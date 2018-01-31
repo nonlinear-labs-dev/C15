@@ -60,7 +60,7 @@ ADD_CUSTOM_TARGET(
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp) 
   
-add_executable(playground ${SOURCE_FILES} src/proxies/hwui/panel-unit/boled/file/PleaseWaitLayout.cpp src/proxies/hwui/panel-unit/boled/file/PleaseWaitLayout.h)
+add_executable(playground ${SOURCE_FILES})
 
 TARGET_LINK_LIBRARIES(playground pthread)
 TARGET_LINK_LIBRARIES(playground stdc++fs)
