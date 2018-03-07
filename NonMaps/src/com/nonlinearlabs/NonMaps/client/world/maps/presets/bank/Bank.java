@@ -56,7 +56,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	private enum DropPosition {
 		ABOVE, COVERING, BELOW
 	}
-
+	
 	public enum DropAction {
 		NONE, COPY_PRESET, MOVE_PRESET, INSERT_EDITBUFFER, INSERT_BANK, DROP_PRESETS
 	}

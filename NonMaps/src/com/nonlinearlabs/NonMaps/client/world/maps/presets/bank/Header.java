@@ -136,7 +136,7 @@ public class Header extends Label {
 	private RGB getBackgroundColor() {
 		RGB r = getParent().getColorBankSelect();
 
-		if (mouseCaptured || getParent().isMouseCaptured())
+		if (!getWorld().isSpaceDown() && mouseCaptured || getParent().isMouseCaptured())
 			r = r.brighter(40);
 
 		return r;
@@ -171,6 +171,9 @@ public class Header extends Label {
 
 	@Override
 	public Control click(Position point) {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		getParent().getParent().selectBank(getParent().getUUID(), true);
 		return this;
 	}
@@ -194,6 +197,9 @@ public class Header extends Label {
 
 	@Override
 	public Control mouseDown(Position eventPoint) {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		Bank parent = getParent();
 		parent.getParent().pushBankOntoTop(parent);
 		return this;
@@ -201,6 +207,9 @@ public class Header extends Label {
 
 	@Override
 	public Control startDragging(Position pos) {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		Control ret = null;
 
 		for (Bank bank : getBanksThatMoveWhenMovingBank(getParent())) {
@@ -234,6 +243,9 @@ public class Header extends Label {
 
 	@Override
 	public Control mouseDrag(Position oldPoint, Position newPoint, boolean fine) {
+		if(getWorld().isSpaceDown())
+			return getWorld().mouseDrag(oldPoint, newPoint, fine);
+		
 		return getParent();
 	}
 
