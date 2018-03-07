@@ -154,6 +154,9 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	@Override
 	public Control doubleClick() {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		setDefault(Initiator.EXPLICIT_USER_ACTION);
 		return this;
 	}

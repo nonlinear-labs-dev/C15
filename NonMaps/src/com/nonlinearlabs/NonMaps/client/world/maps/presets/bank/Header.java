@@ -164,6 +164,9 @@ public class Header extends Label {
 
 	@Override
 	public Control mouseUp(Position eventPoint) {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		sendPosChangeToServer = true;
 		requestLayout();
 		return super.mouseUp(eventPoint);

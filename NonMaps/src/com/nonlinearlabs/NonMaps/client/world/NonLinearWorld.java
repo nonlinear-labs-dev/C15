@@ -3,6 +3,7 @@ package com.nonlinearlabs.NonMaps.client.world;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.Composite;
 import com.google.gwt.canvas.dom.client.Context2d.LineCap;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -324,9 +325,6 @@ public class NonLinearWorld extends MapsLayout {
 	public Control mouseUp(Position eventPoint) {
 		scrollAnimation.run();
 
-		NonMaps.get().getNonLinearWorld().setShiftDown(false);
-		NonMaps.get().getNonLinearWorld().setSpaceDown(false);
-
 		if (getPresetManager().hasMultipleRectangle()) {
 			getPresetManager().endMultipleRectangle();
 		}
@@ -478,13 +476,16 @@ public class NonLinearWorld extends MapsLayout {
 
 	public boolean handleKeyUp(final KeyUpEvent event) {
 		isShiftDown = event.isShiftKeyDown();
-		isSpaceDown = event.getNativeKeyCode() == KeyCodes.KEY_SPACE;
+		if(event.getNativeKeyCode() == KeyCodes.KEY_SPACE)
+			isSpaceDown = false;
 		isCtrlDown = event.isControlKeyDown();
 		return true;
 	}
 
 	public boolean handleKey(final KeyDownEvent event) {
 		isShiftDown = event.isShiftKeyDown();
+		isSpaceDown = event.getNativeKeyCode() == KeyCodes.KEY_SPACE;
+
 
 		Control ctrl = recurseChildren(new ControlFinder() {
 
