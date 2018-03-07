@@ -146,6 +146,8 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
         transaction->rollBack();
         http->respond("Invalid File. Please choose correct xml.tar.gz or xml.zip file.");
       }
+
+      m_presetManager.getEditBuffer()->sendToLPC();
     }
   });
 
