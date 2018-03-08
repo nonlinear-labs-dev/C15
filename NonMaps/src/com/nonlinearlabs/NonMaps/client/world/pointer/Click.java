@@ -1,5 +1,6 @@
 package com.nonlinearlabs.NonMaps.client.world.pointer;
 
+import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.world.Control;
 import com.nonlinearlabs.NonMaps.client.world.Position;
 
@@ -28,6 +29,8 @@ class Click extends Terminus implements Gesture.HasPosition {
 
 		if (ret != null)
 			setReceiver(receiver);
+
+		NonMaps.get().getNonLinearWorld().postClick();
 
 		return ret;
 	}
