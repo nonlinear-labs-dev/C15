@@ -631,4 +631,9 @@ public class NonLinearWorld extends MapsLayout {
 	public int getDragRating(Position newPoint, DragProxy dragProxy) {
 		return -1;
 	}
+
+	public void postClick() {
+		if (!isShiftDown() && getPresetManager().hasMultiplePresetSelection())
+			getPresetManager().closeMultiSelection();
+	}
 }

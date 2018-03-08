@@ -2,8 +2,10 @@ package com.nonlinearlabs.NonMaps.client.world.maps.presets.bank;
 
 import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.world.Control;
+import com.nonlinearlabs.NonMaps.client.world.NonLinearWorld;
 import com.nonlinearlabs.NonMaps.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.Parameter.Initiator;
+import com.nonlinearlabs.NonMaps.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets.PresetList.ScrollRequest;
 
@@ -119,19 +121,32 @@ public class PresetList extends LayoutResizingVertical {
 		if (selectedPreset.equals(uuid))
 			return;
 
+		NonLinearWorld world = NonMaps.theMaps.getNonLinearWorld();
+		PresetManager pm = getParent().getParent();
+		Preset p = findPreset(uuid);
+
 		selectedPreset = uuid;
 
-		if (initiator == Initiator.EXPLICIT_USER_ACTION)
+		if (initiator == Initiator.EXPLICIT_USER_ACTION) {
+			if (world.isShiftDown()) {
+				if (pm.hasMultiplePresetSelection())
+					pm.getMultiSelection().toggle(p);
+				else
+					pm.startMultiSelection(p);
+				return;
+			}
+
 			getNonMaps().getServerProxy().selectPreset(uuid);
+		}
 
 		requestLayout();
 
 		if (getParent().isSelected()) {
-			NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay().getBelt().getPresetLayout().getBankControl().getPresetList()
+			world.getViewport().getOverlay().getBelt().getPresetLayout().getBankControl().getPresetList()
 					.scheduleAutoScroll(ScrollRequest.Smooth);
 		}
 
-		getParent().getParent().onPresetSelectionChanged(findPreset(selectedPreset));
+		pm.onPresetSelectionChanged(findPreset(selectedPreset));
 	}
 
 	public boolean hasSelectedPreset() {
