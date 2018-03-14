@@ -54,7 +54,7 @@ class Preset : public ParameterGroupSet, public AttributesOwner
     void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
     void writeDiff(Writer &writer, Preset *other) const;
 
-    UpdateDocumentContributor::tUpdateID onChange () override;
+    UpdateDocumentContributor::tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     PresetSettings &getSettings ();
     const PresetSettings &getSettings () const;

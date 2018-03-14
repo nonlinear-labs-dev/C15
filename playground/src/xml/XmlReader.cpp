@@ -32,6 +32,14 @@ void XmlReader::on_start_element (ParseContext& context, const Glib::ustring& el
   {
     m_lastAttributes = cp;
   }
+
+  m_lastTag = element_name;
+}
+
+void XmlReader::on_text (ParseContext& context, const Glib::ustring& text)
+{
+  m_lastText = text;
+  m_lastTag = context.get_element();
 }
 
 void XmlReader::on_end_element (ParseContext& context, const Glib::ustring& element_name)
@@ -101,8 +109,4 @@ void XmlReader::feed ()
   while (!getInStream ().eof ());
 }
 
-void XmlReader::on_text (ParseContext& context, const Glib::ustring& text)
-{
-  m_lastText = text;
-  m_lastTag = context.get_element();
-}
+

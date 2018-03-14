@@ -9,7 +9,7 @@ class UndoScope : public UNDO::Scope
   public:
     using UNDO::Scope::Scope;
 
-    virtual tUpdateID onChange () override;
+    virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
     sigc::connection onUndoScopeChanged (slot<void> cb);
 
   protected:

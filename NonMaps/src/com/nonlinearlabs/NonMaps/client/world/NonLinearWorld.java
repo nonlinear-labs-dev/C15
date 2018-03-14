@@ -324,9 +324,6 @@ public class NonLinearWorld extends MapsLayout {
 	public Control mouseUp(Position eventPoint) {
 		scrollAnimation.run();
 
-		NonMaps.get().getNonLinearWorld().setShiftDown(false);
-		NonMaps.get().getNonLinearWorld().setSpaceDown(false);
-
 		if (getPresetManager().hasMultipleRectangle()) {
 			getPresetManager().endMultipleRectangle();
 		}
@@ -478,7 +475,10 @@ public class NonLinearWorld extends MapsLayout {
 
 	public boolean handleKeyUp(final KeyUpEvent event) {
 		isShiftDown = event.isShiftKeyDown();
-		isSpaceDown = event.getNativeKeyCode() == KeyCodes.KEY_SPACE;
+
+		if (event.getNativeKeyCode() == KeyCodes.KEY_SPACE)
+			isSpaceDown = false;
+
 		isCtrlDown = event.isControlKeyDown();
 		return true;
 	}
@@ -617,10 +617,6 @@ public class NonLinearWorld extends MapsLayout {
 
 	public boolean isSpaceDown() {
 		return isSpaceDown;
-	}
-
-	public void setSpaceDown(boolean isSpaceDown) {
-		this.isSpaceDown = isSpaceDown;
 	}
 
 	public boolean isCtrlDown() {

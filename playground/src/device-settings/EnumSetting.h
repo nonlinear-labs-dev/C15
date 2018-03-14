@@ -37,6 +37,9 @@ template<typename TEnum>
 
       tEnum get () const
       {
+        if(auto overlay = m_overlay.lock())
+          return *overlay;
+
         return m_mode;
       }
 
@@ -93,10 +96,18 @@ template<typename TEnum>
       virtual const vector<Glib::ustring> &enumToString () const = 0;
       virtual const vector<Glib::ustring> &enumToDisplayString () const = 0;
 
+      std::shared_ptr<tEnum> scopedOverlay(tEnum value)
+      {
+        auto ret = std::make_shared<tEnum>(value);
+        m_overlay = ret;
+        return ret;
+      }
+
     private:
       EnumSetting (const EnumSetting& other);
       EnumSetting& operator= (const EnumSetting&);
 
       tEnum m_mode;
+      std::weak_ptr<tEnum> m_overlay;
   };
 

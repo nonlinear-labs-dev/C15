@@ -18,7 +18,7 @@ DateTimeInfo::DateTimeInfo (DeviceInformation *parent) :
 
 bool DateTimeInfo::onTimeChanged ()
 {
-  onChange ();
+  onChange (UpdateDocumentContributor::ChangeFlags::Generic);
   return true;
 }
 

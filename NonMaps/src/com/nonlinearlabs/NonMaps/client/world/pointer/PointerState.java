@@ -116,7 +116,9 @@ public class PointerState {
 			if (receiver == currentReceiver)
 				handledByCaptureControl = deliverGestureToCaptureControl();
 
-		if (!handledByCaptureControl)
+		boolean isSpaceDown = NonMaps.get().getNonLinearWorld().isSpaceDown();
+
+		if (!handledByCaptureControl && !isSpaceDown)
 			bubbleGesture(receiver);
 	}
 
@@ -161,6 +163,12 @@ public class PointerState {
 	}
 
 	private Control getReceiver(Gesture g) {
+		if (NonMaps.get().getNonLinearWorld().isSpaceDown()) {
+			Control world = NonMaps.theMaps.getNonLinearWorld();
+			setReceiver(world);
+			return world;
+		}
+
 		if (currentReceiver != null && g instanceof Gesture.NeedsFocus) {
 			return currentReceiver;
 		}

@@ -16,10 +16,10 @@ connection PresetSetting::onSettingChange (slot<void, const PresetSetting*> slot
   return m_signal.connectAndInit (slot, this);
 }
 
-PresetSetting::tUpdateID PresetSetting::onChange ()
+PresetSetting::tUpdateID PresetSetting::onChange (uint64_t flags)
 {
   m_signal.send (this);
-  return super::onChange ();
+  return super::onChange (flags);
 }
 
 void PresetSetting::writeDocument (Writer &writer, tUpdateID knownRevision) const

@@ -82,10 +82,10 @@ Settings::~Settings ()
   DebugLevel::warning (__PRETTY_FUNCTION__, __LINE__);
 }
 
-Settings::tUpdateID Settings::onChange ()
+Settings::tUpdateID Settings::onChange (uint64_t flags)
 {
   m_saveJob.trigger ();
-  return super::onChange ();
+  return super::onChange (flags);
 }
 
 Glib::ustring Settings::getPrefix () const

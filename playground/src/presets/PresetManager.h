@@ -105,7 +105,7 @@ class PresetManager : public ContentSection
 
   protected:
     void onTransactionAdded ();
-    virtual tUpdateID onChange () override;
+    virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
   private:
     PresetManager (const PresetManager &);

@@ -136,9 +136,9 @@ sigc::connection ParameterGroup::onGroupChanged(slot<void> slot)
   return m_signalGroupChanged.connectAndInit(slot);
 }
 
-ParameterGroup::tUpdateID ParameterGroup::onChange()
+ParameterGroup::tUpdateID ParameterGroup::onChange(uint64_t flags)
 {
-  auto ret = super::onChange();
+  auto ret = super::onChange(flags);
   m_signalGroupChanged.send();
   return ret;
 }

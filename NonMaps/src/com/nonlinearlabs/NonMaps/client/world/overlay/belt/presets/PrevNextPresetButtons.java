@@ -1,7 +1,7 @@
 package com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets;
 
-import com.nonlinearlabs.NonMaps.client.world.overlay.SVGImage;
 import com.nonlinearlabs.NonMaps.client.world.overlay.OverlayLayout;
+import com.nonlinearlabs.NonMaps.client.world.overlay.SVGImage;
 
 class PrevNextPresetButtons extends OverlayLayout {
 
@@ -21,9 +21,8 @@ class PrevNextPresetButtons extends OverlayLayout {
 		double buttonWidth = SVGImage.calcSVGDimensionToPixels(36);
 		double buttonHeight = SVGImage.calcSVGDimensionToPixels(34);
 		double margin = getButtonDimension() / 8;
-		double top = (h - 2 * buttonHeight + margin) / 3;
 
-		prev.doLayout(0, top, buttonWidth, buttonHeight);
+		prev.doLayout(0, 0, buttonWidth, buttonHeight);
 		next.doLayout(0, prev.getRelativePosition().getBottom() + margin, buttonWidth, buttonHeight);
 	}
 }

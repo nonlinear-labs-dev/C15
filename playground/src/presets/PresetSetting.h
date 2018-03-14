@@ -20,7 +20,7 @@ class PresetSetting : public UpdateDocumentContributor
     virtual ustring save() const = 0;
     virtual void load(UNDO::Scope::tTransactionPtr, const Glib::ustring &v) = 0;
 
-    tUpdateID onChange () override;
+    tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
     connection onSettingChange(slot<void, const PresetSetting*> slot);
 
     virtual void sendToLPC() const = 0;

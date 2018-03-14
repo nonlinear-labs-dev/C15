@@ -5,9 +5,9 @@ DeviceInformationItem::DeviceInformationItem (DeviceInformation *parent) :
 {
 }
 
-DeviceInformationItem::tUpdateID DeviceInformationItem::onChange ()
+DeviceInformationItem::tUpdateID DeviceInformationItem::onChange (uint64_t flags)
 {
-  auto ret = UpdateDocumentContributor::onChange ();
+  auto ret = UpdateDocumentContributor::onChange (flags);
   m_signal.send (this);
   return ret;
 }

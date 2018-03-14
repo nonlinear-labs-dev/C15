@@ -1,6 +1,7 @@
 package com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets;
 
 import com.google.gwt.xml.client.Node;
+import com.nonlinearlabs.NonMaps.client.Millimeter;
 import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.ServerProxy;
 import com.nonlinearlabs.NonMaps.client.world.Control;
@@ -19,10 +20,13 @@ class DirectLoadButton extends SVGImage {
 	public boolean isInStoreSelectMode() {
 		return NonMaps.get().getNonLinearWorld().getPresetManager().isInStoreSelectMode();
 	}
-	
+
 	@Override
 	public void doLayout(double x, double y, double w, double h) {
-		x = x - getButtonDimension() * 1.5;
+		double imgHeight = getSelectedImage().getImgHeight();
+		y = (h - imgHeight) / 2;
+		y += Millimeter.toPixels(4.5);
+		h = imgHeight;
 		super.doLayout(x, y, w, h);
 	}
 

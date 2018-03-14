@@ -12,7 +12,7 @@ import com.nonlinearlabs.NonMaps.client.world.TextCropper;
 
 public abstract class Label extends OverlayControl {
 
-	double fontHeightInPx = 0;
+	protected double fontHeightInPx = 0;
 	RGB m_linecolor;
 
 	protected RGB getLineColor() {
@@ -76,11 +76,19 @@ public abstract class Label extends OverlayControl {
 		} else {
 			double x = left.getX();
 			for (int i = 0; i < splits.length; i++) {
-				ctx.setFillStyle(getColorFontForSplit(i).toString());
-				ctx.fillText(splits[i], x, left.getY() + getVerticalFontDisplacement());
-				x += ctx.measureText(splits[i]).getWidth();
+				String split = splits[i];
+
+				double y = left.getY() + getVerticalFontDisplacement();
+				drawSplit(i, ctx, split, x, y);
+				x += ctx.measureText(split).getWidth();
 			}
 		}
+	}
+
+	public void drawSplit(int idx, Context2d ctx, String split, double x, double y) {
+		RGB color = getColorFontForSplit(idx);
+		ctx.setFillStyle(color.toString());
+		ctx.fillText(split, x, y);
 	}
 
 	protected RGB getColorFontForSplit(int i) {

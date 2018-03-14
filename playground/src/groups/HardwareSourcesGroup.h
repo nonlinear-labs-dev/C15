@@ -12,8 +12,6 @@ class HardwareSourcesGroup : public ParameterGroup
     HardwareSourcesGroup (ParameterGroupSet *parent);
     virtual ~HardwareSourcesGroup ();
 
-    virtual tUpdateID onChange () override;
-
     typedef PhysicalControlParameter* tPhysicalControlParameter;
     typedef list<tPhysicalControlParameter> tPhysicalControlParameters;
     tPhysicalControlParameters getPhysicalControlParameters ();

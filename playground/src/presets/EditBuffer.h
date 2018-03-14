@@ -5,6 +5,7 @@
 #include "Preset.h"
 #include "LastLoadedPresetInfo.h"
 #include <tools/Expiration.h>
+#include <tools/DelayedJob.h>
 
 class Application;
 class Writer;
@@ -49,7 +50,7 @@ class EditBuffer : public Preset
     void resetModifiedIndicator (UNDO::Scope::tTransactionPtr transaction);
     virtual void copyFrom (UNDO::Scope::tTransactionPtr transaction, Preset *other, bool ignoreUUIDs) override;
 
-    virtual tUpdateID onChange () override;
+    virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     bool hasLocks();
 
@@ -58,6 +59,7 @@ class EditBuffer : public Preset
     sigc::connection onModificationStateChanged (slot<void, bool> s);
     sigc::connection onChange (slot<void> s);
     sigc::connection onPresetLoaded (slot<void> s);
+    sigc::connection onLocksChanged (slot<void> s);
 
     void undoableImportReaktorPreset (const Glib::ustring &preset);
     void undoableImportReaktorPreset (UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &preset);
@@ -67,28 +69,30 @@ class EditBuffer : public Preset
     bool isSelectedPresetLoadedAndUnModified();
 
   private:
-    bool doesAnyParameterHaveALock();
+    Parameter *searchForAnyParameterWithLock() const;
+
     virtual UNDO::Scope &getUndoScope () override;
 
     void setParameter (size_t id, double cpValue);
 
     EditBuffer (UpdateDocumentContributor *parent);
 
-
     void undoableSelectParameter (UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &id);
-
     void setModulationSource (int src);
     void setModulationAmount (double amount);
 
     bool undoableImportReaktorParameter (UNDO::Scope::tTransactionPtr transaction, std::istringstream &input, Parameter *param);
     bool readReaktorPresetHeader (std::istringstream &input) const;
 
+    void doDeferedJobs();
     void checkModified ();
+    void checkAnyLocks ();
 
     Signal<void, Parameter *, Parameter *> m_signalSelectedParameter;
     Signal<void, bool> m_signalModificationState;
     Signal<void> m_signalChange;
     Signal<void> m_signalPresetLoaded;
+    Signal<void> m_signalLocksChanged;
 
     Parameter *m_selectedParameter = nullptr;
 
@@ -97,9 +101,10 @@ class EditBuffer : public Preset
 
     LastLoadedPresetInfo m_lastLoadedPresetInfo;
 
+    DelayedJob m_deferedJobs;
+
     size_t m_hashOnStore;
     bool m_isModified;
-    Expiration m_checkModified;
 
     friend class PresetManager;
 };

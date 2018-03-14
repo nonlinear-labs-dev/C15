@@ -549,14 +549,14 @@ sigc::connection PresetBank::onBankChanged(sigc::slot<void> slot)
   return m_signalBankChanged.connectAndInit(slot);
 }
 
-UpdateDocumentContributor::tUpdateID PresetBank::onChange()
+UpdateDocumentContributor::tUpdateID PresetBank::onChange(uint64_t flags)
 {
   m_lastChangedTimestamp = TimeTools::getAdjustedTimestamp();
 
   if(getParent())
   {
     signalBankChanged();
-    return UpdateDocumentContributor::onChange();
+    return UpdateDocumentContributor::onChange(flags);
   }
   return 0;
 }

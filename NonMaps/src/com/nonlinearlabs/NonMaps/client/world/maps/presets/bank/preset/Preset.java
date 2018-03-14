@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.nonlinearlabs.NonMaps.client.NonMaps;
@@ -233,7 +234,11 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 				.getContextMenuSettings();
 		if (contextMenuSettings.isEnabled()) {
 			Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
-			return o.setContextMenu(pos, new PresetContextMenu(o, this));
+			
+			boolean isInMultiSel = isSelectedInMultiplePresetSelectionMode();
+			
+			if(isInMultiSel || (!isInMultiSel && !isInMultiplePresetSelectionMode()))
+				return o.setContextMenu(pos, new PresetContextMenu(o, this));
 		}
 		return this;
 	}
@@ -247,6 +252,15 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 		}
 		invalidate(INVALIDATION_FLAG_UI_CHANGED);
+	}
+	
+	private boolean isSelectedInMultiplePresetSelectionMode() {
+		MultiplePresetSelection mp = getParent().getParent().getMultiSelection();
+		if(mp != null)
+		{
+			return mp.getSelectedPresets().contains(this.getUUID());
+		}
+		return false;
 	}
 
 	private boolean isInMultiplePresetSelectionMode() {

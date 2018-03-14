@@ -13,7 +13,7 @@ class AttributesOwner
     AttributesOwner ();
     virtual ~AttributesOwner ();
 
-    virtual UpdateDocumentContributor::tUpdateID onChange () = 0;
+    virtual UpdateDocumentContributor::tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) = 0;
 
     void setAttribute (const Glib::ustring &key, const Glib::ustring &value);
     void undoableSetAttribute (UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &key, const Glib::ustring &value);

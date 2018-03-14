@@ -47,7 +47,7 @@ public class StoreOptionsMenu extends SVGImage {
 	String currentSetting = "Append";
 
 	public StoreOptionsMenu(OverlayLayout parent) {
-		super(parent, "Append_Enabled .svg", "Insert_Enabled.svg", "Overwrite_Enabled.svg");
+		super(parent, "Append_Enabled.svg", "Insert_Enabled.svg", "Overwrite_Enabled.svg");
 	}
 
 	@Override
@@ -68,12 +68,12 @@ public class StoreOptionsMenu extends SVGImage {
 	public Control mouseDown(Position pos) {
 		return openContextMenu(pos);
 	}
-	
+
 	@Override
 	public Control onContextMenu(Position pos) {
 		return openContextMenu(pos);
 	}
-	
+
 	private Control openContextMenu(Position pos) {
 		Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
 		return o.setContextMenu(pos, new StoreOptionsContextMenu(o));
@@ -110,5 +110,4 @@ public class StoreOptionsMenu extends SVGImage {
 	public double getPictureWidth() {
 		return getPhase(getSelectedPhase()).getImgWidth();
 	}
-
 }

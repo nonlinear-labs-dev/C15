@@ -27,7 +27,7 @@ class Clipboard : public ContentSection
     bool containsPreset() const;
     bool hasContent() const;
 
-    UpdateDocumentContributor::tUpdateID onChange() override;
+    UpdateDocumentContributor::tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     connection onClipboardChanged(slot<void> cb);
 

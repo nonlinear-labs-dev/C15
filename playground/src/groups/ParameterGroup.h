@@ -54,7 +54,7 @@ class ParameterGroup : public UpdateDocumentContributor, public IntrusiveListIte
     void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
     void writeDiff(Writer &writer, ParameterGroup *other) const;
 
-    virtual tUpdateID onChange () override;
+    virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     // CALLBACKS
     sigc::connection onGroupChanged (slot<void> slot);

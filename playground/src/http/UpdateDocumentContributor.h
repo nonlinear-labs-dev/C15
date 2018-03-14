@@ -27,7 +27,13 @@ class UpdateDocumentContributor : public IntrusiveListItem<UpdateDocumentContrib
     UpdateDocumentContributor(const UpdateDocumentContributor& other) = delete;
     UpdateDocumentContributor& operator=(const UpdateDocumentContributor&) = delete;
 
-    virtual tUpdateID onChange();
+    enum ChangeFlags : uint64_t
+    {
+      Generic = 1 << 0,
+      LockState = 1 << 1,
+    };
+
+    virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic);
     void onRestore();
 
     bool didChangeSince(tUpdateID clientsUpdateID) const;
