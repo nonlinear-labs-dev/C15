@@ -974,8 +974,7 @@ public class PresetManager extends MapsLayout {
 
 	@Override
 	public Control click(Position eventPoint) {
-		NonMaps.get().getNonLinearWorld().setShiftDown(false);
-
+		
 		if (moveAllBanks != null) {
 			toggleMoveAllBanks();
 			return this;

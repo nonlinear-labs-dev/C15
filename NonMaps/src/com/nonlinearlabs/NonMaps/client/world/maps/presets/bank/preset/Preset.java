@@ -211,6 +211,10 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 	@Override
 	public Control click(Position point) {
+		if(getWorld().isSpaceDown())
+			return this;
+		
+		
 		if (isInMultiplePresetSelectionMode()) {
 			getParent().getParent().getMultiSelection().toggle(this);
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
@@ -274,6 +278,10 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 	@Override
 	public Control startDragging(Position pos) {
+		if(getWorld().isSpaceDown()) {
+			return this;
+		}
+		
 		if (getNonMaps().getNonLinearWorld().getViewport().getOverlay().getSetup().getPresetDragDropSetting().isEnabled()) {
 			if (isInMultiplePresetSelectionMode()) {
 				return startMultipleSelectionDrag(pos);
@@ -317,6 +325,9 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 	@Override
 	public Control mouseDrag(Position oldPoint, Position newPoint, boolean fine) {
+		if(getWorld().isSpaceDown())
+			return getWorld().mouseDrag(oldPoint, newPoint, fine);
+		
 		return this;
 	}
 

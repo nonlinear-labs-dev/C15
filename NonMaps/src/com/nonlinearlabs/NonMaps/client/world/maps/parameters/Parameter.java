@@ -138,6 +138,9 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	@Override
 	public Control click(Position eventPoint) {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		boolean isAnyChildVisible = isAnyChildVisible();
 
 		if (!isAnyChildVisible)
@@ -151,12 +154,18 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	@Override
 	public Control doubleClick() {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		setDefault(Initiator.EXPLICIT_USER_ACTION);
 		return this;
 	}
 
 	@Override
 	public Control mouseDown(Position eventPoint) {
+		if(getWorld().isSpaceDown())
+			return this;
+		
 		EditParameterSetting s = getWorld().getViewport().getOverlay().getSetup().getEditParameterDragSetting();
 		String choiceString = s.getSettingsControl().getChoiceString();
 
