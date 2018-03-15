@@ -14,7 +14,7 @@ public class MacroControlContextMenu extends ParameterContextMenu {
 	public MacroControlContextMenu(OverlayLayout parent, final MacroControlParameter param) {
 		super(parent, param);
 
-		addChild(new ContextMenuItem(this, "Rename") {
+		addChild(new ContextMenuItem(this, "Rename ...") {
 			@Override
 			public Control click(Position eventPoint) {
 				RenameDialog.open(param);
@@ -22,7 +22,7 @@ public class MacroControlContextMenu extends ParameterContextMenu {
 			}
 		});
 
-		String infoText = (ParameterInfoDialog.isShown() ? "Hide " : "Show ") + " Info";
+		String infoText = "Parameter Info ...";
 
 		addChild(new ContextMenuItem(this, infoText) {
 			@Override

@@ -18,70 +18,59 @@ namespace DETAIL
   {
     public:
       BankComment(Rect pos) :
-          MultiLineLabel ("---")
+          MultiLineLabel("---")
       {
         setPosition(pos);
       }
 
-      Oleds::tFont getFont ()
+      Oleds::tFont getFont()
       {
-        return Oleds::get ().getFont ("Emphase_8_TXT_Regular", 8);
+        return Oleds::get().getFont("Emphase_8_TXT_Regular", 8);
       }
   };
 }
 
-static const int divider = 64;
-
 BankInfoContent::BankInfoContent()
 {
-  addInfoField("name", new LeftAlignedLabel("Name", Rect(0, 0, divider, 16)), new DETAIL::BankComment(Rect(divider, 0, 256 - divider, 0)));
-  addInfoField("size", new LeftAlignedLabel("Size", Rect(0, 16, divider, 16)),
-      new LeftAlignedLabel("---", Rect(divider, 16, 256 - divider, 16)));
-  addInfoField("comment", new LeftAlignedLabel("Comment", Rect(0, 32, divider, 16)),
-      new DETAIL::BankComment(Rect(divider, 32, 256 - divider, 0)));
-  addInfoField("state", new LeftAlignedLabel("State", Rect(0, 48, divider, 16)),
-      new LeftAlignedLabel("---", Rect(divider, 48, 256 - divider, 16)));
-  addInfoField("dateofchange", new LeftAlignedLabel("Last Change", Rect(0, 64, divider, 16)),
-      new LeftAlignedLabel("---", Rect(divider, 64, 256 - divider, 16)));
-  addInfoField("importdate", new LeftAlignedLabel("Import Date", Rect(0, 96, divider, 16)),
-      new LeftAlignedLabel("---", Rect(divider, 96, 256 - divider, 16)));
-  addInfoField("importfile", new LeftAlignedLabel("Import File", Rect(0, 112, divider, 16)),
-      new LeftAlignedLabel("---", Rect(divider, 112, 256 - divider, 16)));
-  addInfoField("exportdate", new LeftAlignedLabel("Export Date", Rect(0, 124, divider, 16)),
-      new LeftAlignedLabel("---", Rect(divider, 124, 256 - divider, 16)));
-  addInfoField("exportfile", new LeftAlignedLabel("Export File", Rect(0, 136, divider, 16)),
-      new LeftAlignedLabel("---", Rect(divider, 136, 256 - divider, 16)));
+  addInfoField("name", "Name", new MultiLineContent());
+  addInfoField("size", "Size");
+  addInfoField("comment", "Comment", new MultiLineContent());
+  addInfoField("state", "State");
+  addInfoField("dateofchange", "Last Change");
+  addInfoField("importdate", "Import Date");
+  addInfoField("importfile", "Import File");
+  addInfoField("exportdate", "Export Date");
+  addInfoField("exportfile", "Export File");
 
-
-  Application::get ().getPresetManager ()->onBankSelection (mem_fun (this, &BankInfoContent::onBankSelectionChanged));
+  Application::get().getPresetManager()->onBankSelection(mem_fun(this, &BankInfoContent::onBankSelectionChanged));
 
   fillFromBank(Application::get().getPresetManager()->getSelectedBank().get());
 }
 
-BankInfoContent::~BankInfoContent ()
+BankInfoContent::~BankInfoContent()
 {
 }
 
-void BankInfoContent::onBankSelectionChanged (shared_ptr<PresetBank> bank)
+void BankInfoContent::onBankSelectionChanged(shared_ptr<PresetBank> bank)
 {
-  m_bankConnection.disconnect ();
+  m_bankConnection.disconnect();
 
-  if (bank)
-    m_bankConnection = bank->onBankChanged (sigc::bind (mem_fun (this, &BankInfoContent::onBankChanged), bank));
+  if(bank)
+    m_bankConnection = bank->onBankChanged(sigc::bind(mem_fun(this, &BankInfoContent::onBankChanged), bank));
 }
 
-void BankInfoContent::onBankChanged (shared_ptr<PresetBank> bank)
+void BankInfoContent::onBankChanged(shared_ptr<PresetBank> bank)
 {
-  if (bank)
+  if(bank)
   {
-    if(fillFromBank (bank.get ()))
+    if(fillFromBank(bank.get()))
     {
-      fixLayout ();
+      fixLayout();
     }
   }
-  else if (fillDefaults ())
+  else if(fillDefaults())
   {
-    fixLayout ();
+    fixLayout();
   }
 }
 
@@ -99,7 +88,7 @@ bool BankInfoContent::fillFromBank(PresetBank *bank)
   return true;
 }
 
-bool BankInfoContent::fillDefaults ()
+bool BankInfoContent::fillDefaults()
 {
   infoFields["name"]->setInfo("---", FrameBuffer::Colors::C128);
   infoFields["comment"]->setInfo("---", FrameBuffer::Colors::C128);
@@ -113,39 +102,33 @@ bool BankInfoContent::fillDefaults ()
   return true;
 }
 
-void BankInfoContent::setPosition (const Rect &rect)
+void BankInfoContent::setPosition(const Rect &rect)
 {
-  super::setPosition (rect);
-  fixLayout ();
+  super::setPosition(rect);
+  fixLayout();
 }
 
-const Rect &BankInfoContent::getPosition () const
+const Rect &BankInfoContent::getPosition() const
 {
-  return super::getPosition ();
+  return super::getPosition();
 }
 
-void BankInfoContent::setDirty ()
+void BankInfoContent::setDirty()
 {
-  super::setDirty ();
-  notifyDirty (true);
+  super::setDirty();
+  notifyDirty(true);
 }
 
-void BankInfoContent::fixLayout ()
+void BankInfoContent::fixLayout()
 {
-
   int y = 0;
 
-  for(auto info :
-  { infoFields["name"], infoFields["comment"], infoFields["size"], infoFields["state"], infoFields["dateofchange"],
-      infoFields["importdate"], infoFields["importfile"], infoFields["exportdate"], infoFields["exportfile"] })
+  for(auto infoKey : { "name", "comment", "size", "state", "dateofchange", "importdate", "importfile", "exportdate", "exportfile" })
   {
-    auto height = info->m_content->getHeight();
-    info->m_label->setPosition(Rect(0, y, divider, 16));
-    info->m_content->setPosition(Rect(divider, y, 256 - divider, height));
-    y = std::max(info->m_content->getPosition().getBottom(), info->m_label->getPosition().getBottom());
+    y = infoFields[infoKey]->format(y);
   }
 
-  Rect r = getPosition ();
-  r.setHeight (y);
-  super::setPosition (r);
+  Rect r = getPosition();
+  r.setHeight(y);
+  super::setPosition(r);
 }

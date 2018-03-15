@@ -415,7 +415,7 @@ void Parameter::undoableLock(UNDO::Scope::tTransactionPtr transaction)
     transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
     {
       swapData->swapWith (m_isLocked);
-      onChange();
+      onChange(ChangeFlags::LockState);
     });
   }
 }
@@ -429,7 +429,7 @@ void Parameter::undoableUnlock(UNDO::Scope::tTransactionPtr transaction)
     transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
     {
       swapData->swapWith (m_isLocked);
-      onChange();
+      onChange(ChangeFlags::LockState);
     });
   }
 }

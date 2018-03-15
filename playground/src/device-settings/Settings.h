@@ -45,7 +45,7 @@ class Settings : public ContentSection
 
     void sendToLPC ();
 
-    tUpdateID onChange () override;
+    tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     bool isLoading () const;
 

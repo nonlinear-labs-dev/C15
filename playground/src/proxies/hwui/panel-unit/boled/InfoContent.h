@@ -4,54 +4,39 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/Scrollable.h>
 #include <proxies/hwui/controls/Label.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MultiLineLabel.h>
+#include <proxies/hwui/controls/LeftAlignedLabel.h>
 #include <cassert>
-
 
 class InfoContent : public Scrollable, public ControlWithChildren
 {
   private:
     typedef ControlWithChildren super;
+
   public:
+    struct MultiLineContent : public MultiLineLabel
+    {
+        MultiLineContent();
+        virtual void setPosition(Rect rect);
+    };
+
+    struct SingleLineContent : public LeftAlignedLabel
+    {
+        SingleLineContent(Glib::ustring name);
+        SingleLineContent();
+    };
+
     struct InfoField
     {
-        InfoField(Label* l, Control* c) :
-            m_label(l), m_content(c)
-        {
-        }
-        ;
-        Label* m_label;
-        Control* m_content;
+        InfoField(SingleLineContent* label, Control* c);
 
-        void setInfo(Glib::ustring text)
-        {
-          if (auto label = dynamic_cast<Label*>(m_content))
-          {
-            label->setText(text);
-          }
-          else if (auto multiLineLabel = dynamic_cast<MultiLineLabel*>(m_content))
-          {
-            multiLineLabel->setText(text, FrameBuffer::Colors::C103);
-          }
-          else
-          {
-            throw new invalid_argument(__LINE__ + __FILE__);
-          }
-        }
-        void setInfo(Glib::ustring text, FrameBuffer::Colors c)
-        {
-          if (auto label = dynamic_cast<Label*>(m_content))
-          {
-            label->setText(text, c);
-          }
-          else if (auto multiLineLabel = dynamic_cast<MultiLineLabel*>(m_content))
-          {
-            multiLineLabel->setText(text, c);
-          }
-          else
-          {
-            assert(false);
-          }
-        }
+        void setInfo(Glib::ustring text);
+        void setInfo(Glib::ustring text, FrameBuffer::Colors c);
+        void setPosition(int y);
+        int format(int y);
+
+      private:
+        SingleLineContent* m_label;
+        Control* m_content;
     };
 
     InfoContent();
@@ -61,7 +46,10 @@ class InfoContent : public Scrollable, public ControlWithChildren
     virtual const Rect &getPosition() const override;
     virtual void setDirty() override;
 
-    InfoField* addInfoField(std::string lineIdentifier, Label* label, Control* field);
+    InfoField* addInfoField(std::string lineIdentifier, Glib::ustring labelText, Control* field);
+    InfoField* addInfoField(std::string lineIdentifier, Glib::ustring labelText);
+
   protected:
-    std::map<std::string, InfoField*> infoFields;
+    std::map<std::string, std::unique_ptr<InfoField>> infoFields;
 };
+

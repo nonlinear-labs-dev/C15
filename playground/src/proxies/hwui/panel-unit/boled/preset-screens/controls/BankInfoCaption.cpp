@@ -32,9 +32,8 @@ void BankInfoCaption::onBankChanged ()
   auto pm = Application::get ().getPresetManager ();
   if (auto bank = pm->getSelectedBank ())
   {
-    //auto bankNumber = pm->calcOrderNumber (bank.get ());
-    //auto text = UNDO::StringTools::buildString (bankNumber, "-", bank->getName (true));
-    auto text = bank->getName (true);
+    auto bankNumber = pm->calcOrderNumber (bank.get ());
+    auto text = std::to_string(bankNumber);
     setText (text);
     return;
   }

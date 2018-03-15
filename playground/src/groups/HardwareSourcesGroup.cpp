@@ -15,11 +15,6 @@ HardwareSourcesGroup::~HardwareSourcesGroup ()
 {
 }
 
-UpdateDocumentContributor::tUpdateID HardwareSourcesGroup::onChange ()
-{
-  return UpdateDocumentContributor::onChange ();
-}
-
 void HardwareSourcesGroup::init ()
 {
   appendParameter (

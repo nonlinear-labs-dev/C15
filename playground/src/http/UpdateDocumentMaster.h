@@ -12,6 +12,6 @@ class UpdateDocumentMaster: public UpdateDocumentContributor
     UpdateDocumentMaster ();
     virtual ~UpdateDocumentMaster ();
 
-    tUpdateID onChange () override;
+    tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 };
 

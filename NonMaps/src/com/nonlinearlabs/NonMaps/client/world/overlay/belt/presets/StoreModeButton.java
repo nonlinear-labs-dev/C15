@@ -42,7 +42,6 @@ public class StoreModeButton extends SVGImage {
 
 	@Override
 	public Control click(Position eventPoint) {
-
 		if (getPresetManager().isInStoreSelectMode()) {
 			getPresetManager().endStoreSelectMode();
 		} else {

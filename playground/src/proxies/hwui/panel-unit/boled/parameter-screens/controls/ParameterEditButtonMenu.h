@@ -16,6 +16,7 @@ class ParameterEditButtonMenu : public ButtonMenu
     void selectButton(size_t i) override;
 
   private:
+    void setup();
     void toggleGroupLock();
     void unlockAll();
     void lockAll();

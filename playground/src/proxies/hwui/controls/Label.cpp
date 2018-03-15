@@ -81,7 +81,7 @@ bool Label::redraw (FrameBuffer &fb)
 
   int width = font->getStringWidth (text);
 
-  if (width >= (pos.getWidth () - getXOffset()))
+  if (width >= (pos.getWidth () - getXOffset() - getRightMargin()))
   {
     text = shortenStringIfNeccessary (font, text);
     width = font->getStringWidth (text);
@@ -109,7 +109,7 @@ bool Label::redraw (FrameBuffer &fb)
       break;
 
     case Font::Justification::Right:
-      font->draw (firstPart, left + (pos.getWidth() - width), pos.getBottom () - offset + getYOffset ());
+      font->draw (firstPart, left + (pos.getWidth() - width - getRightMargin()), pos.getBottom () - offset + getYOffset ());
       break;
   }
 
@@ -166,6 +166,11 @@ int Label::getXOffset () const
 }
 
 int Label::getYOffset () const
+{
+  return 0;
+}
+
+int Label::getRightMargin() const
 {
   return 0;
 }

@@ -40,7 +40,7 @@ Font::Justification PresetNameLabel::getJustification () const
 
 Glib::ustring PresetNameLabel::shortenStringIfNeccessary (shared_ptr<Font> font, const Glib::ustring &text) const
 {
-  auto width = getPosition().getWidth() - getXOffset();
+  auto width = getPosition().getWidth() - getXOffset() - getRightMargin();
   auto c = text;
 
   for(size_t len = text.length(); len > 0 && (font->getStringWidth(c) >= width); len--)
@@ -54,4 +54,9 @@ Glib::ustring PresetNameLabel::shortenStringIfNeccessary (shared_ptr<Font> font,
 int PresetNameLabel::getXOffset () const
 {
   return 7;
+}
+
+int PresetNameLabel::getRightMargin() const
+{
+  return 3;
 }

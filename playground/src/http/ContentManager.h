@@ -24,7 +24,7 @@ class ContentManager : public PendingHTTPRequests, public UpdateDocumentMaster, 
     void handleRequest (shared_ptr<NetworkRequest> request);
     void onSectionMessageFinished (SoupMessage *msg);
 
-    tUpdateID onChange () override;
+    tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     UNDO::Scope &getUndoScope () override;
     const UNDO::Scope &getUndoScope () const override;

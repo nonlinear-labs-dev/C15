@@ -112,7 +112,7 @@ class PresetBank : public UpdateDocumentContributor,
 
     PresetBank *getClusterMaster();
 
-    virtual tUpdateID onChange() override;
+    virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     // CALLBACKS
     sigc::connection onBankChanged(sigc::slot<void> slot);

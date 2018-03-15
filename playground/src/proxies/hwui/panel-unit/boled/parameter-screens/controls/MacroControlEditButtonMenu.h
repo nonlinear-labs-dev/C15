@@ -16,8 +16,8 @@ class MacroControlEditButtonMenu : public ButtonMenu
     void selectButton(size_t i) override;
 
   private:
-    MacroControlEditButtonMenu(const MacroControlEditButtonMenu& other);
-    MacroControlEditButtonMenu& operator=(const MacroControlEditButtonMenu&);
+    void setup();
+    void onGroupChanged();
 
     void editInfo();
     void rename();

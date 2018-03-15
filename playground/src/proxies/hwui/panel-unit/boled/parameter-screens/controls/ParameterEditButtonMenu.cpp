@@ -17,18 +17,32 @@ ParameterEditButtonMenu::ParameterEditButtonMenu(const Rect &rect) :
     super(rect)
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-
-  addButton("Lock Group", bind(&ParameterEditButtonMenu::toggleGroupLock, this));
-  addButton("Lock all", bind(&ParameterEditButtonMenu::lockAll, this));
-  addButton("Unlock all", bind(&ParameterEditButtonMenu::unlockAll, this));
-
-  eb->onSelectionChanged(sigc::mem_fun(this, &ParameterEditButtonMenu::onParameterSelectionChanged));
-
-  selectButton(s_lastAction);
+  eb->onLocksChanged(mem_fun(this, &ParameterEditButtonMenu::setup));
 }
 
 ParameterEditButtonMenu::~ParameterEditButtonMenu()
 {
+}
+
+void ParameterEditButtonMenu::setup()
+{
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+
+  clear();
+  clearActions();
+
+  if(eb->getSelected()->getParentGroup()->areAllParametersLocked())
+    addButton("Unlock Group", bind(&ParameterEditButtonMenu::toggleGroupLock, this));
+  else
+    addButton("Lock Group", bind(&ParameterEditButtonMenu::toggleGroupLock, this));
+
+  addButton("Lock all", bind(&ParameterEditButtonMenu::lockAll, this));
+
+  if(eb->hasLocks())
+    addButton("Unlock all", bind(&ParameterEditButtonMenu::unlockAll, this));
+
+  eb->onSelectionChanged(sigc::mem_fun(this, &ParameterEditButtonMenu::onParameterSelectionChanged));
+  selectButton(s_lastAction);
 }
 
 void ParameterEditButtonMenu::onParameterSelectionChanged(Parameter *oldParameter, Parameter *newParameter)

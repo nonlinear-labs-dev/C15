@@ -27,7 +27,7 @@ namespace UNDO
       {
       }
 
-      tUpdateID onChange () override
+      tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override
       {
         return 0;
       }

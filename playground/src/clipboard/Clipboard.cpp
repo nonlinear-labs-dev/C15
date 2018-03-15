@@ -118,7 +118,7 @@ void Clipboard::copyBank (const Glib::ustring &bankUuid)
     auto scope = getUndoScope ().startTrashTransaction ();
     m_content.reset (new PresetBank (pm.get ()));
     static_pointer_cast<PresetBank> (m_content)->copyFrom (scope->getTransaction (), bank, false);
-    onChange ();
+    onChange (UpdateDocumentContributor::ChangeFlags::Generic);
   }
 }
 
@@ -131,7 +131,7 @@ bool Clipboard::copyPreset (const Glib::ustring &presetUuid)
     auto scope = getUndoScope ().startTrashTransaction ();
     m_content = Preset::createPreset (nullptr);
     static_pointer_cast<Preset> (m_content)->copyFrom (scope->getTransaction (), preset.get (), false);
-    onChange ();
+    onChange (UpdateDocumentContributor::ChangeFlags::Generic);
     return true;
   }
   return false;
@@ -304,9 +304,9 @@ void Clipboard::doCut (std::shared_ptr<UNDO::Transaction> transaction)
   }
 }
 
-UpdateDocumentContributor::tUpdateID Clipboard::onChange ()
+UpdateDocumentContributor::tUpdateID Clipboard::onChange (uint64_t flags)
 {
-  auto ret = super::onChange();
+  auto ret = super::onChange(flags);
   m_sigChanged.send();
   return ret;
 }

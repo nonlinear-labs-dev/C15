@@ -35,7 +35,7 @@ public class PresetContextMenu extends ContextMenu {
 					if (pm.hasMultiplePresetSelection())
 						pm.closeMultiSelection();
 					else
-						pm.startMultiSelection(preset);
+						pm.startMultiSelection(preset, false);
 					return super.click(eventPoint);
 				}
 			});
@@ -44,7 +44,7 @@ public class PresetContextMenu extends ContextMenu {
 		if (!hasMultipleSelection) {
 
 			if (!PresetInfoDialog.isShown()) {
-				String presetInfoText = "Preset Info";
+				String presetInfoText = "Preset Info ...";
 				addChild(new ContextMenuItem(this, presetInfoText) {
 					@Override
 					public Control click(Position eventPoint) {
@@ -56,7 +56,7 @@ public class PresetContextMenu extends ContextMenu {
 				});
 			}
 
-			addChild(new ContextMenuItem(this, "Rename") {
+			addChild(new ContextMenuItem(this, "Rename ...") {
 				@Override
 				public Control click(Position eventPoint) {
 					RenameDialog.open(preset);
@@ -106,7 +106,7 @@ public class PresetContextMenu extends ContextMenu {
 		});
 
 		if (hasMultipleSelection && pm.getMultiSelection().getNumSelectedPresets() == 2) {
-			addChild(new ContextMenuItem(this, "Compare") {
+			addChild(new ContextMenuItem(this, "Compare ...") {
 				@Override
 				public Control click(Position eventPoint) {
 
@@ -118,7 +118,7 @@ public class PresetContextMenu extends ContextMenu {
 				}
 			});
 		} else if (hasMultipleSelection == false) {
-			addChild(new ContextMenuItem(this, "Compare to Editbuffer") {
+			addChild(new ContextMenuItem(this, "Compare to Editbuffer ...") {
 				@Override
 				public Control click(Position eventPoint) {
 					CompareDialog.open(preset);
@@ -127,7 +127,7 @@ public class PresetContextMenu extends ContextMenu {
 			});
 		}
 
-		addChild(new ContextMenuItem(this, "Color Tag...") {
+		addChild(new ContextMenuItem(this, "Color Tag >") {
 			@Override
 			public Control click(Position eventPosition) {
 				Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();

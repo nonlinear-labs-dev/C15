@@ -46,13 +46,15 @@ public class MacroControlMappings extends ParameterGroupVertical {
 				}
 			});
 
-			addChild(new ContextMenuItem(this, "Unlock all groups") {
-				@Override
-				public Control click(Position eventPoint) {
-					NonMaps.get().getServerProxy().unlockAllGroups();
-					return super.click(eventPoint);
-				}
-			});
+			if (NonMaps.get().getNonLinearWorld().getParameterEditor().isAnyParameterLocked()) {
+				addChild(new ContextMenuItem(this, "Unlock all groups") {
+					@Override
+					public Control click(Position eventPoint) {
+						NonMaps.get().getServerProxy().unlockAllGroups();
+						return super.click(eventPoint);
+					}
+				});
+			}
 		}
 	}
 

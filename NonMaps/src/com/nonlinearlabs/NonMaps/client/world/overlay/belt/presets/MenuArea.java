@@ -1,10 +1,10 @@
 package com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.nonlinearlabs.NonMaps.client.Millimeter;
 import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.world.Gray;
-import com.nonlinearlabs.NonMaps.client.world.Rect;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.NonMaps.client.world.overlay.BankInfoDialog;
@@ -15,15 +15,7 @@ import com.nonlinearlabs.NonMaps.client.world.overlay.PresetInfoDialog;
 
 class MenuArea extends OverlayLayout {
 
-	boolean isSmall = true;
-
-	public boolean isSmall() {
-		return isSmall;
-	}
-
-	public void setSmall(boolean isSmall) {
-		this.isSmall = isSmall;
-	}
+	private boolean withLabels = true;
 
 	class MenuLabel extends Label {
 
@@ -38,6 +30,11 @@ class MenuArea extends OverlayLayout {
 		@Override
 		public String getDrawText(Context2d ctx) {
 			return text;
+		}
+
+		@Override
+		protected TextAlign getAlignment() {
+			return TextAlign.LEFT;
 		}
 
 	}
@@ -60,37 +57,42 @@ class MenuArea extends OverlayLayout {
 			addChild(label);
 			addChild(btn);
 			addChild(info);
+
 			if (search != null)
 				addChild(search);
 		}
 
-		@Override
-		public void doLayout(double x, double y, double w, double h) {
-			super.doLayout(x, y, w, h);
-			double margin = getSmallButtonWidth() / 3;
+		public void doLayout(double x, double y, double h, boolean withLabels) {
+			double margin = getMargin();
+			double buttonWidth = getSmallButtonWidth();
+			double w = getDesiredWidth(withLabels);
+			double left = 0;
 
-			if (((MenuArea) getParent()).isSmall()) {
-				label.setVisible(false);
-				btn.doLayout(margin + margin, 0, getSmallButtonWidth(), h);
-				info.doLayout(btn.getPixRect().getRight() + margin, 0, getSmallButtonWidth(), h);
-				if (search != null)
-					search.doLayout(info.getPixRect().getRight() + margin, 0, getSmallButtonWidth(), h);
+			if (withLabels) {
+				label.doLayout(0, 0, getLabelWidth(), h);
+				left += label.getRelativePosition().getWidth() + margin;
 			} else {
-				label.setVisible(true);
-				label.doLayout(margin + margin / 2, 0, getSmallButtonWidth() * 1.75, h);
-				btn.doLayout(label.getPixRect().getRight() + margin, 0, getSmallButtonWidth(), h);
-				info.doLayout(btn.getPixRect().getRight() + margin, 0, getSmallButtonWidth(), h);
-				if (search != null)
-					search.doLayout(info.getPixRect().getRight() + margin, 0, getSmallButtonWidth(), h);
+				label.doLayout(0, 0, 0, 0);
 			}
 
+			btn.doLayout(left, 0, buttonWidth, h);
+			left += buttonWidth + margin;
+
+			info.doLayout(left, 0, buttonWidth, h);
+			left += buttonWidth + margin;
+
+			if (search != null)
+				search.doLayout(left, 0, buttonWidth, h);
+
+			super.doLayout(x, y, w, h);
 		}
 
-		public double getRight() {
-			if (search != null)
-				return search.getPixRect().getRight();
-			else
-				return info.getPixRect().getRight() + getSmallButtonWidth() * 1.5;
+		private double getDesiredWidth(boolean withLabels) {
+			double buttonWidth = getSmallButtonWidth();
+			double margin = getMargin();
+			double buttonsWidth = buttonWidth * 3 + margin * 2;
+			double labelWidth = getLabelWidth() + margin;
+			return buttonsWidth + (withLabels ? labelWidth : 0);
 		}
 	}
 
@@ -168,33 +170,34 @@ class MenuArea extends OverlayLayout {
 		return (BeltPresetLayout) super.getParent();
 	}
 
-	@Override
-	public void doLayout(double x, double y, double w, double h) {
-		super.doLayout(x, y, w, h);
-		presets.doLayout(0, 0, presets.getRight(), h / 2);
-		banks.doLayout(0, h / 2, banks.getRight(), h / 2);
+	public void doLayout(double x, double y, double h, boolean withLabels) {
+		this.withLabels = withLabels;
+		double margin = getMargin();
+		presets.doLayout(margin, 0, h / 2, withLabels);
+		banks.doLayout(margin, h / 2, h / 2, withLabels);
+		double contentWidth = Math.max(presets.getRelativePosition().getWidth(), banks.getRelativePosition().getWidth());
+		super.doLayout(x, y, margin + margin + contentWidth, h);
+	}
+
+	public boolean isSmall() {
+		return !withLabels;
 	}
 
 	private double getSmallButtonWidth() {
 		return Millimeter.toPixels(11);
 	}
 
-	void roundRect(Context2d ctx, double x, double y, double width, double height, double radius) {
-		Rect r = new Rect(x, y, width, height);
-		r.drawRoundedArea(ctx, radius, 1, new Gray(16), null);
+	public double getMargin() {
+		return getSmallButtonWidth() / 3;
+	}
+
+	public double getLabelWidth() {
+		return Millimeter.toPixels(15);
 	}
 
 	@Override
 	public void draw(Context2d ctx, int invalidationMask) {
-		double x = presets.getPixRect().getLeft() + getSmallButtonWidth() / 3;
-		double yPreset = presets.getPixRect().getTop() + 3.5;
-		double yBank = banks.getPixRect().getTop() + 3.5;
-		double w = presets.getPixRect().getRight() - presets.getPixRect().getLeft() - getSmallButtonWidth() / 5;
-		double h = presets.getPixRect().getHeight() - 7;
-		double r = 5;
-		roundRect(ctx, x, yPreset, w, h, r);
-		roundRect(ctx, x, yBank, w, h, r);
+		getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(2), Millimeter.toPixels(1), new Gray(16), null);
 		super.draw(ctx, invalidationMask);
 	}
-
 }

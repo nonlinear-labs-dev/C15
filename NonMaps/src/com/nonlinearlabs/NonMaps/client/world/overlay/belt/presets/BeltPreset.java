@@ -187,6 +187,11 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		else
 			copyPreset(p, newPreset);
 	}
+	
+	@Override
+	public boolean stopDragCompletelyIfDraggedOn() {
+		return true;
+	}
 
 	protected void insertBank(IBank bank) {
 		Preset p = mapsPreset;

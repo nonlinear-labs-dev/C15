@@ -19,6 +19,8 @@
 #include <xml/XmlWriter.h>
 #include <boost/algorithm/string.hpp>
 #include <tools/StringTools.h>
+#include <device-settings/Settings.h>
+#include <device-settings/AutoLoadSelectedPreset.h>
 
 PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
     RPCActionManager("/presets/"),
@@ -150,7 +152,10 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
 
       if(auto preset = m_presetManager.findPreset(editBuffer->getUuid()))
       {
+        auto scopedLock = Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->scopedOverlay(BooleanSettings::BOOLEAN_SETTING_FALSE);
         editBuffer->undoableSetLoadedPresetInfo(transaction, preset.get());
+        preset->undoableSelect(transaction);
+        presetManager.undoableSelectBank(transaction, preset->getBank()->getUuid());
       }
 
       editBuffer->sendToLPC();

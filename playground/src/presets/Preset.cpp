@@ -165,11 +165,11 @@ void Preset::undoableSetUuid(UNDO::Scope::tTransactionPtr transaction, const Uui
   }
 }
 
-UpdateDocumentContributor::tUpdateID Preset::onChange()
+UpdateDocumentContributor::tUpdateID Preset::onChange(uint64_t flags)
 {
   if(getParent())
   {
-    auto u = ParameterGroupSet::onChange();
+    auto u = ParameterGroupSet::onChange(flags);
     m_signalPresetChanged.send();
     return u;
   }

@@ -21,6 +21,7 @@ import com.nonlinearlabs.NonMaps.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.NonMaps.client.world.maps.MapsControl;
 import com.nonlinearlabs.NonMaps.client.world.maps.NonDimension;
 import com.nonlinearlabs.NonMaps.client.world.maps.NonPosition;
+import com.nonlinearlabs.NonMaps.client.world.maps.NonRect;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.Parameter.Initiator;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.MultiplePresetSelection;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.PresetManager;
@@ -391,11 +392,13 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		if (isDraggingControl() && !isVisibilityForced())
 			return;
 
+		super.draw(ctx, invalidationMask);
+
 		Rect r = getPixRect().copy();
 		double reduce = toXPixels(getAttachArea());
 		r = r.getReducedBy(2 * reduce);
-		r.drawRoundedRect(ctx, Rect.ROUNDING_TOP, toXPixels(6), toXPixels(1), getColorBankSelect(), null);
-		super.draw(ctx, invalidationMask);
+		r.drawRoundedRect(ctx, Rect.ROUNDING_TOP, toXPixels(6), toXPixels(3), null, getColorBankSelect());
+
 		drawDropIndicator(ctx);
 	}
 
@@ -875,5 +878,16 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 
 	public PresetList getPresetList() {
 		return presetList;
+	}
+
+	@Override
+	protected NonDimension layoutChildren(double levelOfDetail) {
+		NonDimension dim = super.layoutChildren(levelOfDetail);
+		NonRect pos = header.getNonPosition();
+		double border = 3;
+		pos.moveBy(-border, -border);
+		pos.getDimension().setWidth(pos.getDimension().getWidth() + 2 * border);
+		pos.getDimension().setHeight(pos.getDimension().getHeight() + border);
+		return dim;
 	}
 }

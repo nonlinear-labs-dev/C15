@@ -832,10 +832,10 @@ void PresetManager::onTransactionAdded()
   onChange();
 }
 
-UpdateDocumentContributor::tUpdateID PresetManager::onChange()
+UpdateDocumentContributor::tUpdateID PresetManager::onChange(uint64_t flags)
 {
   scheduleSave();
-  return UpdateDocumentContributor::onChange();
+  return UpdateDocumentContributor::onChange(flags);
 }
 
 sigc::connection PresetManager::onBankSelection(sigc::slot<void, tBankPtr> slot)

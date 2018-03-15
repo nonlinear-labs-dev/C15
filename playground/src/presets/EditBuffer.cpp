@@ -26,7 +26,7 @@ shared_ptr<EditBuffer> EditBuffer::createEditBuffer(UpdateDocumentContributor *p
 EditBuffer::EditBuffer(UpdateDocumentContributor *parent) :
     Preset(parent),
     m_isModified(false),
-    m_checkModified(mem_fun(this, &EditBuffer::checkModified))
+    m_deferedJobs(100, std::bind(&EditBuffer::doDeferedJobs, this))
 {
   m_selectedParameter = NULL;
   m_hashOnStore = getHash();
@@ -71,13 +71,26 @@ connection EditBuffer::onPresetLoaded(slot<void> s)
   return m_signalPresetLoaded.connect(s);
 }
 
-UpdateDocumentContributor::tUpdateID EditBuffer::onChange()
+connection EditBuffer::onLocksChanged (slot<void> s)
 {
-  if(!m_checkModified.isPending())
-    m_checkModified.refresh(std::chrono::milliseconds(100));
+  return m_signalLocksChanged.connectAndInit(s);
+}
 
+UpdateDocumentContributor::tUpdateID EditBuffer::onChange(uint64_t flags)
+{
+  m_deferedJobs.trigger();
   m_signalChange.send();
-  return Preset::onChange();
+
+  if(flags & ChangeFlags::LockState)
+  {
+    m_signalLocksChanged.deferedSend();
+  }
+  return Preset::onChange(flags);
+}
+
+void EditBuffer::doDeferedJobs()
+{
+  checkModified();
 }
 
 void EditBuffer::checkModified()
@@ -166,7 +179,7 @@ void EditBuffer::setModulationAmount(double amount)
 
 bool EditBuffer::hasLocks()
 {
-  return doesAnyParameterHaveALock();
+  return searchForAnyParameterWithLock() != nullptr;
 }
 
 void EditBuffer::undoableSelectParameter(Parameter *p)
@@ -299,6 +312,7 @@ void EditBuffer::undoableLoad(UNDO::Scope::tTransactionPtr transaction, shared_p
 
   if(PresetBank *bank = dynamic_cast<PresetBank *>(preset->getParent()))
   {
+    bank->undoableSelectPreset(transaction, preset->getUuid());
     getParent()->undoableSelectBank(transaction, bank->getUuid());
   }
 
@@ -335,8 +349,6 @@ void EditBuffer::undoableSetLoadedPresetInfo(UNDO::Scope::tTransactionPtr transa
     m_signalPresetLoaded.send();
     onChange ();
   });
-
-  preset->undoableSelect(transaction);
 }
 
 void EditBuffer::undoableUpdateLoadedPresetInfo(UNDO::Scope::tTransactionPtr transaction)
@@ -572,15 +584,15 @@ void EditBuffer::undoableToggleGroupLock(UNDO::Scope::tTransactionPtr transactio
     g->undoableToggleLock(transaction);
 }
 
-bool EditBuffer::doesAnyParameterHaveALock()
+Parameter *EditBuffer::searchForAnyParameterWithLock() const
 {
   for(auto group : getParameterGroups())
   {
     for(auto parameter : group->getParameters())
     {
       if(parameter->isLocked())
-        return true;
+        return parameter;
     }
   }
-  return false;
+  return nullptr;
 }

@@ -17,6 +17,19 @@ MacroControlEditButtonMenu::MacroControlEditButtonMenu(const Rect &rect) :
     super(rect)
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
+  eb->onLocksChanged(mem_fun(this, &MacroControlEditButtonMenu::setup));
+}
+
+MacroControlEditButtonMenu::~MacroControlEditButtonMenu()
+{
+}
+
+void MacroControlEditButtonMenu::setup()
+{
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+
+  clear();
+  clearActions();
 
   addButton("Smoothing", bind(&MacroControlEditButtonMenu::smoothing, this));
   addButton("Rename", bind(&MacroControlEditButtonMenu::rename, this));
@@ -26,14 +39,24 @@ MacroControlEditButtonMenu::MacroControlEditButtonMenu(const Rect &rect) :
     addButton("Unlock Group", bind(&MacroControlEditButtonMenu::unlockGroup, this));
   else
     addButton("Lock Group", bind(&MacroControlEditButtonMenu::lockGroup, this));
+
   addButton("Lock all", bind(&MacroControlEditButtonMenu::lockAll, this));
-  addButton("Unlock all", bind(&MacroControlEditButtonMenu::unlockAll, this));
+
+  if(eb->hasLocks())
+    addButton("Unlock all", bind(&MacroControlEditButtonMenu::unlockAll, this));
+
+  auto mcGroup = eb->getParameterGroupByID("MCs");
+  mcGroup->onGroupChanged(mem_fun(this, &MacroControlEditButtonMenu::onGroupChanged));
 
   selectButton(s_lastAction);
 }
 
-MacroControlEditButtonMenu::~MacroControlEditButtonMenu()
+void MacroControlEditButtonMenu::onGroupChanged()
 {
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  auto mcGroup = eb->getParameterGroupByID("MCs");
+  auto allParametersLocked = mcGroup->areAllParametersLocked();
+  setItemTitle(3, allParametersLocked ? "Unlock Group" : "Lock Group");
 }
 
 void MacroControlEditButtonMenu::selectButton(size_t i)

@@ -10,7 +10,7 @@ UpdateDocumentMaster::~UpdateDocumentMaster()
 {
 }
 
-UpdateDocumentMaster::tUpdateID UpdateDocumentMaster::onChange ()
+UpdateDocumentMaster::tUpdateID UpdateDocumentMaster::onChange (uint64_t flags)
 {
   incUpdateID();
   return getUpdateIDOfLastChange();

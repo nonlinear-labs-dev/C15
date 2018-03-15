@@ -6,7 +6,7 @@ import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.bank.preset.Preset;
 
 public class MultiplePresetSelection {
-	private ArrayList<String> selectedPresets = new ArrayList<String>();
+	protected ArrayList<String> selectedPresets = new ArrayList<String>();
 
 	public MultiplePresetSelection(Preset p) {
 		add(p);
@@ -69,11 +69,11 @@ public class MultiplePresetSelection {
 		NonMaps.get().getServerProxy().deletePresets(getCSV());
 	}
 		
-	private PresetManager getPresetManager() {
+	protected PresetManager getPresetManager() {
 		return NonMaps.get().getNonLinearWorld().getPresetManager();
 	}
 	
-	private String getLastUuid() {
+	protected String getLastUuid() {
 		try {
 			return selectedPresets.get(selectedPresets.size() - 1);
 		} catch(Exception e) {

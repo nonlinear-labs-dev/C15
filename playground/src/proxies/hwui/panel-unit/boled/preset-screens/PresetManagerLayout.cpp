@@ -16,9 +16,11 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetEditButtonMenu.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListSelectStorePosition.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/controls/AnyParameterLockedIndicator.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/PresetManagerLayout.h>
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
+
 #include <functional>
 #include <memory>
 #include <vector>
@@ -54,12 +56,6 @@ void PresetManagerLayout::setup()
 
   clear();
 
-  if(Application::get().getPresetManager()->getEditBuffer()->hasLocks())
-  {
-    m_groupLocking = addControl(new InvertedLabel("L", Rect(8, 26, 48, 12)));
-    m_groupLocking->setHighlight(true);
-  }
-
   if(m_focusAndMode.focus == UIFocus::Banks)
   {
     setupBankFocus();
@@ -92,8 +88,6 @@ void PresetManagerLayout::setupBankFocus()
 
 void PresetManagerLayout::setupBankEdit()
 {
-  remove(m_groupLocking);
-  m_groupLocking = nullptr;
   addControl(new BankAndPresetNumberLabel(Rect(0, 1, 64, 14)));
   addControl(new InvertedLabel("Edit", Rect(8, 26, 48, 12)))->setHighlight(true);
   m_menu = addControl(new BankEditButtonMenu(Rect(195, 1, 58, 62)));
@@ -106,6 +100,7 @@ void PresetManagerLayout::setupBankSelect()
   addControl(new BankAndPresetNumberLabel(Rect(0, 1, 64, 14)));
   addControl(new NumBanksLabel(Rect(208, 1, 32, 14)))->setHighlight(false);
   m_autoLoad = addControl(new Button("Direct Load", BUTTON_D));
+  addControl(new AnyParameterLockedIndicator(Rect(8, 26, 48, 12)));
   m_presets = addControl(new PresetList(Rect(64, 0, 128, 63), true));
   m_presets->setBankFocus();
   Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange(
@@ -114,8 +109,6 @@ void PresetManagerLayout::setupBankSelect()
 
 void PresetManagerLayout::setupBankStore()
 {
-  remove(m_groupLocking);
-  m_groupLocking = nullptr;
   addControl(new BankAndPresetNumberLabel(Rect(0, 1, 64, 14)));
   addControl(new InvertedLabel("Store", Rect(8, 26, 48, 12)))->setHighlight(true);
   m_menu = addControl(new AppendOverwriteInsertButtonMenu(*this, Rect(195, 1, 58, 62)));
@@ -166,6 +159,7 @@ void PresetManagerLayout::setupPresetSelect()
   m_numPresetsInBank = addControl(new NumPresetsInBankLabel(Rect(192, 1, 64, 14)));
   m_autoLoad = addControl(new Button("Direct Load", BUTTON_D));
   m_presets = addControl(new PresetList(Rect(64, 0, 128, 63), true));
+  addControl(new AnyParameterLockedIndicator(Rect(8, 26, 48, 12)));
   Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange(
       sigc::mem_fun(this, &PresetManagerLayout::updateAutoLoadButton));
 }

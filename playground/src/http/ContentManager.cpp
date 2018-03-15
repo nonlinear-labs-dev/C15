@@ -273,9 +273,9 @@ void ContentManager::deliverContentSectionResponse (tContentSectionPtr section, 
   section->handleHTTPRequest (request, request->getPath());
 }
 
-ContentManager::tUpdateID ContentManager::onChange ()
+ContentManager::tUpdateID ContentManager::onChange (uint64_t flags)
 {
-  ContentManager::tUpdateID id = UpdateDocumentMaster::onChange ();
+  ContentManager::tUpdateID id = UpdateDocumentMaster::onChange (flags);
   onSectionChanged ();
   return id;
 }

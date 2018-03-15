@@ -31,6 +31,7 @@ class Label : public Control
 
     virtual int getXOffset () const;
     virtual int getYOffset () const;
+    virtual int getRightMargin() const;
 
   private:
     Label (const Label& other);

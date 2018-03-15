@@ -36,9 +36,9 @@ void UpdateDocumentContributor::adopt(UpdateDocumentContributor *parent)
   m_parent = parent;
 }
 
-UpdateDocumentContributor::tUpdateID UpdateDocumentContributor::onChange ()
+UpdateDocumentContributor::tUpdateID UpdateDocumentContributor::onChange (uint64_t flags)
 {
-  m_updateIDOnLastChange = m_parent->onChange ();
+  m_updateIDOnLastChange = m_parent->onChange (flags);
   return m_updateIDOnLastChange;
 }
 

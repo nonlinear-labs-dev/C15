@@ -59,7 +59,7 @@ public abstract class BankContextMenu extends ContextMenu {
 		if (bank != null) {
 
 			if (!BankInfoDialog.isShown()) {
-				String bankInfoText = "Bank Info";
+				String bankInfoText = "Bank Info ...";
 				addChild(new ContextMenuItem(this, bankInfoText) {
 					@Override
 					public Control click(Position eventPoint) {
@@ -71,7 +71,7 @@ public abstract class BankContextMenu extends ContextMenu {
 				});
 			}
 
-			addChild(new ContextMenuItem(this, "Rename") {
+			addChild(new ContextMenuItem(this, "Rename ...") {
 				@Override
 				public Control click(Position eventPoint) {
 					RenameDialog.open(bank);

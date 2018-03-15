@@ -20,4 +20,9 @@ class Name extends Label {
 		return 2.5;
 	}
 
+	@Override
+	public double getRightMargin() {
+		return 2.5;
+	}
+
 }

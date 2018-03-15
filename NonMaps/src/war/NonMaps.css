@@ -1722,7 +1722,9 @@ input.param-name-edit {
 	background-color: #cf2b3b;
 } 
 .colortaggingfield-none {
-	background-color: #909090;
+	background-color: #414141;
+	line-height: 15px;
+    color: #838383;
 }
 
 .colortag-current {
@@ -1733,6 +1735,8 @@ input.param-name-edit {
 	outline-style: solid;
 	border-style: none;
 	font-size: initial;
+	line-height: 17px;
+    color: #838383;
 }
 
 .tag-div {

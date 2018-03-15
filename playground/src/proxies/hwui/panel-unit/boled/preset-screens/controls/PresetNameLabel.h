@@ -21,6 +21,7 @@ class PresetNameLabel : public PresetLabel
   protected:
     Font::Justification getJustification () const override;
     int getXOffset () const override;
+    int getRightMargin() const override;
     Glib::ustring shortenStringIfNeccessary (shared_ptr<Font> font, const Glib::ustring &text) const override;
 };
 

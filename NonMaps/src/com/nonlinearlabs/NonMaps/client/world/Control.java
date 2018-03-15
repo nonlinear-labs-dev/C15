@@ -306,4 +306,8 @@ public abstract class Control {
 
 	public void beingDropped() {
 	}
+	
+	public boolean stopDragCompletelyIfDraggedOn() {
+		return false;
+	}
 }

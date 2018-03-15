@@ -8,9 +8,9 @@ void UndoScope::onAddTransaction (UNDO::Scope::tTransactionPtr transaction)
   UNDO::Scope::onAddTransaction (transaction);
 }
 
-UndoScope::tUpdateID UndoScope::onChange ()
+UndoScope::tUpdateID UndoScope::onChange (uint64_t flags)
 {
-  auto i = super::onChange ();
+  auto i = super::onChange (flags);
   m_sigUndoScopeChanged.send ();
   return i;
 }
