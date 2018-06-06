@@ -11,7 +11,7 @@ class Bridge
     Bridge(Sender *sender, Receiver *receiver);
     virtual ~Bridge();
 
-  private:
+  protected:
     std::unique_ptr<Sender> m_sender;
     std::unique_ptr<Receiver> m_receiver;
 };

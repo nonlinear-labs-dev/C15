@@ -7,8 +7,8 @@ import com.nonlinearlabs.NonMaps.client.world.Gray;
 import com.nonlinearlabs.NonMaps.client.world.Position;
 import com.nonlinearlabs.NonMaps.client.world.RGB;
 import com.nonlinearlabs.NonMaps.client.world.Rect;
-import com.nonlinearlabs.NonMaps.client.world.overlay.SVGImage;
 import com.nonlinearlabs.NonMaps.client.world.overlay.OverlayLayout;
+import com.nonlinearlabs.NonMaps.client.world.overlay.SVGImage;
 
 abstract public class BeltButton extends SVGImage {
 
@@ -23,7 +23,7 @@ abstract public class BeltButton extends SVGImage {
 	public Control click(Position eventPoint) {
 		return this;
 	}
-	
+
 	@Override
 	public Control onContextMenu(Position pos) {
 		return this;

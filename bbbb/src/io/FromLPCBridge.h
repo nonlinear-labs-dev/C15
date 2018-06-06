@@ -7,6 +7,7 @@ class FromLPCBridge : public Bridge
   public:
     FromLPCBridge();
     virtual ~FromLPCBridge();
+    void sendRibbonPosition(bool m_upperRibon, double value);
 
 };
 

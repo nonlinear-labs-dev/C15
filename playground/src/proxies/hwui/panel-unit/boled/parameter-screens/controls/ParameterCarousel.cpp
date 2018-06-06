@@ -38,9 +38,9 @@ void ParameterCarousel::setup (Parameter *selectedParameter)
   {
     if (selectedParameter)
     {
-      int button = edit->findButtonForParameter (selectedParameter);
+      auto button = edit->findButtonForParameter (selectedParameter);
 
-      if (button != -1)
+      if (button != Buttons::INVALID)
       {
         setupChildControls (edit, selectedParameter, button);
       }
@@ -55,7 +55,7 @@ void ParameterCarousel::setup (Parameter *selectedParameter)
   setDirty ();
 }
 
-void ParameterCarousel::setupChildControls (const shared_ptr<PanelUnitParameterEditMode>& edit, Parameter* selectedParameter, int button)
+void ParameterCarousel::setupChildControls (const shared_ptr<PanelUnitParameterEditMode>& edit, Parameter* selectedParameter, Buttons button)
 {
   list<int> buttonAssignments = edit->getButtonAssignments (button);
 

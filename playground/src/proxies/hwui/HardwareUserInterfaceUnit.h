@@ -2,6 +2,7 @@
 
 #include "playground.h"
 #include <proxies/hwui/HWUIEnums.h>
+#include <proxies/hwui/buttons.h>
 
 class UsageMode;
 
@@ -20,7 +21,7 @@ class HardwareUserInterfaceUnit
     shared_ptr<UsageMode> getUsageMode ();
     shared_ptr<const UsageMode> getUsageMode () const;
 
-    virtual bool onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state);
+    virtual bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
 
   private:
     HardwareUserInterfaceUnit (const HardwareUserInterfaceUnit& other) = delete;

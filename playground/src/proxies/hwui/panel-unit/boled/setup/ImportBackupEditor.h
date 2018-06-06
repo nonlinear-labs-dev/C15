@@ -13,7 +13,7 @@ class ImportBackupEditor : public ControlWithChildren, public SetupEditor
     virtual ~ImportBackupEditor();
 
     void setPosition(const Rect &) override;
-    bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
 
   private:
     void addLabel (const Glib::ustring &text);

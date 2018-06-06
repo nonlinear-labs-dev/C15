@@ -63,14 +63,14 @@ void DateTimeEditor::setPosition (const Rect &)
   ControlWithChildren::setPosition (c_fullRightSidePosition);
 }
 
-bool DateTimeEditor::onButton (int i, bool down, ButtonModifiers modifiers)
+bool DateTimeEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   if (down)
   {
     m_labels[m_selection]->setHighlight (false);
     m_controls[m_selection]->setHighlight (false);
 
-    if (i == BUTTON_C)
+    if (i == Buttons::BUTTON_C)
     {
       if (m_selection == 0)
         m_selection = Selection::Year;
@@ -78,7 +78,7 @@ bool DateTimeEditor::onButton (int i, bool down, ButtonModifiers modifiers)
         m_selection = (Selection) (m_selection - 1);
     }
 
-    if (i == BUTTON_D)
+    if (i == Buttons::BUTTON_D)
     {
       if (m_selection == Selection::Year)
         m_selection = Selection::Month;

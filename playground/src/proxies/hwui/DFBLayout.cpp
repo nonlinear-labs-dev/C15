@@ -7,12 +7,12 @@
 #include "proxies/hwui/panel-unit/PanelUnit.h"
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
+#include "proxies/hwui/OLEDProxy.h"
 
 #include <proxies/hwui/buttons.h>
 #include "ButtonRepeat.h"
 
-DFBLayout::DFBLayout (OLEDProxy &oled) :
-    m_oled (oled)
+DFBLayout::DFBLayout ()
 {
 }
 
@@ -20,23 +20,23 @@ DFBLayout::~DFBLayout ()
 {
 }
 
-OLEDProxy &DFBLayout::getOLEDProxy()
-{
-  return m_oled;
-}
-
-bool DFBLayout::redrawLayout ()
+bool DFBLayout::redrawLayout (OLEDProxy& oled)
 {
   bool doRedraw = m_clear || isDirty ();
 
   if (m_clear)
   {
     m_clear = false;
-    m_oled.clear ();
+    oled.clear ();
   }
 
   if (doRedraw)
+  {
+    std::list<Rect> dirtyRects;
+    collectDirtyRects(dirtyRects);
+    setDirtyIfOverlapsWithAny(dirtyRects);
     return redraw (getFrameBuffer ());
+  }
 
   return doRedraw;
 }
@@ -46,15 +46,15 @@ FrameBuffer &DFBLayout::getFrameBuffer ()
   return FrameBuffer::get ();
 }
 
-bool DFBLayout::onButton (int i, bool down, ButtonModifiers modifiers)
+bool DFBLayout::onButton (Buttons i, bool down, ::ButtonModifiers modifiers)
 {
-  if (i == BUTTON_INC || i == BUTTON_DEC)
+  if (i == Buttons::BUTTON_INC || i == Buttons::BUTTON_DEC)
   {
     if (down)
     {
       installButtonRepeat ([ = ]()
       {
-        int direction = (i == BUTTON_INC) ? 1 : - 1;
+        int direction = (i == Buttons::BUTTON_INC) ? 1 : - 1;
         onRotary (direction, modifiers);
       });
     }
@@ -69,7 +69,7 @@ bool DFBLayout::onButton (int i, bool down, ButtonModifiers modifiers)
   return false;
 }
 
-bool DFBLayout::onRotary (int inc, ButtonModifiers modifiers)
+bool DFBLayout::onRotary (int inc, ::ButtonModifiers modifiers)
 {
   return false;
 }

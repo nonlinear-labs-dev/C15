@@ -4,6 +4,11 @@
 
 #include <gtkmm-3.0/gtkmm.h>
 #include <io/network/WebSocketServer.h>
+#include "Boled.h"
+#include "PanelUnit.h"
+#include "PlayPanel.h"
+#include "Ribbon.h"
+#include "LowerRibbon.h"
 
 class Window : public Gtk::Window
 {
@@ -11,15 +16,18 @@ class Window : public Gtk::Window
     Window();
     virtual ~Window();
 
-    bool on_draw(const ::Cairo::RefPtr<::Cairo::Context> & cr) override;
-
   private:
     void onFrameBufferMessageReceived(WebSocketServer::tMessage msg);
     void onPanelLEDsMessageReceived(WebSocketServer::tMessage msg);
-
     WebSocketServer::tMessage m_frameBuffer;
 
-    std::array<uint8_t, 96> m_panelLEDs;
+    Gtk::VBox m_box;
+    Gtk::VBox m_ribbonBox;
+    Gtk::CheckButton m_oldScreen;
+    PlayPanel m_playPanel;
+    PanelUnit m_editPanel;
+    Ribbon m_ribbonUp;
+    LowerRibbon m_ribbonDown;
 };
 
 #endif

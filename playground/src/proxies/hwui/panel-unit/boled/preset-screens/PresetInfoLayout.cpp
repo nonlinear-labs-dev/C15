@@ -43,9 +43,9 @@ Scrollable * PresetInfoLayout::createScrollableContent ()
   return new PresetInfoContent ();
 }
 
-bool PresetInfoLayout::onButton (int i, bool down, ButtonModifiers modifiers)
+bool PresetInfoLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if (i == BUTTON_EDIT && down)
+  if (i == Buttons::BUTTON_EDIT && down)
   {
     auto layout = new EditPresetInfoLayout ();
     Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ().setOverlay (layout);

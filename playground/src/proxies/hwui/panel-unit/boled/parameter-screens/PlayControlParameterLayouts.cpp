@@ -27,7 +27,7 @@ PlayControlParameterLayout2::PlayControlParameterLayout2() :
     super()
 {
   addControl(new PhysicalControlSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
-  addControl(new Button("Select", BUTTON_A));
+  addControl(new Button("Select", Buttons::BUTTON_A));
 
   if(s_instanceCount == 0)
     s_mode = Mode::ValueEdit;
@@ -45,9 +45,9 @@ PlayControlParameterLayout2::~PlayControlParameterLayout2()
   s_instanceCount--;
 }
 
-bool PlayControlParameterLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PlayControlParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(down && BUTTON_A == i)
+  if(down && Buttons::BUTTON_A == i)
   {
     toggleMode(Mode::Select);
     return true;
@@ -126,7 +126,7 @@ PitchbendParameterSelectLayout2::PitchbendParameterSelectLayout2() :
 {
 }
 
-bool PitchbendParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PitchbendParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
@@ -139,8 +139,8 @@ PitchbendParameterEditLayout2::PitchbendParameterEditLayout2() :
     super1(),
     super2()
 {
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));
 }
 
@@ -149,7 +149,7 @@ ButtonMenu *PitchbendParameterEditLayout2::createMenu(const Rect &rect)
   return new ParameterEditButtonMenu(rect);
 }
 
-bool PitchbendParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PitchbendParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
@@ -165,7 +165,7 @@ AftertouchParameterSelectLayout2::AftertouchParameterSelectLayout2() :
 {
 }
 
-bool AftertouchParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool AftertouchParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
@@ -183,8 +183,8 @@ AftertouchParameterEditLayout2::AftertouchParameterEditLayout2() :
     super1(),
     super2()
 {
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));
 }
 
@@ -193,7 +193,7 @@ ButtonMenu *AftertouchParameterEditLayout2::createMenu(const Rect &rect)
   return new ParameterEditButtonMenu(rect);
 }
 
-bool AftertouchParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool AftertouchParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
@@ -207,9 +207,9 @@ PedalParameterLayout2::PedalParameterLayout2() :
 {
 }
 
-bool PedalParameterLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PedalParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(down && BUTTON_EDIT == i)
+  if(down && Buttons::BUTTON_EDIT == i)
   {
     Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
     return true;
@@ -226,7 +226,7 @@ PedalParameterEditLayout2::PedalParameterEditLayout2() :
 {
 }
 
-bool PedalParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PedalParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
@@ -246,8 +246,8 @@ PlayControlParameterSelectLayout2::PlayControlParameterSelectLayout2() :
     virtual_base(),
     super()
 {
-  addControl(new Button("MC..", BUTTON_B));
-  addControl(new Button("HW Amt..", BUTTON_C));
+  addControl(new Button("MC..", Buttons::BUTTON_B));
+  addControl(new Button("HW Amt..", Buttons::BUTTON_C));
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));
 }
 
@@ -256,7 +256,7 @@ Carousel *PlayControlParameterSelectLayout2::createCarousel(const Rect &rect)
   return new ModulationRoutersCarousel(Rect(195, 0, 58, 64));
 }
 
-bool PlayControlParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PlayControlParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
@@ -265,7 +265,7 @@ bool PlayControlParameterSelectLayout2::onButton(int i, bool down, ButtonModifie
 
     switch(i)
     {
-      case BUTTON_B:
+      case Buttons::BUTTON_B:
         if(auto p = dynamic_cast<PhysicalControlParameter*>(getCurrentParameter()))
         {
           auto group = Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID("MCM");
@@ -284,7 +284,7 @@ bool PlayControlParameterSelectLayout2::onButton(int i, bool down, ButtonModifie
 
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         if(auto p = dynamic_cast<PhysicalControlParameter*>(getCurrentParameter()))
           editBuffer->undoableSelectParameter(p->getUiSelectedModulationRouter());
 
@@ -300,7 +300,7 @@ PlayControlParameterEditLayout2::PlayControlParameterEditLayout2() :
 {
 }
 
-bool PlayControlParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PlayControlParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   return super::onButton(i, down, modifiers);
 }
@@ -310,9 +310,9 @@ PlayControlWithBehaviourEditLayout2::PlayControlWithBehaviourEditLayout2() :
     super1(),
     super2()
 {
-  addControl(new Button("Behavior", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
-  addControl(new Button("", BUTTON_D));
+  addControl(new Button("Behavior", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_D));
   addControl(new PhysicalControlBehaviorLabel(Rect(64, BUTTON_VALUE_Y_POSITION, 64, 12)));
 }
 
@@ -321,9 +321,9 @@ ButtonMenu *PedalParameterEditLayout2::createMenu(const Rect &rect)
   return new ParameterEditButtonMenu(rect);
 }
 
-bool PlayControlWithBehaviourEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PlayControlWithBehaviourEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(down && BUTTON_B == i)
+  if(down && Buttons::BUTTON_B == i)
   {
     toggleMode(Mode::Behaviour);
     return true;
@@ -383,7 +383,7 @@ PedalParameterSelectLayout2::PedalParameterSelectLayout2() :
 {
 }
 
-bool PedalParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PedalParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
@@ -397,9 +397,9 @@ RibbonParameterLayout2::RibbonParameterLayout2() :
 {
 }
 
-bool RibbonParameterLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool RibbonParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(down && BUTTON_EDIT == i)
+  if(down && Buttons::BUTTON_EDIT == i)
   {
     Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
     return true;
@@ -414,7 +414,7 @@ RibbonParameterEditLayout2::RibbonParameterEditLayout2() :
     super1(),
     super2()
 {
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_C));
 }
 
 ButtonMenu *RibbonParameterEditLayout2::createMenu(const Rect &rect)
@@ -422,7 +422,7 @@ ButtonMenu *RibbonParameterEditLayout2::createMenu(const Rect &rect)
   return new ParameterEditButtonMenu(rect);
 }
 
-bool RibbonParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool RibbonParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
@@ -456,7 +456,7 @@ RibbonParameterSelectLayout2::RibbonParameterSelectLayout2() :
 {
 }
 
-bool RibbonParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool RibbonParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;

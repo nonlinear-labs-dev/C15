@@ -17,6 +17,8 @@ class ControlWithChildren : public Control, public ControlOwner
     void drawBackground (FrameBuffer &fb) override;
     virtual bool isHighlight() const override;
     virtual void setDirty() override;
+    void collectDirtyRects(std::list<Rect> &rects) const override;
+    void setDirtyIfOverlapsWithAny(const std::list<Rect> &rects) override;
 
     void setHighlight (bool isHighlight) override;
 

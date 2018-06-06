@@ -24,7 +24,7 @@ class ParameterCarousel : public Carousel
   private:
     ParameterCarousel (const ParameterCarousel &other);
     ParameterCarousel &operator= (const ParameterCarousel &);
-    void setupChildControls (const std::shared_ptr<PanelUnitParameterEditMode>& edit, Parameter* selectedParameter, int button);
+    void setupChildControls (const std::shared_ptr<PanelUnitParameterEditMode>& edit, Parameter* selectedParameter, Buttons button);
     void setupChildControls (Parameter* selectedParameter, const std::__cxx11::list<int>& buttonAssignments);
 };
 

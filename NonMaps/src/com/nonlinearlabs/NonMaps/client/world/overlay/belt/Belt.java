@@ -58,10 +58,12 @@ public class Belt extends OverlayLayout {
 	}
 
 	void toggle() {
-		if (desiredHeight == 1)
+		if (desiredHeight == 1) {
 			desiredHeight = 2;
-		else
+		} else {
 			desiredHeight = 1;
+			presetLayout.storeSelectOff();
+		}
 
 		if (animator != null)
 			animator.cancel();
@@ -133,24 +135,41 @@ public class Belt extends OverlayLayout {
 	public Control onKey(final KeyDownEvent event) {
 
 		if (event.getNativeKeyCode() == KeyCodes.KEY_P && getNonMaps().getNonLinearWorld().isShiftDown()) {
-			if (isPresetView() && !isHidden())
+			if (isPresetView())
 				toggle();
 			else
 				setPresetView(true);
 			return this;
 
 		} else if (event.getNativeKeyCode() == KeyCodes.KEY_E && getNonMaps().getNonLinearWorld().isShiftDown()) {
-			if (isParameterView() && !isHidden())
+			if (isParameterView())
 				toggle();
 			else
 				setParameterView(true);
 			return this;
 		} else if (event.getNativeKeyCode() == KeyCodes.KEY_N && getNonMaps().getNonLinearWorld().isShiftDown()) {
-			if (isSoundView() && !isHidden())
+			if (isSoundView())
 				toggle();
 			else
 				setSoundView(true);
 			return this;
+		} else if (event.getNativeKeyCode() == KeyCodes.KEY_D) {
+			if (!isPresetView())
+				setPresetView(true);
+
+			getPresetLayout().toggleDirectLoad();
+			return this;
+		} else if (event.getNativeKeyCode() == KeyCodes.KEY_R) {
+			getPresetLayout().renameCurrentPreset();
+			return this;
+		} else if (event.getNativeKeyCode() == KeyCodes.KEY_S) {
+			if (!isPresetView())
+				setPresetView(true);
+
+			getPresetLayout().toggleStoreSelect();
+			return this;
+		} else if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+			return getPresetLayout().handleEnterKey();
 		}
 
 		return null;

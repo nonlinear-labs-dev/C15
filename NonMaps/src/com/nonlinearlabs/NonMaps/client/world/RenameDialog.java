@@ -44,6 +44,7 @@ public class RenameDialog extends DialogBox {
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
 				theDialog = null;
+				NonMaps.get().captureFocus();
 			}
 		});
 	}

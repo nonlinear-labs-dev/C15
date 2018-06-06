@@ -68,3 +68,8 @@ WebSocketServer *Application::getWebsocketServer()
 {
   return m_websocketServer.get();
 }
+
+Bridges* Application::getBridges()
+{
+  return m_bridges.get();
+}

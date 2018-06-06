@@ -70,9 +70,7 @@ public abstract class SVGImage extends OverlayControl {
 	public void calcPixRect(Position parentsReference, double currentZoom) {
 		super.calcPixRect(parentsReference, currentZoom);
 
-		SVGImagePhase phase = getSelectedImage();
-
-		if (phase != null)
+		for (SVGImagePhase phase : phases)
 			phase.calcPixRect(getPixRect().getLeftTop(), currentZoom);
 	}
 
@@ -80,9 +78,7 @@ public abstract class SVGImage extends OverlayControl {
 	public void doLayout(double x, double y, double w, double h) {
 		super.doLayout(x, y, w, h);
 
-		SVGImagePhase phase = getSelectedImage();
-
-		if (phase != null) {
+		for (SVGImagePhase phase : phases) {
 			double xOff = (w - phase.getImgWidth()) / 2;
 			double yOff = (h - phase.getImgHeight()) / 2;
 			phase.doLayout(xOff, yOff, w, h);

@@ -1,0 +1,63 @@
+{
+  "layouts": {
+    "ModulateableParameter-SelectMode-MCSelect": {
+      "Selector": {
+        "UIFocus": "Parameters",
+        "UIMode": "Select",
+        "UIDetail": "MCSelect"
+      },
+      "Conditions": "isParameterModulateable",
+      "Controls": {
+        "GroupHeader": {
+          "Class": "ParameterGroupName",
+          "Position": "0,0",
+          "Events": "ParameterGroupName => Text[Text]"
+        },
+        "Slider": {
+          "Class": "BigSlider",
+          "Position": "77,24",
+          "Events": "IsBipolar => CenterMark[Visibility], SliderRange => Slider[Range]"
+        },
+        "ParameterName": {
+          "Class": "ParameterNameLabel",
+          "Position": "72,8",
+          "Events": "ParameterName => Text[Text]"
+        },
+        "ButtonA": {
+          "Class": "EmptyButton",
+          "Position": "0,52"
+        },
+        "MCName": {
+          "Class": "MCName",
+          "Position": "72, 35",
+          "Events": "MacroControlSymbol => Text[Text]"
+        },
+        "ButtonB": {
+          "Class": "McSelButton",
+          "Position": "64,52"
+        },
+        "ButtonC": {
+          "Class": "EmptyButton",
+          "Position": "128,52"
+        },
+        "ButtonD": {
+          "Class": "EmptyButton",
+          "Position": "192,52"
+        },
+        "LockIndicator": {
+          "Class": "LockIndicator1Letter",
+          "Position": "65,1",
+          "Events": "LockStatus => Text[Visibility]"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_INC": "IncMCSel",
+        "BUTTON_DEC": "DecMCSel",
+        "ROTARY_PLUS": "IncMCSel",
+        "ROTARY_MINUS": "DecMCSel",
+        "BUTTON_EDIT": "SwitchToEditMode",
+        "BUTTON_B": "SwitchToInitDetail"
+      }
+    }
+  }
+}

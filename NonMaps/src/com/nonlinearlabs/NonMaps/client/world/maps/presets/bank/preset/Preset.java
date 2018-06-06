@@ -18,6 +18,7 @@ import com.nonlinearlabs.NonMaps.client.world.Position;
 import com.nonlinearlabs.NonMaps.client.world.RGB;
 import com.nonlinearlabs.NonMaps.client.world.RGBA;
 import com.nonlinearlabs.NonMaps.client.world.Rect;
+import com.nonlinearlabs.NonMaps.client.world.RenameDialog;
 import com.nonlinearlabs.NonMaps.client.world.maps.LayoutResizingHorizontal;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.Parameter.Initiator;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.MultiplePresetSelection;
@@ -186,7 +187,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 		return uuid.equals(getParent().getPresetList().getSelectedPreset());
 	}
-	
+
 	public boolean isContextMenuActiveOnMe() {
 		Overlay o = NonMaps.get().getNonLinearWorld().getViewport().getOverlay();
 		ContextMenu c = o.getContextMenu();
@@ -411,6 +412,10 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 		if (isInMultiplePresetSelectionMode())
 			getParent().getParent().closeMultiSelection();
+	}
+
+	public void rename() {
+		RenameDialog.open(this);
 	}
 
 }

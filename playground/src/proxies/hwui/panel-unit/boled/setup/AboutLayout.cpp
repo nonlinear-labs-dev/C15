@@ -6,8 +6,7 @@
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 
-AboutLayout::AboutLayout () :
-    super (Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ())
+AboutLayout::AboutLayout ()
 {
   m_scrollArea = addControl (new ScrollArea (new AboutText (), Rect (0, 0, 256, 64)));
 }
@@ -22,7 +21,7 @@ bool AboutLayout::onRotary (int inc, ButtonModifiers modifiers)
   return true;
 }
 
-bool AboutLayout::onButton (int i, bool down, ButtonModifiers modifiers)
+bool AboutLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   if (!super::onButton (i, down, modifiers))
   {
@@ -30,11 +29,11 @@ bool AboutLayout::onButton (int i, bool down, ButtonModifiers modifiers)
     {
       Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ().resetOverlay ();
 
-      if (i == BUTTON_PRESET)
+      if (i == Buttons::BUTTON_PRESET)
       {
         Application::get ().getHWUI ()->undoableSetFocusAndMode (FocusAndMode (UIFocus::Presets, UIMode::Select));
       }
-      else if (i == BUTTON_STORE)
+      else if (i == Buttons::BUTTON_STORE)
       {
         Application::get ().getHWUI ()->undoableSetFocusAndMode (FocusAndMode (UIFocus::Presets, UIMode::Store));
       }

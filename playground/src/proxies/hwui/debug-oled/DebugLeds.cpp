@@ -2,8 +2,7 @@
 
 #include "DebugLedPanel.h"
 
-DebugLeds::DebugLeds (OLEDProxy &oled) :
-    super (oled)
+DebugLeds::DebugLeds (OLEDProxy &oled)
 {
   const int screenWidth = 256;
   const int screenHeight = 64;

@@ -22,7 +22,7 @@ class UndoLayout : public DFBLayout
     UndoLayout ();
     virtual ~UndoLayout ();
 
-    virtual bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
     virtual bool onRotary (int inc, ButtonModifiers modifiers) override;
 
   private:

@@ -1,6 +1,9 @@
 package com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets;
 
 import com.google.gwt.xml.client.Node;
+import com.nonlinearlabs.NonMaps.client.NonMaps;
+import com.nonlinearlabs.NonMaps.client.world.Control;
+import com.nonlinearlabs.NonMaps.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.NonMaps.client.world.overlay.OverlayLayout;
 
 public class StorePresetArea extends OverlayLayout {
@@ -44,5 +47,25 @@ public class StorePresetArea extends OverlayLayout {
 
 	public double getDesiredWidth() {
 		return menu.getPictureWidth();
+	}
+
+	public void toggleStoreSelect() {
+		m_modeButton.toggle();
+	}
+
+	public Control handleEnterKey() {
+		if (getPresetManager().isInStoreSelectMode()) {
+			return m_commitButton.handleEnterKey();
+		}
+		return null;
+	}
+
+	private PresetManager getPresetManager() {
+		return NonMaps.get().getNonLinearWorld().getPresetManager();
+	}
+
+	public void storeSelectOff() {
+		m_modeButton.storeSelectOff();
+
 	}
 }

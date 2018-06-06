@@ -10,7 +10,7 @@ class DimmingModulationModeButton : public ModulationModeButton
     typedef ModulationModeButton super;
 
   public:
-    DimmingModulationModeButton (const Glib::ustring &text, int id);
+    DimmingModulationModeButton (const Glib::ustring &text, Buttons id);
     virtual ~DimmingModulationModeButton ();
 };
 

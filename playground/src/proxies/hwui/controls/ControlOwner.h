@@ -1,7 +1,9 @@
 #pragma once
 
 #include "playground.h"
+#include "Rect.h"
 #include <tools/Uncopyable.h>
+#include <list>
 
 class Control;
 class FrameBuffer;
@@ -11,6 +13,9 @@ class ControlOwner : public Uncopyable
   public:
     ControlOwner ();
     virtual ~ControlOwner ();
+
+    void collectDirtyRects(std::list<Rect> &rects) const;
+    void setDirtyIfOverlapsWithAny(const std::list<Rect> &rects);
 
     virtual bool isDirty() const;
     virtual bool redraw(FrameBuffer &fb);

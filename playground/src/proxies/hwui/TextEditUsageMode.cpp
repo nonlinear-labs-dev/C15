@@ -57,16 +57,16 @@ void TextEditUsageMode::setup ()
   {
     for (int row = 0; row < 4; row++)
     {
-      int buttonID = col * 4 + row;
+      Buttons buttonID = (Buttons)(col * 4 + row);
       m_buttonMap[buttonID] = tButtonAssignment (layout[row].at (col), shiftLayout[row].at (col), symbolLayout[row].at (col),
           symbolShiftLayout[row].at (col));
-      m_buttonMap[buttonID + 48] = tButtonAssignment (layout[row].at (col), shiftLayout[row].at (col), symbolLayout[row].at (col),
+      m_buttonMap[(Buttons)((int)buttonID + 48)] = tButtonAssignment (layout[row].at (col), shiftLayout[row].at (col), symbolLayout[row].at (col),
           symbolShiftLayout[row].at (col));
     }
   }
 }
 
-ustring TextEditUsageMode::getKeyLabel (int buttonID) const
+ustring TextEditUsageMode::getKeyLabel (Buttons buttonID) const
 {
   try
   {
@@ -83,12 +83,12 @@ ustring TextEditUsageMode::getKeyLabel (int buttonID) const
   }
   catch (out_of_range ex)
   {
-    DebugLevel::error ("there is no label for button", buttonID);
+    DebugLevel::error ("there is no label for button", toString(buttonID));
   }
   return "";
 }
 
-gunichar TextEditUsageMode::getCharForButton (int buttonID) const
+gunichar TextEditUsageMode::getCharForButton (Buttons buttonID) const
 {
   auto keyAssignment = m_buttonMap.at (buttonID);
 
@@ -179,11 +179,11 @@ void TextEditUsageMode::clampPosition ()
   m_position = std::min<int> (m_position, m_text.length ());
 }
 
-bool TextEditUsageMode::onButtonPressed (gint32 buttonID, ButtonModifiers modifiers, bool state)
+bool TextEditUsageMode::onButtonPressed (Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
   m_buttonRepeat.reset ();
 
-  if (buttonID == BUTTON_SHIFT)
+  if (buttonID == Buttons::BUTTON_SHIFT)
   {
     handleShiftButton (state);
     return true;
@@ -372,12 +372,12 @@ void TextEditUsageMode::updateLeds ()
     auto capsState = realShiftState ? TwoStateLED::ON : TwoStateLED::OFF;
     auto hwui = Application::get ().getHWUI ();
 
-    for (auto led : { 3, 7, 51, 55 })
+    for (auto led : { Buttons::BUTTON_3, Buttons::BUTTON_7, Buttons::BUTTON_51, Buttons::BUTTON_55 })
     {
       hwui->getPanelUnit ().getLED (led)->setState (capsState);
     }
 
-    for (auto led : { 43, 47, 91, 95 })
+    for (auto led : { Buttons::BUTTON_43, Buttons::BUTTON_47, Buttons::BUTTON_91, Buttons::BUTTON_95 })
     {
       hwui->getPanelUnit ().getLED (led)->setState (symbolState);
     }

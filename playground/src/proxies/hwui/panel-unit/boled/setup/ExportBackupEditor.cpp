@@ -39,13 +39,13 @@ void ExportBackupEditor::installState (State s)
   {
   case NotReady:
     addControl(new MultiLineLabel("Please insert an USB-Stick and reload this page!"))->setPosition(Rect(3, 0, 119, 24));
-    addControl(new Button("Back", Button::getButtonPos(BUTTON_D).getMovedBy(Point(-128, -16))));
+    addControl(new Button("Back", Button::getButtonPos(Buttons::BUTTON_D).getMovedBy(Point(-128, -16))));
     break;
   case Initial:
     addControl(new MultiLineLabel("Save all banks to USB? This might take a while, and will freeze your C15."))->setPosition(
         Rect(3, 0, 119, 24));
-    addControl(new Button("OK", Button::getButtonPos(BUTTON_C).getMovedBy(Point(-128, -16))));
-    addControl(new Button("Cancel", Button::getButtonPos(BUTTON_D).getMovedBy(Point(-128, -16))));
+    addControl(new Button("OK", Button::getButtonPos(Buttons::BUTTON_C).getMovedBy(Point(-128, -16))));
+    addControl(new Button("Cancel", Button::getButtonPos(Buttons::BUTTON_D).getMovedBy(Point(-128, -16))));
     break;
 
   case Running:
@@ -56,8 +56,8 @@ void ExportBackupEditor::installState (State s)
 
   case Finished:
     addControl(new Label("Saved all banks to USB!", Rect(3, -20, 128, 64)));
-    addControl(new Button("Save again!", Button::getButtonPos(BUTTON_C).getMovedBy(Point(-128, -16))));
-    addControl(new Button("Done", Button::getButtonPos(BUTTON_D).getMovedBy(Point(-128, -16))));
+    addControl(new Button("Save again!", Button::getButtonPos(Buttons::BUTTON_C).getMovedBy(Point(-128, -16))));
+    addControl(new Button("Done", Button::getButtonPos(Buttons::BUTTON_D).getMovedBy(Point(-128, -16))));
     break;
   }
 }
@@ -93,16 +93,16 @@ void ExportBackupEditor::writeBackupFileXML ()
   boled.resetOverlay();
 }
 
-bool ExportBackupEditor::onButton (int i, bool down, ButtonModifiers modifiers)
+bool ExportBackupEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   if (down)
   {
-    if (i == BUTTON_C && m_state != NotReady)
+    if (i == Buttons::BUTTON_C && m_state != NotReady)
     {
       installState (Running);
       return true;
     }
-    else if (i == BUTTON_D)
+    else if (i == Buttons::BUTTON_D)
     {
       diveUp ();
       return true;

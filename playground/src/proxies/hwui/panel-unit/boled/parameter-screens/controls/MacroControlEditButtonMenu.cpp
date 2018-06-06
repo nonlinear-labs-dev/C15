@@ -40,9 +40,10 @@ void MacroControlEditButtonMenu::setup()
   else
     addButton("Lock Group", bind(&MacroControlEditButtonMenu::lockGroup, this));
 
-  addButton("Lock all", bind(&MacroControlEditButtonMenu::lockAll, this));
+  if(!eb->areAllParametersLocked())
+    addButton("Lock all", bind(&MacroControlEditButtonMenu::lockAll, this));
 
-  if(eb->hasLocks())
+  if(eb->isAnyParameterLocked())
     addButton("Unlock all", bind(&MacroControlEditButtonMenu::unlockAll, this));
 
   auto mcGroup = eb->getParameterGroupByID("MCs");

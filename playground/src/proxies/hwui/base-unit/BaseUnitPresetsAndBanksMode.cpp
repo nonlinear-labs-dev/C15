@@ -21,7 +21,7 @@ BaseUnitPresetsAndBanksMode::~BaseUnitPresetsAndBanksMode ()
 
 void BaseUnitPresetsAndBanksMode::setup ()
 {
-  setupButtonConnection (BUTTON_FUNCTION, [=](gint32 button, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_FUNCTION, [=](Buttons button, ButtonModifiers modifiers, bool state)
   {
     if(state)
     {
@@ -36,7 +36,7 @@ void BaseUnitPresetsAndBanksMode::setup ()
     return true;
   });
 
-  setupButtonConnection (BUTTON_MODE, [ = ] (gint32 buttonID, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_MODE, [ = ] (Buttons buttonID, ButtonModifiers modifiers, bool state)
   {
     if (state)
     {

@@ -63,7 +63,7 @@ std::pair<int, int> PresetListSelectStorePosition::getSelectedPosition() const
   { m_bankPosition, m_presetPosition};
 }
 
-bool PresetListSelectStorePosition::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PresetListSelectStorePosition::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   auto focusAndMode = Application::get().getHWUI()->getFocusAndMode();
 
@@ -71,7 +71,7 @@ bool PresetListSelectStorePosition::onButton(int i, bool down, ButtonModifiers m
   {
     switch(i)
     {
-      case BUTTON_B:
+      case Buttons::BUTTON_B:
         if(focusAndMode.focus == UIFocus::Banks)
         {
           movePresetSelection(-1);
@@ -82,7 +82,7 @@ bool PresetListSelectStorePosition::onButton(int i, bool down, ButtonModifiers m
         }
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         if(focusAndMode.focus == UIFocus::Banks)
         {
           movePresetSelection(1);

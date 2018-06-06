@@ -24,6 +24,18 @@ bool ControlOwner::isDirty () const
   return false;
 }
 
+void ControlOwner::collectDirtyRects(std::list<Rect> &rects) const
+{
+  for (auto c : m_controls)
+    c->collectDirtyRects(rects);
+}
+
+void ControlOwner::setDirtyIfOverlapsWithAny(const std::list<Rect> &rects)
+{
+  for (auto c : m_controls)
+    c->setDirtyIfOverlapsWithAny(rects);
+}
+
 void ControlOwner::setHighlight (bool isHighlight)
 {
   for (auto c : m_controls)

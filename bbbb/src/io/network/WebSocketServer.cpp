@@ -27,6 +27,7 @@ sigc::connection WebSocketServer::onMessageReceived(Domain d, const sigc::slot<v
   return m_onMessageReceived[d].connect(cb);
 }
 
+
 void WebSocketServer::webSocket(SoupServer *, SoupWebsocketConnection *c, const char *, SoupClientContext *, WebSocketServer *pThis)
 {
   pThis->connectWebSocket(c);

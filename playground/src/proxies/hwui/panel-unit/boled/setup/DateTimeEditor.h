@@ -13,7 +13,7 @@ class DateTimeEditor : public ControlWithChildren, public SetupEditor
     virtual ~DateTimeEditor ();
 
     void setPosition (const Rect &) override;
-    bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
     bool onRotary (int inc, ButtonModifiers modifiers) override;
 
   private:

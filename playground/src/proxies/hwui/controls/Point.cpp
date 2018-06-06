@@ -35,3 +35,13 @@ void Point::moveBy(int x, int y)
   m_x += x;
   m_y += y;
 }
+
+bool operator ==(const Point &lhs, const Point &rhs)
+{
+  return lhs.getX() == rhs.getX() && lhs.getY() == rhs.getY();
+}
+
+bool operator !=(const Point &lhs, const Point &rhs)
+{
+  return lhs.getX() != rhs.getX() || lhs.getY() != rhs.getY();
+}

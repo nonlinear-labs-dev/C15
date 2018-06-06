@@ -15,7 +15,7 @@ class PresetListSelectStorePosition : public PresetListBase
     PresetListSelectStorePosition(const Rect &pos, bool showBankArrows);
     virtual ~PresetListSelectStorePosition();
 
-    virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
     virtual void onRotary(int inc, ButtonModifiers modifiers) override;
     std::pair<int, int> getSelectedPosition() const override;
     void movePresetSelection();

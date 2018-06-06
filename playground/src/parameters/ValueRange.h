@@ -15,7 +15,7 @@ class ValueRange
     tValue m_max;
 
   public:
-    ValueRange(tValue min, tValue max) :
+    ValueRange(tValue min = 0, tValue max = 0) :
         m_min(min), m_max(max)
     {
     }
@@ -88,3 +88,15 @@ class ValueRange
       return h(m_min) ^ h(m_max);
     }
 };
+
+template<typename T>
+inline bool operator==(const ValueRange<T> &a, const ValueRange<T> &b)
+{
+  return (a.getMin() == b.getMin()) && (a.getMax() == b.getMax());
+}
+
+template<typename T>
+inline bool operator!=(const ValueRange<T> &a, const ValueRange<T> &b)
+{
+  return (a.getMin() != b.getMin()) || (a.getMax() != b.getMax());
+}

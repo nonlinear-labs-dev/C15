@@ -1,0 +1,25 @@
+{
+	"controls": {
+		"LockIndicator1Letter": {
+			"Text": {
+				"Class": "Text",
+				"Rect": "0,0,11,11",
+				"Property": "Text",
+				"Default": "L"
+			}
+		}
+	},
+	"styles": {
+		"ParamNameLabel-Selected": {
+			"selector": {
+				"ControlClasses": "LockIndicator1Letter"
+			},
+			"styles": {
+				"FontSize": 9,
+				"BackgroundColor": "C43",
+				"Color": "C255",
+				"TextAlign": "Center"
+			}
+		}
+	}
+}

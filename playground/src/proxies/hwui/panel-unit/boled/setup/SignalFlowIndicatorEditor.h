@@ -19,7 +19,7 @@ private:
   bool redraw (FrameBuffer &fb) override;
   void setBackgroundColor (FrameBuffer &fb) const override;
   void onSettingChanged (const Setting *s);
-  bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
   bool onRotary (int inc, ButtonModifiers modifiers) override;
   void setFontColor (FrameBuffer &fb) const override;
 

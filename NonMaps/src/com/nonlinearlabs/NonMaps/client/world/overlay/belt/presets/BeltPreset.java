@@ -285,4 +285,10 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		return super.onContextMenu(pos);
 	}
 
+	public void rename() {
+		if (mapsPreset != null)
+			mapsPreset.rename();
+
+	}
+
 }

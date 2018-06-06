@@ -1,0 +1,24 @@
+{
+	"controls": {
+		"ParameterGroupName": {
+			"Text": {
+				"Class": "Text",
+				"Rect": "0, 0, 64,13",
+				"Property": "Text"
+			}
+		}
+	},
+	"styles": {
+		"ParameterGroupNameText": {
+			"selector": {
+				"ControlClasses": "ParameterGroupName",
+				"PrimitveClasses": "Text",
+				"UIFocus": "Parameters"
+			},
+			"styles": {
+				"BackgroundColor": "C255",
+				"Color": "C43"
+			}
+		}
+	}
+}

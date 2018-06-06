@@ -1,7 +1,7 @@
 #include "MCSelectButton.h"
 #include <proxies/hwui/buttons.h>
 
-MCSelectButton::MCSelectButton (int id) :
+MCSelectButton::MCSelectButton (Buttons id) :
     super ("MC Sel", id)
 {
 }

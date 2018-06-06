@@ -23,7 +23,7 @@ class ModulateableParameterSelectLayout2 : public ParameterSelectLayout2, public
 
   protected:
     virtual void init () override;
-    virtual bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
     virtual bool onRotary (int inc, ButtonModifiers modifiers) override;
     virtual Parameter * getCurrentEditParameter () const override;
     virtual void setDefault () override;

@@ -15,8 +15,7 @@
 #include <proxies/lpc/LPCProxy.h>
 
 
-PlayOrEditModeLayout::PlayOrEditModeLayout () :
-    super (Application::get().getHWUI()->getBaseUnit().getPlayPanel().getSOLED())
+PlayOrEditModeLayout::PlayOrEditModeLayout ()
 {
   addControl (new Label ("Shift", Rect (1, 1, 23, 14)));
   addControl (new NoteShiftDisplay (Rect (1, 17, 23, 14)));

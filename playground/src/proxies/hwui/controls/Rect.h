@@ -7,12 +7,13 @@ class FrameBuffer;
 class Rect
 {
   public:
-    Rect (int x, int y, int w, int h);
-    Rect (const Point &leftTop, const Point &rightBottom);
-    virtual ~Rect ();
+    Rect(int x, int y, int w, int h);
+    Rect(const Point &leftTop, const Point &rightBottom);
+    virtual ~Rect();
 
     bool contains(int x, int y) const;
     Rect getIntersection(const Rect &other) const;
+    bool intersects(const Rect &other) const;
 
     const Point &getPosition() const;
     int getX() const;
@@ -21,7 +22,7 @@ class Rect
     int getLeft() const;
     int getBottom() const;
     int getRight() const;
-    int getWidth () const;
+    int getWidth() const;
     int getHeight() const;
 
     Point getCenter() const;
@@ -37,7 +38,7 @@ class Rect
     void moveBy(int x, int y);
     void normalize();
 
-    bool isEmpty () const;
+    bool isEmpty() const;
 
     Rect getMovedBy(const Point &p) const;
     Rect getMargined(int h, int v) const;
@@ -48,6 +49,9 @@ class Rect
     void drawRounded(FrameBuffer &fb) const;
 
     static void registerTests();
+
+    friend bool operator ==(const Rect &lhs, const Rect &rhs);
+    friend bool operator !=(const Rect &lhs, const Rect &rhs);
 
   private:
     Point m_leftTop;

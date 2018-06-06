@@ -603,12 +603,10 @@ void PresetManager::load()
 
     auto path = Application::get().getOptions()->getPresetManagerPath();
 
-    DEBUG_TRACE("Loading presets at ", path);
     auto file = Gio::File::create_for_path(path);
 
     if(file->query_exists())
     {
-      DEBUG_TRACE("Loading presetmanager at", path);
       loadMetadataAndSendEditBufferToLpc(transaction, file);
       loadInitSound(transaction, file);
       loadBanks(transaction, file);
@@ -716,7 +714,6 @@ SaveResult PresetManager::saveMetadata(RefPtr<Gio::File> pmFolder)
 
 void PresetManager::loadMetadataAndSendEditBufferToLpc(UNDO::Scope::tTransactionPtr transaction, RefPtr<Gio::File> pmFolder)
 {
-  DEBUG_TRACE("loadMetadata", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Edit Buffer");
   Serializer::read<PresetManagerMetadataSerializer>(transaction, pmFolder, ".metadata", std::ref(*this));
   getEditBuffer()->sendToLPC();
@@ -736,7 +733,6 @@ SaveResult PresetManager::saveInitSound(RefPtr<Gio::File> pmFolder)
 
 void PresetManager::loadInitSound(UNDO::Scope::tTransactionPtr transaction, RefPtr<Gio::File> pmFolder)
 {
-  DEBUG_TRACE("loadInitSound", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Init Sound");
 
   Serializer::read<PresetSerializer>(transaction, pmFolder, ".initSound", m_initSound.get(), true);
@@ -782,9 +778,7 @@ void PresetManager::deleteOldBanks(const RefPtr<Gio::File> pmFolder)
       {
         if(!findBank(uuid))
         {
-          DEBUG_TRACE("bank with uuid: ", uuid, " found...");
           FileSystem::deleteFolder(pmFolder->get_child(uuid));
-          DEBUG_TRACE("...and deleted");
         }
       }
     }
@@ -793,7 +787,6 @@ void PresetManager::deleteOldBanks(const RefPtr<Gio::File> pmFolder)
 
 void PresetManager::loadBanks(UNDO::Scope::tTransactionPtr transaction, RefPtr<Gio::File> pmFolder)
 {
-  DEBUG_TRACE("loadBanks", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Banks");
 
   list<std::shared_ptr<PresetBank>> toDelete;
@@ -803,7 +796,6 @@ void PresetManager::loadBanks(UNDO::Scope::tTransactionPtr transaction, RefPtr<G
 
   for(auto b : m_banks)
   {
-    DEBUG_TRACE("loadBanks, bank:", b->getUuid());
     auto bankFolder = pmFolder->get_child((Glib::ustring) b->getUuid());
 
     try
@@ -812,7 +804,6 @@ void PresetManager::loadBanks(UNDO::Scope::tTransactionPtr transaction, RefPtr<G
     }
     catch(...)
     {
-      DEBUG_TRACE("could not load bank", b->getUuid());
       toDelete.push_back(b);
     }
   }
@@ -822,7 +813,6 @@ void PresetManager::loadBanks(UNDO::Scope::tTransactionPtr transaction, RefPtr<G
     undoableDeleteBank(transaction, b);
     banksDeleted++;
   }
-  DEBUG_TRACE("Deleted ", banksDeleted, " Banks in loadBanks!");
 }
 
 void PresetManager::onTransactionAdded()

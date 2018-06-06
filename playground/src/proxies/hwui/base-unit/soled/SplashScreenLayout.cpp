@@ -7,8 +7,7 @@
 #include <proxies/hwui/controls/Rect.h>
 #include <proxies/hwui/HWUI.h>
 
-SplashScreenLayout::SplashScreenLayout () :
-    super (Application::get().getHWUI()->getBaseUnit().getPlayPanel().getSOLED())
+SplashScreenLayout::SplashScreenLayout ()
 {
   auto height = 32;
   auto labelHeight = 9;

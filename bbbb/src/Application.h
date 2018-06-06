@@ -20,6 +20,7 @@ class Application
 
     Options *getOptions();
     WebSocketServer *getWebsocketServer();
+    Bridges* getBridges();
 
   private:
     static char *initStatic (Application *app, char *argv);

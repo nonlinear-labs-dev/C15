@@ -19,7 +19,7 @@ void BaseUnitBanksMode::setup ()
 {
   super::setup();
 
-  setupButtonConnection (BUTTON_MINUS, [=](gint32 button, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_MINUS, [=](Buttons button, ButtonModifiers modifiers, bool state)
   {
     if(state)
     {
@@ -28,7 +28,7 @@ void BaseUnitBanksMode::setup ()
     return true;
   });
 
-  setupButtonConnection (BUTTON_PLUS, [=](gint32 button, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_PLUS, [=](Buttons button, ButtonModifiers modifiers, bool state)
   {
     if(state)
     {

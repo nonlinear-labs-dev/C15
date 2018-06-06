@@ -1,0 +1,67 @@
+{
+	"controls": {
+		"EmptyButton": {
+			"Background": {
+				"Class": "Bar",
+				"Tag": "Button",
+				"Rect": "3, 2, 56,9"
+			},
+			"Border": {
+				"Class": "Border",
+				"Rect": "2,1,58,11"
+			},
+			"CoverLT": {
+				"Class": "Bar",
+				"Tag": "Cover",
+				"Rect": "2,1,1,1"
+			},
+			"CoverRT": {
+				"Class": "Bar",
+				"Tag": "Cover",
+				"Rect": "59,1,1,1"
+			},
+			"CoverLB": {
+				"Class": "Bar",
+				"Tag": "Cover",
+				"Rect": "2,11,1,1"
+			},
+			"CoverRB": {
+				"Class": "Bar",
+				"Tag": "Cover",
+				"Rect": "59,11,1,1"
+			}
+		}
+	},
+	"styles": {
+		"EmptyButton-Border": {
+			"selector": {
+				"ControlClasses": "EmptyButton",
+				"PrimitiveClasses": "Border"
+			},
+			"styles": {
+				"Color": "C103",
+				"TextAlign": "Left"
+			}
+		},
+		"EmptyButton-Background": {
+			"selector": {
+				"ControlClasses": "EmptyButton",
+				"PrimitiveClasses": "Bar"
+			},
+			"styles": {
+				"Color": "C77"
+			}
+		},
+		"EmptyButton-Covers": {
+			"selector": {
+				"ControlClasses": "EmptyButton",
+				"Tag": "Cover",
+				"PrimitiveClasses": "Bar"
+			},
+			"styles": {
+				"Color": "C43",
+				"TextAlign": "Left"
+			}
+		}
+	}
+}

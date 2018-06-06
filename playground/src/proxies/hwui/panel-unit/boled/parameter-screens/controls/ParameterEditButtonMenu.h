@@ -3,6 +3,8 @@
 #include "proxies/hwui/controls/ButtonMenu.h"
 
 class PresetBank;
+class Parameter;
+class ParameterGroup;
 
 class ParameterEditButtonMenu : public ButtonMenu
 {

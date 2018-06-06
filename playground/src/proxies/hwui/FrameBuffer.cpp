@@ -105,8 +105,11 @@ inline void FrameBuffer::setOffsetPixel(tCoordinate x, tCoordinate y)
 
 inline void FrameBuffer::setRawPixel(tCoordinate x, tCoordinate y)
 {
-  const long index = getIndex(x, y);
-  m_backBuffer[index] = m_currentColor;
+  if(m_currentColor != Transparent)
+  {
+    const long index = getIndex(x, y);
+    m_backBuffer[index] = m_currentColor;
+  }
 }
 
 inline long FrameBuffer::getIndex(tCoordinate x, tCoordinate y) const
@@ -127,11 +130,13 @@ void FrameBuffer::clear()
 void FrameBuffer::setColor(const Colors &c)
 {
   m_currentColor = c;
+  g_assert(isValidColor(c));
 }
 
 void FrameBuffer::fiddleColor(tPixel p)
 {
   m_currentColor = (Colors) (p);
+  g_assert(m_currentColor);
 }
 
 FrameBuffer::Colors FrameBuffer::getColor() const
@@ -161,11 +166,14 @@ void FrameBuffer::fillRect(const Rect &rect)
 
 inline void FrameBuffer::drawRawHorizontalLine(tCoordinate x, tCoordinate y, tCoordinate length)
 {
-  auto fromIdx = getIndex(x, y);
-  auto data = m_backBuffer.data() + fromIdx;
+  if(m_currentColor != Transparent)
+  {
+    auto fromIdx = getIndex(x, y);
+    auto data = m_backBuffer.data() + fromIdx;
 
-  for(long i = 0; i < length; i++)
-    data[i] = m_currentColor;
+    for(long i = 0; i < length; i++)
+      data[i] = m_currentColor;
+  }
 }
 
 void FrameBuffer::drawRect(tCoordinate x, tCoordinate y, tCoordinate width, tCoordinate height)
@@ -220,8 +228,20 @@ void FrameBuffer::drawVerticalLine(tCoordinate x, tCoordinate y, tCoordinate len
 
 void FrameBuffer::swapBuffers()
 {
+#if _DEVELOPMENT_PC
+  for(int i = 0; i < m_backBuffer.size(); i++)
+  {
+    auto c = m_backBuffer.data()[i];
+    g_assert(isValidColor((Colors)c));
+  }
+#endif
   auto bytes = Glib::Bytes::create(m_backBuffer.data(), m_backBuffer.size());
   Application::get().getWebSocketSession()->sendMessage(WebSocketSession::Domain::Oled, bytes);
+}
+
+bool FrameBuffer::isValidColor(Colors c) const
+{
+  return c == C43 || c == C77 || c == C103 || c == C128 || c == C179 || c == C204 || c == C255 || c == Transparent;
 }
 
 FrameBuffer::Clip FrameBuffer::clip(const Rect &rect)

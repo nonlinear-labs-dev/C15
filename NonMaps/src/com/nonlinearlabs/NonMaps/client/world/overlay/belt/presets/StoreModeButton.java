@@ -42,15 +42,24 @@ public class StoreModeButton extends SVGImage {
 
 	@Override
 	public Control click(Position eventPoint) {
-		if (getPresetManager().isInStoreSelectMode()) {
-			getPresetManager().endStoreSelectMode();
-		} else {
-			getPresetManager().startStoreSelectMode();
-		}
+		toggle();
 		return this;
 	}
 
 	public void update(Node settingsNode, Node presetManagerNode) {
 
+	}
+
+	public void toggle() {
+		if (getPresetManager().isInStoreSelectMode()) {
+			getPresetManager().endStoreSelectMode();
+		} else {
+			getPresetManager().startStoreSelectMode();
+		}
+	}
+
+	public void storeSelectOff() {
+		if (getPresetManager().isInStoreSelectMode())
+			getPresetManager().endStoreSelectMode();
 	}
 }

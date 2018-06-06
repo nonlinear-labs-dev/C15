@@ -58,7 +58,7 @@ ADD_CUSTOM_TARGET(
 	COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/src/device-info/SoftwareVersion.cpp
 )
 
-file(GLOB_RECURSE SOURCE_FILES src/*.cpp) 
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.h)
   
 add_executable(playground ${SOURCE_FILES})
 

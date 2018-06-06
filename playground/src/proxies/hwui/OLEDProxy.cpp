@@ -90,7 +90,7 @@ bool OLEDProxy::redraw ()
     auto &fb = FrameBuffer::get ();
     auto clip = fb.clip (m_posInFrameBuffer);
     auto offset = fb.offset (m_posInFrameBuffer.getPosition ());
-    ret = l->redrawLayout ();
+    ret = l->redrawLayout (*this);
   }
 
   return ret;

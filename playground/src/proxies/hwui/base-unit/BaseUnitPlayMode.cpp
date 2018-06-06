@@ -26,7 +26,7 @@ void BaseUnitPlayMode::setup ()
   setupBaseUnitMinusButton ();
   setupBaseUnitPlusButton ();
 
-  setupButtonConnection (BUTTON_FUNCTION, [ = ] (gint32 buttonID, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_FUNCTION, [ = ] (Buttons buttonID, ButtonModifiers modifiers, bool state)
   {
     if (state)
     toggleTouchBehaviour();
@@ -51,7 +51,7 @@ void BaseUnitPlayMode::toggleTouchBehaviour ()
 
 void BaseUnitPlayMode::setupBaseUnitUIModeButton ()
 {
-  setupButtonConnection (BUTTON_MODE, [ = ] (gint32 buttonID, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_MODE, [ = ] (Buttons buttonID, ButtonModifiers modifiers, bool state)
   {
     if (state)
     Application::get ().getSettings ()->getSetting<BaseUnitUIMode> ()->inc ();
@@ -62,7 +62,7 @@ void BaseUnitPlayMode::setupBaseUnitUIModeButton ()
 
 void BaseUnitPlayMode::setupBaseUnitMinusButton ()
 {
-  setupButtonConnection (BUTTON_MINUS, [ = ] (gint32 buttonID, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_MINUS, [ = ] (Buttons buttonID, ButtonModifiers modifiers, bool state)
   {
     if (state)
     m_noteShiftState.traverse (NOTE_SHIFT_EVENT_MINUS_PRESSED);
@@ -75,7 +75,7 @@ void BaseUnitPlayMode::setupBaseUnitMinusButton ()
 
 void BaseUnitPlayMode::setupBaseUnitPlusButton ()
 {
-  setupButtonConnection (BUTTON_PLUS, [ = ] (gint32 buttonID, ButtonModifiers modifiers, bool state)
+  setupButtonConnection (Buttons::BUTTON_PLUS, [ = ] (Buttons buttonID, ButtonModifiers modifiers, bool state)
   {
     if (state)
     m_noteShiftState.traverse (NOTE_SHIFT_EVENT_PLUS_PRESSED);

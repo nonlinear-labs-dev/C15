@@ -2,6 +2,7 @@
 
 #include "playground.h"
 #include <proxies/hwui/HWUIEnums.h>
+#include <proxies/hwui/buttons.h>
 #include <tools/Uncopyable.h>
 #include <map>
 #include <set>
@@ -16,16 +17,16 @@ class UsageMode : public Uncopyable
     UsageMode ();
     virtual ~UsageMode ();
 
-    virtual bool onButtonPressed (gint32 buttonID, ButtonModifiers modifiers, bool state);
+    virtual bool onButtonPressed (Buttons buttonID, ButtonModifiers modifiers, bool state);
 
     virtual void setup () = 0;
     virtual void setupFocusAndMode (FocusAndMode focusAndMode);
     virtual void bruteForceUpdateLeds();
 
   protected:
-    typedef function<bool (gint32 button, ButtonModifiers modifiers, bool state)> tAction;
+    typedef function<bool (Buttons button, ButtonModifiers modifiers, bool state)> tAction;
 
-    void setupButtonConnection (gint32 buttonID, tAction action);
+    void setupButtonConnection (Buttons buttonID, tAction action);
 
     Application &getApp ();
     const Application &getApp () const;
@@ -35,8 +36,6 @@ class UsageMode : public Uncopyable
 #endif
 
   private:
-    static const int num_buttons = 128;
-
-    std::map<int, tAction> m_actions;
+    std::map<Buttons, tAction> m_actions;
 
 };

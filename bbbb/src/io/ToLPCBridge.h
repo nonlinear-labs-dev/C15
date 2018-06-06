@@ -9,6 +9,5 @@ class ToLPCBridge : public Bridge
   public:
     ToLPCBridge();
     virtual ~ToLPCBridge();
-
 };
 

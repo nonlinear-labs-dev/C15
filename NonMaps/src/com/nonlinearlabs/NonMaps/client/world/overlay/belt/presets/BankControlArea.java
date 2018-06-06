@@ -31,4 +31,8 @@ public class BankControlArea extends OverlayLayout {
 	public double getHorizontalCenterLinePosition() {
 		return bank.getHorizontalCenterLinePosition() + getRelativePosition().getTop();
 	}
+
+	public void renameCurrentPreset() {
+		bank.renameCurrentPreset();
+	}
 }

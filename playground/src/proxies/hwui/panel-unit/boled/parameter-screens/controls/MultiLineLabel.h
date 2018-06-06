@@ -18,7 +18,6 @@ class MultiLineLabel : public ControlWithChildren
 
     void drawBackground (FrameBuffer &fb) override;
     bool redraw (FrameBuffer &fb) override;
-
     virtual void setPosition (const Rect &rect) override;
 
   protected:

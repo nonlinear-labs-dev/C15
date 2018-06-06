@@ -13,6 +13,10 @@
 #include <proxies/hwui/panel-unit/boled/sound-screens/SingleSoundLayout.h>
 #include <proxies/hwui/panel-unit/boled/SplashLayout.h>
 #include <proxies/hwui/panel-unit/boled/undo/UndoLayout.h>
+#include <proxies/hwui/descriptive-layouts/LayoutFactory.h>
+#include <proxies/hwui/descriptive-layouts/LayoutFolderMonitor.h>
+#include <proxies/hwui/debug-oled/DebugLayout.h>
+#include <tools/ExceptionTools.h>
 
 BOLED::BOLED () :
     OLEDProxy (Rect (0, 0, 256, 64))
@@ -26,9 +30,46 @@ BOLED::~BOLED ()
 void BOLED::init()
 {
   reset(new SplashLayout());
+
+  LayoutFolderMonitor::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
 }
 
-void BOLED::setupFocusAndMode (FocusAndMode focusAndMode)
+void BOLED::bruteForce()
+{
+  setupFocusAndMode(Application::get().getHWUI()->getFocusAndMode());
+}
+
+void BOLED::setupFocusAndMode (FocusAndMode focusAndMode) {
+  if(Application::get().getHWUI()->getOldLayoutsSetting()) {
+    installOldLayouts(focusAndMode);
+  }
+  else {
+    try {
+      reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
+    } catch(...) {
+      auto description = ExceptionTools::handle_eptr(std::current_exception());
+      Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
+    }
+  }
+  /*try {
+ /* } catch (nlohmann::json::out_of_range &e) {
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("nlohmann::json::out_of_range\n"s + e.what()));
+  } catch (nlohmann::json::parse_error &e) {
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("nlohmann::json::parse_error:\n"s + e.what()));
+  } catch (std::out_of_range &e) {
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("std::out_of_range\n "s + e.what()));
+  } catch (std::runtime_error &e) {
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("runtime_error\n"s + e.what()));
+  } catch(std::exception& e) {
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("Uncaught Exception of Type:\n"s
+    + e.what()));
+  } catch(...) {
+    auto description = ExceptionTools::handle_eptr(std::current_exception());
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("...\n"s + description));
+  }*/
+}
+
+void BOLED::installOldLayouts(FocusAndMode focusAndMode)
 {
   switch (focusAndMode.focus)
   {
@@ -54,7 +95,7 @@ void BOLED::setupFocusAndMode (FocusAndMode focusAndMode)
 
     default:
       g_assert_not_reached()
-      ;
+              ;
       break;
   }
 }
@@ -114,7 +155,7 @@ void BOLED::setupBankScreen (FocusAndMode focusAndMode)
   }
 }
 
-bool BOLED::onButtonPressed (gint32 buttonID, ButtonModifiers modifiers, bool state)
+bool BOLED::onButtonPressed (Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
   if (shared_ptr<DFBLayout> l = dynamic_pointer_cast<DFBLayout> (getLayout ()))
     if (l->onButton (buttonID, state, modifiers))

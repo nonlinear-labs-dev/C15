@@ -45,8 +45,7 @@ class DirectLoadButton extends SVGImage {
 		if (isInStoreSelectMode())
 			return this;
 
-		married = !married;
-		NonMaps.theMaps.getServerProxy().setSetting("AutoLoadSelectedPreset", married ? "on" : "off");
+		toggle();
 		return this;
 	}
 
@@ -60,5 +59,10 @@ class DirectLoadButton extends SVGImage {
 				requestLayout();
 			}
 		}
+	}
+
+	public void toggle() {
+		married = !married;
+		NonMaps.theMaps.getServerProxy().setSetting("AutoLoadSelectedPreset", married ? "on" : "off");
 	}
 }

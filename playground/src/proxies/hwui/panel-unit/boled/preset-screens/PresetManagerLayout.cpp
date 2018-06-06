@@ -26,7 +26,6 @@
 #include <vector>
 
 PresetManagerLayout::PresetManagerLayout(FocusAndMode focusAndMode) :
-    super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled()),
     m_focusAndMode(focusAndMode)
 {
   setup();
@@ -68,7 +67,7 @@ void PresetManagerLayout::setup()
 
 void PresetManagerLayout::setupBankFocus()
 {
-  addControl(new Button("Bank", BUTTON_A))->setHighlight(true);
+  addControl(new Button("Bank", Buttons::BUTTON_A))->setHighlight(true);
 
   switch(m_focusAndMode.mode)
   {
@@ -99,7 +98,7 @@ void PresetManagerLayout::setupBankSelect()
 {
   addControl(new BankAndPresetNumberLabel(Rect(0, 1, 64, 14)));
   addControl(new NumBanksLabel(Rect(208, 1, 32, 14)))->setHighlight(false);
-  m_autoLoad = addControl(new Button("Direct Load", BUTTON_D));
+  m_autoLoad = addControl(new Button("Direct Load", Buttons::BUTTON_D));
   addControl(new AnyParameterLockedIndicator(Rect(8, 26, 48, 12)));
   m_presets = addControl(new PresetList(Rect(64, 0, 128, 63), true));
   m_presets->setBankFocus();
@@ -118,7 +117,7 @@ void PresetManagerLayout::setupBankStore()
 
 void PresetManagerLayout::setupPresetFocus()
 {
-  addControl(new Button("Bank", BUTTON_A));
+  addControl(new Button("Bank", Buttons::BUTTON_A));
 
   switch(m_focusAndMode.mode)
   {
@@ -149,7 +148,7 @@ void PresetManagerLayout::setupPresetEdit()
   }
   else
   {
-    addControl(new Button("", BUTTON_D));
+    addControl(new Button("", Buttons::BUTTON_D));
   }
 }
 
@@ -157,7 +156,7 @@ void PresetManagerLayout::setupPresetSelect()
 {
   m_bankAndPresetNumberLabel = addControl(new BankAndPresetNumberLabel(Rect(0, 1, 64, 14)));
   m_numPresetsInBank = addControl(new NumPresetsInBankLabel(Rect(192, 1, 64, 14)));
-  m_autoLoad = addControl(new Button("Direct Load", BUTTON_D));
+  m_autoLoad = addControl(new Button("Direct Load", Buttons::BUTTON_D));
   m_presets = addControl(new PresetList(Rect(64, 0, 128, 63), true));
   addControl(new AnyParameterLockedIndicator(Rect(8, 26, 48, 12)));
   Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange(
@@ -172,7 +171,7 @@ void PresetManagerLayout::setupPresetStore()
   m_menu = addControl(new AppendOverwriteInsertButtonMenu(*this, Rect(195, 1, 58, 62)));
 }
 
-bool PresetManagerLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(!down)
   {
@@ -187,15 +186,15 @@ bool PresetManagerLayout::onButton(int i, bool down, ButtonModifiers modifiers)
 
     switch(i)
     {
-      case BUTTON_A:
+      case Buttons::BUTTON_A:
         if(m_focusAndMode.focus == UIFocus::Banks)
           hwui->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets));
         else
           hwui->undoableSetFocusAndMode(FocusAndMode(UIFocus::Banks));
         break;
 
-      case BUTTON_B:
-      case BUTTON_C:
+      case Buttons::BUTTON_B:
+      case Buttons::BUTTON_C:
         installButtonRepeat([ = ]()
         {
           m_presets->onButton(i, down, modifiers);
@@ -203,7 +202,7 @@ bool PresetManagerLayout::onButton(int i, bool down, ButtonModifiers modifiers)
 
         return true;
 
-      case BUTTON_D:
+      case Buttons::BUTTON_D:
         if(m_menu)
         {
           if(modifiers[SHIFT] == 1)
@@ -222,32 +221,32 @@ bool PresetManagerLayout::onButton(int i, bool down, ButtonModifiers modifiers)
 
         return true;
 
-      case BUTTON_STORE:
+      case Buttons::BUTTON_STORE:
         if(m_focusAndMode.mode == UIMode::Store)
           hwui->undoableSetFocusAndMode(UIMode::Select);
         else
           hwui->undoableSetFocusAndMode(UIMode::Store);
         break;
 
-      case BUTTON_EDIT:
+      case Buttons::BUTTON_EDIT:
         if(m_focusAndMode.mode == UIMode::Edit)
           hwui->undoableSetFocusAndMode(UIMode::Select);
         else
           hwui->undoableSetFocusAndMode(UIMode::Edit);
         break;
 
-      case BUTTON_PRESET:
+      case Buttons::BUTTON_PRESET:
         if(m_focusAndMode.focus == UIFocus::Presets && m_focusAndMode.mode == UIMode::Select)
           hwui->undoableSetFocusAndMode(UIFocus::Parameters);
         else
           hwui->undoableSetFocusAndMode( { UIFocus::Presets, UIMode::Select });
         break;
 
-      case BUTTON_INFO:
+      case Buttons::BUTTON_INFO:
         hwui->undoableSetFocusAndMode(UIMode::Info);
         break;
 
-      case BUTTON_ENTER:
+      case Buttons::BUTTON_ENTER:
         if(m_menu)
           m_menu->doAction();
         else if(m_focusAndMode.mode == UIMode::Select)

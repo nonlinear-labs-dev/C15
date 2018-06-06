@@ -1,0 +1,36 @@
+Style: UIFocus::Parameter, PrimitiveClass::Border
+	Color: C43
+  TextAlign: Center
+  
+// "Style:" keyword, dann eine Komma-separierte Liste mit Selektoren
+// new-line-separierte Liste von Key/Value pairs
+
+Control: slider128x12
+  class: Slider
+  Border: Border, (0, 0, 128, 12)
+  Background: Bar, (1, 1, 126, 10), (Length)
+  Slider: Bar, (2, 2, 124, 8), (Range, LINEAR_EXPO_BIPOLAR_CONVERTER) 
+  CenterMark: Bar, (63, 2, 2, 8)
+        
+// "Control:" keyword, dann der Name des Prototypen
+// new line mit Control Klasse
+// new line separierte Primitives Auflistung
+// PrimitiveInstance: PrimitiveClass, (Rect), [ (Property, [ converterEnum ]) ]
+
+       
+
+       
+Layout: UnmodulateableParameterLayout (UIFocus::Parameters, UIMode::Select)
+	GroupHeader: label64x16, (0,0), ParamGroupName, Text
+  Slider: slider128x12, (64, 20), SliderRange, Slider
+  ROTARY_INC, BUTTON_INC -> IncParam
+	ROTARY_DEC, BUTTON_DEC -> DecParam
+ 
+// "Layout:" keyword, LayoutName, dann eine Komma-separierte Liste mit Selektoren in Klammern
+// ControlInstance: ControlClass, (Point), EventSource, EventTargetPrimitve
+// *
+// Komma-separierte Liste von HWUI Events -> EventSink 
+// *
+
+
+  

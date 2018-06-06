@@ -11,14 +11,14 @@ class Button : public LabelRegular8
     typedef LabelRegular8 super;
 
   public:
-    Button (const Glib::ustring &caption, int buttonID);
+    Button (const Glib::ustring &caption, Buttons buttonID);
     Button (const Glib::ustring &caption, const Rect &rect);
     virtual ~Button ();
 
     bool redraw (FrameBuffer &fb) override;
     void blind (bool b);
 
-    static Rect getButtonPos (int n);
+    static Rect getButtonPos (Buttons n);
 
   protected:
     void setFontColor (FrameBuffer &fb) const override;

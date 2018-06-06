@@ -21,7 +21,7 @@ AnyParameterLockedIndicator::~AnyParameterLockedIndicator()
 
 void AnyParameterLockedIndicator::calcHasLocks()
 {
-  auto hasLocks = Application::get().getPresetManager()->getEditBuffer()->hasLocks();
+  auto hasLocks = Application::get().getPresetManager()->getEditBuffer()->isAnyParameterLocked();
   setText(hasLocks ? "L" : "");
   setVisible(hasLocks);
 }

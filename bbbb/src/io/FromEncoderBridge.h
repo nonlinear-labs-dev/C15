@@ -8,5 +8,7 @@ class FromEncoderBridge : public Bridge
     FromEncoderBridge();
     virtual ~FromEncoderBridge();
 
+    void sendRotary(int8_t inc);
+
 };
 

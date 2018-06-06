@@ -54,7 +54,8 @@ class EditBuffer : public Preset
 
     virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
-    bool hasLocks();
+    bool isAnyParameterLocked() const;
+    bool areAllParametersLocked() const;
 
     // CALLBACKS
     sigc::connection onSelectionChanged (slot<void, Parameter *, Parameter *> s);
@@ -72,6 +73,7 @@ class EditBuffer : public Preset
 
   private:
     Parameter *searchForAnyParameterWithLock() const;
+    Parameter *searchForAnyParameterWithoutLock() const;
 
     virtual UNDO::Scope &getUndoScope () override;
 

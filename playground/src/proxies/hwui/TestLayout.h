@@ -15,7 +15,7 @@ class TestLayout : public DFBLayout
     void iterate();
 
   private:
-    virtual bool redrawLayout () override;
+    virtual bool redrawLayout (OLEDProxy& oled) override;
 
     enum Tests
     {

@@ -28,7 +28,7 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
     enum Colors
       : tPixel
       {
-        Undefined = 0xFF, C43 = 0x00, C77 = 0x02, C103 = 0x05, C128 = 0x06, C179 = 0x0A, C204 = 0x0B, C255 = 0x0F, SYNC = 0xFF
+        Undefined = 0xFF, C43 = 0x00, C77 = 0x02, C103 = 0x05, C128 = 0x06, C179 = 0x0A, C204 = 0x0B, C255 = 0x0F, Transparent = 0xFF
     };
 
     tPixel interpolateColor (float normalized)
@@ -89,6 +89,7 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
     Offset offset (const Point &offset);
 
     void swapBuffers();
+    bool isValidColor(Colors c) const;
 
   private:
     FrameBuffer ();

@@ -48,7 +48,7 @@ void EditSmoothingTimeEditor::onSettingChanged (const Setting *s)
     setText (p->getDisplayString (), 0);
 }
 
-bool EditSmoothingTimeEditor::onButton (int i, bool down, ButtonModifiers modifiers)
+bool EditSmoothingTimeEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }

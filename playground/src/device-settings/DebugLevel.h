@@ -8,9 +8,9 @@ enum class DebugLevels
   DEBUG_LEVEL_DEBUG, DEBUG_LEVEL_SILENT, DEBUG_LEVEL_ERROR, DEBUG_LEVEL_WARNING, DEBUG_LEVEL_INFO, DEBUG_LEVEL_GASSY
 };
 
-inline std::ostream & operator<< (std::ostream &out, const DebugLevels &level)
+inline std::ostream & operator<<(std::ostream &out, const DebugLevels &level)
 {
-  switch (level)
+  switch(level)
   {
     case DebugLevels::DEBUG_LEVEL_SILENT:
       out << "silent";
@@ -46,101 +46,100 @@ class DebugLevel : public EnumSetting<DebugLevels>
     typedef EnumSetting<DebugLevels> super;
 
   public:
-    DebugLevel (Settings &settings);
-    virtual ~DebugLevel ();
+    DebugLevel(Settings &settings);
+    virtual ~DebugLevel();
 
-    bool set (DebugLevels m) override;
+    bool set(DebugLevels m) override;
 
-    static DebugLevels getLevel ();
+    static DebugLevels getLevel();
 
     template<typename ... tArgs>
-      static void gassy (const tArgs& ...args)
+      static void gassy(const tArgs& ...args)
       {
-        trace (DebugLevels::DEBUG_LEVEL_GASSY, args...);
+        trace(DebugLevels::DEBUG_LEVEL_GASSY, args...);
       }
 
     template<typename ... tArgs>
-      static void info (const tArgs& ...args)
+      static void info(const tArgs& ...args)
       {
-        trace (DebugLevels::DEBUG_LEVEL_INFO, args...);
+        trace(DebugLevels::DEBUG_LEVEL_INFO, args...);
       }
 
     template<typename ... tArgs>
-      static void debug (const tArgs& ...args)
+      static void debug(const tArgs& ...args)
       {
-        trace (DebugLevels::DEBUG_LEVEL_DEBUG, args...);
+        trace(DebugLevels::DEBUG_LEVEL_DEBUG, args...);
       }
 
     template<typename ... tArgs>
-      static void warning (const tArgs& ...args)
+      static void warning(const tArgs& ...args)
       {
-        trace (DebugLevels::DEBUG_LEVEL_WARNING, args...);
+        trace(DebugLevels::DEBUG_LEVEL_WARNING, args...);
       }
 
     template<typename ... tArgs>
-      static void error (const tArgs& ...args)
+      static void error(const tArgs& ...args)
       {
-        trace (DebugLevels::DEBUG_LEVEL_ERROR, args...);
+        trace(DebugLevels::DEBUG_LEVEL_ERROR, args...);
       }
 
     template<typename ... tArgs>
-      static void trace (DebugLevels level, const tArgs& ...args)
+      static void trace(DebugLevels level, const tArgs& ...args)
       {
-        if (DebugLevel::getLevel () >= level)
-          printTrace (level, args...);
+        if(DebugLevel::getLevel() >= level)
+          printTrace(level, args...);
       }
 
     template<typename ... tArgs>
-      static void output (const tArgs& ...args)
+      static void output(const tArgs& ...args)
       {
         stringstream str;
-        printTrace (str, args...);
-        g_printerr ("%s\n", str.str ().c_str ());
+        printTrace(str, args...);
+        g_printerr("%s\n", str.str().c_str());
+      }
+
+    template<typename ... tArgs>
+      static void throwException(const tArgs& ...args)
+      {
+        auto str = concat(args...);
+        throw std::runtime_error(str);
       }
 
   private:
-    DebugLevel (const DebugLevel& other);
-    DebugLevel& operator= (const DebugLevel&);
+    DebugLevel(const DebugLevel& other);
+    DebugLevel& operator=(const DebugLevel&);
 
-    const vector<Glib::ustring> &enumToString () const override;
-    const vector<Glib::ustring> &enumToDisplayString () const override;
+    const vector<Glib::ustring> &enumToString() const override;
+    const vector<Glib::ustring> &enumToDisplayString() const override;
 
     template<typename ... tArgs>
-      static void printTrace (DebugLevels level, tArgs& ...args)
+      static std::string concat(tArgs& ...args)
       {
         stringstream str;
-        str << level << " ";
-        printTrace (str, args...);
+        (void) std::initializer_list<bool> { (str << args << " ", false)... };
+        return str.str();
       }
 
-    template<typename tFirst, typename ... tArgs>
-      static void printTrace (stringstream &str, const tFirst &first, const tArgs& ...args)
+    template<typename ... tArgs>
+      static void printTrace(DebugLevels level, tArgs& ...args)
       {
-        str << first << " ";
-        printTrace (str, args...);
+        auto txt = concat(level, args...);
+        g_printerr ("%8" G_GUINT64_FORMAT ": %s\n", getTimestamp(), txt.c_str ());
       }
 
-    template<typename tFirst>
-      static void printTrace (stringstream &str, const tFirst &first)
-      {
-        str << first;
-        g_printerr ("%8" G_GUINT64_FORMAT ": %s\n", getTimestamp(), str.str ().c_str ());
-      }
+  static uint64_t getTimestamp()
+  {
+    static uint64_t epoch = getCurrentMilliseconds();
+    return getCurrentMilliseconds() - epoch;
+  }
 
-    static uint64_t getTimestamp ()
-    {
-      static uint64_t epoch = getCurrentMilliseconds();
-      return getCurrentMilliseconds() - epoch;
-    }
-
-    static uint64_t getCurrentMilliseconds ()
-    {
-      struct timeval spec;
-      gettimeofday(&spec, NULL);
-      return spec.tv_sec * 1000 + spec.tv_usec / 1000;
-    }
+  static uint64_t getCurrentMilliseconds()
+  {
+    struct timeval spec;
+    gettimeofday(&spec, NULL);
+    return spec.tv_sec * 1000 + spec.tv_usec / 1000;
+  }
 };
 
-#define DEBUG_TRACE(...) DebugLevel::debug(__PRETTY_FUNCTION__, "Line",__LINE__, "->", __VA_ARGS__)
-#define DEBUG_TRACE_EMPTY() DebugLevel::debug(__PRETTY_FUNCTION__, "Line", __LINE__)
+
 

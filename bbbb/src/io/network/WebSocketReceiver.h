@@ -10,5 +10,6 @@ class WebSocketReceiver : public Receiver
 
   private:
     void onMessageReceived(tMessage msg);
+    void onLPCMessageReceived(tMessage msg);
 };
 

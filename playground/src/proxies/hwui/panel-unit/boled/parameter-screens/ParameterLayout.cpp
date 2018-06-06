@@ -10,8 +10,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 
-ParameterLayout2::ParameterLayout2 () :
-    super (Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
+ParameterLayout2::ParameterLayout2 ()
 {
   addControl (new ModuleCaption (Rect (0, 0, 64, 13)));
   addControl (new ParameterNameLabel (Rect (72, 8, 112, 11)));
@@ -28,25 +27,25 @@ Parameter * ParameterLayout2::getCurrentEditParameter () const
   return getCurrentParameter ();
 }
 
-bool ParameterLayout2::onButton (int i, bool down, ButtonModifiers modifiers)
+bool ParameterLayout2::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   if (down)
   {
     switch (i)
     {
-    case BUTTON_PRESET:
+    case Buttons::BUTTON_PRESET:
       Application::get ().getHWUI ()->undoableSetFocusAndMode (FocusAndMode (UIFocus::Presets, UIMode::Select));
       return true;
 
-    case BUTTON_STORE:
+    case Buttons::BUTTON_STORE:
       Application::get ().getHWUI ()->undoableSetFocusAndMode (FocusAndMode (UIFocus::Presets, UIMode::Store));
       return true;
 
-    case BUTTON_INFO:
+    case Buttons::BUTTON_INFO:
       Application::get ().getHWUI ()->undoableSetFocusAndMode (UIMode::Info);
       return true;
 
-    case BUTTON_DEFAULT:
+    case Buttons::BUTTON_DEFAULT:
       setDefault ();
       return true;
     }
@@ -104,13 +103,13 @@ Carousel *ParameterSelectLayout2::getCarousel()
   return m_carousel;
 }
 
-bool ParameterSelectLayout2::onButton (int i, bool down, ButtonModifiers modifiers)
+bool ParameterSelectLayout2::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   if (down)
   {
     switch(i)
     {
-      case BUTTON_D:
+      case Buttons::BUTTON_D:
         if(m_carousel)
         {
           if(modifiers[SHIFT] == 1)
@@ -125,7 +124,7 @@ bool ParameterSelectLayout2::onButton (int i, bool down, ButtonModifiers modifie
 
         return true;
 
-      case BUTTON_EDIT:
+      case Buttons::BUTTON_EDIT:
         Application::get ().getHWUI ()->undoableSetFocusAndMode (UIMode::Edit);
         return true;
     }
@@ -157,13 +156,13 @@ ButtonMenu *ParameterEditLayout2::getMenu ()
   return m_menu;
 }
 
-bool ParameterEditLayout2::onButton (int i, bool down, ButtonModifiers modifiers)
+bool ParameterEditLayout2::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   if (down)
   {
     if (m_menu)
     {
-      if (BUTTON_D == i)
+      if (Buttons::BUTTON_D == i)
       {
         if(modifiers[SHIFT] == 1)
           m_menu->antiToggle();
@@ -171,14 +170,15 @@ bool ParameterEditLayout2::onButton (int i, bool down, ButtonModifiers modifiers
           m_menu->toggle ();
         return true;
       }
-      if (BUTTON_ENTER == i)
+
+      if (Buttons::BUTTON_ENTER == i)
       {
         m_menu->doAction ();
         return true;
       }
     }
 
-    if (BUTTON_EDIT == i)
+    if (Buttons::BUTTON_EDIT == i)
     {
       Application::get ().getHWUI ()->undoableSetFocusAndMode (UIMode::Select);
       return true;

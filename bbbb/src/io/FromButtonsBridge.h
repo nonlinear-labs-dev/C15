@@ -7,6 +7,6 @@ class FromButtonsBridge : public Bridge
   public:
     FromButtonsBridge();
     virtual ~FromButtonsBridge();
-
+    void sendKey(int key, bool down);
 };
 

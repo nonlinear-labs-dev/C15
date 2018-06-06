@@ -49,7 +49,7 @@ void SignalFlowIndicatorEditor::onSettingChanged (const Setting *s)
     setText (p->getDisplayString (), 0);
 }
 
-bool SignalFlowIndicatorEditor::onButton (int i, bool down, ButtonModifiers modifiers)
+bool SignalFlowIndicatorEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }

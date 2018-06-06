@@ -31,16 +31,16 @@ void PanelUnitPresetMode::bruteForceUpdateLeds ()
     array<TwoStateLED::LedState, numLeds> states;
     states.fill(TwoStateLED::OFF);
 
-    getMappings().forEachButton ([&](int buttonId, const list<int> parameters)
-        {
-          setStateForButton(buttonId, parameters, states);
-        });
+    getMappings().forEachButton ([&](Buttons buttonId, const list<int> parameters)
+    {
+      setStateForButton(buttonId, parameters, states);
+    });
 
     applyStateToLeds(states);
   });
 }
 
-void PanelUnitPresetMode::setStateForButton(int buttonId, const list<int> parameters, array<TwoStateLED::LedState, numLeds>& states)
+void PanelUnitPresetMode::setStateForButton(Buttons buttonId, const list<int> parameters, array<TwoStateLED::LedState, numLeds>& states)
 {
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
 
@@ -52,7 +52,7 @@ void PanelUnitPresetMode::setStateForButton(int buttonId, const list<int> parame
     {
       if (mc->getTargets().size() > 0)
       {
-        states[buttonId] = TwoStateLED::ON;
+        states[(int)buttonId] = TwoStateLED::ON;
       }
     }
     else if (signalFlowIndicator != invalidSignalFlowIndicator)
@@ -61,7 +61,7 @@ void PanelUnitPresetMode::setStateForButton(int buttonId, const list<int> parame
       {
         if (p->getControlPositionValue() != signalFlowIndicator)
         {
-          states[buttonId] = TwoStateLED::ON;
+          states[(int)buttonId] = TwoStateLED::ON;
         }
       }
     }
@@ -73,6 +73,6 @@ void PanelUnitPresetMode::applyStateToLeds(array<TwoStateLED::LedState, numLeds>
   auto &panelUnit = Application::get().getHWUI()->getPanelUnit();
   for (int i = 0; i < numLeds; i++)
   {
-    panelUnit.getLED(i)->setState(states[i]);
+    panelUnit.getLED((Buttons)i)->setState(states[i]);
   }
 }

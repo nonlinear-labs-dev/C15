@@ -163,9 +163,9 @@ void PanelUnit::installUsageMode(FocusAndMode focusAndMode)
   }
 }
 
-PanelUnit::tLed PanelUnit::getLED(int id)
+PanelUnit::tLed PanelUnit::getLED(Buttons id)
 {
-  return m_leds[id];
+  return m_leds[(int)id];
 }
 
 void PanelUnit::onTimeout()
@@ -183,7 +183,7 @@ const EditPanel &PanelUnit::getEditPanel() const
   return m_editPanel;
 }
 
-bool PanelUnit::onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state)
+bool PanelUnit::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
   if(super::onButtonPressed(buttonID, modifiers, state))
   {

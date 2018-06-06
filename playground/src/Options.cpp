@@ -1,6 +1,7 @@
 #include "Options.h"
 #include <glibmm/optiongroup.h>
 #include "device-settings/DebugLevel.h"
+#include "Application.h"
 
 Options::Options(int &argc, char **&argv)
 {
@@ -16,6 +17,13 @@ Options::Options(int &argc, char **&argv)
   pmPath.set_description("name of the folder that stores preset-managers banks as XML files");
   mainGroup.add_entry_filename(pmPath, sigc::mem_fun(this, &Options::setPMPathName));
 
+  OptionEntry layoutPath;
+  layoutPath.set_flags(OptionEntry::FLAG_FILENAME);
+  layoutPath.set_long_name("layouts");
+  layoutPath.set_short_name('l');
+  layoutPath.set_description("name of the folder containing the styles, controls and layouts");
+  mainGroup.add_entry_filename(layoutPath, sigc::mem_fun(this, &Options::setLayoutFolder));
+
   OptionEntry bbbb;
   bbbb.set_long_name("bbbb");
   bbbb.set_short_name('b');
@@ -30,7 +38,7 @@ Options::Options(int &argc, char **&argv)
 
 Options::~Options()
 {
-  DebugLevel::warning (__PRETTY_FUNCTION__, __LINE__);
+  DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 }
 
 void Options::setDefaults()
@@ -39,7 +47,7 @@ void Options::setDefaults()
 
   auto file = Gio::File::create_for_path(prefered);
 
-  if (file->query_exists() || makePresetManagerDirectory(file))
+  if(file->query_exists() || makePresetManagerDirectory(file))
   {
     m_pmPath = prefered;
   }
@@ -50,6 +58,12 @@ void Options::setDefaults()
 
   m_settingsFile = "./settings.xml";
   m_kioskModeFile = "./kiosk-mode.stamp";
+
+  Glib::ustring p = Application::get().getSelfPath();
+  size_t lastSlash = p.rfind('/');
+  Glib::ustring path = "/resources/Templates/";
+  p = p.substr(0, lastSlash) + path;
+  m_layoutFolder = p;
 }
 
 bool Options::makePresetManagerDirectory(Glib::RefPtr<Gio::File> file)
@@ -72,6 +86,14 @@ bool Options::setPMPathName(const Glib::ustring &optionName, const Glib::ustring
   return true;
 }
 
+bool Options::setLayoutFolder(const Glib::ustring &optionName, const Glib::ustring &path, bool hasValue)
+{
+  if(hasValue)
+    m_layoutFolder = path;
+
+  return true;
+}
+
 Glib::ustring Options::getPresetManagerPath() const
 {
   return m_pmPath;
@@ -90,6 +112,11 @@ Glib::ustring Options::getSettingsFile() const
 Glib::ustring Options::getKioskModeFile() const
 {
   return m_kioskModeFile;
+}
+
+Glib::ustring Options::getLayoutFolder() const
+{
+  return m_layoutFolder;
 }
 
 Glib::ustring Options::getHardwareTestsFolder() const

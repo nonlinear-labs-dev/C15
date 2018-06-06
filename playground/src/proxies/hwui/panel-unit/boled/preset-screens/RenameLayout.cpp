@@ -12,8 +12,7 @@ const int c_numRows = 4;
 const int c_letterWidth = 256 / 12;
 const int c_letterHeight = 12;
 
-RenameLayout::RenameLayout () :
-    super (Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ())
+RenameLayout::RenameLayout ()
 {
 }
 
@@ -31,8 +30,8 @@ void RenameLayout::init ()
   addLetters ();
   addControlKeys ();
 
-  addControl (new Button ("Cancel", BUTTON_A));
-  addControl (new Button ("Apply", BUTTON_D));
+  addControl (new Button ("Cancel", Buttons::BUTTON_A));
+  addControl (new Button ("Apply", Buttons::BUTTON_D));
 
   addControl (new TextEditControl (Rect (67, 51, 122, 11), m_textUsageMode));
 
@@ -61,7 +60,7 @@ void RenameLayout::addLetters ()
 
     for (int row = 0; row < c_numRows - 1; row++)
     {
-      int buttonID = col * c_numRows + row;
+      Buttons buttonID = (Buttons)(col * c_numRows + row);
       Glib::ustring label = m_textUsageMode->getKeyLabel (buttonID);
       addControl (new RenameLetter (m_textUsageMode, buttonID, Rect (x, y, c_letterWidth, c_letterHeight)));
       y += c_letterHeight;
@@ -82,7 +81,7 @@ void RenameLayout::addControlKeys ()
     if (col == c_numCols / 4)
       x += 2;
 
-    int buttonID = 2 * col * c_numRows + 3;
+    Buttons buttonID = (Buttons)(2 * col * c_numRows + 3);
     Glib::ustring label = m_textUsageMode->getKeyLabel (buttonID);
     addControl (new RenameLetter (m_textUsageMode, buttonID, Rect (x, y, twiceLetterWidth, c_letterHeight)));
     x += twiceLetterWidth;
@@ -94,11 +93,11 @@ void RenameLayout::onTextChanged (const ustring &text)
   setDirty ();
 }
 
-bool RenameLayout::onButton (int i, bool down, ButtonModifiers modifiers)
+bool RenameLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   switch (i)
   {
-    case BUTTON_A:
+    case Buttons::BUTTON_A:
       if (down)
       {
         cancel ();
@@ -107,8 +106,8 @@ bool RenameLayout::onButton (int i, bool down, ButtonModifiers modifiers)
 
       return true;
 
-    case BUTTON_D:
-    case BUTTON_ENTER:
+    case Buttons::BUTTON_D:
+    case Buttons::BUTTON_ENTER:
       if (down)
       {
         commit (m_textUsageMode->getText ());

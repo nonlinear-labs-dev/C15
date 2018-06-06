@@ -26,7 +26,7 @@ class PresetManagerLayout : public DFBLayout
 
     void setFocusAndMode(FocusAndMode focusAndMode);
 
-    virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
     virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 
     bool animateSelectedPreset(function<void()> cb);

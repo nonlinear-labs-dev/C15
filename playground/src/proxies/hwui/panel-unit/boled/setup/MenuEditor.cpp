@@ -53,7 +53,7 @@ void MenuEditor::updateOnSettingChanged ()
   }
 }
 
-bool MenuEditor::onButton (int i, bool down, ButtonModifiers modifiers)
+bool MenuEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }

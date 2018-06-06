@@ -13,7 +13,7 @@ class PresetInfoLayout : public InfoLayout
     PresetInfoLayout ();
     virtual ~PresetInfoLayout ();
 
-    virtual bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
 
   protected:
     virtual void addModuleCaption () override;

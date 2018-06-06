@@ -32,25 +32,25 @@ Scrollable* FileDialogInfoLayout::createScrollableContent()
   return new FileInfoContent(m_file);
 }
 
-bool FileDialogInfoLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool FileDialogInfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if (down)
   {
     switch (i)
     {
-    case BUTTON_PRESET:
+    case Buttons::BUTTON_PRESET:
       Application::get().getHWUI()->undoableSetFocusAndMode(
       { UIFocus::Presets, UIMode::Select });
       return true;
 
 
-    case BUTTON_STORE:
-    case BUTTON_EDIT:
+    case Buttons::BUTTON_STORE:
+    case Buttons::BUTTON_EDIT:
       return true;
 
 
-    case BUTTON_INFO:
-    case BUTTON_ENTER:
+    case Buttons::BUTTON_INFO:
+    case Buttons::BUTTON_ENTER:
       Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().resetOverlay();
       return true;
     }

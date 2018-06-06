@@ -22,7 +22,7 @@ class ParameterLayout2 : public DFBLayout
   protected:
     virtual Parameter * getCurrentParameter () const;
     virtual Parameter * getCurrentEditParameter () const;
-    virtual bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
     virtual bool onRotary (int inc, ButtonModifiers modifiers) override;
     virtual void setDefault ();
 };
@@ -35,7 +35,7 @@ class ParameterSelectLayout2 : public virtual ParameterLayout2
 
   protected:
     virtual void init () override;
-    virtual bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
     virtual Carousel *createCarousel (const Rect &rect);
 
     void setCarousel(Carousel *c);
@@ -54,7 +54,7 @@ class ParameterEditLayout2 : public virtual ParameterLayout2
 
   protected:
     virtual void init () override;
-    virtual bool onButton (int i, bool down, ButtonModifiers modifiers) override;
+    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
     virtual ButtonMenu *createMenu (const Rect &rect) = 0;
 
     ButtonMenu *getMenu ();

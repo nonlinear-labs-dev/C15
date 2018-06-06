@@ -15,8 +15,7 @@
 #include "SoledHeader.h"
 #include "DirectLoadIndicator.h"
 
-PresetsLayout::PresetsLayout () :
-    super (Application::get ().getHWUI ()->getBaseUnit ().getPlayPanel ().getSOLED ())
+PresetsLayout::PresetsLayout ()
 {
   const auto headlineHeight = 16;
 

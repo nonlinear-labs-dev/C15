@@ -150,8 +150,8 @@ public class PresetList extends OverlayLayout {
 		else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
 			getNonMaps().getServerProxy().dropEditBufferOnBank(b);
 		else if (dragProxy.getOrigin() instanceof IBank) {
-			Bank draggedBank = (Bank)dragProxy.getOrigin();
-			if(!draggedBank.hasSlaves()) {
+			Bank draggedBank = (Bank) dragProxy.getOrigin();
+			if (!draggedBank.hasSlaves()) {
 				getNonMaps().getServerProxy().dropBankOnBank((IBank) dragProxy.getOrigin(), b);
 			}
 		}
@@ -329,6 +329,14 @@ public class PresetList extends OverlayLayout {
 
 	public double getHorizontalCenterLinePosition() {
 		return getRelativePosition().getCenterPoint().getY();
+	}
+
+	public void renameCurrentPreset() {
+		BeltPreset p = findSelectedPreset();
+
+		if (p != null)
+			p.rename();
+
 	}
 
 }

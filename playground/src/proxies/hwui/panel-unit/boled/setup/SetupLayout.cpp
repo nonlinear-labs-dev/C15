@@ -712,7 +712,6 @@ class Breadcrumb : public Control
 };
 
 SetupLayout::SetupLayout(FocusAndMode focusAndMode) :
-    super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled()),
     m_tree(new NavTree::Setup()),
     m_focusAndMode(focusAndMode)
 {
@@ -818,16 +817,16 @@ void SetupLayout::diveUp()
   buildPage();
 }
 
-bool SetupLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool SetupLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
-    if(i == BUTTON_PRESET)
+    if(i == Buttons::BUTTON_PRESET)
     {
       Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
       return true;
     }
-    else if(i == BUTTON_STORE)
+    else if(i == Buttons::BUTTON_STORE)
     {
       Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Store));
       return true;
@@ -835,7 +834,7 @@ bool SetupLayout::onButton(int i, bool down, ButtonModifiers modifiers)
 
     if(m_focusAndMode.mode == UIMode::Select)
     {
-      if(i == BUTTON_ENTER || i == BUTTON_C || i == BUTTON_D)
+      if(i == Buttons::BUTTON_ENTER || i == Buttons::BUTTON_C || i == Buttons::BUTTON_D)
       {
         onEnterInSelectionMode(modifiers);
         return true;
@@ -845,7 +844,7 @@ bool SetupLayout::onButton(int i, bool down, ButtonModifiers modifiers)
     {
       if(!m_editor->onButton(i, down, modifiers))
       {
-        if(i == BUTTON_ENTER)
+        if(i == Buttons::BUTTON_ENTER)
         {
           onEnterInEditMode();
           return true;
@@ -853,7 +852,7 @@ bool SetupLayout::onButton(int i, bool down, ButtonModifiers modifiers)
       }
     }
 
-    if(i == BUTTON_A || i == BUTTON_B)
+    if(i == Buttons::BUTTON_A || i == Buttons::BUTTON_B)
     {
       diveUp();
       return true;

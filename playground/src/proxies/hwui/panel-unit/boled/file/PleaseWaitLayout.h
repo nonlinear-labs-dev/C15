@@ -1,9 +1,9 @@
-
 #include <proxies/hwui/DFBLayout.h>
 
-class PleaseWaitLayout : public DFBLayout {
-public:
+class PleaseWaitLayout : public DFBLayout
+{
+  public:
     PleaseWaitLayout();
-    bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+    bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 

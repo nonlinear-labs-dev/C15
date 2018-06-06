@@ -3,6 +3,7 @@ package com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets;
 import java.util.LinkedList;
 
 import com.google.gwt.xml.client.Node;
+import com.nonlinearlabs.NonMaps.client.world.Control;
 import com.nonlinearlabs.NonMaps.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.NonMaps.client.world.overlay.belt.Belt;
 
@@ -60,6 +61,32 @@ public class BeltPresetLayout extends OverlayLayout {
 
 	public BankControl getBankControl() {
 		return bank.getBankControl();
+	}
+
+	public void toggleDirectLoad() {
+		autoLoad.toggle();
+	}
+
+	public void renameCurrentPreset() {
+		bank.renameCurrentPreset();
+	}
+
+	public void toggleStoreSelect() {
+		store.toggleStoreSelect();
+	}
+
+	public Control handleEnterKey() {
+		return store.handleEnterKey();
+	}
+
+	@Override
+	public void fadeOut() {
+		super.fadeOut();
+		storeSelectOff();
+	}
+
+	public void storeSelectOff() {
+		store.storeSelectOff();
 	}
 
 }

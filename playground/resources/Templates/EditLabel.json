@@ -1,0 +1,22 @@
+{
+	"controls": {
+		"EditLabel": {
+			"Text": {
+				"Class": "Text",
+				"Rect": "0,0,48,12",
+				"Default": "Edit"
+			}
+		}
+	},
+	"styles": {
+		"EditLabel-Colors": {
+			"selector": {
+				"ControlClasses": "EditLabel"
+			},
+			"styles": {
+				"BackgroundColor": "C255",
+				"Color": "C43"
+			}
+		}
+	}
+}

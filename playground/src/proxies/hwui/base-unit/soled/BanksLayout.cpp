@@ -15,8 +15,7 @@
 #include "SoledHeader.h"
 #include "DirectLoadIndicator.h"
 
-BanksLayout::BanksLayout () :
-    super (Application::get().getHWUI()->getBaseUnit().getPlayPanel().getSOLED())
+BanksLayout::BanksLayout ()
 {
   const auto headlineHeight = 16;
   addControl (new SoledHeader ("Bank", Rect (0, 0, 31, headlineHeight + 1)));

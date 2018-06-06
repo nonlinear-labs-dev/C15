@@ -85,6 +85,11 @@ class StorePreset extends SVGImage {
 
 	@Override
 	public Control click(Position eventPoint) {
+		fire();
+		return this;
+	}
+
+	private void fire() {
 		boolean hasSelectedBank = getPresetManager().hasSelectedBank();
 
 		if (getPresetManager().isInStoreSelectMode())
@@ -96,7 +101,6 @@ class StorePreset extends SVGImage {
 			storeToBank();
 
 		getPresetManager().endStoreSelectMode();
-		return this;
 	}
 
 	protected PresetManager getPresetManager() {
@@ -185,6 +189,11 @@ class StorePreset extends SVGImage {
 				invalidate(INVALIDATION_FLAG_UI_CHANGED);
 			}
 		}
+	}
+
+	public Control handleEnterKey() {
+		fire();
+		return null;
 	}
 
 }

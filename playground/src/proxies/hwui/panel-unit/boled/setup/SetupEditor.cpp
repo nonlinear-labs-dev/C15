@@ -10,7 +10,7 @@ SetupEditor::~SetupEditor ()
 {
 }
 
-bool SetupEditor::onButton (int i, bool down, ButtonModifiers modifiers)
+bool SetupEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }

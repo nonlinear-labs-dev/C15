@@ -1,0 +1,45 @@
+{
+	"controls": {
+		"BigSlider": {
+			"Border": {
+				"Class": "Border",
+				"Rect": "0,0,102,6"
+			},
+			"Background": {
+				"Class": "Bar",
+				"Rect": "1,1,100,4"
+			},
+			"Slider": {
+				"Class": "Bar",
+				"Rect": "1,1,100,4",
+				"Property": "Range"
+			},
+			"CenterMark": {
+				"Class": "Bar",
+				"Rect": "50,1,1,4"
+			}
+		}
+	},
+	"styles": {
+		"slider-foreground": {
+			"selector": {
+				"ControlClasses": "BigSlider",
+				"PrimitiveInstances": "Slider",
+				"PrimitiveClasses": "Bar"
+			},
+			"styles": {
+				"Color": "C255"
+			}
+		},
+		"centerMark": {
+			"selector": {
+				"ControlClasses": "BigSlider",
+				"PrimitiveClasses": "Bar",
+				"PrimitiveInstances": "CenterMark"
+			},
+			"styles": {
+				"Color": "C255"
+			}
+		}
+	}
+}

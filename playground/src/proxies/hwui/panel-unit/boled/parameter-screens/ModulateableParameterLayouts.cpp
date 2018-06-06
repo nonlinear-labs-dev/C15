@@ -46,9 +46,9 @@ ModulateableParameterSelectLayout2::ModulateableParameterSelectLayout2() :
     super1(),
     super2()
 {
-  addControl(new MCPositionButton(BUTTON_A));
-  addControl(new MCSelectButton(BUTTON_B));
-  addControl(new MCAmountButton(BUTTON_C));
+  addControl(new MCPositionButton(Buttons::BUTTON_A));
+  addControl(new MCSelectButton(Buttons::BUTTON_B));
+  addControl(new MCAmountButton(Buttons::BUTTON_C));
 
   m_modeOverlay = addControl(new Overlay(Rect(0, 0, 256, 64)));
 
@@ -70,27 +70,27 @@ void ModulateableParameterSelectLayout2::init()
   super2::init();
 }
 
-bool ModulateableParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ModulateableParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
     switch(i)
     {
-      case BUTTON_A:
+      case Buttons::BUTTON_A:
         if(hasModulationSource())
           toggleMode(Mode::MacroControlPosition);
         return true;
 
-      case BUTTON_B:
+      case Buttons::BUTTON_B:
         toggleMode(Mode::MacroControlSelection);
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         if(hasModulationSource())
           toggleMode(Mode::MacroControlAmount);
         return true;
 
-      case BUTTON_D:
+      case Buttons::BUTTON_D:
         if(auto m = dynamic_cast<ModulationCarousel*>(getCarousel()))
         {
           if(m_mode == Mode::CarouselUpperBound)
@@ -349,9 +349,9 @@ ModulateableParameterEditLayout2::ModulateableParameterEditLayout2() :
     super1(),
     super2()
 {
-  addControl(new Button("", BUTTON_A));
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_A));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
 
   if(auto p = getCurrentParameter())
   {

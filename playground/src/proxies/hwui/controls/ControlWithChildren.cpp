@@ -9,6 +9,16 @@ ControlWithChildren::~ControlWithChildren ()
 {
 }
 
+void ControlWithChildren::collectDirtyRects(std::list<Rect> &rects) const
+{
+  ControlOwner::collectDirtyRects(rects);
+}
+
+void ControlWithChildren::setDirtyIfOverlapsWithAny(const std::list<Rect> &rects)
+{
+  ControlOwner::setDirtyIfOverlapsWithAny(rects);
+}
+
 bool ControlWithChildren::isDirty () const
 {
   if(super::isDirty())
