@@ -2,6 +2,7 @@ package com.nonlinearlabs.NonMaps.client.world.maps.parameters;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.world.Rect;
 import com.nonlinearlabs.NonMaps.client.world.maps.MapsLayout;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.PhysicalControlParameter.ReturnMode;
@@ -123,6 +124,10 @@ public class ModulationRoutingParameter extends Parameter {
 			setupChildren(src.getReturnMode() != ReturnMode.None);
 			getValue().setBoolean(src.getReturnMode() == ReturnMode.None);
 		}
+	}
+
+	public PhysicalControlParameter getSource() {
+		return (PhysicalControlParameter) NonMaps.get().getNonLinearWorld().getParameterEditor().findParameter(sourceParamID);
 	}
 
 }

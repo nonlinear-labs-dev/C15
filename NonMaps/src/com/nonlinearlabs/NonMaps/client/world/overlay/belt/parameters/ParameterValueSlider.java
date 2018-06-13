@@ -1,14 +1,17 @@
 package com.nonlinearlabs.NonMaps.client.world.overlay.belt.parameters;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.core.client.GWT;
 import com.nonlinearlabs.NonMaps.client.Millimeter;
 import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.world.Gray;
 import com.nonlinearlabs.NonMaps.client.world.Position;
 import com.nonlinearlabs.NonMaps.client.world.RGB;
 import com.nonlinearlabs.NonMaps.client.world.Rect;
+import com.nonlinearlabs.NonMaps.client.world.maps.parameters.ModulationRoutingParameter;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.Parameter;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.PhysicalControlParameter;
+import com.nonlinearlabs.NonMaps.client.world.maps.parameters.PhysicalControlParameter.ReturnMode;
 import com.nonlinearlabs.NonMaps.client.world.overlay.OverlayControl;
 
 public class ParameterValueSlider extends OverlayControl {
@@ -22,12 +25,30 @@ public class ParameterValueSlider extends OverlayControl {
 		return (Sliders) super.getParent();
 	}
 
+	public static boolean isParameterHWONOFF(Parameter p) {
+		if(p instanceof ModulationRoutingParameter) {
+			ModulationRoutingParameter mp = (ModulationRoutingParameter)p;
+			
+			if(mp.getSource().getReturnMode() == ReturnMode.None) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	@Override
 	public void draw(Context2d ctx, int invalidationMask) {
 		Parameter p = getParameter();
-
-		double value = p.getValue().getQuantizedClipped();
+		
 		boolean isBiPolar = p.isBiPolar();
+
+		if(!isParameterHWONOFF(p))
+			isBiPolar = false;
+		
+		GWT.log(p.getClass().toString());
+		
+		double value = p.getValue().getQuantizedClipped();
+
 
 		if (!p.shouldHaveHandleOnly()) {
 
