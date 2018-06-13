@@ -286,6 +286,9 @@ public class SearchQueryDialog extends GWTDialog {
 		HorizontalPanel panel = new HorizontalPanel();
 
 		final TextBox nameField = new TextBox();
+		final Label l = new Label();
+		l.setText("⌫");
+		l.setHeight("2em");
 		nameField.getElement().addClassName("search-query");
 		nameField.addKeyUpHandler(new NameFieldKeyUpHandler(nameField));
 		nameField.addMouseDownHandler(new NameFieldMouseUpHandler(nameField));
@@ -312,6 +315,9 @@ public class SearchQueryDialog extends GWTDialog {
 			}
 		});
 
+		l.addStyleName("search-query-symbol");
+		
+		panel.add(l);
 		panel.add(nameField);
 		panel.add(matches = new Label(""));
 		updateMatches(0);
