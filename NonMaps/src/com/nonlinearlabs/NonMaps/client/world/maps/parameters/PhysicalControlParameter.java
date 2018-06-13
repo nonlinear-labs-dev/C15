@@ -120,7 +120,7 @@ abstract public class PhysicalControlParameter extends Parameter {
 	}
 
 	public String getDisplayName() {
-
+		
 		int idWithLargestAmount = 0;
 		double largestAmount = 0;
 		boolean isNegative = false;

@@ -7,6 +7,7 @@ import com.nonlinearlabs.NonMaps.client.Millimeter;
 import com.nonlinearlabs.NonMaps.client.world.Control;
 import com.nonlinearlabs.NonMaps.client.world.Position;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.ModulatableParameter;
+import com.nonlinearlabs.NonMaps.client.world.maps.parameters.ModulationRoutingParameter;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.Parameter;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.Parameter.Initiator;
 import com.nonlinearlabs.NonMaps.client.world.maps.parameters.SelectionListener;
@@ -408,6 +409,15 @@ public class BeltParameterLayout extends OverlayLayout implements SelectionListe
 	public String[] getDecoratedValue(boolean b) {
 		Parameter p = getNonMaps().getNonLinearWorld().getParameterEditor().getSelectedOrSome();
 
+		if(!ParameterValueSlider.isParameterHWONOFF(p))
+		{
+			ModulationRoutingParameter mp = (ModulationRoutingParameter)p;
+			if(mp.getValue().getQuantizedClipped() == 0.0)
+				return new String[] { "Off" };
+			else
+				return new String[] { "On" };
+		}
+		
 		if (p instanceof ModulatableParameter) {
 			ModulatableParameter m = (ModulatableParameter) p;
 			MacroControls s = m.getModulationSource();
