@@ -276,7 +276,7 @@ void PedalParameter::loadDefault(UNDO::Scope::tTransactionPtr transaction)
 }
 
 void PedalParameter::loadFromPreset (UNDO::Scope::tTransactionPtr transaction, const tControlPositionValue &value) {
-  setCpValue(transaction, Initiator::INDIRECT, value, true);
+  setCpValue(transaction, Initiator::EXPLICIT_OTHER, value, true);
 }
 
 
