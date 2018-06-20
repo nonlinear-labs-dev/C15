@@ -27,6 +27,7 @@ class PedalParameter : public PhysicalControlParameter
     virtual ReturnMode getReturnMode() const override;
     virtual void copyFrom (UNDO::Scope::tTransactionPtr transaction, Parameter * other) override;
     virtual void loadDefault (UNDO::Scope::tTransactionPtr transaction) override;
+    virtual void loadFromPreset (UNDO::Scope::tTransactionPtr transaction, const tControlPositionValue &value) override;
 
     shared_ptr<PedalType> getAssociatedPedalTypeSetting() const;
 

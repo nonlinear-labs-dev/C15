@@ -275,6 +275,11 @@ void PedalParameter::loadDefault(UNDO::Scope::tTransactionPtr transaction)
   undoableSetPedalMode(transaction, PedalModes::STAY);
 }
 
+void PedalParameter::loadFromPreset (UNDO::Scope::tTransactionPtr transaction, const tControlPositionValue &value) {
+  setCpValue(transaction, Initiator::EXPLICIT_OTHER, value, true);
+}
+
+
 size_t PedalParameter::getHash() const
 {
   size_t hash = super::getHash();
