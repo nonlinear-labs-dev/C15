@@ -11,6 +11,7 @@ class RenameMCLayout : public RenameLayout
 
   public:
     RenameMCLayout ();
+    ~RenameMCLayout();
 
   private:
     virtual void commit (const Glib::ustring &newName) override;

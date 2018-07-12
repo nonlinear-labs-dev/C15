@@ -416,7 +416,7 @@ void PanelUnitParameterEditMode::bruteForceUpdateLeds()
       letMacroControlTargetsBlink();
     }
 
-    if(Application::get().getSettings()->getSetting<SignalFlowIndicationSetting>()->get() == true)
+    if(Application::get().getSettings()->getSetting<SignalFlowIndicationSetting>()->get())
       letTargetsBlink(selParam);
   }
 }
