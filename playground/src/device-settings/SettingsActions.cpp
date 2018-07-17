@@ -1,6 +1,7 @@
 #include "SettingsActions.h"
 #include "Settings.h"
 #include "Setting.h"
+#include "BenderCurve.h"
 #include <device-settings/DebugLevel.h>
 #include <Application.h>
 #include <proxies/hwui/TestLayout.h>
@@ -19,6 +20,14 @@ SettingsActions::SettingsActions (Settings &settings) :
     if(auto s = settings.getSetting (key))
     {
       s->setSetting(Initiator::EXPLICIT_WEBUI, value);
+    }
+  });
+
+  addAction("set-bender-raw", [&](shared_ptr<NetworkRequest> request)
+  {
+    if(auto benderSetting = dynamic_pointer_cast<BenderCurve>(settings.getSetting("BenderCurve")))
+    {
+      benderSetting->setRawMode(!(request->get("rawSetting", "false") == "false"));
     }
   });
 

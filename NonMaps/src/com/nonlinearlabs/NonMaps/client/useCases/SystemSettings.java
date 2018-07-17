@@ -2,6 +2,7 @@ package com.nonlinearlabs.NonMaps.client.useCases;
 
 import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.dataModel.Setup;
+import com.nonlinearlabs.NonMaps.client.dataModel.Setup.BenderCurve;
 import com.nonlinearlabs.NonMaps.client.dataModel.Setup.BooleanValues;
 import com.nonlinearlabs.NonMaps.client.dataModel.Setup.DebugLevel;
 
@@ -21,6 +22,11 @@ public class SystemSettings {
 		Setup.get().systemSettings.debugLevel.setValue(v);
 		NonMaps.get().getServerProxy().setSetting("DebugLevel", v.toString());
 
+	}
+	
+	public void setPitchBenderRaw(BenderCurve v) {
+		Setup.get().systemSettings.benderCurve.setValue(v);
+		NonMaps.get().getServerProxy().setSetting("DebugLevel", v.toString());
 	}
 
 	public void setKioskMode(BooleanValues v) {

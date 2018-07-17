@@ -22,6 +22,7 @@ public class DeveloperSettings extends LayoutResizingVertical {
 		addChild(new TestHWUIDisplay(this));
 		addChild(new KioskMode(this));
 		addChild(new BlockingMainThreadIndication(this));
+		addChild(new PitchBenderRawSetting(this));
 	}
 
 	public String get(String key, String def) {

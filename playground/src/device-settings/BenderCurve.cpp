@@ -15,7 +15,19 @@ BenderCurve::~BenderCurve ()
 
 void BenderCurve::sendToLPC () const
 {
-  Application::get ().getLPCProxy ()->sendSetting (BENDER_CURVE, (uint16_t) (get ()));
+  if(!isInRawMode())
+    Application::get ().getLPCProxy ()->sendSetting (BENDER_CURVE, (uint16_t) (get ()));
+  else
+    Application::get().getLPCProxy()->sendSetting(BENDER_CURVE, (uint16_t)SpecialCurve::Raw);
+}
+
+bool BenderCurve::isInRawMode() const {
+  return m_inRawMode;
+}
+
+void BenderCurve::setRawMode(bool raw) {
+  m_inRawMode = raw;
+  notify();
 }
 
 const vector<Glib::ustring> &BenderCurve::enumToString () const
