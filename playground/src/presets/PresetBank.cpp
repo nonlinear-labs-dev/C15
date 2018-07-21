@@ -807,6 +807,17 @@ const Glib::ustring PresetBank::calcStateString() const
   }
 }
 
+const bool PresetBank::isInCluster() const {
+  bool attached = m_attachment.direction != AttachmentDirection::none;
+  bool isParent = [this](){
+    for(auto& bank: getParent()->getBanks())
+      if(bank->getDirectClusterMaster().get() == this)
+        return true;
+    return false;
+  }();
+  return attached || isParent;
+}
+
 void PresetBank::undoableAssignDefaultPosition(shared_ptr<UNDO::Transaction> transaction)
 {
   auto xy = calcDefaultPosition();
@@ -939,10 +950,71 @@ bool PresetBank::resolveCyclicAttachments(std::vector<PresetBank*> stackedBanks,
   return true;
 }
 
-PresetBank *PresetBank::getClusterMaster()
+PresetBank::tPresetBankPtr PresetBank::getClusterMaster()
 {
   if(auto master = getParent()->findBank(getAttached().uuid))
-    return master->getClusterMaster();
+    if(master.get() != this)
+      return master->getClusterMaster();
 
-  return this;
+  return getParent()->findBank(getUuid());
 }
+
+PresetBank::tPresetBankPtr PresetBank::getDirectClusterMaster()
+{
+  if(auto master = getParent()->findBank(getAttached().uuid))
+    return master;
+
+  return nullptr;
+}
+
+PresetBank *PresetBank::getBottomSlave() {
+  auto pm = Application::get().getPresetManager();
+  for(auto& bank: pm->getBanks()) {
+    if(auto directMaster = bank->getDirectClusterMaster())
+      if(directMaster.get() == this)
+        if(bank->getAttached().direction == AttachmentDirection::top)
+          return bank.get();
+  }
+  return nullptr;
+}
+
+PresetBank *PresetBank::getRightSlave() {
+  auto pm = Application::get().getPresetManager();
+  for(auto& bank: pm->getBanks()) {
+    if(auto directMaster = bank->getDirectClusterMaster())
+      if(directMaster.get() == this)
+        if(bank->getAttached().direction == AttachmentDirection::left)
+          return bank.get();
+  }
+  return nullptr;
+}
+
+std::vector<PresetManager::tBankPtr> PresetBank::getClusterAsSortedVector()
+{
+  bool finished = false;
+  std::vector<PresetManager::tBankPtr> cluster;
+  PresetBank* current = this;
+  PresetBank* nodeToRight = nullptr;
+
+  while(!finished)
+  {
+    nodeToRight = nullptr;
+
+    while(current)
+    {
+      cluster.push_back(getParent()->findBank(current->getUuid())); //urgh
+
+      if(auto rightSlave = current->getRightSlave())
+        nodeToRight = rightSlave;
+
+      current = current->getBottomSlave();
+    }
+
+    if(nodeToRight)
+      current = nodeToRight;
+    else
+      finished = true;
+  }
+  return cluster;
+}
+

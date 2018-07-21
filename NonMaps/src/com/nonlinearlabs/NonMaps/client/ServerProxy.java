@@ -102,7 +102,7 @@ public class ServerProxy {
 			if(PresetInfoDialog.isShown()) {
 				PresetInfoDialog.theDialog.updateEditBuffer(editBufferNode);
 			} else {
-				PresetInfoDialog.theDialog.setLastUpdateNode(editBufferNode);
+				PresetInfoDialog.setLastUpdateNode(editBufferNode);
 			}
 
 			setPlaygroundSoftwareVersion(deviceInfo);
@@ -935,6 +935,12 @@ public class ServerProxy {
 	public void renameEditBuffer(String text) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "rename-editbuffer");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("name", text));
+		queueJob(uri, false);
+	}
+
+	public void sortBankNumbers() {
+		StaticURI.Path path = new StaticURI.Path("presets", "banks", "sort-bank-numbers");
+		StaticURI uri = new StaticURI(path);
 		queueJob(uri, false);
 	}
 }

@@ -107,6 +107,14 @@ public class PresetManagerContextMenu extends ContextMenu {
 				return super.click(eventPoint);
 			}
 		});
+		
+		addChild(new ContextMenuItem(this, "Sort Bank Numbers") {
+			@Override
+			public Control click(Position eventPoint) {
+				getNonMaps().getServerProxy().sortBankNumbers();
+				return super.click(eventPoint);
+			}
+		});
 
 	}
 

@@ -233,6 +233,25 @@ void PresetManager::undoableSetOrderNumber(UNDO::Scope::tTransactionPtr transact
   });
 }
 
+void PresetManager::undoableSetBanks(UNDO::Scope::tTransactionPtr transaction, std::vector<tBankPtr> newBankOrder) {
+  auto swapData = UNDO::createSwapData(newBankOrder);
+
+
+
+  sanitizeBankClusterRelations(transaction);
+  transaction->addSimpleCommand([ = ] (UNDO::Command::State)
+                                {
+                                  swapData->swapWith(m_banks);
+                                  for(auto bank : swapData->get<0>()) {
+                                    bank->onChange();
+                                  }
+                                  reassignOrderNumbers();
+                                  sanitizeBankClusterRelations(transaction);
+
+                                });
+}
+
+
 void PresetManager::undoableSelectNext()
 {
   auto selected = getSelectedBank();
@@ -896,6 +915,16 @@ Glib::ustring PresetManager::getBaseName(const ustring &basedOn) const
 auto PresetManager::getBanks() const -> const vector<tBankPtr> &
 {
   return m_banks;
+}
+
+auto PresetManager::getBanksIf (std::function<bool(const tBankPtr&)> predicate) const -> const vector<tBankPtr> {
+  std::vector<tBankPtr> ret;
+  for(auto b: m_banks) {
+    if(predicate(b)) {
+      ret.push_back(b);
+    }
+  }
+  return ret;
 }
 
 void PresetManager::undoableStoreInitSound(UNDO::Scope::tTransactionPtr transaction)

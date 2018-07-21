@@ -30,6 +30,7 @@ class PresetBank : public UpdateDocumentContributor,
     const PresetManager *getParent() const;
 
     typedef shared_ptr<Preset> tPresetPtr;
+    typedef shared_ptr<PresetBank> tPresetBankPtr;
 
     enum AttachmentDirection
     {
@@ -63,6 +64,9 @@ class PresetBank : public UpdateDocumentContributor,
     SaveResult save(RefPtr<Gio::File> bankFolder);
     int getHighestIncrementForBaseName(const Glib::ustring &baseName) const;
     const Glib::ustring calcStateString() const;
+
+    const bool isInCluster() const;
+    std::vector<PresetManager::tBankPtr>  getClusterAsSortedVector();
 
     bool setSelectedPreset(Glib::ustring uuid);
     void assignDefaultPosition();
@@ -111,14 +115,19 @@ class PresetBank : public UpdateDocumentContributor,
     void resolveCyclicAttachments(UNDO::Scope::tTransactionPtr transaction);
     bool resolveCyclicAttachments(std::vector<PresetBank*> stackedBanks, UNDO::Scope::tTransactionPtr transaction);
 
-    PresetBank *getClusterMaster();
+    tPresetBankPtr getClusterMaster();
+    tPresetBankPtr getDirectClusterMaster();
 
     virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
     // CALLBACKS
     sigc::connection onBankChanged(sigc::slot<void> slot);
 
-  private:
+    PresetBank *getBottomSlave();
+    PresetBank *getRightSlave();
+
+
+      private:
     void resetAttached(UNDO::Scope::tTransactionPtr transaction);
     Glib::ustring generateHumanReadablePresetName(size_t pos) const;
     void setName(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &name);

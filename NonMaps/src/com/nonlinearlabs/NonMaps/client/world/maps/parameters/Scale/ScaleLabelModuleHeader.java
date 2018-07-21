@@ -39,7 +39,7 @@ public class ScaleLabelModuleHeader extends LabelModuleHeader {
 				.getContextMenuSettings();
 		if (contextMenuSettings.isEnabled()) {
 			Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
-			return o.setContextMenu(pos, new ScaleGroupContextMenu(o, (Scale) m_parentGroup));
+			return o.setContextMenu(pos, new ScaleGroupContextMenu(o, (Scale) getParent()));
 		}
 		return super.onContextMenu(pos);
 	}

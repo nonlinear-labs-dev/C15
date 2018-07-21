@@ -8,6 +8,7 @@
 #include "http/SoupOutStream.h"
 #include <http/HTTPRequest.h>
 #include "xml/XmlWriter.h"
+#include "BankSorter.h"
 #include <xml/MemoryInStream.h>
 #include <xml/XmlReader.h>
 #include <device-settings/AutoLoadSelectedPreset.h>
@@ -956,6 +957,10 @@ BankActions::BankActions(PresetManager &presetManager) :
     {
       bank->undoableMovePosition(transaction, x, y);
     }
+  });
+
+  addAction("sort-bank-numbers", [&](auto request) mutable {
+    BankSorter::sort();
   });
 }
 
