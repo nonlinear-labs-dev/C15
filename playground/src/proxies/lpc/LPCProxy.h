@@ -40,7 +40,7 @@ enum LPCSettingIDs
   PEDAL_4_TYPE = 29,                        // ... SwitchOpening = 3
 
   AFTERTOUCH_CURVE = 30,                    // SOFT = 0, NORMAL = 1, HARD = 2
-  BENDER_CURVE = 31,                    // ZERO = 0, NARROW = 1, WIDE = 2
+  BENDER_CURVE = 31,                    // ZERO = 0, NARROW = 1, WIDE = 2, RAW = 255
 
   PITCHBEND_ON_PRESSED_KEYS = 32,           // OFF = 0, ON = 1
 

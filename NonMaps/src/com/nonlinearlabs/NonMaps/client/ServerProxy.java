@@ -944,4 +944,11 @@ public class ServerProxy {
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("name", text));
 		queueJob(uri, false);
 	}
+
+	public void setPitchBenderBypass(boolean val) {
+		StaticURI.Path path = new StaticURI.Path("settings", "set-bender-raw");
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("rawSetting", val));
+		queueJob(uri, false);
+		
+	}
 }
