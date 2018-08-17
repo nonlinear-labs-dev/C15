@@ -14,7 +14,7 @@
 #if _DEVELOPMENT_PC
 static const char *c_fileName = "/home/hhoegelo/development/nl/playground/hostapd.conf";
 #else
-static const char *c_fileName = "/etc/hostapd.conf";
+static const char *c_fileName = "/etc/hostapd.nonlinear.conf";
 #endif
 
 HostAPDSetting::HostAPDSetting (Settings &parent, const std::string &pattern) :
