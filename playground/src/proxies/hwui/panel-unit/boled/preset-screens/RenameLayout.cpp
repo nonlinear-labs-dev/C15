@@ -15,13 +15,10 @@ const int c_letterHeight = 12;
 RenameLayout::RenameLayout () :
     super (Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ())
 {
-  auto &panelUnit = Application::get ().getHWUI ()->getPanelUnit ();
-  m_oldUsageMode = panelUnit.getUsageMode();
 }
 
 RenameLayout::~RenameLayout ()
 {
-  Application::get().getHWUI()->getPanelUnit().restoreUsageMode(m_oldUsageMode);
 }
 
 void RenameLayout::init ()

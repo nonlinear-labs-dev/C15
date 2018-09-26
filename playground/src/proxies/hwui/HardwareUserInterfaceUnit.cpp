@@ -28,11 +28,6 @@ void HardwareUserInterfaceUnit::setUsageMode (UsageMode *mode)
   m_usageMode->setup ();
 }
 
-void HardwareUserInterfaceUnit::restoreUsageMode (shared_ptr<UsageMode> mode)
-{
-  m_usageMode = mode;
-}
-
 shared_ptr<UsageMode> HardwareUserInterfaceUnit::getUsageMode ()
 {
   return m_usageMode;
