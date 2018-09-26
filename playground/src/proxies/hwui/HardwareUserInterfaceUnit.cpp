@@ -17,7 +17,7 @@ void HardwareUserInterfaceUnit::setUsageMode (UsageMode *mode)
 {
   if(mode && m_usageMode)
   {
-    if(typeid(*mode) == typeid(*m_usageMode.get()))
+    if(typeid(*m_usageMode.get()) == typeid(*mode))
     {
       delete mode;
       return;

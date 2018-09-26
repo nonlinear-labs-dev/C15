@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <Application.h>
 #include <http/UndoScope.h>
 #include <presets/Preset.h>
@@ -10,7 +12,7 @@
 
 RenamePresetLayout::RenamePresetLayout (tCommitCB commitCB, tCancelCB cancelCB) :
     super (),
-    m_commitCB (commitCB), m_cancelCB(cancelCB)
+    m_commitCB (std::move(commitCB)), m_cancelCB(std::move(cancelCB))
 
 {
   if (auto bank = Application::get ().getPresetManager ()->getSelectedBank ())

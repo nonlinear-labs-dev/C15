@@ -162,24 +162,23 @@ void AppendOverwriteInsertButtonMenu::overwrite(shared_ptr<PresetBank> bank, sha
 
 void AppendOverwriteInsertButtonMenu::pushRenameScreen()
 {
-  auto layout = new RenamePresetLayout([=](const Glib::ustring &newName)
-  {
-    if (auto bank = Application::get ().getPresetManager ()->getSelectedBank ())
-    {
-      const auto &uuid = bank->getSelectedPreset ();
+  Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(
+          new RenamePresetLayout([=](const Glib::ustring &newName)
+          {
+              if (auto bank = Application::get ().getPresetManager ()->getSelectedBank ())
+              {
+                const auto &uuid = bank->getSelectedPreset ();
 
-      if(auto preset = bank->getPreset (uuid))
-      {
-        auto scope = Application::get().getUndoScope()->startTransaction("Rename preset");
-        preset->undoableSetName (scope->getTransaction(), newName);
-      }
-    }
-    animate();
-  }, [=](){
-    animate();
-  });
-
-  Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
+                if(auto preset = bank->getPreset (uuid))
+                {
+                  auto scope = Application::get().getUndoScope()->startTransaction("Rename preset");
+                  preset->undoableSetName (scope->getTransaction(), newName);
+                }
+              }
+              animate();
+          }, [=](){
+              animate();
+          }));
 }
 
 shared_ptr<Preset> AppendOverwriteInsertButtonMenu::overwritePreset(shared_ptr<Preset> preset)
