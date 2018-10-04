@@ -98,6 +98,7 @@ class PresetManager : public ContentSection
 
     sigc::connection onBankSelection (sigc::slot<void, tBankPtr> slot);
     sigc::connection onNumBanksChanged (sigc::slot<void, int> slot);
+    sigc::connection onRestored(sigc::slot<void> slot);
 
     Glib::ustring createPresetNameBasedOn (const Glib::ustring &oldName) const;
     void undoableAppendBank (UNDO::Scope::tTransactionPtr transaction, const Uuid &uuid, bool autoSelect);
@@ -108,6 +109,8 @@ class PresetManager : public ContentSection
     void sanitizeBankClusterRelations(UNDO::Scope::tTransactionPtr transaction);
 
     Glib::ustring getDiffString(tPresetPtr preset1, tPresetPtr preset2);
+
+    void onRestore();
   protected:
     void onTransactionAdded ();
     virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
@@ -141,7 +144,7 @@ class PresetManager : public ContentSection
     SaveResult saveInitSound (RefPtr<Gio::File> pmFolder);
     SaveResult saveBanks (RefPtr<Gio::File> file);
     Glib::ustring getBaseName (const ustring &basedOn) const;
-    void deleteOldBanks (const Glib::RefPtr<Gio::File> pmFolder);
+    void deleteOldBanks (Glib::RefPtr<Gio::File> pmFolder);
 
     void undoableSelectSibling (UNDO::Scope::tTransactionPtr transaction, int idx);
 
@@ -154,9 +157,6 @@ class PresetManager : public ContentSection
     void recurseSaveAsynchronously ();
 
     void resolveCyclicAttachments(UNDO::Scope::tTransactionPtr transaction);
-    void enforceClusterRuleOfOne();
-    std::vector<PresetManager::tBankPtr> getClusterMasters();
-    std::tuple<PresetManager::tBankPtr, PresetManager::tBankPtr> getChildrenOfMaster(Glib::ustring masterUUID);
 
     vector<tBankPtr> m_banks;
     shared_ptr<EditBuffer> m_editBuffer;
@@ -174,6 +174,7 @@ class PresetManager : public ContentSection
 
     Signal<void, tBankPtr> m_sigBankSelection;
     Signal<void, int> m_sigNumBanksChanged;
+    Signal<void> m_sigRestored;
 
     Expiration m_saveJob;
     tUpdateID m_lastSavedMetdaDataUpdateID = 0;

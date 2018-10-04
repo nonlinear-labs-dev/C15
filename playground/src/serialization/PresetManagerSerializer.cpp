@@ -15,6 +15,10 @@ PresetManagerSerializer::PresetManagerSerializer(PresetManager &pm) :
 {
 }
 
+PresetManagerSerializer::~PresetManagerSerializer() {
+  m_pm.onRestore();
+}
+
 Glib::ustring PresetManagerSerializer::getTagName()
 {
   return "preset-manager";

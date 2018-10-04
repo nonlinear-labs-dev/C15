@@ -8,6 +8,7 @@ class PresetManagerSerializer : public Serializer
 {
   public:
     PresetManagerSerializer (PresetManager &pm);
+    ~PresetManagerSerializer();
 
     static Glib::ustring getTagName();
 

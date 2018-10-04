@@ -17,4 +17,3 @@ public:
     int getSelectedIndex () const override;
 
 };
-
