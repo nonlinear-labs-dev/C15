@@ -14,7 +14,6 @@ PanelUnitPresetMode::PanelUnitPresetMode() :
     m_bruteForceLedThrottler(std::chrono::milliseconds(40))
 {
   DebugLevel::gassy (__PRETTY_FUNCTION__);
-
   Application::get().getPresetManager()->getEditBuffer()->onChange(mem_fun(this, &PanelUnitPresetMode::bruteForceUpdateLeds));
 
 }
@@ -28,8 +27,7 @@ void PanelUnitPresetMode::bruteForceUpdateLeds ()
 {
   m_bruteForceLedThrottler.doTask([this]()
   {
-    array<TwoStateLED::LedState, numLeds> states;
-    states.fill(TwoStateLED::OFF);
+    array<TwoStateLED::LedState, numLeds> states{TwoStateLED::OFF};
 
     if(Application::get().getHWUI()->getButtonModifiers()[SHIFT] == true)
       getMappings().forEachButton ([&](int buttonId, const list<int> parameters)
@@ -68,7 +66,7 @@ void PanelUnitPresetMode::setStateForButton(int buttonId, const list<int> parame
 
     if (auto mc = dynamic_cast<MacroControlParameter*>(editBuffer->findParameterByID(i)))
     {
-      if (mc->getTargets().size() > 0)
+      if (!mc->getTargets().empty())
       {
         states[buttonId] = TwoStateLED::ON;
       }

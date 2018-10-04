@@ -17,7 +17,6 @@ class HardwareUserInterfaceUnit
 
     void setUsageMode (UsageMode *mode);
 
-    void restoreUsageMode (shared_ptr<UsageMode> mode);
     shared_ptr<UsageMode> getUsageMode ();
     shared_ptr<const UsageMode> getUsageMode () const;
 

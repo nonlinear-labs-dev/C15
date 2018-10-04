@@ -32,5 +32,4 @@ private:
     void replaceUsageMode();
     void addLetters();
     void addControlKeys();
-    shared_ptr<UsageMode> m_oldUsageMode;
 };

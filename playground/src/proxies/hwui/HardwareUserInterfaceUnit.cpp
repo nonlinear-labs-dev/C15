@@ -17,7 +17,7 @@ void HardwareUserInterfaceUnit::setUsageMode (UsageMode *mode)
 {
   if(mode && m_usageMode)
   {
-    if(typeid(*mode) == typeid(*m_usageMode.get()))
+    if(typeid(*m_usageMode.get()) == typeid(*mode))
     {
       delete mode;
       return;
@@ -26,11 +26,6 @@ void HardwareUserInterfaceUnit::setUsageMode (UsageMode *mode)
 
   m_usageMode.reset (mode);
   m_usageMode->setup ();
-}
-
-void HardwareUserInterfaceUnit::restoreUsageMode (shared_ptr<UsageMode> mode)
-{
-  m_usageMode = mode;
 }
 
 shared_ptr<UsageMode> HardwareUserInterfaceUnit::getUsageMode ()
