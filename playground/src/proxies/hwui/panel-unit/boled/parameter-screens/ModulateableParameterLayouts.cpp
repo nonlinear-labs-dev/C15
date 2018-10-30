@@ -52,6 +52,8 @@ ModulateableParameterSelectLayout2::ModulateableParameterSelectLayout2() :
 
   m_modeOverlay = addControl(new Overlay(Rect(0, 0, 256, 64)));
 
+  Application::get().getPresetManager()->getEditBuffer()->onPresetChanged(sigc::mem_fun(this, &ModulateableParameterSelectLayout2::onPresetSelectionChanged));
+
   setMode(Mode::ParameterValue);
 }
 
@@ -345,6 +347,18 @@ void ModulateableParameterSelectLayout2::setMode (Mode desiredMode)
   }
 
   setAllDirty();
+}
+
+void ModulateableParameterSelectLayout2::onPresetSelectionChanged() {
+  if(auto eb = Application::get().getPresetManager()->getEditBuffer()) {
+    if(auto selParam = eb->getSelected()) {
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(selParam)) {
+        if(modParam->getModulationSource() == ModulateableParameter::ModulationSource::NONE) {
+          setMode(Mode::ParameterValue);
+        }
+      }
+    }
+  }
 }
 
 ModulateableParameterEditLayout2::ModulateableParameterEditLayout2() :

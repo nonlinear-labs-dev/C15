@@ -20,6 +20,7 @@ class ModulateableParameterSelectLayout2 : public ParameterSelectLayout2, public
 
     virtual void copyFrom (Layout *other) override;
     void installMcAmountScreen();
+    void onPresetSelectionChanged();
 
   protected:
     virtual void init () override;
