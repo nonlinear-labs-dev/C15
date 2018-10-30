@@ -30,6 +30,7 @@ class SelectedParameterModAmount : public Control
     void setRangeOrdered(float from, float to);
     void setParameter (Parameter * param);
     void onParamValueChanged(const Parameter* param);
+    void onPresetChanged();
 
     
     sigc::connection m_paramValueConnection;
