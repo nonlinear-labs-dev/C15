@@ -10,29 +10,33 @@
 
 class MacroControlParameter;
 
-CurrentModulatedValueLabel::CurrentModulatedValueLabel (const Rect &r) :
-    super (r)
+CurrentModulatedValueLabel::CurrentModulatedValueLabel(const Rect &r)
+    : super(r)
 {
 }
 
-CurrentModulatedValueLabel::~CurrentModulatedValueLabel ()
+CurrentModulatedValueLabel::~CurrentModulatedValueLabel()
 {
 }
 
-void CurrentModulatedValueLabel::updateText (MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
+void CurrentModulatedValueLabel::updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
 {
-  if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
-    setText (modulatedParam->getDisplayString () + " F", 2);
+  auto displayString = modulatedParam->getDisplayString();
+  std::string displayStringWithoutSpaces = displayString;
+  displayStringWithoutSpaces.erase(remove_if(displayStringWithoutSpaces.begin(), displayStringWithoutSpaces.end(), [](auto c){ return std::isspace(c);}), displayStringWithoutSpaces.end());
+
+  if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
+    setText(displayStringWithoutSpaces + "F", 1);
   else
-    setText (modulatedParam->getDisplayString (), 0);
+    setText(displayStringWithoutSpaces, 0);
 }
 
-bool CurrentModulatedValueLabel::onRotary (int inc, ButtonModifiers modifiers)
+bool CurrentModulatedValueLabel::onRotary(int inc, ButtonModifiers modifiers)
 {
-  if (auto p = getModulatedParameter ())
+  if(auto p = getModulatedParameter())
   {
-    auto scope = p->getUndoScope ().startContinuousTransaction (p, "Set '%0'", p->getGroupAndParameterName ());
-    p->stepCPFromHwui (scope->getTransaction (), inc, modifiers);
+    auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+    p->stepCPFromHwui(scope->getTransaction(), inc, modifiers);
     return true;
   }
   return false;

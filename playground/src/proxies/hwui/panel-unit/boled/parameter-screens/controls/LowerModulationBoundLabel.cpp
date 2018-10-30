@@ -8,22 +8,23 @@
 
 class MacroControlParameter;
 
-LowerModulationBoundLabel::LowerModulationBoundLabel (const Rect &r) :
-    super (r)
+LowerModulationBoundLabel::LowerModulationBoundLabel(const Rect &r)
+    : super(r)
 {
 }
 
-LowerModulationBoundLabel::~LowerModulationBoundLabel ()
+LowerModulationBoundLabel::~LowerModulationBoundLabel()
 {
 }
 
-void LowerModulationBoundLabel::updateText (MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
+void LowerModulationBoundLabel::updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
 {
   auto rangeDisplayValues = modulatedParam->getModRangeAsDisplayValues();
+  std::string valueWithoutSpaces = rangeDisplayValues.first;
+  valueWithoutSpaces.erase(remove_if(valueWithoutSpaces.begin(), valueWithoutSpaces.end(), [](auto c){ return std::isspace(c);}), valueWithoutSpaces.end());
 
-  if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
-    setText (rangeDisplayValues.first + " F", 2);
+  if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
+    setText(valueWithoutSpaces + "F", 1);
   else
-    setText (rangeDisplayValues.first, 0);
+    setText(valueWithoutSpaces, 0);
 }
-

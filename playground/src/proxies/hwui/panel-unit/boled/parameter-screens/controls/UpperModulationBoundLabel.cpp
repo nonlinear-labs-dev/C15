@@ -20,10 +20,12 @@ UpperModulationBoundLabel::~UpperModulationBoundLabel ()
 void UpperModulationBoundLabel::updateText (MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
 {
   auto rangeDisplayValues = modulatedParam->getModRangeAsDisplayValues();
+  std::string valueWithoutSpaces = rangeDisplayValues.second;
+  valueWithoutSpaces.erase(remove_if(valueWithoutSpaces.begin(), valueWithoutSpaces.end(), [](auto c){ return std::isspace(c);}), valueWithoutSpaces.end());
 
   if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
-    setText (rangeDisplayValues.second + " F", 2);
+    setText (valueWithoutSpaces + "F", 1);
   else
-    setText (rangeDisplayValues.second, 0);
+    setText (valueWithoutSpaces, 0);
 }
 
