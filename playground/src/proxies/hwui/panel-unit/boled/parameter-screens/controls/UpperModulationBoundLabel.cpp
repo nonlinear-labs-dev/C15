@@ -5,6 +5,7 @@
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/UpperModulationBoundLabel.h>
 #include <utility>
+#include <tools/StringTools.h>
 
 class MacroControlParameter;
 
@@ -20,8 +21,7 @@ UpperModulationBoundLabel::~UpperModulationBoundLabel ()
 void UpperModulationBoundLabel::updateText (MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
 {
   auto rangeDisplayValues = modulatedParam->getModRangeAsDisplayValues();
-  std::string valueWithoutSpaces = rangeDisplayValues.second;
-  valueWithoutSpaces.erase(remove_if(valueWithoutSpaces.begin(), valueWithoutSpaces.end(), [](auto c){ return std::isspace(c);}), valueWithoutSpaces.end());
+  std::string valueWithoutSpaces = StringTools::removeSpaces(rangeDisplayValues.second);
 
   if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
     setText (valueWithoutSpaces + "F", 1);

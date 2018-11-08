@@ -7,6 +7,7 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/CurrentModulatedValueLabel.h>
+#include <tools/StringTools.h>
 
 class MacroControlParameter;
 
@@ -22,8 +23,7 @@ CurrentModulatedValueLabel::~CurrentModulatedValueLabel()
 void CurrentModulatedValueLabel::updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
 {
   auto displayString = modulatedParam->getDisplayString();
-  std::string displayStringWithoutSpaces = displayString;
-  displayStringWithoutSpaces.erase(remove_if(displayStringWithoutSpaces.begin(), displayStringWithoutSpaces.end(), [](auto c){ return std::isspace(c);}), displayStringWithoutSpaces.end());
+  std::string displayStringWithoutSpaces = StringTools::removeSpaces(displayString);
 
   if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
     setText(displayStringWithoutSpaces + "F", 1);
