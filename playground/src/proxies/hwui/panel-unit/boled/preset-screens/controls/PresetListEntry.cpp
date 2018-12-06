@@ -24,7 +24,6 @@ PresetListEntry::PresetListEntry(const Rect &pos) :
 
 PresetListEntry::~PresetListEntry()
 {
-  doAnimationCallback();
   m_animationConnection.disconnect();
   m_presetConnection.disconnect();
 }
