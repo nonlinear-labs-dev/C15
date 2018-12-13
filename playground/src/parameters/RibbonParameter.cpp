@@ -224,20 +224,18 @@ void RibbonParameter::onPresetSentToLpc() const
 
 void RibbonParameter::sendModeToLpc() const
 {
-  if(dynamic_cast<const EditBuffer *>(getParentGroup()->getParent()))
-  {
-    uint16_t id = getID() == HardwareSourcesGroup::getUpperRibbonParameterID() ? PLAY_MODE_UPPER_RIBBON_BEHAVIOUR
-                                                                               : PLAY_MODE_LOWER_RIBBON_BEHAVIOUR;
-    uint16_t v = 0;
 
-    if(getRibbonReturnMode() == RibbonReturnMode::RETURN)
-      v += 1;
+  uint16_t id = getID() == HardwareSourcesGroup::getUpperRibbonParameterID() ? PLAY_MODE_UPPER_RIBBON_BEHAVIOUR
+                                                                             : PLAY_MODE_LOWER_RIBBON_BEHAVIOUR;
+  uint16_t v = 0;
 
-    if(getRibbonTouchBehaviour() == RibbonTouchBehaviour::RELATIVE)
-      v += 2;
+  if(getRibbonReturnMode() == RibbonReturnMode::RETURN)
+    v += 1;
 
-    Application::get().getLPCProxy()->sendSetting(id, v);
-  }
+  if(getRibbonTouchBehaviour() == RibbonTouchBehaviour::RELATIVE)
+    v += 2;
+
+  Application::get().getLPCProxy()->sendSetting(id, v);
 }
 
 void RibbonParameter::copyFrom(UNDO::Transaction *transaction, const PresetParameter *other)

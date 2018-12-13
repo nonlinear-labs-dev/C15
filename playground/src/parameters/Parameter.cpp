@@ -197,8 +197,7 @@ void Parameter::undoableSetDefaultValue(UNDO::Transaction *transaction, const Pr
 
 void Parameter::sendToLpc() const
 {
-  if(dynamic_cast<const EditBuffer *>(getParentGroup()->getParent()))
-    Application::get().getLPCProxy()->sendParameter(this);
+  Application::get().getLPCProxy()->sendParameter(this);
 }
 
 tControlPositionValue Parameter::getNextStepValue(int incs, ButtonModifiers modifiers) const

@@ -137,12 +137,9 @@ void PedalParameter::onPresetSentToLpc() const
 
 void PedalParameter::sendModeToLpc() const
 {
-  if(dynamic_cast<const EditBuffer *>(getParentGroup()->getParent()))
-  {
     uint16_t id = mapParameterIdToLPCSetting();
     uint16_t v = (uint16_t) m_mode;
     Application::get().getLPCProxy()->sendSetting(id, v);
-  }
 }
 
 uint16_t PedalParameter::mapParameterIdToLPCSetting() const
