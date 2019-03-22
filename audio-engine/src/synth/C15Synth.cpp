@@ -31,6 +31,12 @@ void C15Synth::doAudio(SampleFrame *target, size_t numFrames)
   }
 }
 
+double C15Synth::measurePerformance(std::chrono::seconds time)
+{
+  m_dsp->testLoadPreset(4);
+  Synth::measurePerformance(time);
+}
+
 void C15Synth::printAndResetTcdInputLog()
 {
   auto cp = m_dsp->m_tcd_input_log;

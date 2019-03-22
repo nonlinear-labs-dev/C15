@@ -12,6 +12,7 @@ class C15Synth : public Synth
 
   void doMidi(const MidiEvent &event) override;
   void doAudio(SampleFrame *target, size_t numFrames) override;
+  double measurePerformance(std::chrono::seconds time) override;
 
   void printAndResetTcdInputLog();
   void resetDSP();

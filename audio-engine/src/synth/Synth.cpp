@@ -51,10 +51,23 @@ const AudioOutput *Synth::getAudioOut() const
 
 double Synth::measurePerformance(std::chrono::seconds time)
 {
-  auto start = std::chrono::high_resolution_clock::now();
-  auto numSamples = static_cast<size_t>(time.count() * getOptions()->getSampleRate());
+  auto numSamples = static_cast<size_t>(getOptions()->getSampleRate());
   std::vector<SampleFrame> samples(numSamples);
-  doAudio(samples.data(), numSamples);
+
+  auto start = std::chrono::high_resolution_clock::now();
+  for(int i = 0; i < time.count(); i++)
+  {
+    for(int v = 0; v < getOptions()->getPolyphony(); v++)
+    {
+      MidiEvent e;
+      e.raw[0] = 0x90;
+      e.raw[1] = v + 49;
+      e.raw[2] = 100;
+      doMidi(e);
+    }
+    doAudio(samples.data(), numSamples);
+  }
+
   auto timeUsed = std::chrono::high_resolution_clock::now() - start;
   return 1.0 * time / timeUsed;
 }

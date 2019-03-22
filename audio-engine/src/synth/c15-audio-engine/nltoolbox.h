@@ -217,30 +217,31 @@ inline float arctan(float x)
  *  @return   sine value
 ******************************************************************************/
 
-inline float sinP3_wrap(float _x)
-{
-    _x += -0.25f;
-
-//    _x = _x - round(_x);
-
-    if (_x >= 0.f)
+    inline float sinP3_wrap(float _x)
     {
+      return SineWaveTables::sine16384.wrapped(_x);
+      /*-
+      _x += -0.25f;
+
+      //    _x = _x - round(_x);
+
+      if(_x >= 0.f)
+      {
         _x -= static_cast<int>(_x + 0.5f);
-    }
-    else
-    {
+      }
+      else
+      {
         _x -= static_cast<int>(_x - 0.5f);
+      }
+
+      _x += _x;
+      _x = std::abs(_x);
+      _x = 0.5f - _x;
+
+      float x_square = _x * _x;
+      return _x * ((2.26548f * x_square - 5.13274f) * x_square + 3.14159f);
+      -*/
     }
-
-    _x += _x;
-    _x = std::abs(_x);
-    _x = 0.5f - _x;
-
-    float x_square = _x * _x;
-    return _x * ((2.26548f * x_square - 5.13274f) * x_square + 3.14159f);
-}
-
-
 
 /*****************************************************************************/
 /** @brief    sine calculation of an incoming value - 3rd degree polynomial
@@ -249,16 +250,18 @@ inline float sinP3_wrap(float _x)
  *  @return   sine value
 ******************************************************************************/
 
-inline float sinP3_noWrap(float _x)
-{
-    _x += _x;
-    _x = std::abs(_x);
-    _x = 0.5f - _x;
+    inline float sinP3_noWrap(float _x)
+    {
+      return SineWaveTables::sine16384.unwrapped(_x);
+      /*-
+      _x += _x;
+      _x = std::abs(_x);
+      _x = 0.5f - _x;
 
-    float x_square = _x * _x;
-    return _x * ((2.26548f * x_square - 5.13274f) * x_square + 3.14159f);
-}
-
+      float x_square = _x * _x;
+      return _x * ((2.26548f * x_square - 5.13274f) * x_square + 3.14159f);
+      -*/
+    }
 
 /*****************************************************************************/
 /** @brief    interpolation of 4 neighbouring samples from the delay buffers
