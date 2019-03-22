@@ -33,7 +33,9 @@ void C15Synth::doAudio(SampleFrame *target, size_t numFrames)
 
 double C15Synth::measurePerformance(std::chrono::seconds time)
 {
+#if test_inputModeFlag
   m_dsp->testLoadPreset(4);
+#endif
   Synth::measurePerformance(time);
 }
 

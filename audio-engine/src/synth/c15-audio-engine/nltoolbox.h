@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "ae_sine_wavetable.h"
+
 #include <cmath>
 #include <iostream>
 #include <stdint.h>
