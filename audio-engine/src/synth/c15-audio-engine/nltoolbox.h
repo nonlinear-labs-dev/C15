@@ -254,7 +254,7 @@ inline float arctan(float x)
 
     inline float sinP3_noWrap(float _x)
     {
-      return SineWaveTables::sine16384.unwrapped(_x);
+      return SineWaveTables::sine16384.unwrapped(_x + 0.25f);
       /*-
       _x += _x;
       _x = std::abs(_x);
