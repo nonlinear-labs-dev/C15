@@ -2,7 +2,6 @@
 #include "io/audio/AlsaAudioOutput.h"
 #include "io/audio/AudioOutputMock.h"
 #include "io/midi/AlsaMidiInput.h"
-#include "io/midi/TestMidiInput.h"
 #include "io/midi/MidiInputMock.h"
 #include "io/Log.h"
 #include "Options.h"
@@ -22,9 +21,7 @@ Synth::Synth()
   else
     m_out = std::make_unique<AlsaAudioOutput>(outDeviceName, [=](auto buf, auto length) { process(buf, length); });
 
-  if(auto distance = options->testNotesDistance())
-    m_in = std::make_unique<TestMidiInput>(distance, [=](auto event) { pushMidiEvent(event); });
-  else if(inDeviceName.empty())
+  if(inDeviceName.empty())
     m_in = std::make_unique<MidiInputMock>([=](auto) {});
   else
     m_in = std::make_unique<AlsaMidiInput>(inDeviceName, [=](auto event) { pushMidiEvent(event); });
@@ -79,6 +76,25 @@ void Synth::pushMidiEvent(const MidiEvent &event)
 }
 
 void Synth::process(SampleFrame *target, size_t numFrames)
+{
+  if(getOptions()->getAdditionalMidiDelay() == std::chrono::nanoseconds::zero())
+    processAudioWithoutTimestampedMidi(target, numFrames);
+  else
+    processAudioWithTimestampedMidi(target, numFrames);
+}
+
+void Synth::processAudioWithoutTimestampedMidi(SampleFrame *target, size_t numFrames)
+{
+  while(auto e = m_midiRingBuffer.peek())
+  {
+    doMidi(*e);
+    m_midiRingBuffer.pop();
+  }
+
+  doAudio(target, numFrames);
+}
+
+void Synth::processAudioWithTimestampedMidi(SampleFrame *target, size_t numFrames)
 {
   constexpr auto nanoRec = 1.0 / std::nano::den;
   const auto sr = getOptions()->getSampleRate();

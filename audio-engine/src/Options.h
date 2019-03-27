@@ -7,7 +7,6 @@ class Options
  public:
   Options(int &argc, char **&argv);
 
-  int testNotesDistance() const;
   bool areXRunsFatal() const;
   int getSampleRate() const;
   int getPolyphony() const;
@@ -24,7 +23,6 @@ class Options
   int getAlsaRingBufferSize() const;
 
  private:
-  int m_testNotesTime = 0;
   bool m_fatalXRuns = false;
   int m_rate = 48000;
   int m_polyphony = 20;

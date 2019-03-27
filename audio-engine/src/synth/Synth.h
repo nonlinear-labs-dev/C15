@@ -28,6 +28,9 @@ class Synth
 
  private:
   void process(SampleFrame *target, size_t numFrames);
+  void processAudioWithoutTimestampedMidi(SampleFrame *target, size_t numFrames);
+  void processAudioWithTimestampedMidi(SampleFrame *target, size_t numFrames);
+
   void pushMidiEvent(const MidiEvent &event);
 
   std::unique_ptr<MidiInput> m_in;

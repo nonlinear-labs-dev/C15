@@ -8,6 +8,7 @@
 #include <memory>
 
 class AudioWriterBase;
+class HighPriorityTask;
 
 class AlsaAudioOutput : public AudioOutput
 {
@@ -21,7 +22,6 @@ class AlsaAudioOutput : public AudioOutput
   void stop() override;
 
   double getPerformance() const override;
-  void prioritizeThread();
 
  private:
   void open(const std::string &deviceName);
@@ -29,7 +29,6 @@ class AlsaAudioOutput : public AudioOutput
   void close();
   void doBackgroundWork();
   void handleWriteError(snd_pcm_sframes_t result);
-  void setThreadAffinity();
   void playback(SampleFrame *frames, size_t numFrames);
   template <typename T> snd_pcm_sframes_t playbackIntLE(const SampleFrame *frames, size_t numFrames);
   snd_pcm_sframes_t playbackF32(SampleFrame *frames, size_t numFrames);
@@ -37,7 +36,7 @@ class AlsaAudioOutput : public AudioOutput
 
   Callback m_cb;
   snd_pcm_t *m_handle = nullptr;
-  std::thread m_bgThread;
+  std::unique_ptr<HighPriorityTask> m_task;
   bool m_run = true;
 
   snd_pcm_uframes_t m_framesProcessed = 0;

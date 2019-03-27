@@ -1,5 +1,6 @@
 #include "AlsaMidiInput.h"
 #include "io/Log.h"
+#include "io/HighPriorityTask.h"
 #include <iostream>
 
 AlsaMidiInput::AlsaMidiInput(const std::string &deviceName, Callback cb)
@@ -23,17 +24,14 @@ void AlsaMidiInput::open(const std::string &deviceName)
 void AlsaMidiInput::start()
 {
   m_run = true;
-  m_bgThread = std::thread([=]() { doBackgroundWork(); });
+  m_task = std::make_unique<HighPriorityTask>(1, [=]() { doBackgroundWork(); });
 }
 
 void AlsaMidiInput::stop()
 {
   m_run = false;
-
   m_cancellable->cancel();
-
-  if(m_bgThread.joinable())
-    m_bgThread.join();
+  m_task.reset();
 }
 
 void AlsaMidiInput::close()
@@ -42,31 +40,8 @@ void AlsaMidiInput::close()
     snd_rawmidi_close(h);
 }
 
-void AlsaMidiInput::prioritizeThread()
-{
-  struct sched_param param;
-  param.sched_priority = 50;
-
-  if(auto r = pthread_setschedparam(pthread_self(), SCHED_FIFO, &param))
-    Log::warning("Could not set thread priority - consider 'sudo setcap 'cap_sys_nice=eip' <application>'");
-}
-
-void AlsaMidiInput::setThreadAffinity()
-{
-  int coreID = 1;
-
-  cpu_set_t set;
-  CPU_ZERO(&set);
-  CPU_SET(coreID, &set);
-  if(sched_setaffinity(0, sizeof(cpu_set_t), &set) < 0)
-    Log::warning("Could not set thread affinity");
-}
-
 void AlsaMidiInput::doBackgroundWork()
 {
-  prioritizeThread();
-  setThreadAffinity();
-
   uint8_t byte;
   snd_midi_event_t *parser = nullptr;
 

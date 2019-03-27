@@ -2,7 +2,9 @@
 
 #include "MidiInput.h"
 #include <giomm.h>
-#include <thread>
+#include <memory>
+
+class HighPriorityTask;
 
 class AlsaMidiInput : public MidiInput
 {
@@ -19,11 +21,9 @@ class AlsaMidiInput : public MidiInput
   void open(const std::string &deviceName);
   void close();
   void doBackgroundWork();
-  void prioritizeThread();
-  void setThreadAffinity();
 
   Glib::RefPtr<Gio::Cancellable> m_cancellable;
   snd_rawmidi_t *m_handle = nullptr;
-  std::thread m_bgThread;
   bool m_run = true;
+  std::unique_ptr<HighPriorityTask> m_task;
 };

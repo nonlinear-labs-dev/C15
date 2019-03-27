@@ -558,7 +558,8 @@ void dsp_host::destinationUpdate(float _value)
   {
     for(p = 0; p < m_decoder.m_selectedParams.m_data[1].m_data[1].m_length; p++)
     {
-      m_params.setDest(v, m_decoder.m_selectedParams.m_data[1].m_data[1].m_data[p], _value);
+      m_params.setDest(m_decoder.m_selectedVoices.m_data[1].m_data[v],
+                       m_decoder.m_selectedParams.m_data[1].m_data[1].m_data[p], _value);
     }
   }
 }

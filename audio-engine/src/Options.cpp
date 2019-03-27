@@ -25,8 +25,6 @@ Options::Options(int &argc, char **&argv)
   add(mainGroup, m_polyphony, "polyphony", 'p', "Polyphony of the c15 audio engine");
   add(mainGroup, m_midiInputDeviceName, "midi-in", 'm', "Name of the alsa midi input device");
   add(mainGroup, m_audioOutputDeviceName, "audio-out", 'a', "Name of the alsa audio output device");
-  add(mainGroup, m_testNotesTime, "test-notes", 't',
-      "Generate midi notes in the given distance (ms) instead of using midi in");
   add(mainGroup, m_fatalXRuns, "fatal-xruns", 'f', "Terminate program in case of alsa underrun or overrun");
   add(mainGroup, m_measurePerformance, "measure-performance", 'e', "Calculate performance of audio engine");
   add(mainGroup, additionalMidiDelayString, "additional-midi-delay", 'i',
@@ -44,11 +42,6 @@ Options::Options(int &argc, char **&argv)
 
   if(!additionalMidiDelayString.empty())
     m_additionalMidiDelay = std::chrono::nanoseconds(std::stoi(additionalMidiDelayString));
-}
-
-int Options::testNotesDistance() const
-{
-  return m_testNotesTime;
 }
 
 bool Options::areXRunsFatal() const

@@ -34,7 +34,15 @@ endforeach(lib)
 
 include_directories(src)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -march=native")
+
+IF(GPO_COLLECT)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -fprofile-dir=/tmp/data/pgo -fprofile-generate=/tmp/data/pgo")
+ENDIF(GPO_COLLECT)
+
+IF(GPO_APPLY)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -fprofile-dir=/tmp/data/pgo -fprofile-use=/tmp/data/pgo -fprofile-correction")
+ENDIF(GPO_APPLY)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 

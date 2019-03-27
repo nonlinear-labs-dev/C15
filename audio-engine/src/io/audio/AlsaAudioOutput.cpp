@@ -2,6 +2,7 @@
 #include "AudioWriter.h"
 #include "main.h"
 #include "Options.h"
+#include "io/HighPriorityTask.h"
 #include "io/Log.h"
 #include <iostream>
 #include <algorithm>
@@ -89,45 +90,18 @@ void AlsaAudioOutput::open(const std::string& deviceName)
 void AlsaAudioOutput::start()
 {
   m_run = true;
-  m_bgThread = std::thread([=]() { doBackgroundWork(); });
+  m_task = std::make_unique<HighPriorityTask>(0, [=]() { doBackgroundWork(); });
 }
 
 void AlsaAudioOutput::stop()
 {
   m_run = false;
-
-  if(m_bgThread.joinable())
-    m_bgThread.join();
-}
-
-void AlsaAudioOutput::prioritizeThread()
-{
-  sched_param p;
-  auto scheduler = SCHED_FIFO;
-  p.sched_priority = sched_get_priority_max(scheduler);
-  Log::info("scheduling priority of", p.sched_priority);
-
-  if(auto r = pthread_setschedparam(pthread_self(), scheduler, &p))
-    Log::warning("Could not set thread priority - consider 'sudo setcap 'cap_sys_nice=eip' <application>'", r);
-}
-
-void AlsaAudioOutput::setThreadAffinity()
-{
-  int coreID = 0;
-
-  cpu_set_t set;
-  CPU_ZERO(&set);
-  CPU_SET(coreID, &set);
-  if(sched_setaffinity(0, sizeof(cpu_set_t), &set) < 0)
-    Log::warning("Could not set thread affinity");
+  m_task.reset();
 }
 
 void AlsaAudioOutput::doBackgroundWork()
 {
   const auto framesPerCallback = m_numFramesPerPeriod;
-
-  prioritizeThread();
-  setThreadAffinity();
 
   snd_pcm_prepare(m_handle);
 
