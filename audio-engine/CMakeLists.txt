@@ -45,7 +45,7 @@ endforeach(lib)
 
 include_directories(src)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -march=native -g")
 
 IF(GPO_COLLECT)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -fprofile-dir=/tmp/data/pgo -fprofile-generate=/tmp/data/pgo")

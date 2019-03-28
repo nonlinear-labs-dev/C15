@@ -37,14 +37,14 @@ class ParameterStorage
     uint32_t param;
   };
 
-  FloatVectorWrapper getParameterForAllVoices(uint32_t param)
+  FloatVector &getParameterForAllVoices(uint32_t param)
   {
-    return FloatVectorWrapper(m_paramsignaldataP[param]);
+    return m_paramsignaldataP[param];
   }
 
-  ConstFloatVectorWrapper getParameterForAllVoices(uint32_t param) const
+  const FloatVector &getParameterForAllVoices(uint32_t param) const
   {
-    return ConstFloatVectorWrapper(m_paramsignaldataP[param]);
+    return m_paramsignaldataP[param];
   }
 
   inline float operator[](uint32_t param) const
@@ -71,7 +71,7 @@ class ParameterStorage
 
  private:
   float m_paramsignaldataV[dsp_number_of_voices][sig_number_of_signal_items] = {};
-  float m_paramsignaldataP[sig_number_of_signal_items][dsp_number_of_voices] = {};
+  FloatVector m_paramsignaldataP[sig_number_of_signal_items] = {};
   float *m_boundVoice = m_paramsignaldataV[0];
   uint32_t m_voice = 0;
 };
