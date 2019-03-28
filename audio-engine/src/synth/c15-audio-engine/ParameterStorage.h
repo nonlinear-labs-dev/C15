@@ -8,24 +8,9 @@ class ParameterStorage
  public:
   ParameterStorage() = default;
 
-  struct ConstAccessor
-  {
-    ConstAccessor(float &f)
-        : f(f)
-    {
-    }
-
-    inline operator const float() const
-    {
-      return f;
-    }
-
-    float &f;
-  };
-
   struct Accessor
   {
-    Accessor(ParameterStorage *p, float &f, uint32_t voice, uint32_t param)
+    inline Accessor(ParameterStorage *p, float &f, uint32_t voice, uint32_t param)
         : p(p)
         , f(f)
         , voice(voice)

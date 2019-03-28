@@ -15,6 +15,7 @@
 #include "nltoolbox.h"
 #include "dsp_defines_signallabels.h"
 #include "pe_defines_config.h"
+#include "ParallelData.h"
 
 class ParameterStorage;
 
