@@ -184,7 +184,7 @@ void ae_reverb::set(ParameterStorage &params)
     m_preDel_R_ramp = 0.f;
   }
 
-  tmp_target = std::clamp(params[REV_LPF], 0.1f, m_omegaClip_max);
+  tmp_target = std::clamp((float) params[REV_LPF], 0.1f, m_omegaClip_max);
   tmp_target = NlToolbox::Math::tan(tmp_target * m_warpConst_PI);
   if(m_lp_omega_target - tmp_target != 0.f)
   {
@@ -194,7 +194,7 @@ void ae_reverb::set(ParameterStorage &params)
     m_lp_omega_ramp = 0.f;
   }
 
-  tmp_target = std::clamp(params[REV_HPF], 0.1f, m_omegaClip_max);
+  tmp_target = std::clamp((float) params[REV_HPF], 0.1f, m_omegaClip_max);
   tmp_target = NlToolbox::Math::tan(tmp_target * m_warpConst_PI);
   if(m_hp_omega_target - tmp_target != 0.f)
   {

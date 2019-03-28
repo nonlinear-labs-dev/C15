@@ -72,7 +72,7 @@ void ae_svfilter::apply(float _sampleA, float _sampleB, float _sampleComb, Param
 
   float outputSample_1 = lowpassOutput * std::max(-(params[SVF_LBH_1]), 0.f);
   outputSample_1 += (bandpassOutput * (1.f - std::abs(params[SVF_LBH_1])));
-  outputSample_1 += (highpassOutput * std::max(params[SVF_LBH_1], 0.f));
+  outputSample_1 += (highpassOutput * std::max((float) params[SVF_LBH_1], 0.f));
 
   //************************** 1st Stage Parabol Sat ***********************//
   m_first_sat_stateVar = std::clamp(bandpassOutput, -2.f, 2.f);
@@ -95,7 +95,7 @@ void ae_svfilter::apply(float _sampleA, float _sampleB, float _sampleComb, Param
 
   tmpVar = lowpassOutput * std::max(-(params[SVF_LBH_2]), 0.f);
   tmpVar += (bandpassOutput * (1.f - std::abs(params[SVF_LBH_2])));
-  tmpVar += (highpassOutput * std::max(params[SVF_LBH_2], 0.f));
+  tmpVar += (highpassOutput * std::max((float) params[SVF_LBH_2], 0.f));
 
   //************************* 2nd Stage Parabol Sat ************************//
   m_second_sat_stateVar = std::clamp(bandpassOutput, -2.f, 2.f);

@@ -76,7 +76,7 @@ void ae_echo::init(float _samplerate, uint32_t _upsampleFactor)
 *******************************************************************************/
 void ae_echo::set(ParameterStorage &params)
 {
-  float omega = std::clamp(params[DLY_LPF], m_freqClip_min, m_freqClip_max);
+  float omega = std::clamp((float) params[DLY_LPF], m_freqClip_min, m_freqClip_max);
   omega = NlToolbox::Math::tan(omega * m_warpConst_PI);
 
   m_lp_a1 = (1.f - omega) / (1.f + omega);

@@ -105,7 +105,7 @@ void ae_flanger::init(float _samplerate, uint32_t _upsampleFactor)
 
 void ae_flanger::set_slow(ParameterStorage &params)
 {
-  float omega = std::clamp(params[FLA_LPF], m_freqClip_min, m_freqClip_max);
+  float omega = std::clamp((float) params[FLA_LPF], m_freqClip_min, m_freqClip_max);
   omega = NlToolbox::Math::tan(omega * m_warpConst_PI);
 
   m_lp_a1 = (1.f - omega) / (1.f + omega);
