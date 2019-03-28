@@ -127,7 +127,7 @@ class dsp_host
   void examineSignal();
 
   /* Audio Engine */
-  ae_soundgenerator m_soundgenerator[dsp_number_of_voices];
+  ae_soundgenerator m_soundgenerator;
   ae_combfilter m_combfilter[dsp_number_of_voices];
 
   /// Activate the SV Filter in pe_defines_config.h -> test_svf_types

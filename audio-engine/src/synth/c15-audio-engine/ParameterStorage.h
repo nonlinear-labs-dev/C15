@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pe_defines_config.h"
+#include "ParallelData.h"
 #include <stdlib.h>
 
 class ParameterStorage
@@ -35,6 +36,16 @@ class ParameterStorage
     uint32_t voice;
     uint32_t param;
   };
+
+  FloatVectorWrapper getParameterForAllVoices(uint32_t param)
+  {
+    return FloatVectorWrapper(m_paramsignaldataP[param]);
+  }
+
+  ConstFloatVectorWrapper getParameterForAllVoices(uint32_t param) const
+  {
+    return ConstFloatVectorWrapper(m_paramsignaldataP[param]);
+  }
 
   inline float operator[](uint32_t param) const
   {

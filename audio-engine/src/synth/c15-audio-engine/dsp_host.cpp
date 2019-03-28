@@ -758,7 +758,7 @@ void dsp_host::keyApply(uint32_t _voiceId)
     const float startPhase = 0.f;
 #endif
     //m_soundgenerator[_voiceId].resetPhase(phaseA, phaseB);
-    m_soundgenerator[_voiceId].resetPhase(startPhase);  // function could be reduced to one argument
+    m_soundgenerator.resetPhase(_voiceId, startPhase);  // function could be reduced to one argument
   }
 }
 
@@ -1519,9 +1519,10 @@ void dsp_host::initAudioEngine()
   m_flush = false;
 
   //****************************** DSP Modules *****************************//
+  m_soundgenerator.init(static_cast<float>(m_samplerate));
+
   for(uint32_t p = 0; p < m_voices; p++)
   {
-    m_soundgenerator[p].init(static_cast<float>(m_samplerate), p);
     m_combfilter[p].init(static_cast<float>(m_samplerate), m_upsampleFactor);
     m_svfilter[p].init(static_cast<float>(m_samplerate));
     m_feedbackmixer[p].init(static_cast<float>(m_samplerate));
@@ -1542,18 +1543,23 @@ void dsp_host::initAudioEngine()
 
 void dsp_host::makePolySound(ParameterStorage &params, uint32_t _voiceID)
 {
-  m_soundgenerator[_voiceID].generate(m_feedbackmixer[_voiceID].m_out, params);
+  if(_voiceID == 0)
+  {
+    // todo: m_feedbackmixer[_voiceID].m_out
+    FloatVector feedbackMixerOuts(0.0f);
+    m_soundgenerator.generate(feedbackMixerOuts, params);
+  }
 
-  m_combfilter[_voiceID].apply(m_soundgenerator[_voiceID].m_out_A, m_soundgenerator[_voiceID].m_out_B, params);
+  m_combfilter[_voiceID].apply(m_soundgenerator.m_out_A[_voiceID], m_soundgenerator.m_out_B[_voiceID], params);
 
-  m_svfilter[_voiceID].apply(m_soundgenerator[_voiceID].m_out_A, m_soundgenerator[_voiceID].m_out_B,
+  m_svfilter[_voiceID].apply(m_soundgenerator.m_out_A[_voiceID], m_soundgenerator.m_out_B[_voiceID],
                              m_combfilter[_voiceID].m_out, params);
 
   m_feedbackmixer[_voiceID].apply(m_combfilter[_voiceID].m_out, m_svfilter[_voiceID].m_out, m_reverb.m_out_FX, params);
 
-  m_soundgenerator[_voiceID].m_feedback_phase = m_feedbackmixer[_voiceID].m_out;
+  m_soundgenerator.m_feedback_phase[_voiceID] = m_feedbackmixer[_voiceID].m_out;
 
-  m_outputmixer.combine(m_soundgenerator[_voiceID].m_out_A, m_soundgenerator[_voiceID].m_out_B,
+  m_outputmixer.combine(m_soundgenerator.m_out_A[_voiceID], m_soundgenerator.m_out_B[_voiceID],
                         m_combfilter[_voiceID].m_out, m_svfilter[_voiceID].m_out, params, _voiceID);
 }
 
@@ -1633,7 +1639,7 @@ void dsp_host::makeMonoSound(ParameterStorage &params)
 
 inline void dsp_host::setPolySlowFilterCoeffs(ParameterStorage &params, uint32_t _voiceID)
 {
-  m_soundgenerator[_voiceID].set(params);
+  m_soundgenerator.set(_voiceID, params);
   m_combfilter[_voiceID].set(params, static_cast<float>(m_samplerate));
   m_feedbackmixer[_voiceID].set(params);
 }
@@ -1711,10 +1717,12 @@ void dsp_host::resetDSP()
   // reset: envlopes
   resetEnv();
   // reset: audio engine poly section (full flush included)
+
+  m_soundgenerator.resetDSP();
+
   uint32_t v;
   for(v = 0; v < m_voices; v++)
   {
-    m_soundgenerator[v].resetDSP();
     m_combfilter[v].resetDSP();
     m_svfilter[v].resetDSP();
     m_feedbackmixer[v].resetDSP();
@@ -1738,10 +1746,11 @@ void dsp_host::resetDSP()
 *******************************************************************************/
 void dsp_host::flushDSP()
 {
+  m_soundgenerator.resetDSP();
+
   // reset: audio engine poly section (full flush included)
   for(uint32_t v = 0; v < m_voices; v++)
   {
-    m_soundgenerator[v].resetDSP();
     m_combfilter[v].resetDSP();
     m_svfilter[v].resetDSP();
     m_feedbackmixer[v].resetDSP();
@@ -1809,10 +1818,10 @@ void dsp_host::muteOsc(uint32_t _oscId, uint32_t _state)
     switch(_oscId)
     {
       case 0:
-        m_soundgenerator[v].m_OscA_mute = _state;
+        m_soundgenerator.m_OscA_mute[v] = 1.0f;
         break;
       case 1:
-        m_soundgenerator[v].m_OscB_mute = _state;
+        m_soundgenerator.m_OscB_mute[v] = 0.0f;
         break;
     }
   }
