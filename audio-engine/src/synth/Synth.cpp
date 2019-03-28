@@ -56,6 +56,11 @@ double Synth::measurePerformance(std::chrono::seconds time)
   return 1.0 * time / timeUsed;
 }
 
+void Synth::resetPerformance()
+{
+  m_out->resetPerformance();
+}
+
 void Synth::pushMidiEvent(const MidiEvent &event)
 {
   auto &c = m_midiRingBuffer.push(event);

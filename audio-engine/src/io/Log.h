@@ -55,7 +55,8 @@ class Log
     std::cout << std::flush;
   }
 
-  template <LogMode mode, typename... Args> static void output(const Args&... args)
+  template <LogMode mode = LogMode::InsertSpacesAndAppendNewLine, typename... Args>
+  static void output(const Args&... args)
   {
     constexpr auto addNewLine = mode == LogMode::AppendNewLine || mode == LogMode::InsertSpacesAndAppendNewLine;
     constexpr auto insertSpaces = mode == LogMode::InsertSpaces || mode == LogMode::InsertSpacesAndAppendNewLine;

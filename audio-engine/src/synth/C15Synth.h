@@ -21,6 +21,8 @@ class C15Synth : public Synth
   void increase();
   void decrease();
 
+  double measurePerformance(std::chrono::seconds time) override;
+
  private:
   void changeSelectedValueBy(int i);
 

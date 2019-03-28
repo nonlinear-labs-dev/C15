@@ -26,11 +26,6 @@ AlsaAudioOutput::~AlsaAudioOutput()
   close();
 }
 
-double AlsaAudioOutput::getPerformance() const
-{
-  return m_performance * 100;
-}
-
 void AlsaAudioOutput::close()
 {
   if(auto h = std::exchange(m_handle, nullptr))
@@ -114,19 +109,17 @@ void AlsaAudioOutput::doBackgroundWork()
   SampleFrame audio[framesPerCallback];
   std::fill(audio, audio + framesPerCallback, SampleFrame{});
 
+  auto microsPerBuffer = std::micro::den * framesPerCallback / getOptions()->getSampleRate();
+
   while(m_run)
   {
-    auto startDSP = std::chrono::high_resolution_clock::now();
+    auto startDSP = g_get_monotonic_time();
     m_cb(audio, framesPerCallback);
-    auto endDSP = std::chrono::high_resolution_clock::now();
+    auto endDSP = g_get_monotonic_time();
     playback(audio, framesPerCallback);
-    auto endPlayback = std::chrono::high_resolution_clock::now();
 
-    auto diffDSP = endDSP - startDSP;
-    auto diffAll = endPlayback - startDSP;
-    auto ratio = 1.0 * diffDSP / diffAll;
-    auto filterCoeff = 0.98;
-    m_performance = filterCoeff * m_performance + (1 - filterCoeff) * ratio;
+    auto diff = endDSP - startDSP;
+    reportPerformanceRatio(1.0 * diff / microsPerBuffer);
   }
 }
 

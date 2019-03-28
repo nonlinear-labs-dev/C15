@@ -21,8 +21,6 @@ class AlsaAudioOutput : public AudioOutput
   void start() override;
   void stop() override;
 
-  double getPerformance() const override;
-
  private:
   void open(const std::string &deviceName);
 
@@ -43,6 +41,4 @@ class AlsaAudioOutput : public AudioOutput
   snd_pcm_uframes_t m_numFramesPerPeriod = 0;
 
   std::unique_ptr<AudioWriterBase> m_writer;
-
-  double m_performance = 0;
 };

@@ -36,23 +36,23 @@ void C15Synth::printAndResetTcdInputLog()
   auto cp = m_dsp->m_tcd_input_log;
   m_dsp->m_tcd_input_log.reset();
 
-  Log::info("TCD MIDI Input Log: (Length:", cp.m_length, ")");
+  Log::output("TCD MIDI Input Log: (Length:", cp.m_length, ")");
 
   if(cp.m_length > 0)
   {
-    Log::info("(elapsed Samples\t: Command Argument, ...) - Argument is always unsigned 14 bit");
+    Log::output("(elapsed Samples\t: Command Argument, ...) - Argument is always unsigned 14 bit");
 
     for(uint32_t i = 0; i < cp.m_length; i++)
     {
       const auto &e = cp.m_entry[(cp.m_startPos + i) % tcd_log_buffersize];
 
       if(e.m_time > 0)
-        Log::info(e.m_time, "\t: ", tcd_command_names[e.m_cmdId], e.m_arg, ", ");
+        Log::output(e.m_time, "\t: ", tcd_command_names[e.m_cmdId], e.m_arg, ", ");
       else
-        Log::info(tcd_command_names[e.m_cmdId], e.m_arg, ", ");
+        Log::output(tcd_command_names[e.m_cmdId], e.m_arg, ", ");
     }
 
-    Log::info("End of TCD MIDI Input Log");
+    Log::output("End of TCD MIDI Input Log");
   }
 }
 
@@ -90,6 +90,18 @@ void C15Synth::increase()
 void C15Synth::decrease()
 {
   changeSelectedValueBy(-1);
+}
+
+double C15Synth::measurePerformance(std::chrono::seconds time)
+{
+  for(int i = 0; i < getOptions()->getPolyphony(); i++)
+  {
+    m_dsp->evalMidi(1, 0, 53);
+    m_dsp->evalMidi(5, 62, 64);
+    m_dsp->evalMidi(1, 0, 83);
+    m_dsp->evalMidi(5, 62, 64);
+  }
+  return Synth::measurePerformance(time);
 }
 
 void C15Synth::changeSelectedValueBy(int i)

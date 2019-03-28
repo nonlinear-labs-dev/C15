@@ -11,6 +11,7 @@ C15_CLI::C15_CLI(C15Synth *synth)
   m_commands['t'] = [=] { synth->toggleTestTone(); };
   m_commands['z'] = [=] { synth->selectTestToneFrequency(); };
   m_commands['u'] = [=] { synth->selectTestToneAmplitude(); };
+  m_commands['r'] = [=] { synth->resetPerformance(); };
   m_commands['+'] = [=] { synth->increase(); };
   m_commands['-'] = [=] { synth->decrease(); };
 

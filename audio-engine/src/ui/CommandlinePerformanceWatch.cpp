@@ -12,8 +12,10 @@ CommandlinePerformanceWatch::CommandlinePerformanceWatch(const AudioOutput *devi
 
 bool CommandlinePerformanceWatch::printPerformance()
 {
+  const auto &p = m_device->getPerformance();
+
   char txt[256];
-  sprintf(txt, "%3.2f %%", m_device->getPerformance());
+  sprintf(txt, "[%3.1f%% ... %3.1f%% ... %3.1f%%]", 100 * p.min, 100 * p.avg, 100 * p.max);
   Log::output<Log::LogMode::InsertSpaces>("\rPerformance:", txt, "#>");
   Log::flush();
   return true;
