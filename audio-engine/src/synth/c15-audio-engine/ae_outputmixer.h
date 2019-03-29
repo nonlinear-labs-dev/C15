@@ -11,6 +11,7 @@
 
 #include "nltoolbox.h"
 #include "dsp_defines_signallabels.h"
+#include "ParallelData.h"
 #include <vector>
 
 class ParameterStorage;
@@ -24,18 +25,21 @@ struct ae_outputmixer
 
   float m_hp30hz_b0;
 
-  std::vector<float> m_hp30hz_stateVar_L;
-  std::vector<float> m_hp30hz_stateVar_R;
+  FloatVector m_hp30hz_stateVar_L;
+  FloatVector m_hp30hz_stateVar_R;
 
   void init(float _samplerate, uint32_t _numOfVoices);
   void combine(float _sampleA, float _sampleB, float _sampleComb, float _sampleSVFilter, ParameterStorage &params,
                uint32_t _voiceID);
+
+  void combine(const FloatVector &_sampleA, const FloatVector &_sampleB, const FloatVector &_sampleComb,
+               const FloatVector &_sampleSVFilter, ParameterStorage &params);
+
   void filter_level(ParameterStorage &params);
   void resetDSP();
 
   //*************************** Highpass Filters ****************************//
   float m_hp_b0, m_hp_b1, m_hp_a1;
-
   float m_hp_stateVar_L1, m_hp_stateVar_R1;
   float m_hp_stateVar_L2, m_hp_stateVar_R2;
 };

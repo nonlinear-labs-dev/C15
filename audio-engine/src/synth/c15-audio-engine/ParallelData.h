@@ -25,14 +25,12 @@ template <typename T, size_t size> class ParallelData<DataMode::Owned, T, size>
 
   inline ParallelData(const T *d)
   {
-#pragma omp simd
     for(size_t i = 0; i < size; i++)
       m_data[i] = d[i];
   }
 
   inline ParallelData(T d)
   {
-#pragma omp simd
     for(size_t i = 0; i < size; i++)
       m_data[i] = d;
   }
@@ -51,7 +49,6 @@ template <typename T, size_t size> class ParallelData<DataMode::Owned, T, size>
   {
     ParallelData<DataMode::Owned, TOut, size> ret;
 
-#pragma omp simd
     for(size_t i = 0; i < size; i++)
       ret[i] = static_cast<TOut>(m_data[i]);
 
@@ -87,7 +84,6 @@ template <typename T, size_t size> class ParallelData<DataMode::Pointer, T, size
   {
     ParallelData<DataMode::Owned, TOut, size> ret;
 
-#pragma omp simd
     for(size_t i = 0; i < size; i++)
       ret[i] = static_cast<TOut>(m_data[i]);
 
@@ -117,7 +113,7 @@ template <typename T, size_t size> class ParallelData<DataMode::ConstPointer, T,
   template <typename TOut> inline explicit operator ParallelData<DataMode::Owned, TOut, size>() const
   {
     ParallelData<DataMode::Owned, TOut, size> ret;
-#pragma omp simd
+
     for(size_t i = 0; i < size; i++)
       ret[i] = static_cast<TOut>(m_data[i]);
 
@@ -140,9 +136,19 @@ namespace std
   {
     ParallelData<DataMode::Owned, T, size> ret;
 
-#pragma omp simd
     for(size_t i = 0; i < size; i++)
       ret[i] = abs(in[i]);
+
+    return ret;
+  }
+
+  template <DataMode rhsDataMode, typename T, size_t size>
+  inline ParallelData<DataMode::Owned, T, size> min(const ParallelData<rhsDataMode, T, size> &in, T a)
+  {
+    ParallelData<DataMode::Owned, T, size> ret;
+
+    for(size_t i = 0; i < size; i++)
+      ret[i] = std::min(in[i], a);
 
     return ret;
   }
@@ -152,7 +158,6 @@ namespace std
   {
     ParallelData<DataMode::Owned, T, size> ret;
 
-#pragma omp simd
     for(size_t i = 0; i < size; i++)
       ret[i] = std::clamp(in[i], min, max);
 
@@ -164,7 +169,6 @@ namespace std
   {
     ParallelData<DataMode::Owned, TOut, size> ret;
 
-#pragma omp simd
     for(size_t i = 0; i < size; i++)
       ret[i] = static_cast<TOut>(std::round(in[i]));
 
@@ -178,13 +182,19 @@ inline ParallelData<DataMode::Owned, T, size> operator&(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i1 = l.m_data;
-  const auto &_i2 = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i1[i] & _i2[i];
+    ret[i] = l[i] & r[i];
+
+  return ret;
+}
+
+template <DataMode lhsDataMode, typename T, size_t size>
+inline ParallelData<DataMode::Owned, T, size> operator&(const ParallelData<lhsDataMode, T, size> &l, T r)
+{
+  ParallelData<DataMode::Owned, T, size> ret;
+
+  for(size_t i = 0; i < size; i++)
+    ret[i] = l[i] & r;
 
   return ret;
 }
@@ -195,13 +205,8 @@ inline ParallelData<DataMode::Owned, T, size> operator*(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i1 = l.m_data;
-  const auto &_i2 = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i1[i] * _i2[i];
+    ret[i] = l[i] * r[i];
 
   return ret;
 }
@@ -212,13 +217,8 @@ inline ParallelData<DataMode::Owned, T, size> operator/(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i1 = l.m_data;
-  const auto &_i2 = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i1[i] / _i2[i];
+    ret[i] = l[i] / r[i];
 
   return ret;
 }
@@ -229,13 +229,8 @@ inline ParallelData<DataMode::Owned, T, size> operator+(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i1 = l.m_data;
-  const auto &_i2 = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i1[i] + _i2[i];
+    ret[i] = l[i] + r[i];
 
   return ret;
 }
@@ -246,13 +241,8 @@ inline ParallelData<DataMode::Owned, T, size> operator-(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i1 = l.m_data;
-  const auto &_i2 = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i1[i] - _i2[i];
+    ret[i] = l[i] - r[i];
 
   return ret;
 }
@@ -261,12 +251,17 @@ template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator&=(ParallelData<lhsDataMode, T, size> &l,
                                                       const ParallelData<rhsDataMode, T, size> &r)
 {
-  const auto &_i = r.m_data;
-  auto &_o = l.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] &= _i[i];
+    l[i] &= r[i];
+
+  return l;
+}
+
+template <DataMode lhsDataMode, typename T, size_t size>
+inline ParallelData<lhsDataMode, T, size> &operator&=(ParallelData<lhsDataMode, T, size> &l, T r)
+{
+  for(size_t i = 0; i < size; i++)
+    l[i] &= r;
 
   return l;
 }
@@ -275,12 +270,8 @@ template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator*=(ParallelData<lhsDataMode, T, size> &l,
                                                       const ParallelData<rhsDataMode, T, size> &r)
 {
-  const auto &_i = r.m_data;
-  auto &_o = l.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] *= _i[i];
+    l[i] *= r[i];
 
   return l;
 }
@@ -289,12 +280,8 @@ template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator/=(ParallelData<lhsDataMode, T, size> &l,
                                                       const ParallelData<rhsDataMode, T, size> &r)
 {
-  const auto &_i = r.m_data;
-  auto &_o = l.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] /= _i[i];
+    l[i] /= r[i];
 
   return l;
 }
@@ -303,12 +290,8 @@ template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator+=(ParallelData<lhsDataMode, T, size> &l,
                                                       const ParallelData<rhsDataMode, T, size> &r)
 {
-  const auto &_i = r.m_data;
-  auto &_o = l.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] += _i[i];
+    l[i] += r[i];
 
   return l;
 }
@@ -317,12 +300,8 @@ template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator-=(ParallelData<lhsDataMode, T, size> &l,
                                                       const ParallelData<rhsDataMode, T, size> &r)
 {
-  const auto &_i = r.m_data;
-  auto &_o = l.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] -= _i[i];
+    l[i] -= r[i];
 
   return l;
 }
@@ -334,12 +313,8 @@ inline ParallelData<DataMode::Owned, T, size> operator*(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = l.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i[i] * r;
+    ret[i] = l[i] * r;
 
   return ret;
 }
@@ -349,12 +324,8 @@ inline ParallelData<DataMode::Owned, T, size> operator/(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = l.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i[i] / r;
+    ret[i] = l[i] / r;
 
   return ret;
 }
@@ -364,12 +335,8 @@ inline ParallelData<DataMode::Owned, T, size> operator+(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = l.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i[i] + r;
+    ret[i] = l[i] + r;
 
   return ret;
 }
@@ -379,12 +346,8 @@ inline ParallelData<DataMode::Owned, T, size> operator-(const ParallelData<lhsDa
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = l.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i[i] - r;
+    ret[i] = l[i] - r;
 
   return ret;
 }
@@ -392,11 +355,8 @@ inline ParallelData<DataMode::Owned, T, size> operator-(const ParallelData<lhsDa
 template <DataMode lhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator*=(ParallelData<lhsDataMode, T, size> &l, const T &r)
 {
-  auto &_io = l.m_data;
-
-#pragma omp simd aligned(_io : 32)
   for(size_t i = 0; i < size; i++)
-    _io[i] *= r;
+    l[i] *= r;
 
   return l;
 }
@@ -404,11 +364,8 @@ inline ParallelData<lhsDataMode, T, size> &operator*=(ParallelData<lhsDataMode, 
 template <DataMode lhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator/=(ParallelData<lhsDataMode, T, size> &l, const T &r)
 {
-  auto &_io = l.m_data;
-
-#pragma omp simd aligned(_io : 32)
   for(size_t i = 0; i < size; i++)
-    _io[i] /= r;
+    l[i] /= r;
 
   return l;
 }
@@ -416,11 +373,8 @@ inline ParallelData<lhsDataMode, T, size> &operator/=(ParallelData<lhsDataMode, 
 template <DataMode lhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator+=(ParallelData<lhsDataMode, T, size> &l, const T &r)
 {
-  auto &_io = l.m_data;
-
-#pragma omp simd aligned(_io : 32)
   for(size_t i = 0; i < size; i++)
-    _io[i] -= r;
+    l[i] -= r;
 
   return l;
 }
@@ -428,11 +382,8 @@ inline ParallelData<lhsDataMode, T, size> &operator+=(ParallelData<lhsDataMode, 
 template <DataMode lhsDataMode, typename T, size_t size>
 inline ParallelData<lhsDataMode, T, size> &operator-=(ParallelData<lhsDataMode, T, size> &l, const T &r)
 {
-  auto &_io = l.m_data;
-
-#pragma omp simd aligned(_io : 32)
   for(size_t i = 0; i < size; i++)
-    _io[i] -= r;
+    l[i] -= r;
 
   return l;
 }
@@ -444,12 +395,8 @@ inline ParallelData<DataMode::Owned, T, size> operator*(const T &l, const Parall
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = l * _i[i];
+    ret[i] = l * r[i];
 
   return ret;
 }
@@ -459,12 +406,8 @@ inline ParallelData<DataMode::Owned, T, size> operator/(const T &l, const Parall
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = l / _i[i];
+    ret[i] = l / r[i];
 
   return ret;
 }
@@ -474,12 +417,8 @@ inline ParallelData<DataMode::Owned, T, size> operator+(const T &l, const Parall
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = l + _i[i];
+    ret[i] = l + r[i];
 
   return ret;
 }
@@ -489,12 +428,8 @@ inline ParallelData<DataMode::Owned, T, size> operator-(const T &l, const Parall
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = r.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = l - _i[i];
+    ret[i] = l - r[i];
 
   return ret;
 }
@@ -512,12 +447,8 @@ inline ParallelData<DataMode::Owned, T, size> keepFractional(const ParallelData<
 {
   ParallelData<DataMode::Owned, T, size> ret;
 
-  const auto &_i = in.m_data;
-  auto &_o = ret.m_data;
-
-#pragma omp simd aligned(_i : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] = _i[i] - NlToolbox::Conversion::float2int(in[i]);
+    ret[i] = in[i] - NlToolbox::Conversion::float2int(in[i]);
 
   return ret;
 }
@@ -589,4 +520,30 @@ inline ParallelData<DataMode::Owned, T, size> bipolarCrossFade(const ParallelDat
                                                                const ParallelData<dataMode3, T, size> &_mix)
 {
   return (1.f - std::abs(_mix)) * _sample1 + _mix * _sample2;
+}
+
+template <DataMode m1, DataMode m2, DataMode m3, DataMode m4, DataMode m5, typename T, size_t size>
+inline ParallelData<DataMode::Owned, T, size>
+    interpolRT(const ParallelData<m1, T, size> &fract, const ParallelData<m2, T, size> &sample_tm1,
+               const ParallelData<m3, T, size> &sample_t0, const ParallelData<m4, T, size> &sample_tp1,
+               const ParallelData<m5, T, size> &sample_tp2)
+{
+  auto fract_square = fract * fract;
+  auto fract_cube = fract_square * fract;
+
+  auto a = 0.5f * (sample_tp1 - sample_tm1);
+  auto b = 0.5f * (sample_tp2 - sample_t0);
+  auto c = sample_t0 - sample_tp1;
+
+  return sample_t0 + fract * a + fract_cube * (a + b + 2.f * c) - fract_square * (2.f * a + b + 3.f * c);
+}
+
+template <DataMode dataMode, typename T, size_t size> inline T sumUp(const ParallelData<dataMode, T, size> &in)
+{
+  T ret = {};
+
+  for(size_t i = 0; i < size; i++)
+    ret += in[i];
+
+  return ret;
 }

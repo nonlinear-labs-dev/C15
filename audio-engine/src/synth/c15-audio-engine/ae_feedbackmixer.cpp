@@ -48,23 +48,25 @@ void ae_feedbackmixer::init(float _samplerate)
 /** @brief
 *******************************************************************************/
 
-void ae_feedbackmixer::set(ParameterStorage &params)
+void ae_feedbackmixer::set(uint32_t voice, ParameterStorage &params)
 {
   float omega = std::clamp((float) params[FBM_HPF], m_freqClip_min, m_freqClip_max);
   omega = NlToolbox::Math::tan(omega * m_warpConst_PI);
 
-  m_hp_a1 = (1.f - omega) / (1.f + omega);
-  m_hp_b0 = 1.f / (1.f + omega);
-  m_hp_b1 = (1.f / (1.f + omega)) * -1.f;
+  m_hp_a1[voice] = (1.f - omega) / (1.f + omega);
+  m_hp_b0[voice] = 1.f / (1.f + omega);
+  m_hp_b1[voice] = (1.f / (1.f + omega)) * -1.f;
 }
 
 /******************************************************************************/
 /** @brief
 *******************************************************************************/
 
-void ae_feedbackmixer::apply(float _sampleComb, float _sampleSVF, float _sampleFX, ParameterStorage &params)
+void ae_feedbackmixer::apply(const FloatVector &_sampleComb, const FloatVector &_sampleSVF,
+                             const FloatVector &_sampleFX, ParameterStorage &params)
 {
-  float tmpVar = _sampleFX * params[FBM_FX] + _sampleComb * params[FBM_CMB] + _sampleSVF * params[FBM_SVF];
+  auto tmpVar = _sampleFX * params.getParameterForAllVoices(FBM_FX)
+      + _sampleComb * params.getParameterForAllVoices(FBM_CMB) + _sampleSVF * params.getParameterForAllVoices(FBM_SVF);
 
   m_out = m_hp_b0 * tmpVar;  // HP
   m_out += m_hp_b1 * m_hp_stateVar_1;
@@ -73,19 +75,19 @@ void ae_feedbackmixer::apply(float _sampleComb, float _sampleSVF, float _sampleF
   m_hp_stateVar_1 = tmpVar + DNC_const;
   m_hp_stateVar_2 = m_out + DNC_const;
 
-  m_out *= params[FBM_DRV];
+  m_out *= params.getParameterForAllVoices(FBM_DRV);
 
   tmpVar = m_out;
-  m_out = NlToolbox::Math::sinP3_wrap(m_out);
-  m_out = NlToolbox::Others::threeRanges(m_out, tmpVar, params[FBM_FLD]);
+  m_out = sinP3_wrap(m_out);
+  m_out = threeRanges(m_out, tmpVar, params.getParameterForAllVoices(FBM_FLD));
 
   tmpVar = m_out * m_out;
   tmpVar -= m_hp30hz_stateVar;  // HP 30Hz
   m_hp30hz_stateVar = tmpVar * m_hp30hz_b0 + m_hp30hz_stateVar + NlToolbox::Constants::DNC_const;
 
-  m_out = NlToolbox::Others::parAsym(m_out, tmpVar, params[FBM_ASM]);
+  m_out = parAsym(m_out, tmpVar, params.getParameterForAllVoices(FBM_ASM));
 
-  m_out = m_out * params[FBM_LVL];
+  m_out = m_out * params.getParameterForAllVoices(FBM_LVL);
 }
 
 /******************************************************************************/

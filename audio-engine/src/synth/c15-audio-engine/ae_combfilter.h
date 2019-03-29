@@ -57,8 +57,8 @@ struct ae_combfilter
   FloatVector m_apStateVar_4;
 
   //****************************** Delay/ Decay *****************************//
-  Int32Vector m_buffer_indx;
-  Int32Vector m_buffer_sz_m1;
+  UInt32Vector m_buffer_indx;
+  uint32_t m_buffer_sz_m1;
   std::vector<FloatVector> m_buffer;
 
   FloatVector m_delaySamples;

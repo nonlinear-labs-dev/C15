@@ -10,6 +10,7 @@
 
 #include "dsp_defines_signallabels.h"
 #include "nltoolbox.h"
+#include "ParallelData.h"
 
 class ParameterStorage;
 using namespace NlToolbox::Constants;
@@ -19,22 +20,23 @@ struct ae_feedbackmixer
   ae_feedbackmixer();  // Default Constructor
 
   void init(float _samplerate);
-  void set(ParameterStorage &params);
-  void apply(float _sampleComb, float _sampleSVF, float _sampleFX, ParameterStorage &params);
+  void set(uint32_t voice, ParameterStorage &params);
+  void apply(const FloatVector &_sampleComb, const FloatVector &_sampleSVF, const FloatVector &_sampleFX,
+             ParameterStorage &params);
   void resetDSP();
 
-  float m_out;
+  FloatVector m_out;
 
   float m_warpConst_PI;
   float m_freqClip_min;
   float m_freqClip_max;
 
   //**************************** 30Hz Highpass *****************************//
-  float m_hp30hz_b0;
-  float m_hp30hz_stateVar;
+  FloatVector m_hp30hz_b0;
+  FloatVector m_hp30hz_stateVar;
 
   //*************************** 1 pole Highpass ****************************//
-  float m_hp_b0, m_hp_b1, m_hp_a1;
+  FloatVector m_hp_b0, m_hp_b1, m_hp_a1;
 
-  float m_hp_stateVar_1, m_hp_stateVar_2;
+  FloatVector m_hp_stateVar_1, m_hp_stateVar_2;
 };

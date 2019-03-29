@@ -175,8 +175,9 @@ void dsp_host::tickMain()
     /* post processing and envelope rendering */
     m_params.postProcessPoly_audio(m_parameters.bindToVoice(v), v);
     /* AUDIO_ENGINE: poly dsp phase */
-    makePolySound(m_parameters.bindToVoice(v), v);
   }
+
+  makePolySound(m_parameters);
   /* AUDIO_ENGINE: mono dsp phase */
   makeMonoSound(m_parameters.bindToVoice(0));
 
@@ -1522,11 +1523,7 @@ void dsp_host::initAudioEngine()
   m_soundgenerator.init(static_cast<float>(m_samplerate));
   m_combfilter.init(static_cast<float>(m_samplerate), m_upsampleFactor);
   m_svfilter.init(static_cast<float>(m_samplerate));
-
-  for(uint32_t p = 0; p < m_voices; p++)
-  {
-    m_feedbackmixer[p].init(static_cast<float>(m_samplerate));
-  }
+  m_feedbackmixer.init(static_cast<float>(m_samplerate));
 
   m_outputmixer.init(static_cast<float>(m_samplerate), m_voices);
   m_cabinet.init(static_cast<float>(m_samplerate));
@@ -1541,24 +1538,15 @@ void dsp_host::initAudioEngine()
 /**
 *******************************************************************************/
 
-void dsp_host::makePolySound(ParameterStorage &params, uint32_t _voiceID)
+void dsp_host::makePolySound(ParameterStorage &params)
 {
-  if(_voiceID == 0)
-  {
-    FloatVector feedbackMixerOuts(0.0f);
-    for(uint32_t i = 0; i < dsp_number_of_voices; i++)
-      feedbackMixerOuts[i] = m_feedbackmixer[i].m_out;
-    m_soundgenerator.generate(feedbackMixerOuts, params);
-    m_combfilter.apply(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, params);
-    m_svfilter.apply(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, m_combfilter.m_out, params);
-  }
-
-  m_feedbackmixer[_voiceID].apply(m_combfilter.m_out[_voiceID], m_svfilter.m_out[_voiceID], m_reverb.m_out_FX, params);
-
-  m_soundgenerator.m_feedback_phase[_voiceID] = m_feedbackmixer[_voiceID].m_out;
-
-  m_outputmixer.combine(m_soundgenerator.m_out_A[_voiceID], m_soundgenerator.m_out_B[_voiceID],
-                        m_combfilter.m_out[_voiceID], m_svfilter.m_out[_voiceID], params, _voiceID);
+  m_soundgenerator.generate(m_feedbackmixer.m_out, params);
+  m_combfilter.apply(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, params);
+  m_svfilter.apply(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, m_combfilter.m_out, params);
+  m_feedbackmixer.apply(m_combfilter.m_out, m_svfilter.m_out, m_reverb.m_out_FX, params);
+  m_soundgenerator.m_feedback_phase = m_feedbackmixer.m_out;
+  m_outputmixer.combine(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, m_combfilter.m_out, m_svfilter.m_out,
+                        params);
 }
 
 /******************************************************************************/
@@ -1639,7 +1627,7 @@ inline void dsp_host::setPolySlowFilterCoeffs(ParameterStorage &params, uint32_t
 {
   m_soundgenerator.set(_voiceID, params);
   m_combfilter.set(_voiceID, params, static_cast<float>(m_samplerate));
-  m_feedbackmixer[_voiceID].set(params);
+  m_feedbackmixer.set(_voiceID, params);
 }
 
 /******************************************************************************/
@@ -1719,12 +1707,7 @@ void dsp_host::resetDSP()
   m_soundgenerator.resetDSP();
   m_combfilter.resetDSP();
   m_svfilter.resetDSP();
-
-  uint32_t v;
-  for(v = 0; v < m_voices; v++)
-  {
-    m_feedbackmixer[v].resetDSP();
-  }
+  m_feedbackmixer.resetDSP();
 
   // audio engine mono section (full flush included)
   m_outputmixer.resetDSP();
@@ -1747,12 +1730,7 @@ void dsp_host::flushDSP()
   m_soundgenerator.resetDSP();
   m_combfilter.resetDSP();
   m_svfilter.resetDSP();
-
-  // reset: audio engine poly section (full flush included)
-  for(uint32_t v = 0; v < m_voices; v++)
-  {
-    m_feedbackmixer[v].resetDSP();
-  }
+  m_feedbackmixer.resetDSP();
 
   // audio engine mono section (full flush included)
   m_outputmixer.resetDSP();

@@ -141,7 +141,7 @@ class dsp_host
 
 #endif
 
-  ae_feedbackmixer m_feedbackmixer[dsp_number_of_voices];
+  ae_feedbackmixer m_feedbackmixer;
   ae_outputmixer m_outputmixer;
   ae_cabinet m_cabinet;
   ae_gapfilter m_gapfilter;
@@ -151,7 +151,7 @@ class dsp_host
   ae_test_tone m_test_tone;
 
   void initAudioEngine();
-  void makePolySound(ParameterStorage &params, uint32_t _voiceID);
+  void makePolySound(ParameterStorage &params);
   void makeMonoSound(ParameterStorage &params);
 
   // inline?

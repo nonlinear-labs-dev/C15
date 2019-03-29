@@ -31,10 +31,8 @@ void ae_outputmixer::init(float _samplerate, uint32_t _numOfVoices)
   m_hp30hz_b0 = (6.28319f / _samplerate) * 30.f;
   m_hp30hz_b0 = std::min(m_hp30hz_b0, 0.8f);
 
-  m_hp30hz_stateVar_L.resize(_numOfVoices);
-  std::fill(m_hp30hz_stateVar_L.begin(), m_hp30hz_stateVar_L.end(), 0.f);
-  m_hp30hz_stateVar_R.resize(_numOfVoices);
-  std::fill(m_hp30hz_stateVar_R.begin(), m_hp30hz_stateVar_R.end(), 0.f);
+  m_hp30hz_stateVar_L = 0.0f;
+  m_hp30hz_stateVar_R = 0.0f;
 
   //*************************** 1 pole Highpass ****************************//
   float omega = NlToolbox::Math::tan(12.978f * NlToolbox::Constants::pi / static_cast<float>(_samplerate));
@@ -95,6 +93,50 @@ void ae_outputmixer::combine(float _sampleA, float _sampleB, float _sampleComb, 
   m_out_R += mainSample;
 }
 
+void ae_outputmixer::combine(const FloatVector &_sampleA, const FloatVector &_sampleB, const FloatVector &_sampleComb,
+                             const FloatVector &_sampleSVFilter, ParameterStorage &params)
+{
+  //******************************* Left Mix *******************************//
+  auto mainSample = params.getParameterForAllVoices(OUT_A_L) * _sampleA
+      + params.getParameterForAllVoices(OUT_B_L) * _sampleB + params.getParameterForAllVoices(OUT_CMB_L) * _sampleComb
+      + params.getParameterForAllVoices(OUT_SVF_L) * _sampleSVFilter;
+
+  //************************* Left Sample Shaper ***************************//
+  mainSample *= params.getParameterForAllVoices(OUT_DRV);
+  auto tmpVar = mainSample;
+
+  mainSample = sinP3_wrap(mainSample);
+  mainSample = threeRanges(mainSample, tmpVar, params.getParameterForAllVoices(OUT_FLD));
+
+  tmpVar = mainSample * mainSample;
+  tmpVar = tmpVar - m_hp30hz_stateVar_L;
+  m_hp30hz_stateVar_L = tmpVar * m_hp30hz_b0 + m_hp30hz_stateVar_L + DNC_const;
+
+  mainSample = parAsym(mainSample, tmpVar, params.getParameterForAllVoices(OUT_ASM));
+
+  m_out_L += sumUp(mainSample);
+
+  //****************************** Right Mix *******************************//
+  mainSample = params.getParameterForAllVoices(OUT_A_R) * _sampleA + params.getParameterForAllVoices(OUT_B_R) * _sampleB
+      + params.getParameterForAllVoices(OUT_CMB_R) * _sampleComb
+      + params.getParameterForAllVoices(OUT_SVF_R) * _sampleSVFilter;
+
+  //************************ Right Sample Shaper ***************************//
+  mainSample *= params.getParameterForAllVoices(OUT_DRV);
+  tmpVar = mainSample;
+
+  mainSample = sinP3_wrap(mainSample);
+  mainSample = threeRanges(mainSample, tmpVar, params.getParameterForAllVoices(OUT_FLD));
+
+  tmpVar = mainSample * mainSample;
+  tmpVar = tmpVar - m_hp30hz_stateVar_R;
+  m_hp30hz_stateVar_R = tmpVar * m_hp30hz_b0 + m_hp30hz_stateVar_R + DNC_const;
+
+  mainSample = parAsym(mainSample, tmpVar, params.getParameterForAllVoices(OUT_ASM));
+
+  m_out_R += sumUp(mainSample);
+}
+
 /******************************************************************************/
 /** @brief
 *******************************************************************************/
@@ -130,8 +172,8 @@ void ae_outputmixer::resetDSP()
 
   //**************************** 30 Hz Highpass ****************************//
 
-  std::fill(m_hp30hz_stateVar_L.begin(), m_hp30hz_stateVar_L.end(), 0.f);
-  std::fill(m_hp30hz_stateVar_R.begin(), m_hp30hz_stateVar_R.end(), 0.f);
+  m_hp30hz_stateVar_L = 0.0f;
+  m_hp30hz_stateVar_R = 0.0f;
 
   //*************************** 1 pole Highpass ****************************//
 

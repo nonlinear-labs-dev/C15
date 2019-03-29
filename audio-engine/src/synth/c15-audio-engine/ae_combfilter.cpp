@@ -48,7 +48,7 @@ void ae_combfilter::init(float _samplerate, uint32_t _upsampleFactor)
   m_apStateVar_4 = 0.f;
 
   //***************************** Delay ************************************//
-  m_buffer_indx = 0;
+  m_buffer_indx = 0u;
   m_buffer.resize(COMB_BUFFER_SIZE * _upsampleFactor);
   m_buffer_sz_m1 = COMB_BUFFER_SIZE * _upsampleFactor - 1;
   std::fill(m_buffer.begin(), m_buffer.end(), 0.f);
@@ -173,12 +173,12 @@ void ae_combfilter::apply(const FloatVector &_sampleA, const FloatVector &_sampl
   tmpVar -= 1.f;
   tmpVar = std::clamp(tmpVar, 1.f, 8189.f);
 
-  auto ind_t0 = std::round<int32_t>(tmpVar - 0.5f);
+  auto ind_t0 = std::round<uint32_t>(tmpVar - 0.5f);
   tmpVar = tmpVar - static_cast<ParallelData<DataMode::Owned, float, dsp_number_of_voices>>(ind_t0);
 
-  auto ind_tm1 = ind_t0 - 1;
-  auto ind_tp1 = ind_t0 + 1;
-  auto ind_tp2 = ind_t0 + 2;
+  auto ind_tm1 = ind_t0 - 1u;
+  auto ind_tp1 = ind_t0 + 1u;
+  auto ind_tp2 = ind_t0 + 2u;
 
   ind_tm1 = m_buffer_indx - ind_tm1;
   ind_t0 = m_buffer_indx - ind_t0;
@@ -190,13 +190,22 @@ void ae_combfilter::apply(const FloatVector &_sampleA, const FloatVector &_sampl
   ind_tp1 &= m_buffer_sz_m1;
   ind_tp2 &= m_buffer_sz_m1;
 
+  FloatVector fract, sample_tm1, sample_t0, sample_tp1, sample_tp2;
+  fract = tmpVar;
+
   for(uint32_t i = 0; i < dsp_number_of_voices; i++)
-    m_out[i] = NlToolbox::Math::interpolRT(tmpVar[i], m_buffer[ind_tm1[i]][i], m_buffer[ind_t0[i]][i],
-                                           m_buffer[ind_tp1[i]][i], m_buffer[ind_tp2[i]][i]);
+  {
+    sample_tm1[i] = m_buffer[ind_tm1[i]][i];
+    sample_t0[i] = m_buffer[ind_t0[i]][i];
+    sample_tp1[i] = m_buffer[ind_tp1[i]][i];
+    sample_tp2[i] = m_buffer[ind_tp2[i]][i];
+  }
+
+  m_out = interpolRT(tmpVar, sample_tm1, sample_t0, sample_tp1, sample_tp2);
 
   /// Envelope for voicestealingtmpVar
 
-  m_buffer_indx = (m_buffer_indx + 1) & m_buffer_sz_m1;
+  m_buffer_indx = (m_buffer_indx + 1u) & m_buffer_sz_m1;
 
   tmpVar = params.getParameterForAllVoices(CMB_BYP);  // Bypass
   m_out = tmpVar * holdsample + (1.f - tmpVar) * m_out;
