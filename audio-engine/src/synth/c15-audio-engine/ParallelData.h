@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <array>
 #include <omp.h>
+#include <x86intrin.h>
 
 enum class DataMode
 {
@@ -53,6 +54,16 @@ template <typename T, size_t size> class ParallelData<DataMode::Owned, T, size>
       ret[i] = static_cast<TOut>(m_data[i]);
 
     return ret;
+  }
+
+  inline const T *getDataPtr() const
+  {
+    return m_data;
+  }
+
+  inline T *getDataPtr()
+  {
+    return m_data;
   }
 
   alignas(32) T m_data[size];
@@ -129,6 +140,132 @@ using UInt32Vector = ParallelData<DataMode::Owned, uint32_t, dsp_number_of_voice
 using FloatVectorWrapper = ParallelData<DataMode::Pointer, float, dsp_number_of_voices>;
 using ConstFloatVectorWrapper = ParallelData<DataMode::ConstPointer, float, dsp_number_of_voices>;
 
+#define BINARY_P_P_OPERATOR(operation)                                                                                 \
+  template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>                                       \
+  inline ParallelData<DataMode::Owned, T, size> operator operation(const ParallelData<lhsDataMode, T, size> &l,        \
+                                                                   const ParallelData<rhsDataMode, T, size> &r)        \
+  {                                                                                                                    \
+    ParallelData<DataMode::Owned, T, size> ret;                                                                        \
+                                                                                                                       \
+    for(size_t i = 0; i < size; i++)                                                                                   \
+      ret[i] = l[i] operation r[i];                                                                                    \
+                                                                                                                       \
+    return ret;                                                                                                        \
+  }
+
+#define BINARY_P_S_OPERATOR(operation)                                                                                 \
+  template <DataMode lhsDataMode, typename T, size_t size>                                                             \
+  inline ParallelData<DataMode::Owned, T, size> operator operation(const ParallelData<lhsDataMode, T, size> &l, T r)   \
+  {                                                                                                                    \
+    ParallelData<DataMode::Owned, T, size> ret;                                                                        \
+                                                                                                                       \
+    for(size_t i = 0; i < size; i++)                                                                                   \
+      ret[i] = l[i] operation r;                                                                                       \
+                                                                                                                       \
+    return ret;                                                                                                        \
+  }
+
+#define BINARY_S_P_OPERATOR(operation)                                                                                 \
+  template <DataMode lhsDataMode, typename T, size_t size>                                                             \
+  inline ParallelData<DataMode::Owned, T, size> operator operation(T l, const ParallelData<lhsDataMode, T, size> &r)   \
+  {                                                                                                                    \
+    ParallelData<DataMode::Owned, T, size> ret;                                                                        \
+                                                                                                                       \
+    for(size_t i = 0; i < size; i++)                                                                                   \
+      ret[i] = l operation r[i];                                                                                       \
+                                                                                                                       \
+    return ret;                                                                                                        \
+  }
+
+#define BINARY_P_P_ASSIGNEMT_OPERATOR(operation)                                                                       \
+  template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>                                       \
+  inline ParallelData<lhsDataMode, T, size> &operator operation##=(ParallelData<lhsDataMode, T, size> &l,              \
+                                                                   const ParallelData<rhsDataMode, T, size> &r)        \
+  {                                                                                                                    \
+    for(size_t i = 0; i < size; i++)                                                                                   \
+      l[i] operation## = r[i];                                                                                         \
+                                                                                                                       \
+    return l;                                                                                                          \
+  }
+
+#define BINARY_P_S_ASSIGNEMT_OPERATOR(operation)                                                                       \
+  template <DataMode lhsDataMode, typename T, size_t size>                                                             \
+  inline ParallelData<lhsDataMode, T, size> &operator operation##=(ParallelData<lhsDataMode, T, size> &l, T r)         \
+  {                                                                                                                    \
+    for(size_t i = 0; i < size; i++)                                                                                   \
+      l[i] operation## = r;                                                                                            \
+                                                                                                                       \
+    return l;                                                                                                          \
+  }
+
+#define VECTOR_P_S_CMP_OPERATOR(operation, imm)                                                                        \
+  template <DataMode lhsDataMode, typename T, size_t size>                                                             \
+  inline ParallelData<DataMode::Owned, uint32_t, size> operator operation(const ParallelData<lhsDataMode, T, size> &l, \
+                                                                          T r)                                         \
+  {                                                                                                                    \
+    constexpr auto iterations = size / 4;                                                                              \
+                                                                                                                       \
+    ParallelData<DataMode::Owned, uint32_t, size> ret;                                                                 \
+    __m128 b = { r, r, r, r };                                                                                         \
+                                                                                                                       \
+    for(size_t i = 0; i < iterations; i++)                                                                             \
+    {                                                                                                                  \
+      auto a = reinterpret_cast<const __m128 *>(l.getDataPtr() + 4 * i);                                               \
+      auto t = reinterpret_cast<__m128 *>(ret.getDataPtr() + 4 * i);                                                   \
+      *t = _mm_cmp_ps(*a, b, imm);                                                                                     \
+    }                                                                                                                  \
+                                                                                                                       \
+    return ret;                                                                                                        \
+  }
+
+#define DEFINE_OPERATORS(operation)                                                                                    \
+  BINARY_P_P_OPERATOR(operation)                                                                                       \
+  BINARY_P_S_OPERATOR(operation)                                                                                       \
+  BINARY_S_P_OPERATOR(operation)                                                                                       \
+  BINARY_P_P_ASSIGNEMT_OPERATOR(operation)                                                                             \
+  BINARY_P_S_ASSIGNEMT_OPERATOR(operation)
+
+DEFINE_OPERATORS(+)
+DEFINE_OPERATORS(-)
+DEFINE_OPERATORS(*)
+DEFINE_OPERATORS(/)
+
+BINARY_P_S_OPERATOR(&)
+BINARY_P_S_OPERATOR(|)
+BINARY_P_S_ASSIGNEMT_OPERATOR(&)
+BINARY_P_S_ASSIGNEMT_OPERATOR(|)
+
+VECTOR_P_S_CMP_OPERATOR(<, _CMP_LT_OS)
+VECTOR_P_S_CMP_OPERATOR(>, _CMP_GT_OS)
+VECTOR_P_S_CMP_OPERATOR(<=, _CMP_LE_OS)
+VECTOR_P_S_CMP_OPERATOR(>=, _CMP_GE_OS)
+
+template <DataMode lhsDataMode, DataMode rhsDataMode, typename T1, typename T2, size_t size>
+inline ParallelData<DataMode::Owned, T1, size> operator&(const ParallelData<lhsDataMode, T1, size> &l,
+                                                         const ParallelData<rhsDataMode, T2, size> &r)
+{
+  ParallelData<DataMode::Owned, T1, size> ret;
+
+  auto intL = reinterpret_cast<const uint32_t *>(l.getDataPtr());
+  auto intR = reinterpret_cast<const uint32_t *>(r.getDataPtr());
+  auto retPtr = reinterpret_cast<uint32_t *>(ret.getDataPtr());
+
+  for(size_t i = 0; i < size; i++)
+    retPtr[i] = intL[i] & intR[i];
+
+  return ret;
+}
+
+template <DataMode lhsDataMode, DataMode rhsDataMode, typename T1, typename T2, size_t size>
+inline ParallelData<DataMode::Owned, T1, size> &operator&=(ParallelData<lhsDataMode, T1, size> &l,
+                                                           const ParallelData<rhsDataMode, T2, size> &r)
+{
+  for(size_t i = 0; i < size; i++)
+    l[i] &= r[i];
+
+  return l;
+}
+
 namespace std
 {
   template <DataMode rhsDataMode, typename T, size_t size>
@@ -176,264 +313,6 @@ namespace std
   }
 }
 
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator&(const ParallelData<lhsDataMode, T, size> &l,
-                                                        const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] & r[i];
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator&(const ParallelData<lhsDataMode, T, size> &l, T r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] & r;
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator*(const ParallelData<lhsDataMode, T, size> &l,
-                                                        const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] * r[i];
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator/(const ParallelData<lhsDataMode, T, size> &l,
-                                                        const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] / r[i];
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator+(const ParallelData<lhsDataMode, T, size> &l,
-                                                        const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] + r[i];
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator-(const ParallelData<lhsDataMode, T, size> &l,
-                                                        const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] - r[i];
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator&=(ParallelData<lhsDataMode, T, size> &l,
-                                                      const ParallelData<rhsDataMode, T, size> &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] &= r[i];
-
-  return l;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator&=(ParallelData<lhsDataMode, T, size> &l, T r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] &= r;
-
-  return l;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator*=(ParallelData<lhsDataMode, T, size> &l,
-                                                      const ParallelData<rhsDataMode, T, size> &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] *= r[i];
-
-  return l;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator/=(ParallelData<lhsDataMode, T, size> &l,
-                                                      const ParallelData<rhsDataMode, T, size> &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] /= r[i];
-
-  return l;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator+=(ParallelData<lhsDataMode, T, size> &l,
-                                                      const ParallelData<rhsDataMode, T, size> &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] += r[i];
-
-  return l;
-}
-
-template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator-=(ParallelData<lhsDataMode, T, size> &l,
-                                                      const ParallelData<rhsDataMode, T, size> &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] -= r[i];
-
-  return l;
-}
-
-// scalars rhs
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator*(const ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] * r;
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator/(const ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] / r;
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator+(const ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] + r;
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator-(const ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l[i] - r;
-
-  return ret;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator*=(ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] *= r;
-
-  return l;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator/=(ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] /= r;
-
-  return l;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator+=(ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] -= r;
-
-  return l;
-}
-
-template <DataMode lhsDataMode, typename T, size_t size>
-inline ParallelData<lhsDataMode, T, size> &operator-=(ParallelData<lhsDataMode, T, size> &l, const T &r)
-{
-  for(size_t i = 0; i < size; i++)
-    l[i] -= r;
-
-  return l;
-}
-
-// scalars lhs
-
-template <DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator*(const T &l, const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l * r[i];
-
-  return ret;
-}
-
-template <DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator/(const T &l, const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l / r[i];
-
-  return ret;
-}
-
-template <DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator+(const T &l, const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l + r[i];
-
-  return ret;
-}
-
-template <DataMode rhsDataMode, typename T, size_t size>
-inline ParallelData<DataMode::Owned, T, size> operator-(const T &l, const ParallelData<rhsDataMode, T, size> &r)
-{
-  ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = l - r[i];
-
-  return ret;
-}
-
 template <DataMode dataMode1, DataMode dataMode2, DataMode dataMode3, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> unipolarCrossFade(const ParallelData<dataMode1, T, size> &_sample1,
                                                                 const ParallelData<dataMode2, T, size> &_sample2,
@@ -454,6 +333,17 @@ inline ParallelData<DataMode::Owned, T, size> keepFractional(const ParallelData<
 }
 
 template <DataMode dataMode, typename T, size_t size>
+inline ParallelData<DataMode::Owned, T, size> trunc(const ParallelData<dataMode, T, size> &in)
+{
+  ParallelData<DataMode::Owned, T, size> ret;
+
+  for(size_t i = 0; i < size; i++)
+    ret[i] = std::trunc(in[i]);
+
+  return ret;
+}
+
+template <DataMode dataMode, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> sinP3_noWrap(const ParallelData<dataMode, T, size> &_x)
 {
   auto a = _x + _x;
@@ -464,6 +354,26 @@ inline ParallelData<DataMode::Owned, T, size> sinP3_noWrap(const ParallelData<da
   return a * ((2.26548f * x_square - 5.13274f) * x_square + 3.14159f);
 }
 
+#if 0
+
+template <DataMode dataMode, typename T, size_t size>
+inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, T, size> _x)
+{
+  _x += -0.25f;
+
+  ParallelData<dataMode, T, size> factors(1.f);
+
+  auto cmpRes = _x >= 0.0f;
+  auto maskedShiftedAmounts = factors & cmpRes;
+  auto maskedAmounts = maskedShiftedAmounts - 0.5f;
+  auto withAddedAmounts = _x + maskedAmounts;
+  auto trunced = trunc(withAddedAmounts);
+  _x -= trunced;
+
+  return sinP3_noWrap(_x);
+}
+
+#else
 template <DataMode dataMode, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, T, size> _x)
 {
@@ -479,6 +389,7 @@ inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, 
 
   return sinP3_noWrap(_x);
 }
+#endif
 
 template <DataMode dataMode1, DataMode dataMode2, DataMode dataMode3, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> threeRanges(const ParallelData<dataMode1, T, size> &sample,
