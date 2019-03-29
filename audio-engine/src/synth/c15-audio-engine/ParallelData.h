@@ -2,6 +2,7 @@
 
 #include "pe_defines_config.h"
 #include "nltoolbox.h"
+#include "ae_sine_wavetable.h"
 #include <stdlib.h>
 #include <type_traits>
 #include <array>
@@ -325,11 +326,8 @@ template <DataMode dataMode, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> keepFractional(const ParallelData<dataMode, T, size> &in)
 {
   ParallelData<DataMode::Owned, T, size> ret;
-
-  for(size_t i = 0; i < size; i++)
-    ret[i] = in[i] - NlToolbox::Conversion::float2int(in[i]);
-
-  return ret;
+  auto truncated = trunc(in);
+  return in - truncated;
 }
 
 template <DataMode dataMode, typename T, size_t size>
@@ -338,10 +336,13 @@ inline ParallelData<DataMode::Owned, T, size> trunc(const ParallelData<dataMode,
   ParallelData<DataMode::Owned, T, size> ret;
 
   for(size_t i = 0; i < size; i++)
-    ret[i] = std::trunc(in[i]);
+    ret[i] = static_cast<T>(static_cast<int32_t>(in[i]));
 
   return ret;
 }
+
+#if 0
+
 
 template <DataMode dataMode, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> sinP3_noWrap(const ParallelData<dataMode, T, size> &_x)
@@ -353,8 +354,6 @@ inline ParallelData<DataMode::Owned, T, size> sinP3_noWrap(const ParallelData<da
   auto x_square = a * a;
   return a * ((2.26548f * x_square - 5.13274f) * x_square + 3.14159f);
 }
-
-#if 0
 
 template <DataMode dataMode, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, T, size> _x)
@@ -373,7 +372,7 @@ inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, 
   return sinP3_noWrap(_x);
 }
 
-#else
+#elif 0
 template <DataMode dataMode, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, T, size> _x)
 {
@@ -389,8 +388,36 @@ inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, 
 
   return sinP3_noWrap(_x);
 }
+
+#else
+
+template <DataMode dataMode, typename T, size_t size>
+inline ParallelData<DataMode::Owned, T, size> sinP3_wrap(ParallelData<dataMode, T, size> _x)
+{
+  ParallelData<DataMode::Owned, T, size> ret;
+
+  for(size_t i = 0; i < size; i++)
+    ret[i] = SineWaveTables::sine16384.wrapped(_x[i]);
+
+  return ret;
+}
+
+template <DataMode dataMode, typename T, size_t size>
+inline ParallelData<DataMode::Owned, T, size> sinP3_noWrap(ParallelData<dataMode, T, size> _x)
+{
+  ParallelData<DataMode::Owned, T, size> ret;
+
+  _x += 0.25f;
+
+  for(size_t i = 0; i < size; i++)
+    ret[i] = SineWaveTables::sine16384.unwrapped(_x[i]);
+
+  return ret;
+}
+
 #endif
 
+#if 1
 template <DataMode dataMode1, DataMode dataMode2, DataMode dataMode3, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> threeRanges(const ParallelData<dataMode1, T, size> &sample,
                                                           const ParallelData<dataMode2, T, size> &ctrlSample,
@@ -416,6 +443,45 @@ inline ParallelData<DataMode::Owned, T, size> threeRanges(const ParallelData<dat
 
   return ret;
 }
+
+#else
+
+template <DataMode dataMode1, DataMode dataMode2, DataMode dataMode3, size_t size>
+inline ParallelData<DataMode::Owned, float, size> threeRanges(const ParallelData<dataMode1, float, size> &sample,
+                                                              const ParallelData<dataMode2, float, size> &ctrlSample,
+                                                              const ParallelData<dataMode3, float, size> &foldAmnt)
+{
+  ParallelData<DataMode::Owned, float, size> ret;
+
+  auto tooSmall = ctrlSample < -0.25f;
+  auto tooLarge = ctrlSample > 0.25f;
+
+  ParallelData<DataMode::Owned, float, size> smallFactors = ParallelData<DataMode::Owned, float, size>(1.0f) & tooSmall;
+  ParallelData<DataMode::Owned, float, size> largeFactors
+      = ParallelData<DataMode::Owned, float, size>(-1.0f) & tooLarge;
+
+  ParallelData<DataMode::Owned, float, size> foldFactor = ParallelData<DataMode::Owned, float, size>(-1.0f) & tooLarge;
+
+  for(size_t i = 0; i < size; i++)
+  {
+    if(ctrlSample[i] < -0.25f)
+    {
+      ret[i] = (sample[i] + 1.f) * foldAmnt[i] - 1.f;
+    }
+    else if(ctrlSample[i] > 0.25f)
+    {
+      ret[i] = (sample[i] - 1.f) * foldAmnt[i] + 1.f;
+    }
+    else
+    {
+      ret[i] = sample[i];
+    }
+  }
+
+  return ret;
+}
+
+#endif
 
 template <DataMode dataMode1, DataMode dataMode2, DataMode dataMode3, typename T, size_t size>
 inline ParallelData<DataMode::Owned, T, size> parAsym(const ParallelData<dataMode1, T, size> &sample,

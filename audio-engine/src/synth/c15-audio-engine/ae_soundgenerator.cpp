@@ -100,25 +100,6 @@ void ae_soundgenerator::resetPhase(uint32_t voice, float _phase)
 
 void ae_soundgenerator::generate(FloatVector _feedbackSample, ParameterStorage &params)
 {
-  /*-{
-    FloatVector a(0.f);
-    a[0] = -10.f;
-    a[1] = -1.f;
-    a[2] = -0.5f;
-    a[3] = -0.25f;
-    a[4] = -0.125f;
-    a[5] = 10.f;
-    a[6] = 1.f;
-    a[7] = 0.5f;
-    a[8] = 0.25f;
-    a[9] = 0.125f;
-
-    auto resOld = sinP3_wrapOld(a);
-    auto resNew = sinP3_wrap(a);
-
-    std::cout << resOld[0] << resNew[0];
-  }-*/
-
   //**************************** Modulation A ******************************//
   auto oscSampleA = m_oscA_selfmix * params.getParameterForAllVoices(OSC_A_PMSEA);
   oscSampleA = oscSampleA + m_oscB_crossmix * params.getParameterForAllVoices(OSC_A_PMBEB);
