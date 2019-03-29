@@ -42,35 +42,38 @@ void ae_svfilter::init(float _samplerate)
 /** @brief
 *******************************************************************************/
 
-void ae_svfilter::apply(float _sampleA, float _sampleB, float _sampleComb, ParameterStorage &params)
+void ae_svfilter::apply(const FloatVector &_sampleA, const FloatVector &_sampleB, const FloatVector &_sampleComb,
+                        ParameterStorage &params)
 {
-  float tmpRes = params[SVF_RES];
+  auto tmpRes = params.getParameterForAllVoices(SVF_RES);
 
   //******************************** Sample Mix ****************************//
-  float tmpVar = params[SVF_AB];
-  float mixSample = _sampleB * (1.f - tmpVar) + _sampleA * tmpVar;
-  tmpVar = params[SVF_CMIX];
+  auto tmpVar = params.getParameterForAllVoices(SVF_AB);
+  auto mixSample = _sampleB * (1.f - tmpVar) + _sampleA * tmpVar;
+  tmpVar = params.getParameterForAllVoices(SVF_CMIX);
   mixSample = mixSample * (1.f - std::abs(tmpVar)) + _sampleComb * tmpVar;
 
   //************************** Frequency Modulation ************************//
-  float fmVar = _sampleA * params[SVF_FMAB] + _sampleB * (1.f - params[SVF_FMAB]);
+  auto fmVar = _sampleA * params.getParameterForAllVoices(SVF_FMAB)
+      + _sampleB * (1.f - params.getParameterForAllVoices(SVF_FMAB));
 
   //************************** 1st Stage SV FILTER *************************//
-  float inputSample = mixSample + (m_first_sat_stateVar * 0.1f);
+  auto inputSample = mixSample + (m_first_sat_stateVar * 0.1f);
 
-  float omega = (params[SVF_F1_CUT] + fmVar * params[SVF_F1_FM]) * m_warpConst_2PI;
+  auto omega = (params.getParameterForAllVoices(SVF_F1_CUT) + fmVar * params.getParameterForAllVoices(SVF_F1_FM))
+      * m_warpConst_2PI;
   omega = std::clamp(omega, 0.f, test_svf_fm_limit);  /// initially 1.5f
 
-  float attenuation = ((2.f + omega) * (2.f - omega) * tmpRes) / (((tmpRes * omega) + (2.f - omega)) * 2.f);
+  auto attenuation = ((2.f + omega) * (2.f - omega) * tmpRes) / (((tmpRes * omega) + (2.f - omega)) * 2.f);
 
-  float highpassOutput = inputSample - (m_first_int1_stateVar * attenuation + m_first_int2_stateVar);
-  float bandpassOutput = highpassOutput * omega + m_first_int1_stateVar;
-  float lowpassOutput = bandpassOutput * omega + m_first_int2_stateVar;
+  auto highpassOutput = inputSample - (m_first_int1_stateVar * attenuation + m_first_int2_stateVar);
+  auto bandpassOutput = highpassOutput * omega + m_first_int1_stateVar;
+  auto lowpassOutput = bandpassOutput * omega + m_first_int2_stateVar;
 
   m_first_int1_stateVar = bandpassOutput + DNC_const;
   m_first_int2_stateVar = lowpassOutput + DNC_const;
 
-  float outputSample_1 = lowpassOutput * std::max(-(params[SVF_LBH_1]), 0.f);
+  auto outputSample_1 = lowpassOutput * std::max(-(params[SVF_LBH_1]), 0.f);
   outputSample_1 += (bandpassOutput * (1.f - std::abs(params[SVF_LBH_1])));
   outputSample_1 += (highpassOutput * std::max((float) params[SVF_LBH_1], 0.f));
 
@@ -79,9 +82,11 @@ void ae_svfilter::apply(float _sampleA, float _sampleB, float _sampleComb, Param
   m_first_sat_stateVar *= (1.f - std::abs(m_first_sat_stateVar) * 0.25f);
 
   //************************** 2nd Stage SV FILTER *************************//
-  inputSample = (outputSample_1 * params[SVF_PAR_3]) + (mixSample * params[SVF_PAR_4]) + (m_second_sat_stateVar * 0.1f);
+  inputSample = (outputSample_1 * params.getParameterForAllVoices(SVF_PAR_3))
+      + (mixSample * params.getParameterForAllVoices(SVF_PAR_4)) + (m_second_sat_stateVar * 0.1f);
 
-  omega = (params[SVF_F2_CUT] + fmVar * params[SVF_F2_FM]) * m_warpConst_2PI;
+  omega = (params.getParameterForAllVoices(SVF_F2_CUT) + fmVar * params.getParameterForAllVoices(SVF_F2_FM))
+      * m_warpConst_2PI;
   omega = std::clamp(omega, 0.f, test_svf_fm_limit);  /// initially 1.5f
 
   attenuation = ((2.f + omega) * (2.f - omega) * tmpRes) / (((tmpRes * omega) + (2.f - omega)) * 2.f);
@@ -102,7 +107,8 @@ void ae_svfilter::apply(float _sampleA, float _sampleB, float _sampleComb, Param
   m_second_sat_stateVar *= (1.f - std::abs(m_second_sat_stateVar) * 0.25f);
 
   //****************************** Crossfades ******************************//
-  m_out = (outputSample_1 * params[SVF_PAR_1]) + (tmpVar * params[SVF_PAR_2]);
+  m_out = (outputSample_1 * params.getParameterForAllVoices(SVF_PAR_1))
+      + (tmpVar * params.getParameterForAllVoices(SVF_PAR_2));
 }
 
 /******************************************************************************/

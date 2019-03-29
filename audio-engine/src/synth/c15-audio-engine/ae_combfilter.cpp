@@ -63,7 +63,7 @@ void ae_combfilter::init(float _samplerate, uint32_t _upsampleFactor)
 /** @brief
 *******************************************************************************/
 
-void ae_combfilter::setDelaySmoother()
+void ae_combfilter::setDelaySmoother(uint32_t voice)
 {
   m_delayStateVar = m_delaySamples;
 }
@@ -72,18 +72,16 @@ void ae_combfilter::setDelaySmoother()
 /** @brief
 *******************************************************************************/
 
-void ae_combfilter::apply(float _sampleA, float _sampleB, ParameterStorage &params)
+void ae_combfilter::apply(const FloatVector &_sampleA, const FloatVector &_sampleB, ParameterStorage &params)
 {
-  float tmpVar;
-
   //**************************** AB Sample Mix ****************************//
-  tmpVar = params[CMB_AB];  // AB Mix is inverted, so crossfade mix is as well (currently)
+  auto tmpVar = params.getParameterForAllVoices(CMB_AB);  // AB Mix is inverted, so crossfade mix is as well (currently)
   m_out = _sampleB * (1.f - tmpVar) + _sampleA * tmpVar;
 
   //****************** AB Ssample Phase Mdulation Mix ********************//
-  tmpVar = params[CMB_PMAB];
-  float phaseMod = _sampleA * (1.f - tmpVar) + _sampleB * tmpVar;
-  phaseMod *= params[CMB_PM];
+  tmpVar = params.getParameterForAllVoices(CMB_PMAB);
+  auto phaseMod = _sampleA * (1.f - tmpVar) + _sampleB * tmpVar;
+  phaseMod *= params.getParameterForAllVoices(CMB_PM);
 
   //************************** 1-Pole Highpass ****************************//
   tmpVar = m_hpCoeff_b0 * m_out;
@@ -121,33 +119,36 @@ void ae_combfilter::apply(float _sampleA, float _sampleB, ParameterStorage &para
   m_apStateVar_3 = m_out;
 
   //****************************** Para D ********************************//
-  if(std::abs(m_out) > 0.501187f)
+  for(uint32_t i = 0; i < dsp_number_of_voices; i++)
   {
-    if(m_out > 0.f)
+    if(std::abs(m_out[i]) > 0.501187f)
     {
-      m_out -= 0.501187f;
-      tmpVar = m_out;
+      if(m_out[i] > 0.f)
+      {
+        m_out[i] -= 0.501187f;
+        auto tmpVar = m_out[i];
 
-      m_out = std::min(m_out, 2.98815f);
-      m_out *= (1.f - m_out * 0.167328f);
+        m_out[i] = std::min(m_out[i], 2.98815f);
+        m_out[i] *= (1.f - m_out[i] * 0.167328f);
 
-      m_out *= 0.7488f;
-      tmpVar *= 0.2512f;
+        m_out[i] *= 0.7488f;
+        tmpVar *= 0.2512f;
 
-      m_out += (tmpVar + 0.501187f);
-    }
-    else
-    {
-      m_out += 0.501187f;
-      tmpVar = m_out;
+        m_out[i] += (tmpVar + 0.501187f);
+      }
+      else
+      {
+        m_out[i] += 0.501187f;
+        auto tmpVar = m_out[i];
 
-      m_out = std::max(m_out, -2.98815f);
-      m_out *= (1.f - std::abs(m_out) * 0.167328f);
+        m_out[i] = std::max(m_out[i], -2.98815f);
+        m_out[i] *= (1.f - std::abs(m_out[i]) * 0.167328f);
 
-      m_out *= 0.7488f;
-      tmpVar *= 0.2512f;
+        m_out[i] *= 0.7488f;
+        tmpVar *= 0.2512f;
 
-      m_out += (tmpVar - 0.501187f);
+        m_out[i] += (tmpVar - 0.501187f);
+      }
     }
   }
 
@@ -158,25 +159,26 @@ void ae_combfilter::apply(float _sampleA, float _sampleB, ParameterStorage &para
 
   m_delayStateVar = tmpVar;
 
-  tmpVar *= params[CMB_FEC];
+  tmpVar *= params.getParameterForAllVoices(CMB_FEC);
   tmpVar += (phaseMod * tmpVar);
 
   //******************************* Delay ********************************//
-  float holdsample = m_out;  // for Bypass
+  auto holdsample = m_out;  // for Bypass
 
-  m_buffer[m_buffer_indx] = m_out;
+  for(uint32_t i = 0; i < dsp_number_of_voices; i++)
+    m_buffer[m_buffer_indx[i]][i] = m_out[i];
 
   /// hier kommt voicestealing hin!!
 
   tmpVar -= 1.f;
   tmpVar = std::clamp(tmpVar, 1.f, 8189.f);
 
-  int32_t ind_t0 = static_cast<int32_t>(std::round(tmpVar - 0.5f));
-  tmpVar = tmpVar - static_cast<float>(ind_t0);
+  auto ind_t0 = std::round<int32_t>(tmpVar - 0.5f);
+  tmpVar = tmpVar - static_cast<ParallelData<DataMode::Owned, float, dsp_number_of_voices>>(ind_t0);
 
-  int32_t ind_tm1 = ind_t0 - 1;
-  int32_t ind_tp1 = ind_t0 + 1;
-  int32_t ind_tp2 = ind_t0 + 2;
+  auto ind_tm1 = ind_t0 - 1;
+  auto ind_tp1 = ind_t0 + 1;
+  auto ind_tp2 = ind_t0 + 2;
 
   ind_tm1 = m_buffer_indx - ind_tm1;
   ind_t0 = m_buffer_indx - ind_t0;
@@ -188,14 +190,15 @@ void ae_combfilter::apply(float _sampleA, float _sampleB, ParameterStorage &para
   ind_tp1 &= m_buffer_sz_m1;
   ind_tp2 &= m_buffer_sz_m1;
 
-  m_out
-      = NlToolbox::Math::interpolRT(tmpVar, m_buffer[ind_tm1], m_buffer[ind_t0], m_buffer[ind_tp1], m_buffer[ind_tp2]);
+  for(uint32_t i = 0; i < dsp_number_of_voices; i++)
+    m_out[i] = NlToolbox::Math::interpolRT(tmpVar[i], m_buffer[ind_tm1[i]][i], m_buffer[ind_t0[i]][i],
+                                           m_buffer[ind_tp1[i]][i], m_buffer[ind_tp2[i]][i]);
 
   /// Envelope for voicestealingtmpVar
 
   m_buffer_indx = (m_buffer_indx + 1) & m_buffer_sz_m1;
 
-  tmpVar = params[CMB_BYP];  // Bypass
+  tmpVar = params.getParameterForAllVoices(CMB_BYP);  // Bypass
   m_out = tmpVar * holdsample + (1.f - tmpVar) * m_out;
 
   //****************************** Decay ********************************//
@@ -206,7 +209,7 @@ void ae_combfilter::apply(float _sampleA, float _sampleB, ParameterStorage &para
 /** @brief
 *******************************************************************************/
 
-void ae_combfilter::set(ParameterStorage &params, float _samplerate)
+void ae_combfilter::set(uint32_t voice, ParameterStorage &params, float _samplerate)
 {
   //********************** Highpass Coefficients *************************//
   float frequency = params[CMB_FRQ];
@@ -216,9 +219,9 @@ void ae_combfilter::set(ParameterStorage &params, float _samplerate)
   frequency *= m_warpConst_PI;
   frequency = NlToolbox::Math::tan(frequency);
 
-  m_hpCoeff_a1 = (1.f - frequency) / (1.f + frequency);
-  m_hpCoeff_b0 = 1.f / (1.f + frequency);
-  m_hpCoeff_b1 = m_hpCoeff_b0 * -1.f;
+  m_hpCoeff_a1[voice] = (1.f - frequency) / (1.f + frequency);
+  m_hpCoeff_b0[voice] = 1.f / (1.f + frequency);
+  m_hpCoeff_b1[voice] = m_hpCoeff_b0[voice] * -1.f;
 
   //*********************** Lowpass Coefficient **************************//
   frequency = params[CMB_LPF];
@@ -231,7 +234,7 @@ void ae_combfilter::set(ParameterStorage &params, float _samplerate)
 
   frequency = NlToolbox::Math::sin(frequency) / NlToolbox::Math::cos(frequency);  // tan -pi..pi
 
-  m_lpCoeff = (1.f - frequency) / (1.f + frequency);
+  m_lpCoeff[voice] = (1.f - frequency) / (1.f + frequency);
 
   //********************** Allpass Coefficients **************************//
   frequency = params[CMB_APF];
@@ -243,19 +246,19 @@ void ae_combfilter::set(ParameterStorage &params, float _samplerate)
 
   float tmpVar = 1.f / (1.f + resonance);
 
-  m_apCoeff_1 = (-2.f * NlToolbox::Math::cos(frequency)) * tmpVar;
-  m_apCoeff_2 = (1.f - resonance) * tmpVar;
+  m_apCoeff_1[voice] = (-2.f * NlToolbox::Math::cos(frequency)) * tmpVar;
+  m_apCoeff_2[voice] = (1.f - resonance) * tmpVar;
 
   //*************************** Delaytime ********************************//
   frequency = params[CMB_FRQ];
 
   if(frequency < m_delayFreqClip)
   {
-    m_delaySamples = _samplerate / m_delayFreqClip;
+    m_delaySamples[voice] = _samplerate / m_delayFreqClip;
   }
   else
   {
-    m_delaySamples = _samplerate / frequency;
+    m_delaySamples[voice] = _samplerate / frequency;
   }
 
   //************************ Lowpass Influence ***************************//
@@ -264,24 +267,24 @@ void ae_combfilter::set(ParameterStorage &params, float _samplerate)
   float stateVar_r = NlToolbox::Math::sinP3_wrap(frequency);
   float stateVar_i = NlToolbox::Math::sinP3_wrap(frequency + 0.25f);
 
-  stateVar_r = stateVar_r * m_lpCoeff;
-  stateVar_i = stateVar_i * -m_lpCoeff + 1.f;
+  stateVar_r = stateVar_r * m_lpCoeff[voice];
+  stateVar_i = stateVar_i * -m_lpCoeff[voice] + 1.f;
 
   tmpVar = NlToolbox::Math::arctan(stateVar_r / stateVar_i) * -0.159155f;  // (1.f / -6.28318f)
 
-  m_delaySamples = m_delaySamples * tmpVar + m_delaySamples;
+  m_delaySamples[voice] = m_delaySamples[voice] * tmpVar + m_delaySamples[voice];
 
   //************************ Allpass Influence ***************************//
-  stateVar_i = NlToolbox::Math::sinP3_wrap(frequency) * -1.f * m_apCoeff_1;
-  stateVar_r = NlToolbox::Math::sinP3_wrap(frequency + 0.25f) * m_apCoeff_1;
+  stateVar_i = NlToolbox::Math::sinP3_wrap(frequency) * -1.f * m_apCoeff_1[voice];
+  stateVar_r = NlToolbox::Math::sinP3_wrap(frequency + 0.25f) * m_apCoeff_1[voice];
 
   float stateVar2_i = NlToolbox::Math::sinP3_wrap(frequency + frequency);
   float stateVar2_r = NlToolbox::Math::sinP3_wrap(frequency + frequency + 0.25f);
 
   float var1_i = stateVar_i - stateVar2_i;
-  float var2_i = (stateVar_i - (m_apCoeff_2 * stateVar2_i)) * -1.f;
-  float var1_r = stateVar_r + stateVar2_r + m_apCoeff_2;
-  float var2_r = stateVar_r + (stateVar2_r * m_apCoeff_2) + 1.f;
+  float var2_i = (stateVar_i - (m_apCoeff_2[voice] * stateVar2_i)) * -1.f;
+  float var1_r = stateVar_r + stateVar2_r + m_apCoeff_2[voice];
+  float var2_r = stateVar_r + (stateVar2_r * m_apCoeff_2[voice]) + 1.f;
 
   stateVar_r = (var1_r * var2_r) - (var1_i * var2_i);
   stateVar_i = (var1_r * var2_i) + (var2_r * var1_i);

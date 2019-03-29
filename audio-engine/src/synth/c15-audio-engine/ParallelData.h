@@ -146,6 +146,47 @@ namespace std
 
     return ret;
   }
+
+  template <DataMode rhsDataMode, typename T, size_t size>
+  inline ParallelData<DataMode::Owned, T, size> clamp(const ParallelData<rhsDataMode, T, size> &in, T min, T max)
+  {
+    ParallelData<DataMode::Owned, T, size> ret;
+
+#pragma omp simd
+    for(size_t i = 0; i < size; i++)
+      ret[i] = std::clamp(in[i], min, max);
+
+    return ret;
+  }
+
+  template <typename TOut, DataMode rhsDataMode, typename T, size_t size>
+  inline ParallelData<DataMode::Owned, TOut, size> round(const ParallelData<rhsDataMode, T, size> &in)
+  {
+    ParallelData<DataMode::Owned, TOut, size> ret;
+
+#pragma omp simd
+    for(size_t i = 0; i < size; i++)
+      ret[i] = static_cast<TOut>(std::round(in[i]));
+
+    return ret;
+  }
+}
+
+template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
+inline ParallelData<DataMode::Owned, T, size> operator&(const ParallelData<lhsDataMode, T, size> &l,
+                                                        const ParallelData<rhsDataMode, T, size> &r)
+{
+  ParallelData<DataMode::Owned, T, size> ret;
+
+  const auto &_i1 = l.m_data;
+  const auto &_i2 = r.m_data;
+  auto &_o = ret.m_data;
+
+#pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
+  for(size_t i = 0; i < size; i++)
+    _o[i] = _i1[i] & _i2[i];
+
+  return ret;
 }
 
 template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
@@ -160,7 +201,7 @@ inline ParallelData<DataMode::Owned, T, size> operator*(const ParallelData<lhsDa
 
 #pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] -= _i1[i] * _i2[i];
+    _o[i] = _i1[i] * _i2[i];
 
   return ret;
 }
@@ -177,7 +218,7 @@ inline ParallelData<DataMode::Owned, T, size> operator/(const ParallelData<lhsDa
 
 #pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] -= _i1[i] / _i2[i];
+    _o[i] = _i1[i] / _i2[i];
 
   return ret;
 }
@@ -194,7 +235,7 @@ inline ParallelData<DataMode::Owned, T, size> operator+(const ParallelData<lhsDa
 
 #pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] -= _i1[i] + _i2[i];
+    _o[i] = _i1[i] + _i2[i];
 
   return ret;
 }
@@ -211,9 +252,23 @@ inline ParallelData<DataMode::Owned, T, size> operator-(const ParallelData<lhsDa
 
 #pragma omp simd aligned(_i1 : 32) aligned(_i2 : 32) aligned(_o : 32)
   for(size_t i = 0; i < size; i++)
-    _o[i] -= _i1[i] - _i2[i];
+    _o[i] = _i1[i] - _i2[i];
 
   return ret;
+}
+
+template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>
+inline ParallelData<lhsDataMode, T, size> &operator&=(ParallelData<lhsDataMode, T, size> &l,
+                                                      const ParallelData<rhsDataMode, T, size> &r)
+{
+  const auto &_i = r.m_data;
+  auto &_o = l.m_data;
+
+#pragma omp simd aligned(_i : 32) aligned(_o : 32)
+  for(size_t i = 0; i < size; i++)
+    _o[i] &= _i[i];
+
+  return l;
 }
 
 template <DataMode lhsDataMode, DataMode rhsDataMode, typename T, size_t size>

@@ -8,6 +8,10 @@ C15Synth::C15Synth()
     : m_dsp(std::make_unique<dsp_host>())
 {
   m_dsp->init(getOptions()->getSampleRate(), getOptions()->getPolyphony());
+
+#if test_inputModeFlag == 1
+  m_dsp->testLoadPreset(4);
+#endif
 }
 
 C15Synth::~C15Synth() = default;
@@ -94,13 +98,11 @@ void C15Synth::decrease()
 
 double C15Synth::measurePerformance(std::chrono::seconds time)
 {
-  for(int i = 0; i < getOptions()->getPolyphony(); i++)
-  {
-    m_dsp->evalMidi(1, 0, 53);
-    m_dsp->evalMidi(5, 62, 64);
-    m_dsp->evalMidi(1, 0, 83);
-    m_dsp->evalMidi(5, 62, 64);
-  }
+  m_dsp->evalMidi(1, 0, 53);
+  m_dsp->evalMidi(5, 62, 64);
+  m_dsp->evalMidi(1, 0, 83);
+  m_dsp->evalMidi(5, 62, 64);
+
   return Synth::measurePerformance(time);
 }
 

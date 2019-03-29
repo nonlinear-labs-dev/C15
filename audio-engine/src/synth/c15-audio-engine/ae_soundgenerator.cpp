@@ -50,8 +50,8 @@ void ae_soundgenerator::init(float _samplerate)
     m_OscB_randVal_int[i] = i + 1 + 111;
   }
 
-  m_OscA_mute = 0.0f;
-  m_OscB_mute = 0.0f;
+  m_OscA_mute = 1.0f;
+  m_OscB_mute = 1.0f;
 }
 
 /******************************************************************************/

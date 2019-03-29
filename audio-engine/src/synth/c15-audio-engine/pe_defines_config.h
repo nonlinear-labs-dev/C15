@@ -24,7 +24,8 @@
 #define test_tone_initial_gain -6.0f   // Test Tone initial Gain (in decibel)
 #define test_tone_initial_state 0      // Test Tone initial State (0: disabled, 1: enabled)
 
-#define test_comb_decay_gate_mode  1  // 0: apply in slow post processing (like prototype), 1: audio fade min, max by gate signal (recommended)
+#define test_comb_decay_gate_mode                                                                                      \
+  1  // 0: apply in slow post processing (like prototype), 1: audio fade min, max by gate signal (recommended)
 
 #define test_svf_types 1        // 0: SVF first Proto NAN, 1: SVF noFIR, 2: SVF FIR, 3: SVF Original Primary (later)
 #define test_svf_fm_limit 1.5f  // SVF fm clipping maximum
@@ -35,12 +36,13 @@
 #define test_reverbParams 1    // 0: fast rendering (like Reaktor), 1: slow rendering (experimental)
 #define test_reverbSmoother 1  // 0: no internal smoothers (experimental), 1: internal smoothers (like Reaktor)
 
-#define test_flanger_phs 1  // 0: slow (default, artifacts), 1: fast (seems okay), 2: audio (optimum)
-#define test_flanger_env 2  // 0: slow (default, artifacts), 1: fast (artifacts), 2: audio (recommended)
+#define test_flanger_phs 1         // 0: slow (default, artifacts), 1: fast (seems okay), 2: audio (optimum)
+#define test_flanger_env 2         // 0: slow (default, artifacts), 1: fast (artifacts), 2: audio (recommended)
 #define test_flanger_env_legato 1  // 0: retriggering flanger env, 1: legato (only trigger if no key is pressed)
 
 #define test_initialize_time 1  // leave at 1 until LPC transmits full init sequence (including time)
-#define test_initialize_fx_sends  1  // leave at 1 until LPC can handle fx sends (echo, reverb) (inits sends to 100%, maintaining compability)
+#define test_initialize_fx_sends                                                                                       \
+  1  // leave at 1 until LPC can handle fx sends (echo, reverb) (inits sends to 100%, maintaining compability)
 
 /* Log Settings                                     THINGS TO PRINT into the terminal: TCD MIDI Input, single Parameter, single Signal */
 
