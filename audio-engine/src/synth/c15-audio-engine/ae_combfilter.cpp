@@ -174,7 +174,7 @@ void ae_combfilter::apply(const FloatVector &_sampleA, const FloatVector &_sampl
   tmpVar = std::clamp(tmpVar, 1.f, 8189.f);
 
   auto ind_t0 = std::round<uint32_t>(tmpVar - 0.5f);
-  tmpVar = tmpVar - static_cast<ParallelData<DataMode::Owned, float, dsp_number_of_voices>>(ind_t0);
+  tmpVar = tmpVar - static_cast<ParallelData<float, dsp_number_of_voices>>(ind_t0);
 
   auto ind_tm1 = ind_t0 - 1u;
   auto ind_tp1 = ind_t0 + 1u;
