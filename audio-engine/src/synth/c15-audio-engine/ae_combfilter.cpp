@@ -65,7 +65,7 @@ void ae_combfilter::init(float _samplerate, uint32_t _upsampleFactor)
 
 void ae_combfilter::setDelaySmoother(uint32_t voice)
 {
-  m_delayStateVar = m_delaySamples;
+  m_delayStateVar[voice] = m_delaySamples[voice];
 }
 
 /******************************************************************************/
