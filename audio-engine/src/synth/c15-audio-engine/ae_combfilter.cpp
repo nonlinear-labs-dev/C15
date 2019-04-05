@@ -166,7 +166,7 @@ void ae_combfilter::apply(const FloatVector &_sampleA, const FloatVector &_sampl
   auto holdsample = m_out;  // for Bypass
 
   for(uint32_t i = 0; i < dsp_number_of_voices; i++)
-    m_buffer[m_buffer_indx[i]][i] = m_out[i];
+    m_buffer[m_buffer_indx][i] = m_out[i];
 
   /// hier kommt voicestealing hin!!
 
