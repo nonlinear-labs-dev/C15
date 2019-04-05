@@ -328,7 +328,7 @@ void ae_combfilter::set(uint32_t voice, ParameterStorage &params, float _sampler
 
   tmpVar *= 0.159155f;
 
-  m_delaySamples = m_delaySamples * tmpVar + m_delaySamples;
+  m_delaySamples[voice] = m_delaySamples[voice] * tmpVar + m_delaySamples[voice];
 
   //**************************** Decay Gain ******************************//
   tmpVar = params[CMB_DEC];
@@ -355,7 +355,7 @@ void ae_combfilter::set(uint32_t voice, ParameterStorage &params, float _sampler
     frequency *= -1.f;
   }
 
-  m_decayGain = frequency;
+  m_decayGain[voice] = frequency;
 }
 
 /******************************************************************************/
