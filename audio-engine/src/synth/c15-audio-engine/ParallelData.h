@@ -240,16 +240,9 @@ inline ParallelData<T, size> unipolarCrossFade(const ParallelData<T, size> &_sam
 template <typename T, size_t size> inline ParallelData<T, size> keepFractional(const ParallelData<T, size> &in)
 {
   ParallelData<T, size> ret;
-  auto truncated = trunc(in);
-  return in - truncated;
-}
-
-template <typename T, size_t size> inline ParallelData<T, size> trunc(const ParallelData<T, size> &in)
-{
-  ParallelData<T, size> ret;
 
   for(size_t i = 0; i < size; i++)
-    ret[i] = static_cast<T>(static_cast<int32_t>(in[i]));
+    ret[i] = in[i] - NlToolbox::Conversion::float2int(in[i]);
 
   return ret;
 }
@@ -288,17 +281,22 @@ inline ParallelData<T, size> sinP3_wrap(ParallelData<T, size> _x)
 #elif 0
 template <typename T, size_t size> inline ParallelData<T, size> sinP3_wrap(ParallelData<T, size> _x)
 {
-  _x += -0.25f;
+  ParallelData<T, size> ret;
 
   for(size_t i = 0; i < size; i++)
-  {
-    if(_x[i] >= 0.f)
-      _x[i] -= static_cast<int>(_x[i] + 0.5f);
-    else
-      _x[i] -= static_cast<int>(_x[i] - 0.5f);
-  }
+    ret[i] = NlToolbox::Math::sinP3_wrap(_x[i]);
 
-  return sinP3_noWrap(_x);
+  return ret;
+}
+
+template <typename T, size_t size> inline ParallelData<T, size> sinP3_noWrap(ParallelData<T, size> _x)
+{
+  ParallelData<T, size> ret;
+
+  for(size_t i = 0; i < size; i++)
+    ret[i] = NlToolbox::Math::sinP3_noWrap(_x[i]);
+
+  return ret;
 }
 
 #else
