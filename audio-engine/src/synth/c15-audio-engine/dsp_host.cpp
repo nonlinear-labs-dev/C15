@@ -44,15 +44,15 @@ void dsp_host::init(uint32_t _samplerate, uint32_t _polyphony)
   m_tcd_input_log.reset();
 
   m_param_status.m_selected = log_param_id;
-  m_param_status.m_id = m_params.m_head[m_param_status.m_selected].m_id;
-  m_param_status.m_index = m_params.m_head[m_param_status.m_selected].m_index;
-  m_param_status.m_size = m_params.m_head[m_param_status.m_selected].m_size;
-  m_param_status.m_clockType = m_params.m_head[m_param_status.m_selected].m_clockType;
-  m_param_status.m_polyType = m_params.m_head[m_param_status.m_selected].m_polyType;
-  m_param_status.m_scaleId = m_params.m_head[m_param_status.m_selected].m_scaleId;
-  m_param_status.m_postId = m_params.m_head[m_param_status.m_selected].m_postId;
-  m_param_status.m_normalize = m_params.m_head[m_param_status.m_selected].m_normalize;
-  m_param_status.m_scaleArg = m_params.m_head[m_param_status.m_selected].m_scaleArg;
+  m_param_status.m_id = m_params.getHead(m_param_status.m_selected).m_id;
+  m_param_status.m_index = m_params.getHead(m_param_status.m_selected).m_index;
+  m_param_status.m_size = m_params.getHead(m_param_status.m_selected).m_size;
+  m_param_status.m_clockType = m_params.getHead(m_param_status.m_selected).m_clockType;
+  m_param_status.m_polyType = m_params.getHead(m_param_status.m_selected).m_polyType;
+  m_param_status.m_scaleId = m_params.getHead(m_param_status.m_selected).m_scaleId;
+  m_param_status.m_postId = m_params.getHead(m_param_status.m_selected).m_postId;
+  m_param_status.m_normalize = m_params.getHead(m_param_status.m_selected).m_normalize;
+  m_param_status.m_scaleArg = m_params.getHead(m_param_status.m_selected).m_scaleArg;
 
   m_signal_status.m_selected = log_signal_id;
   m_signal_status.m_size = m_voices;
@@ -100,28 +100,25 @@ void dsp_host::loadInitialPreset()
 /* */
 void dsp_host::tickMain()
 {
-  /* provide indices for items, voices and parameters */
-  uint32_t i, v, p;
   /* first: evaluate slow clock status */
   if(m_clockPosition[3] == 0)
   {
     /* render slow mono parameters and perform mono post processing */
-    for(p = 0; p < m_params.m_clockIds.m_data[3].m_data[0].m_length; p++)
+    for(const auto &it : m_params.m_parameters.getClockIds(PARAM_SLOW, PARAM_MONO))
     {
-      i = m_params.m_head[m_params.m_clockIds.m_data[3].m_data[0].m_data[p]].m_index;
-      m_params.tickItem(i);
+        auto i = m_params.getHead(it).m_index;
+        m_params.tickItem(i);
     }
     m_params.postProcessMono_slow(m_parameters.bindToVoice(0));
     /* render slow poly parameters and perform poly slow post processing */
-    for(v = 0; v < m_voices; v++)
+    for(uint32_t v = 0; v < m_voices; v++)
     {
-      for(p = 0; p < m_params.m_clockIds.m_data[3].m_data[1].m_length; p++)
+      for(const auto &it : m_params.m_parameters.getClockIds(PARAM_SLOW, PARAM_POLY))
       {
-        i = m_params.m_head[m_params.m_clockIds.m_data[3].m_data[1].m_data[p]].m_index + v;
-        m_params.tickItem(i);
+          auto i = m_params.getHead(it).m_index + v;
+          m_params.tickItem(i);
       }
       m_params.postProcessPoly_slow(m_parameters.bindToVoice(v), v);
-
       /* slow polyphonic Trigger for Filter Coefficients */
       setPolySlowFilterCoeffs(m_parameters.bindToVoice(v), v);
     }
@@ -132,19 +129,19 @@ void dsp_host::tickMain()
   if(m_clockPosition[2] == 0)
   {
     /* render fast mono parameters and perform mono post processing */
-    for(p = 0; p < m_params.m_clockIds.m_data[2].m_data[0].m_length; p++)
+    for(auto &it : m_params.m_parameters.getClockIds(PARAM_FAST, PARAM_MONO))
     {
-      i = m_params.m_head[m_params.m_clockIds.m_data[2].m_data[0].m_data[p]].m_index;
-      m_params.tickItem(i);
+        auto i = m_params.getHead(it).m_index;
+        m_params.tickItem(i);
     }
     m_params.postProcessMono_fast(m_parameters.bindToVoice(0));
     /* render fast poly parameters and perform poly fast post processing */
-    for(v = 0; v < m_voices; v++)
+    for(uint32_t v = 0; v < m_voices; v++)
     {
-      for(p = 0; p < m_params.m_clockIds.m_data[2].m_data[1].m_length; p++)
+      for(auto &it : m_params.m_parameters.getClockIds(PARAM_FAST, PARAM_POLY))
       {
-        i = m_params.m_head[m_params.m_clockIds.m_data[2].m_data[1].m_data[p]].m_index + v;
-        m_params.tickItem(i);
+          auto i = m_params.getHead(it).m_index + v;
+          m_params.tickItem(i);
       }
       m_params.postProcessPoly_fast(m_parameters.bindToVoice(v), v);
     }
@@ -152,25 +149,24 @@ void dsp_host::tickMain()
     setMonoFastFilterCoeffs(m_parameters.bindToVoice(0));
   }
   /* third: evaluate audio clock (always) - mono rendering and post processing, poly rendering and post processing */
-  for(p = 0; p < m_params.m_clockIds.m_data[1].m_data[0].m_length; p++)
+  for(auto &it : m_params.m_parameters.getClockIds(PARAM_AUDIO, PARAM_MONO))
   {
-    /* render mono audio parameters */
-    i = m_params.m_head[m_params.m_clockIds.m_data[1].m_data[0].m_data[p]].m_index;
-    m_params.tickItem(i);
+      auto i = m_params.getHead(it).m_index;
+      m_params.tickItem(i);
   }
   m_params.postProcessMono_audio(m_parameters.bindToVoice(0));
   /* Reset Outputmixer Sum Samples */
   m_outputmixer.m_out_L = 0.f;
   m_outputmixer.m_out_R = 0.f;
 
-  for(v = 0; v < m_voices; v++)
+  /* this is the MAIN POLYPHONIC LOOP - rendering (and post processing) parameters, envelopes and the AUDIO_ENGINE */
+  for(uint32_t v = 0; v < m_voices; v++)
   {
-    /* this is the MAIN POLYPHONIC LOOP - rendering (and post processing) parameters, envelopes and the AUDIO_ENGINE */
     /* render poly audio parameters */
-    for(p = 0; p < m_params.m_clockIds.m_data[1].m_data[1].m_length; p++)
+    for(auto &it : m_params.m_parameters.getClockIds(PARAM_AUDIO, PARAM_POLY))
     {
-      i = m_params.m_head[m_params.m_clockIds.m_data[1].m_data[1].m_data[p]].m_index + v;
-      m_params.tickItem(i);
+        auto i = m_params.getHead(it).m_index + v;
+        m_params.tickItem(i);
     }
     /* post processing and envelope rendering */
     m_params.postProcessPoly_audio(m_parameters.bindToVoice(v), v);
@@ -416,10 +412,10 @@ void dsp_host::paramSelectionUpdate()
   for(uint32_t p = 0; p < sig_number_of_params; p++)
   {
     /* only TRUE TCD IDs (< 16383) */
-    if(m_params.m_head[p].m_id < 16383)
+    if(m_params.getHead(p).m_id < 16383)
     {
-      s = m_decoder.selectionEvent(m_decoder.m_paramFrom, m_decoder.m_paramTo, m_params.m_head[p].m_id);
-      m_decoder.m_selectedParams.add(m_params.m_head[p].m_polyType, s, p);
+      s = m_decoder.selectionEvent(m_decoder.m_paramFrom, m_decoder.m_paramTo, m_params.getHead(p).m_id);
+      m_decoder.m_selectedParams.add(m_params.getHead(p).m_polyType, s, p);
     }
   }
 }
@@ -445,7 +441,7 @@ void dsp_host::preloadUpdate(uint32_t _mode, uint32_t _listId)
       /* reset parameter preload counters */
       for(p = 0; p < sig_number_of_param_items; p++)
       {
-        m_params.m_body[p].m_preload = 0;
+        m_params.getBody(p).m_preload = 0;
       }
       /* reset key event preload counters */
       m_params.m_event.m_mono.m_preload = 0;
@@ -461,7 +457,7 @@ void dsp_host::preloadUpdate(uint32_t _mode, uint32_t _listId)
       /* apply preloaded values - parameters */
       for(p = 0; p < sig_number_of_params; p++)
       {
-        for(v = 0; v < m_params.m_head[p].m_size; v++)
+        for(v = 0; v < m_params.getHead(p).m_size; v++)
         {
           m_params.applyPreloaded(v, p);
         }
@@ -722,7 +718,7 @@ void dsp_host::keyApply(uint32_t _voiceId)
 
     /* determine note steal */
 #if test_milestone < 156
-    if(static_cast<uint32_t>(m_params.m_body[m_params.m_head[P_KEY_VS].m_index].m_signal) == 1)
+    if(static_cast<uint32_t>(m_params.getSignal(P_KEY_VS)) == 1)
     {
       /* AUDIO_ENGINE: trigger voice-steal */
     }
@@ -752,7 +748,7 @@ void dsp_host::keyApply(uint32_t _voiceId)
     //float phaseA = m_params.m_body[m_params.m_head[P_KEY_PA].m_index + _voiceId].m_signal;
     //float phaseB = m_params.m_body[m_params.m_head[P_KEY_PB].m_index + _voiceId].m_signal;
 #if test_milestone == 150
-    const float startPhase = m_params.m_body[m_params.m_head[P_KEY_PH].m_index + _voiceId].m_signal;
+    const float startPhase = m_params.getSignal(P_KEY_PH, _voiceId);
 #elif test_milestone == 155
     const float startPhase = 0.f;
 #elif test_milestone == 156
@@ -768,7 +764,7 @@ void dsp_host::keyApply(uint32_t _voiceId)
 void dsp_host::keyUp156(const float _velocity)
 {
   uint32_t voiceId = m_decoder.m_voiceFrom;
-  const uint32_t unisonVoices = 1 + static_cast<uint32_t>(m_params.m_body[m_params.m_head[P_UN_V].m_index].m_signal);
+  const uint32_t unisonVoices = 1 + static_cast<uint32_t>(m_params.getSignal(P_UN_V));
 
   for(uint32_t v = 0; v < unisonVoices; v++)
   {
@@ -782,16 +778,16 @@ void dsp_host::keyUp156(const float _velocity)
 void dsp_host::keyDown156(const float _velocity)
 {
   uint32_t voiceId = m_decoder.m_voiceFrom;
-  const uint32_t unisonVoices = 1 + static_cast<uint32_t>(m_params.m_body[m_params.m_head[P_UN_V].m_index].m_signal);
-  const uint32_t index = m_params.m_head[P_KEY_BP].m_index + voiceId;
-  const float pitch = m_params.m_body[index].m_dest;
+  const uint32_t unisonVoices = 1 + static_cast<uint32_t>(m_params.getSignal(P_UN_V));
+  const uint32_t index = m_params.getHead(P_KEY_BP).m_index + voiceId;
+  const float pitch = m_params.getBody(index).m_dest;
   //
   for(uint32_t v = 0; v < unisonVoices; v++)
   {
     if(v > 0)
     {
-      m_params.m_body[index + v].m_dest = pitch;
-      m_params.m_body[index + v].m_preload++;
+      m_params.getBody(index + v).m_dest = pitch;
+      m_params.getBody(index + v).m_preload++;
     }
     m_params.m_unison_index[voiceId] = v;
     keyDown(voiceId, _velocity);
@@ -1174,7 +1170,7 @@ void dsp_host::testNewNoteOn(uint32_t _pitch, uint32_t _velocity)
   int32_t keyPos = static_cast<int32_t>(_pitch) - 60;
   uint32_t noteVel
       = static_cast<uint32_t>(static_cast<float>(_velocity) * m_test_normalizeMidi * utility_definition[0][0]);
-  m_test_unison_voices = static_cast<uint32_t>(m_params.m_body[m_params.m_head[P_UN_V].m_index].m_signal) + 1;
+  m_test_unison_voices = static_cast<uint32_t>(m_params.getSignal(P_UN_V)) + 1;
   evalMidi(47, 2, 1);              // enable preload (key event list mode)
   evalMidi(0, 0, m_test_voiceId);  // select voice: current
   for(uint32_t uIndex = 0; uIndex < m_test_unison_voices; uIndex++)
@@ -1198,7 +1194,7 @@ void dsp_host::testNoteOn156(uint32_t _pitch, uint32_t _velocity)
   int32_t keyPos = static_cast<int32_t>(_pitch) - 60;
   uint32_t noteVel
       = static_cast<uint32_t>(static_cast<float>(_velocity) * m_test_normalizeMidi * utility_definition[0][0]);
-  m_test_unison_voices = static_cast<uint32_t>(m_params.m_body[m_params.m_head[P_UN_V].m_index].m_signal) + 1;
+  m_test_unison_voices = static_cast<uint32_t>(m_params.getSignal(P_UN_V)) + 1;
   /* */
   evalMidi(55, 0, (m_test_voiceId << 1) + 0);  // new keyVoice (current voice, no steal)
   testParseDestination(keyPos * 1000);         // base pitch (factor 1000 because of Scaling)
@@ -1406,7 +1402,7 @@ void dsp_host::testGetParamHeadData()
   Log::info("PARAM_HEAD:");
   for(uint32_t p = 0; p < sig_number_of_params; p++)
   {
-    param_head *obj = &m_params.m_head[p];
+    param_head *obj = &m_params.getHead(p);
     Log::info<Log::LogMode::Plain>("id: ", obj->m_id, ", ");
     Log::info<Log::LogMode::Plain>("index: ", obj->m_index, ", ");
     Log::info<Log::LogMode::Plain>("size: ", obj->m_size, ", ");
@@ -1426,11 +1422,11 @@ void dsp_host::testGetParamRenderData()
   Log::info("PARAM_BODY:");
   for(uint32_t p = 0; p < sig_number_of_params; p++)
   {
-    param_head *obj = &m_params.m_head[p];
+    param_head *obj = &m_params.getHead(p);
     uint32_t index = obj->m_index;
     for(uint32_t i = 0; i < obj->m_size; i++)
     {
-      param_body *item = &m_params.m_body[index];
+      param_body *item = &m_params.getBody(index);
       Log::info<Log::LogMode::Plain>("P(", obj->m_id, ", ", i, "):\t");
       Log::info<Log::LogMode::Plain>("state: ", item->m_state, ",\tpreload: ", item->m_preload);
       Log::info<Log::LogMode::Plain>(",\tsignal: ", item->m_signal, ",\tdx:[", item->m_dx[0], ", ", item->m_dx[1], "]");
@@ -1668,7 +1664,7 @@ void dsp_host::examineParameter()
   uint32_t v;
   for(v = 0; v < m_param_status.m_size; v++)
   {
-    param_body *par = &m_params.m_body[m_param_status.m_index];
+    param_body *par = &m_params.getBody(m_param_status.m_index);
     m_param_status.m_state[v] = par->m_state;
     m_param_status.m_preload[v] = par->m_preload;
     m_param_status.mparams[v] = par->m_signal;

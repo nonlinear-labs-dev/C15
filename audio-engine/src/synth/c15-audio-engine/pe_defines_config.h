@@ -66,6 +66,7 @@
 
 #define dsp_poly_types 2         // two polyphony types (mono, poly) - (later, a dual type needs to be implemented)
 #define dsp_clock_types 4        // four different parameter types (sync, audio, fast, slow)
+#define dsp_spread_types 2       // two (mono) spread types (single: mono->mono, spread: mono->poly)
 #define dsp_number_of_voices 20  // maximum allowed number of voices
 
 const uint32_t dsp_clock_rates[2] = {

@@ -63,9 +63,103 @@ struct param_utility
   float m_scaleArg;
 };
 
+struct Parameters
+{
+
+  inline param_head &getHead(uint32_t id)
+  {
+    return m_head[id];
+  }
+
+  inline param_body &getBody(uint32_t id)
+  {
+    return m_body[id];
+  }
+
+  inline float getSignal(uint32_t paramId) const
+  {
+    return m_body[m_head[paramId].m_index].m_signal;
+  }
+
+  inline float getSignal(uint32_t paramId, uint32_t voice) const
+  {
+    return m_body[m_head[paramId].m_index + voice].m_signal;
+  }
+
+  inline void addClockId(uint32_t _clockType, uint32_t _polyType, uint32_t _id)
+  {
+      m_clockIds.add(_clockType, _polyType, _id);
+  }
+
+  inline const std::vector<uint32_t> &getClockIds(uint32_t _clockType, uint32_t _polyType) const
+  {
+      return m_clockIds.get(_clockType, _polyType);
+  }
+
+  inline void addPostId(uint32_t _spreadType, uint32_t _clockType, uint32_t _polyType, uint32_t _id)
+  {
+      m_postIds.add(_spreadType, _clockType, _polyType, _id);
+  }
+
+  inline const std::vector<uint32_t> &getPostIds(uint32_t _spreadType, uint32_t _clockType, uint32_t _polyType) const
+  {
+      return m_postIds.get(_spreadType, _clockType, _polyType);
+  }
+
+private:
+  param_head m_head[sig_number_of_params];
+  param_body m_body[sig_number_of_param_items];
+  new_clock_id_list m_clockIds;
+  new_dual_clock_id_list m_postIds;
+};
+
+/* improving code readability */
+enum PARAM_CLOCK_TYPES
+{
+    PARAM_SYNC = 0,
+    PARAM_AUDIO = 1,
+    PARAM_FAST = 2,
+    PARAM_SLOW = 3
+};
+
+enum PARAM_POLY_TYPES
+{
+    PARAM_MONO = 0,
+    PARAM_POLY = 1
+};
+
+enum PARAM_SPREAD_TYPES
+{
+    PARAM_SINGLE = 0,
+    PARAM_SPREAD = 1
+};
+
 /* */
 struct paramengine
 {
+
+  Parameters m_parameters;
+
+  inline param_head &getHead(uint32_t id)
+  {
+    return m_parameters.getHead(id);
+  }
+
+  inline param_body &getBody(uint32_t id)
+  {
+    return m_parameters.getBody(id);
+  }
+
+  inline float getSignal(uint32_t paramId) const
+  {
+    return m_parameters.getSignal(paramId);
+  }
+
+  inline float getSignal(uint32_t paramId, uint32_t voice) const
+  {
+    return m_parameters.getSignal(paramId, voice);
+  }
+
   /* local variables */
   uint32_t m_samplerate;
   uint32_t m_preload = 0;
@@ -81,10 +175,6 @@ struct paramengine
   /* access to envelope parameters */
   const uint32_t m_envIds[sig_number_of_env_events] = { P_EA, P_EB, P_EC };
   /* local data structures */
-  clock_id_list m_clockIds;
-  dual_clock_id_list m_postIds;
-  param_head m_head[sig_number_of_params];
-  param_body m_body[sig_number_of_param_items];
   exponentiator m_convert;
   param_utility m_utilities[sig_number_of_utilities];
   float m_env_c_clipFactor[dsp_number_of_voices];

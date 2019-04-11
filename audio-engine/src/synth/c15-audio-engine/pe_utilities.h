@@ -12,6 +12,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <vector>
 #include "pe_defines_config.h"
 
 struct id_list
@@ -51,24 +52,6 @@ struct poly_id_list
     void add(const uint32_t _polyId, const uint32_t _id);
 };
 
-struct clock_id_list
-{
-    /* local variables */
-    poly_id_list m_data[dsp_clock_types];
-    /* list operations */
-    void reset();
-    void add(const uint32_t _clockId, const uint32_t _polyId, const uint32_t _id);
-};
-
-struct dual_clock_id_list
-{
-    /* local variables */
-    clock_id_list m_data[2];
-    /* list operations */
-    void reset();
-    void add(const uint32_t _listId, const uint32_t _clockId, const uint32_t _polyId, const uint32_t _id);
-};
-
 struct env_id_list
 {
     /* local variables */
@@ -86,4 +69,36 @@ struct dual_env_id_list
     /* list operations */
     void reset();
     void add(const uint32_t _listId, const uint32_t _id);
+};
+
+struct new_clock_id_list
+{
+    inline void add(uint32_t _clockType, uint32_t _polyType, uint32_t _id)
+    {
+        m_data[_clockType][_polyType].push_back(_id);
+    }
+
+    inline const std::vector<uint32_t> &get(uint32_t _clockType, uint32_t _polyType) const
+    {
+        return m_data[_clockType][_polyType];
+    }
+
+private:
+    std::vector<uint32_t> m_data[dsp_clock_types][dsp_poly_types];
+};
+
+struct new_dual_clock_id_list
+{
+    inline void add(uint32_t _spreadType, uint32_t _clockType, uint32_t _polyType, uint32_t _id)
+    {
+        m_data[_spreadType][_clockType][_polyType].push_back(_id);
+    }
+
+    inline const std::vector<uint32_t> &get(uint32_t _spreadType, uint32_t _clockType, uint32_t _polyType) const
+    {
+        return m_data[_spreadType][_clockType][_polyType];
+    }
+
+private:
+    std::vector<uint32_t> m_data[dsp_spread_types][dsp_clock_types][dsp_poly_types];
 };

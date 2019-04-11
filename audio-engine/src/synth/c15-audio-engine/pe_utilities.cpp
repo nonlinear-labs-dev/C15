@@ -56,34 +56,6 @@ void poly_id_list::add(const uint32_t _polyId, const uint32_t _id)
     m_data[_polyId].add(_id);
 }
 
-/* clock id list methods (reset list, add _id to specified sub-list) */
-
-void clock_id_list::reset()
-{
-    for(uint32_t i = 0; i < dsp_clock_types; i++)
-    {
-        m_data[i].reset();
-    }
-}
-
-void clock_id_list::add(const uint32_t _clockId, const uint32_t _polyId, const uint32_t _id)
-{
-    m_data[_clockId].add(_polyId, _id);
-}
-
-/* dual clock id list methods (reset list, add _id to specified sub-list) */
-
-void dual_clock_id_list::reset()
-{
-    m_data[0].reset();
-    m_data[1].reset();
-}
-
-void dual_clock_id_list::add(const uint32_t _listId, const uint32_t _clockId, const uint32_t _polyId, const uint32_t _id)
-{
-    m_data[_listId].add(_clockId, _polyId, _id);
-}
-
 /* env id list methods (reset list, add _id to list) */
 
 void env_id_list::reset()
