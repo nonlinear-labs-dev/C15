@@ -52,16 +52,17 @@ void PresetListEntry::onPresetChanged()
   {
     bool isLoaded
         = m_preset->getUuid() == Application::get().getPresetManager()->getEditBuffer()->getUUIDOfLastLoadedPreset();
-    auto bank = dynamic_cast<Bank *>(m_preset->getParent());
-    auto num = bank->getPresetPosition(m_preset->getUuid());
-    m_number->update(num, m_selected, isLoaded);
-    m_name->update(m_preset->getName(), m_selected, isLoaded);
+    if(auto bank = dynamic_cast<Bank *>(m_preset->getParent()))
+    {
+      auto num = bank->getPresetPosition(m_preset->getUuid());
+      m_number->update(num, m_selected, isLoaded);
+      m_name->update(m_preset->getName(), m_selected, isLoaded);
+      return;
+    }
   }
-  else
-  {
-    m_number->update(-1, false, false);
-    m_name->update("", false, false);
-  }
+
+  m_number->update(-1, false, false);
+  m_name->update("", false, false);
 }
 
 bool PresetListEntry::redraw(FrameBuffer &fb)
