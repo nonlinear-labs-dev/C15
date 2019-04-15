@@ -327,10 +327,11 @@ void EditBuffer::fakePresetDetails(Writer &writer, bool changed) const
       {
         for(auto &param : group->getParameters())
         {
+          auto &paramCache = param->getRecallData().getParameterCache();
           writer.writeTag("param",
-                          { Attribute{ "id", param->getID() },
-                            Attribute{ "value", param->getDefaultValue() },
-                            Attribute{ "mod-src", "0" }, Attribute{ "mod-amt", "0" } },
+                          { Attribute{ "id", paramCache.getID() }, Attribute{ "value", paramCache.getValue() },
+                            Attribute{ "mod-src", to_string(static_cast<int>(paramCache.getModulationSource())) },
+                            Attribute{ "mod-amt", to_string(paramCache.getModulationAmount()) } },
                           []() {});
         }
       }
@@ -357,10 +358,7 @@ void EditBuffer::writeDocument(Writer &writer, tUpdateID knownRevision) const
                     if(changed)
                       super::writeDocument(writer, knownRevision);
 
-                    if(auto originPreset = getOrigin())
-                      originPreset->writeDetailDocument(writer, knownRevision, knownRevision < m_updateIdWhenLastLoadedPresetChanged);
-                    else
-                      fakePresetDetails(writer, knownRevision < m_updateIdWhenLastLoadedPresetChanged);
+                    fakePresetDetails(writer, knownRevision < m_updateIdWhenLastLoadedPresetChanged);
                   });
 }
 
@@ -422,12 +420,13 @@ void EditBuffer::undoableSetLoadedPresetInfo(UNDO::Transaction *transaction, Pre
     m_signalPresetLoaded.send();
     m_updateIdWhenLastLoadedPresetChanged = onChange();
   });
+
+  forEachParameter([transaction](Parameter *p) { p->getRecallData().onLoad(transaction); });
 }
 
 void EditBuffer::undoableUpdateLoadedPresetInfo(UNDO::Transaction *transaction)
 {
-  auto pm = static_cast<PresetManager *>(getParent());
-  undoableSetLoadedPresetInfo(transaction, pm->findPreset(getUUIDOfLastLoadedPreset()));
+  undoableSetLoadedPresetInfo(transaction, getParent()->findPreset(getUUIDOfLastLoadedPreset()));
 }
 
 void EditBuffer::undoableClear(UNDO::Transaction *transaction)
@@ -440,6 +439,8 @@ void EditBuffer::undoableClear(UNDO::Transaction *transaction)
   {
     group->undoableClear(transaction);
   }
+
+  forEachParameter([transaction](Parameter *p) { p->getRecallData().onLoad(transaction); });
 }
 
 void EditBuffer::undoableRandomize(UNDO::Transaction *transaction, Initiator initiator)
@@ -474,6 +475,7 @@ void EditBuffer::undoableInitSound(UNDO::Transaction *transaction)
 
   setName(transaction, "Init Sound");
   transaction->addSimpleCommand(sendEditBuffer, UNDO::ActionCommand::tAction());
+  forEachParameter([transaction](Parameter *p) { p->getRecallData().onLoad(transaction); });
 }
 
 void EditBuffer::undoableSetDefaultValues(UNDO::Transaction *transaction, Preset *other)

@@ -35,6 +35,15 @@ class ParameterGroupSet : public AttributesOwner
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
+  template<typename T>
+  void forEachParameter(T t) {
+      for(auto& g: m_parameterGroups) {
+          for(auto& p: g->getParameters()) {
+              t(p);
+          }
+      }
+  }
+
  protected:
   void copyFrom(UNDO::Transaction *transaction, const Preset *other);
   virtual tParameterGroupPtr appendParameterGroup(ParameterGroup *p);

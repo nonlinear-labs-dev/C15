@@ -7,6 +7,7 @@
 #include "value/QuantizedValue.h"
 #include <proxies/hwui/HWUIEnums.h>
 #include <tools/FlagOwner.h>
+#include <parameters/recall/ParameterRecallData.h>
 
 class Layout;
 class DFBLayout;
@@ -52,7 +53,7 @@ class Parameter : public UpdateDocumentContributor,
   ParameterGroup *getParentGroup();
   gint32 getID() const;
 
-  PresetParameter *getOriginalParameter() const;
+  const PresetParameter * getOriginalParameter() const;
 
   virtual bool isChangedFromLoaded() const;
   virtual bool isValueChangedFromLoaded() const;
@@ -123,6 +124,7 @@ class Parameter : public UpdateDocumentContributor,
   void check();
 
   void undoableRecallFromPreset();
+  ParameterRecallData& getRecallData() const;
 
  protected:
   virtual void sendToLpc() const;
@@ -139,7 +141,7 @@ class Parameter : public UpdateDocumentContributor,
   Signal<void, const Parameter *> m_signalParamChanged;
 
   uint16_t m_id;
-  mutable PresetParameter* m_cachedOGParam;
+  mutable ParameterRecallData m_recallData;
   QuantizedValue m_value;
   sigc::connection m_valueChangedConnection;
 
