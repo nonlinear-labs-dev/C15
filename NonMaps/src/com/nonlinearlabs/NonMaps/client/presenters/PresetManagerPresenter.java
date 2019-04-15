@@ -50,7 +50,7 @@ public class PresetManagerPresenter {
 	}
 	
 	public String getLoadedPresetNumberString() {
-		boolean mod = NonMaps.theMaps.getNonLinearWorld().getParameterEditor().isModified();
+		boolean mod = EditBufferModel.get().isAnyParamChanged();
 		String ret = getBaseLoadedPresetNumberString();
 		
 		if(ret.isEmpty())
