@@ -9,7 +9,6 @@ set(LIBS
   alsa
   )
 
-
 EXEC_PROGRAM("sh"
   ${CMAKE_CURRENT_SOURCE_DIR}
   ARGS "-c \"git branch | grep '^\\* ' | sed 's/^\\* //'\" "
@@ -43,7 +42,8 @@ foreach(lib ${LIBS})
   addLib(${lib})
 endforeach(lib)
 
-include_directories(src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -march=native")
 
@@ -57,7 +57,29 @@ ENDIF(GPO_APPLY)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
-add_executable(audio-engine ${SOURCE_FILES})
+# generated source files
+file(GLOB_RECURSE SOURCE_FILE_GENERATORS ${CMAKE_CURRENT_SOURCE_DIR}/src/synth/c15-audio-engine/code-generators/header-generators/*.sh)
+
+function(processHeaderGenerator generatorScript)
+    string(REPLACE .sh .h generatedHeader ${generatorScript})
+    string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} generatedHeader ${generatedHeader})
+    set(GENERATED_SOURCE_FILES ${GENERATED_SOURCE_FILES} ${generatedHeader} PARENT_SCOPE)
+    get_filename_component(PARENT_DIR ${generatedHeader} DIRECTORY)
+
+    add_custom_command(OUTPUT ${generatedHeader}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PARENT_DIR}
+        COMMAND sh ${generatorScript} > ${generatedHeader}
+        DEPENDS ${generatorScript}
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/synth/c15-audio-engine/pe_defines_lists.h
+    )
+endfunction(processHeaderGenerator)
+
+foreach(line IN LISTS SOURCE_FILE_GENERATORS)
+    processHeaderGenerator(${line})
+endforeach()
+
+add_executable(audio-engine ${GENERATED_SOURCE_FILES} ${SOURCE_FILES})
 
 IF(DEV_PC)
     TARGET_COMPILE_DEFINITIONS(audio-engine PRIVATE test_inputModeFlag=1)
@@ -83,8 +105,8 @@ install(TARGETS audio-engine
   )
 
 ADD_CUSTOM_TARGET(
-	audio-engine-touch-cmakelists ALL
-	COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
+    audio-engine-touch-cmakelists ALL
+    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
 )
 
 
