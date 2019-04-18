@@ -179,6 +179,10 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       {
           Application::get().getPresetManager()->stressAllParams(500);
       }
+      else if(line == "inc-all-fine")
+      {
+          Application::get().getPresetManager()->incAllParamsFine();
+      }
       else if(line == "stress-pm")
       {
         Application::get().getPresetManager()->stressLoad(1000);
