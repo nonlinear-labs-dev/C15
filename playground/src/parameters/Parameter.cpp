@@ -334,11 +334,7 @@ void Parameter::writeDocProperties(Writer &writer, tUpdateID knownRevision) cons
 {
   writer.writeTextElement("value", to_string(m_value.getRawValue()));
   writer.writeTextElement("default", to_string(m_value.getDefaultValue()));
-
-  if(auto ogParam = getOriginalParameter())
-    writer.writeTextElement("og-value", to_string(ogParam->getValue()));
-  else
-    writer.writeTextElement("og-value", to_string(getDefaultValue()));
+  writer.writeTextElement("og-value", to_string(getOriginalParameter()->getValue()));
 
   if(shouldWriteDocProperties(knownRevision))
   {
