@@ -27,10 +27,9 @@ public class BasicParameterModel extends Notifier<BasicParameterModel> {
 	}
 
 	public boolean isValueChanged() {
-		int denominator = value.metaData.fineDenominator.getValue();
-		
-		int roundedVal = (int) (value.value.getValue() * denominator);
-		int roundedOgVal = (int) (originalValue.getValue() * denominator);
+		int compareDenominator = value.metaData.fineDenominator.getValue() * 2;
+		int roundedVal = (int) (value.value.getValue() * compareDenominator);
+		int roundedOgVal = (int) (originalValue.getValue() * compareDenominator);
 		return roundedVal != roundedOgVal;
 	}
 	

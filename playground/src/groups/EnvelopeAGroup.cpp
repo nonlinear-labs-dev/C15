@@ -44,7 +44,7 @@ void EnvelopeAGroup::init()
 
   appendParameter(
       new ModulateableParameterWithUnusualModUnit(this, 12, ScaleConverter::get<LinearBipolar24DbScaleConverter>(),
-                                                  ScaleConverter::get<LinearBipolar48DbScaleConverter>(), 0, 48, 480));
+                                                  ScaleConverter::get<LinearBipolar48DbScaleConverter>(), 0, 48, 240));
 
   appendParameter(new Parameter(this, 14, ScaleConverter::get<Linear60DbScaleConverter>(), 0.5, 60, 600));
 

@@ -56,8 +56,9 @@ public class EditBufferUpdater extends Updater {
 
 			if (!id.isEmpty()) {
 				BasicParameterModel bpm = EditBufferModel.get().findParameter(Integer.valueOf(id));
-				if (!val.isEmpty())
-					bpm.originalValue.setValue(Double.valueOf(val));
+				if (!val.isEmpty()) {
+					bpm.originalValue.fromString(val);
+				}
 
 				if (bpm instanceof ModulateableParameter) {
 					ModulateableParameter modP = ((ModulateableParameter) bpm);
