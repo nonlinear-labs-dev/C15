@@ -181,7 +181,7 @@ void Parameter::copyFrom(UNDO::Transaction *transaction, const PresetParameter *
 
 void Parameter::copyTo(UNDO::Transaction *transaction, PresetParameter *other) const
 {
-  other->setValue(transaction, getValue().getRawValue());
+  other->setValue(transaction, getValue().getQuantizedClipped());
 }
 
 void Parameter::undoableSetDefaultValue(UNDO::Transaction *transaction, const PresetParameter *value)
