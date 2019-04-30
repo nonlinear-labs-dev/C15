@@ -26,7 +26,7 @@ class Preset : public PresetParameterGroups
  public:
   Preset(UpdateDocumentContributor *parent);
   Preset(UpdateDocumentContributor *parent, const Preset &other, bool ignoreUuids);
-  Preset(UpdateDocumentContributor *parent, const EditBuffer &editBuffer);
+  Preset(UpdateDocumentContributor *parent, const EditBuffer &editBuffer, bool copyUUID = false);
   ~Preset() override;
 
   // supported interfaces
@@ -66,6 +66,7 @@ class Preset : public PresetParameterGroups
   EditBuffer *getEditBuffer();
   size_t getHash() const = delete;
   void updateBanksLastModifiedTimestamp(UNDO::Transaction *transaction);
+  void writeGroups(Writer &w, const Preset *preset) const;
 
   Uuid m_uuid;
   Glib::ustring m_name;

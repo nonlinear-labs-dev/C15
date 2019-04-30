@@ -9,6 +9,7 @@ import com.google.gwt.xml.client.NodeList;
 import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.ServerProxy;
 import com.nonlinearlabs.NonMaps.client.Tracer;
+import com.nonlinearlabs.NonMaps.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.NonMaps.client.world.AppendOverwriteInsertPresetDialog;
 import com.nonlinearlabs.NonMaps.client.world.Control;
 import com.nonlinearlabs.NonMaps.client.world.Name;
@@ -446,10 +447,6 @@ public class ParameterEditor extends LayoutResizingVertical {
 			return (Parameter) selectedObject;
 
 		return parameterMap.values().iterator().next();
-	}
-
-	public boolean isModified() {
-		return m_isModified;
 	}
 
 	public Parameter findParameter(int parameterID) {

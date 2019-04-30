@@ -35,6 +35,7 @@ tControlPositionValue PresetParameter::getValue() const
 
 void PresetParameter::setValue(UNDO::Transaction *transaction, tControlPositionValue v)
 {
+  v = ScaleConverter::getControlPositionRangeBipolar().clip(v);
   transaction->addUndoSwap(m_value, v);
 }
 

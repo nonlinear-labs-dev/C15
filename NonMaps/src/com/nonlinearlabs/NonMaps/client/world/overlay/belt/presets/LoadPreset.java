@@ -1,6 +1,7 @@
 package com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets;
 
 import com.nonlinearlabs.NonMaps.client.NonMaps;
+import com.nonlinearlabs.NonMaps.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.NonMaps.client.world.Control;
 import com.nonlinearlabs.NonMaps.client.world.Position;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.PresetManager;
@@ -59,10 +60,12 @@ class LoadPreset extends SVGImage {
 		if (!isSelectedPresetLoaded())
 			return true;
 
-		return NonMaps.get().getNonLinearWorld().getParameterEditor().isModified();
+		return EditBufferModel.get().isAnyParamChanged();
 	}
 
 	protected boolean isSelectedPresetLoaded() {
+		String loadedPresetUUID = EditBufferModel.get().loadedPreset.getValue();
+		
 		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
 		String b = pm.getSelectedBank();
 		if (b != null) {
@@ -72,7 +75,7 @@ class LoadPreset extends SVGImage {
 				if (p != null) {
 					Preset preset = bank.getPresetList().findPreset(p);
 					if (preset != null) {
-						return preset.equals(pm.findLoadedPreset());
+						return preset.getUUID().equals(loadedPresetUUID);
 					}
 				}
 			}

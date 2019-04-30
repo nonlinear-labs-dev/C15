@@ -10,13 +10,13 @@ PresetParameterGroups::PresetParameterGroups(UpdateDocumentContributor *parent)
 }
 
 PresetParameterGroups::PresetParameterGroups(UpdateDocumentContributor *parent, const Preset &other)
-    : PresetParameterGroups(parent)
+    : AttributesOwner(parent, &other)
 {
   init(&other);
 }
 
 PresetParameterGroups::PresetParameterGroups(UpdateDocumentContributor *parent, const EditBuffer &editbuffer)
-    : PresetParameterGroups(parent)
+    : AttributesOwner(parent, &editbuffer)
 {
   for(auto &g : editbuffer.getParameterGroups())
     m_parameterGroups[g->getID()] = std::make_unique<PresetParameterGroup>(*g);

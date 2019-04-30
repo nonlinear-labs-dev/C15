@@ -11,6 +11,9 @@ MiniParameterLabel::MiniParameterLabel(Parameter *parameter, const Rect &pos)
 
   Application::get().getPresetManager()->getEditBuffer()->onPresetLoaded(
       sigc::bind(sigc::mem_fun(this, &MiniParameterLabel::onParameterChanged), parameter));
+
+  Application::get().getPresetManager()->getEditBuffer()->onRecallValuesChanged(
+      sigc::bind(sigc::mem_fun(this, &MiniParameterLabel::onParameterChanged), parameter));
 }
 
 MiniParameterLabel::~MiniParameterLabel()

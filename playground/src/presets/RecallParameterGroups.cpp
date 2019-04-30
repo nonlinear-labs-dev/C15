@@ -41,13 +41,12 @@ void RecallParameterGroups::copyParamSet(UNDO::Transaction *transaction, const P
     m_parameterGroups.at(pair.first)->copyFrom(transaction, othergroup.get());
   }
 
-  transaction->addUndoSwap(m_origin, Glib::ustring("Preset"));
-  transaction->addSimpleCommand([this](auto) { onChange(); });
+  transaction->addUndoSwap(this, m_origin, Glib::ustring("Preset"));
 }
 
 void RecallParameterGroups::onPresetDeleted(UNDO::Transaction *transaction)
 {
-  transaction->addUndoSwap(m_origin, Glib::ustring("EditBuffer"));
+  transaction->addUndoSwap(this, m_origin, Glib::ustring("EditBuffer"));
 }
 
 void RecallParameterGroups::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
@@ -62,4 +61,10 @@ void RecallParameterGroups::writeDocument(Writer &writer, UpdateDocumentContribu
   });
 
   AttributesOwner::writeDocument(writer, knownRevision);
+}
+
+UpdateDocumentContributor::tUpdateID RecallParameterGroups::onChange(uint64_t flags)
+{
+  m_signalRecallValues.send();
+  return UpdateDocumentContributor::onChange(flags);
 }

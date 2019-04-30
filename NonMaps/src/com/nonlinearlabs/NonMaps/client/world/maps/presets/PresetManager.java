@@ -243,9 +243,6 @@ public class PresetManager extends MapsLayout {
 		if (NonMaps.theMaps.getNonLinearWorld().getSettings().isOneOf("SelectionAutoScroll", "on", "preset",
 				"parameter-and-preset"))
 			scrollToSelectedPreset();
-
-		if (hasMultiplePresetSelection())
-			closeMultiSelection();
 	}
 
 	private void scrollToSelectedPreset() {

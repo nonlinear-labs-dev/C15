@@ -15,12 +15,15 @@ class RecallParameterGroups : public PresetParameterGroups
 
   void copyFromEditBuffer(UNDO::Transaction *transaction, const EditBuffer *other);
 
-  void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+    tUpdateID onChange(uint64_t flags) override;
+
+    void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
   void copyParamSet(UNDO::Transaction *transaction, const Preset *other);
   void onPresetDeleted(UNDO::Transaction *transaction);
 
  private:
+  Signal<void> m_signalRecallValues;
   Glib::ustring m_origin;
 
   friend class EditBuffer;

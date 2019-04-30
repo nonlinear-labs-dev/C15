@@ -14,6 +14,9 @@ ParameterNameLabel::ParameterNameLabel(const Rect &pos)
 
   Application::get().getPresetManager()->getEditBuffer()->onPresetLoaded(
       sigc::mem_fun(this, &ParameterNameLabel::onPresetLoaded));
+
+    Application::get().getPresetManager()->getEditBuffer()->onRecallValuesChanged(
+            sigc::mem_fun(this, &ParameterNameLabel::onPresetLoaded));
 }
 
 ParameterNameLabel::~ParameterNameLabel()

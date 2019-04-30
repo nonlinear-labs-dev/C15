@@ -67,6 +67,7 @@ class EditBuffer : public ParameterGroupSet
   sigc::connection onChange(slot<void> s);
   sigc::connection onPresetLoaded(slot<void> s);
   sigc::connection onLocksChanged(slot<void> s);
+  sigc::connection onRecallValuesChanged(slot<void> s);
 
   void undoableImportReaktorPreset(const Glib::ustring &preset);
   void undoableImportReaktorPreset(UNDO::Transaction *transaction, const Glib::ustring &preset);
