@@ -36,6 +36,13 @@ void printStackTrace(int i)
   exit(EXIT_FAILURE);
 }
 
+std::string doubleToStringWithPrecision(double value, int precision)
+{
+  std::ostringstream ss;
+  ss << std::fixed << std::setprecision(precision) << value;
+  return ss.str();
+}
+
 std::string getStackTrace(const std::string& prefix)
 {
   std::stringstream str;

@@ -334,12 +334,12 @@ void Parameter::writeDocument(Writer &writer, tUpdateID knownRevision) const
 
 void Parameter::writeDocProperties(Writer &writer, tUpdateID knownRevision) const
 {
-  std::ostringstream ss;
-  ss << std::setprecision(25) << m_value.getRawValue();
-  auto converted = ss.str();
-  writer.writeTextElement("value", converted);
-  writer.writeTextElement("default", to_string(m_value.getDefaultValue()));
-  writer.writeTextElement("og-value", to_string(getOriginalParameter()->getValue()));
+  auto now = doubleToStringWithPrecision(m_value.getRawValue());
+  auto og = doubleToStringWithPrecision(getOriginalParameter()->getValue());
+
+  writer.writeTextElement("value", now);
+  writer.writeTextElement("default", doubleToStringWithPrecision(m_value.getDefaultValue()));
+  writer.writeTextElement("og-value", og);
 
   if(shouldWriteDocProperties(knownRevision))
   {

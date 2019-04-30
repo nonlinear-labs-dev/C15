@@ -8,6 +8,8 @@
 #include <memory>
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 #define TRACE_LOC_AND_ARGS(loc, arg) std::cout << loc << ": " << arg << std::endl
 #define TRACE(arg) TRACE_LOC_AND_ARGS(G_STRLOC, arg)
@@ -57,6 +59,8 @@ std::ostream& operator<<(std::ostream& stream, const T& e)
   stream << static_cast<int>(e);
   return stream;
 }
+
+std::string doubleToStringWithPrecision(double value, int precision = 10);
 
 template <class T> inline void hash_combine(std::size_t& seed, const T& v)
 {
