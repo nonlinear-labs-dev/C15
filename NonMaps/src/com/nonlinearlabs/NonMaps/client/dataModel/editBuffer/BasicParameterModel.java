@@ -1,5 +1,6 @@
 package com.nonlinearlabs.NonMaps.client.dataModel.editBuffer;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.NonMaps.client.dataModel.DoubleDataModelEntity;
 import com.nonlinearlabs.NonMaps.client.dataModel.Notifier;
@@ -27,7 +28,7 @@ public class BasicParameterModel extends Notifier<BasicParameterModel> {
 	}
 
 	public boolean isValueChanged() {
-		int compareDenominator = value.metaData.fineDenominator.getValue() * 2;
+		int compareDenominator = value.metaData.fineDenominator.getValue();
 		int roundedVal = (int) (value.value.getValue() * compareDenominator);
 		int roundedOgVal = (int) (originalValue.getValue() * compareDenominator);
 		return roundedVal != roundedOgVal;

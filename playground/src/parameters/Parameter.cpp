@@ -17,6 +17,8 @@
 #include <presets/PresetParameter.h>
 #include <presets/Preset.h>
 #include <device-settings/DebugLevel.h>
+#include <sstream>
+#include <iomanip>
 
 static const auto c_invalidSnapshotValue = numeric_limits<tControlPositionValue>::max();
 
@@ -332,7 +334,10 @@ void Parameter::writeDocument(Writer &writer, tUpdateID knownRevision) const
 
 void Parameter::writeDocProperties(Writer &writer, tUpdateID knownRevision) const
 {
-  writer.writeTextElement("value", to_string(m_value.getRawValue()));
+  std::ostringstream ss;
+  ss << std::setprecision(25) << m_value.getRawValue();
+  auto converted = ss.str();
+  writer.writeTextElement("value", converted);
   writer.writeTextElement("default", to_string(m_value.getDefaultValue()));
   writer.writeTextElement("og-value", to_string(getOriginalParameter()->getValue()));
 
