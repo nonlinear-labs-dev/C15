@@ -33,6 +33,7 @@ class PresetManager : public ContentSection
   void stress(int numTransactions);
   void stressAllParams(int numParamChangedForEachParameter);
   void incAllParamsFine();
+  void testRecall();
   void stressParam(UNDO::Transaction* transaction, Parameter* param);
   void stressBlocking(int numTransactions);
   void stressLoad(int numTransactions);

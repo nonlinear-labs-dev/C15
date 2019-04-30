@@ -694,11 +694,47 @@ void PresetManager::incAllParamsFine()
         {
           for(auto &param : group->getParameters())
           {
-            param->stepCPFromHwui(trans, 1, ButtonModifiers{ButtonModifier::FINE});
+            param->stepCPFromHwui(trans, 1, ButtonModifiers{ ButtonModifier::FINE });
           }
         }
       },
       20);
+}
+
+void testParam(int paramID, UNDO::Scope &undoScope, EditBuffer &eb)
+{
+  {
+    auto scope = undoScope.startTransaction("Change Param");
+    auto transaction = scope->getTransaction();
+    eb.findParameterByID(paramID)->stepCPFromHwui(transaction, 1, ButtonModifiers{ ButtonModifier::FINE });
+  }
+
+  if(!eb.findParameterByID(paramID)->isValueChangedFromLoaded())
+  {
+    DebugLevel::error("TEST -> ", paramID, "-> not changed Failed");
+    return;
+  }
+}
+
+void PresetManager::testRecall()
+{
+  {
+    auto scope = getUndoScope().startTransaction("Prepare EditBuffer");
+    auto transaction = scope->getTransaction();
+    getEditBuffer()->loadDebug(transaction);
+  }
+
+  if(getEditBuffer()->anyParameterChanged())
+  {
+    DebugLevel::error("TEST -> initRecall -> not changed Failed");
+    getEditBuffer()->anyParameterChanged();
+    return;
+  }
+
+  for(auto id : { 10, 11, 55, 54, 53, 88 })
+  {
+    testParam(id, getUndoScope(), *getEditBuffer());
+  }
 }
 
 void PresetManager::stressAllParams(int numParamChangedForEachParameter)

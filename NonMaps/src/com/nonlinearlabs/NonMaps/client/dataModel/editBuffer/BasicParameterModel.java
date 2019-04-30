@@ -1,5 +1,8 @@
 package com.nonlinearlabs.NonMaps.client.dataModel.editBuffer;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.NonMaps.client.dataModel.DoubleDataModelEntity;
@@ -27,10 +30,32 @@ public class BasicParameterModel extends Notifier<BasicParameterModel> {
 		return this;
 	}
 
+	int getDecimalPlaces(Double d) {
+		if(d.toString().contains("\\.")) {
+			String[] splitter = d.toString().split("\\.");
+			return splitter[1].length() + 1;
+		}
+		return 0;
+	}	
+	
+	double scale(double v, int scale) {
+		BigDecimal foo = new BigDecimal(v).setScale(scale, RoundingMode.HALF_UP);
+		return foo.doubleValue();
+	}
+	
 	public boolean isValueChanged() {
+		double og = originalValue.getValue(); 
+		double val = value.value.getValue(); 
+		
+		int valDigits = Math.max(getDecimalPlaces(val), 5);
+				
+		og = scale(og, valDigits);
+		val = scale(val, valDigits);
+		
 		int compareDenominator = value.metaData.fineDenominator.getValue();
-		int roundedVal = (int) (value.value.getValue() * compareDenominator);
-		int roundedOgVal = (int) (originalValue.getValue() * compareDenominator);
+		int roundedVal = (int) (val * compareDenominator);
+		int roundedOgVal = (int) (og * compareDenominator);
+
 		return roundedVal != roundedOgVal;
 	}
 	

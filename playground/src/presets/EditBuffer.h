@@ -75,6 +75,8 @@ class EditBuffer : public ParameterGroupSet
   bool isModified() const;
   void sendToLPC();
 
+  void loadDebug(UNDO::Transaction *transaction);
+
   //RECALL
   RecallParameterGroups &getRecallParameterSet();
   void initRecallValues(UNDO::Transaction *t);

@@ -183,6 +183,10 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       {
           Application::get().getPresetManager()->incAllParamsFine();
       }
+      else if(line == "test-recall-og")
+      {
+          Application::get().getPresetManager()->testRecall();
+      }
       else if(line == "stress-pm")
       {
         Application::get().getPresetManager()->stressLoad(1000);

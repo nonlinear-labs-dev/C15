@@ -40,6 +40,15 @@ std::string doubleToStringWithPrecision(double value, int precision)
 {
   std::ostringstream ss;
   ss << std::fixed << std::setprecision(precision) << value;
+
+  int target = precision + 2;
+  if(value < 0)
+      target+=1;
+
+  while(ss.str().size() != target) {
+      ss << 0;
+  }
+
   return ss.str();
 }
 

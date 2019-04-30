@@ -638,3 +638,7 @@ void EditBuffer::setMacroControlValueFromMCView(int id, double value, Glib::ustr
       mc->setLastMCViewUUID(uuid);
     }
 }
+
+void EditBuffer::loadDebug(UNDO::Transaction *transaction) {
+    m_recallSet.copyFromEditBuffer(transaction, this);
+}
