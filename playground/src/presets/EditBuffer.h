@@ -74,9 +74,7 @@ class EditBuffer : public ParameterGroupSet
   Glib::ustring exportReaktorPreset();
   bool isModified() const;
   void sendToLPC();
-
-  void loadDebug(UNDO::Transaction *transaction);
-
+  
   //RECALL
   RecallParameterGroups &getRecallParameterSet();
   void initRecallValues(UNDO::Transaction *t);
