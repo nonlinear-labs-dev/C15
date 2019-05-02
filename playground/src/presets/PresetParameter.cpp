@@ -51,7 +51,7 @@ void PresetParameter::copyFrom(UNDO::Transaction *transaction, const PresetParam
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   assert(m_id == other->m_id);
-  transaction->addUndoSwap(eb, m_value, other->m_value);
+  transaction->addUndoSwap(eb, m_value, doubleToDoubleWithPrecision(other->m_value));
   transaction->addUndoSwap(eb, m_fields, other->m_fields);
 }
 

@@ -9,7 +9,7 @@ public class CurrentValuesName extends Label {
 		super(parent);
 		super.setFontHeightInMM(5);
 	}
-
+	
 	@Override
 	public BeltParameterLayout getParent() {
 		return (BeltParameterLayout) super.getParent();

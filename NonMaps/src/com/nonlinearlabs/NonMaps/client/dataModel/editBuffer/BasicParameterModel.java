@@ -29,20 +29,17 @@ public class BasicParameterModel extends Notifier<BasicParameterModel> {
 	public BasicParameterModel getValue() {
 		return this;
 	}
-	
-	private double roundForCompare(double val) {
-		int tmp = (int) (val * 100000);
-		return tmp / 100000.0;
+		
+	private static int roundCompare(double value) {
+	    BigDecimal bd = new BigDecimal(value);
+	    bd = bd.setScale(1, RoundingMode.HALF_UP);
+	    return (int)bd.doubleValue();
 	}
 	
 	public boolean isValueChanged() {
-		double og = roundForCompare(originalValue.getValue()); 
-		double val = roundForCompare(value.value.getValue()); 
-		
 		int compareDenominator = value.metaData.fineDenominator.getValue();
-		int roundedVal = (int) (val * compareDenominator);
-		int roundedOgVal = (int) (og * compareDenominator);
-
+		int roundedVal = roundCompare(value.value.getValue() * compareDenominator);
+		int roundedOgVal = roundCompare(originalValue.getValue() * compareDenominator);
 		return roundedVal != roundedOgVal;
 	}
 	

@@ -61,6 +61,7 @@ std::ostream& operator<<(std::ostream& stream, const T& e)
 }
 
 std::string doubleToStringWithPrecision(double value, int precision = 10);
+double doubleToDoubleWithPrecision(double value, int precision = 10);
 
 template <class T> inline void hash_combine(std::size_t& seed, const T& v)
 {

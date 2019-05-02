@@ -183,7 +183,7 @@ void Parameter::copyFrom(UNDO::Transaction *transaction, const PresetParameter *
 
 void Parameter::copyTo(UNDO::Transaction *transaction, PresetParameter *other) const
 {
-  other->setValue(transaction, getValue().getRawValue());
+  other->setValue(transaction, doubleToDoubleWithPrecision(getValue().getRawValue()));
 }
 
 void Parameter::undoableSetDefaultValue(UNDO::Transaction *transaction, const PresetParameter *value)
@@ -235,9 +235,9 @@ bool Parameter::isChangedFromLoaded() const
 bool Parameter::isValueChangedFromLoaded() const
 {
   const int denominator = static_cast<const int>(getValue().getFineDenominator());
-  const int roundedNow = static_cast<const int>(getControlPositionValue() * denominator);
-  const int roundedOG = static_cast<const int>(getOriginalParameter()->getValue() * denominator);
-  return roundedOG != roundedNow;
+  const int value = static_cast<const int>(std::round(getControlPositionValue() * denominator));
+  const int original = static_cast<const int>(std::round(getOriginalParameter()->getValue() * denominator));
+  return value != original;
 }
 
 bool Parameter::isBiPolar() const

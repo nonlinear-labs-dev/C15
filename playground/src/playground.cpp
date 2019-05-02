@@ -4,6 +4,7 @@
 #include <execinfo.h>
 #include <iostream>
 #include <chrono>
+#include <cmath>
 #include "device-settings/DebugLevel.h"
 #include "profiling/Profiler.h"
 
@@ -50,6 +51,13 @@ std::string doubleToStringWithPrecision(double value, int precision)
   }
 
   return ss.str();
+}
+
+double doubleToDoubleWithPrecision(double v, int precision)
+{
+    double denom = std::pow(10, precision);
+    auto rounded = static_cast<long long>(v * denom);
+    return rounded / denom;
 }
 
 std::string getStackTrace(const std::string& prefix)
