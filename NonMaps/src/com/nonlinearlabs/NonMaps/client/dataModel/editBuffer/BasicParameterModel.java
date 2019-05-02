@@ -29,28 +29,15 @@ public class BasicParameterModel extends Notifier<BasicParameterModel> {
 	public BasicParameterModel getValue() {
 		return this;
 	}
-
-	int getDecimalPlaces(Double d) {
-		if(d.toString().contains("\\.")) {
-			String[] splitter = d.toString().split("\\.");
-			return splitter[1].length() + 1;
-		}
-		return 0;
-	}	
 	
-	double scale(double v, int scale) {
-		BigDecimal foo = new BigDecimal(v).setScale(scale, RoundingMode.HALF_UP);
-		return foo.doubleValue();
+	private double roundForCompare(double val) {
+		int tmp = (int) (val * 100000);
+		return tmp / 100000.0;
 	}
 	
 	public boolean isValueChanged() {
-		double og = originalValue.getValue(); 
-		double val = value.value.getValue(); 
-		
-		int valDigits = Math.max(getDecimalPlaces(val), 5);
-				
-		og = scale(og, valDigits);
-		val = scale(val, valDigits);
+		double og = roundForCompare(originalValue.getValue()); 
+		double val = roundForCompare(value.value.getValue()); 
 		
 		int compareDenominator = value.metaData.fineDenominator.getValue();
 		int roundedVal = (int) (val * compareDenominator);

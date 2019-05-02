@@ -29,12 +29,13 @@ const PresetParameter *RecallParameterGroups::findParameterByID(int id) const
 
 void RecallParameterGroups::copyFromEditBuffer(UNDO::Transaction *transaction, const EditBuffer *other)
 {
-  transaction->addUndoSwap(m_origin, Glib::ustring("EditBuffer"));
   PresetParameterGroups::copyFromParameterGroupSet(transaction, other);
+  transaction->addUndoSwap(this, m_origin, Glib::ustring("EditBuffer"));
 }
 
 void RecallParameterGroups::copyParamSet(UNDO::Transaction *transaction, const Preset *other)
 {
+  AttributesOwner::copyFrom(transaction, other);
   for(auto &pair : other->m_parameterGroups)
   {
     auto &othergroup = pair.second;
@@ -52,6 +53,7 @@ void RecallParameterGroups::onPresetDeleted(UNDO::Transaction *transaction)
 void RecallParameterGroups::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
 {
   auto changed = getUpdateIDOfLastChange() > knownRevision;
+
   writer.writeTag("recall-data", Attribute{ "changed", changed }, [this, &writer, changed] {
     if(changed)
     {

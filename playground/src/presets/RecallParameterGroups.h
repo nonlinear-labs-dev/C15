@@ -15,9 +15,9 @@ class RecallParameterGroups : public PresetParameterGroups
 
   void copyFromEditBuffer(UNDO::Transaction *transaction, const EditBuffer *other);
 
-    tUpdateID onChange(uint64_t flags) override;
+  tUpdateID onChange(uint64_t flags) override;
 
-    void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
   void copyParamSet(UNDO::Transaction *transaction, const Preset *other);
   void onPresetDeleted(UNDO::Transaction *transaction);
