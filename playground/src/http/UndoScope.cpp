@@ -4,7 +4,6 @@
 
 void UndoScope::onAddTransaction(UNDO::Transaction* transaction)
 {
-  EditBufferSnapshotMaker::get().addSnapshotIfRequired(transaction);
   UNDO::Scope::onAddTransaction(transaction);
 }
 
