@@ -58,7 +58,8 @@ Label::StringAndSuffix Label::getText() const
   return m_text;
 }
 
-Label::StringAndSuffix Label::shortenStringIfNeccessary(std::shared_ptr<Font> font, const Label::StringAndSuffix &text) const
+Label::StringAndSuffix Label::shortenStringIfNeccessary(std::shared_ptr<Font> font,
+                                                        const Label::StringAndSuffix &text) const
 {
   return text;
 }

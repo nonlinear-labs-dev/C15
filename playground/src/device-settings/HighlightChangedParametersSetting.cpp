@@ -11,6 +11,7 @@ ForceHighlightChangedParametersSetting::ForceHighlightChangedParametersSetting(S
 {
 }
 
-bool ForceHighlightChangedParametersSetting::persistent() const {
-    return false;
+bool ForceHighlightChangedParametersSetting::persistent() const
+{
+  return false;
 }

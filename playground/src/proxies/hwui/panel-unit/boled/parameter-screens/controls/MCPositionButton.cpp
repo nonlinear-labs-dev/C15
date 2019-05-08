@@ -7,8 +7,7 @@ MCPositionButton::MCPositionButton(int id)
 {
 }
 
-MCPositionButton::~MCPositionButton()
-= default;
+MCPositionButton::~MCPositionButton() = default;
 
 void MCPositionButton::update(const Parameter *parameter)
 {
@@ -17,7 +16,7 @@ void MCPositionButton::update(const Parameter *parameter)
     if(p->getModulationSource() == ModulationSource::NONE)
       setText("");
     else
-      setText({std::string("MC Pos") + (p->isMacroControlAssignedAndChanged() ? "*" : "")});
+      setText({ std::string("MC Pos") + (p->isMacroControlAssignedAndChanged() ? "*" : "") });
   }
   else
   {

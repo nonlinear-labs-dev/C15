@@ -115,20 +115,20 @@ void PanelUnitParameterEditMode::setup()
       setupButtonConnection(buttonID, createParameterSelectAction(para));
   });
 
-  setupButtonConnection(75,
-                        std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 243));
+  setupButtonConnection(
+      75, std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 243));
   FOR_TESTS(assignedAudioIDs.insert(243));
 
-  setupButtonConnection(79,
-                        std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 244));
+  setupButtonConnection(
+      79, std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 244));
   FOR_TESTS(assignedAudioIDs.insert(244));
 
-  setupButtonConnection(83,
-                        std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 245));
+  setupButtonConnection(
+      83, std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 245));
   FOR_TESTS(assignedAudioIDs.insert(245));
 
-  setupButtonConnection(87,
-                        std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 246));
+  setupButtonConnection(
+      87, std::bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 246));
   FOR_TESTS(assignedAudioIDs.insert(246));
 
   assertAllButtonsAssigned();
@@ -244,7 +244,7 @@ UsageMode::tAction PanelUnitParameterEditMode::createParameterSelectAction(std::
 UsageMode::tAction PanelUnitParameterEditMode::createParameterSelectAction(gint32 audioID)
 {
   return std::bind(&PanelUnitParameterEditMode::toggleParameterSelection, this, std::vector<gint32>(audioID),
-              std::placeholders::_3);
+                   std::placeholders::_3);
 }
 
 bool PanelUnitParameterEditMode::toggleParameterSelection(const std::vector<gint32> ids, bool state)

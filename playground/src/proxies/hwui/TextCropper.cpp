@@ -37,7 +37,8 @@ void TextCropper::registerTests()
   });
 };
 
-Glib::ustring TextCropper::shortenStringIfNeccessary(std::shared_ptr<Font> font, const Glib::ustring &text, double maxWidth)
+Glib::ustring TextCropper::shortenStringIfNeccessary(std::shared_ptr<Font> font, const Glib::ustring &text,
+                                                     double maxWidth)
 {
   if(font->getStringWidth(text) > maxWidth)
     return preserveEndShorten(font, text, maxWidth);

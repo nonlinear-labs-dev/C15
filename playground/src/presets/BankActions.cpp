@@ -381,7 +381,7 @@ BankActions::BankActions(PresetManager &presetManager)
       auto transaction = scope->getTransaction();
       auto desiredPresetPos = bank->getPresetPosition(selUuid) + 1;
       auto newPreset = bank->insertAndLoadPreset(transaction, desiredPresetPos,
-                                          std::make_unique<Preset>(bank, *m_presetManager.getEditBuffer()));
+                                                 std::make_unique<Preset>(bank, *m_presetManager.getEditBuffer()));
 
       if(!uuid.empty())
         newPreset->setUuid(transaction, uuid);
@@ -723,8 +723,8 @@ BankActions::BankActions(PresetManager &presetManager)
           draggedBank->attachBank(transaction, droppedOntoBank->getUuid(), Bank::AttachmentDirection::left);
         }
 
-          draggedBank->setX(transaction, x);
-          draggedBank->setY(transaction, y);
+        draggedBank->setX(transaction, x);
+        draggedBank->setY(transaction, y);
 
         m_presetManager.sanitizeBankClusterRelations(transaction);
       }

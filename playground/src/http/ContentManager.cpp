@@ -31,8 +31,8 @@ ContentManager::WebsocketConnection::~WebsocketConnection()
   g_object_unref(ws);
 }
 
-void ContentManager::WebsocketConnection::onWebsocketRequestDone(std::shared_ptr<WebSocketRequest> request, tUpdateID oldID,
-                                                                 tUpdateID newId)
+void ContentManager::WebsocketConnection::onWebsocketRequestDone(std::shared_ptr<WebSocketRequest> request,
+                                                                 tUpdateID oldID, tUpdateID newId)
 {
   if(oldID == lastSelfIssuedUpdateId)
   {
@@ -227,7 +227,8 @@ bool ContentManager::feedWebSocket(tWebsocketConnection c)
   return false;
 }
 
-bool ContentManager::tryHandlingContentSectionRequest(tContentSectionPtr section, std::shared_ptr<NetworkRequest> request)
+bool ContentManager::tryHandlingContentSectionRequest(tContentSectionPtr section,
+                                                      std::shared_ptr<NetworkRequest> request)
 {
   Glib::ustring path = request->getPath();
 

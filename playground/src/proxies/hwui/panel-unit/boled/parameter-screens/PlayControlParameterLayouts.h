@@ -12,6 +12,7 @@ class PlayControlParameterLayout2 : public virtual ParameterLayout2
 
   virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
+
  protected:
   virtual void onInit() override;
 
@@ -71,7 +72,6 @@ class PlayControlParameterSelectLayout2 : public ParameterSelectLayout2
 
   virtual Carousel *createCarousel(const Rect &rect) override;
   virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
-
 };
 
 class PlayControlParameterEditLayout2 : public ParameterEditLayout2

@@ -4,7 +4,8 @@
 
 class Settings;
 
-class CrashOnError : public BooleanSetting {
-public:
-    CrashOnError(Settings& parent);
+class CrashOnError : public BooleanSetting
+{
+ public:
+  CrashOnError(Settings& parent);
 };

@@ -14,8 +14,8 @@ time_t TimeTools::getRealTimestamp()
 
 time_t TimeTools::getAdjustedTimestamp()
 {
-  auto dateTimeSetting
-      = std::static_pointer_cast<DateTimeAdjustment>(Application::get().getSettings()->getSetting("DateTimeAdjustment"));
+  auto dateTimeSetting = std::static_pointer_cast<DateTimeAdjustment>(
+      Application::get().getSettings()->getSetting("DateTimeAdjustment"));
   return getRealTimestamp() + dateTimeSetting->get();
 }
 

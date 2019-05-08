@@ -122,7 +122,7 @@ void ControlOwner::highlightButtonWithCaption(const Glib::ustring &caption)
   forEach([&caption](tControlPtr ctrl) {
     if(auto b = std::dynamic_pointer_cast<Button>(ctrl))
     {
-        b->setHighlight(b->getText().text == caption);
+      b->setHighlight(b->getText().text == caption);
     }
   });
 }

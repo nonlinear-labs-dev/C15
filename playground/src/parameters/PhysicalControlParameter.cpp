@@ -22,14 +22,15 @@ PhysicalControlParameter::PhysicalControlParameter(ParameterGroup *group, uint16
 {
 }
 
-bool PhysicalControlParameter::isValueChangedFromLoaded() const {
-    return false;
+bool PhysicalControlParameter::isValueChangedFromLoaded() const
+{
+  return false;
 }
 
-bool PhysicalControlParameter::isChangedFromLoaded() const {
-    return false;
+bool PhysicalControlParameter::isChangedFromLoaded() const
+{
+  return false;
 }
-
 
 void PhysicalControlParameter::onChangeFromLpc(tControlPositionValue newVal)
 {
@@ -101,15 +102,15 @@ size_t PhysicalControlParameter::getHash() const
 Glib::ustring PhysicalControlParameter::generateName() const
 {
   auto it = std::max_element(m_targets.begin(), m_targets.end(),
-                        [](const ModulationRoutingParameter *a, const ModulationRoutingParameter *b) {
-                          auto fa = fabs(a->getControlPositionValue());
-                          auto fb = fabs(b->getControlPositionValue());
+                             [](const ModulationRoutingParameter *a, const ModulationRoutingParameter *b) {
+                               auto fa = fabs(a->getControlPositionValue());
+                               auto fb = fabs(b->getControlPositionValue());
 
-                          if(fa == fb)
-                            return a->getID() < b->getID();
+                               if(fa == fb)
+                                 return a->getID() < b->getID();
 
-                          return fa < fb;
-                        });
+                               return fa < fb;
+                             });
 
   if(it == m_targets.end())
     return "Not assigned";
@@ -178,8 +179,8 @@ void PhysicalControlParameter::setUiSelectedModulationRouter(int pos)
 
     invalidate();
 
-    if(auto u
-       = std::dynamic_pointer_cast<PanelUnitParameterEditMode>(Application::get().getHWUI()->getPanelUnit().getUsageMode()))
+    if(auto u = std::dynamic_pointer_cast<PanelUnitParameterEditMode>(
+           Application::get().getHWUI()->getPanelUnit().getUsageMode()))
     {
       u->bruteForceUpdateLeds();
     }

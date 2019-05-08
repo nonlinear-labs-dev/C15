@@ -45,7 +45,7 @@ double ModulateableParameterWithUnusualModUnit::getModulationAmountCoarseDenomin
   return m_modAmountScaling->getCoarseDenominator(getValue());
 }
 
-Glib::ustring ModulateableParameterWithUnusualModUnit::stringizeModulationAmount(tControlPositionValue amount) const {
-    return m_modAmountScaling->getDimension().stringize(
-            m_modAmountScaling->controlPositionToDisplay(amount));
+Glib::ustring ModulateableParameterWithUnusualModUnit::stringizeModulationAmount(tControlPositionValue amount) const
+{
+  return m_modAmountScaling->getDimension().stringize(m_modAmountScaling->controlPositionToDisplay(amount));
 }

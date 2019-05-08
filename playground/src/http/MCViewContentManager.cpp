@@ -12,16 +12,20 @@ void MCViewContentManager::connectWebSocket(SoupWebsocketConnection *connection)
 {
   g_signal_connect(connection, "message", G_CALLBACK(&MCViewContentManager::onWebSocketMessage), this);
   m_webSockets.emplace_back(std::make_shared<WebsocketConnection>(connection));
-  for(auto& param: Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID("MCs")->getParameters()) {
-      if(auto mc = dynamic_cast<MacroControlParameter*>(param)) {
-          using namespace std::string_literals;
-          const auto idString = to_string(mc->getID());
-          const auto valueD = mc->getValue().getClippedValue();
-          const auto value = to_string(valueD);
-          const auto uuid = "FORCE"s;
-          const auto str = StringTools::buildString("MCVIEW&ID=",idString,"&VAL=",value,"&UUID=",uuid,"&NAME=",mc->getGivenName());
-          soup_websocket_connection_send_text(m_webSockets.back()->getConnection(), str.c_str());
-      }
+  for(auto &param :
+      Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID("MCs")->getParameters())
+  {
+    if(auto mc = dynamic_cast<MacroControlParameter *>(param))
+    {
+      using namespace std::string_literals;
+      const auto idString = to_string(mc->getID());
+      const auto valueD = mc->getValue().getClippedValue();
+      const auto value = to_string(valueD);
+      const auto uuid = "FORCE"s;
+      const auto str = StringTools::buildString("MCVIEW&ID=", idString, "&VAL=", value, "&UUID=", uuid,
+                                                "&NAME=", mc->getGivenName());
+      soup_websocket_connection_send_text(m_webSockets.back()->getConnection(), str.c_str());
+    }
   }
 }
 

@@ -3,13 +3,16 @@
 
 class EditBuffer;
 
-class RecallEditBufferSerializer : public Serializer {
-public:
-    RecallEditBufferSerializer(EditBuffer *edit);
-    static Glib::ustring getTagName();
-protected:
-    void writeTagContent(Writer &writer) const override;
-    void readTagContent(Reader &reader) const override;
-protected:
-    EditBuffer* m_editBuffer;
+class RecallEditBufferSerializer : public Serializer
+{
+ public:
+  RecallEditBufferSerializer(EditBuffer *edit);
+  static Glib::ustring getTagName();
+
+ protected:
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
+
+ protected:
+  EditBuffer *m_editBuffer;
 };

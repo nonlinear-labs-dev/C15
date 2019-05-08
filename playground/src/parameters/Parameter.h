@@ -121,7 +121,7 @@ class Parameter : public UpdateDocumentContributor,
 
   //Recall
   void undoableRecallFromPreset();
-  const RecallParameter * getOriginalParameter() const;
+  const RecallParameter *getOriginalParameter() const;
 
   virtual bool isChangedFromLoaded() const;
   virtual bool isValueChangedFromLoaded() const;

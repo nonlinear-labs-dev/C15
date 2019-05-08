@@ -101,8 +101,7 @@ bool FileDialogLayout::onRotary(int inc, ButtonModifiers modifiers)
 void FileDialogLayout::updateLabels()
 {
   if(fileCount != 0)
-    positionLabel->setText(
-        { "[" + to_string(fileList->getSelectedIndex() + 1) + "/" + to_string(fileCount) + "]" });
+    positionLabel->setText({ "[" + to_string(fileList->getSelectedIndex() + 1) + "/" + to_string(fileCount) + "]" });
   else
     positionLabel->setText("[0/0]");
 }

@@ -43,10 +43,12 @@ class ContentManager : public PendingHTTPRequests, public UpdateDocumentMaster, 
   void onSectionChanged();
 
   void deliverResponse(std::shared_ptr<HTTPRequest> request, tUpdateID clientsUpdateID);
-  void deliverContentSectionResponse(ContentManager::tContentSectionPtr section, std::shared_ptr<NetworkRequest> request);
+  void deliverContentSectionResponse(ContentManager::tContentSectionPtr section,
+                                     std::shared_ptr<NetworkRequest> request);
   void delayResponseUntilChanged(std::shared_ptr<HTTPRequest> request);
 
-  bool tryHandlingContentSectionRequest(ContentManager::tContentSectionPtr section, std::shared_ptr<NetworkRequest> request);
+  bool tryHandlingContentSectionRequest(ContentManager::tContentSectionPtr section,
+                                        std::shared_ptr<NetworkRequest> request);
 
   void writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision, bool omitOracles) const;
   void sendResponses();

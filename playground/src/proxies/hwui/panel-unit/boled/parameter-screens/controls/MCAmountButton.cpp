@@ -7,8 +7,7 @@ MCAmountButton::MCAmountButton(int id)
 {
 }
 
-MCAmountButton::~MCAmountButton()
-= default;
+MCAmountButton::~MCAmountButton() = default;
 
 void MCAmountButton::update(const Parameter *parameter)
 {
@@ -17,7 +16,7 @@ void MCAmountButton::update(const Parameter *parameter)
     if(p->getModulationSource() == ModulationSource::NONE)
       setText("");
     else
-      setText({std::string("MC Amt") + (p->isModAmountChanged() ? "*" : "")});
+      setText({ std::string("MC Amt") + (p->isModAmountChanged() ? "*" : "") });
   }
   else
   {

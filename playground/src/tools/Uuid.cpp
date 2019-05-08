@@ -78,7 +78,7 @@ Uuid Uuid::none()
 
 Uuid Uuid::init()
 {
-    return Uuid("Init");
+  return Uuid("Init");
 }
 
 void Uuid::generate()

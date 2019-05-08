@@ -18,7 +18,8 @@ RecallMCPositionLabel::RecallMCPositionLabel(Rect pos)
       if(auto originalMC = mc->getOriginalParameter())
       {
         auto scPtr = mc->getValue().getScaleConverter();
-        auto recallString = scPtr->getDimension().stringize(scPtr->controlPositionToDisplay(originalMC->getRecallValue()));
+        auto recallString
+            = scPtr->getDimension().stringize(scPtr->controlPositionToDisplay(originalMC->getRecallValue()));
         setText(recallString);
         return;
       }
