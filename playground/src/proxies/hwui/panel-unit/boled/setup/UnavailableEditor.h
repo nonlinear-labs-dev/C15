@@ -5,8 +5,7 @@
 
 class UnavailableEditor : public SetupLabel, public SetupEditor
 {
-  public:
-    UnavailableEditor ();
-    virtual ~UnavailableEditor ();
+ public:
+  UnavailableEditor();
+  virtual ~UnavailableEditor();
 };
-

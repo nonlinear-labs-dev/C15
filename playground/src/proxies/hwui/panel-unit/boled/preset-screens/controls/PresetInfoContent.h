@@ -9,25 +9,24 @@ class PresetBank;
 
 class PresetInfoContent : public InfoContent
 {
-  private:
-    typedef InfoContent super;
+ private:
+  typedef InfoContent super;
 
-  public:
-    PresetInfoContent ();
-    virtual ~PresetInfoContent ();
+ public:
+  PresetInfoContent();
+  virtual ~PresetInfoContent();
 
-  private:
-    void onBankChanged (shared_ptr<PresetBank> bank);
-    void onPresetSelectionChanged ();
+ private:
+  void onBankChanged(shared_ptr<PresetBank> bank);
+  void onPresetSelectionChanged();
 
-    void fixLayout();
-    bool fillFromPreset (const Preset *preset);
-    bool fillDefaults ();
-    Preset *getCurrentPreset ();
-    void onPresetChanged();
-    void connectToPreset (Preset* preset);
+  void fixLayout();
+  bool fillFromPreset(const Preset *preset);
+  bool fillDefaults();
+  Preset *getCurrentPreset();
+  void onPresetChanged();
+  void connectToPreset(Preset *preset);
 
-    sigc::connection m_bankConnection;
-    sigc::connection m_presetConnection;
+  sigc::connection m_bankConnection;
+  sigc::connection m_presetConnection;
 };
-

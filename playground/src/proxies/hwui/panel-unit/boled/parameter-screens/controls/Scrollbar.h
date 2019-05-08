@@ -6,16 +6,16 @@ class Scrollable;
 
 class Scrollbar : public Control
 {
-  private:
-    typedef Control super;
+ private:
+  typedef Control super;
 
-  public:
-    Scrollbar (Scrollable *content, const Rect &pos);
+ public:
+  Scrollbar(Scrollable *content, const Rect &pos);
 
-    virtual bool redraw (FrameBuffer &fb) override;
+  virtual bool redraw(FrameBuffer &fb) override;
 
-  private:
-    void onClientsDirtyStateChanged(bool isDirty);
+ private:
+  void onClientsDirtyStateChanged(bool isDirty);
 
-    Scrollable *m_content = nullptr;
+  Scrollable *m_content = nullptr;
 };

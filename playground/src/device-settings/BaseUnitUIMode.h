@@ -12,20 +12,19 @@ enum class BaseUnitUIModes
 
 class BaseUnitUIMode : public EnumSetting<BaseUnitUIModes>
 {
-  private:
-    typedef EnumSetting<BaseUnitUIModes> super;
+ private:
+  typedef EnumSetting<BaseUnitUIModes> super;
 
-  public:
-    BaseUnitUIMode (Settings &settings);
-    virtual ~BaseUnitUIMode ();
+ public:
+  BaseUnitUIMode(Settings &settings);
+  virtual ~BaseUnitUIMode();
 
-    bool set (BaseUnitUIModes m) override;
+  bool set(BaseUnitUIModes m) override;
 
-  private:
-    BaseUnitUIMode (const BaseUnitUIMode& other);
-    BaseUnitUIMode& operator= (const BaseUnitUIMode&);
+ private:
+  BaseUnitUIMode(const BaseUnitUIMode &other);
+  BaseUnitUIMode &operator=(const BaseUnitUIMode &);
 
-    const vector<Glib::ustring> &enumToString () const override;
-    const vector<Glib::ustring> &enumToDisplayString () const override;
+  const vector<Glib::ustring> &enumToString() const override;
+  const vector<Glib::ustring> &enumToDisplayString() const override;
 };
-

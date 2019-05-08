@@ -15,44 +15,46 @@ class HTTPRequest;
 
 class HTTPServer
 {
-  public:
-    HTTPServer ();
-    virtual ~HTTPServer ();
+ public:
+  HTTPServer();
+  virtual ~HTTPServer();
 
-    void init();
+  void init();
 
-    virtual void handleRequest (shared_ptr<NetworkRequest> request);
-    virtual void onMessageFinished (SoupMessage *msg);
+  virtual void handleRequest(shared_ptr<NetworkRequest> request);
+  virtual void onMessageFinished(SoupMessage *msg);
 
-    void pauseMessage(SoupMessage *msg);
-    void unpauseMessage(SoupMessage *msg);
+  void pauseMessage(SoupMessage *msg);
+  void unpauseMessage(SoupMessage *msg);
 
-    UpdateDocumentMaster *getUpdateDocumentMaster();
+  UpdateDocumentMaster *getUpdateDocumentMaster();
 
-  private:
-    static void serverCallback (SoupServer *server, SoupMessage *msg, const char *path, GHashTable *query, SoupClientContext *context, HTTPServer *pThis);
-    static void webSocket (SoupServer *server, SoupWebsocketConnection *connection, const char *pathStr, SoupClientContext *client, HTTPServer *pThis);
+ private:
+  static void serverCallback(SoupServer *server, SoupMessage *msg, const char *path, GHashTable *query,
+                             SoupClientContext *context, HTTPServer *pThis);
+  static void webSocket(SoupServer *server, SoupWebsocketConnection *connection, const char *pathStr,
+                        SoupClientContext *client, HTTPServer *pThis);
 
-    static void messageFinishedCB (SoupMessage *msg, HTTPServer *pThis);
+  static void messageFinishedCB(SoupMessage *msg, HTTPServer *pThis);
 
-    void startServer ();
-    void initializeServer ();
+  void startServer();
+  void initializeServer();
 
-    void serveStaticFile(shared_ptr<HTTPRequest> request);
+  void serveStaticFile(shared_ptr<HTTPRequest> request);
 
-    static bool isIndexPageAlias (const Glib::ustring &path);
-    static Glib::ustring getPathFromMessage(SoupMessage *msg);
-    void redirectToIndexPage (shared_ptr<HTTPRequest> request) const;
+  static bool isIndexPageAlias(const Glib::ustring &path);
+  static Glib::ustring getPathFromMessage(SoupMessage *msg);
+  void redirectToIndexPage(shared_ptr<HTTPRequest> request) const;
 
-    static bool isStaticFileURL (const Glib::ustring &path);
-    void deliverJournal (std::shared_ptr<HTTPRequest> request) const;
+  static bool isStaticFileURL(const Glib::ustring &path);
+  void deliverJournal(std::shared_ptr<HTTPRequest> request) const;
 
-    SoupServer *m_server = nullptr;
-    ContentManager m_contentManager;
+  SoupServer *m_server = nullptr;
+  ContentManager m_contentManager;
 
-    typedef shared_ptr<ServedStream> tServedStream;
-    typedef shared_ptr<HTTPRequest> tHTTPRequest;
-    list<tServedStream> m_servedStreams;
+  typedef shared_ptr<ServedStream> tServedStream;
+  typedef shared_ptr<HTTPRequest> tHTTPRequest;
+  list<tServedStream> m_servedStreams;
 
-    shared_ptr<AvahiService> m_avahi;
+  shared_ptr<AvahiService> m_avahi;
 };

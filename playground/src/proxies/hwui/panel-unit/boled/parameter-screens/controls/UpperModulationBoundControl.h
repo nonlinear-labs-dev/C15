@@ -5,11 +5,11 @@
 
 class UpperModulationBoundControl : public ControlWithChildren, public RotaryEncoder::Receiver
 {
-    typedef ControlWithChildren super;
-  public:
-    UpperModulationBoundControl (const Rect &r);
-    virtual ~UpperModulationBoundControl ();
+  typedef ControlWithChildren super;
 
-    bool onRotary (int inc, ButtonModifiers modifiers) override;
+ public:
+  UpperModulationBoundControl(const Rect &r);
+  virtual ~UpperModulationBoundControl();
+
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
 };
-

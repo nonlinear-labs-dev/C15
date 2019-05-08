@@ -4,19 +4,19 @@
 #include <device-settings/Passphrase.h>
 #include <proxies/hwui/panel-unit/boled/setup/PassphraseView.h>
 
-PassphraseView::PassphraseView () :
-    base_type ("", Rect (0, 0, 0, 0))
+PassphraseView::PassphraseView()
+    : base_type("", Rect(0, 0, 0, 0))
 {
-  Application::get ().getSettings ()->getSetting<Passphrase> ()->onChange (mem_fun (this, &PassphraseView::onSettingChanged));
+  Application::get().getSettings()->getSetting<Passphrase>()->onChange(
+      mem_fun(this, &PassphraseView::onSettingChanged));
 }
 
-PassphraseView::~PassphraseView ()
+PassphraseView::~PassphraseView()
 {
 }
 
-void PassphraseView::onSettingChanged (const Setting *s)
+void PassphraseView::onSettingChanged(const Setting *s)
 {
-  auto v = dynamic_cast<const Passphrase*> (s);
-  setText (v->get ());
+  auto v = dynamic_cast<const Passphrase *>(s);
+  setText(v->get());
 }
-

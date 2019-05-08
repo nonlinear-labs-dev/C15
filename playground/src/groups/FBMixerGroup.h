@@ -4,9 +4,9 @@
 
 class FBMixerGroup : public ParameterGroup
 {
-  public:
-    FBMixerGroup (ParameterGroupSet *parent);
-    virtual ~FBMixerGroup ();
+ public:
+  FBMixerGroup(ParameterGroupSet *parent);
+  virtual ~FBMixerGroup();
 
-    void init ();
+  void init();
 };

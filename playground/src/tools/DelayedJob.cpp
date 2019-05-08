@@ -1,27 +1,28 @@
 #include "DelayedJob.h"
 
-DelayedJob::DelayedJob (int maxDelay, tJob job) :
-    m_maxDelay (maxDelay),
-    m_job (job)
+DelayedJob::DelayedJob(int maxDelay, tJob job)
+    : m_maxDelay(maxDelay)
+    , m_job(job)
 {
 }
 
-DelayedJob::~DelayedJob ()
+DelayedJob::~DelayedJob()
 {
-  m_timeout.disconnect ();
+  m_timeout.disconnect();
 }
 
-void DelayedJob::trigger ()
+void DelayedJob::trigger()
 {
-  if (m_timeout.empty ())
+  if(m_timeout.empty())
   {
-    m_timeout = Glib::MainContext::get_default ()->signal_timeout ().connect (sigc::mem_fun (this, &DelayedJob::onTimeout), m_maxDelay);
+    m_timeout = Glib::MainContext::get_default()->signal_timeout().connect(sigc::mem_fun(this, &DelayedJob::onTimeout),
+                                                                           m_maxDelay);
   }
 }
 
-bool DelayedJob::onTimeout ()
+bool DelayedJob::onTimeout()
 {
-  m_timeout.disconnect ();
-  m_job ();
+  m_timeout.disconnect();
+  m_job();
   return false;
 }

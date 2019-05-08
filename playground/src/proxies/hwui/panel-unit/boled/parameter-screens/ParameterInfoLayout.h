@@ -4,17 +4,17 @@
 
 class ParameterInfoLayout : public InfoLayout
 {
-  private:
-    typedef InfoLayout super;
+ private:
+  typedef InfoLayout super;
 
-  public:
-    ParameterInfoLayout ();
+ public:
+  ParameterInfoLayout();
 
-    bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
-  protected:
-    virtual void addHeadline() override;
-    virtual void addModuleCaption() override;
-    virtual void addInfoLabel() override;
-    virtual Scrollable *createScrollableContent() override;
+ protected:
+  virtual void addHeadline() override;
+  virtual void addModuleCaption() override;
+  virtual void addInfoLabel() override;
+  virtual Scrollable *createScrollableContent() override;
 };

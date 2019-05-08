@@ -4,15 +4,14 @@
 
 class NumPresetsInBankLabel : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    NumPresetsInBankLabel (const Rect &pos);
-    virtual ~NumPresetsInBankLabel ();
+ public:
+  NumPresetsInBankLabel(const Rect &pos);
+  virtual ~NumPresetsInBankLabel();
 
-  private:
-    void updateText (shared_ptr<PresetBank> bank);
-    void setFontColor (FrameBuffer &fb) const override;
+ private:
+  void updateText(shared_ptr<PresetBank> bank);
+  void setFontColor(FrameBuffer &fb) const override;
 };
-

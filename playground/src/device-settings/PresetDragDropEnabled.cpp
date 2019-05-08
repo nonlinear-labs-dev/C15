@@ -1,10 +1,10 @@
 #include "PresetDragDropEnabled.h"
 
-PresetDragDropEnabled::PresetDragDropEnabled (Settings &settings) :
-    super (settings, true)
+PresetDragDropEnabled::PresetDragDropEnabled(Settings &settings)
+    : super(settings, true)
 {
 }
 
-PresetDragDropEnabled::~PresetDragDropEnabled ()
+PresetDragDropEnabled::~PresetDragDropEnabled()
 {
 }

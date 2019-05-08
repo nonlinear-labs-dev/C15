@@ -12,16 +12,15 @@ namespace DescriptiveLayouts
 {
   static struct LayoutConditionDatabase
   {
-      LayoutConditionDatabase()
-      {
-        m_conditions[LayoutConditions::IsParameterModulateable] = []()
-        {
-          auto p = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter();
-          return dynamic_cast<ModulateableParameter*>(p) != nullptr;
-        };
-      }
-      using Condition = std::function<bool ()>;
-      std::unordered_map<LayoutConditions, Condition> m_conditions;
+    LayoutConditionDatabase()
+    {
+      m_conditions[LayoutConditions::IsParameterModulateable] = []() {
+        auto p = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter();
+        return dynamic_cast<ModulateableParameter*>(p) != nullptr;
+      };
+    }
+    using Condition = std::function<bool()>;
+    std::unordered_map<LayoutConditions, Condition> m_conditions;
   } db;
 
   bool isConditionFulfilled(LayoutConditions c)

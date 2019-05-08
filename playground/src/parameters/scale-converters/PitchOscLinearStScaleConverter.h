@@ -4,8 +4,7 @@
 
 class PitchOscLinearStScaleConverter : public LinearScaleConverter
 {
-  public:
-    PitchOscLinearStScaleConverter ();
-    virtual ~PitchOscLinearStScaleConverter ();
+ public:
+  PitchOscLinearStScaleConverter();
+  virtual ~PitchOscLinearStScaleConverter();
 };
-

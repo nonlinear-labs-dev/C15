@@ -8,22 +8,21 @@
 
 class MacroControlParameter;
 
-UpperModulationBoundLabel::UpperModulationBoundLabel (const Rect &r) :
-    super (r)
+UpperModulationBoundLabel::UpperModulationBoundLabel(const Rect &r)
+    : super(r)
 {
 }
 
-UpperModulationBoundLabel::~UpperModulationBoundLabel ()
+UpperModulationBoundLabel::~UpperModulationBoundLabel()
 {
 }
 
-void UpperModulationBoundLabel::updateText (MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
+void UpperModulationBoundLabel::updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
 {
   auto rangeDisplayValues = modulatedParam->getModRangeAsDisplayValues();
 
-  if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
-    setText (rangeDisplayValues.second + " F", 2);
+  if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
+    setText(rangeDisplayValues.second + " F", 2);
   else
-    setText (rangeDisplayValues.second, 0);
+    setText(rangeDisplayValues.second, 0);
 }
-

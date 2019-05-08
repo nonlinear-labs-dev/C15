@@ -5,56 +5,54 @@
 #include <proxies/hwui/HWUI.h>
 #include "SetupLabel.h"
 
-EncoderAccelerationEditor::EncoderAccelerationEditor () :
-    super (Rect (0, 0, 0, 0))
+EncoderAccelerationEditor::EncoderAccelerationEditor()
+    : super(Rect(0, 0, 0, 0))
 {
-  Application::get ().getSettings ()->getSetting<EncoderAcceleration> ()->onChange (
-      mem_fun (this, &EncoderAccelerationEditor::onSettingChanged));
+  Application::get().getSettings()->getSetting<EncoderAcceleration>()->onChange(
+      mem_fun(this, &EncoderAccelerationEditor::onSettingChanged));
 }
 
-EncoderAccelerationEditor::~EncoderAccelerationEditor ()
+EncoderAccelerationEditor::~EncoderAccelerationEditor()
 {
 }
 
-
-bool EncoderAccelerationEditor::redraw (FrameBuffer &fb)
+bool EncoderAccelerationEditor::redraw(FrameBuffer &fb)
 {
   super::redraw(fb);
 
-  fb.setColor (FrameBuffer::C179);
-  fb.drawRect (getPosition());
+  fb.setColor(FrameBuffer::C179);
+  fb.drawRect(getPosition());
   return true;
 }
 
-void EncoderAccelerationEditor::setBackgroundColor (FrameBuffer &fb) const
+void EncoderAccelerationEditor::setBackgroundColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::C103);
+  fb.setColor(FrameBuffer::C103);
 }
 
-
-Font::Justification EncoderAccelerationEditor::getJustification () const
+Font::Justification EncoderAccelerationEditor::getJustification() const
 {
   return Font::Justification::Left;
 }
 
-void EncoderAccelerationEditor::setFontColor (FrameBuffer &fb) const
+void EncoderAccelerationEditor::setFontColor(FrameBuffer &fb) const
 {
   fb.setColor(FrameBuffer::C255);
 }
 
-void EncoderAccelerationEditor::onSettingChanged (const Setting *s)
+void EncoderAccelerationEditor::onSettingChanged(const Setting *s)
 {
-  if (auto p = dynamic_cast<const EncoderAcceleration*> (s))
-    setText (p->getDisplayString (), 0);
+  if(auto p = dynamic_cast<const EncoderAcceleration *>(s))
+    setText(p->getDisplayString(), 0);
 }
 
-bool EncoderAccelerationEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
+bool EncoderAccelerationEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }
 
-bool EncoderAccelerationEditor::onRotary (int inc, ButtonModifiers modifiers)
+bool EncoderAccelerationEditor::onRotary(int inc, ButtonModifiers modifiers)
 {
-  Application::get ().getSettings ()->getSetting<EncoderAcceleration> ()->incDec (inc, modifiers);
+  Application::get().getSettings()->getSetting<EncoderAcceleration>()->incDec(inc, modifiers);
   return true;
 }

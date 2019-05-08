@@ -4,17 +4,16 @@
 
 class AutoLoadSelectedPreset : public BooleanSetting
 {
-  private:
-    typedef BooleanSetting super;
+ private:
+  typedef BooleanSetting super;
 
-  public:
-    AutoLoadSelectedPreset (Settings &settings);
-    virtual ~AutoLoadSelectedPreset ();
+ public:
+  AutoLoadSelectedPreset(Settings& settings);
+  virtual ~AutoLoadSelectedPreset();
 
-    virtual bool set (tEnum m) override;
-    void cheat(tEnum m);
+  virtual bool set(tEnum m) override;
+  void cheat(tEnum m);
 
-    AutoLoadSelectedPreset (const AutoLoadSelectedPreset& other) = delete;
-    AutoLoadSelectedPreset& operator= (const AutoLoadSelectedPreset&) = delete;
+  AutoLoadSelectedPreset(const AutoLoadSelectedPreset& other) = delete;
+  AutoLoadSelectedPreset& operator=(const AutoLoadSelectedPreset&) = delete;
 };
-

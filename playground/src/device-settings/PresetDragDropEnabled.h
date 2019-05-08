@@ -4,11 +4,10 @@
 
 class PresetDragDropEnabled : public BooleanSetting
 {
-  private:
-    typedef BooleanSetting super;
+ private:
+  typedef BooleanSetting super;
 
-  public:
-    PresetDragDropEnabled (Settings &settings);
-    virtual ~PresetDragDropEnabled ();
+ public:
+  PresetDragDropEnabled(Settings &settings);
+  virtual ~PresetDragDropEnabled();
 };
-

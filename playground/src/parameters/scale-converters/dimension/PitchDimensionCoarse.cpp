@@ -19,7 +19,7 @@ const PitchDimensionCoarse& PitchDimensionCoarse::get()
   return p;
 }
 
-Glib::ustring PitchDimensionCoarse::stringize (const tDisplayValue &displayValue) const
+Glib::ustring PitchDimensionCoarse::stringize(const tDisplayValue& displayValue) const
 {
-  return formatDimensionRounded (displayValue,  "st", 0.1);
+  return formatDimensionRounded(displayValue, "st", 0.1);
 }

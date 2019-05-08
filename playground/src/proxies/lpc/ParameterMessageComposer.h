@@ -6,21 +6,20 @@ class Parameter;
 
 class ParameterMessageComposer : public MessageComposer
 {
-  private:
-    typedef MessageComposer super;
+ private:
+  typedef MessageComposer super;
 
-  public:
-    // public methods
-    ParameterMessageComposer (const Parameter *p);
-    virtual ~ParameterMessageComposer ();
+ public:
+  // public methods
+  ParameterMessageComposer(const Parameter* p);
+  virtual ~ParameterMessageComposer();
 
-    bool canReplace (const MessageComposer *other) const override;
+  bool canReplace(const MessageComposer* other) const override;
 
-  private:
-    // private methods
-    ParameterMessageComposer (const ParameterMessageComposer& other);
-    ParameterMessageComposer& operator= (const ParameterMessageComposer&);
+ private:
+  // private methods
+  ParameterMessageComposer(const ParameterMessageComposer& other);
+  ParameterMessageComposer& operator=(const ParameterMessageComposer&);
 
-    uint16_t m_parameterID;
+  uint16_t m_parameterID;
 };
-

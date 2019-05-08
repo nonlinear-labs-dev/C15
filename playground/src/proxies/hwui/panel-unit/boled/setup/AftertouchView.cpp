@@ -4,19 +4,19 @@
 #include <device-settings/AftertouchCurve.h>
 #include <proxies/hwui/panel-unit/boled/setup/AftertouchView.h>
 
-AftertouchView::AftertouchView () :
-    base_type ("", Rect (0, 0, 0, 0))
+AftertouchView::AftertouchView()
+    : base_type("", Rect(0, 0, 0, 0))
 {
-  Application::get ().getSettings ()->getSetting<AftertouchCurve> ()->onChange (mem_fun (this, &AftertouchView::onSettingChanged));
+  Application::get().getSettings()->getSetting<AftertouchCurve>()->onChange(
+      mem_fun(this, &AftertouchView::onSettingChanged));
 }
 
-AftertouchView::~AftertouchView ()
+AftertouchView::~AftertouchView()
 {
 }
 
-void AftertouchView::onSettingChanged (const Setting *s)
+void AftertouchView::onSettingChanged(const Setting *s)
 {
-  auto v = dynamic_cast<const AftertouchCurve*> (s);
-  setText (v->getDisplayString ());
+  auto v = dynamic_cast<const AftertouchCurve *>(s);
+  setText(v->getDisplayString());
 }
-

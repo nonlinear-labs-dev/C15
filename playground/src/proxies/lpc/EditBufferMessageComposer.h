@@ -4,12 +4,11 @@
 
 class Preset;
 
-class EditBufferMessageComposer :  public MessageComposer
+class EditBufferMessageComposer : public MessageComposer
 {
-  private:
-    using super = MessageComposer;
+ private:
+  using super = MessageComposer;
 
-  public:
-    EditBufferMessageComposer ();
+ public:
+  EditBufferMessageComposer();
 };
-

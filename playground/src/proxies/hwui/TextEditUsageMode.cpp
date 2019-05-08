@@ -14,136 +14,123 @@ const gunichar c_back = 0x8;
 const gunichar c_space = 0x20;
 const gunichar c_ins = 0x11;
 
-static ustring layout[] = { u8"qwertyuiop[]",
-u8"asdfghjkl;'ü",
-u8"zxcvbnm,./öä",
-u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13"
-};
+static ustring layout[]
+    = { u8"qwertyuiop[]", u8"asdfghjkl;'ü", u8"zxcvbnm,./öä", u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13" };
 
-static ustring shiftLayout[] = { u8"QWERTYUIOP{}",
-u8"ASDFGHJKL:\"Ü",
-u8"ZXCVBNM<>?ÖÄ",
-u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13"
-};
+static ustring shiftLayout[]
+    = { u8"QWERTYUIOP{}", u8"ASDFGHJKL:\"Ü", u8"ZXCVBNM<>?ÖÄ", u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13" };
 
-static ustring symbolLayout[] = { u8"1234567890()",
-u8"~`!@#$%^&*_+",
-u8"|\\§°€    ß-=",
-u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13"
-};
+static ustring symbolLayout[]
+    = { u8"1234567890()", u8"~`!@#$%^&*_+", u8"|\\§°€    ß-=", u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13" };
 
-static ustring symbolShiftLayout[] = { u8"1234567890()",
-u8"~`!@#$%^&*_+",
-u8"|\\§°€    ß-=",
-u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13"
-};
+static ustring symbolShiftLayout[]
+    = { u8"1234567890()", u8"~`!@#$%^&*_+", u8"|\\§°€    ß-=", u8"\x12\x12\x7F\x7F\x8\x8\x20\x20\x11\x11\x13\x13" };
 
-TextEditUsageMode::TextEditUsageMode (const Glib::ustring &initalText) :
-    m_text (initalText),
-    m_position (initalText.length ()),
-    m_layout (Layout::Normal)
+TextEditUsageMode::TextEditUsageMode(const Glib::ustring &initalText)
+    : m_text(initalText)
+    , m_position(initalText.length())
+    , m_layout(Layout::Normal)
 {
 }
 
-TextEditUsageMode::~TextEditUsageMode ()
+TextEditUsageMode::~TextEditUsageMode()
 {
 }
 
-void TextEditUsageMode::setup ()
+void TextEditUsageMode::setup()
 {
-  Application::get ().getHWUI ()->getPanelUnit ().turnLedsOff ();
+  Application::get().getHWUI()->getPanelUnit().turnLedsOff();
 
-  for (int col = 0; col < 12; col++)
+  for(int col = 0; col < 12; col++)
   {
-    for (int row = 0; row < 4; row++)
+    for(int row = 0; row < 4; row++)
     {
       Buttons buttonID = (Buttons)(col * 4 + row);
-      m_buttonMap[buttonID] = tButtonAssignment (layout[row].at (col), shiftLayout[row].at (col), symbolLayout[row].at (col),
-          symbolShiftLayout[row].at (col));
-      m_buttonMap[(Buttons)((int)buttonID + 48)] = tButtonAssignment (layout[row].at (col), shiftLayout[row].at (col), symbolLayout[row].at (col),
-          symbolShiftLayout[row].at (col));
+      m_buttonMap[buttonID] = tButtonAssignment(layout[row].at(col), shiftLayout[row].at(col),
+                                                symbolLayout[row].at(col), symbolShiftLayout[row].at(col));
+      m_buttonMap[(Buttons)((int) buttonID + 48)] = tButtonAssignment(
+          layout[row].at(col), shiftLayout[row].at(col), symbolLayout[row].at(col), symbolShiftLayout[row].at(col));
     }
   }
 }
 
-ustring TextEditUsageMode::getKeyLabel (Buttons buttonID) const
+ustring TextEditUsageMode::getKeyLabel(Buttons buttonID) const
 {
   try
   {
-    auto uni = getCharForButton (buttonID);
+    auto uni = getCharForButton(buttonID);
 
-    if (g_unichar_isgraph (uni))
+    if(g_unichar_isgraph(uni))
     {
       ustring ret;
       ret = uni;
       return ret;
     }
 
-    return stringizeSpecialChar (uni);
+    return stringizeSpecialChar(uni);
   }
-  catch (out_of_range ex)
+  catch(out_of_range ex)
   {
-    DebugLevel::error ("there is no label for button", toString(buttonID));
+    DebugLevel::error("there is no label for button", toString(buttonID));
   }
   return "";
 }
 
-gunichar TextEditUsageMode::getCharForButton (Buttons buttonID) const
+gunichar TextEditUsageMode::getCharForButton(Buttons buttonID) const
 {
-  auto keyAssignment = m_buttonMap.at (buttonID);
+  auto keyAssignment = m_buttonMap.at(buttonID);
 
-  switch (m_layout)
+  switch(m_layout)
   {
     case Layout::Shift:
-      return std::get<1> (keyAssignment);
+      return std::get<1>(keyAssignment);
 
     case Layout::Symbol:
-      return std::get<2> (keyAssignment);
+      return std::get<2>(keyAssignment);
 
     case Layout::SymbolShift:
-      return std::get<3> (keyAssignment);
+      return std::get<3>(keyAssignment);
 
     case Layout::Normal:
     default:
-      return std::get<0> (keyAssignment);
+      return std::get<0>(keyAssignment);
       break;
   }
-
 }
 
-ustring TextEditUsageMode::stringizeSpecialChar (gunichar c) const
+ustring TextEditUsageMode::stringizeSpecialChar(gunichar c) const
 {
-  switch (c)
+  switch(c)
   {
     case c_shift:
       return u8"Shift";
 
-      case c_symbol:
+    case c_symbol:
       return u8"Symbol";
 
-      case c_del:
+    case c_del:
       return u8"Del";
 
-      case c_back:
+    case c_back:
       return u8"Back";
 
-      case c_space:
+    case c_space:
       return u8" ";
 
-      case c_ins:
+    case c_ins:
       return u8"Ins";
-    }
-
-    return u8"Huh?";
   }
 
-void TextEditUsageMode::replaceCharWith (gunichar newChar)
-{
-  clampPosition ();
+  return u8"Huh?";
+}
 
-  if (m_position >= 0 && m_position < m_text.length ())
+void TextEditUsageMode::replaceCharWith(gunichar newChar)
+{
+  clampPosition();
+
+  if(m_position >= 0 && m_position < m_text.length())
   {
-    m_text.replace (m_position, 1, 1, newChar);
+    m_text.replace(m_position, 1, 1, newChar);
   }
   else
   {
@@ -151,18 +138,18 @@ void TextEditUsageMode::replaceCharWith (gunichar newChar)
   }
 
   m_position++;
-  clampPosition ();
+  clampPosition();
 
-  m_sigTextChanged.send (m_text);
+  m_sigTextChanged.send(m_text);
 }
 
-void TextEditUsageMode::insertChar (gunichar newChar)
+void TextEditUsageMode::insertChar(gunichar newChar)
 {
-  clampPosition ();
+  clampPosition();
 
-  if (m_position >= 0 && m_position < m_text.length ())
+  if(m_position >= 0 && m_position < m_text.length())
   {
-    m_text.insert (m_position, 1, newChar);
+    m_text.insert(m_position, 1, newChar);
   }
   else
   {
@@ -170,224 +157,216 @@ void TextEditUsageMode::insertChar (gunichar newChar)
   }
 
   m_position++;
-  m_sigTextChanged.send (m_text);
+  m_sigTextChanged.send(m_text);
 }
 
-void TextEditUsageMode::clampPosition ()
+void TextEditUsageMode::clampPosition()
 {
-  m_position = std::max<int> (m_position, 0);
-  m_position = std::min<int> (m_position, m_text.length ());
+  m_position = std::max<int>(m_position, 0);
+  m_position = std::min<int>(m_position, m_text.length());
 }
 
-bool TextEditUsageMode::onButtonPressed (Buttons buttonID, ButtonModifiers modifiers, bool state)
+bool TextEditUsageMode::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
-  m_buttonRepeat.reset ();
+  m_buttonRepeat.reset();
 
-  if (buttonID == Buttons::BUTTON_SHIFT)
+  if(buttonID == Buttons::BUTTON_SHIFT)
   {
-    handleShiftButton (state);
+    handleShiftButton(state);
     return true;
   }
 
   try
   {
-    auto uni = getCharForButton (buttonID);
+    auto uni = getCharForButton(buttonID);
 
-    if (g_unichar_isgraph (uni))
+    if(g_unichar_isgraph(uni))
     {
-      if (state)
+      if(state)
       {
-        installButtonRepeat ([ = ]()
-        {
-          onCharPressed (uni);
-        });
+        installButtonRepeat([=]() { onCharPressed(uni); });
       }
 
       return true;
     }
 
-    if (state)
+    if(state)
     {
-      return handleSpecialChar (uni);
+      return handleSpecialChar(uni);
     }
   }
-  catch (out_of_range ex)
+  catch(out_of_range ex)
   {
   }
 
-  return super::onButtonPressed (buttonID, modifiers, state);
+  return super::onButtonPressed(buttonID, modifiers, state);
 }
 
-void TextEditUsageMode::handleShiftButton (bool state)
+void TextEditUsageMode::handleShiftButton(bool state)
 {
   m_shiftState = state;
-  chooseLayout ();
+  chooseLayout();
 }
 
-void TextEditUsageMode::installButtonRepeat (function<void ()> cb)
+void TextEditUsageMode::installButtonRepeat(function<void()> cb)
 {
-  m_buttonRepeat.reset (new ButtonRepeat (cb));
+  m_buttonRepeat.reset(new ButtonRepeat(cb));
 }
 
-void TextEditUsageMode::onCharPressed (gunichar c)
+void TextEditUsageMode::onCharPressed(gunichar c)
 {
-  if (m_insert)
+  if(m_insert)
   {
-    insertChar (c);
+    insertChar(c);
   }
   else
   {
-    replaceCharWith (c);
+    replaceCharWith(c);
   }
 }
 
-bool TextEditUsageMode::handleSpecialChar (gunichar c)
+bool TextEditUsageMode::handleSpecialChar(gunichar c)
 {
-  switch (c)
+  switch(c)
   {
     case c_shift:
-      toggleCapsLock ();
+      toggleCapsLock();
       return true;
 
     case c_symbol:
-      toggleSymbol ();
+      toggleSymbol();
       return true;
 
     case c_del:
-      installButtonRepeat ([ = ]()
-      {
-        if (m_position < m_text.length() && !m_text.empty())
+      installButtonRepeat([=]() {
+        if(m_position < m_text.length() && !m_text.empty())
         {
-          m_text.erase (m_position, 1);
-          m_sigTextChanged.send (m_text);
+          m_text.erase(m_position, 1);
+          m_sigTextChanged.send(m_text);
         }
       });
 
       return true;
 
     case c_back:
-      installButtonRepeat ([ = ]()
-      {
-        if (m_position > 0 && !m_text.empty())
+      installButtonRepeat([=]() {
+        if(m_position > 0 && !m_text.empty())
         {
           m_position--;
-          m_text.erase (m_position, 1);
-          m_sigTextChanged.send (m_text);
+          m_text.erase(m_position, 1);
+          m_sigTextChanged.send(m_text);
         }
       });
 
       return true;
 
     case c_space:
-      installButtonRepeat ([ = ]()
-      {
-        onCharPressed (' ');
-      });
+      installButtonRepeat([=]() { onCharPressed(' '); });
       return true;
 
     case c_ins:
       m_insert = !m_insert;
-      m_sigTextChanged.send (m_text);
+      m_sigTextChanged.send(m_text);
       return true;
   }
 
   return false;
 }
 
-connection TextEditUsageMode::onTextChanged (slot<void, const ustring &> cb)
+connection TextEditUsageMode::onTextChanged(slot<void, const ustring &> cb)
 {
-  return m_sigTextChanged.connectAndInit (cb, m_text);
+  return m_sigTextChanged.connectAndInit(cb, m_text);
 }
 
-gunichar TextEditUsageMode::getCharAtRelativeToCursorPosition (int pos) const
+gunichar TextEditUsageMode::getCharAtRelativeToCursorPosition(int pos) const
 {
   pos += m_position;
 
-  if (pos < 0)
+  if(pos < 0)
     return c_space;
 
-  if (pos >= m_text.length ())
+  if(pos >= m_text.length())
     return c_space;
 
-  return m_text.at (pos);
+  return m_text.at(pos);
 }
 
-bool TextEditUsageMode::isInserting () const
+bool TextEditUsageMode::isInserting() const
 {
   return m_insert;
 }
 
-void TextEditUsageMode::moveCursor (int step)
+void TextEditUsageMode::moveCursor(int step)
 {
   m_position += step;
-  clampPosition ();
-  m_sigTextChanged.send (m_text);
+  clampPosition();
+  m_sigTextChanged.send(m_text);
 }
 
-ustring TextEditUsageMode::getText () const
+ustring TextEditUsageMode::getText() const
 {
   return m_text;
 }
 
-TextEditUsageMode::Layout TextEditUsageMode::getLayout () const
+TextEditUsageMode::Layout TextEditUsageMode::getLayout() const
 {
   return m_layout;
 }
 
-void TextEditUsageMode::chooseLayout ()
+void TextEditUsageMode::chooseLayout()
 {
   bool realShiftState = m_capsLock ^ m_shiftState;
 
-  if (m_symbolState == true && realShiftState == false)
+  if(m_symbolState == true && realShiftState == false)
     m_layout = Layout::Symbol;
-  else if (m_symbolState == true && realShiftState == true)
+  else if(m_symbolState == true && realShiftState == true)
     m_layout = Layout::SymbolShift;
-  else if (m_symbolState == false && realShiftState == false)
+  else if(m_symbolState == false && realShiftState == false)
     m_layout = Layout::Normal;
-  else if (m_symbolState == false && realShiftState == true)
+  else if(m_symbolState == false && realShiftState == true)
     m_layout = Layout::Shift;
 
-  updateLeds ();
-  m_sigTextChanged.send (m_text);
+  updateLeds();
+  m_sigTextChanged.send(m_text);
 }
 
-void TextEditUsageMode::toggleCapsLock ()
+void TextEditUsageMode::toggleCapsLock()
 {
   m_capsLock = !m_capsLock;
-  chooseLayout ();
+  chooseLayout();
 }
 
-void TextEditUsageMode::toggleSymbol ()
+void TextEditUsageMode::toggleSymbol()
 {
   m_symbolState = !m_symbolState;
-  chooseLayout ();
+  chooseLayout();
 }
 
-void TextEditUsageMode::updateLeds ()
+void TextEditUsageMode::updateLeds()
 {
-  if (!TestDriverBase::isInTestRun ())
+  if(!TestDriverBase::isInTestRun())
   {
     bool realShiftState = m_capsLock ^ m_shiftState;
-    auto symbolState = m_layout == Layout::Symbol || m_layout == Layout::SymbolShift ? TwoStateLED::ON : TwoStateLED::OFF;
+    auto symbolState
+        = m_layout == Layout::Symbol || m_layout == Layout::SymbolShift ? TwoStateLED::ON : TwoStateLED::OFF;
     auto capsState = realShiftState ? TwoStateLED::ON : TwoStateLED::OFF;
-    auto hwui = Application::get ().getHWUI ();
+    auto hwui = Application::get().getHWUI();
 
-    for (auto led : { Buttons::BUTTON_3, Buttons::BUTTON_7, Buttons::BUTTON_51, Buttons::BUTTON_55 })
+    for(auto led : { Buttons::BUTTON_3, Buttons::BUTTON_7, Buttons::BUTTON_51, Buttons::BUTTON_55 })
     {
-      hwui->getPanelUnit ().getLED (led)->setState (capsState);
+      hwui->getPanelUnit().getLED(led)->setState(capsState);
     }
 
-    for (auto led : { Buttons::BUTTON_43, Buttons::BUTTON_47, Buttons::BUTTON_91, Buttons::BUTTON_95 })
+    for(auto led : { Buttons::BUTTON_43, Buttons::BUTTON_47, Buttons::BUTTON_91, Buttons::BUTTON_95 })
     {
-      hwui->getPanelUnit ().getLED (led)->setState (symbolState);
+      hwui->getPanelUnit().getLED(led)->setState(symbolState);
     }
   }
 }
 
-void TextEditUsageMode::registerTests ()
+void TextEditUsageMode::registerTests()
 {
-  g_test_add_func ("/TextEditUsageMode/modes", []()
-  {
+  g_test_add_func("/TextEditUsageMode/modes", []() {
     TextEditUsageMode mode("");
     g_assert_true(mode.m_layout == Layout::Normal);
 

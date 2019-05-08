@@ -3,21 +3,21 @@
 #include "MessageParser.h"
 #include "device-settings/DebugLevel.h"
 
-ParameterMessageComposer::ParameterMessageComposer (const Parameter *p) :
-    MessageComposer (MessageParser::PARAM)
+ParameterMessageComposer::ParameterMessageComposer(const Parameter *p)
+    : MessageComposer(MessageParser::PARAM)
 {
-  m_parameterID = p->getID ();
+  m_parameterID = p->getID();
   *this << m_parameterID;
-  p->writeToLPC (*this);
+  p->writeToLPC(*this);
 }
 
-ParameterMessageComposer::~ParameterMessageComposer ()
+ParameterMessageComposer::~ParameterMessageComposer()
 {
 }
 
-bool ParameterMessageComposer::canReplace (const MessageComposer *other) const
+bool ParameterMessageComposer::canReplace(const MessageComposer *other) const
 {
-  if (auto *otherParameterMessageComposer = dynamic_cast<const ParameterMessageComposer*> (other))
+  if(auto *otherParameterMessageComposer = dynamic_cast<const ParameterMessageComposer *>(other))
   {
     DebugLevel::info("can replace existing message with new!");
     return otherParameterMessageComposer->m_parameterID == m_parameterID;

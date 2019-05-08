@@ -9,17 +9,17 @@
 #include <functional>
 
 const float c_numAnimationSteps = 30;
-const float c_animationLength = 1000; // ms
+const float c_animationLength = 1000;  // ms
 
-PresetListEntry::PresetListEntry(const Rect &pos) :
-    super(pos),
-    m_animationProgress(0)
+PresetListEntry::PresetListEntry(const Rect &pos)
+    : super(pos)
+    , m_animationProgress(0)
 {
   m_number = addControl(new PresetNumberLabel(Rect(0, 0, 21, 16)));
   m_name = addControl(new PresetNameLabel(Rect(21, 0, 105, 16)));
 
-	auto eb = Application::get().getPresetManager()->getEditBuffer();
-	eb->onPresetLoaded(mem_fun(this, &PresetListEntry::onPresetChanged));
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  eb->onPresetLoaded(mem_fun(this, &PresetListEntry::onPresetChanged));
 }
 
 PresetListEntry::~PresetListEntry()
@@ -50,8 +50,9 @@ void PresetListEntry::onPresetChanged()
 {
   if(m_preset)
   {
-		bool isLoaded = m_preset->getUuid() == Application::get().getPresetManager()->getEditBuffer()->getUUIDOfLastLoadedPreset();
-		auto bank = m_preset->getBank();
+    bool isLoaded
+        = m_preset->getUuid() == Application::get().getPresetManager()->getEditBuffer()->getUUIDOfLastLoadedPreset();
+    auto bank = m_preset->getBank();
     auto num = bank->getPresetPosition(m_preset->getUuid());
     m_number->update(num, m_selected, isLoaded);
     m_name->update(m_preset->getName(), m_selected, isLoaded);
@@ -128,4 +129,3 @@ void PresetListEntry::doAnimationCallback()
   if(cb)
     cb();
 }
-

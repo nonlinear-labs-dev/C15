@@ -7,11 +7,10 @@
 #include "xml/Writer.h"
 #include <proxies/hwui/panel-unit/boled/SplashLayout.h>
 
-EditBufferSerializer::EditBufferSerializer(shared_ptr<EditBuffer> editBuffer) :
-    Serializer(getTagName()),
-    m_editBuffer(editBuffer)
+EditBufferSerializer::EditBufferSerializer(shared_ptr<EditBuffer> editBuffer)
+    : Serializer(getTagName())
+    , m_editBuffer(editBuffer)
 {
-
 }
 
 EditBufferSerializer::~EditBufferSerializer()
@@ -65,25 +64,20 @@ void EditBufferSerializer::readTagContent(Reader &reader) const
     }
   }
 
-  reader.onTag(PresetSerializer::getTagName(), [&](const Attributes &attr) mutable
-  {
-    return new PresetSerializer(m_editBuffer.get());
-  });
+  reader.onTag(PresetSerializer::getTagName(),
+               [&](const Attributes &attr) mutable { return new PresetSerializer(m_editBuffer.get()); });
 
-  reader.onTextElement("selected-parameter", [&](const Glib::ustring &text, const Attributes &attr) mutable
-  {
+  reader.onTextElement("selected-parameter", [&](const Glib::ustring &text, const Attributes &attr) mutable {
     m_editBuffer->undoableSelectParameter(reader.getTransaction(), text);
   });
 
-  reader.onTag(LastLoadedPresetInfoSerializer::getTagName(), [&](const Attributes &attr) mutable
-  {
+  reader.onTag(LastLoadedPresetInfoSerializer::getTagName(), [&](const Attributes &attr) mutable {
     return new LastLoadedPresetInfoSerializer(m_editBuffer->m_lastLoadedPresetInfo);
   });
 
   reader.loadElement("hash-on-store", m_editBuffer->m_hashOnStore);
 
-  reader.onTextElement("locked-parameter", [&](const Glib::ustring &text, const Attributes &attr) mutable
-  {
+  reader.onTextElement("locked-parameter", [&](const Glib::ustring &text, const Attributes &attr) mutable {
     m_editBuffer->findParameterByID(stoi(text))->undoableLock(reader.getTransaction());
   });
 }

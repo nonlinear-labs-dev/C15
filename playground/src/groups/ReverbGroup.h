@@ -4,9 +4,9 @@
 
 class ReverbGroup : public ParameterGroup
 {
-  public:
-    ReverbGroup (ParameterGroupSet *parent);
-    virtual ~ReverbGroup ();
+ public:
+  ReverbGroup(ParameterGroupSet *parent);
+  virtual ~ReverbGroup();
 
-    void init ();
+  void init();
 };

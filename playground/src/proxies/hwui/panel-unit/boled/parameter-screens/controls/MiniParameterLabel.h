@@ -4,25 +4,24 @@
 
 class MiniParameterLabel : public LabelRegular8
 {
-  private:
-    typedef LabelRegular8 super;
+ private:
+  typedef LabelRegular8 super;
 
-  public:
-    // public methods
-    MiniParameterLabel (const Glib::ustring &text, const Rect &pos);
-    virtual ~MiniParameterLabel ();
+ public:
+  // public methods
+  MiniParameterLabel(const Glib::ustring &text, const Rect &pos);
+  virtual ~MiniParameterLabel();
 
-    void setSelected (bool selected);
-    bool isSelected () const;
+  void setSelected(bool selected);
+  bool isSelected() const;
 
-  private:
-    // private methods
-    MiniParameterLabel (const MiniParameterLabel& other);
-    MiniParameterLabel& operator= (const MiniParameterLabel&);
+ private:
+  // private methods
+  MiniParameterLabel(const MiniParameterLabel &other);
+  MiniParameterLabel &operator=(const MiniParameterLabel &);
 
-    bool redraw (FrameBuffer &fb) override;
-    void setFontColor (FrameBuffer &fb) const override;
+  bool redraw(FrameBuffer &fb) override;
+  void setFontColor(FrameBuffer &fb) const override;
 
-    bool m_selected;
+  bool m_selected;
 };
-

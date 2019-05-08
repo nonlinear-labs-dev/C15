@@ -4,8 +4,7 @@
 
 class LinearBipolar1DbstScaleConverter : public LinearScaleConverter
 {
-  public:
-    LinearBipolar1DbstScaleConverter ();
-    virtual ~LinearBipolar1DbstScaleConverter ();
+ public:
+  LinearBipolar1DbstScaleConverter();
+  virtual ~LinearBipolar1DbstScaleConverter();
 };
-

@@ -8,9 +8,9 @@
 
 namespace DescriptiveLayouts
 {
-  GenericControl::GenericControl(const ControlInstance &prototype) :
-      ControlWithChildren(Rect(prototype.position, Point(0, 0))),
-      m_prototype(prototype)
+  GenericControl::GenericControl(const ControlInstance &prototype)
+      : ControlWithChildren(Rect(prototype.position, Point(0, 0)))
+      , m_prototype(prototype)
   {
     addPrimitives();
   }
@@ -28,7 +28,7 @@ namespace DescriptiveLayouts
     int maxX = 0;
     int maxY = 0;
 
-    const ControlClass& controlClass = ControlRegistry::get().find(m_prototype.controlClass);
+    const ControlClass &controlClass = ControlRegistry::get().find(m_prototype.controlClass);
 
     for(auto &p : controlClass.primitves)
     {
@@ -60,8 +60,8 @@ namespace DescriptiveLayouts
 
     for(auto &c : m_prototype.eventConnections)
     {
-      m_connections.push_back(
-          EventSourceBroker::get().connect(c.src, sigc::bind < 1 > (sigc::mem_fun(this, &GenericControl::onEventFired), c)));
+      m_connections.push_back(EventSourceBroker::get().connect(
+          c.src, sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onEventFired), c)));
     }
   }
 

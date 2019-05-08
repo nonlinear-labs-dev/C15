@@ -11,23 +11,23 @@ class PresetSetting;
 
 class UpperRibbon : public Ribbon
 {
-    typedef Ribbon super;
+  typedef Ribbon super;
 
-  public:
-    UpperRibbon ();
-    virtual ~UpperRibbon ();
+ public:
+  UpperRibbon();
+  virtual ~UpperRibbon();
 
-    static void registerTests ();
+  static void registerTests();
 
-  private:
-    void onParamSelectionChanged (Parameter * oldOne, Parameter * newOne);
-    void onParamValueChanged (const Parameter* param);
+ private:
+  void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne);
+  void onParamValueChanged(const Parameter* param);
 
-    void onSettingChanged (const Setting* setting);
-    void reconnect ();
-    Parameter * getResponsibleParameter ();
+  void onSettingChanged(const Setting* setting);
+  void reconnect();
+  Parameter* getResponsibleParameter();
 
-    int posToLedID (int pos) const; // 0 -> 32 ... 16 -> 0
+  int posToLedID(int pos) const;  // 0 -> 32 ... 16 -> 0
 
-    sigc::connection m_paramConnection;
+  sigc::connection m_paramConnection;
 };

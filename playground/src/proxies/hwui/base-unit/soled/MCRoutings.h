@@ -9,29 +9,27 @@ class Parameter;
 
 class MCRoutings : public Control
 {
-  private:
-    typedef Control super;
+ private:
+  typedef Control super;
 
-  public:
-    MCRoutings (int ribbonParamID, const Rect &pos);
-    virtual ~MCRoutings ();
+ public:
+  MCRoutings(int ribbonParamID, const Rect &pos);
+  virtual ~MCRoutings();
 
-    bool redraw (FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
 
-  private:
-    MCRoutings (const MCRoutings& other) = delete;
-    MCRoutings& operator= (const MCRoutings&) = delete;
+ private:
+  MCRoutings(const MCRoutings &other) = delete;
+  MCRoutings &operator=(const MCRoutings &) = delete;
 
-    shared_ptr<EditBuffer> getEditBuffer() const;
-    void connectToRoutingParameters();
-    void onRoutingParameterChanged(const Parameter *p);
+  shared_ptr<EditBuffer> getEditBuffer() const;
+  void connectToRoutingParameters();
+  void onRoutingParameterChanged(const Parameter *p);
 
-    void drawRoutingParameters(FrameBuffer &fb, MacroControlMappingGroup::tModRoutingParams &params);
-    void drawRoutingParameter(FrameBuffer &fb, MacroControlMappingGroup::tModRoutingParam param, int yPos);
+  void drawRoutingParameters(FrameBuffer &fb, MacroControlMappingGroup::tModRoutingParams &params);
+  void drawRoutingParameter(FrameBuffer &fb, MacroControlMappingGroup::tModRoutingParam param, int yPos);
 
-    MacroControlMappingGroup::tModRoutingParams getRoutingParameters ();
+  MacroControlMappingGroup::tModRoutingParams getRoutingParameters();
 
-    
-    int m_ribbonParamID;
+  int m_ribbonParamID;
 };
-

@@ -9,18 +9,20 @@
 
 class XmlWriter : public Writer
 {
-  private:
-    typedef Writer super;
+ private:
+  typedef Writer super;
 
-  public:
-    XmlWriter (shared_ptr<OutStream> out);
-    virtual ~XmlWriter ();
+ public:
+  XmlWriter(shared_ptr<OutStream> out);
+  virtual ~XmlWriter();
 
-  private:
-    virtual void implWriteTextElement (const Glib::ustring &name, const Glib::ustring &text, const initializer_list<Attribute> &attributes) override;
-    virtual void implWriteTag (const Glib::ustring &name, const initializer_list<Attribute> &attributes, const tTagContentWriter &w) override;
-    virtual void implWriteAttribute (const Attribute &a) override;
+ private:
+  virtual void implWriteTextElement(const Glib::ustring &name, const Glib::ustring &text,
+                                    const initializer_list<Attribute> &attributes) override;
+  virtual void implWriteTag(const Glib::ustring &name, const initializer_list<Attribute> &attributes,
+                            const tTagContentWriter &w) override;
+  virtual void implWriteAttribute(const Attribute &a) override;
 
-  private:
-    size_t m_stackSize = 0;
+ private:
+  size_t m_stackSize = 0;
 };

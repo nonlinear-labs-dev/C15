@@ -2,15 +2,15 @@
 
 #include "proxies/hwui/controls/Label.h"
 
-class InvertedLabel :  public Label
+class InvertedLabel : public Label
 {
-  private:
-      typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    InvertedLabel(const Glib::ustring& text, const Rect& pos);
-    InvertedLabel(const Rect& pos);
-    ~InvertedLabel();
+ public:
+  InvertedLabel(const Glib::ustring& text, const Rect& pos);
+  InvertedLabel(const Rect& pos);
+  ~InvertedLabel();
 
-    bool redraw(FrameBuffer &fb) override;
+  bool redraw(FrameBuffer& fb) override;
 };

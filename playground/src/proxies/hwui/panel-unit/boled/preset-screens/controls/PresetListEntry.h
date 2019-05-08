@@ -13,35 +13,33 @@ class Application;
 
 class PresetListEntry : public ControlWithChildren
 {
-  private:
-    typedef ControlWithChildren super;
+ private:
+  typedef ControlWithChildren super;
 
-  public:
-    using tCallback= function<void ()>;
+ public:
+  using tCallback = function<void()>;
 
-    PresetListEntry(const Rect &pos);
-    virtual ~PresetListEntry();
+  PresetListEntry(const Rect &pos);
+  virtual ~PresetListEntry();
 
-    void setPreset(std::shared_ptr<Preset> preset, bool selected);
-    bool redraw(FrameBuffer &fb) override;
-    void animate(tCallback cb);
+  void setPreset(std::shared_ptr<Preset> preset, bool selected);
+  bool redraw(FrameBuffer &fb) override;
+  void animate(tCallback cb);
 
-  private:
-    bool animationProgress();
-    void doAnimationCallback();
-    void onPresetChanged();
+ private:
+  bool animationProgress();
+  void doAnimationCallback();
+  void onPresetChanged();
 
+  float m_animationProgress;
+  tCallback m_animationCallback;
 
-    float m_animationProgress;
-    tCallback m_animationCallback;
+  PresetNumberLabel *m_number = nullptr;
+  PresetNameLabel *m_name = nullptr;
 
-    PresetNumberLabel *m_number = nullptr;
-    PresetNameLabel *m_name = nullptr;
+  connection m_animationConnection;
+  connection m_presetConnection;
 
-    connection m_animationConnection;
-    connection m_presetConnection;
-
-    bool m_selected = false;
-    shared_ptr<Preset> m_preset;
+  bool m_selected = false;
+  shared_ptr<Preset> m_preset;
 };
-

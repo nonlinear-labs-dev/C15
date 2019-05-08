@@ -4,14 +4,12 @@
 #include <proxies/hwui/controls/Rect.h>
 #include <proxies/hwui/FrameBuffer.h>
 
-DebugOLED::DebugOLED () :
-    OLEDProxy (Rect (0, 96, 256, 64))
+DebugOLED::DebugOLED()
+    : OLEDProxy(Rect(0, 96, 256, 64))
 {
-  reset (new DebugLeds (*this));
+  reset(new DebugLeds(*this));
 }
 
-DebugOLED::~DebugOLED ()
+DebugOLED::~DebugOLED()
 {
 }
-
-

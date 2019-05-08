@@ -6,13 +6,13 @@ class PresetBank;
 
 class PresetBankSerializer : public PresetBankMetadataSerializer
 {
-  private:
-    typedef PresetBankMetadataSerializer super;
+ private:
+  typedef PresetBankMetadataSerializer super;
 
-  public:
-    PresetBankSerializer (shared_ptr<PresetBank> bank, bool ignoreUUIDs = false);
+ public:
+  PresetBankSerializer(shared_ptr<PresetBank> bank, bool ignoreUUIDs = false);
 
-  private:
-    void writeTagContent (Writer &writer) const;
-    void readTagContent (Reader &reader) const;
+ private:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
 };

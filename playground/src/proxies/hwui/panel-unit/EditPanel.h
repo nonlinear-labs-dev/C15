@@ -9,23 +9,23 @@ class BOLED;
 
 class EditPanel
 {
-  public:
-    EditPanel();
-    virtual ~EditPanel();
+ public:
+  EditPanel();
+  virtual ~EditPanel();
 
-    void init();
+  void init();
 
-    void onTimeout();
-    RotaryEncoder &getKnob();
-    BOLED &getBoled();
-    const BOLED &getBoled() const;
+  void onTimeout();
+  RotaryEncoder &getKnob();
+  BOLED &getBoled();
+  const BOLED &getBoled() const;
 
-    bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
-    void setupFocusAndMode (FocusAndMode focusAndMode);
-    UndoButtonStateMachine &getUndoStateMachine();
+  bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
+  void setupFocusAndMode(FocusAndMode focusAndMode);
+  UndoButtonStateMachine &getUndoStateMachine();
 
-  private:
-    BOLED m_oled;
-    RotaryEncoder m_knob;
-    UndoButtonStateMachine m_statemachine;
+ private:
+  BOLED m_oled;
+  RotaryEncoder m_knob;
+  UndoButtonStateMachine m_statemachine;
 };

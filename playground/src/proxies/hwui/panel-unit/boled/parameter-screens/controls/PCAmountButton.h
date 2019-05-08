@@ -6,17 +6,16 @@ class Application;
 
 class PCAmountButton : public Button
 {
-  private:
-    typedef Button super;
+ private:
+  typedef Button super;
 
-  public:
-    // public methods
-    PCAmountButton (const Rect &rect);
-    virtual ~PCAmountButton ();
+ public:
+  // public methods
+  PCAmountButton(const Rect& rect);
+  virtual ~PCAmountButton();
 
-  private:
-    // private methods
-    PCAmountButton (const PCAmountButton& other);
-    PCAmountButton& operator= (const PCAmountButton&);
+ private:
+  // private methods
+  PCAmountButton(const PCAmountButton& other);
+  PCAmountButton& operator=(const PCAmountButton&);
 };
-

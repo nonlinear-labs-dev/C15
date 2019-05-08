@@ -4,11 +4,10 @@
 
 class Fine12STScaleConverter : public LinearScaleConverter
 {
-  private:
-    typedef LinearScaleConverter super;
+ private:
+  typedef LinearScaleConverter super;
 
-  public:
-    Fine12STScaleConverter ();
-    virtual ~Fine12STScaleConverter ();
+ public:
+  Fine12STScaleConverter();
+  virtual ~Fine12STScaleConverter();
 };
-

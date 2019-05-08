@@ -2,15 +2,15 @@
 
 #include "Dimension.h"
 
-class PitchDimensionCoarse: public Dimension
+class PitchDimensionCoarse : public Dimension
 {
-  private:
-    PitchDimensionCoarse();
+ private:
+  PitchDimensionCoarse();
 
-  public:
-    virtual ~PitchDimensionCoarse();
+ public:
+  virtual ~PitchDimensionCoarse();
 
-    static const PitchDimensionCoarse& get();
-    Glib::ustring getStingizerJS() const override;
-    Glib::ustring stringize (const tDisplayValue &displayValue) const override;
+  static const PitchDimensionCoarse& get();
+  Glib::ustring getStingizerJS() const override;
+  Glib::ustring stringize(const tDisplayValue& displayValue) const override;
 };

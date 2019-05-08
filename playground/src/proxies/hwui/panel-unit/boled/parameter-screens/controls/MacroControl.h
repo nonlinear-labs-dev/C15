@@ -10,27 +10,26 @@ class MacroControlParameter;
 
 class MacroControl : public ControlWithChildren
 {
-  private:
-    typedef ControlWithChildren super;
+ private:
+  typedef ControlWithChildren super;
 
-  public:
-    // public methods
-    MacroControl (const Rect &pos);
-    virtual ~MacroControl ();
+ public:
+  // public methods
+  MacroControl(const Rect &pos);
+  virtual ~MacroControl();
 
-  private:
-    // private methods
-    MacroControl (const MacroControl& other);
-    MacroControl& operator= (const MacroControl&);
+ private:
+  // private methods
+  MacroControl(const MacroControl &other);
+  MacroControl &operator=(const MacroControl &);
 
-    void onSelectionChanged (Parameter * parameter);
-    void onTargetChanged (const Parameter* modulatingParameter);
+  void onSelectionChanged(Parameter *parameter);
+  void onTargetChanged(const Parameter *modulatingParameter);
 
-    Label *m_name = nullptr;
-    Slider *m_slider = nullptr;
-    Label *m_value = nullptr;
+  Label *m_name = nullptr;
+  Slider *m_slider = nullptr;
+  Label *m_value = nullptr;
 
-    sigc::connection m_connectionTarget;
-    MacroControlParameter *m_srcParam = nullptr;
+  sigc::connection m_connectionTarget;
+  MacroControlParameter *m_srcParam = nullptr;
 };
-

@@ -2,13 +2,12 @@
 #include <device-settings/Settings.h>
 #include <device-settings/SSID.h>
 
-SSID::SSID (Settings &parent) :
-    super (parent, "ssid=")
+SSID::SSID(Settings &parent)
+    : super(parent, "ssid=")
 {
-  loadFromFile ();
+  loadFromFile();
 
-  parent.getSetting<DeviceName> ()->onChange ([=](const Setting *s)
-  {
+  parent.getSetting<DeviceName>()->onChange([=](const Setting *s) {
     static const std::string dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-_";
 
     std::string ssid = "NL-C15-" + s->save();
@@ -22,6 +21,6 @@ SSID::SSID (Settings &parent) :
   });
 }
 
-SSID::~SSID ()
+SSID::~SSID()
 {
 }

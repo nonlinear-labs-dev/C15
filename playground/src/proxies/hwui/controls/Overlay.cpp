@@ -1,16 +1,17 @@
 #include "Overlay.h"
 
-Overlay::Overlay (const Rect &pos) : super (pos)
+Overlay::Overlay(const Rect &pos)
+    : super(pos)
 {
 }
 
-void Overlay::drawBackground (FrameBuffer &fb)
+void Overlay::drawBackground(FrameBuffer &fb)
 {
 }
 
-void Overlay::setBackgroundColor (FrameBuffer &fb) const
+void Overlay::setBackgroundColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C43);
+  fb.setColor(FrameBuffer::Colors::C43);
 }
 
 bool Overlay::isTransparent() const

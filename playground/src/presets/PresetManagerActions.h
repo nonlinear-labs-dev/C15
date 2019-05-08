@@ -12,21 +12,20 @@ class HTTPRequest;
 
 class PresetManagerActions : public RPCActionManager
 {
-  private:
-    typedef RPCActionManager super;
-    PresetManager& m_presetManager;
+ private:
+  typedef RPCActionManager super;
+  PresetManager& m_presetManager;
 
-  public:
-    PresetManagerActions (PresetManager &presetManager);
-    virtual ~PresetManagerActions ();
+ public:
+  PresetManagerActions(PresetManager& presetManager);
+  virtual ~PresetManagerActions();
 
-    bool handleRequest (const Glib::ustring &path, shared_ptr<NetworkRequest> request) override;
+  bool handleRequest(const Glib::ustring& path, shared_ptr<NetworkRequest> request) override;
 
-  private:
-    void handleImportBackupFile(UNDO::TransactionCreationScope::tTransactionPtr transaction, SoupBuffer* buffer,
-                                shared_ptr<HTTPRequest> http);
+ private:
+  void handleImportBackupFile(UNDO::TransactionCreationScope::tTransactionPtr transaction, SoupBuffer* buffer,
+                              shared_ptr<HTTPRequest> http);
 
-    typedef shared_ptr<PresetBank> tBankPtr;
-    typedef shared_ptr<Preset> tPresetPtr;
+  typedef shared_ptr<PresetBank> tBankPtr;
+  typedef shared_ptr<Preset> tPresetPtr;
 };
-

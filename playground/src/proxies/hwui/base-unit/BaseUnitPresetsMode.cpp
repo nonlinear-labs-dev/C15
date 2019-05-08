@@ -10,56 +10,53 @@
 #include <proxies/hwui/buttons.h>
 #include <proxies/hwui/HWUIEnums.h>
 
-BaseUnitPresetsMode::BaseUnitPresetsMode ()
+BaseUnitPresetsMode::BaseUnitPresetsMode()
 {
 }
 
-BaseUnitPresetsMode::~BaseUnitPresetsMode ()
+BaseUnitPresetsMode::~BaseUnitPresetsMode()
 {
 }
 
-void BaseUnitPresetsMode::setup ()
+void BaseUnitPresetsMode::setup()
 {
   super::setup();
 
-  setupButtonConnection (Buttons::BUTTON_MINUS, [=](Buttons button, ButtonModifiers modifiers, bool state)
-  {
-    if (state)
+  setupButtonConnection(Buttons::BUTTON_MINUS, [=](Buttons button, ButtonModifiers modifiers, bool state) {
+    if(state)
     {
       if(auto bank = Application::get().getPresetManager()->getSelectedBank())
       {
-        bank->undoableIncPresetSelection (-1, ButtonModifiers());
+        bank->undoableIncPresetSelection(-1, ButtonModifiers());
       }
     }
 
     return true;
   });
 
-  setupButtonConnection (Buttons::BUTTON_PLUS, [=](Buttons button, ButtonModifiers modifiers, bool state)
-  {
-    if (state)
+  setupButtonConnection(Buttons::BUTTON_PLUS, [=](Buttons button, ButtonModifiers modifiers, bool state) {
+    if(state)
     {
       if(auto bank = Application::get().getPresetManager()->getSelectedBank())
       {
-        bank->undoableIncPresetSelection (1, ButtonModifiers());
+        bank->undoableIncPresetSelection(1, ButtonModifiers());
       }
     }
     return true;
   });
 }
 
-void BaseUnitPresetsMode::onFuncButtonDown ()
+void BaseUnitPresetsMode::onFuncButtonDown()
 {
-  auto &app = Application::get ();
-  auto eb = app.getPresetManager ()->getEditBuffer ();
+  auto &app = Application::get();
+  auto eb = app.getPresetManager()->getEditBuffer();
 
-  if(!app.getSettings ()->getSetting<AutoLoadSelectedPreset> ()->get ())
+  if(!app.getSettings()->getSetting<AutoLoadSelectedPreset>()->get())
   {
-    eb->undoableLoadSelectedPreset ();
+    eb->undoableLoadSelectedPreset();
   }
   else if(eb->isModified())
   {
-    eb->undoableLoadSelectedPreset ();
+    eb->undoableLoadSelectedPreset();
   }
 }
-

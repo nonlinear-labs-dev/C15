@@ -6,17 +6,16 @@ class Application;
 
 class PCSelectButton : public Button
 {
-  private:
-    typedef Button super;
+ private:
+  typedef Button super;
 
-  public:
-    // public methods
-    PCSelectButton (const Rect &rect);
-    virtual ~PCSelectButton ();
+ public:
+  // public methods
+  PCSelectButton(const Rect& rect);
+  virtual ~PCSelectButton();
 
-  private:
-    // private methods
-    PCSelectButton (const PCSelectButton& other);
-    PCSelectButton& operator= (const PCSelectButton&);
+ private:
+  // private methods
+  PCSelectButton(const PCSelectButton& other);
+  PCSelectButton& operator=(const PCSelectButton&);
 };
-

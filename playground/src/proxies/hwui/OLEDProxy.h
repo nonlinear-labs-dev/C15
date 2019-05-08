@@ -11,30 +11,30 @@ class FrameBuffer;
 
 class OLEDProxy : public Uncopyable
 {
-  public:
-    OLEDProxy (const Rect &posInFrameBuffer);
-    virtual ~OLEDProxy ();
+ public:
+  OLEDProxy(const Rect &posInFrameBuffer);
+  virtual ~OLEDProxy();
 
-    typedef shared_ptr<Layout> tLayoutPtr;
+  typedef shared_ptr<Layout> tLayoutPtr;
 
-    tLayoutPtr getLayout () const;
-    void reset (Layout *layout);
-    void reset (tLayoutPtr layout);
+  tLayoutPtr getLayout() const;
+  void reset(Layout *layout);
+  void reset(tLayoutPtr layout);
 
-    void setOverlay (Layout *layout);
-    void setOverlay (tLayoutPtr layout);
-    tLayoutPtr getOverlay() const;
-    void resetOverlay ();
+  void setOverlay(Layout *layout);
+  void setOverlay(tLayoutPtr layout);
+  tLayoutPtr getOverlay() const;
+  void resetOverlay();
 
-    void invalidate ();
-    void clear ();
+  void invalidate();
+  void clear();
 
-    virtual bool redraw ();
+  virtual bool redraw();
 
-    const Rect &getPosInFrameBuffer () const;
+  const Rect &getPosInFrameBuffer() const;
 
-  private:
-    tLayoutPtr m_layout;
-    tLayoutPtr m_overlay;
-    Rect m_posInFrameBuffer;
+ private:
+  tLayoutPtr m_layout;
+  tLayoutPtr m_overlay;
+  Rect m_posInFrameBuffer;
 };

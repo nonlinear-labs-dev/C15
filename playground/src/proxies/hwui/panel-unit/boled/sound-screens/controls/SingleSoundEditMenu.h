@@ -6,11 +6,10 @@
 
 class SingleSoundEditMenu : public ButtonMenu
 {
-  private:
-    typedef ButtonMenu super;
+ private:
+  typedef ButtonMenu super;
 
-  public:
-    SingleSoundEditMenu (const Rect &rect);
-    virtual ~SingleSoundEditMenu ();
+ public:
+  SingleSoundEditMenu(const Rect &rect);
+  virtual ~SingleSoundEditMenu();
 };
-

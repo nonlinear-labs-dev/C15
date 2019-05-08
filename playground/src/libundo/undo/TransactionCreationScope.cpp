@@ -3,12 +3,12 @@
 namespace UNDO
 {
 
-  TransactionCreationScope::TransactionCreationScope (tTransactionPtr transaction) :
-      m_transaction(transaction)
+  TransactionCreationScope::TransactionCreationScope(tTransactionPtr transaction)
+      : m_transaction(transaction)
   {
   }
 
-  TransactionCreationScope::~TransactionCreationScope ()
+  TransactionCreationScope::~TransactionCreationScope()
   {
     m_transaction->close();
   }

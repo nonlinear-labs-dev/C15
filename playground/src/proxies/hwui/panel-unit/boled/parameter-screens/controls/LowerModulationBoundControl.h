@@ -5,19 +5,18 @@
 
 class LowerModulationBoundControl : public ControlWithChildren, public RotaryEncoder::Receiver
 {
-    typedef ControlWithChildren super;
+  typedef ControlWithChildren super;
 
-  public:
-    LowerModulationBoundControl (const Rect &r);
-    virtual ~LowerModulationBoundControl ();
+ public:
+  LowerModulationBoundControl(const Rect &r);
+  virtual ~LowerModulationBoundControl();
 
-    bool onRotary (int inc, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
 
-  private:
-    void onSelectionChanged (Parameter *, Parameter *newParam);
-    void onParameterChanged (const Parameter *p);
+ private:
+  void onSelectionChanged(Parameter *, Parameter *newParam);
+  void onParameterChanged(const Parameter *p);
 
-    Control *m_dummyButton = nullptr;
-    connection m_paramChanged;
+  Control *m_dummyButton = nullptr;
+  connection m_paramChanged;
 };
-

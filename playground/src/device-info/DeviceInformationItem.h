@@ -5,15 +5,15 @@
 
 class DeviceInformationItem : public UpdateDocumentContributor
 {
-  public:
-    DeviceInformationItem (DeviceInformation *parent);
+ public:
+  DeviceInformationItem(DeviceInformation *parent);
 
-    tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
-    connection onChange (slot<void, const DeviceInformationItem*> slot);
+  tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
+  connection onChange(slot<void, const DeviceInformationItem *> slot);
 
-    virtual Glib::ustring get() const = 0;
-    virtual Glib::ustring getDisplayString() const;
+  virtual Glib::ustring get() const = 0;
+  virtual Glib::ustring getDisplayString() const;
 
-  private:
-    Signal<void, const DeviceInformationItem*> m_signal;
+ private:
+  Signal<void, const DeviceInformationItem *> m_signal;
 };

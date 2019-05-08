@@ -7,18 +7,18 @@ class TextEditUsageMode;
 
 class RenameLetter : public LabelRegular8
 {
-  private:
-    typedef LabelRegular8 super;
+ private:
+  typedef LabelRegular8 super;
 
-  public:
-    RenameLetter (shared_ptr<TextEditUsageMode> mode, Buttons buttonID, const Rect &pos);
-    virtual Glib::ustring getText() const override;
-    bool redraw (FrameBuffer &fb) override;
+ public:
+  RenameLetter(shared_ptr<TextEditUsageMode> mode, Buttons buttonID, const Rect &pos);
+  virtual Glib::ustring getText() const override;
+  bool redraw(FrameBuffer &fb) override;
 
-  private:
-    int getXOffset () const override;
-    bool highlightLetter() const;
+ private:
+  int getXOffset() const override;
+  bool highlightLetter() const;
 
-    shared_ptr<TextEditUsageMode> m_mode;
-    Buttons m_buttonID;
+  shared_ptr<TextEditUsageMode> m_mode;
+  Buttons m_buttonID;
 };

@@ -6,15 +6,14 @@ class Settings;
 
 class SettingsActions : public RPCActionManager
 {
-  private:
-    typedef RPCActionManager super;
+ private:
+  typedef RPCActionManager super;
 
-  public:
-    SettingsActions (Settings &settings);
-    virtual ~SettingsActions ();
+ public:
+  SettingsActions(Settings& settings);
+  virtual ~SettingsActions();
 
-  private:
-    SettingsActions (const SettingsActions& other) = delete;
-    SettingsActions& operator= (const SettingsActions&) = delete;
+ private:
+  SettingsActions(const SettingsActions& other) = delete;
+  SettingsActions& operator=(const SettingsActions&) = delete;
 };
-

@@ -4,13 +4,12 @@
 
 class VersionAttribute : public Attribute
 {
-  public:
-    static VersionAttribute &get();
+ public:
+  static VersionAttribute &get();
 
-    static int getCurrentFileVersion();
+  static int getCurrentFileVersion();
 
-  private:
-    VersionAttribute (int v);
-    virtual ~VersionAttribute ();
+ private:
+  VersionAttribute(int v);
+  virtual ~VersionAttribute();
 };
-

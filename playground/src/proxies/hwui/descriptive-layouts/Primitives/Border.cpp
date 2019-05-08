@@ -5,9 +5,9 @@
 namespace DescriptiveLayouts
 {
 
-  Border::Border(const PrimitiveInstance &e) :
-      Control(e.relativePosition),
-      m_primitive(e)
+  Border::Border(const PrimitiveInstance &e)
+      : Control(e.relativePosition)
+      , m_primitive(e)
   {
   }
 
@@ -39,7 +39,8 @@ namespace DescriptiveLayouts
         fb.drawRect(getPosition());
         return true;
     }
-    throw ExceptionTools::TemplateException("unkown border style: " + getStyleValue(StyleKey::BorderStyle), "__LINE__ __FILE__");
+    throw ExceptionTools::TemplateException("unkown border style: " + getStyleValue(StyleKey::BorderStyle),
+                                            "__LINE__ __FILE__");
     return true;
   }
 

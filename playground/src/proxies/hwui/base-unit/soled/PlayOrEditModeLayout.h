@@ -7,23 +7,22 @@ class Setting;
 
 class PlayOrEditModeLayout : public DFBLayout
 {
-  private:
-    typedef DFBLayout super;
+ private:
+  typedef DFBLayout super;
 
-  public:
-    PlayOrEditModeLayout ();
-    virtual ~PlayOrEditModeLayout ();
+ public:
+  PlayOrEditModeLayout();
+  virtual ~PlayOrEditModeLayout();
 
-  protected:
-    int getBehaviourLeft () const;
+ protected:
+  int getBehaviourLeft() const;
 
-  private:
-    PlayOrEditModeLayout (const PlayOrEditModeLayout& other);
-    PlayOrEditModeLayout& operator= (const PlayOrEditModeLayout&);
+ private:
+  PlayOrEditModeLayout(const PlayOrEditModeLayout& other);
+  PlayOrEditModeLayout& operator=(const PlayOrEditModeLayout&);
 
-    void onLastTouchedRibbonChanged (int lastTouchedRibbonParameterID);
+  void onLastTouchedRibbonChanged(int lastTouchedRibbonParameterID);
 
-    Label *m_upperArrow = nullptr;
-    Label *m_lowerArrow = nullptr;
+  Label* m_upperArrow = nullptr;
+  Label* m_lowerArrow = nullptr;
 };
-

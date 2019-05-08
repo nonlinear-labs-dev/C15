@@ -6,15 +6,14 @@ class Setting;
 
 class AftertouchEditor : public MenuEditor
 {
-  private:
-    typedef MenuEditor super;
+ private:
+  typedef MenuEditor super;
 
-  public:
-    AftertouchEditor ();
-    virtual ~AftertouchEditor ();
+ public:
+  AftertouchEditor();
+  virtual ~AftertouchEditor();
 
-    void incSetting (int inc) override;
-    const vector<ustring> &getDisplayStrings () const override;
-    int getSelectedIndex () const override;
+  void incSetting(int inc) override;
+  const vector<ustring> &getDisplayStrings() const override;
+  int getSelectedIndex() const override;
 };
-

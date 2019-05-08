@@ -1,28 +1,28 @@
 #include "ParabolicGainDbScaleConverter.h"
 #include "dimension/LevelDimension3Digits.h"
 
-ParabolicGainDbScaleConverter::ParabolicGainDbScaleConverter () :
-    ScaleConverter (LevelDimension3Digits::get ())
+ParabolicGainDbScaleConverter::ParabolicGainDbScaleConverter()
+    : ScaleConverter(LevelDimension3Digits::get())
 {
 }
 
-ParabolicGainDbScaleConverter::~ParabolicGainDbScaleConverter ()
+ParabolicGainDbScaleConverter::~ParabolicGainDbScaleConverter()
 {
 }
 
-bool ParabolicGainDbScaleConverter::isBiPolar () const
+bool ParabolicGainDbScaleConverter::isBiPolar() const
 {
   return false;
 }
 
-tDisplayValue ParabolicGainDbScaleConverter::controlPositionToDisplay (const tControlPositionValue &cpValue) const
+tDisplayValue ParabolicGainDbScaleConverter::controlPositionToDisplay(const tControlPositionValue &cpValue) const
 {
   tControlPositionValue in = getControlPositionRange().clip(cpValue);
 
   if(in == 0)
     return -128;
 
-  return 20 * log10 (4 * in * in);
+  return 20 * log10(4 * in * in);
 }
 
 tTcdValue ParabolicGainDbScaleConverter::controlPositionToTcd(const tControlPositionValue &cpValue) const
@@ -30,16 +30,15 @@ tTcdValue ParabolicGainDbScaleConverter::controlPositionToTcd(const tControlPosi
   return 16000 * cpValue;
 }
 
-tControlPositionValue ParabolicGainDbScaleConverter::tcdToControlPosition (tTcdValue v) const
+tControlPositionValue ParabolicGainDbScaleConverter::tcdToControlPosition(tTcdValue v) const
 {
   return v / 16000.0;
 }
 
-Glib::ustring ParabolicGainDbScaleConverter::controlPositionToDisplayJS () const
+Glib::ustring ParabolicGainDbScaleConverter::controlPositionToDisplayJS() const
 {
   stringstream s;
   s << "return $wnd.formatDimension(cpValue == 0 ? -128 : (20 * Math.log (4 * cpValue * cpValue) / Math.log(10)), \""
-  << getDimension ().getStingizerJS () << "\", withUnit);";
-  return s.str ();
+    << getDimension().getStingizerJS() << "\", withUnit);";
+  return s.str();
 }
-

@@ -4,8 +4,6 @@
 
 class UndoTransactionClient
 {
-  public:
-    virtual void assignTransaction (shared_ptr<UNDO::Transaction> transaction, bool selected, bool current) = 0;
-
+ public:
+  virtual void assignTransaction(shared_ptr<UNDO::Transaction> transaction, bool selected, bool current) = 0;
 };
-

@@ -2,39 +2,38 @@
 #include "Settings.h"
 #include "xml/Writer.h"
 
-Setting::Setting (Settings &parent) :
-    super (&parent)
+Setting::Setting(Settings &parent)
+    : super(&parent)
 {
 }
 
-Setting::~Setting ()
+Setting::~Setting()
 {
 }
 
-connection Setting::onChange (slot<void, const Setting*> slot)
+connection Setting::onChange(slot<void, const Setting *> slot)
 {
-  return m_signal.connectAndInit (slot, this);
+  return m_signal.connectAndInit(slot, this);
 }
 
-void Setting::notify ()
+void Setting::notify()
 {
-  m_signal.send (this);
-  super::onChange ();
-  sendToLPC ();
+  m_signal.send(this);
+  super::onChange();
+  sendToLPC();
 }
 
-void Setting::writeDocument (Writer &writer, tUpdateID knownRevision) const
+void Setting::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
-  bool changed = knownRevision < getUpdateIDOfLastChange ();
-  writer.writeTextElement ("value", save (), Attribute ("changed", changed));
+  bool changed = knownRevision < getUpdateIDOfLastChange();
+  writer.writeTextElement("value", save(), Attribute("changed", changed));
 }
 
-void Setting::sendToLPC () const
+void Setting::sendToLPC() const
 {
-
 }
 
-void Setting::setSetting (Initiator initiator, const Glib::ustring &text)
+void Setting::setSetting(Initiator initiator, const Glib::ustring &text)
 {
-  load (text);
+  load(text);
 }

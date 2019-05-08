@@ -5,27 +5,28 @@
 #include "proxies/lpc/LPCProxy.h"
 #include "groups/HardwareSourcesGroup.h"
 
-BaseUnitEditMode::BaseUnitEditMode () 
+BaseUnitEditMode::BaseUnitEditMode()
 {
 }
 
-BaseUnitEditMode::~BaseUnitEditMode ()
+BaseUnitEditMode::~BaseUnitEditMode()
 {
 }
 
-void BaseUnitEditMode::toggleTouchBehaviour ()
+void BaseUnitEditMode::toggleTouchBehaviour()
 {
-  if (Application::get ().getLPCProxy ()->getLastTouchedRibbonParameterID () == HardwareSourcesGroup::getUpperRibbonParameterID ())
+  if(Application::get().getLPCProxy()->getLastTouchedRibbonParameterID()
+     == HardwareSourcesGroup::getUpperRibbonParameterID())
   {
-    toggleParameterEditModeRibbonBehaviour ();
+    toggleParameterEditModeRibbonBehaviour();
   }
   else
   {
-    super::toggleTouchBehaviour ();
+    super::toggleTouchBehaviour();
   }
 }
 
-void BaseUnitEditMode::toggleParameterEditModeRibbonBehaviour ()
+void BaseUnitEditMode::toggleParameterEditModeRibbonBehaviour()
 {
-  Application::get ().getSettings ()->getSetting<ParameterEditModeRibbonBehaviour>()->inc();
+  Application::get().getSettings()->getSetting<ParameterEditModeRibbonBehaviour>()->inc();
 }

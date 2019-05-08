@@ -2,10 +2,11 @@
 
 #include "TimeScaleConverter.h"
 
-class TransitionTimeMSScaleConverter: public TimeScaleConverter
+class TransitionTimeMSScaleConverter : public TimeScaleConverter
 {
-    typedef TimeScaleConverter super;
-  public:
-    TransitionTimeMSScaleConverter();
-    virtual ~TransitionTimeMSScaleConverter();
+  typedef TimeScaleConverter super;
+
+ public:
+  TransitionTimeMSScaleConverter();
+  virtual ~TransitionTimeMSScaleConverter();
 };

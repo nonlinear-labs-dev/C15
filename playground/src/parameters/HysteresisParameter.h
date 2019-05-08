@@ -5,15 +5,15 @@
 
 class HysteresisParameter : public PhysicalControlParameter
 {
-  private:
-    typedef PhysicalControlParameter super;
+ private:
+  typedef PhysicalControlParameter super;
 
-  public:
-    HysteresisParameter (ParameterGroup *group, uint16_t id, const ScaleConverter *scaling,
-                         tDisplayValue def, int coarseDenominator, int fineDenominator);
+ public:
+  HysteresisParameter(ParameterGroup *group, uint16_t id, const ScaleConverter *scaling, tDisplayValue def,
+                      int coarseDenominator, int fineDenominator);
 
-    virtual void onChangeFromLpc (tControlPositionValue newValue) override;
+  virtual void onChangeFromLpc(tControlPositionValue newValue) override;
 
-  private:
-    Hysteresis m_lpcHysteresis;
+ private:
+  Hysteresis m_lpcHysteresis;
 };

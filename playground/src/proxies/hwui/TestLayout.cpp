@@ -6,11 +6,11 @@
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 #include <proxies/hwui/panel-unit/EditPanel.h>
 
-TestLayout::TestLayout (OLEDProxy &parent)
+TestLayout::TestLayout(OLEDProxy& parent)
 {
 }
 
-TestLayout::~TestLayout ()
+TestLayout::~TestLayout()
 {
 }
 
@@ -18,12 +18,11 @@ void TestLayout::iterate()
 {
   m_test++;
   m_isDirty = true;
-
 }
 
-bool TestLayout::redrawLayout (OLEDProxy& oled)
+bool TestLayout::redrawLayout(OLEDProxy& oled)
 {
-  if (!m_isDirty)
+  if(!m_isDirty)
     return false;
 
   return true;

@@ -2,16 +2,16 @@
 #include <device-settings/PresetGlitchSuppression.h>
 #include <proxies/lpc/LPCProxy.h>
 
-PresetGlitchSuppression::PresetGlitchSuppression (Settings &settings) :
-    super (settings, false)
+PresetGlitchSuppression::PresetGlitchSuppression(Settings &settings)
+    : super(settings, false)
 {
 }
 
-PresetGlitchSuppression::~PresetGlitchSuppression ()
+PresetGlitchSuppression::~PresetGlitchSuppression()
 {
 }
 
-void PresetGlitchSuppression::sendToLPC () const
+void PresetGlitchSuppression::sendToLPC() const
 {
-  Application::get ().getLPCProxy ()->sendSetting (PRESET_GLITCH_SUPPRESSION, get());
+  Application::get().getLPCProxy()->sendSetting(PRESET_GLITCH_SUPPRESSION, get());
 }

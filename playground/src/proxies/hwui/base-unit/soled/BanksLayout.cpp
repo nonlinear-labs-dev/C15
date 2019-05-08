@@ -15,21 +15,22 @@
 #include "SoledHeader.h"
 #include "DirectLoadIndicator.h"
 
-BanksLayout::BanksLayout ()
+BanksLayout::BanksLayout()
 {
   const auto headlineHeight = 16;
-  addControl (new SoledHeader ("Bank", Rect (0, 0, 31, headlineHeight + 1)));
+  addControl(new SoledHeader("Bank", Rect(0, 0, 31, headlineHeight + 1)));
 
   m_number = addControl(new LabelRegular8("", Rect(32, 1, 64, headlineHeight - 1)));
   m_name = addControl(new Label("", Rect(0, headlineHeight + 2, 128, 32 - headlineHeight - 2)));
-  m_directLoad = addControl (new DirectLoadIndicator (Rect (96, 0, 32, headlineHeight)));
+  m_directLoad = addControl(new DirectLoadIndicator(Rect(96, 0, 32, headlineHeight)));
   addControl(new DottedLine(Rect(31, headlineHeight, 96, 1)));
 
-  Application::get().getPresetManager()->onBankSelection (sigc::mem_fun(this, &BanksLayout::onBankSelected));
-  Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange(sigc::mem_fun(this, &BanksLayout::onAutoLoadSettingChanged));
+  Application::get().getPresetManager()->onBankSelection(sigc::mem_fun(this, &BanksLayout::onBankSelected));
+  Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange(
+      sigc::mem_fun(this, &BanksLayout::onAutoLoadSettingChanged));
 }
 
-BanksLayout::~BanksLayout ()
+BanksLayout::~BanksLayout()
 {
 }
 
@@ -37,7 +38,7 @@ void BanksLayout::onBankSelected(shared_ptr<PresetBank> bank)
 {
   if(bank)
   {
-    auto order = Application::get().getPresetManager()->calcOrderNumber (bank.get());
+    auto order = Application::get().getPresetManager()->calcOrderNumber(bank.get());
     auto numBanks = Application::get().getPresetManager()->getNumBanks();
     auto str = Glib::ustring::format(order);
     m_number->setText(str);

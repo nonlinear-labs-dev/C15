@@ -7,18 +7,16 @@ ClusterEnforcement::ClusterEnforcement()
 
 ClusterEnforcement::~ClusterEnforcement()
 {
-
 }
-
 
 std::vector<ClusterEnforcement::tBankPtr> ClusterEnforcement::getClusterMasters()
 {
   auto presetManager = Application::get().getPresetManager();
   auto allBanks = presetManager->getBanks();
   std::vector<tBankPtr> clusterMaster;
-  for (auto bank : allBanks)
+  for(auto bank : allBanks)
   {
-    if (bank->getAttached().uuid == "")
+    if(bank->getAttached().uuid == "")
       clusterMaster.push_back(bank);
   }
   return clusterMaster;
@@ -33,19 +31,19 @@ void ClusterEnforcement::buildClusterStructure()
 
   std::vector<tBankPtr> anotherWaitingList;
 
-  while (true)
+  while(true)
   {
     anotherWaitingList.clear();
 
-    for (auto bank : waitingList)
+    for(auto bank : waitingList)
     {
-      if (bank->getAttached().uuid == "")
+      if(bank->getAttached().uuid == "")
       {
         auto clusterRoot = std::make_shared<TreeNode>();
         clusterRoot->bank = bank;
         addCluster(clusterRoot);
       }
-      else if (auto masterNode = findTreeNode(bank->getAttached().uuid))
+      else if(auto masterNode = findTreeNode(bank->getAttached().uuid))
       {
         auto myNode = std::make_shared<TreeNode>();
         myNode->bank = bank;
@@ -57,7 +55,7 @@ void ClusterEnforcement::buildClusterStructure()
       }
     }
 
-    if (waitingList.size() == anotherWaitingList.size())
+    if(waitingList.size() == anotherWaitingList.size())
     {
       break;
     }
@@ -71,15 +69,15 @@ void ClusterEnforcement::enforceClusterRuleOfOne(UNDO::Scope::tTransactionPtr tr
   do
   {
     buildClusterStructure();
-  }
-  while (applyRule(transaction));
+  } while(applyRule(transaction));
 }
 
-void ClusterEnforcement::sanitizeBankThatWillBeDeleted(UNDO::Scope::tTransactionPtr transaction, ClusterEnforcement::tBankPtr bank)
+void ClusterEnforcement::sanitizeBankThatWillBeDeleted(UNDO::Scope::tTransactionPtr transaction,
+                                                       ClusterEnforcement::tBankPtr bank)
 {
   buildClusterStructure();
 
-  if (auto deletedTreeNode = findTreeNode(bank->getUuid()))
+  if(auto deletedTreeNode = findTreeNode(bank->getUuid()))
   {
     auto left = deletedTreeNode->left;
     auto right = deletedTreeNode->right;
@@ -90,11 +88,11 @@ void ClusterEnforcement::sanitizeBankThatWillBeDeleted(UNDO::Scope::tTransaction
     constexpr auto leftDir = PresetBank::AttachmentDirection::left;
     constexpr auto noneDir = PresetBank::AttachmentDirection::none;
 
-    if (top)
+    if(top)
     {
       ruleDelete(transaction, bottom, right, top->bank->getUuid(), topDir);
     }
-    else if (left)
+    else if(left)
     {
       ruleDelete(transaction, bottom, right, left->bank->getUuid(), leftDir);
     }
@@ -102,11 +100,11 @@ void ClusterEnforcement::sanitizeBankThatWillBeDeleted(UNDO::Scope::tTransaction
     {
       ruleDelete(transaction, bottom, right, "", noneDir);
 
-      if (bottom)
+      if(bottom)
       {
         bottom->bank->undoableSetPosition(transaction, bank->getX(), bank->getY());
       }
-      else if (right)
+      else if(right)
       {
         right->bank->undoableSetPosition(transaction, bank->getX(), bank->getY());
       }
@@ -115,19 +113,18 @@ void ClusterEnforcement::sanitizeBankThatWillBeDeleted(UNDO::Scope::tTransaction
 }
 
 void ClusterEnforcement::ruleDelete(UNDO::Scope::tTransactionPtr transaction, ClusterEnforcement::tTreeNodePtr bottom,
-                                    ClusterEnforcement::tTreeNodePtr right,
-                                    Glib::ustring newMasterUuid,
+                                    ClusterEnforcement::tTreeNodePtr right, Glib::ustring newMasterUuid,
                                     PresetBank::AttachmentDirection dir)
 {
-  if (bottom)
+  if(bottom)
   {
     bottom->bank->undoableAttachBank(transaction, newMasterUuid, dir);
-    if (right)
+    if(right)
     {
       right->bank->undoableAttachBank(transaction, bottom->bank->getUuid(), PresetBank::AttachmentDirection::left);
     }
   }
-  else if (right)
+  else if(right)
   {
     right->bank->undoableAttachBank(transaction, newMasterUuid, dir);
   }
@@ -135,9 +132,9 @@ void ClusterEnforcement::ruleDelete(UNDO::Scope::tTransactionPtr transaction, Cl
 
 bool ClusterEnforcement::applyRule(UNDO::Scope::tTransactionPtr transaction)
 {
-  for (auto clusterMaster : m_clusters)
+  for(auto clusterMaster : m_clusters)
   {
-    if (applyRule(transaction, clusterMaster))
+    if(applyRule(transaction, clusterMaster))
     {
       return true;
     }
@@ -149,11 +146,11 @@ bool ClusterEnforcement::applyRule(UNDO::Scope::tTransactionPtr transaction, tTr
 {
   tTreeNodePtr mostTopNode = nullptr;
 
-  while (node != nullptr)
+  while(node != nullptr)
   {
-    if (node->right != nullptr)
+    if(node->right != nullptr)
     {
-      if (mostTopNode != nullptr)
+      if(mostTopNode != nullptr)
       {
         appendToBottomChildOfNode(transaction, node->right, mostTopNode);
         return true;
@@ -169,9 +166,10 @@ bool ClusterEnforcement::applyRule(UNDO::Scope::tTransactionPtr transaction, tTr
   return false;
 }
 
-void ClusterEnforcement::appendToBottomChildOfNode(UNDO::Scope::tTransactionPtr transaction, tTreeNodePtr node, tTreeNodePtr target)
+void ClusterEnforcement::appendToBottomChildOfNode(UNDO::Scope::tTransactionPtr transaction, tTreeNodePtr node,
+                                                   tTreeNodePtr target)
 {
-  while (target->bottom != nullptr)
+  while(target->bottom != nullptr)
   {
     target = target->bottom;
   }
@@ -183,7 +181,7 @@ ClusterEnforcement::tTreeNodePtr ClusterEnforcement::findTreeNode(Glib::ustring 
 {
   auto it = m_uuidToTreeNode.find(uuid);
 
-  if (it != m_uuidToTreeNode.end())
+  if(it != m_uuidToTreeNode.end())
     return it->second;
   else
     return nullptr;
@@ -197,16 +195,16 @@ void ClusterEnforcement::addCluster(tTreeNodePtr clusterRoot)
 
 void ClusterEnforcement::connectToClusterStructure(tTreeNodePtr masterNode, tTreeNodePtr myNode)
 {
-  switch (myNode->bank->getAttached().direction)
+  switch(myNode->bank->getAttached().direction)
   {
-  case PresetBank::AttachmentDirection::left:
-    myNode->left = masterNode;
-    masterNode->right = myNode;
+    case PresetBank::AttachmentDirection::left:
+      myNode->left = masterNode;
+      masterNode->right = myNode;
 
-    break;
-  case PresetBank::AttachmentDirection::top:
-    myNode->top = masterNode;
-    masterNode->bottom = myNode;
+      break;
+    case PresetBank::AttachmentDirection::top:
+      myNode->top = masterNode;
+      masterNode->bottom = myNode;
   }
 
   m_uuidToTreeNode[myNode->bank->getUuid()] = myNode;

@@ -5,42 +5,41 @@
 #include <proxies/hwui/TwoStateLED.h>
 #include "MacroControlAssignmentStateMachine.h"
 
-
 class Application;
 class Parameter;
 class TwoStateLED;
 
 class PanelUnit : public HardwareUserInterfaceUnit, public sigc::trackable
 {
-  private:
-    typedef HardwareUserInterfaceUnit super;
+ private:
+  typedef HardwareUserInterfaceUnit super;
 
-  public:
-    PanelUnit();
-    virtual ~PanelUnit();
+ public:
+  PanelUnit();
+  virtual ~PanelUnit();
 
-    typedef shared_ptr<TwoStateLED> tLed;
+  typedef shared_ptr<TwoStateLED> tLed;
 
-    void setupFocusAndMode();
-    virtual void setupFocusAndMode (FocusAndMode focusAndMode) override;
-    void onTimeout();
+  void setupFocusAndMode();
+  virtual void setupFocusAndMode(FocusAndMode focusAndMode) override;
+  void onTimeout();
 
-    tLed getLED(Buttons id);
-    EditPanel &getEditPanel();
-    const EditPanel &getEditPanel() const;
+  tLed getLED(Buttons id);
+  EditPanel &getEditPanel();
+  const EditPanel &getEditPanel() const;
 
-    virtual bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state) override;
-    void init();
-    void turnLedsOff();
+  virtual bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state) override;
+  void init();
+  void turnLedsOff();
 
-    MacroControlAssignmentStateMachine &getMacroControlAssignmentStateMachine();
+  MacroControlAssignmentStateMachine &getMacroControlAssignmentStateMachine();
 
-  private:
-    void installUsageMode (FocusAndMode focusAndMode);
-    int choseHWBestSourceForMC(int mcParamId) const;
-    void onBBBBConnected();
+ private:
+  void installUsageMode(FocusAndMode focusAndMode);
+  int choseHWBestSourceForMC(int mcParamId) const;
+  void onBBBBConnected();
 
-    EditPanel m_editPanel;
-    vector<tLed> m_leds;
-    MacroControlAssignmentStateMachine m_macroControlAssignmentStateMachine;
+  EditPanel m_editPanel;
+  vector<tLed> m_leds;
+  MacroControlAssignmentStateMachine m_macroControlAssignmentStateMachine;
 };

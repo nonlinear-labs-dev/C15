@@ -4,40 +4,40 @@
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/RandomizeAmountLabel.h>
 #include <proxies/hwui/HWUI.h>
 
-RandomizeAmountLabel::RandomizeAmountLabel (const Rect &rect) :
-    super (rect)
+RandomizeAmountLabel::RandomizeAmountLabel(const Rect &rect)
+    : super(rect)
 {
-  Application::get ().getSettings ()->getSetting<RandomizeAmount> ()->onChange (
-      sigc::mem_fun (this, &RandomizeAmountLabel::onSettingChanged));
+  Application::get().getSettings()->getSetting<RandomizeAmount>()->onChange(
+      sigc::mem_fun(this, &RandomizeAmountLabel::onSettingChanged));
 
-  Application::get ().getHWUI ()->onModifiersChanged (
-      sigc::hide(sigc::mem_fun (this, &RandomizeAmountLabel::onModifiersChanged)));
+  Application::get().getHWUI()->onModifiersChanged(
+      sigc::hide(sigc::mem_fun(this, &RandomizeAmountLabel::onModifiersChanged)));
 }
 
-RandomizeAmountLabel::~RandomizeAmountLabel ()
+RandomizeAmountLabel::~RandomizeAmountLabel()
 {
 }
 
-void RandomizeAmountLabel::onSettingChanged (const Setting *s)
+void RandomizeAmountLabel::onSettingChanged(const Setting *s)
 {
-  auto displayString = (((const RandomizeAmount*)s)->getDisplayString());
+  auto displayString = (((const RandomizeAmount *) s)->getDisplayString());
 
-  if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
+  if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
   {
-    setText (displayString + " F", 2);
+    setText(displayString + " F", 2);
   }
   else
   {
-    setText (displayString);
+    setText(displayString);
   }
 }
 
-void RandomizeAmountLabel::setSuffixFontColor (FrameBuffer &fb) const
+void RandomizeAmountLabel::setSuffixFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C103);
+  fb.setColor(FrameBuffer::Colors::C103);
 }
 
-void RandomizeAmountLabel::onModifiersChanged ()
+void RandomizeAmountLabel::onModifiersChanged()
 {
-  onSettingChanged(Application::get ().getSettings ()->getSetting<RandomizeAmount> ().get());
+  onSettingChanged(Application::get().getSettings()->getSetting<RandomizeAmount>().get());
 }

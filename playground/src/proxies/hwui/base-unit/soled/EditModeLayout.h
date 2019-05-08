@@ -7,15 +7,14 @@ class Setting;
 
 class EditModeLayout : public PlayOrEditModeLayout
 {
-  private:
-    typedef PlayOrEditModeLayout super;
+ private:
+  typedef PlayOrEditModeLayout super;
 
-  public:
-    EditModeLayout ();
-    virtual ~EditModeLayout ();
+ public:
+  EditModeLayout();
+  virtual ~EditModeLayout();
 
-  private:
-    EditModeLayout (const EditModeLayout& other);
-    EditModeLayout& operator= (const EditModeLayout&);
+ private:
+  EditModeLayout(const EditModeLayout& other);
+  EditModeLayout& operator=(const EditModeLayout&);
 };
-

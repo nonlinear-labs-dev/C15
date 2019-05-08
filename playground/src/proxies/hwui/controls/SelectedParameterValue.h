@@ -8,23 +8,22 @@ class Parameter;
 
 class SelectedParameterValue : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    SelectedParameterValue (const Rect &rect);
-    virtual ~SelectedParameterValue ();
+ public:
+  SelectedParameterValue(const Rect &rect);
+  virtual ~SelectedParameterValue();
 
-  protected:
-    virtual void onParameterSelected (Parameter * parameter);
-    virtual void onParamValueChanged (const Parameter* param);
+ protected:
+  virtual void onParameterSelected(Parameter *parameter);
+  virtual void onParamValueChanged(const Parameter *param);
 
-    void setSuffixFontColor (FrameBuffer &fb) const override;
-    virtual void onModifiersChanged (ButtonModifiers mods);
+  void setSuffixFontColor(FrameBuffer &fb) const override;
+  virtual void onModifiersChanged(ButtonModifiers mods);
 
-    bool redraw (FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
 
-  private:
-    sigc::connection m_paramValueConnection;
+ private:
+  sigc::connection m_paramValueConnection;
 };
-

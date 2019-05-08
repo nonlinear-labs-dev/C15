@@ -4,38 +4,39 @@
 
 class ParameterImportConversions
 {
-  public:
-    static ParameterImportConversions &get ();
+ public:
+  static ParameterImportConversions &get();
 
-    typedef function<tControlPositionValue (tControlPositionValue)> tConverter;
-    typedef int tFileVersion;
-    typedef uint16_t tParameterID;
+  typedef function<tControlPositionValue(tControlPositionValue)> tConverter;
+  typedef int tFileVersion;
+  typedef uint16_t tParameterID;
 
-    tControlPositionValue convert (const tParameterID parameterID, const tControlPositionValue in, const tFileVersion inVersion) const;
-    tControlPositionValue convertMCAmount (const tParameterID parameterID, const tControlPositionValue in, const tFileVersion inVersion) const;
+  tControlPositionValue convert(const tParameterID parameterID, const tControlPositionValue in,
+                                const tFileVersion inVersion) const;
+  tControlPositionValue convertMCAmount(const tParameterID parameterID, const tControlPositionValue in,
+                                        const tFileVersion inVersion) const;
 
-    virtual ~ParameterImportConversions ();
+  virtual ~ParameterImportConversions();
 
-    static void registerTests ();
+  static void registerTests();
 
-  private:
-    ParameterImportConversions (bool registerDefaults);
+ private:
+  ParameterImportConversions(bool registerDefaults);
 
-    void registerConverter (const tParameterID parameterID, const tFileVersion srcVersion, tConverter c);
-    void registerMCAmountConverter (const tParameterID parameterID, const tFileVersion srcVersion, tConverter c);
+  void registerConverter(const tParameterID parameterID, const tFileVersion srcVersion, tConverter c);
+  void registerMCAmountConverter(const tParameterID parameterID, const tFileVersion srcVersion, tConverter c);
 
-    tControlPositionValue attackV2ToV3 (tControlPositionValue in) const;
-    tControlPositionValue decayV2ToV3 (tControlPositionValue in) const;
-    tControlPositionValue releaseV2ToV3 (tControlPositionValue in) const;
-    tControlPositionValue driveV2ToV3 (tControlPositionValue in) const;
+  tControlPositionValue attackV2ToV3(tControlPositionValue in) const;
+  tControlPositionValue decayV2ToV3(tControlPositionValue in) const;
+  tControlPositionValue releaseV2ToV3(tControlPositionValue in) const;
+  tControlPositionValue driveV2ToV3(tControlPositionValue in) const;
 
-    struct ConvertersBySourceFileVersion
-    {
-        tControlPositionValue convert (const tControlPositionValue in, const tFileVersion inVersion) const;
-        std::map<tFileVersion, tConverter> from;
-    };
+  struct ConvertersBySourceFileVersion
+  {
+    tControlPositionValue convert(const tControlPositionValue in, const tFileVersion inVersion) const;
+    std::map<tFileVersion, tConverter> from;
+  };
 
-    std::map<tParameterID, ConvertersBySourceFileVersion> m_converters;
-    std::map<tParameterID, ConvertersBySourceFileVersion> m_mcAmountConverters;
+  std::map<tParameterID, ConvertersBySourceFileVersion> m_converters;
+  std::map<tParameterID, ConvertersBySourceFileVersion> m_mcAmountConverters;
 };
-

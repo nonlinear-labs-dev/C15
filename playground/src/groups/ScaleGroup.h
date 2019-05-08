@@ -7,15 +7,15 @@ class ParameterGroupSet;
 
 class ScaleGroup : public ParameterGroup
 {
-  public:
-    ScaleGroup (ParameterGroupSet *parent);
-    virtual ~ScaleGroup ();
+ public:
+  ScaleGroup(ParameterGroupSet *parent);
+  virtual ~ScaleGroup();
 
-    void init ();
-    static int getScaleBaseParameterID ();
+  void init();
+  static int getScaleBaseParameterID();
 
-  private:
-    void onBaseKeyParameterChanged (const Parameter *baseKeyParameter);
+ private:
+  void onBaseKeyParameterChanged(const Parameter *baseKeyParameter);
 
-    Throttler m_updateNames;
+  Throttler m_updateNames;
 };

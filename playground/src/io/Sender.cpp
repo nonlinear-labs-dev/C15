@@ -7,4 +7,3 @@ Sender::Sender()
 Sender::~Sender()
 {
 }
-

@@ -5,14 +5,13 @@
 
 class UndoList : public ControlWithChildren
 {
-  private:
-    typedef ControlWithChildren super;
+ private:
+  typedef ControlWithChildren super;
 
-  public:
-    UndoList (const Rect &pos);
-    virtual ~UndoList ();
+ public:
+  UndoList(const Rect &pos);
+  virtual ~UndoList();
 
-    void assignTransactions (shared_ptr<UNDO::Transaction> tip);
-    bool redraw (FrameBuffer &fb) override;
+  void assignTransactions(shared_ptr<UNDO::Transaction> tip);
+  bool redraw(FrameBuffer &fb) override;
 };
-

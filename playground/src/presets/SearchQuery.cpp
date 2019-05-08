@@ -58,15 +58,17 @@ tStrings splitQuotes(const Glib::ustring &str)
   return trimAll(ret);
 }
 
-SearchQuery::SearchQuery(const Glib::ustring &query, Mode mode, std::vector<PresetManager::presetInfoSearchFields> &&fields) :
-    m_mode(mode),
-    m_query(splitQuotes(query)),
-    m_searchFields(fields)
+SearchQuery::SearchQuery(const Glib::ustring &query, Mode mode,
+                         std::vector<PresetManager::presetInfoSearchFields> &&fields)
+    : m_mode(mode)
+    , m_query(splitQuotes(query))
+    , m_searchFields(fields)
 {
 }
 
-SearchQuery::SearchQuery(const Glib::ustring &query, const Glib::ustring &mode, std::vector<PresetManager::presetInfoSearchFields> &&fields) :
-    SearchQuery(query, fromString(mode), std::move(fields))
+SearchQuery::SearchQuery(const Glib::ustring &query, const Glib::ustring &mode,
+                         std::vector<PresetManager::presetInfoSearchFields> &&fields)
+    : SearchQuery(query, fromString(mode), std::move(fields))
 {
 }
 
@@ -79,7 +81,8 @@ std::vector<PresetManager::presetInfoSearchFields> SearchQuery::getFields() cons
   return m_searchFields;
 }
 
-bool SearchQuery::iterate(function<bool(const Glib::ustring &, std::vector<PresetManager::presetInfoSearchFields> fields)> cb) const
+bool SearchQuery::iterate(
+    function<bool(const Glib::ustring &, std::vector<PresetManager::presetInfoSearchFields> fields)> cb) const
 {
   bool match = false;
 
@@ -124,30 +127,21 @@ void assertStrings(const Glib::ustring &query, tStrings expected)
 
 void SearchQuery::registerTests()
 {
-  g_test_add_func("/SearchQuery/quoted", []()
-  {
-    assertStrings("", tStrings(
-            {}));
+  g_test_add_func("/SearchQuery/quoted", []() {
+    assertStrings("", tStrings({}));
 
-    assertStrings("abc \"def\" ghi", tStrings(
-            { "abc", "def", "ghi"}));
+    assertStrings("abc \"def\" ghi", tStrings({ "abc", "def", "ghi" }));
 
-    assertStrings("abc \"def ghi", tStrings(
-            { "abc", "\"def", "ghi"}));
+    assertStrings("abc \"def ghi", tStrings({ "abc", "\"def", "ghi" }));
 
-    assertStrings("abc    def   ghi" ,tStrings(
-            { "abc", "def", "ghi"}));
+    assertStrings("abc    def   ghi", tStrings({ "abc", "def", "ghi" }));
 
-    assertStrings("\"abc    def   ghi\"" ,tStrings(
-            { "abc    def   ghi"}));
+    assertStrings("\"abc    def   ghi\"", tStrings({ "abc    def   ghi" }));
 
-    assertStrings("\"aaa \"\"bbb\"" ,tStrings(
-            { "aaa", "bbb"}));
+    assertStrings("\"aaa \"\"bbb\"", tStrings({ "aaa", "bbb" }));
 
-    assertStrings("\"aaa \"\"bbb bbb\"" ,tStrings(
-            { "aaa", "bbb bbb"}));
+    assertStrings("\"aaa \"\"bbb bbb\"", tStrings({ "aaa", "bbb bbb" }));
 
-    assertStrings("\"aaa \"\"bbb ccc" ,tStrings(
-            { "aaa", "\"bbb", "ccc"}));
+    assertStrings("\"aaa \"\"bbb ccc", tStrings({ "aaa", "\"bbb", "ccc" }));
   });
 }

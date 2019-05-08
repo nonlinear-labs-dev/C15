@@ -5,15 +5,15 @@
 
 class AttributesOwnerSerializer : public Serializer
 {
-  public:
-    AttributesOwnerSerializer (AttributesOwner *owner);
+ public:
+  AttributesOwnerSerializer(AttributesOwner *owner);
 
-    static Glib::ustring getTagName();
+  static Glib::ustring getTagName();
 
-  private:
-    void writeTagContent(Writer &writer) const override;
-    void readTagContent(Reader &reader) const override;
-    void readProlog(Reader &reader) const override;
+ private:
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
+  void readProlog(Reader &reader) const override;
 
-    AttributesOwner *m_owner;
+  AttributesOwner *m_owner;
 };

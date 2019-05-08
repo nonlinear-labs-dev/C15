@@ -5,10 +5,9 @@
 
 class UpdateAvailableEditor : public MultiLineLabel, public SetupEditor
 {
-    typedef MultiLineLabel super;
+  typedef MultiLineLabel super;
 
-  public:
-    UpdateAvailableEditor ();
-    virtual ~UpdateAvailableEditor ();
+ public:
+  UpdateAvailableEditor();
+  virtual ~UpdateAvailableEditor();
 };
-

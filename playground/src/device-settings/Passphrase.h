@@ -6,13 +6,12 @@ class Settings;
 
 class Passphrase : public HostAPDSetting
 {
-  private:
-    typedef HostAPDSetting super;
+ private:
+  typedef HostAPDSetting super;
 
-  public:
-    Passphrase (Settings &parent);
-    virtual ~Passphrase ();
+ public:
+  Passphrase(Settings &parent);
+  virtual ~Passphrase();
 
-    void dice();
+  void dice();
 };
-

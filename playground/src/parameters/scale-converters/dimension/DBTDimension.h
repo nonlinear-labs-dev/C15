@@ -4,15 +4,13 @@
 
 class DBTDimension : public Dimension
 {
-  public:
-    virtual ~DBTDimension ();
+ public:
+  virtual ~DBTDimension();
 
-    Glib::ustring getStingizerJS() const override;
-    static const DBTDimension &get();
-    Glib::ustring stringize(const tDisplayValue &displayValue) const override;
+  Glib::ustring getStingizerJS() const override;
+  static const DBTDimension &get();
+  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 
-  private:
-    DBTDimension ();
-
+ private:
+  DBTDimension();
 };
-

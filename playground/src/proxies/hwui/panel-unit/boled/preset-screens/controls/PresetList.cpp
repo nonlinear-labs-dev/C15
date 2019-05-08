@@ -8,8 +8,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListHeader.h>
 #include <memory>
 
-PresetList::PresetList(const Rect &pos, bool showBankArrows) :
-    super(pos, showBankArrows)
+PresetList::PresetList(const Rect &pos, bool showBankArrows)
+    : super(pos, showBankArrows)
 {
   Application::get().getPresetManager()->onBankSelection(mem_fun(this, &PresetList::onBankSelectionChanged));
 }
@@ -82,7 +82,6 @@ bool PresetList::onButton(Buttons i, bool down, ButtonModifiers modifiers)
   }
 
   return false;
-
 }
 
 void PresetList::onRotary(int inc, ButtonModifiers modifiers)
@@ -119,8 +118,6 @@ std::pair<int, int> PresetList::getSelectedPosition() const
     auto bankPos = pm->calcBankIndex(b.get());
     auto presetPos = b->getPresetPosition(b->getSelectedPreset());
     return make_pair(bankPos, presetPos);
-
   }
-  return
-  { -1, -1};
+  return { -1, -1 };
 }

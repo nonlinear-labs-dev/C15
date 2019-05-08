@@ -7,25 +7,25 @@ class Parameter;
 
 class ModulationBoundSlider : public Control
 {
-    typedef Control super;
+  typedef Control super;
 
-  public:
-    ModulationBoundSlider (const Rect &pos);
-    virtual ~ModulationBoundSlider ();
+ public:
+  ModulationBoundSlider(const Rect &pos);
+  virtual ~ModulationBoundSlider();
 
-    bool redraw (FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
 
-  protected:
-    enum class BoundPosition
-    {
-      Left, Right
-    };
+ protected:
+  enum class BoundPosition
+  {
+    Left,
+    Right
+  };
 
-    virtual BoundPosition getBoundPosition () const = 0;
-    void onSelectionChanged (Parameter *, Parameter *newParam);
-    void onParameterChanged (const Parameter *);
+  virtual BoundPosition getBoundPosition() const = 0;
+  void onSelectionChanged(Parameter *, Parameter *newParam);
+  void onParameterChanged(const Parameter *);
 
-    ModulateableParameter *m_param = nullptr;
-    connection m_paramChanged;
+  ModulateableParameter *m_param = nullptr;
+  connection m_paramChanged;
 };
-

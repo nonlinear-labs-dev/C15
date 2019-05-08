@@ -6,50 +6,49 @@
 #include <device-settings/DebugLevel.h>
 #include <boost/lexical_cast.hpp>
 
-DateTimeAdjustment::DateTimeAdjustment (Settings &parent) :
-    super (parent),
-    m_adjustment (0)
+DateTimeAdjustment::DateTimeAdjustment(Settings &parent)
+    : super(parent)
+    , m_adjustment(0)
 {
 }
 
-DateTimeAdjustment::~DateTimeAdjustment ()
+DateTimeAdjustment::~DateTimeAdjustment()
 {
 }
 
-void DateTimeAdjustment::load (const Glib::ustring &text)
+void DateTimeAdjustment::load(const Glib::ustring &text)
 {
   try
   {
     set(boost::lexical_cast<int64_t>(text.raw()));
   }
-  catch (...)
+  catch(...)
   {
-    set (0);
+    set(0);
     DebugLevel::error("Could not read settings for date time adjustment:", text);
   }
 }
 
-Glib::ustring DateTimeAdjustment::save () const
+Glib::ustring DateTimeAdjustment::save() const
 {
-  return to_string (get ());
+  return to_string(get());
 }
 
-void DateTimeAdjustment::set (int64_t adjustment)
+void DateTimeAdjustment::set(int64_t adjustment)
 {
-  if (m_adjustment != adjustment)
+  if(m_adjustment != adjustment)
   {
     m_adjustment = adjustment;
-    notify ();
+    notify();
   }
 }
 
-int64_t DateTimeAdjustment::get () const
+int64_t DateTimeAdjustment::get() const
 {
   return m_adjustment;
 }
 
 void DateTimeAdjustment::adjust(time_t modifiedTime)
 {
-  set(modifiedTime - std::time (nullptr));
+  set(modifiedTime - std::time(nullptr));
 }
-

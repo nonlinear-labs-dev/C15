@@ -7,35 +7,35 @@
 
 namespace DescriptiveLayouts
 {
-  ENUM(EventSinks, uint8_t, IncParam, DecParam, SwitchToInitDetail, SwitchToEditMode,
-       SwitchToSelectMode, IncButtonMenu, FireButtonMenu, SwitchToMCSelectDetail, IncMCSel, DecMCSel,
-       SwitchToMCModRangeDetail, SwitchToMCAmtDetail, IncMCAmt, DecMCAmt, IncMCPos, DecMCPos);
+  ENUM(EventSinks, uint8_t, IncParam, DecParam, SwitchToInitDetail, SwitchToEditMode, SwitchToSelectMode, IncButtonMenu,
+       FireButtonMenu, SwitchToMCSelectDetail, IncMCSel, DecMCSel, SwitchToMCModRangeDetail, SwitchToMCAmtDetail,
+       IncMCAmt, DecMCAmt, IncMCPos, DecMCPos);
 
   struct EventSinkMapping
   {
-    public:
-      EventSinkMapping(Buttons button, EventSinks sink, ButtonEvents event = ButtonEvents::Down, ButtonModifiers modifiers =
-          ButtonModifiers::None);
+   public:
+    EventSinkMapping(Buttons button, EventSinks sink, ButtonEvents event = ButtonEvents::Down,
+                     ButtonModifiers modifiers = ButtonModifiers::None);
 
-      Buttons button;
-      ButtonEvents event;
-      ButtonModifiers modifiers;
-      EventSinks sink;
+    Buttons button;
+    ButtonEvents event;
+    ButtonModifiers modifiers;
+    EventSinks sink;
   };
 
   class EventSinkBroker
   {
-    public:
-      static EventSinkBroker& get();
+   public:
+    static EventSinkBroker& get();
 
-      void fire(EventSinks s);
+    void fire(EventSinks s);
 
-    private:
-      using tAction = std::function<void()>;
+   private:
+    using tAction = std::function<void()>;
 
-      EventSinkBroker();
-      void registerEvent(EventSinks sink, tAction action);
+    EventSinkBroker();
+    void registerEvent(EventSinks sink, tAction action);
 
-      std::unordered_map<EventSinks, tAction> m_map;
+    std::unordered_map<EventSinks, tAction> m_map;
   };
 }

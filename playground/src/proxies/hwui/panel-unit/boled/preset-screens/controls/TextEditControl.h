@@ -6,9 +6,9 @@ class TextEditUsageMode;
 
 class TextEditControl : public ControlWithChildren
 {
-  private:
-    typedef ControlWithChildren super;
-    
-  public:
-    TextEditControl (const Rect &pos, shared_ptr<TextEditUsageMode> textUsageMode);
+ private:
+  typedef ControlWithChildren super;
+
+ public:
+  TextEditControl(const Rect &pos, shared_ptr<TextEditUsageMode> textUsageMode);
 };

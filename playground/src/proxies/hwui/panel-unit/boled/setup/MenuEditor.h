@@ -7,22 +7,21 @@ class Setting;
 
 class MenuEditor : public ControlWithChildren, public SetupEditor
 {
-  private:
-    typedef ControlWithChildren super;
+ private:
+  typedef ControlWithChildren super;
 
-  public:
-    MenuEditor ();
-    virtual ~MenuEditor ();
+ public:
+  MenuEditor();
+  virtual ~MenuEditor();
 
-    void setPosition (const Rect &r) override;
-    bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
-    bool onRotary (int inc, ButtonModifiers modifiers) override;
+  void setPosition(const Rect &r) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
 
-  protected:
-    virtual void incSetting(int inc) = 0;
-    virtual const vector<ustring> &getDisplayStrings () const = 0;
-    virtual int getSelectedIndex() const = 0;
-    void onSettingChanged (const Setting *s);
-    void updateOnSettingChanged ();
+ protected:
+  virtual void incSetting(int inc) = 0;
+  virtual const vector<ustring> &getDisplayStrings() const = 0;
+  virtual int getSelectedIndex() const = 0;
+  void onSettingChanged(const Setting *s);
+  void updateOnSettingChanged();
 };
-

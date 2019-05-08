@@ -7,11 +7,11 @@ namespace DescriptiveLayouts
 
   StyleSheet::StyleSheet()
   {
-
   }
 
-  void StyleSheet::registerStyleFull(UIFocus f, UIMode m, UIDetail d, LayoutClasses l, ControlClasses cc, ControlInstances ci,
-                                     PrimitiveClasses pc, PrimitiveTag pt, PrimitiveInstances pi, const StyleMap &s)
+  void StyleSheet::registerStyleFull(UIFocus f, UIMode m, UIDetail d, LayoutClasses l, ControlClasses cc,
+                                     ControlInstances ci, PrimitiveClasses pc, PrimitiveTag pt, PrimitiveInstances pi,
+                                     const StyleMap &s)
   {
     m_styles[f][m][d][l][cc][ci][pc][pt][pi] = s;
   }
@@ -35,5 +35,4 @@ namespace DescriptiveLayouts
   {
     m_styles.clear();
   }
-
 }

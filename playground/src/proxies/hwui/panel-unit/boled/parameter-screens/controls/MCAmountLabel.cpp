@@ -6,59 +6,58 @@
 #include "presets/EditBuffer.h"
 #include "parameters/scale-converters/LinearBipolar100PercentScaleConverter.h"
 
-MCAmountLabel::MCAmountLabel (const Rect &rect) :
-    super (rect)
+MCAmountLabel::MCAmountLabel(const Rect &rect)
+    : super(rect)
 {
-  Application::get ().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide < 0 > (sigc::mem_fun (this, &MCAmountLabel::onParameterSelected)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &MCAmountLabel::onParameterSelected)));
 
-  Application::get ().getHWUI ()->onModifiersChanged (
-      sigc::hide(sigc::mem_fun (this, &MCAmountLabel::onModifiersChanged)));
+  Application::get().getHWUI()->onModifiersChanged(sigc::hide(sigc::mem_fun(this, &MCAmountLabel::onModifiersChanged)));
 }
 
-MCAmountLabel::~MCAmountLabel ()
+MCAmountLabel::~MCAmountLabel()
 {
 }
 
-void MCAmountLabel::onParameterSelected (Parameter * newParameter)
+void MCAmountLabel::onParameterSelected(Parameter *newParameter)
 {
-  if (newParameter)
+  if(newParameter)
   {
-    m_paramValueConnection.disconnect ();
-    m_paramValueConnection = newParameter->onParameterChanged (sigc::mem_fun (this, &MCAmountLabel::update));
+    m_paramValueConnection.disconnect();
+    m_paramValueConnection = newParameter->onParameterChanged(sigc::mem_fun(this, &MCAmountLabel::update));
   }
 }
 
-void MCAmountLabel::update (const Parameter *parameter)
+void MCAmountLabel::update(const Parameter *parameter)
 {
-  if (const ModulateableParameter *mp = dynamic_cast<const ModulateableParameter *> (parameter))
+  if(const ModulateableParameter *mp = dynamic_cast<const ModulateableParameter *>(parameter))
   {
-    if (mp->getModulationSource () != ModulateableParameter::NONE)
+    if(mp->getModulationSource() != ModulateableParameter::NONE)
     {
-      auto amount = mp->stringizeModulationAmount ();
+      auto amount = mp->stringizeModulationAmount();
 
-      if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
+      if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
       {
-        setText (amount + " F", 2);
+        setText(amount + " F", 2);
       }
       else
       {
-        setText (amount);
+        setText(amount);
       }
 
       return;
     }
   }
 
-  setText ("");
+  setText("");
 }
 
-void MCAmountLabel::setSuffixFontColor (FrameBuffer &fb) const
+void MCAmountLabel::setSuffixFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C103);
+  fb.setColor(FrameBuffer::Colors::C103);
 }
 
-void MCAmountLabel::onModifiersChanged ()
+void MCAmountLabel::onModifiersChanged()
 {
-  update (Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
+  update(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
 }

@@ -2,11 +2,11 @@
 
 #include "TimeScaleConverter.h"
 
-class EnvelopeTimeMSScaleConverter: public TimeScaleConverter
+class EnvelopeTimeMSScaleConverter : public TimeScaleConverter
 {
-    typedef TimeScaleConverter super;
+  typedef TimeScaleConverter super;
 
-  public:
-    EnvelopeTimeMSScaleConverter();
-    virtual ~EnvelopeTimeMSScaleConverter();
+ public:
+  EnvelopeTimeMSScaleConverter();
+  virtual ~EnvelopeTimeMSScaleConverter();
 };

@@ -1,14 +1,15 @@
 #include <device-settings/SignalFlowIndicationSetting.h>
 
-SignalFlowIndicationSetting::SignalFlowIndicationSetting(Settings& settings) : BooleanSetting(settings, true) {
-
-}
-
-SignalFlowIndicationSetting::~SignalFlowIndicationSetting() {
-
-}
-
-bool SignalFlowIndicationSetting::set (tEnum m)
+SignalFlowIndicationSetting::SignalFlowIndicationSetting(Settings& settings)
+    : BooleanSetting(settings, true)
 {
-	return BooleanSetting::set (m);
+}
+
+SignalFlowIndicationSetting::~SignalFlowIndicationSetting()
+{
+}
+
+bool SignalFlowIndicationSetting::set(tEnum m)
+{
+  return BooleanSetting::set(m);
 }

@@ -11,22 +11,22 @@ class PresetSetting;
 
 class LowerRibbon : public Ribbon
 {
-    typedef Ribbon super;
+  typedef Ribbon super;
 
-  public:
-    LowerRibbon ();
-    virtual ~LowerRibbon ();
-    void indicateBlockingMainThread (bool onOff);
+ public:
+  LowerRibbon();
+  virtual ~LowerRibbon();
+  void indicateBlockingMainThread(bool onOff);
 
-  private:
-    void onParamSelectionChanged (Parameter * oldOne, Parameter * newOne);
-    void onParamValueChanged (const Parameter* param);
-    void reconnect ();
-    
-    Parameter * getResponsibleParameter ();
+ private:
+  void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne);
+  void onParamValueChanged(const Parameter* param);
+  void reconnect();
 
-    int posToLedID (int pos) const;
-    
-    sigc::connection m_paramConnection;
-    bool m_indicateBlockingMainThread = false;
+  Parameter* getResponsibleParameter();
+
+  int posToLedID(int pos) const;
+
+  sigc::connection m_paramConnection;
+  bool m_indicateBlockingMainThread = false;
 };

@@ -5,21 +5,19 @@
 class Application;
 class Setting;
 
-
 class NoteShiftDisplay : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    NoteShiftDisplay (const Rect &rect);
-    virtual ~NoteShiftDisplay ();
+ public:
+  NoteShiftDisplay(const Rect& rect);
+  virtual ~NoteShiftDisplay();
 
-  private:
-    NoteShiftDisplay (const NoteShiftDisplay& other) = delete;
-    NoteShiftDisplay& operator= (const NoteShiftDisplay&) = delete;
+ private:
+  NoteShiftDisplay(const NoteShiftDisplay& other) = delete;
+  NoteShiftDisplay& operator=(const NoteShiftDisplay&) = delete;
 
-    void setDisplayText(const Setting* setting);
-    Glib::ustring formatShift(int i) const;
+  void setDisplayText(const Setting* setting);
+  Glib::ustring formatShift(int i) const;
 };
-

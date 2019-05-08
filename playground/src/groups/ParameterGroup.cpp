@@ -5,12 +5,12 @@
 #include <fstream>
 
 ParameterGroup::ParameterGroup(ParameterGroupSet *parent, const char *id, const char *shortName, const char *longName,
-                               const char *webUIName) :
-    UpdateDocumentContributor(parent),
-    m_id(id),
-    m_shortName(shortName),
-    m_longName(longName),
-    m_webUIName(webUIName ? : m_longName)
+                               const char *webUIName)
+    : UpdateDocumentContributor(parent)
+    , m_id(id)
+    , m_shortName(shortName)
+    , m_longName(longName)
+    , m_webUIName(webUIName ?: m_longName)
 {
 }
 
@@ -112,17 +112,18 @@ map<int, pair<tDisplayValue, Glib::ustring>> &getDefaultValues()
 ParameterGroup::tParameterPtr ParameterGroup::appendParameter(Parameter *p)
 {
 #if _TESTS
-  auto &m = getDefaultValues ();
+  auto &m = getDefaultValues();
 
-  if (!m.empty())
+  if(!m.empty())
   {
-    auto it = m.find (p->getID ());
-    g_assert (it != m.end ());
+    auto it = m.find(p->getID());
+    g_assert(it != m.end());
 
-    if (p->getDefaultValue () != it->second.first)
+    if(p->getDefaultValue() != it->second.first)
     {
-      g_error ("Parameter %s (%d) in group %s has wrong default value. Current value is %f, should be %s\n",
-          p->getLongName ().c_str (), p->getID (), getShortName ().c_str (), p->getDefaultValue (), it->second.second.c_str());
+      g_error("Parameter %s (%d) in group %s has wrong default value. Current value is %f, should be %s\n",
+              p->getLongName().c_str(), p->getID(), getShortName().c_str(), p->getDefaultValue(),
+              it->second.second.c_str());
     }
   }
 #endif
@@ -143,7 +144,7 @@ ParameterGroup::tUpdateID ParameterGroup::onChange(uint64_t flags)
   return ret;
 }
 
-void ParameterGroup::copyFrom(UNDO::Scope::tTransactionPtr transaction, ParameterGroup* other)
+void ParameterGroup::copyFrom(UNDO::Scope::tTransactionPtr transaction, ParameterGroup *other)
 {
   auto itThis = getParameters().begin();
   auto itOther = other->getParameters().begin();
@@ -173,21 +174,19 @@ void ParameterGroup::writeDocument(Writer &writer, tUpdateID knownRevision) cons
 {
   bool changed = knownRevision < getUpdateIDOfLastChange();
 
-  writer.writeTag("parameter-group", Attribute("id", getID()), Attribute("short-name", getShortName()), Attribute("long-name", m_webUIName),
-      Attribute("changed", changed), [&]()
-      {
-        if (changed)
-        for (const tParameterPtr p : m_parameters)
-        p->writeDocument (writer, knownRevision);
-      });
+  writer.writeTag("parameter-group", Attribute("id", getID()), Attribute("short-name", getShortName()),
+                  Attribute("long-name", m_webUIName), Attribute("changed", changed), [&]() {
+                    if(changed)
+                      for(const tParameterPtr p : m_parameters)
+                        p->writeDocument(writer, knownRevision);
+                  });
 }
 
 void ParameterGroup::writeDiff(Writer &writer, ParameterGroup *other) const
 {
   if(getHash() != other->getHash())
   {
-    writer.writeTag("group", Attribute("name", getLongName()), [&]
-    {
+    writer.writeTag("group", Attribute("name", getLongName()), [&] {
       for(auto parameter : getParameters())
       {
         auto otherParameter = other->getParameterByID(parameter->getID());
@@ -225,7 +224,8 @@ void ParameterGroup::undoableRandomize(UNDO::Scope::tTransactionPtr transaction,
   }
 }
 
-void ParameterGroup::undoableSetType(UNDO::Scope::tTransactionPtr transaction, PresetType oldType, PresetType desiredType)
+void ParameterGroup::undoableSetType(UNDO::Scope::tTransactionPtr transaction, PresetType oldType,
+                                     PresetType desiredType)
 {
   for(auto p : getParameters())
     p->undoableSetType(transaction, oldType, desiredType);
@@ -268,4 +268,3 @@ bool ParameterGroup::areAllParametersLocked() const
 
   return true;
 }
-

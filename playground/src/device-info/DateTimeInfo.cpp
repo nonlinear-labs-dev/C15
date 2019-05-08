@@ -9,26 +9,27 @@
 #include <string>
 #include <tools/TimeTools.h>
 
-DateTimeInfo::DateTimeInfo (DeviceInformation *parent) :
-    DeviceInformationItem (parent)
+DateTimeInfo::DateTimeInfo(DeviceInformation *parent)
+    : DeviceInformationItem(parent)
 {
-  onTimeChanged ();
-  Application::get ().getMainContext ()->signal_timeout ().connect_seconds (sigc::mem_fun (this, &DateTimeInfo::onTimeChanged), 60);
+  onTimeChanged();
+  Application::get().getMainContext()->signal_timeout().connect_seconds(
+      sigc::mem_fun(this, &DateTimeInfo::onTimeChanged), 60);
 }
 
-bool DateTimeInfo::onTimeChanged ()
+bool DateTimeInfo::onTimeChanged()
 {
-  onChange (UpdateDocumentContributor::ChangeFlags::Generic);
+  onChange(UpdateDocumentContributor::ChangeFlags::Generic);
   return true;
 }
 
-void DateTimeInfo::writeDocument (Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
+void DateTimeInfo::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
 {
-  writer.writeTextElement ("date-time", get ());
+  writer.writeTextElement("date-time", get());
   writer.writeTextElement("date-time-display", getDisplayString());
 }
 
-Glib::ustring DateTimeInfo::get () const
+Glib::ustring DateTimeInfo::get() const
 {
   return TimeTools::getAdjustedIso();
 }
@@ -37,4 +38,3 @@ Glib::ustring DateTimeInfo::getDisplayString() const
 {
   return TimeTools::getDisplayStringFromIso(TimeTools::getAdjustedIso());
 }
-

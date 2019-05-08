@@ -27,12 +27,11 @@ PanelUnit::PanelUnit()
   for(int i = 0; i < numLEDs; i++)
     m_leds.emplace_back(new TwoStateLED(i));
 
-  m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Selected, [=]()
-  {
+  m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Selected, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
     auto p = editBuffer->getSelectedParameter();
 
-    if(auto mrp = dynamic_cast<ModulationRoutingParameter*>(p))
+    if(auto mrp = dynamic_cast<ModulationRoutingParameter *>(p))
     {
       mrp->getSourceParameter()->setUiSelectedModulationRouter(p->getID());
     }
@@ -42,8 +41,7 @@ PanelUnit::PanelUnit()
     return true;
   });
 
-  m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Assign, [=]()
-  {
+  m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Assign, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
     auto selParam = editBuffer->getSelectedParameter();
     auto mc = MacroControlsGroup::paramIDToModSrc(selParam->getID());
@@ -51,7 +49,7 @@ PanelUnit::PanelUnit()
     auto targetId = m_macroControlAssignmentStateMachine.getCurrentModulateableParameter();
     auto target = editBuffer->findParameterByID(targetId);
 
-    if(auto modParam = dynamic_cast<ModulateableParameter*>(target))
+    if(auto modParam = dynamic_cast<ModulateableParameter *>(target))
     {
       if(modParam->getModulationSource() == mc)
       {
@@ -70,21 +68,19 @@ PanelUnit::PanelUnit()
         auto hwui = Application::get().getHWUI();
         auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout();
 
-        if (auto modParamLayout = dynamic_cast<ModulateableParameterSelectLayout2*>(layout.get()))
+        if(auto modParamLayout = dynamic_cast<ModulateableParameterSelectLayout2 *>(layout.get()))
         {
 
           modParamLayout->installMcAmountScreen();
           m_macroControlAssignmentStateMachine.setState(MacroControlAssignmentStates::Initial);
           return true;
         }
-
       }
     }
     return true;
   });
 
-  m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::SelectSource, [=]()
-  {
+  m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::SelectSource, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
     auto p = editBuffer->getSelectedParameter();
     auto currentSource = choseHWBestSourceForMC(p->getID());
@@ -104,7 +100,8 @@ PanelUnit::~PanelUnit()
 
 int PanelUnit::choseHWBestSourceForMC(int mcParamId) const
 {
-  if(auto mc = dynamic_cast<MacroControlParameter*>(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(mcParamId)))
+  if(auto mc = dynamic_cast<MacroControlParameter *>(
+         Application::get().getPresetManager()->getEditBuffer()->findParameterByID(mcParamId)))
   {
     return mc->getUiSelectedHardwareSource();
   }
@@ -165,7 +162,7 @@ void PanelUnit::installUsageMode(FocusAndMode focusAndMode)
 
 PanelUnit::tLed PanelUnit::getLED(Buttons id)
 {
-  return m_leds[(int)id];
+  return m_leds[(int) id];
 }
 
 void PanelUnit::onTimeout()
@@ -173,7 +170,7 @@ void PanelUnit::onTimeout()
   m_editPanel.onTimeout();
 }
 
-EditPanel & PanelUnit::getEditPanel()
+EditPanel &PanelUnit::getEditPanel()
 {
   return m_editPanel;
 }

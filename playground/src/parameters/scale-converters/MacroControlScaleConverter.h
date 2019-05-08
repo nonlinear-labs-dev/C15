@@ -4,9 +4,9 @@
 
 class MacroControlScaleConverter : public LinearScaleConverter
 {
-  private:
-    typedef LinearScaleConverter super;
+ private:
+  typedef LinearScaleConverter super;
 
-  public:
-    MacroControlScaleConverter();
+ public:
+  MacroControlScaleConverter();
 };

@@ -5,35 +5,34 @@
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetNameHeadlineLabel.h>
 
-PresetNameHeadlineLabel::PresetNameHeadlineLabel (const Rect &pos) :
-    super (pos)
+PresetNameHeadlineLabel::PresetNameHeadlineLabel(const Rect &pos)
+    : super(pos)
 {
   setText("Preset");
 }
 
-shared_ptr<Font> PresetNameHeadlineLabel::getFont () const
+shared_ptr<Font> PresetNameHeadlineLabel::getFont() const
 {
-  return Oleds::get ().getFont ("Emphase_9_Bold", getFontHeight ());
+  return Oleds::get().getFont("Emphase_9_Bold", getFontHeight());
 }
 
-int PresetNameHeadlineLabel::getFontHeight () const
+int PresetNameHeadlineLabel::getFontHeight() const
 {
   return 9;
 }
 
-void PresetNameHeadlineLabel::setFontColor (FrameBuffer &fb) const
+void PresetNameHeadlineLabel::setFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C255);
+  fb.setColor(FrameBuffer::Colors::C255);
 }
 
-bool PresetNameHeadlineLabel::redraw (FrameBuffer &fb)
+bool PresetNameHeadlineLabel::redraw(FrameBuffer &fb)
 {
-  const Rect &r = getPosition ();
+  const Rect &r = getPosition();
 
-  fb.setColor (FrameBuffer::Colors::C77);
-  fb.fillRect (r.getX (), r.getY (), r.getWidth (), r.getHeight ());
+  fb.setColor(FrameBuffer::Colors::C77);
+  fb.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 
-  super::redraw (fb);
+  super::redraw(fb);
   return true;
 }
-

@@ -19,17 +19,17 @@ LayoutFolderMonitor& LayoutFolderMonitor::get()
   return mon;
 }
 
-LayoutFolderMonitor::LayoutFolderMonitor() : m_rootFolder(Gio::File::create_for_path(Application::get().getOptions()->getLayoutFolder())),
-                                             m_recMonitor(m_rootFolder, std::bind(&LayoutFolderMonitor::onFileChanged,
-                                                                                  this,
-                                                                                  std::placeholders::_1,
-                                                                                  std::placeholders::_2,
-                                                                                  std::placeholders::_3))
+LayoutFolderMonitor::LayoutFolderMonitor()
+    : m_rootFolder(Gio::File::create_for_path(Application::get().getOptions()->getLayoutFolder()))
+    , m_recMonitor(m_rootFolder,
+                   std::bind(&LayoutFolderMonitor::onFileChanged, this, std::placeholders::_1, std::placeholders::_2,
+                             std::placeholders::_3))
 {
   bruteForce();
 }
 
-void LayoutFolderMonitor::onFileChanged(const Glib::RefPtr<Gio::File>& o, const Glib::RefPtr<Gio::File>& n, Gio::FileMonitorEvent e)
+void LayoutFolderMonitor::onFileChanged(const Glib::RefPtr<Gio::File>& o, const Glib::RefPtr<Gio::File>& n,
+                                        Gio::FileMonitorEvent e)
 {
   bruteForce();
 }
@@ -40,20 +40,21 @@ void LayoutFolderMonitor::bruteForce()
   DescriptiveLayouts::ControlRegistry::get().clear();
   DescriptiveLayouts::StyleSheet::get().clear();
 
-
-  try {
+  try
+  {
     auto allFiles = m_recMonitor.getAllFilesInFolder(m_rootFolder);
 
-    for(auto& file: allFiles) {
+    for(auto& file : allFiles)
+    {
       auto path = FileTools::getFullPath(file);
 
-      if (g_str_has_suffix(path.c_str(), ".json")) 
+      if(g_str_has_suffix(path.c_str(), ".json"))
       {
         DescriptiveLayouts::importControls(path);
         DescriptiveLayouts::importLayout(path);
         DescriptiveLayouts::importStyles(path);
-      } 
-      else if (g_str_has_suffix(path.c_str(), ".yaml")) 
+      }
+      else if(g_str_has_suffix(path.c_str(), ".yaml"))
       {
         auto tmpPath = "/tmp/__nl_style.json";
         SpawnCommandLine cmd("yaml2json " + path);
@@ -76,7 +77,7 @@ void LayoutFolderMonitor::bruteForce()
   {
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(e.what()));
   }
-  catch(std::out_of_range &e)
+  catch(std::out_of_range& e)
   {
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(e.what()));
   }
@@ -98,11 +99,9 @@ void LayoutFolderMonitor::bruteForce()
     auto description = ExceptionTools::handle_eptr(std::current_exception());
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
   }
-
 }
 
 sigc::connection LayoutFolderMonitor::onChange(std::function<void()> cb)
 {
   return m_onChange.connect(cb);
 }
-

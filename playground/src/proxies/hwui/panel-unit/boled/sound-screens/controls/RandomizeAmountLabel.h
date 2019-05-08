@@ -6,17 +6,16 @@ class Setting;
 
 class RandomizeAmountLabel : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    RandomizeAmountLabel (const Rect &rect);
-    virtual ~RandomizeAmountLabel ();
+ public:
+  RandomizeAmountLabel(const Rect &rect);
+  virtual ~RandomizeAmountLabel();
 
-    void setSuffixFontColor (FrameBuffer &fb) const override;
+  void setSuffixFontColor(FrameBuffer &fb) const override;
 
-  private:
-    void onSettingChanged (const Setting *s);
-    void onModifiersChanged ();
+ private:
+  void onSettingChanged(const Setting *s);
+  void onModifiersChanged();
 };
-

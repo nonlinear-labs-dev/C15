@@ -2,14 +2,22 @@
 
 MacroControlAssignmentStateMachine::MacroControlAssignmentStateMachine()
 {
-  registerTraversal(MacroControlAssignmentStates::Initial, MacroControlAssignmentEvents::MCPressedWhileUnselected, MacroControlAssignmentStates::Selected);
-  registerTraversal(MacroControlAssignmentStates::Initial, MacroControlAssignmentEvents::MCPressedWhileSelected, MacroControlAssignmentStates::Armed);
-  registerTraversal(MacroControlAssignmentStates::Selected, MacroControlAssignmentEvents::ModParamPressed, MacroControlAssignmentStates::Assign);
-  registerTraversal(MacroControlAssignmentStates::Selected, MacroControlAssignmentEvents::MCReleased, MacroControlAssignmentStates::Initial);
-  registerTraversal(MacroControlAssignmentStates::Assign, MacroControlAssignmentEvents::ModParamReleased, MacroControlAssignmentStates::Selected);
-  registerTraversal(MacroControlAssignmentStates::Assign, MacroControlAssignmentEvents::MCReleased, MacroControlAssignmentStates::Initial);
-  registerTraversal(MacroControlAssignmentStates::Armed, MacroControlAssignmentEvents::ModParamPressed, MacroControlAssignmentStates::Assign);
-  registerTraversal(MacroControlAssignmentStates::Armed, MacroControlAssignmentEvents::MCReleased, MacroControlAssignmentStates::SelectSource);
+  registerTraversal(MacroControlAssignmentStates::Initial, MacroControlAssignmentEvents::MCPressedWhileUnselected,
+                    MacroControlAssignmentStates::Selected);
+  registerTraversal(MacroControlAssignmentStates::Initial, MacroControlAssignmentEvents::MCPressedWhileSelected,
+                    MacroControlAssignmentStates::Armed);
+  registerTraversal(MacroControlAssignmentStates::Selected, MacroControlAssignmentEvents::ModParamPressed,
+                    MacroControlAssignmentStates::Assign);
+  registerTraversal(MacroControlAssignmentStates::Selected, MacroControlAssignmentEvents::MCReleased,
+                    MacroControlAssignmentStates::Initial);
+  registerTraversal(MacroControlAssignmentStates::Assign, MacroControlAssignmentEvents::ModParamReleased,
+                    MacroControlAssignmentStates::Selected);
+  registerTraversal(MacroControlAssignmentStates::Assign, MacroControlAssignmentEvents::MCReleased,
+                    MacroControlAssignmentStates::Initial);
+  registerTraversal(MacroControlAssignmentStates::Armed, MacroControlAssignmentEvents::ModParamPressed,
+                    MacroControlAssignmentStates::Assign);
+  registerTraversal(MacroControlAssignmentStates::Armed, MacroControlAssignmentEvents::MCReleased,
+                    MacroControlAssignmentStates::SelectSource);
 }
 
 MacroControlAssignmentStateMachine::~MacroControlAssignmentStateMachine()

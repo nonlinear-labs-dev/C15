@@ -6,13 +6,12 @@ class Application;
 
 class MCAmountButton : public DimmingModulationModeButton
 {
-  private:
-    typedef DimmingModulationModeButton super;
+ private:
+  typedef DimmingModulationModeButton super;
 
-  public:
-    MCAmountButton (Buttons id);
-    virtual ~MCAmountButton ();
+ public:
+  MCAmountButton(Buttons id);
+  virtual ~MCAmountButton();
 
-    void update (const Parameter *parameter) override;
+  void update(const Parameter *parameter) override;
 };
-

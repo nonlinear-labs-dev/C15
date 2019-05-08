@@ -6,27 +6,24 @@ class Application;
 
 class SelectedMacroControlsHWSourceSlider : public DotSlider
 {
-  private:
-    typedef DotSlider super;
+ private:
+  typedef DotSlider super;
 
-  public:
-    SelectedMacroControlsHWSourceSlider (const Rect &rect);
-    virtual ~SelectedMacroControlsHWSourceSlider ();
-    
-protected:
-    virtual void onParamValueChanged (const Parameter *param) override;
-    virtual void drawSliderBackground (FrameBuffer &fb) override;
+ public:
+  SelectedMacroControlsHWSourceSlider(const Rect& rect);
+  virtual ~SelectedMacroControlsHWSourceSlider();
 
-  private:
-    SelectedMacroControlsHWSourceSlider (const SelectedMacroControlsHWSourceSlider& other);
-    SelectedMacroControlsHWSourceSlider& operator= (const SelectedMacroControlsHWSourceSlider&);
+ protected:
+  virtual void onParamValueChanged(const Parameter* param) override;
+  virtual void drawSliderBackground(FrameBuffer& fb) override;
 
-    void onParameterSelected (Parameter * newOne);
-    void onMCChanged (const Parameter* param);
+ private:
+  SelectedMacroControlsHWSourceSlider(const SelectedMacroControlsHWSourceSlider& other);
+  SelectedMacroControlsHWSourceSlider& operator=(const SelectedMacroControlsHWSourceSlider&);
 
-    
-    sigc::connection m_mcChanged;
-    int m_hwParamID;
+  void onParameterSelected(Parameter* newOne);
+  void onMCChanged(const Parameter* param);
+
+  sigc::connection m_mcChanged;
+  int m_hwParamID;
 };
-
-

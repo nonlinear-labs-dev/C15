@@ -12,98 +12,100 @@
 
 class RibbonRelFactorScaleConverter : public LinearScaleConverter
 {
-  public:
-    RibbonRelFactorScaleConverter() :
-      LinearScaleConverter(tTcdRange(256, 2560), tDisplayRange(1, 10), UnitlessDimension::get ()) {}
+ public:
+  RibbonRelFactorScaleConverter()
+      : LinearScaleConverter(tTcdRange(256, 2560), tDisplayRange(1, 10), UnitlessDimension::get())
+  {
+  }
 };
 
-RibbonRelativeFactor::RibbonRelativeFactor (Settings &parent) :
-    super (parent),
-    m_factor (nullptr, ScaleConverter::get<RibbonRelFactorScaleConverter> (), 1, 100, 1000)
+RibbonRelativeFactor::RibbonRelativeFactor(Settings &parent)
+    : super(parent)
+    , m_factor(nullptr, ScaleConverter::get<RibbonRelFactorScaleConverter>(), 1, 100, 1000)
 {
 }
 
-RibbonRelativeFactor::~RibbonRelativeFactor ()
+RibbonRelativeFactor::~RibbonRelativeFactor()
 {
 }
 
-void RibbonRelativeFactor::load (const Glib::ustring &text)
+void RibbonRelativeFactor::load(const Glib::ustring &text)
 {
   try
   {
-    set (stod (text));
+    set(stod(text));
   }
-  catch (...)
+  catch(...)
   {
-    set (0);
-    DebugLevel::error ("Could not read settings for ribbon relative factor:", text);
+    set(0);
+    DebugLevel::error("Could not read settings for ribbon relative factor:", text);
   }
 }
 
-Glib::ustring RibbonRelativeFactor::save () const
+Glib::ustring RibbonRelativeFactor::save() const
 {
-  return to_string (get ());
+  return to_string(get());
 }
 
-void RibbonRelativeFactor::set (tControlPositionValue amount)
+void RibbonRelativeFactor::set(tControlPositionValue amount)
 {
   amount = m_factor.getScaleConverter()->getControlPositionRange().clip(amount);
 
-  if (m_factor.setRawValue (Initiator::INDIRECT, amount))
+  if(m_factor.setRawValue(Initiator::INDIRECT, amount))
   {
-    notify ();
+    notify();
   }
 }
 
-void RibbonRelativeFactor::sendToLPC () const
+void RibbonRelativeFactor::sendToLPC() const
 {
-  uint16_t v = (uint16_t) (m_factor.getTcdValue());
-  Application::get ().getLPCProxy ()->sendSetting (RIBBON_REL_FACTOR, v);
+  uint16_t v = (uint16_t)(m_factor.getTcdValue());
+  Application::get().getLPCProxy()->sendSetting(RIBBON_REL_FACTOR, v);
 }
 
-void RibbonRelativeFactor::setDefault ()
+void RibbonRelativeFactor::setDefault()
 {
-  set (m_factor.getDefaultValue ());
+  set(m_factor.getDefaultValue());
 }
 
-tControlPositionValue RibbonRelativeFactor::get () const
+tControlPositionValue RibbonRelativeFactor::get() const
 {
-  return m_factor.getQuantizedClipped ();
+  return m_factor.getQuantizedClipped();
 }
 
-void RibbonRelativeFactor::incDec (int incs, ButtonModifiers modifiers)
+void RibbonRelativeFactor::incDec(int incs, ButtonModifiers modifiers)
 {
-  while (incs > 0)
+  while(incs > 0)
   {
-    m_factor.inc (Initiator::INDIRECT, modifiers);
+    m_factor.inc(Initiator::INDIRECT, modifiers);
     incs--;
   }
 
-  while (incs < 0)
+  while(incs < 0)
   {
-    m_factor.dec (Initiator::INDIRECT, modifiers);
+    m_factor.dec(Initiator::INDIRECT, modifiers);
     incs++;
   }
 
-  notify ();
-  sendToLPC ();
+  notify();
+  sendToLPC();
 }
 
-ustring RibbonRelativeFactor::getDisplayString () const
+ustring RibbonRelativeFactor::getDisplayString() const
 {
-  return m_factor.getDisplayString ();
+  return m_factor.getDisplayString();
 }
 
-void RibbonRelativeFactor::writeDocument (Writer &writer, tUpdateID knownRevision) const
+void RibbonRelativeFactor::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
-  super::writeDocument (writer, knownRevision);
+  super::writeDocument(writer, knownRevision);
 
-  if (knownRevision == 0)
+  if(knownRevision == 0)
   {
-    writer.writeTextElement ("default", to_string (m_factor.getDefaultValue ()));
-    writer.writeTextElement ("scaling", m_factor.getScaleConverter ()->controlPositionToDisplayJS ());
-    writer.writeTextElement ("bipolar", to_string (m_factor.isBiPolar ()));
-    writer.writeTextElement ("coarse-denominator", to_string (m_factor.getCoarseDenominator ()));
-    writer.writeTextElement ("fine-denominator", to_string (m_factor.getFineDenominator ()));
+    writer.writeTextElement("default", to_string(m_factor.getDefaultValue()));
+    writer.writeTextElement("scaling", m_factor.getScaleConverter()->controlPositionToDisplayJS());
+    writer.writeTextElement("bipolar", to_string(m_factor.isBiPolar()));
+    writer.writeTextElement("coarse-denominator", to_string(m_factor.getCoarseDenominator()));
+    writer.writeTextElement("fine-denominator", to_string(m_factor.getFineDenominator()));
   }
 }

@@ -4,9 +4,9 @@
 
 class OscillatorBGroup : public ParameterGroup
 {
-  public:
-    OscillatorBGroup (ParameterGroupSet *parent);
-    virtual ~OscillatorBGroup ();
+ public:
+  OscillatorBGroup(ParameterGroupSet *parent);
+  virtual ~OscillatorBGroup();
 
-    void init ();
+  void init();
 };

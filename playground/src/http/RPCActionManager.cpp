@@ -1,8 +1,8 @@
 #include "RPCActionManager.h"
 #include "device-settings/DebugLevel.h"
 
-RPCActionManager::RPCActionManager(const Glib::ustring &basePath) :
-  m_basePath(basePath)
+RPCActionManager::RPCActionManager(const Glib::ustring &basePath)
+    : m_basePath(basePath)
 {
 }
 
@@ -34,7 +34,7 @@ bool RPCActionManager::handleRequest(const Glib::ustring &path, shared_ptr<Netwo
   {
     DebugLevel::gassy("doing action", path);
     it->second(request);
-    request->okAndComplete ();
+    request->okAndComplete();
     return true;
   }
 

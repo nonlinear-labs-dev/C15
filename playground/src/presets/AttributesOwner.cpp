@@ -27,21 +27,21 @@ void AttributesOwner::setAttribute(const Glib::ustring &key, const Glib::ustring
   onChange();
 }
 
-void AttributesOwner::undoableSetAttribute(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &key, const Glib::ustring &value)
+void AttributesOwner::undoableSetAttribute(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &key,
+                                           const Glib::ustring &value)
 {
   auto swapData = UNDO::createSwapData(value);
 
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-  {
-    Glib::ustring curValue = getAttribute (key, "");
-    swapData->swapWith (curValue);
+  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+    Glib::ustring curValue = getAttribute(key, "");
+    swapData->swapWith(curValue);
 
-    if (curValue.empty())
-    m_attributes.erase (key);
+    if(curValue.empty())
+      m_attributes.erase(key);
     else
-    m_attributes[key] = curValue;
+      m_attributes[key] = curValue;
 
-    onChange ();
+    onChange();
   });
 }
 
@@ -49,10 +49,9 @@ void AttributesOwner::undoableClearAttributes(UNDO::Scope::tTransactionPtr trans
 {
   auto swapData = UNDO::createSwapData(tAttributes());
 
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-  {
-    swapData->swapWith (m_attributes);
-    onChange ();
+  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+    swapData->swapWith(m_attributes);
+    onChange();
   });
 }
 
@@ -70,10 +69,9 @@ void AttributesOwner::copyFrom(UNDO::Scope::tTransactionPtr transaction, Attribu
 {
   auto swapData = UNDO::createSwapData(other->m_attributes);
 
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-  {
-    swapData->swapWith<0> (m_attributes);
-    onChange ();
+  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+    swapData->swapWith<0>(m_attributes);
+    onChange();
   });
 }
 
@@ -81,7 +79,7 @@ size_t AttributesOwner::getHash() const
 {
   size_t hash = 0;
 
-  for(auto & a : m_attributes)
+  for(auto &a : m_attributes)
   {
     hash_combine(hash, a.first);
     hash_combine(hash, a.second);
@@ -144,14 +142,13 @@ bool AttributesOwner::isHashTag(const Glib::ustring &str, size_t pos)
 
 void AttributesOwner::writeAttributes(Writer &writer) const
 {
-  for(auto & it : getAttributes())
+  for(auto &it : getAttributes())
     writer.writeTextElement("attribute", it.second, Attribute("key", it.first));
 }
 
 void AttributesOwner::registerTests()
 {
-  g_test_add_func("/AttributesOwner/isHashTag", []()
-  {
+  g_test_add_func("/AttributesOwner/isHashTag", []() {
     g_assert_true(AttributesOwner::isHashTag("#abc"));
     g_assert_true(AttributesOwner::isHashTag("#a"));
     g_assert_true(AttributesOwner::isHashTag("#"));
@@ -189,8 +186,7 @@ void AttributesOwner::registerTests()
     g_assert_false(AttributesOwner::isHashTag(" ags uyr j  # abc", 11));
   });
 
-  g_test_add_func("/AttributesOwner/doesAttributeMatch", []()
-  {
+  g_test_add_func("/AttributesOwner/doesAttributeMatch", []() {
     g_assert_false(AttributesOwner::doesAttributeMatch("eins zwei drei", "#eins"));
     g_assert_false(AttributesOwner::doesAttributeMatch("eins zwei drei", "#zwei"));
     g_assert_false(AttributesOwner::doesAttributeMatch("eins zwei drei", "#drei"));

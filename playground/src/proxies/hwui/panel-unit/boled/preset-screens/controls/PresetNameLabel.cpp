@@ -2,12 +2,12 @@
 #include "Application.h"
 #include "presets/Preset.h"
 
-PresetNameLabel::PresetNameLabel (const Rect &pos) :
-    super (pos)
+PresetNameLabel::PresetNameLabel(const Rect &pos)
+    : super(pos)
 {
 }
 
-PresetNameLabel::~PresetNameLabel ()
+PresetNameLabel::~PresetNameLabel()
 {
 }
 
@@ -16,29 +16,29 @@ void PresetNameLabel::update(const Glib::ustring &presetName, bool selected, boo
   setText(presetName, selected, loaded);
 }
 
-void PresetNameLabel::drawBackground (FrameBuffer &fb)
+void PresetNameLabel::drawBackground(FrameBuffer &fb)
 {
-  super::drawBackground (fb);
+  super::drawBackground(fb);
 
-  const Rect &r = getPosition ();
+  const Rect &r = getPosition();
 
-  if (showsLoadedPreset())
-    fb.setColor (FrameBuffer::Colors::C103);
+  if(showsLoadedPreset())
+    fb.setColor(FrameBuffer::Colors::C103);
   else
-    fb.setColor (FrameBuffer::Colors::C43);
+    fb.setColor(FrameBuffer::Colors::C43);
 
   int xinset = showsSelectedPreset() ? 3 : 1;
   int yinset = showsSelectedPreset() ? 2 : 1;
 
-  fb.fillRect (r.getX (), r.getY () + yinset, r.getWidth () - xinset, r.getHeight () - 2 * yinset);
+  fb.fillRect(r.getX(), r.getY() + yinset, r.getWidth() - xinset, r.getHeight() - 2 * yinset);
 }
 
-Font::Justification PresetNameLabel::getJustification () const
+Font::Justification PresetNameLabel::getJustification() const
 {
   return Font::Justification::Left;
 }
 
-Glib::ustring PresetNameLabel::shortenStringIfNeccessary (shared_ptr<Font> font, const Glib::ustring &text) const
+Glib::ustring PresetNameLabel::shortenStringIfNeccessary(shared_ptr<Font> font, const Glib::ustring &text) const
 {
   auto width = getPosition().getWidth() - getXOffset() - getRightMargin();
   auto c = text;
@@ -51,7 +51,7 @@ Glib::ustring PresetNameLabel::shortenStringIfNeccessary (shared_ptr<Font> font,
   return c;
 }
 
-int PresetNameLabel::getXOffset () const
+int PresetNameLabel::getXOffset() const
 {
   return 7;
 }

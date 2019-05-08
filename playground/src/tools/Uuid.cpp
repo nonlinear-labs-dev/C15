@@ -16,7 +16,6 @@ Uuid::Uuid(const Glib::ustring &id)
   this->id = id;
 }
 
-
 Uuid::Uuid(const std::string &id)
 {
   this->id = id;
@@ -32,7 +31,7 @@ Uuid &Uuid::operator=(const Uuid &other)
   return *this;
 }
 
-Uuid::operator Glib::ustring () const
+Uuid::operator Glib::ustring() const
 {
   return id;
 }
@@ -56,4 +55,3 @@ void Uuid::generate()
   uuid_unparse(g, txt);
   id = txt;
 }
-

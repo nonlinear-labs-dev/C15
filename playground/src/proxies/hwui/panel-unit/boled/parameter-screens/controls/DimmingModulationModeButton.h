@@ -6,11 +6,10 @@ class Application;
 
 class DimmingModulationModeButton : public ModulationModeButton
 {
-  private:
-    typedef ModulationModeButton super;
+ private:
+  typedef ModulationModeButton super;
 
-  public:
-    DimmingModulationModeButton (const Glib::ustring &text, Buttons id);
-    virtual ~DimmingModulationModeButton ();
+ public:
+  DimmingModulationModeButton(const Glib::ustring &text, Buttons id);
+  virtual ~DimmingModulationModeButton();
 };
-

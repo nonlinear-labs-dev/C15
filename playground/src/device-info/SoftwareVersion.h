@@ -4,12 +4,12 @@
 
 class SoftwareVersion : public DeviceInformationItem
 {
-  public:
-    SoftwareVersion (DeviceInformation *parent);
+ public:
+  SoftwareVersion(DeviceInformation *parent);
 
-    virtual void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
-    Glib::ustring get () const override;
+  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  Glib::ustring get() const override;
 
-  private:
-    Glib::ustring m_versionString;
+ private:
+  Glib::ustring m_versionString;
 };

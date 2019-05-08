@@ -7,14 +7,13 @@ class Application;
 
 class TransitionTimeSlider : public BarSlider
 {
-  private:
-    typedef BarSlider super;
+ private:
+  typedef BarSlider super;
 
-  public:
-    TransitionTimeSlider (const Rect &rect);
-    virtual ~TransitionTimeSlider ();
+ public:
+  TransitionTimeSlider(const Rect &rect);
+  virtual ~TransitionTimeSlider();
 
-  private:
-    void onSettingChanged (const Setting *s);
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

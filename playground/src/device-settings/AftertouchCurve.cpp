@@ -4,27 +4,27 @@
 #include "Application.h"
 #include "proxies/lpc/LPCProxy.h"
 
-AftertouchCurve::AftertouchCurve (Settings &settings) :
-    super (settings, AftertouchCurves::AFTERTOUCH_CURVE_NORMAL)
+AftertouchCurve::AftertouchCurve(Settings &settings)
+    : super(settings, AftertouchCurves::AFTERTOUCH_CURVE_NORMAL)
 {
 }
 
-AftertouchCurve::~AftertouchCurve ()
+AftertouchCurve::~AftertouchCurve()
 {
 }
 
-void AftertouchCurve::sendToLPC () const
+void AftertouchCurve::sendToLPC() const
 {
-  Application::get ().getLPCProxy ()->sendSetting (AFTERTOUCH_CURVE, (uint16_t) (get()));
+  Application::get().getLPCProxy()->sendSetting(AFTERTOUCH_CURVE, (uint16_t)(get()));
 }
 
-const vector<Glib::ustring> &AftertouchCurve::enumToString () const
+const vector<Glib::ustring> &AftertouchCurve::enumToString() const
 {
-  static vector<Glib::ustring> s_modeNames = { "soft", "normal", "hard"};
+  static vector<Glib::ustring> s_modeNames = { "soft", "normal", "hard" };
   return s_modeNames;
 }
 
-const vector<Glib::ustring> &AftertouchCurve::enumToDisplayString () const
+const vector<Glib::ustring> &AftertouchCurve::enumToDisplayString() const
 {
   static vector<Glib::ustring> s_modeNames = { "Soft", "Normal", "Hard" };
   return s_modeNames;

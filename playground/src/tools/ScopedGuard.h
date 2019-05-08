@@ -4,21 +4,21 @@
 
 class ScopedGuard
 {
-  public:
-    ScopedGuard ();
-    virtual ~ScopedGuard ();
+ public:
+  ScopedGuard();
+  virtual ~ScopedGuard();
 
-    class Lock
+  class Lock
+  {
+   public:
+    Lock()
     {
-      public:
-        Lock ()
-        {
-        }
-    };
+    }
+  };
 
-    shared_ptr<Lock> lock ();
-    bool isLocked () const;
+  shared_ptr<Lock> lock();
+  bool isLocked() const;
 
-  private:
-    weak_ptr<Lock> m_currentLock;
+ private:
+  weak_ptr<Lock> m_currentLock;
 };

@@ -4,13 +4,13 @@
 
 class LED
 {
-  public:
-    LED();
-    virtual ~LED();
+ public:
+  LED();
+  virtual ~LED();
 
-    void setID(int id);
-    int getID() const;
+  void setID(int id);
+  int getID() const;
 
-  private:
-    int m_ledID;
+ private:
+  int m_ledID;
 };

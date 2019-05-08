@@ -5,49 +5,49 @@
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationBoundSlider.h>
 
-ModulationBoundSlider::ModulationBoundSlider (const Rect &pos) :
-    super (pos)
+ModulationBoundSlider::ModulationBoundSlider(const Rect &pos)
+    : super(pos)
 {
-  Application::get ().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      mem_fun (this, &ModulationBoundSlider::onSelectionChanged));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      mem_fun(this, &ModulationBoundSlider::onSelectionChanged));
 }
 
-ModulationBoundSlider::~ModulationBoundSlider ()
+ModulationBoundSlider::~ModulationBoundSlider()
 {
 }
 
-void ModulationBoundSlider::onSelectionChanged (Parameter *, Parameter *newParam)
+void ModulationBoundSlider::onSelectionChanged(Parameter *, Parameter *newParam)
 {
-  m_paramChanged.disconnect ();
+  m_paramChanged.disconnect();
 
-  if (m_param = dynamic_cast<ModulateableParameter*> (newParam))
-    m_paramChanged = m_param->onParameterChanged (mem_fun (this, &ModulationBoundSlider::onParameterChanged));
+  if(m_param = dynamic_cast<ModulateableParameter *>(newParam))
+    m_paramChanged = m_param->onParameterChanged(mem_fun(this, &ModulationBoundSlider::onParameterChanged));
 }
 
-void ModulationBoundSlider::onParameterChanged (const Parameter *)
+void ModulationBoundSlider::onParameterChanged(const Parameter *)
 {
-  setDirty ();
+  setDirty();
 }
 
-bool ModulationBoundSlider::redraw (FrameBuffer &fb)
+bool ModulationBoundSlider::redraw(FrameBuffer &fb)
 {
-  if (m_param && m_param->getModulationSource () != ModulateableParameter::NONE)
+  if(m_param && m_param->getModulationSource() != ModulateableParameter::NONE)
   {
-    if (isHighlight ())
-      fb.setColor (FrameBuffer::C255);
+    if(isHighlight())
+      fb.setColor(FrameBuffer::C255);
     else
-      fb.setColor (FrameBuffer::C103);
+      fb.setColor(FrameBuffer::C103);
 
-    const Rect &pos = getPosition ();
+    const Rect &pos = getPosition();
 
-    auto y = pos.getTop () + (pos.getHeight () - 3) / 2;
-    fb.drawHorizontalLine (pos.getLeft (), y, pos.getWidth ());
-    fb.drawHorizontalLine (pos.getLeft (), y + 2, pos.getWidth ());
+    auto y = pos.getTop() + (pos.getHeight() - 3) / 2;
+    fb.drawHorizontalLine(pos.getLeft(), y, pos.getWidth());
+    fb.drawHorizontalLine(pos.getLeft(), y + 2, pos.getWidth());
 
-    if (getBoundPosition () == BoundPosition::Left)
-      fb.drawVerticalLine (pos.getLeft (), pos.getTop (), pos.getHeight () - 1);
+    if(getBoundPosition() == BoundPosition::Left)
+      fb.drawVerticalLine(pos.getLeft(), pos.getTop(), pos.getHeight() - 1);
     else
-      fb.drawVerticalLine (pos.getRight (), pos.getTop (), pos.getHeight () - 1);
+      fb.drawVerticalLine(pos.getRight(), pos.getTop(), pos.getHeight() - 1);
   }
   return true;
 }

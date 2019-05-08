@@ -4,12 +4,12 @@
 
 class PhysicalControlSlider : public SelectedParameterDotSlider
 {
-  private:
-    typedef SelectedParameterDotSlider super;
+ private:
+  typedef SelectedParameterDotSlider super;
 
-  public:
-    using super::super;
+ public:
+  using super::super;
 
-  protected:
-    virtual void drawSliderBackground (FrameBuffer &fb) override;
+ protected:
+  virtual void drawSliderBackground(FrameBuffer &fb) override;
 };

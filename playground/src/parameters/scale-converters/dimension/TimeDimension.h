@@ -2,14 +2,14 @@
 
 #include "Dimension.h"
 
-class TimeDimension: public Dimension
+class TimeDimension : public Dimension
 {
-  public:
-    TimeDimension();
-    virtual ~TimeDimension();
+ public:
+  TimeDimension();
+  virtual ~TimeDimension();
 
-    Glib::ustring getStingizerJS() const override;
-    Glib::ustring stringize (const tDisplayValue &displayValue) const override;
+  Glib::ustring getStingizerJS() const override;
+  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 
-    static const TimeDimension &get();
+  static const TimeDimension &get();
 };

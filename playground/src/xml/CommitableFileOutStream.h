@@ -4,9 +4,8 @@
 
 class CommitableFileOutStream : public FileOutStream
 {
-    typedef FileOutStream super;
+  typedef FileOutStream super;
 
-  public:
-    CommitableFileOutStream(const Glib::ustring &fileName, bool zip);
+ public:
+  CommitableFileOutStream(const Glib::ustring &fileName, bool zip);
 };
-

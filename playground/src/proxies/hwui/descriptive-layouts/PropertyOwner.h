@@ -9,8 +9,7 @@ namespace DescriptiveLayouts
 
   class PropertyOwner
   {
-    public:
-      virtual void setProperty(PrimitiveProperty key, std::any value) = 0;
+   public:
+    virtual void setProperty(PrimitiveProperty key, std::any value) = 0;
   };
-
 }

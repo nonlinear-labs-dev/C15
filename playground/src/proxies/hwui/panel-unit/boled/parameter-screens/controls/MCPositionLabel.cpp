@@ -6,87 +6,87 @@
 #include "presets/EditBuffer.h"
 #include "groups/MacroControlsGroup.h"
 
-MCPositionLabel::MCPositionLabel (const Rect &rect) :
-    super (rect)
+MCPositionLabel::MCPositionLabel(const Rect &rect)
+    : super(rect)
 {
-  Application::get ().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide < 0 > (sigc::mem_fun (this, &MCPositionLabel::onParameterSelected)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &MCPositionLabel::onParameterSelected)));
 
-  Application::get ().getHWUI ()->onModifiersChanged (
-      sigc::hide(sigc::mem_fun (this, &MCPositionLabel::onModifiersChanged)));
+  Application::get().getHWUI()->onModifiersChanged(
+      sigc::hide(sigc::mem_fun(this, &MCPositionLabel::onModifiersChanged)));
 }
 
-MCPositionLabel::~MCPositionLabel ()
+MCPositionLabel::~MCPositionLabel()
 {
 }
 
-void MCPositionLabel::onParameterSelected (Parameter *newParameter)
+void MCPositionLabel::onParameterSelected(Parameter *newParameter)
 {
-  if (newParameter)
+  if(newParameter)
   {
-    m_paramValueConnection.disconnect ();
-    m_paramValueConnection = newParameter->onParameterChanged (sigc::mem_fun (this, &MCPositionLabel::updateTarget));
+    m_paramValueConnection.disconnect();
+    m_paramValueConnection = newParameter->onParameterChanged(sigc::mem_fun(this, &MCPositionLabel::updateTarget));
   }
 }
 
-void MCPositionLabel::updateTarget (const Parameter *parameter)
+void MCPositionLabel::updateTarget(const Parameter *parameter)
 {
   ensureDisconnectedModulationSourceIfApplicable(parameter);
 
-  if (const ModulateableParameter* modP = dynamic_cast<const ModulateableParameter*> (parameter))
+  if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(parameter))
   {
-    auto src = modP->getModulationSource ();
+    auto src = modP->getModulationSource();
 
-    uint16_t srcParamID = MacroControlsGroup::modSrcToParamID (src);
+    uint16_t srcParamID = MacroControlsGroup::modSrcToParamID(src);
 
-    if (auto pa = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(srcParamID))
+    if(auto pa = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(srcParamID))
     {
-      m_mcValueConnection.disconnect ();
-      m_mcValueConnection = pa->onParameterChanged (sigc::mem_fun (this, &MCPositionLabel::updateSource));
+      m_mcValueConnection.disconnect();
+      m_mcValueConnection = pa->onParameterChanged(sigc::mem_fun(this, &MCPositionLabel::updateSource));
       return;
     }
   }
 
-  setText ("");
+  setText("");
 }
 
-void MCPositionLabel::updateSource (const Parameter *parameter)
+void MCPositionLabel::updateSource(const Parameter *parameter)
 {
   ensureDisconnectedModulationSourceIfApplicable(parameter);
 
-  if (parameter)
+  if(parameter)
   {
-    auto t = parameter->getDisplayString ();
+    auto t = parameter->getDisplayString();
 
-    if (isHighlight () && Application::get ().getHWUI ()->isModifierSet(ButtonModifier::FINE))
+    if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
     {
-      setText (t + " F", 2);
+      setText(t + " F", 2);
     }
     else
     {
-      setText (t);
+      setText(t);
     }
   }
   else
   {
-    setText ("");
+    setText("");
   }
 }
-void MCPositionLabel::setSuffixFontColor (FrameBuffer &fb) const
+void MCPositionLabel::setSuffixFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C103);
+  fb.setColor(FrameBuffer::Colors::C103);
 }
 
-void MCPositionLabel::onModifiersChanged ()
+void MCPositionLabel::onModifiersChanged()
 {
-  onParameterSelected (Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
+  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
 }
 
 void MCPositionLabel::ensureDisconnectedModulationSourceIfApplicable(const Parameter *parameter)
 {
-  if (auto modP = dynamic_cast<const ModulateableParameter*>(parameter))
+  if(auto modP = dynamic_cast<const ModulateableParameter *>(parameter))
   {
-    if (modP->getModulationSource() == ModulateableParameter::ModulationSource::NONE)
+    if(modP->getModulationSource() == ModulateableParameter::ModulationSource::NONE)
     {
       m_mcValueConnection.disconnect();
       setText("");

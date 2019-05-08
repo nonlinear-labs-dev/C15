@@ -4,27 +4,27 @@
 #include <proxies/hwui/panel-unit/boled/setup/MenuEditorEntry.h>
 #include <proxies/hwui/panel-unit/boled/setup/AftertouchEditor.h>
 
-AftertouchEditor::AftertouchEditor ()
+AftertouchEditor::AftertouchEditor()
 {
-  Application::get ().getSettings ()->getSetting<AftertouchCurve> ()->onChange (mem_fun (this, &AftertouchEditor::onSettingChanged));
+  Application::get().getSettings()->getSetting<AftertouchCurve>()->onChange(
+      mem_fun(this, &AftertouchEditor::onSettingChanged));
 }
 
-AftertouchEditor::~AftertouchEditor ()
+AftertouchEditor::~AftertouchEditor()
 {
 }
 
-void AftertouchEditor::incSetting (int inc)
+void AftertouchEditor::incSetting(int inc)
 {
-  Application::get ().getSettings ()->getSetting<AftertouchCurve> ()->inc (inc);
+  Application::get().getSettings()->getSetting<AftertouchCurve>()->inc(inc);
 }
 
-const vector<ustring> &AftertouchEditor::getDisplayStrings () const
+const vector<ustring> &AftertouchEditor::getDisplayStrings() const
 {
-  return Application::get ().getSettings ()->getSetting<AftertouchCurve> ()->enumToDisplayString ();
+  return Application::get().getSettings()->getSetting<AftertouchCurve>()->enumToDisplayString();
 }
 
-int AftertouchEditor::getSelectedIndex () const
+int AftertouchEditor::getSelectedIndex() const
 {
-  return (int) Application::get ().getSettings ()->getSetting<AftertouchCurve> ()->get ();
+  return (int) Application::get().getSettings()->getSetting<AftertouchCurve>()->get();
 }
-

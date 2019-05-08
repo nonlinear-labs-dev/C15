@@ -5,14 +5,14 @@
 
 class PresetSettingsSerializer : public Serializer
 {
-  public:
-    PresetSettingsSerializer (Preset *preset);
+ public:
+  PresetSettingsSerializer(Preset *preset);
 
-    static Glib::ustring getTagName();
+  static Glib::ustring getTagName();
 
-  private:
-    void writeTagContent(Writer &writer) const;
-    void readTagContent(Reader &reader) const;
+ private:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
 
-    Preset *m_preset;
+  Preset *m_preset;
 };

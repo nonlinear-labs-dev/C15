@@ -5,13 +5,14 @@
 #include "parameters/Parameter.h"
 #include "proxies/hwui/panel-unit/boled/BOLED.h"
 
-AnyParameterLockedIndicator::AnyParameterLockedIndicator(const Rect &pos) :
-    super(pos),
-    m_calcHasLocks(1, std::bind(&AnyParameterLockedIndicator::calcHasLocks, this))
+AnyParameterLockedIndicator::AnyParameterLockedIndicator(const Rect &pos)
+    : super(pos)
+    , m_calcHasLocks(1, std::bind(&AnyParameterLockedIndicator::calcHasLocks, this))
 {
-  setFontColor (FrameBuffer::C43);
+  setFontColor(FrameBuffer::C43);
   setVisible(false);
-  Application::get().getPresetManager()->getEditBuffer()->onLocksChanged(sigc::mem_fun(this, &AnyParameterLockedIndicator::update));
+  Application::get().getPresetManager()->getEditBuffer()->onLocksChanged(
+      sigc::mem_fun(this, &AnyParameterLockedIndicator::update));
   update();
 }
 
@@ -30,5 +31,3 @@ void AnyParameterLockedIndicator::update()
 {
   m_calcHasLocks.trigger();
 }
-
-

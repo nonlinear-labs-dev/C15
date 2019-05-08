@@ -2,28 +2,28 @@
 
 class Rect;
 
-AboutText::AboutText () :
-    super ("")
+AboutText::AboutText()
+    : super("")
 {
   setText("Development:\nStephan Schmitt, Daniel Tzschentke, Simone Fabbri, "
-      "Henry Högelow, Matthias Seeber, Pascal Hürst, Tino Meinert, "
-      "Justus Scheil, Gabriel Mulzer, Mike Daliot, Nemanja Nikodijevic, "
-      "Ulrich Wappler, Anton Schmied, Brian Smith, Klaus Strohhäcker, Paul Schulz",
-      FrameBuffer::Colors::C255);
+          "Henry Högelow, Matthias Seeber, Pascal Hürst, Tino Meinert, "
+          "Justus Scheil, Gabriel Mulzer, Mike Daliot, Nemanja Nikodijevic, "
+          "Ulrich Wappler, Anton Schmied, Brian Smith, Klaus Strohhäcker, Paul Schulz",
+          FrameBuffer::Colors::C255);
 }
 
-void AboutText::setPosition (const Rect &rect)
+void AboutText::setPosition(const Rect &rect)
 {
-  super::setPosition (rect);
+  super::setPosition(rect);
 }
 
-const Rect &AboutText::getPosition () const
+const Rect &AboutText::getPosition() const
 {
-  return super::getPosition ();
+  return super::getPosition();
 }
 
-void AboutText::setDirty ()
+void AboutText::setDirty()
 {
-  super::setDirty ();
-  notifyDirty (true);
+  super::setDirty();
+  notifyDirty(true);
 }

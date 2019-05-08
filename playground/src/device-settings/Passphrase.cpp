@@ -1,12 +1,12 @@
 #include "Passphrase.h"
 
-Passphrase::Passphrase (Settings &parent) :
-    super (parent, "wpa_passphrase=")
+Passphrase::Passphrase(Settings &parent)
+    : super(parent, "wpa_passphrase=")
 {
-  loadFromFile ();
+  loadFromFile();
 }
 
-Passphrase::~Passphrase ()
+Passphrase::~Passphrase()
 {
 }
 

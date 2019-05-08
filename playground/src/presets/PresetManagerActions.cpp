@@ -24,12 +24,11 @@
 #include <proxies/lpc/LPCProxy.h>
 #include <proxies/lpc/LPCParameterChangeSurpressor.h>
 
-PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
-    RPCActionManager("/presets/"),
-    m_presetManager(presetManager)
+PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
+    : RPCActionManager("/presets/")
+    , m_presetManager(presetManager)
 {
-  addAction("new-bank", [&](shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("new-bank", [&](shared_ptr<NetworkRequest> request) mutable {
     Glib::ustring x = request->get("x");
     Glib::ustring y = request->get("y");
     Glib::ustring name = request->get("name");
@@ -40,8 +39,7 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
     presetManager.undoableSelectBank(scope->getTransaction(), bank->getUuid());
   });
 
-  addAction("new-bank-from-edit-buffer", [&](shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("new-bank-from-edit-buffer", [&](shared_ptr<NetworkRequest> request) mutable {
     Glib::ustring x = request->get("x");
     Glib::ustring y = request->get("y");
 
@@ -57,75 +55,69 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
     presetManager.getEditBuffer()->undoableUpdateLoadedPresetInfo(transaction);
   });
 
-  addAction("rename-bank",
-      [&](shared_ptr<NetworkRequest> request) mutable
-      {
-        Glib::ustring uuid = request->get("uuid");
-        Glib::ustring newName = request->get("name");
+  addAction("rename-bank", [&](shared_ptr<NetworkRequest> request) mutable {
+    Glib::ustring uuid = request->get("uuid");
+    Glib::ustring newName = request->get("name");
 
-        if(tBankPtr bank = presetManager.findBank(uuid))
-        {
-          UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction("Rename Preset Bank '%0' to '%1'", bank->getName(true), newName);
-          UNDO::Scope::tTransactionPtr transaction = scope->getTransaction();
-          bank->undoableSetName(transaction, newName);
-          presetManager.undoableSelectBank(scope->getTransaction(), bank->getUuid());
-          presetManager.getEditBuffer()->undoableUpdateLoadedPresetInfo(scope->getTransaction());
-        }
-      });
+    if(tBankPtr bank = presetManager.findBank(uuid))
+    {
+      UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction(
+          "Rename Preset Bank '%0' to '%1'", bank->getName(true), newName);
+      UNDO::Scope::tTransactionPtr transaction = scope->getTransaction();
+      bank->undoableSetName(transaction, newName);
+      presetManager.undoableSelectBank(scope->getTransaction(), bank->getUuid());
+      presetManager.getEditBuffer()->undoableUpdateLoadedPresetInfo(scope->getTransaction());
+    }
+  });
 
-  addAction("select-bank", [&](shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("select-bank", [&](shared_ptr<NetworkRequest> request) mutable {
     Glib::ustring uuid = request->get("uuid");
     presetManager.undoableSelectBank(uuid);
   });
 
-  addAction("delete-bank", [&](shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("delete-bank", [&](shared_ptr<NetworkRequest> request) mutable {
     Glib::ustring uuid = request->get("uuid");
 
     if(tBankPtr bank = presetManager.findBank(uuid))
     {
       bool wasSelected = presetManager.getSelectedBank() == bank;
-      UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction("Delete Bank '%0'", bank->getName(true));
+      UNDO::Scope::tTransactionScopePtr scope
+          = presetManager.getUndoScope().startTransaction("Delete Bank '%0'", bank->getName(true));
       auto transaction = scope->getTransaction();
       presetManager.undoableDeleteBank(transaction, bank);
     }
   });
 
-  addAction("find-unique-preset-name", [&](shared_ptr<NetworkRequest> request) mutable
-  {
-    if (auto httpRequest = dynamic_pointer_cast<HTTPRequest> (request))
+  addAction("find-unique-preset-name", [&](shared_ptr<NetworkRequest> request) mutable {
+    if(auto httpRequest = dynamic_pointer_cast<HTTPRequest>(request))
     {
       Glib::ustring basedOn = request->get("based-on");
-      Glib::ustring result = presetManager.createPresetNameBasedOn (basedOn);
-      httpRequest->respond (result);
+      Glib::ustring result = presetManager.createPresetNameBasedOn(basedOn);
+      httpRequest->respond(result);
     }
   });
 
-  addAction("store-init", [&](shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("store-init", [&](shared_ptr<NetworkRequest> request) mutable {
     UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction("Store Init");
     auto transaction = scope->getTransaction();
     presetManager.undoableStoreInitSound(transaction);
   });
 
-  addAction("reset-init", [&](shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("reset-init", [&](shared_ptr<NetworkRequest> request) mutable {
     UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction("Reset Init");
     auto transaction = scope->getTransaction();
     presetManager.undoableResetInitSound(transaction);
   });
 
-  addAction("import-all-banks", [&] (shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("import-all-banks", [&](shared_ptr<NetworkRequest> request) mutable {
     if(auto http = dynamic_pointer_cast<HTTPRequest>(request))
     {
-      auto &boled = Application::get().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ();
-      UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction ("Import all Banks");
+      auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
+      UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction("Import all Banks");
       auto transaction = scope->getTransaction();
 
-      boled.setOverlay (new SplashLayout ());
-      auto* buffer = http->getFlattenedBuffer();
+      boled.setOverlay(new SplashLayout());
+      auto *buffer = http->getFlattenedBuffer();
 
       handleImportBackupFile(transaction, buffer, http);
 
@@ -134,11 +126,10 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
     }
   });
 
-  addAction("load-editbuffer", [&] (shared_ptr<NetworkRequest> request) mutable
-  {
+  addAction("load-editbuffer", [&](shared_ptr<NetworkRequest> request) mutable {
     if(auto http = dynamic_pointer_cast<HTTPRequest>(request))
     {
-      UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction ("Load Edit Buffer");
+      UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction("Load Edit Buffer");
       auto transaction = scope->getTransaction();
       auto xml = http->get("xml", "");
 
@@ -156,18 +147,17 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager) :
 
       if(auto preset = m_presetManager.findPreset(editBuffer->getUuid()))
       {
-        auto scopedLock = Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->scopedOverlay(BooleanSettings::BOOLEAN_SETTING_FALSE);
+        auto scopedLock = Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->scopedOverlay(
+            BooleanSettings::BOOLEAN_SETTING_FALSE);
         editBuffer->undoableSetLoadedPresetInfo(transaction, preset.get());
         preset->undoableSelect(transaction);
         presetManager.undoableSelectBank(transaction, preset->getBank()->getUuid());
       }
-
     }
   });
 
-  addAction("move-cluster", [&] (shared_ptr<NetworkRequest> request) mutable
-  {
-    UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction ("Moved Banks");
+  addAction("move-cluster", [&](shared_ptr<NetworkRequest> request) mutable {
+    UNDO::Scope::tTransactionScopePtr scope = presetManager.getUndoScope().startTransaction("Moved Banks");
     auto transaction = scope->getTransaction();
 
     std::vector<std::string> values;
@@ -197,8 +187,8 @@ PresetManagerActions::~PresetManagerActions()
 {
 }
 
-void PresetManagerActions::handleImportBackupFile(UNDO::TransactionCreationScope::tTransactionPtr transaction, SoupBuffer* buffer,
-                                                  shared_ptr<HTTPRequest> http)
+void PresetManagerActions::handleImportBackupFile(UNDO::TransactionCreationScope::tTransactionPtr transaction,
+                                                  SoupBuffer *buffer, shared_ptr<HTTPRequest> http)
 {
   m_presetManager.undoableClear(transaction);
 
@@ -228,8 +218,7 @@ bool PresetManagerActions::handleRequest(const Glib::ustring &path, shared_ptr<N
       std::vector<PresetManager::presetInfoSearchFields> fields;
 
       auto splitFieldStrings = StringTools::splitStringOnAnyDelimiter(field, ',');
-      std::for_each(splitFieldStrings.begin(), splitFieldStrings.end(), [&](std::string t)
-      {
+      std::for_each(splitFieldStrings.begin(), splitFieldStrings.end(), [&](std::string t) {
         if(t == "name")
         {
           fields.push_back(PresetManager::presetInfoSearchFields::name);

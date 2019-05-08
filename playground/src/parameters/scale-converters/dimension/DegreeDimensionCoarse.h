@@ -4,15 +4,14 @@
 
 class DegreeDimensionCoarse : public Dimension
 {
-  private:
-    DegreeDimensionCoarse ();
+ private:
+  DegreeDimensionCoarse();
 
-  public:
-    virtual ~DegreeDimensionCoarse ();
+ public:
+  virtual ~DegreeDimensionCoarse();
 
-    static const DegreeDimensionCoarse &get();
-    Glib::ustring getStingizerJS() const override;
+  static const DegreeDimensionCoarse &get();
+  Glib::ustring getStingizerJS() const override;
 
-    Glib::ustring stringize (const tDisplayValue &displayValue) const override;
+  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 };
-

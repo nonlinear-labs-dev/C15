@@ -7,13 +7,13 @@
 #include "SelectedParamValueWithFrame.h"
 #include "ParamEditModeRibbonBehaviourLabel.h"
 
-EditModeLayout::EditModeLayout () :
-    super ()
+EditModeLayout::EditModeLayout()
+    : super()
 {
-  addControl (new SelectedParamValueWithFrame (Rect (29, 2, 70, 13)));
-  addControl (new ParamEditModeRibbonBehaviourLabel (Rect (getBehaviourLeft(), 1, 12, 14)));
+  addControl(new SelectedParamValueWithFrame(Rect(29, 2, 70, 13)));
+  addControl(new ParamEditModeRibbonBehaviourLabel(Rect(getBehaviourLeft(), 1, 12, 14)));
 }
 
-EditModeLayout::~EditModeLayout ()
+EditModeLayout::~EditModeLayout()
 {
 }

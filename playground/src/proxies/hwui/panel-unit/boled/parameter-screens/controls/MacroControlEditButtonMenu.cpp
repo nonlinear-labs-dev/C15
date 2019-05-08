@@ -13,8 +13,8 @@
 
 int MacroControlEditButtonMenu::s_lastAction = 0;
 
-MacroControlEditButtonMenu::MacroControlEditButtonMenu(const Rect &rect) :
-    super(rect)
+MacroControlEditButtonMenu::MacroControlEditButtonMenu(const Rect &rect)
+    : super(rect)
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   eb->onLocksChanged(mem_fun(this, &MacroControlEditButtonMenu::setup));
@@ -87,7 +87,8 @@ void MacroControlEditButtonMenu::editInfo()
 
 void MacroControlEditButtonMenu::reset()
 {
-  if(auto p = dynamic_cast<MacroControlParameter*>(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
+  if(auto p = dynamic_cast<MacroControlParameter *>(
+         Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
   {
     p->undoableResetConnectionsToTargets();
   }

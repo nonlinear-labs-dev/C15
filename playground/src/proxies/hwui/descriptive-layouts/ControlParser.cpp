@@ -43,30 +43,28 @@ namespace DescriptiveLayouts
     catch(...)
     {
       DebugLevel::throwException("No rect defined for primitive", key);
-      return { 0, 0, 0, 0};
+      return { 0, 0, 0, 0 };
     }
   }
 
-  template<class T>
-  constexpr T getFromJson(json j, std::string key)
+  template <class T> constexpr T getFromJson(json j, std::string key)
   {
-      auto itProp = j.find(key);
-      if(itProp != j.end())
-      {
-        return *itProp;
-      }
-      return T { };
+    auto itProp = j.find(key);
+    if(itProp != j.end())
+    {
+      return *itProp;
+    }
+    return T{};
   }
 
-  template<class T>
-  T getFromJson(json j, std::string key, std::function<T(std::string)> converter)
+  template <class T> T getFromJson(json j, std::string key, std::function<T(std::string)> converter)
   {
-      auto itProp = j.find(key);
-      if(itProp != j.end())
-      {
-        return converter(*itProp);
-      }
-      return T { };
+    auto itProp = j.find(key);
+    if(itProp != j.end())
+    {
+      return converter(*itProp);
+    }
+    return T{};
   }
 
   std::list<PrimitiveInstance> createPrimitives(json primitives)
@@ -101,7 +99,7 @@ namespace DescriptiveLayouts
 
   void registerControls(json j)
   {
-    for(auto& c : createControls(j))
+    for(auto &c : createControls(j))
     {
       ControlRegistry::get().registerControl(std::move(c));
     }
@@ -121,5 +119,4 @@ namespace DescriptiveLayouts
       registerControls(control);
     }
   }
-
 }

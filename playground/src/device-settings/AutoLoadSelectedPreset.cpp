@@ -4,27 +4,27 @@
 #include <device-settings/Settings.h>
 #include <presets/PresetManager.h>
 
-AutoLoadSelectedPreset::AutoLoadSelectedPreset (Settings &settings) :
-    super (settings, false)
+AutoLoadSelectedPreset::AutoLoadSelectedPreset(Settings &settings)
+    : super(settings, false)
 {
 }
 
-AutoLoadSelectedPreset::~AutoLoadSelectedPreset ()
+AutoLoadSelectedPreset::~AutoLoadSelectedPreset()
 {
 }
 
 void AutoLoadSelectedPreset::cheat(tEnum m)
 {
-  super::set (m);
+  super::set(m);
 }
 
-bool AutoLoadSelectedPreset::set (tEnum m)
+bool AutoLoadSelectedPreset::set(tEnum m)
 {
-  bool ret = super::set (m);
+  bool ret = super::set(m);
 
-  if (m == BooleanSettings::BOOLEAN_SETTING_TRUE && !getSettings ()->isLoading ())
+  if(m == BooleanSettings::BOOLEAN_SETTING_TRUE && !getSettings()->isLoading())
   {
-    Application::get ().getPresetManager ()->doAutoLoadSelectedPreset ();
+    Application::get().getPresetManager()->doAutoLoadSelectedPreset();
   }
 
   return ret;

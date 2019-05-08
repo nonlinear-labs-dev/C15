@@ -7,32 +7,34 @@
 
 class AttributesOwner
 {
-  public:
-    typedef std::map<Glib::ustring, Glib::ustring> tAttributes;
+ public:
+  typedef std::map<Glib::ustring, Glib::ustring> tAttributes;
 
-    AttributesOwner ();
-    virtual ~AttributesOwner ();
+  AttributesOwner();
+  virtual ~AttributesOwner();
 
-    virtual UpdateDocumentContributor::tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) = 0;
+  virtual UpdateDocumentContributor::tUpdateID onChange(uint64_t flags
+                                                        = UpdateDocumentContributor::ChangeFlags::Generic)
+      = 0;
 
-    void setAttribute (const Glib::ustring &key, const Glib::ustring &value);
-    void undoableSetAttribute (UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &key, const Glib::ustring &value);
-    void undoableClearAttributes (UNDO::Scope::tTransactionPtr transaction);
+  void setAttribute(const Glib::ustring &key, const Glib::ustring &value);
+  void undoableSetAttribute(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &key,
+                            const Glib::ustring &value);
+  void undoableClearAttributes(UNDO::Scope::tTransactionPtr transaction);
 
-    void copyFrom (UNDO::Scope::tTransactionPtr transaction, AttributesOwner *other);
-    size_t getHash () const;
-    bool doesAnyAttributeMatch (const Glib::ustring &part) const;
+  void copyFrom(UNDO::Scope::tTransactionPtr transaction, AttributesOwner *other);
+  size_t getHash() const;
+  bool doesAnyAttributeMatch(const Glib::ustring &part) const;
 
-    Glib::ustring getAttribute (const Glib::ustring &key, const Glib::ustring &def) const;
-    const tAttributes &getAttributes () const;
-    void writeAttributes (Writer &writer) const;
+  Glib::ustring getAttribute(const Glib::ustring &key, const Glib::ustring &def) const;
+  const tAttributes &getAttributes() const;
+  void writeAttributes(Writer &writer) const;
 
-    static void registerTests();
+  static void registerTests();
 
-  private:
-    static bool isHashTag(const Glib::ustring &str, size_t pos = Glib::ustring::npos);
-    static bool doesAttributeMatch (const Glib::ustring &attribute, const Glib::ustring &query);
+ private:
+  static bool isHashTag(const Glib::ustring &str, size_t pos = Glib::ustring::npos);
+  static bool doesAttributeMatch(const Glib::ustring &attribute, const Glib::ustring &query);
 
-    tAttributes m_attributes;
+  tAttributes m_attributes;
 };
-

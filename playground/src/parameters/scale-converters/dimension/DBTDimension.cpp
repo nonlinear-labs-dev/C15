@@ -21,5 +21,5 @@ Glib::ustring DBTDimension::getStingizerJS() const
 
 Glib::ustring DBTDimension::stringize(const tDisplayValue &displayValue) const
 {
-  return formatDimensionRounded(displayValue,  "dB_T", 0.1);
+  return formatDimensionRounded(displayValue, "dB_T", 0.1);
 }

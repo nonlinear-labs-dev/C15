@@ -4,20 +4,19 @@
 
 class EmptyBankLabel : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    // public methods
-    EmptyBankLabel (const Rect &pos);
-    virtual ~EmptyBankLabel ();
+ public:
+  // public methods
+  EmptyBankLabel(const Rect &pos);
+  virtual ~EmptyBankLabel();
 
-    bool redraw (FrameBuffer &fb);
-    void setFontColor (FrameBuffer &fb) const;
+  bool redraw(FrameBuffer &fb);
+  void setFontColor(FrameBuffer &fb) const;
 
-  private:
-    // private methods
-    EmptyBankLabel (const EmptyBankLabel& other);
-    EmptyBankLabel& operator= (const EmptyBankLabel&);
+ private:
+  // private methods
+  EmptyBankLabel(const EmptyBankLabel &other);
+  EmptyBankLabel &operator=(const EmptyBankLabel &);
 };
-

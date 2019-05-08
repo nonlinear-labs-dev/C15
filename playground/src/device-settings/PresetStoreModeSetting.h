@@ -14,18 +14,17 @@ enum class PresetStoreModeSettings
 
 class PresetStoreModeSetting : public EnumSetting<PresetStoreModeSettings>
 {
-  private:
-    typedef EnumSetting<PresetStoreModeSettings> super;
+ private:
+  typedef EnumSetting<PresetStoreModeSettings> super;
 
-  public:
-    PresetStoreModeSetting (Settings &settings);
-    virtual ~PresetStoreModeSetting ();
+ public:
+  PresetStoreModeSetting(Settings &settings);
+  virtual ~PresetStoreModeSetting();
 
-  private:
-    PresetStoreModeSetting (const PresetStoreModeSetting& other);
-    PresetStoreModeSetting& operator= (const PresetStoreModeSetting&);
+ private:
+  PresetStoreModeSetting(const PresetStoreModeSetting &other);
+  PresetStoreModeSetting &operator=(const PresetStoreModeSetting &);
 
-    const vector<Glib::ustring> &enumToString () const override;
-    const vector<Glib::ustring> &enumToDisplayString () const override;
+  const vector<Glib::ustring> &enumToString() const override;
+  const vector<Glib::ustring> &enumToDisplayString() const override;
 };
-

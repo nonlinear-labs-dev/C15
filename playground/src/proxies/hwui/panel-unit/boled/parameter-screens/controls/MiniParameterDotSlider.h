@@ -4,16 +4,15 @@
 
 class MiniParameterDotSlider : public DotSlider
 {
-  private:
-    typedef DotSlider super;
+ private:
+  typedef DotSlider super;
 
-  public:
-    MiniParameterDotSlider (Parameter * param, const Rect &rect);
-    virtual ~MiniParameterDotSlider ();
+ public:
+  MiniParameterDotSlider(Parameter *param, const Rect &rect);
+  virtual ~MiniParameterDotSlider();
 
-    bool redraw (FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
 
-  private:
-    bool hasBorder () const override;
+ private:
+  bool hasBorder() const override;
 };
-

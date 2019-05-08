@@ -4,15 +4,13 @@
 
 class VelocityView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    VelocityView ();
-    virtual ~VelocityView ();
+ public:
+  VelocityView();
+  virtual ~VelocityView();
 
-  private:
-    void onSettingChanged (const Setting *s);
-
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

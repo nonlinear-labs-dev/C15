@@ -9,20 +9,19 @@ class Application;
 
 class HWTests : public ContentSection
 {
-  public:
-    HWTests(UpdateDocumentContributor *parent);
-    virtual ~HWTests();
+ public:
+  HWTests(UpdateDocumentContributor *parent);
+  virtual ~HWTests();
 
-    Glib::ustring getPrefix() const override;
-    void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
+  Glib::ustring getPrefix() const override;
+  void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
-  private:
-    void handleHTTPRequest(shared_ptr<NetworkRequest> request, const Glib::ustring &path) override;
-    void initialize();
+ private:
+  void handleHTTPRequest(shared_ptr<NetworkRequest> request, const Glib::ustring &path) override;
+  void initialize();
 
-    
-    bool m_init;
+  bool m_init;
 
-    typedef shared_ptr<HWTest> tTest;
-    set<tTest> m_availableTests;
+  typedef shared_ptr<HWTest> tTest;
+  set<tTest> m_availableTests;
 };

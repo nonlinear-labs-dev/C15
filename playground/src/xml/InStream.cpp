@@ -7,4 +7,3 @@ InStream::InStream()
 InStream::~InStream()
 {
 }
-

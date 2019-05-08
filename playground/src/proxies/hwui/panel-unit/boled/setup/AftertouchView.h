@@ -4,15 +4,13 @@
 
 class AftertouchView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    AftertouchView ();
-    virtual ~AftertouchView ();
+ public:
+  AftertouchView();
+  virtual ~AftertouchView();
 
-  private:
-    void onSettingChanged (const Setting *s);
-
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

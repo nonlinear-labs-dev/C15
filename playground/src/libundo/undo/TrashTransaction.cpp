@@ -6,49 +6,46 @@ namespace UNDO
 {
   class TrashUpdateDocMaster : public UpdateDocumentMaster
   {
-    public:
-      TrashUpdateDocMaster ()
-      {
+   public:
+    TrashUpdateDocMaster()
+    {
+    }
 
-      }
-
-      virtual void writeDocument (Writer &writer, tUpdateID knownRevision) const override
-      {
-      }
+    virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override
+    {
+    }
   };
 
   static TrashUpdateDocMaster trashDocMaster;
 
   class TrashScope : public Scope
   {
-    public:
-      TrashScope () :
-          Scope (&trashDocMaster)
-      {
-      }
+   public:
+    TrashScope()
+        : Scope(&trashDocMaster)
+    {
+    }
 
-      tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override
-      {
-        return 0;
-      }
+    tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override
+    {
+      return 0;
+    }
   };
 
   static TrashScope trashScope;
 
-  TrashTransaction::TrashTransaction () :
-      Transaction (trashScope, "trash", 0)
+  TrashTransaction::TrashTransaction()
+      : Transaction(trashScope, "trash", 0)
   {
   }
 
-  TrashTransaction::~TrashTransaction ()
+  TrashTransaction::~TrashTransaction()
   {
   }
 
-  void TrashTransaction::addCommand (Command::tCommandPtr cmd)
+  void TrashTransaction::addCommand(Command::tCommandPtr cmd)
   {
-    cmd->setParentTransaction (this);
-    cmd->doAction ();
+    cmd->setParentTransaction(this);
+    cmd->doAction();
   }
-
 }
-

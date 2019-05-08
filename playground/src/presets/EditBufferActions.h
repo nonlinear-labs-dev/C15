@@ -6,15 +6,14 @@ class EditBuffer;
 
 class EditBufferActions : public RPCActionManager
 {
-  private:
-    typedef RPCActionManager super;
+ private:
+  typedef RPCActionManager super;
 
-  public:
-    EditBufferActions (shared_ptr<EditBuffer> editBuffer);
-    virtual ~EditBufferActions ();
+ public:
+  EditBufferActions(shared_ptr<EditBuffer> editBuffer);
+  virtual ~EditBufferActions();
 
-  private:
-    EditBufferActions (const EditBufferActions& other) = delete;
-    EditBufferActions& operator= (const EditBufferActions&) = delete;
+ private:
+  EditBufferActions(const EditBufferActions& other) = delete;
+  EditBufferActions& operator=(const EditBufferActions&) = delete;
 };
-

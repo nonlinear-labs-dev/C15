@@ -4,24 +4,22 @@
 
 class DelayedJob
 {
-  private:
+ private:
+ public:
+  typedef function<void()> tJob;
 
-  public:
-    typedef function<void ()> tJob;
+  DelayedJob(int maxDelayMS, tJob job);
+  virtual ~DelayedJob();
 
-    DelayedJob (int maxDelayMS, tJob job);
-    virtual ~DelayedJob ();
+  void trigger();
 
-    void trigger ();
+ private:
+  DelayedJob(const DelayedJob& other) = delete;
+  DelayedJob& operator=(const DelayedJob&) = delete;
 
-  private:
-    DelayedJob (const DelayedJob& other) = delete;
-    DelayedJob& operator= (const DelayedJob&) = delete;
+  bool onTimeout();
 
-    bool onTimeout ();
-
-    int m_maxDelay;
-    tJob m_job;
-    sigc::connection m_timeout;
+  int m_maxDelay;
+  tJob m_job;
+  sigc::connection m_timeout;
 };
-

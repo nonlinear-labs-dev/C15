@@ -4,10 +4,10 @@
 namespace DescriptiveLayouts
 {
 
-  Bar::Bar(const PrimitiveInstance &e) :
-      Control(e.relativePosition),
-      m_primitive(e),
-      m_range(0.0, 1.0)
+  Bar::Bar(const PrimitiveInstance &e)
+      : Control(e.relativePosition)
+      , m_primitive(e)
+      , m_range(0.0, 1.0)
   {
   }
 
@@ -27,10 +27,10 @@ namespace DescriptiveLayouts
     auto from = std::min(m_range.first, m_range.second);
     auto to = std::max(m_range.first, m_range.second);
 
-    auto left = round(r.getLeft () + from * r.getWidth ());
-    auto right = round(r.getLeft () + to * r.getWidth ());
-    r.setLeft (left);
-    r.setWidth (right - left);
+    auto left = round(r.getLeft() + from * r.getWidth());
+    auto right = round(r.getLeft() + to * r.getWidth());
+    r.setLeft(left);
+    r.setWidth(right - left);
     r.normalize();
 
     fb.setColor(color);
@@ -53,7 +53,7 @@ namespace DescriptiveLayouts
     switch(key)
     {
       case PrimitiveProperty::Range:
-        if(std::exchange(m_range, std::any_cast < Range > (value)) != m_range)
+        if(std::exchange(m_range, std::any_cast<Range>(value)) != m_range)
           setDirty();
         break;
 

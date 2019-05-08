@@ -4,14 +4,15 @@
 
 namespace DescriptiveLayouts
 {
-  PrimitiveInstance::PrimitiveInstance(PrimitiveInstances primitiveInstance, PrimitiveClasses type, Rect relativePosition, PrimitiveTag t,
-                                       DefaultText defaultText, Converter converter) :
-      primitiveInstance(primitiveInstance),
-      tag(t),
-      primitveClass(type),
-      relativePosition(relativePosition),
-      defaultText(defaultText),
-      converter(converter)
+  PrimitiveInstance::PrimitiveInstance(PrimitiveInstances primitiveInstance, PrimitiveClasses type,
+                                       Rect relativePosition, PrimitiveTag t, DefaultText defaultText,
+                                       Converter converter)
+      : primitiveInstance(primitiveInstance)
+      , tag(t)
+      , primitveClass(type)
+      , relativePosition(relativePosition)
+      , defaultText(defaultText)
+      , converter(converter)
   {
   }
 

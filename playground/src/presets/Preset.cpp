@@ -28,9 +28,9 @@ shared_ptr<Preset> Preset::createPreset(UpdateDocumentContributor *parent)
   return p;
 }
 
-Preset::Preset(UpdateDocumentContributor *parent) :
-    ParameterGroupSet(parent),
-    m_settings(*this)
+Preset::Preset(UpdateDocumentContributor *parent)
+    : ParameterGroupSet(parent)
+    , m_settings(*this)
 {
 }
 
@@ -98,7 +98,8 @@ void Preset::undoableSetName(const ustring &name)
 {
   if(name != m_name)
   {
-    UNDO::Scope::tTransactionScopePtr scope = getUndoScope().startTransaction("Rename preset '%0' to '%1'", getName(), name);
+    UNDO::Scope::tTransactionScopePtr scope
+        = getUndoScope().startTransaction("Rename preset '%0' to '%1'", getName(), name);
     undoableSetName(scope->getTransaction(), name);
   }
 }
@@ -109,10 +110,9 @@ void Preset::undoableSetName(UNDO::Scope::tTransactionPtr transaction, const ust
   {
     auto swapData = UNDO::createSwapData(name);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_name);
-      onChange ();
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+      swapData->swapWith(m_name);
+      onChange();
     });
 
     Application::get().getPresetManager()->getEditBuffer()->undoableUpdateLoadedPresetInfo(transaction);
@@ -130,10 +130,7 @@ void Preset::undoableSetType(UNDO::Scope::tTransactionPtr transaction, PresetTyp
 
     auto swapData = UNDO::createSwapData(desiredType);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_type);
-    });
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable { swapData->swapWith(m_type); });
   }
 }
 
@@ -150,9 +147,8 @@ void Preset::undoableSetUuid(UNDO::Scope::tTransactionPtr transaction, const Uui
 
   auto swapData = UNDO::createSwapData(uuid);
 
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-  {
-    swapData->swapWith (m_uuid);
+  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+    swapData->swapWith(m_uuid);
     onChange();
   });
 
@@ -201,14 +197,14 @@ void Preset::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
   bool changed = knownRevision < getUpdateIDOfLastChange();
 
-  writer.writeTag("preset", Attribute("uuid", (Glib::ustring) m_uuid), Attribute("name", m_name), Attribute("changed", changed), [&]()
-  {
-    if (changed)
-    {
-      writeAttributes(writer);
-      m_settings.writeDocument (writer, knownRevision);
-    }
-  });
+  writer.writeTag("preset", Attribute("uuid", (Glib::ustring) m_uuid), Attribute("name", m_name),
+                  Attribute("changed", changed), [&]() {
+                    if(changed)
+                    {
+                      writeAttributes(writer);
+                      m_settings.writeDocument(writer, knownRevision);
+                    }
+                  });
 }
 
 void Preset::copyFrom(UNDO::Scope::tTransactionPtr transaction, Preset *other, bool ignoreUUIDs)
@@ -222,10 +218,9 @@ void Preset::copyFrom(UNDO::Scope::tTransactionPtr transaction, Preset *other, b
 
     auto swapData = UNDO::createSwapData(preset->m_name);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_name);
-      onChange ();
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+      swapData->swapWith(m_name);
+      onChange();
     });
 
     if(!ignoreUUIDs)
@@ -312,22 +307,17 @@ Glib::ustring Preset::getUndoTransactionTitle(const Glib::ustring &prefix) const
 
 bool Preset::matchesQuery(const SearchQuery &query) const
 {
-  return query.iterate([&](const Glib::ustring &part, std::vector<PresetManager::presetInfoSearchFields> fields)
-  {
-    static_assert((int)PresetManager::presetInfoSearchFields::name == 0, "");
-    static_assert((int)PresetManager::presetInfoSearchFields::comment == 1, "");
-    static_assert((int)PresetManager::presetInfoSearchFields::devicename == 2, "");
+  return query.iterate([&](const Glib::ustring &part, std::vector<PresetManager::presetInfoSearchFields> fields) {
+    static_assert((int) PresetManager::presetInfoSearchFields::name == 0, "");
+    static_assert((int) PresetManager::presetInfoSearchFields::comment == 1, "");
+    static_assert((int) PresetManager::presetInfoSearchFields::devicename == 2, "");
 
-    std::array<ustring, 3> entries =
-    {
-      getName().lowercase(),
-      getAttribute("Comment", "").lowercase(),
-      getAttribute("DeviceName", "").lowercase()
-    };
+    std::array<ustring, 3> entries = { getName().lowercase(), getAttribute("Comment", "").lowercase(),
+                                       getAttribute("DeviceName", "").lowercase() };
 
     for(auto f : fields)
     {
-      if(entries[(int)f].find(part) != ustring::npos)
+      if(entries[(int) f].find(part) != ustring::npos)
       {
         return true;
       }
@@ -356,29 +346,29 @@ void Preset::writeDiff(Writer &writer, Preset *other) const
     bPositionString = txt;
   }
 
-  writer.writeTag("diff",
-      [&]
+  writer.writeTag("diff", [&] {
+    auto hash = getHash();
+    auto otherHash = other->getHash();
+
+    writer.writeTextElement("hash", "", Attribute("a", hash), Attribute("b", otherHash));
+    writer.writeTextElement("position", "", Attribute("a", aPositionString), Attribute("b", bPositionString));
+    writer.writeTextElement("name", "", Attribute("a", getName()), Attribute("b", other->getName()));
+
+    if(hash != otherHash)
+    {
+      if(getAttribute("Comment", "") != other->getAttribute("Comment", ""))
       {
-        auto hash = getHash();
-        auto otherHash = other->getHash();
+        writer.writeTextElement("comment", "", Attribute("a", getAttribute("Comment", "")),
+                                Attribute("b", other->getAttribute("Comment", "")));
+      }
 
-        writer.writeTextElement("hash", "", Attribute("a", hash), Attribute("b", otherHash));
-        writer.writeTextElement("position", "", Attribute("a", aPositionString), Attribute("b", bPositionString));
-        writer.writeTextElement("name", "", Attribute("a", getName()), Attribute("b", other->getName()));
+      if(getAttribute("color", "") != other->getAttribute("color", ""))
+      {
+        writer.writeTextElement("color", "", Attribute("a", getAttribute("color", "")),
+                                Attribute("b", other->getAttribute("color", "")));
+      }
 
-        if(hash != otherHash)
-        {
-          if(getAttribute("Comment", "") != other->getAttribute("Comment", ""))
-          {
-            writer.writeTextElement("comment", "", Attribute("a", getAttribute("Comment", "")), Attribute("b", other->getAttribute("Comment", "")));
-          }
-
-          if(getAttribute("color", "") != other->getAttribute("color", ""))
-          {
-            writer.writeTextElement("color", "", Attribute("a", getAttribute("color", "")), Attribute("b", other->getAttribute("color", "")));
-          }
-
-          ParameterGroupSet::writeDiff(writer, other);
-        }
-      });
+      ParameterGroupSet::writeDiff(writer, other);
+    }
+  });
 }

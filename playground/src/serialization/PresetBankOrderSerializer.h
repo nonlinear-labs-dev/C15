@@ -6,15 +6,15 @@ class PresetManager;
 
 class PresetBankOrderSerializer : public Serializer
 {
-  public:
-    PresetBankOrderSerializer (PresetManager &pm);
+ public:
+  PresetBankOrderSerializer(PresetManager &pm);
 
-    static Glib::ustring getTagName();
-    void finalize (Reader &reader);
+  static Glib::ustring getTagName();
+  void finalize(Reader &reader);
 
-  protected:
-    void writeTagContent(Writer &writer) const;
-    void readTagContent(Reader &reader) const;
+ protected:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
 
-    PresetManager &m_pm;
+  PresetManager &m_pm;
 };

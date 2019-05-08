@@ -7,11 +7,10 @@ class Setting;
 
 class PlayModeLayout : public PlayOrEditModeLayout
 {
-  private:
-    typedef PlayOrEditModeLayout super;
+ private:
+  typedef PlayOrEditModeLayout super;
 
-  public:
-    PlayModeLayout ();
-    virtual ~PlayModeLayout ();
+ public:
+  PlayModeLayout();
+  virtual ~PlayModeLayout();
 };
-

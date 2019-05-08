@@ -6,16 +6,16 @@ class ParameterGroup;
 
 class ParameterGroupSerializer : public Serializer
 {
-  public:
-    ParameterGroupSerializer (ParameterGroup *paramGroup);
-    virtual ~ParameterGroupSerializer();
+ public:
+  ParameterGroupSerializer(ParameterGroup *paramGroup);
+  virtual ~ParameterGroupSerializer();
 
-    static Glib::ustring getTagName ();
+  static Glib::ustring getTagName();
 
-  private:
-    void writeTagContent (Writer &writer) const;
-    void readTagContent (Reader &reader) const;
+ private:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
 
-    ParameterGroup *m_paramGroup = nullptr;
-    map<gint32, Parameter*> m_parameterById;
+  ParameterGroup *m_paramGroup = nullptr;
+  map<gint32, Parameter *> m_parameterById;
 };

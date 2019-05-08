@@ -8,34 +8,34 @@
 namespace UNDO
 {
   using std::chrono::steady_clock;
-  
-  class ContinuousTransaction: public UNDO::Transaction
+
+  class ContinuousTransaction : public UNDO::Transaction
   {
-      typedef UNDO::Transaction super;
-      
-    public:
-      ContinuousTransaction(Scope &scope, void *id, const Glib::ustring &name, size_t depth);
-      virtual ~ContinuousTransaction();
+    typedef UNDO::Transaction super;
 
-      chrono::steady_clock::duration getAge() const;
-      void *getID() const;
-      void setIsNested();
+   public:
+    ContinuousTransaction(Scope &scope, void *id, const Glib::ustring &name, size_t depth);
+    virtual ~ContinuousTransaction();
 
-      void setClosingCommand(std::shared_ptr<UNDO::ContinuousTransaction> command);
-      std::shared_ptr<UNDO::ContinuousTransaction> getClosingCommand() const;
+    chrono::steady_clock::duration getAge() const;
+    void *getID() const;
+    void setIsNested();
 
-    protected:
-      virtual void implUndoAction() const;
-      virtual void implRedoAction() const;
+    void setClosingCommand(std::shared_ptr<UNDO::ContinuousTransaction> command);
+    std::shared_ptr<UNDO::ContinuousTransaction> getClosingCommand() const;
 
-      virtual void onImplUndoActionStart() const;
-      virtual void onImplRedoActionFinished() const;
+   protected:
+    virtual void implUndoAction() const;
+    virtual void implRedoAction() const;
 
-    private:
-      void *m_id = NULL;
-      steady_clock::time_point m_creationTimestamp;
-      std::shared_ptr<UNDO::ContinuousTransaction> m_closingCommand;
-      bool m_isNested = false;
+    virtual void onImplUndoActionStart() const;
+    virtual void onImplRedoActionFinished() const;
+
+   private:
+    void *m_id = NULL;
+    steady_clock::time_point m_creationTimestamp;
+    std::shared_ptr<UNDO::ContinuousTransaction> m_closingCommand;
+    bool m_isNested = false;
   };
 
 } /* namespace UNDO */

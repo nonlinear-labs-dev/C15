@@ -2,10 +2,10 @@
 #include "serialization/Serializer.h"
 #include "Attributes.h"
 
-Reader::Reader(InStream &in, UNDO::Scope::tTransactionPtr transaction) :
-    m_in(in),
-    m_transaction(transaction),
-    m_treeDepth(0)
+Reader::Reader(InStream &in, UNDO::Scope::tTransactionPtr transaction)
+    : m_in(in)
+    , m_transaction(transaction)
+    , m_treeDepth(0)
 {
 }
 
@@ -35,14 +35,10 @@ void Reader::onTag(const ustring &name, tTagElementCB cb)
 
 void Reader::loadTextElement(size_t nameHash, ustring &target)
 {
-  onTextElement(nameHash, [&](const ustring &text, const Attributes &attr) mutable
-  {
+  onTextElement(nameHash, [&](const ustring &text, const Attributes &attr) mutable {
     auto scope = UNDO::createSwapData(text);
 
-    getTransaction()->addSimpleCommand([=,&target](UNDO::Command::State) mutable
-        {
-          scope->swapWith(target);
-        });
+    getTransaction()->addSimpleCommand([=, &target](UNDO::Command::State) mutable { scope->swapWith(target); });
   });
 }
 
@@ -61,7 +57,7 @@ int Reader::getFileVersion() const
   return m_fileVersion;
 }
 
-bool Reader::onStartElement(size_t nameHash, const Attributes& attributes)
+bool Reader::onStartElement(size_t nameHash, const Attributes &attributes)
 {
   if(m_treeDepth == 0 && m_fileVersion == 0)
   {
@@ -122,7 +118,7 @@ UNDO::Scope::tTransactionPtr Reader::getTransaction()
   return m_transaction;
 }
 
-InStream & Reader::getInStream()
+InStream &Reader::getInStream()
 {
   return m_in;
 }
@@ -131,4 +127,3 @@ sigc::connection Reader::onFileVersionRead(sigc::slot<FileVersionCheckResult, in
 {
   return m_sigFileVersionRead.connect(slot);
 }
-

@@ -4,8 +4,7 @@
 
 class LinearBipolar150StScaleConverter : public LinearScaleConverter
 {
-  public:
-    LinearBipolar150StScaleConverter ();
-    virtual ~LinearBipolar150StScaleConverter ();
+ public:
+  LinearBipolar150StScaleConverter();
+  virtual ~LinearBipolar150StScaleConverter();
 };
-

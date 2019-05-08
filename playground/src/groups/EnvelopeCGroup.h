@@ -4,9 +4,9 @@
 
 class EnvelopeCGroup : public ParameterGroup
 {
-  public:
-    EnvelopeCGroup (ParameterGroupSet *parent);
-    virtual ~EnvelopeCGroup ();
+ public:
+  EnvelopeCGroup(ParameterGroupSet *parent);
+  virtual ~EnvelopeCGroup();
 
-    void init ();
+  void init();
 };

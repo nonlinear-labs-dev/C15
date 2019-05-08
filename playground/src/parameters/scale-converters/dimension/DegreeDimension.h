@@ -4,15 +4,14 @@
 
 class DegreeDimension : public Dimension
 {
-  private:
-    DegreeDimension ();
+ private:
+  DegreeDimension();
 
-  public:
-    virtual ~DegreeDimension ();
+ public:
+  virtual ~DegreeDimension();
 
-    static const DegreeDimension &get();
-    Glib::ustring getStingizerJS() const override;
+  static const DegreeDimension &get();
+  Glib::ustring getStingizerJS() const override;
 
-    Glib::ustring stringize (const tDisplayValue &displayValue) const override;
+  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 };
-

@@ -4,27 +4,27 @@
 #include <proxies/hwui/panel-unit/boled/setup/PresetGlitchSuppressionEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/MenuEditorEntry.h>
 
-PresetGlitchSuppressionEditor::PresetGlitchSuppressionEditor ()
+PresetGlitchSuppressionEditor::PresetGlitchSuppressionEditor()
 {
-  Application::get ().getSettings ()->getSetting<PresetGlitchSuppression> ()->onChange (mem_fun (this, &PresetGlitchSuppressionEditor::onSettingChanged));
+  Application::get().getSettings()->getSetting<PresetGlitchSuppression>()->onChange(
+      mem_fun(this, &PresetGlitchSuppressionEditor::onSettingChanged));
 }
 
-PresetGlitchSuppressionEditor::~PresetGlitchSuppressionEditor ()
+PresetGlitchSuppressionEditor::~PresetGlitchSuppressionEditor()
 {
 }
 
-void PresetGlitchSuppressionEditor::incSetting (int inc)
+void PresetGlitchSuppressionEditor::incSetting(int inc)
 {
-  Application::get ().getSettings ()->getSetting<PresetGlitchSuppression> ()->inc (inc);
+  Application::get().getSettings()->getSetting<PresetGlitchSuppression>()->inc(inc);
 }
 
-const vector<ustring> &PresetGlitchSuppressionEditor::getDisplayStrings () const
+const vector<ustring> &PresetGlitchSuppressionEditor::getDisplayStrings() const
 {
-  return Application::get ().getSettings ()->getSetting<PresetGlitchSuppression> ()->enumToDisplayString ();
+  return Application::get().getSettings()->getSetting<PresetGlitchSuppression>()->enumToDisplayString();
 }
 
-int PresetGlitchSuppressionEditor::getSelectedIndex () const
+int PresetGlitchSuppressionEditor::getSelectedIndex() const
 {
-  return (int) Application::get ().getSettings ()->getSetting<PresetGlitchSuppression> ()->get ();
+  return (int) Application::get().getSettings()->getSetting<PresetGlitchSuppression>()->get();
 }
-

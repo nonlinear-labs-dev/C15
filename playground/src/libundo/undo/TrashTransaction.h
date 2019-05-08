@@ -4,12 +4,12 @@
 
 namespace UNDO
 {
-  class TrashTransaction :  public Transaction
+  class TrashTransaction : public Transaction
   {
-    public:
-      TrashTransaction ();
-      virtual ~TrashTransaction();
-      
-      virtual void addCommand (tCommandPtr cmd) override;
+   public:
+    TrashTransaction();
+    virtual ~TrashTransaction();
+
+    virtual void addCommand(tCommandPtr cmd) override;
   };
 }

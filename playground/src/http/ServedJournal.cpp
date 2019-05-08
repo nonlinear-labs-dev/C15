@@ -5,20 +5,20 @@
 #include <device-settings/DebugLevel.h>
 #include <memory>
 
-ServedJournal::ServedJournal (HTTPServer &server, shared_ptr<HTTPRequest> request) :
-    ServedStream (server, request)
+ServedJournal::ServedJournal(HTTPServer &server, shared_ptr<HTTPRequest> request)
+    : ServedStream(server, request)
 {
 }
 
-ServedJournal::~ServedJournal ()
+ServedJournal::~ServedJournal()
 {
 }
 
-void ServedJournal::startServing ()
+void ServedJournal::startServing()
 {
-  auto command = Application::get ().getResourcePath () + "pack-journal.sh";
+  auto command = Application::get().getResourcePath() + "pack-journal.sh";
   GError *error = nullptr;
-  auto process = g_subprocess_new (G_SUBPROCESS_FLAGS_STDOUT_PIPE, &error, command.c_str (), nullptr);
+  auto process = g_subprocess_new(G_SUBPROCESS_FLAGS_STDOUT_PIPE, &error, command.c_str(), nullptr);
 
   if(error)
   {
@@ -28,7 +28,7 @@ void ServedJournal::startServing ()
   }
   else
   {
-    GInputStream *output = g_subprocess_get_stdout_pipe (process);
-    startResponseFromStream (Glib::wrap (output));
+    GInputStream *output = g_subprocess_get_stdout_pipe(process);
+    startResponseFromStream(Glib::wrap(output));
   }
 }

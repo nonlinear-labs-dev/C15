@@ -1,11 +1,11 @@
 #include "ControlWithChildren.h"
 
-ControlWithChildren::ControlWithChildren (const Rect &pos) :
-    super (pos)
+ControlWithChildren::ControlWithChildren(const Rect &pos)
+    : super(pos)
 {
 }
 
-ControlWithChildren::~ControlWithChildren ()
+ControlWithChildren::~ControlWithChildren()
 {
 }
 
@@ -19,7 +19,7 @@ void ControlWithChildren::setDirtyIfOverlapsWithAny(const std::list<Rect> &rects
   ControlOwner::setDirtyIfOverlapsWithAny(rects);
 }
 
-bool ControlWithChildren::isDirty () const
+bool ControlWithChildren::isDirty() const
 {
   if(super::isDirty())
     return true;
@@ -43,7 +43,7 @@ void ControlWithChildren::setHighlight(bool isHighlight)
   ControlOwner::setHighlight(isHighlight);
 }
 
-bool ControlWithChildren::redraw (FrameBuffer &fb)
+bool ControlWithChildren::redraw(FrameBuffer &fb)
 {
   bool redrew = Control::isDirty();
 
@@ -66,9 +66,8 @@ bool ControlWithChildren::redraw (FrameBuffer &fb)
   return redrew;
 }
 
-void ControlWithChildren::drawBackground (FrameBuffer &fb)
+void ControlWithChildren::drawBackground(FrameBuffer &fb)
 {
-
 }
 
 bool ControlWithChildren::isTransparent() const

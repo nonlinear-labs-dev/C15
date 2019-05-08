@@ -10,11 +10,11 @@
 
 namespace DescriptiveLayouts
 {
-  EventSinkMapping::EventSinkMapping(Buttons button, EventSinks sink, ButtonEvents event, ButtonModifiers modifiers) :
-      button(button),
-      sink(sink),
-      event(event),
-      modifiers(modifiers)
+  EventSinkMapping::EventSinkMapping(Buttons button, EventSinks sink, ButtonEvents event, ButtonModifiers modifiers)
+      : button(button)
+      , sink(sink)
+      , event(event)
+      , modifiers(modifiers)
   {
   }
 
@@ -29,13 +29,12 @@ namespace DescriptiveLayouts
     auto eb = Application::get().getPresetManager()->getEditBuffer();
     auto hwui = Application::get().getHWUI();
 
-    registerEvent(EventSinks::IncParam, [eb, hwui]()
-    {
+    registerEvent(EventSinks::IncParam, [eb, hwui]() {
       if(auto p = eb->getSelectedParameter())
-      p->getValue().inc(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
+        p->getValue().inc(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
     });
 
-    registerEvent(EventSinks::IncMCPos, [eb, hwui](){
+    registerEvent(EventSinks::IncMCPos, [eb, hwui]() {
       if(auto mc = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter())->getMacroControl())
       {
         UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction("Big Bang");
@@ -44,35 +43,25 @@ namespace DescriptiveLayouts
       }
     });
 
-    registerEvent(EventSinks::DecParam, [eb, hwui]()
-    {
+    registerEvent(EventSinks::DecParam, [eb, hwui]() {
       if(auto p = eb->getSelectedParameter())
-      p->getValue().dec(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
+        p->getValue().dec(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
     });
 
-    registerEvent(EventSinks::SwitchToEditMode, [hwui]()
-    {
-      hwui->undoableSetFocusAndMode(UIMode::Edit);
-    });
+    registerEvent(EventSinks::SwitchToEditMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Edit); });
 
-    registerEvent(EventSinks::SwitchToSelectMode, [hwui]()
-    {
-      hwui->undoableSetFocusAndMode(UIMode::Select);
-    });
+    registerEvent(EventSinks::SwitchToSelectMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Select); });
 
-    registerEvent(EventSinks::SwitchToMCSelectDetail, [hwui, eb]()
-    {
+    registerEvent(EventSinks::SwitchToMCSelectDetail, [hwui, eb]() {
       if(dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()) != nullptr)
       {
         hwui->setUiModeDetail(UIDetail::MCSelect);
       }
     });
 
-    registerEvent(EventSinks::SwitchToInitDetail, [hwui](){
-      hwui->setUiModeDetail(UIDetail::Init);
-    });
+    registerEvent(EventSinks::SwitchToInitDetail, [hwui]() { hwui->setUiModeDetail(UIDetail::Init); });
 
-    registerEvent(EventSinks::SwitchToMCModRangeDetail, [hwui, eb](){
+    registerEvent(EventSinks::SwitchToMCModRangeDetail, [hwui, eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
       {
         if(modParam->getModulationSource() != ModulateableParameter::ModulationSource::NONE)
@@ -82,12 +71,12 @@ namespace DescriptiveLayouts
       }
     });
 
-    registerEvent(EventSinks::IncMCSel, [eb](){
+    registerEvent(EventSinks::IncMCSel, [eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
         modParam->undoableIncrementMCSelect(1);
     });
 
-    registerEvent(EventSinks::DecMCSel, [eb](){
+    registerEvent(EventSinks::DecMCSel, [eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
         modParam->undoableIncrementMCSelect(-1);
     });
@@ -102,14 +91,16 @@ namespace DescriptiveLayouts
       }
     });
 
-    registerEvent(EventSinks::DecMCAmt, [hwui, eb](){
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter())) {
+    registerEvent(EventSinks::DecMCAmt, [hwui, eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+      {
         modParam->undoableIncrementMCAmount(-1);
       }
     });
 
-    registerEvent(EventSinks::IncMCAmt, [hwui, eb](){
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter())) {
+    registerEvent(EventSinks::IncMCAmt, [hwui, eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+      {
         modParam->undoableIncrementMCAmount(1);
       }
     });

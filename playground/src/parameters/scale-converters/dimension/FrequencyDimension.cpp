@@ -21,5 +21,5 @@ Glib::ustring FrequencyDimension::getStingizerJS() const
 
 Glib::ustring FrequencyDimension::stringize(const tDisplayValue &displayValue) const
 {
-  return formatDimensionDigits(displayValue,  "Hz", 3);
+  return formatDimensionDigits(displayValue, "Hz", 3);
 }

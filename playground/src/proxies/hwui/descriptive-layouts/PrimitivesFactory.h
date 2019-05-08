@@ -9,7 +9,6 @@ namespace DescriptiveLayouts
 
   struct PrimitivesFactory
   {
-      static Control* create(const PrimitiveInstance& c);
+    static Control* create(const PrimitiveInstance& c);
   };
-
 }

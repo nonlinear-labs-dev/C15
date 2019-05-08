@@ -8,48 +8,48 @@
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
 
-MacroControl::MacroControl (const Rect &pos) :
-    super (pos)
+MacroControl::MacroControl(const Rect &pos)
+    : super(pos)
 {
-  m_name = addControl (new LabelRegular8 ("", Rect (0, 0, 48, 13)));
-  m_slider = addControl (new Slider (Rect (0, 13, 48, 4)));
+  m_name = addControl(new LabelRegular8("", Rect(0, 0, 48, 13)));
+  m_slider = addControl(new Slider(Rect(0, 13, 48, 4)));
 
-  Application::get ().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide < 0 > (sigc::mem_fun (this, &MacroControl::onSelectionChanged)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &MacroControl::onSelectionChanged)));
 }
 
-MacroControl::~MacroControl ()
+MacroControl::~MacroControl()
 {
 }
 
-void MacroControl::onSelectionChanged (Parameter * parameter)
+void MacroControl::onSelectionChanged(Parameter *parameter)
 {
-  m_connectionTarget.disconnect ();
-  m_connectionTarget = parameter->onParameterChanged (sigc::mem_fun (this, &MacroControl::onTargetChanged));
+  m_connectionTarget.disconnect();
+  m_connectionTarget = parameter->onParameterChanged(sigc::mem_fun(this, &MacroControl::onTargetChanged));
 }
 
-void MacroControl::onTargetChanged (const Parameter* modulatedParameter)
+void MacroControl::onTargetChanged(const Parameter *modulatedParameter)
 {
-  MacroControlParameter* srcParam;
+  MacroControlParameter *srcParam;
 
-  if (const ModulateableParameter *p = dynamic_cast<const ModulateableParameter*> (modulatedParameter))
+  if(const ModulateableParameter *p = dynamic_cast<const ModulateableParameter *>(modulatedParameter))
   {
-    auto src = p->getModulationSource ();
-    uint16_t srcParamID = MacroControlsGroup::modSrcToParamID (src);
+    auto src = p->getModulationSource();
+    uint16_t srcParamID = MacroControlsGroup::modSrcToParamID(src);
 
-    if (auto pa = Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (srcParamID))
-      srcParam = dynamic_cast<MacroControlParameter *> (pa);
+    if(auto pa = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(srcParamID))
+      srcParam = dynamic_cast<MacroControlParameter *>(pa);
   }
 
-  if (m_srcParam != srcParam)
+  if(m_srcParam != srcParam)
   {
     m_srcParam = srcParam;
 
-    m_slider->setParameter (srcParam);
+    m_slider->setParameter(srcParam);
 
-    if (srcParam)
-      m_name->setText (srcParam->getShortName());
+    if(srcParam)
+      m_name->setText(srcParam->getShortName());
     else
-      m_name->setText ("");
+      m_name->setText("");
   }
 }

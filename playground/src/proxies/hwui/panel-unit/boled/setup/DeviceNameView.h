@@ -4,15 +4,13 @@
 
 class DeviceNameView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    DeviceNameView ();
-    virtual ~DeviceNameView ();
+ public:
+  DeviceNameView();
+  virtual ~DeviceNameView();
 
-  private:
-    void onSettingChanged (const Setting *s);
-
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

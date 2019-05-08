@@ -7,13 +7,13 @@ class Parameter;
 
 class AboutText : public MultiLineLabel, public Scrollable
 {
-  private:
-    typedef MultiLineLabel super;
+ private:
+  typedef MultiLineLabel super;
 
-  public:
-    AboutText ();
+ public:
+  AboutText();
 
-    virtual void setPosition (const Rect &rect) override;
-    virtual const Rect &getPosition () const override;
-    virtual void setDirty () override;
+  virtual void setPosition(const Rect &rect) override;
+  virtual const Rect &getPosition() const override;
+  virtual void setDirty() override;
 };

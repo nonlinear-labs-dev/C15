@@ -1,30 +1,30 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MiniParameterDotSlider.h>
 
-MiniParameterDotSlider::MiniParameterDotSlider (Parameter * param, const Rect &rect) :
-    super (param, rect)
+MiniParameterDotSlider::MiniParameterDotSlider(Parameter *param, const Rect &rect)
+    : super(param, rect)
 {
 }
 
-MiniParameterDotSlider::~MiniParameterDotSlider ()
+MiniParameterDotSlider::~MiniParameterDotSlider()
 {
 }
 
-bool MiniParameterDotSlider::hasBorder () const
+bool MiniParameterDotSlider::hasBorder() const
 {
   return false;
 }
 
-bool MiniParameterDotSlider::redraw (FrameBuffer &fb)
+bool MiniParameterDotSlider::redraw(FrameBuffer &fb)
 {
-  Rect r = getPosition ();
+  Rect r = getPosition();
 
-  if (isHighlight ())
-    fb.setColor (FrameBuffer::Colors::C128);
+  if(isHighlight())
+    fb.setColor(FrameBuffer::Colors::C128);
   else
-    fb.setColor (FrameBuffer::Colors::C103);
+    fb.setColor(FrameBuffer::Colors::C103);
 
-  fb.fillRect (r.getX (), r.getTop (), r.getWidth (), r.getHeight ());
-  super::redraw (fb);
+  fb.fillRect(r.getX(), r.getTop(), r.getWidth(), r.getHeight());
+  super::redraw(fb);
 
   return true;
 }

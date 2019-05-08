@@ -6,12 +6,11 @@
 
 class Application;
 
-class UpdateDocumentMaster: public UpdateDocumentContributor
+class UpdateDocumentMaster : public UpdateDocumentContributor
 {
-  public:
-    UpdateDocumentMaster ();
-    virtual ~UpdateDocumentMaster ();
+ public:
+  UpdateDocumentMaster();
+  virtual ~UpdateDocumentMaster();
 
-    tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
+  tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 };
-

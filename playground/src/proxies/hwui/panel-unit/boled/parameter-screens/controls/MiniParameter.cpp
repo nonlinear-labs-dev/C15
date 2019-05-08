@@ -4,39 +4,38 @@
 #include "parameters/Parameter.h"
 #include "MiniParameterLabel.h"
 
-MiniParameter::MiniParameter (Parameter * param, const Rect &pos) :
-    super (pos),
-    m_param (param)
+MiniParameter::MiniParameter(Parameter *param, const Rect &pos)
+    : super(pos)
+    , m_param(param)
 {
-  m_label = addControl (new MiniParameterLabel (param->getMiniParameterEditorName (), Rect (0, 0, 56, 9)));
+  m_label = addControl(new MiniParameterLabel(param->getMiniParameterEditorName(), Rect(0, 0, 56, 9)));
 
-  if (param->getVisualizationStyle() == Parameter::VisualizationStyle::Dot)
-    addControl (new MiniParameterDotSlider (param, Rect (0, 10, 56, 2)));
+  if(param->getVisualizationStyle() == Parameter::VisualizationStyle::Dot)
+    addControl(new MiniParameterDotSlider(param, Rect(0, 10, 56, 2)));
   else
-    addControl (new MiniParameterBarSlider (param, Rect (0, 10, 56, 2)));
+    addControl(new MiniParameterBarSlider(param, Rect(0, 10, 56, 2)));
 }
 
-MiniParameter::~MiniParameter ()
+MiniParameter::~MiniParameter()
 {
 }
 
-Parameter * MiniParameter::getParameter ()
-{
-  return m_param;
-}
-
-const Parameter * MiniParameter::getParameter () const
+Parameter *MiniParameter::getParameter()
 {
   return m_param;
 }
 
-
-void MiniParameter::setSelected (bool selected)
+const Parameter *MiniParameter::getParameter() const
 {
-  m_label->setSelected (selected);
+  return m_param;
 }
 
-bool MiniParameter::isSelected () const
+void MiniParameter::setSelected(bool selected)
 {
-  return m_label->isSelected ();
+  m_label->setSelected(selected);
+}
+
+bool MiniParameter::isSelected() const
+{
+  return m_label->isSelected();
 }

@@ -12,13 +12,13 @@
 #include <complex>
 #include <complex.h>
 
-FrameBuffer::StackScopeGuard::StackScopeGuard(FrameBuffer *fb) :
-    m_fb(fb)
+FrameBuffer::StackScopeGuard::StackScopeGuard(FrameBuffer *fb)
+    : m_fb(fb)
 {
 }
 
-FrameBuffer::StackScopeGuard::StackScopeGuard(StackScopeGuard &&other) :
-    m_fb(nullptr)
+FrameBuffer::StackScopeGuard::StackScopeGuard(StackScopeGuard &&other)
+    : m_fb(nullptr)
 {
   swap(m_fb, other.m_fb);
 }
@@ -27,15 +27,15 @@ FrameBuffer::StackScopeGuard::~StackScopeGuard()
 {
 }
 
-FrameBuffer::Clip::Clip(FrameBuffer *fb, const Rect &rect) :
-    StackScopeGuard(fb)
+FrameBuffer::Clip::Clip(FrameBuffer *fb, const Rect &rect)
+    : StackScopeGuard(fb)
 {
   auto intersection = rect.getIntersection(m_fb->m_clips.top());
   fb->m_clips.push(intersection);
 }
 
-FrameBuffer::Clip::Clip(Clip &&other) :
-    StackScopeGuard(std::move(other))
+FrameBuffer::Clip::Clip(Clip &&other)
+    : StackScopeGuard(std::move(other))
 {
 }
 
@@ -50,14 +50,14 @@ bool FrameBuffer::Clip::isEmpty() const
   return m_fb->m_clips.top().isEmpty();
 }
 
-FrameBuffer::Offset::Offset(FrameBuffer *fb, const Point &offset) :
-    StackScopeGuard(fb)
+FrameBuffer::Offset::Offset(FrameBuffer *fb, const Point &offset)
+    : StackScopeGuard(fb)
 {
   m_fb->m_offsets.push(m_fb->m_offsets.top() + offset);
 }
 
-FrameBuffer::Offset::Offset(Offset &&other) :
-    StackScopeGuard(std::move(other))
+FrameBuffer::Offset::Offset(Offset &&other)
+    : StackScopeGuard(std::move(other))
 {
 }
 
@@ -96,7 +96,7 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::setPixel(tCoordinate x, tCoordinate y)
 {
-  const auto& offset = m_offsets.top();
+  const auto &offset = m_offsets.top();
   setOffsetPixel(x + offset.getX(), y + offset.getY());
 }
 
@@ -122,7 +122,6 @@ inline long FrameBuffer::getIndex(tCoordinate x, tCoordinate y) const
 
 void FrameBuffer::unmapAndClose()
 {
-
 }
 
 void FrameBuffer::clear()
@@ -138,7 +137,7 @@ void FrameBuffer::setColor(const Colors &c)
 
 void FrameBuffer::fiddleColor(tPixel p)
 {
-  m_currentColor = (Colors) (p);
+  m_currentColor = (Colors)(p);
   g_assert(m_currentColor);
 }
 
@@ -167,13 +166,15 @@ void FrameBuffer::fillRect(const Rect &rect)
   }
 }
 
-void FrameBuffer::fillCircle(const Point& pos, int radius, int steps)
+void FrameBuffer::fillCircle(const Point &pos, int radius, int steps)
 {
-  if(radius <= 6) {
+  if(radius <= 6)
+  {
     fillRect(pos.getX() - radius / 2, pos.getY() - radius, radius, radius * 2);
     fillRect(pos.getX() - radius, pos.getY() - radius / 2, radius * 2, radius);
   }
-  else {
+  else
+  {
     auto theta = 0;
     auto h = pos.getX();
     auto k = pos.getY();
@@ -181,11 +182,11 @@ void FrameBuffer::fillCircle(const Point& pos, int radius, int steps)
 
     while(theta <= 360)
     {
-      const auto x = h + radius*cos(theta);
-      const auto y = k + radius*sin(theta);
+      const auto x = h + radius * cos(theta);
+      const auto y = k + radius * sin(theta);
       if(abs(x - h) <= radius + 0.5 && abs(x - h) >= radius - 0.5)
         setPixel(x, y);
-      theta+=step;
+      theta += step;
     }
   }
 }
@@ -258,7 +259,7 @@ void FrameBuffer::swapBuffers()
   for(int i = 0; i < m_backBuffer.size(); i++)
   {
     auto c = m_backBuffer.data()[i];
-    g_assert(isValidColor((Colors)c));
+    g_assert(isValidColor((Colors) c));
   }
 #endif
   auto bytes = Glib::Bytes::create(m_backBuffer.data(), m_backBuffer.size());

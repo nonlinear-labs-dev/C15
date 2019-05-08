@@ -18,80 +18,81 @@ class UsageMode;
 
 class HWUI
 {
-  public:
-    HWUI ();
-    virtual ~HWUI ();
+ public:
+  HWUI();
+  virtual ~HWUI();
 
-    void init ();
+  void init();
 
-    void indicateBlockingMainThread ();
+  void indicateBlockingMainThread();
 
-    void undoableSetFocusAndMode (UNDO::Scope::tTransactionPtr transaction, FocusAndMode focusAndMode);
-    void setUiModeDetail(UIDetail detail);
-    void undoableSetFocusAndMode (FocusAndMode focusAndMode);
-    void setFocusAndMode (FocusAndMode focusAndMode);
-    FocusAndMode getFocusAndMode () const;
+  void undoableSetFocusAndMode(UNDO::Scope::tTransactionPtr transaction, FocusAndMode focusAndMode);
+  void setUiModeDetail(UIDetail detail);
+  void undoableSetFocusAndMode(FocusAndMode focusAndMode);
+  void setFocusAndMode(FocusAndMode focusAndMode);
+  FocusAndMode getFocusAndMode() const;
 
-    void freezeFocusAndMode();
-    void thawFocusAndMode();
+  void freezeFocusAndMode();
+  void thawFocusAndMode();
 
-    PanelUnit &getPanelUnit ();
-    const PanelUnit &getPanelUnit () const;
+  PanelUnit &getPanelUnit();
+  const PanelUnit &getPanelUnit() const;
 
-    BaseUnit &getBaseUnit ();
-    const BaseUnit &getBaseUnit () const;
+  BaseUnit &getBaseUnit();
+  const BaseUnit &getBaseUnit() const;
 
-    void testDisplays();
+  void testDisplays();
 
-    ButtonModifiers getButtonModifiers () const;
-    bool isResolutionFine () const;
-    void unsetFineMode();
-    bool isModifierSet (ButtonModifier m) const;
-    bool getButtonState(uint16_t buttonId) const;
+  ButtonModifiers getButtonModifiers() const;
+  bool isResolutionFine() const;
+  void unsetFineMode();
+  bool isModifierSet(ButtonModifier m) const;
+  bool getButtonState(uint16_t buttonId) const;
 
-    sigc::connection onModifiersChanged (slot<void, ButtonModifiers> cb);
-    sigc::connection connectToBlinkTimer (slot<void, int> cb);
-    void deInit();
-    const bool getOldLayoutsSetting() const;
-    private:
-    void onButtonMessage(WebSocketSession::tMessage msg);
-    void onButtonPressed (Buttons buttonID, bool state);
-    void onKeyboardLineRead (Glib::RefPtr<Gio::AsyncResult>& res);
+  sigc::connection onModifiersChanged(slot<void, ButtonModifiers> cb);
+  sigc::connection connectToBlinkTimer(slot<void, int> cb);
+  void deInit();
+  const bool getOldLayoutsSetting() const;
 
-    void addModifier (ButtonModifier i);
-    void removeModifier (ButtonModifier i);
-    void setModifiers (ButtonModifiers m);
+ private:
+  void onButtonMessage(WebSocketSession::tMessage msg);
+  void onButtonPressed(Buttons buttonID, bool state);
+  void onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res);
 
-    bool onBlinkTimeout ();
-    void setupFocusAndMode();
+  void addModifier(ButtonModifier i);
+  void removeModifier(ButtonModifier i);
+  void setModifiers(ButtonModifiers m);
 
-    void setModifiers(Buttons buttonID, bool state);
-    bool detectAffengriff (Buttons buttonID, bool state);
-    bool isFineAllowed();
+  bool onBlinkTimeout();
+  void setupFocusAndMode();
 
-    FocusAndMode restrictFocusAndMode(FocusAndMode in) const;
+  void setModifiers(Buttons buttonID, bool state);
+  bool detectAffengriff(Buttons buttonID, bool state);
+  bool isFineAllowed();
 
-    PanelUnit m_panelUnit;
-    BaseUnit m_baseUnit;
+  FocusAndMode restrictFocusAndMode(FocusAndMode in) const;
 
-    RefPtr<Gio::Cancellable> m_readersCancel;
-    RefPtr<Gio::DataInputStream> m_keyboardInput;
+  PanelUnit m_panelUnit;
+  BaseUnit m_baseUnit;
 
-    FineButton m_fineButton;
-    ButtonModifiers m_modifiers;
+  RefPtr<Gio::Cancellable> m_readersCancel;
+  RefPtr<Gio::DataInputStream> m_keyboardInput;
 
-    sigc::connection m_blinkTimerConnection;
-    Signal<void, ButtonModifiers> m_modifersChanged;
-    Signal<void, int> m_blinkTimer;
-    std::array<bool, (size_t)Buttons::NUM_BUTTONS>  m_buttonStates;
+  FineButton m_fineButton;
+  ButtonModifiers m_modifiers;
 
-    int m_affengriffState = 0;
-    bool m_oldLayouts = false;
+  sigc::connection m_blinkTimerConnection;
+  Signal<void, ButtonModifiers> m_modifersChanged;
+  Signal<void, int> m_blinkTimer;
+  std::array<bool, (size_t) Buttons::NUM_BUTTONS> m_buttonStates;
 
-    FocusAndMode m_focusAndMode;
+  int m_affengriffState = 0;
+  bool m_oldLayouts = false;
 
-    int m_blinkCount;
-    Expiration m_switchOffBlockingMainThreadIndicator;
+  FocusAndMode m_focusAndMode;
 
-    bool m_focusAndModeFrozen = false;
-  };
+  int m_blinkCount;
+  Expiration m_switchOffBlockingMainThreadIndicator;
+
+  bool m_focusAndModeFrozen = false;
+};

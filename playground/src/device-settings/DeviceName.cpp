@@ -4,8 +4,8 @@
 #include <set>
 #include <tools/TimeTools.h>
 
-DeviceName::DeviceName(Settings &parent) :
-    super(parent)
+DeviceName::DeviceName(Settings &parent)
+    : super(parent)
 {
 }
 

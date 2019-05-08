@@ -2,11 +2,11 @@
 
 #include "LinearScaleConverter.h"
 
-class IdentityScaleConverter: public LinearScaleConverter
+class IdentityScaleConverter : public LinearScaleConverter
 {
-    typedef LinearScaleConverter super;
+  typedef LinearScaleConverter super;
 
-  public:
-    IdentityScaleConverter();
-    virtual ~IdentityScaleConverter();
+ public:
+  IdentityScaleConverter();
+  virtual ~IdentityScaleConverter();
 };

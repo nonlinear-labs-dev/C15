@@ -1,11 +1,11 @@
 #include <xml/VersionAttribute.h>
 
-VersionAttribute::VersionAttribute (int v) :
- Attribute("version", v)
+VersionAttribute::VersionAttribute(int v)
+    : Attribute("version", v)
 {
 }
 
-VersionAttribute::~VersionAttribute ()
+VersionAttribute::~VersionAttribute()
 {
 }
 

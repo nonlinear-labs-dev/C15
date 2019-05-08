@@ -10,26 +10,26 @@ class Scrollable;
 
 class InfoLayout : public DFBLayout
 {
-  private:
-    typedef DFBLayout super;
+ private:
+  typedef DFBLayout super;
 
-  public:
-    InfoLayout ();
+ public:
+  InfoLayout();
 
-    virtual void init() override;
+  virtual void init() override;
 
-  protected:
-    virtual bool onRotary (int inc, ButtonModifiers modifiers) override;
-    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
+ protected:
+  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
-    virtual void addModuleCaption() = 0;
-    virtual void addHeadline() = 0;
-    virtual void addInfoLabel() = 0;
-    virtual Scrollable* createScrollableContent() = 0;
-    virtual Rect getScrollableAreaRect () const;
+  virtual void addModuleCaption() = 0;
+  virtual void addHeadline() = 0;
+  virtual void addInfoLabel() = 0;
+  virtual Scrollable* createScrollableContent() = 0;
+  virtual Rect getScrollableAreaRect() const;
 
-    void scrollToMax();
+  void scrollToMax();
 
-  private:
-    ScrollArea *m_scrollArea = nullptr;
+ private:
+  ScrollArea* m_scrollArea = nullptr;
 };

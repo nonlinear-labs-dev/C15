@@ -1,11 +1,11 @@
 #include "PendingHTTPRequests.h"
 #include "HTTPRequest.h"
 
-PendingHTTPRequests::PendingHTTPRequests ()
+PendingHTTPRequests::PendingHTTPRequests()
 {
 }
 
-PendingHTTPRequests::~PendingHTTPRequests ()
+PendingHTTPRequests::~PendingHTTPRequests()
 {
 }
 
@@ -41,7 +41,7 @@ bool PendingHTTPRequests::removeIfExists(SoupMessage *msg)
     {
       if(httpRequest->matches(msg))
       {
-        m_pendingMessages.erase (it);
+        m_pendingMessages.erase(it);
         return true;
       }
     }

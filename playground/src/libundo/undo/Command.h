@@ -8,40 +8,40 @@ namespace UNDO
 
   class Command
   {
-    public:
-      typedef std::shared_ptr<Command> tCommandPtr;
+   public:
+    typedef std::shared_ptr<Command> tCommandPtr;
 
-      Command ();
-      virtual ~Command ();
+    Command();
+    virtual ~Command();
 
-      void setParentTransaction (Transaction *parent);
-      bool hasParentTransaction () const;
+    void setParentTransaction(Transaction *parent);
+    bool hasParentTransaction() const;
 
-      void doAction () const;
-      void undoAction () const;
-      void redoAction () const;
+    void doAction() const;
+    void undoAction() const;
+    void redoAction() const;
 
-      enum State
-      {
-        INITIAL,
-        DOING,
-        DONE,
-        UNDOING,
-        UNDONE,
-        REDOING,
-        REDONE
-      };
+    enum State
+    {
+      INITIAL,
+      DOING,
+      DONE,
+      UNDOING,
+      UNDONE,
+      REDOING,
+      REDONE
+    };
 
-      State getState () const;
+    State getState() const;
 
-    protected:
-      virtual void implDoAction () const = 0;
-      virtual void implUndoAction () const = 0;
-      virtual void implRedoAction () const = 0;
+   protected:
+    virtual void implDoAction() const = 0;
+    virtual void implUndoAction() const = 0;
+    virtual void implRedoAction() const = 0;
 
-    private:
-      Transaction *m_parent = nullptr;
-      mutable State m_state;
+   private:
+    Transaction *m_parent = nullptr;
+    mutable State m_state;
   };
 
 } /* namespace UNDO */

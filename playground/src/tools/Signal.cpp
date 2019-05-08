@@ -4,64 +4,59 @@
 
 static TestDriver<Signal<void, bool>> tests;
 
-template<>
-void Signal<void, bool>::registerTests()
+template <> void Signal<void, bool>::registerTests()
 {
   class Sender : public sigc::trackable
   {
-  public:
+   public:
     Signal<void, bool> sig;
   };
-  
+
   class Receiver : public sigc::trackable
   {
-  public:
-    Receiver (bool &r) :
-    received (r)
+   public:
+    Receiver(bool &r)
+        : received(r)
     {
-      
     }
-    void fn (bool v)
+    void fn(bool v)
     {
       received = true;
     }
-    
+
     bool &received;
   };
-  
-  g_test_add_func ("/Signals/normalLifeCycle", []()
-  {
+
+  g_test_add_func("/Signals/normalLifeCycle", []() {
     bool received = false;
     Sender *s = new Sender();
-    Receiver *r = new Receiver (received);
-    s->sig.connectAndInit (mem_fun (r, &Receiver::fn), false);
-    g_main_iteration (FALSE);
+    Receiver *r = new Receiver(received);
+    s->sig.connectAndInit(mem_fun(r, &Receiver::fn), false);
+    g_main_iteration(FALSE);
     delete r;
     delete s;
-    g_assert (received);
+    g_assert(received);
   });
 
-  g_test_add_func ("/Signals/senderDiesFirst", []()
-  {
+  g_test_add_func("/Signals/senderDiesFirst", []() {
     bool received = false;
     Sender *s = new Sender();
-    Receiver *r = new Receiver (received);
-    s->sig.connectAndInit (mem_fun (r, &Receiver::fn), false);
+    Receiver *r = new Receiver(received);
+    s->sig.connectAndInit(mem_fun(r, &Receiver::fn), false);
     delete s;
-    g_main_iteration (FALSE);
+    g_main_iteration(FALSE);
     delete r;
-    g_assert (!received);
+    g_assert(!received);
   });
-  
-  g_test_add_func ("/Signals/receiverDiesFirst", []()
-  {
+
+  g_test_add_func("/Signals/receiverDiesFirst", []() {
     bool received = false;
     Sender *s = new Sender();
-    Receiver *r = new Receiver (received);
-    s->sig.connectAndInit (mem_fun (r, &Receiver::fn), false);
+    Receiver *r = new Receiver(received);
+    s->sig.connectAndInit(mem_fun(r, &Receiver::fn), false);
     delete r;
-    g_main_iteration (FALSE);
+    g_main_iteration(FALSE);
     delete s;
-    g_assert (!received);
+    g_assert(!received);
   });
 }

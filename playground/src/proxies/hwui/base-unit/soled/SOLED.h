@@ -7,14 +7,14 @@ class Setting;
 
 class SOLED : public OLEDProxy
 {
-    typedef OLEDProxy super;
+  typedef OLEDProxy super;
 
-  public:
-    SOLED ();
-    virtual ~SOLED ();
-    void init ();
-    void resetSplash();
+ public:
+  SOLED();
+  virtual ~SOLED();
+  void init();
+  void resetSplash();
 
-  private:
-    void onBaseUnitUIModeChange (const Setting *s);
+ private:
+  void onBaseUnitUIModeChange(const Setting *s);
 };

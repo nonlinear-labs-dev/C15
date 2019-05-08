@@ -7,19 +7,18 @@ namespace DescriptiveLayouts
 
   class ConsistencyChecker
   {
-    public:
-      ConsistencyChecker(std::ostream &out);
+   public:
+    ConsistencyChecker(std::ostream &out);
 
-      bool checkAll();
+    bool checkAll();
 
-    private:
-      bool checkLayoutSelectorsUnique();
-      bool checkLayoutsContainOnlyKnownControlClasses();
-      bool checkEventTargetsAreKnown();
-      bool checkStyleSelectorsUseKnownEntities();
-      bool checkAllControlClassesAreUsed();
+   private:
+    bool checkLayoutSelectorsUnique();
+    bool checkLayoutsContainOnlyKnownControlClasses();
+    bool checkEventTargetsAreKnown();
+    bool checkStyleSelectorsUseKnownEntities();
+    bool checkAllControlClassesAreUsed();
 
-      std::ostream &m_out;
+    std::ostream &m_out;
   };
-
 }

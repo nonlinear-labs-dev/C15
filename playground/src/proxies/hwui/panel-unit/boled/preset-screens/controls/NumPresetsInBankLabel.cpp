@@ -4,8 +4,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/NumPresetsInBankLabel.h>
 #include <presets/PresetBank.h>
 
-NumPresetsInBankLabel::NumPresetsInBankLabel(const Rect &pos) :
-    super(pos)
+NumPresetsInBankLabel::NumPresetsInBankLabel(const Rect &pos)
+    : super(pos)
 {
   Application::get().getPresetManager()->onBankSelection(mem_fun(this, &NumPresetsInBankLabel::updateText));
 }

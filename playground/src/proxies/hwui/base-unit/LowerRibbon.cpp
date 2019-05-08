@@ -9,71 +9,73 @@
 #include <glib.h>
 #include <math.h>
 
-LowerRibbon::LowerRibbon ()
+LowerRibbon::LowerRibbon()
 {
-  initLEDs ();
-  Application::get ().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::mem_fun (this, &LowerRibbon::onParamSelectionChanged));
+  initLEDs();
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::mem_fun(this, &LowerRibbon::onParamSelectionChanged));
 }
 
-LowerRibbon::~LowerRibbon ()
+LowerRibbon::~LowerRibbon()
 {
 }
 
-int LowerRibbon::posToLedID (int pos) const
+int LowerRibbon::posToLedID(int pos) const
 {
   return pos * 2;
 }
 
-void LowerRibbon::onParamSelectionChanged (Parameter * oldOne, Parameter * newOne)
+void LowerRibbon::onParamSelectionChanged(Parameter *oldOne, Parameter *newOne)
 {
-  reconnect ();
+  reconnect();
 }
 
-void LowerRibbon::reconnect ()
+void LowerRibbon::reconnect()
 {
-  m_paramConnection.disconnect ();
+  m_paramConnection.disconnect();
 
-  if (auto p = getResponsibleParameter ())
-    m_paramConnection = p->onParameterChanged (sigc::mem_fun (this, &LowerRibbon::onParamValueChanged));
+  if(auto p = getResponsibleParameter())
+    m_paramConnection = p->onParameterChanged(sigc::mem_fun(this, &LowerRibbon::onParamValueChanged));
 }
 
-Parameter * LowerRibbon::getResponsibleParameter ()
+Parameter *LowerRibbon::getResponsibleParameter()
 {
-  return Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (HardwareSourcesGroup::getLowerRibbonParameterID ());
+  return Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+      HardwareSourcesGroup::getLowerRibbonParameterID());
 }
 
-void LowerRibbon::onParamValueChanged (const Parameter *param)
+void LowerRibbon::onParamValueChanged(const Parameter *param)
 {
-  auto ribbonParameter = dynamic_cast<const RibbonParameter *> (param);
-  auto ribbonMode = ribbonParameter->getRibbonReturnMode ();
+  auto ribbonParameter = dynamic_cast<const RibbonParameter *>(param);
+  auto ribbonMode = ribbonParameter->getRibbonReturnMode();
 
   bool bipol = ribbonMode == RibbonParameter::RETURN;
 
-  auto paramVal = param->getControlPositionValue ();
+  auto paramVal = param->getControlPositionValue();
 
-  if (!bipol)
+  if(!bipol)
   {
-    setLEDsForValueUniPolar (paramVal, false);
+    setLEDsForValueUniPolar(paramVal, false);
   }
   else
   {
-    setLEDsForValueBiPolar (paramVal, false);
+    setLEDsForValueBiPolar(paramVal, false);
   }
 }
 
-void LowerRibbon::indicateBlockingMainThread (bool onOff)
+void LowerRibbon::indicateBlockingMainThread(bool onOff)
 {
   m_indicateBlockingMainThread = onOff;
 
-  if (m_indicateBlockingMainThread)
+  if(m_indicateBlockingMainThread)
   {
-    for (int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
+    for(int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
     {
-      setLEDState (i, (i % 2 == 0) ? 3 : 0, false);
+      setLEDState(i, (i % 2 == 0) ? 3 : 0, false);
     }
   }
   else
   {
-    onParamValueChanged (getResponsibleParameter ());}
+    onParamValueChanged(getResponsibleParameter());
   }
+}

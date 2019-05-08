@@ -6,15 +6,14 @@ class Setting;
 
 class BenderCurveEditor : public MenuEditor
 {
-  private:
-    typedef MenuEditor super;
+ private:
+  typedef MenuEditor super;
 
-  public:
-    BenderCurveEditor ();
-    virtual ~BenderCurveEditor ();
+ public:
+  BenderCurveEditor();
+  virtual ~BenderCurveEditor();
 
-    void incSetting (int inc) override;
-    const vector<ustring> &getDisplayStrings () const override;
-    int getSelectedIndex () const override;
+  void incSetting(int inc) override;
+  const vector<ustring> &getDisplayStrings() const override;
+  int getSelectedIndex() const override;
 };
-

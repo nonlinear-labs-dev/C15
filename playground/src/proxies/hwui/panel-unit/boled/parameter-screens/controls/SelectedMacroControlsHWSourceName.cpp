@@ -4,38 +4,38 @@
 #include "presets/EditBuffer.h"
 #include "parameters/MacroControlParameter.h"
 
-SelectedMacroControlsHWSourceName::SelectedMacroControlsHWSourceName (const Rect &rect) :
-    super (rect)
+SelectedMacroControlsHWSourceName::SelectedMacroControlsHWSourceName(const Rect& rect)
+    : super(rect)
 {
-  Application::get().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide < 0 > (sigc::mem_fun (this, &SelectedMacroControlsHWSourceName::onParameterSelected)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceName::onParameterSelected)));
 }
 
-SelectedMacroControlsHWSourceName::~SelectedMacroControlsHWSourceName ()
+SelectedMacroControlsHWSourceName::~SelectedMacroControlsHWSourceName()
 {
 }
 
-void SelectedMacroControlsHWSourceName::onParameterSelected (Parameter * newOne)
+void SelectedMacroControlsHWSourceName::onParameterSelected(Parameter* newOne)
 {
-  m_mcChanged.disconnect ();
-  m_mcChanged = newOne->onParameterChanged (sigc::mem_fun (this, &SelectedMacroControlsHWSourceName::onMCChanged));
+  m_mcChanged.disconnect();
+  m_mcChanged = newOne->onParameterChanged(sigc::mem_fun(this, &SelectedMacroControlsHWSourceName::onMCChanged));
 }
 
-void SelectedMacroControlsHWSourceName::onMCChanged (const Parameter* param)
+void SelectedMacroControlsHWSourceName::onMCChanged(const Parameter* param)
 {
-  if (auto mc = dynamic_cast<const MacroControlParameter*> (param))
+  if(auto mc = dynamic_cast<const MacroControlParameter*>(param))
   {
-    int hwSourceID = mc->getUiSelectedHardwareSource ();
+    int hwSourceID = mc->getUiSelectedHardwareSource();
 
-    if (m_hwParamID != hwSourceID)
+    if(m_hwParamID != hwSourceID)
     {
       m_hwParamID = hwSourceID;
 
-      if (hwSourceID > 0)
+      if(hwSourceID > 0)
       {
-        if (auto hwParam = Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (hwSourceID))
+        if(auto hwParam = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(hwSourceID))
         {
-          setText (hwParam->getLongName ());
+          setText(hwParam->getLongName());
         }
       }
     }

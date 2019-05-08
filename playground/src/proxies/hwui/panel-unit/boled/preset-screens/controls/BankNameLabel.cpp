@@ -3,8 +3,8 @@
 #include "presets/PresetManager.h"
 #include "presets/PresetBank.h"
 
-BankNameLabel::BankNameLabel(const Rect &pos) :
-    super(pos)
+BankNameLabel::BankNameLabel(const Rect &pos)
+    : super(pos)
 {
 }
 
@@ -17,7 +17,8 @@ void BankNameLabel::updateLabel(shared_ptr<PresetBank> newBank)
   if(newBank)
   {
     Glib::ustring bankName = newBank->getName(true);
-    Glib::ustring s = to_string(Application::get().getPresetManager()->calcOrderNumber(newBank.get())) + ": " + bankName;
+    Glib::ustring s
+        = to_string(Application::get().getPresetManager()->calcOrderNumber(newBank.get())) + ": " + bankName;
     setText(s);
   }
   else

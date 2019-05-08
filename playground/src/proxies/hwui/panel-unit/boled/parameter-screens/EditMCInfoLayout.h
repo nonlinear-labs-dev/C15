@@ -6,15 +6,15 @@ class MacroControlParameter;
 
 class EditMCInfoLayout : public RenameLayout
 {
-  private:
-    typedef RenameLayout super;
+ private:
+  typedef RenameLayout super;
 
-  public:
-    EditMCInfoLayout ();
+ public:
+  EditMCInfoLayout();
 
-  private:
-    virtual void commit (const Glib::ustring &newName) override;
-    virtual Glib::ustring getInitialText () const override;
+ private:
+  virtual void commit(const Glib::ustring &newName) override;
+  virtual Glib::ustring getInitialText() const override;
 
-    MacroControlParameter *getMacroControl () const;
+  MacroControlParameter *getMacroControl() const;
 };

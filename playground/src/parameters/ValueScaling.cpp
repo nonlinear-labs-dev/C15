@@ -17,4 +17,3 @@ ValueScaling::tValue ValueScaling::expCtrl(tValue in, tValue factor)
   tValue basis = factor << exp;
   return (basis + ((rest * basis) >> 4));
 }
-

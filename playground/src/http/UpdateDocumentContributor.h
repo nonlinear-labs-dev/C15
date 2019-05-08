@@ -13,58 +13,57 @@ namespace UNDO
 class Writer;
 class UpdateDocumentMaster;
 
-class UpdateDocumentContributor : public IntrusiveListItem<UpdateDocumentContributor*>
+class UpdateDocumentContributor : public IntrusiveListItem<UpdateDocumentContributor *>
 {
-  private:
-    using super = IntrusiveListItem<UpdateDocumentContributor*>;
+ private:
+  using super = IntrusiveListItem<UpdateDocumentContributor *>;
 
-  public:
-    typedef int tUpdateID;
+ public:
+  typedef int tUpdateID;
 
-    UpdateDocumentContributor(UpdateDocumentContributor *parent);
-    virtual ~UpdateDocumentContributor();
+  UpdateDocumentContributor(UpdateDocumentContributor *parent);
+  virtual ~UpdateDocumentContributor();
 
-    UpdateDocumentContributor(const UpdateDocumentContributor& other) = delete;
-    UpdateDocumentContributor& operator=(const UpdateDocumentContributor&) = delete;
+  UpdateDocumentContributor(const UpdateDocumentContributor &other) = delete;
+  UpdateDocumentContributor &operator=(const UpdateDocumentContributor &) = delete;
 
-    enum ChangeFlags : uint64_t
-    {
-      Generic = 1 << 0,
-      LockState = 1 << 1,
-    };
+  enum ChangeFlags : uint64_t
+  {
+    Generic = 1 << 0,
+    LockState = 1 << 1,
+  };
 
-    virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic);
-    void onRestore();
+  virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic);
+  void onRestore();
 
-    bool didChangeSince(tUpdateID clientsUpdateID) const;
-    tUpdateID getUpdateIDOfLastChange() const;
+  bool didChangeSince(tUpdateID clientsUpdateID) const;
+  tUpdateID getUpdateIDOfLastChange() const;
 
-    virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const = 0;
+  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const = 0;
 
-    const UpdateDocumentContributor *getParent() const;
-    UpdateDocumentContributor *getParent();
-    UpdateDocumentMaster *getRoot();
-    const UpdateDocumentMaster *getRoot() const;
+  const UpdateDocumentContributor *getParent() const;
+  UpdateDocumentContributor *getParent();
+  UpdateDocumentMaster *getRoot();
+  const UpdateDocumentMaster *getRoot() const;
 
-    virtual UNDO::Scope &getUndoScope();
-    virtual const UNDO::Scope &getUndoScope() const;
+  virtual UNDO::Scope &getUndoScope();
+  virtual const UNDO::Scope &getUndoScope() const;
 
-    void propagateChangeDownstream();
-    void orphan();
+  void propagateChangeDownstream();
+  void orphan();
 
-  protected:
-    void setUpdateID(tUpdateID id);
-    void incUpdateID();
+ protected:
+  void setUpdateID(tUpdateID id);
+  void incUpdateID();
 
-    void adopt(UpdateDocumentContributor *parent);
+  void adopt(UpdateDocumentContributor *parent);
 
-  private:
-    using super::getNext;
-    using super::getPrev;
+ private:
+  using super::getNext;
+  using super::getPrev;
 
-    UpdateDocumentContributor *m_parent = nullptr;
-    IntrusiveList<UpdateDocumentContributor*> m_children;
+  UpdateDocumentContributor *m_parent = nullptr;
+  IntrusiveList<UpdateDocumentContributor *> m_children;
 
-    tUpdateID m_updateIDOnLastChange;
+  tUpdateID m_updateIDOnLastChange;
 };
-

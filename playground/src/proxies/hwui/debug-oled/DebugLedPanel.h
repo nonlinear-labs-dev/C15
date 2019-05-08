@@ -4,17 +4,16 @@
 
 class DebugLedPanel : public ControlWithChildren
 {
-  private:
-    typedef ControlWithChildren super;
+ private:
+  typedef ControlWithChildren super;
 
-  public:
-    DebugLedPanel (const Rect &pos, int startID);
-    virtual ~DebugLedPanel ();
+ public:
+  DebugLedPanel(const Rect& pos, int startID);
+  virtual ~DebugLedPanel();
 
-    bool setLedState(int led, bool onOrOff);
+  bool setLedState(int led, bool onOrOff);
 
-  private:
-    DebugLedPanel (const DebugLedPanel& other) = delete;
-    DebugLedPanel& operator= (const DebugLedPanel&) = delete;
+ private:
+  DebugLedPanel(const DebugLedPanel& other) = delete;
+  DebugLedPanel& operator=(const DebugLedPanel&) = delete;
 };
-

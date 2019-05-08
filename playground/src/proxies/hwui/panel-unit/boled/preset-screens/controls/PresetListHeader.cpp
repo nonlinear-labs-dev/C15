@@ -7,9 +7,9 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListHeader.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListHeaderArrow.h>
 
-PresetListHeader::PresetListHeader(const Rect &pos, bool showBankArrows) :
-    super(pos),
-    m_showBankArrows(showBankArrows)
+PresetListHeader::PresetListHeader(const Rect& pos, bool showBankArrows)
+    : super(pos)
+    , m_showBankArrows(showBankArrows)
 {
 }
 

@@ -4,9 +4,9 @@
 
 class FlangerGroup : public ParameterGroup
 {
-  public:
-    FlangerGroup (ParameterGroupSet *parent);
-    virtual ~FlangerGroup ();
+ public:
+  FlangerGroup(ParameterGroupSet *parent);
+  virtual ~FlangerGroup();
 
-    void init ();
+  void init();
 };

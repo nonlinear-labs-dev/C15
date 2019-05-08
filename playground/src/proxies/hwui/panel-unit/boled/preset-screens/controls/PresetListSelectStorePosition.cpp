@@ -8,8 +8,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListSelectStorePosition.h>
 #include <algorithm>
 
-PresetListSelectStorePosition::PresetListSelectStorePosition(const Rect &pos, bool showBankArrows) :
-    super(pos, showBankArrows)
+PresetListSelectStorePosition::PresetListSelectStorePosition(const Rect &pos, bool showBankArrows)
+    : super(pos, showBankArrows)
 {
   initBankAndPreset();
 }
@@ -59,8 +59,7 @@ void PresetListSelectStorePosition::onBankChanged()
 
 std::pair<int, int> PresetListSelectStorePosition::getSelectedPosition() const
 {
-  return
-  { m_bankPosition, m_presetPosition};
+  return { m_bankPosition, m_presetPosition };
 }
 
 bool PresetListSelectStorePosition::onButton(Buttons i, bool down, ButtonModifiers modifiers)

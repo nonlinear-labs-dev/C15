@@ -3,7 +3,6 @@
 
 class BlockingMainThreadIndication : public BooleanSetting
 {
-  public:
-    using BooleanSetting::BooleanSetting;
+ public:
+  using BooleanSetting::BooleanSetting;
 };
-

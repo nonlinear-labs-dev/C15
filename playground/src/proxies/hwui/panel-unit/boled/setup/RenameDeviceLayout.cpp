@@ -7,23 +7,23 @@
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 
-RenameDeviceLayout::RenameDeviceLayout (shared_ptr<Layout> restore) :
-    m_restore (restore)
+RenameDeviceLayout::RenameDeviceLayout(shared_ptr<Layout> restore)
+    : m_restore(restore)
 {
 }
 
-RenameDeviceLayout::~RenameDeviceLayout ()
+RenameDeviceLayout::~RenameDeviceLayout()
 {
   auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
   boled.reset(m_restore);
 }
 
-void RenameDeviceLayout::commit (const Glib::ustring &newName)
+void RenameDeviceLayout::commit(const Glib::ustring &newName)
 {
-  Application::get ().getSettings ()->getSetting<DeviceName> ()->set (newName);
+  Application::get().getSettings()->getSetting<DeviceName>()->set(newName);
 }
 
-Glib::ustring RenameDeviceLayout::getInitialText () const
+Glib::ustring RenameDeviceLayout::getInitialText() const
 {
-  return Application::get ().getSettings ()->getSetting<DeviceName> ()->get ();
+  return Application::get().getSettings()->getSetting<DeviceName>()->get();
 }

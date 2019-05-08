@@ -4,10 +4,9 @@
 
 class ServedJournal : public ServedStream
 {
-  public:
-    ServedJournal (HTTPServer &server, shared_ptr<HTTPRequest> request);
-    virtual ~ServedJournal ();
+ public:
+  ServedJournal(HTTPServer &server, shared_ptr<HTTPRequest> request);
+  virtual ~ServedJournal();
 
-    void startServing() override;
+  void startServing() override;
 };
-

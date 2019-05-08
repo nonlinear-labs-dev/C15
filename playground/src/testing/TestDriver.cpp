@@ -4,8 +4,8 @@
 static TestDriverBase *listOfDrivers = nullptr;
 static bool s_running = false;
 
-TestDriverBase::TestDriverBase() :
-    next(nullptr)
+TestDriverBase::TestDriverBase()
+    : next(nullptr)
 {
 #ifdef _TESTS
   next = listOfDrivers;
@@ -25,7 +25,7 @@ bool TestDriverBase::isInTestRun()
 void TestDriverBase::doTests(int &numArgs, char **&argv)
 {
 #ifdef _TESTS
-  g_test_init (&numArgs, &argv, NULL);
+  g_test_init(&numArgs, &argv, NULL);
 
   DebugLevel::info("Running tests:");
 
@@ -38,11 +38,10 @@ void TestDriverBase::doTests(int &numArgs, char **&argv)
   }
 
   s_running = true;
-  if(g_test_run () == 0)
+  if(g_test_run() == 0)
     DebugLevel::info("All tests ran without errors.");
   else
     DebugLevel::info("!!! There have been errors running the tests !!!");
   s_running = false;
 #endif
 }
-

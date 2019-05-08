@@ -16,17 +16,17 @@ namespace DETAIL
 {
   class BankComment : public MultiLineLabel
   {
-    public:
-      BankComment(Rect pos) :
-          MultiLineLabel("---")
-      {
-        setPosition(pos);
-      }
+   public:
+    BankComment(Rect pos)
+        : MultiLineLabel("---")
+    {
+      setPosition(pos);
+    }
 
-      Oleds::tFont getFont()
-      {
-        return Oleds::get().getFont("Emphase_8_TXT_Regular", 8);
-      }
+    Oleds::tFont getFont()
+    {
+      return Oleds::get().getFont("Emphase_8_TXT_Regular", 8);
+    }
   };
 }
 
@@ -81,9 +81,11 @@ bool BankInfoContent::fillFromBank(PresetBank *bank)
   infoFields["comment"]->setInfo(bank->getAttribute("Comment", "---"), FrameBuffer::Colors::C128);
   infoFields["state"]->setInfo(bank->calcStateString());
   infoFields["dateofchange"]->setInfo(TimeTools::getDisplayStringFromStamp(bank->getLastChangedTimestamp()));
-  infoFields["importdate"]->setInfo(TimeTools::getDisplayStringFromIso(bank->getAttribute("Date of Import File", "---")));
+  infoFields["importdate"]->setInfo(
+      TimeTools::getDisplayStringFromIso(bank->getAttribute("Date of Import File", "---")));
   infoFields["importfile"]->setInfo(bank->getAttribute("Name of Import File", "---"));
-  infoFields["exportdate"]->setInfo(TimeTools::getDisplayStringFromIso(bank->getAttribute("Date of Export File", "---")));
+  infoFields["exportdate"]->setInfo(
+      TimeTools::getDisplayStringFromIso(bank->getAttribute("Date of Export File", "---")));
   infoFields["exportfile"]->setInfo(bank->getAttribute("Name of Export File", "---"));
   return true;
 }
@@ -123,7 +125,8 @@ void BankInfoContent::fixLayout()
 {
   int y = 0;
 
-  for(auto infoKey : { "name", "comment", "size", "state", "dateofchange", "importdate", "importfile", "exportdate", "exportfile" })
+  for(auto infoKey :
+      { "name", "comment", "size", "state", "dateofchange", "importdate", "importfile", "exportdate", "exportfile" })
   {
     y = infoFields[infoKey]->format(y);
   }

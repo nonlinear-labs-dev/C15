@@ -9,21 +9,22 @@ namespace fs = std::experimental::filesystem;
 
 class FileListControl : public ControlWithChildren
 {
-  private:
-    Label* upperFile;
-    Label* middleFile;
-    Label* bottomFile;
-    Label* bottomFile2;
-    std::unique_ptr<FileTools::FileList> fileList;
-    int selectedItem;
+ private:
+  Label* upperFile;
+  Label* middleFile;
+  Label* bottomFile;
+  Label* bottomFile2;
+  std::unique_ptr<FileTools::FileList> fileList;
+  int selectedItem;
 
-    std::string getFileNameAtIndex(int index);
-  public:
-    FileListControl();
-    void setFileList(FileTools::FileList list);
-    virtual ~FileListControl();
-    void setSelection(int index);
-    void changeSelection(int change);
-    fs::directory_entry getSelection() const;
-    int getSelectedIndex() const;
+  std::string getFileNameAtIndex(int index);
+
+ public:
+  FileListControl();
+  void setFileList(FileTools::FileList list);
+  virtual ~FileListControl();
+  void setSelection(int index);
+  void changeSelection(int change);
+  fs::directory_entry getSelection() const;
+  int getSelectedIndex() const;
 };

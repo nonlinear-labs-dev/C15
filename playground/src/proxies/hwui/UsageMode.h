@@ -13,29 +13,28 @@ class Application;
 
 class UsageMode : public Uncopyable
 {
-  public:
-    UsageMode ();
-    virtual ~UsageMode ();
+ public:
+  UsageMode();
+  virtual ~UsageMode();
 
-    virtual bool onButtonPressed (Buttons buttonID, ButtonModifiers modifiers, bool state);
+  virtual bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
 
-    virtual void setup () = 0;
-    virtual void setupFocusAndMode (FocusAndMode focusAndMode);
-    virtual void bruteForceUpdateLeds();
+  virtual void setup() = 0;
+  virtual void setupFocusAndMode(FocusAndMode focusAndMode);
+  virtual void bruteForceUpdateLeds();
 
-  protected:
-    typedef function<bool (Buttons button, ButtonModifiers modifiers, bool state)> tAction;
+ protected:
+  typedef function<bool(Buttons button, ButtonModifiers modifiers, bool state)> tAction;
 
-    void setupButtonConnection (Buttons buttonID, tAction action);
+  void setupButtonConnection(Buttons buttonID, tAction action);
 
-    Application &getApp ();
-    const Application &getApp () const;
+  Application &getApp();
+  const Application &getApp() const;
 
 #if _TESTS
-    set<gint32> assignedAudioIDs;
+  set<gint32> assignedAudioIDs;
 #endif
 
-  private:
-    std::map<Buttons, tAction> m_actions;
-
+ private:
+  std::map<Buttons, tAction> m_actions;
 };

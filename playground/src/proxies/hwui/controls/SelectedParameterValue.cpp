@@ -4,11 +4,11 @@
 #include <proxies/hwui/controls/SelectedParameterValue.h>
 #include <proxies/hwui/HWUI.h>
 
-SelectedParameterValue::SelectedParameterValue(const Rect &rect) :
-    super(rect)
+SelectedParameterValue::SelectedParameterValue(const Rect &rect)
+    : super(rect)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide < 0 > (sigc::mem_fun(this, &SelectedParameterValue::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedParameterValue::onParameterSelected)));
 
   Application::get().getHWUI()->onModifiersChanged(sigc::mem_fun(this, &SelectedParameterValue::onModifiersChanged));
 }
@@ -22,15 +22,16 @@ void SelectedParameterValue::onModifiersChanged(ButtonModifiers mods)
   onParamValueChanged(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
 }
 
-void SelectedParameterValue::onParameterSelected(Parameter * parameter)
+void SelectedParameterValue::onParameterSelected(Parameter *parameter)
 {
   m_paramValueConnection.disconnect();
 
   if(parameter)
-    m_paramValueConnection = parameter->onParameterChanged(sigc::mem_fun(this, &SelectedParameterValue::onParamValueChanged));
+    m_paramValueConnection
+        = parameter->onParameterChanged(sigc::mem_fun(this, &SelectedParameterValue::onParamValueChanged));
 }
 
-void SelectedParameterValue::onParamValueChanged(const Parameter* param)
+void SelectedParameterValue::onParamValueChanged(const Parameter *param)
 {
   setDirty();
 }

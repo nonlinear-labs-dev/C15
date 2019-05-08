@@ -8,23 +8,22 @@ class Parameter;
 
 class ModulationSourceLabel : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    ModulationSourceLabel (const Rect &r, Font::Justification justification = Font::Justification::Center);
-    virtual ~ModulationSourceLabel ();
+ public:
+  ModulationSourceLabel(const Rect &r, Font::Justification justification = Font::Justification::Center);
+  virtual ~ModulationSourceLabel();
 
-    bool redraw (FrameBuffer &fb) override;
-    void setDimmed();
+  bool redraw(FrameBuffer &fb) override;
+  void setDimmed();
 
-    Font::Justification getJustification () const override;
+  Font::Justification getJustification() const override;
 
-  private:
-    void onParameterSelected (Parameter * parameter);
-    void onParamValueChanged (const Parameter* param);
+ private:
+  void onParameterSelected(Parameter *parameter);
+  void onParamValueChanged(const Parameter *param);
 
-    sigc::connection m_paramValueConnection;
-    Font::Justification m_justification;
+  sigc::connection m_paramValueConnection;
+  Font::Justification m_justification;
 };
-

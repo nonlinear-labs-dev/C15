@@ -4,27 +4,27 @@
 #include <proxies/hwui/panel-unit/boled/setup/BenderCurveEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/MenuEditorEntry.h>
 
-BenderCurveEditor::BenderCurveEditor ()
+BenderCurveEditor::BenderCurveEditor()
 {
-  Application::get ().getSettings ()->getSetting<BenderCurve> ()->onChange (mem_fun (this, &BenderCurveEditor::onSettingChanged));
+  Application::get().getSettings()->getSetting<BenderCurve>()->onChange(
+      mem_fun(this, &BenderCurveEditor::onSettingChanged));
 }
 
-BenderCurveEditor::~BenderCurveEditor ()
+BenderCurveEditor::~BenderCurveEditor()
 {
 }
 
-void BenderCurveEditor::incSetting (int inc)
+void BenderCurveEditor::incSetting(int inc)
 {
-  Application::get ().getSettings ()->getSetting<BenderCurve> ()->inc (inc);
+  Application::get().getSettings()->getSetting<BenderCurve>()->inc(inc);
 }
 
-const vector<ustring> &BenderCurveEditor::getDisplayStrings () const
+const vector<ustring> &BenderCurveEditor::getDisplayStrings() const
 {
-  return Application::get ().getSettings ()->getSetting<BenderCurve> ()->enumToDisplayString ();
+  return Application::get().getSettings()->getSetting<BenderCurve>()->enumToDisplayString();
 }
 
-int BenderCurveEditor::getSelectedIndex () const
+int BenderCurveEditor::getSelectedIndex() const
 {
-  return (int) Application::get ().getSettings ()->getSetting<BenderCurve> ()->get ();
+  return (int) Application::get().getSettings()->getSetting<BenderCurve>()->get();
 }
-

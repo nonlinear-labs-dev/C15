@@ -6,11 +6,10 @@ class Settings;
 
 class SSID : public HostAPDSetting
 {
-  private:
-    typedef HostAPDSetting super;
+ private:
+  typedef HostAPDSetting super;
 
-  public:
-    SSID (Settings &parent);
-    virtual ~SSID ();
+ public:
+  SSID(Settings &parent);
+  virtual ~SSID();
 };
-

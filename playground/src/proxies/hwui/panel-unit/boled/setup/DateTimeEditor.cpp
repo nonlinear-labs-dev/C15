@@ -10,95 +10,95 @@
 #include <cstdio>
 #include <ctime>
 
-static const Rect c_fullRightSidePosition (129, 16, 126, 48);
+static const Rect c_fullRightSidePosition(129, 16, 126, 48);
 
-DateTimeEditor::DateTimeEditor () :
-    ControlWithChildren (Rect (0, 0, 0, 0)),
-    m_originalTime(std::time (nullptr))
+DateTimeEditor::DateTimeEditor()
+    : ControlWithChildren(Rect(0, 0, 0, 0))
+    , m_originalTime(std::time(nullptr))
 {
   auto margin = 5;
   auto y = 12;
   auto w = 20;
 
-  m_labels[Selection::Year] = addControl (new Label ("yyyy", Rect (margin, y, 2 * w, 10)));
-  m_labels[Selection::Month] = addControl (new Label ("mm", Rect (margin + 2 * w, y, w, 10)));
-  m_labels[Selection::Day] = addControl (new Label ("dd", Rect (margin + 3 * w, y, w, 10)));
+  m_labels[Selection::Year] = addControl(new Label("yyyy", Rect(margin, y, 2 * w, 10)));
+  m_labels[Selection::Month] = addControl(new Label("mm", Rect(margin + 2 * w, y, w, 10)));
+  m_labels[Selection::Day] = addControl(new Label("dd", Rect(margin + 3 * w, y, w, 10)));
 
-
-  m_labels[Selection::Hour] = addControl (new Label ("HH", Rect (margin + 4 * w, y, w, 10)));
-  m_labels[Selection::Minute] = addControl (new Label ("MM", Rect (margin + 5 * w, y, w, 10)));
+  m_labels[Selection::Hour] = addControl(new Label("HH", Rect(margin + 4 * w, y, w, 10)));
+  m_labels[Selection::Minute] = addControl(new Label("MM", Rect(margin + 5 * w, y, w, 10)));
 
   y = 24;
 
-  m_controls[Selection::Year] = addControl (new Label ("", Rect (margin, y, 2 * w, 10)));
-  m_controls[Selection::Month] = addControl (new Label ("", Rect (margin + 2 * w, y, w, 10)));
-  m_controls[Selection::Day] = addControl (new Label ("", Rect (margin + 3 * w, y, w, 10)));
+  m_controls[Selection::Year] = addControl(new Label("", Rect(margin, y, 2 * w, 10)));
+  m_controls[Selection::Month] = addControl(new Label("", Rect(margin + 2 * w, y, w, 10)));
+  m_controls[Selection::Day] = addControl(new Label("", Rect(margin + 3 * w, y, w, 10)));
 
-  m_controls[Selection::Hour] = addControl (new Label ("", Rect (margin + 4 * w, y, w, 10)));
-  m_controls[Selection::Minute] = addControl (new Label ("", Rect (margin + 5 * w, y, w, 10)));
+  m_controls[Selection::Hour] = addControl(new Label("", Rect(margin + 4 * w, y, w, 10)));
+  m_controls[Selection::Minute] = addControl(new Label("", Rect(margin + 5 * w, y, w, 10)));
 
   auto buttonHeight = 11;
   auto buttonWidth = 58;
   auto buttonMargin = 3;
 
-  addControl (new Button ("<", Rect (buttonMargin, c_fullRightSidePosition.getHeight () - buttonHeight, buttonWidth, buttonHeight)));
-  addControl (
-      new Button (">",
-          Rect (buttonMargin + buttonWidth + 6, c_fullRightSidePosition.getHeight () - buttonHeight, buttonWidth, buttonHeight)));
+  addControl(new Button(
+      "<", Rect(buttonMargin, c_fullRightSidePosition.getHeight() - buttonHeight, buttonWidth, buttonHeight)));
+  addControl(new Button(">",
+                        Rect(buttonMargin + buttonWidth + 6, c_fullRightSidePosition.getHeight() - buttonHeight,
+                             buttonWidth, buttonHeight)));
 
-  m_labels[m_selection]->setHighlight (true);
-  m_controls[m_selection]->setHighlight (true);
+  m_labels[m_selection]->setHighlight(true);
+  m_controls[m_selection]->setHighlight(true);
 
   m_diff = Application::get().getSettings()->getSetting<DateTimeAdjustment>()->get();
 
-  setTimeValues ();
+  setTimeValues();
 }
 
-DateTimeEditor::~DateTimeEditor ()
+DateTimeEditor::~DateTimeEditor()
 {
 }
 
-void DateTimeEditor::setPosition (const Rect &)
+void DateTimeEditor::setPosition(const Rect &)
 {
-  ControlWithChildren::setPosition (c_fullRightSidePosition);
+  ControlWithChildren::setPosition(c_fullRightSidePosition);
 }
 
-bool DateTimeEditor::onButton (Buttons i, bool down, ButtonModifiers modifiers)
+bool DateTimeEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if (down)
+  if(down)
   {
-    m_labels[m_selection]->setHighlight (false);
-    m_controls[m_selection]->setHighlight (false);
+    m_labels[m_selection]->setHighlight(false);
+    m_controls[m_selection]->setHighlight(false);
 
-    if (i == Buttons::BUTTON_C)
+    if(i == Buttons::BUTTON_C)
     {
-      if (m_selection == 0)
+      if(m_selection == 0)
         m_selection = Selection::Year;
       else
-        m_selection = (Selection) (m_selection - 1);
+        m_selection = (Selection)(m_selection - 1);
     }
 
-    if (i == Buttons::BUTTON_D)
+    if(i == Buttons::BUTTON_D)
     {
-      if (m_selection == Selection::Year)
+      if(m_selection == Selection::Year)
         m_selection = Selection::Month;
       else
-        m_selection = (Selection) (m_selection + 1);
+        m_selection = (Selection)(m_selection + 1);
     }
 
-    m_labels[m_selection]->setHighlight (true);
-    m_controls[m_selection]->setHighlight (true);
+    m_labels[m_selection]->setHighlight(true);
+    m_controls[m_selection]->setHighlight(true);
     true;
   }
   return false;
 }
 
-bool DateTimeEditor::onRotary (int inc, ButtonModifiers modifiers)
+bool DateTimeEditor::onRotary(int inc, ButtonModifiers modifiers)
 {
   std::time_t t = m_originalTime + m_diff;
-  std::tm *tm = std::localtime (&t);
+  std::tm *tm = std::localtime(&t);
 
-  switch (m_selection)
+  switch(m_selection)
   {
     case Month:
       tm->tm_mon += inc;
@@ -126,30 +126,30 @@ bool DateTimeEditor::onRotary (int inc, ButtonModifiers modifiers)
       break;
   }
 
-  auto modifiedTime = timelocal (tm);
+  auto modifiedTime = timelocal(tm);
   Application::get().getSettings()->getSetting<DateTimeAdjustment>()->adjust(modifiedTime);
   m_diff = modifiedTime - m_originalTime;
-  setTimeValues ();
+  setTimeValues();
   return true;
 }
 
-Glib::ustring format (int v, int numDigits)
+Glib::ustring format(int v, int numDigits)
 {
   char format[64];
-  sprintf (format, "%%0%dd", numDigits);
+  sprintf(format, "%%0%dd", numDigits);
   char txt[64];
-  sprintf (txt, format, v);
+  sprintf(txt, format, v);
   return txt;
 }
 
-void DateTimeEditor::setTimeValues ()
+void DateTimeEditor::setTimeValues()
 {
-  std::time_t t = std::time (nullptr) + m_diff;
-  std::tm *tm = std::localtime (&t);
+  std::time_t t = std::time(nullptr) + m_diff;
+  std::tm *tm = std::localtime(&t);
 
-  m_controls[Selection::Month]->setText (format (tm->tm_mon + 1, 2));
-  m_controls[Selection::Day]->setText (format (tm->tm_mday, 2));
-  m_controls[Selection::Year]->setText (format (tm->tm_year + 1900, 4));
-  m_controls[Selection::Hour]->setText (format (tm->tm_hour, 2));
-  m_controls[Selection::Minute]->setText (format (tm->tm_min, 2));
+  m_controls[Selection::Month]->setText(format(tm->tm_mon + 1, 2));
+  m_controls[Selection::Day]->setText(format(tm->tm_mday, 2));
+  m_controls[Selection::Year]->setText(format(tm->tm_year + 1900, 4));
+  m_controls[Selection::Hour]->setText(format(tm->tm_hour, 2));
+  m_controls[Selection::Minute]->setText(format(tm->tm_min, 2));
 }

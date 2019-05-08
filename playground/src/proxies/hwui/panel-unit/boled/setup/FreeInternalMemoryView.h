@@ -6,15 +6,13 @@ class DeviceInformationItem;
 
 class FreeInternalMemoryView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    FreeInternalMemoryView ();
-    virtual ~FreeInternalMemoryView ();
+ public:
+  FreeInternalMemoryView();
+  virtual ~FreeInternalMemoryView();
 
-  private:
-    void onSettingChanged (const DeviceInformationItem *s);
-
+ private:
+  void onSettingChanged(const DeviceInformationItem *s);
 };
-

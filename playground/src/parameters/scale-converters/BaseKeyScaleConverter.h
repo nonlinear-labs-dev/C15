@@ -4,8 +4,7 @@
 
 class BaseKeyScaleConverter : public LinearScaleConverter
 {
-  public:
-    BaseKeyScaleConverter ();
-    virtual ~BaseKeyScaleConverter ();
+ public:
+  BaseKeyScaleConverter();
+  virtual ~BaseKeyScaleConverter();
 };
-

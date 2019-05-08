@@ -39,100 +39,100 @@
 #include <xml/VersionAttribute.h>
 #include <proxies/lpc/LPCProxy.h>
 
-Settings::Settings (UpdateDocumentMaster *master) :
-    super (master),
-    m_actions (*this),
-    m_saveJob (5000, bind (&Settings::save, this))
+Settings::Settings(UpdateDocumentMaster *master)
+    : super(master)
+    , m_actions(*this)
+    , m_saveJob(5000, bind(&Settings::save, this))
 {
-  addSetting ("AutoLoadSelectedPreset", new AutoLoadSelectedPreset (*this));
-  addSetting ("SendPresetAsLPCWriteFallback", new SendPresetAsLPCWriteFallback (*this));
-  addSetting ("PresetStoreModeSetting", new PresetStoreModeSetting (*this));
-  addSetting ("BaseUnitUIMode", new BaseUnitUIMode (*this));
-  addSetting ("NoteShift", new NoteShift (*this));
-  addSetting ("ParameterEditModeRibbonBehaviour", new ParameterEditModeRibbonBehaviour (*this));
-  addSetting ("DebugLevel", new DebugLevel (*this));
-  addSetting ("VelocityCurve", new VelocityCurve (*this));
-  addSetting ("DeviceName", new DeviceName (*this));
-  addSetting ("PresetDragDropEnabled", new PresetDragDropEnabled (*this));
-  addSetting ("TransitionTime", new TransitionTime (*this));
-  addSetting ("RandomizeAmount", new RandomizeAmount (*this));
-  addSetting ("RibbonRelFactor", new RibbonRelativeFactor (*this));
-  addSetting ("Pedal1Type", new PedalType (*this, PEDAL_1_TYPE));
-  addSetting ("Pedal2Type", new PedalType (*this, PEDAL_2_TYPE));
-  addSetting ("Pedal3Type", new PedalType (*this, PEDAL_3_TYPE));
-  addSetting ("Pedal4Type", new PedalType (*this, PEDAL_4_TYPE));
-  addSetting ("EncoderAcceleration", new EncoderAcceleration (*this));
-  addSetting ("AftertouchCurve", new AftertouchCurve(*this));
-  addSetting ("BenderCurve", new BenderCurve(*this));
-  addSetting ("PitchbendOnPressedKeys", new PitchbendOnPressedKey(*this));
-  addSetting ("EditSmoothingTime", new EditSmoothingTime(*this));
-  addSetting ("SSID", new SSID(*this));
-  addSetting ("Passphrase", new Passphrase(*this));
-  addSetting ("PresetGlitchSuppression", new PresetGlitchSuppression(*this));
-  addSetting ("DateTimeAdjustment", new DateTimeAdjustment(*this));
-  addSetting ("SignalFlowIndication", new SignalFlowIndicationSetting(*this));
-  addSetting ("KioskMode", new KioskModeSetting(*this));
-  addSetting ("IndicateBlockedUI", new BlockingMainThreadIndication(*this, false));
+  addSetting("AutoLoadSelectedPreset", new AutoLoadSelectedPreset(*this));
+  addSetting("SendPresetAsLPCWriteFallback", new SendPresetAsLPCWriteFallback(*this));
+  addSetting("PresetStoreModeSetting", new PresetStoreModeSetting(*this));
+  addSetting("BaseUnitUIMode", new BaseUnitUIMode(*this));
+  addSetting("NoteShift", new NoteShift(*this));
+  addSetting("ParameterEditModeRibbonBehaviour", new ParameterEditModeRibbonBehaviour(*this));
+  addSetting("DebugLevel", new DebugLevel(*this));
+  addSetting("VelocityCurve", new VelocityCurve(*this));
+  addSetting("DeviceName", new DeviceName(*this));
+  addSetting("PresetDragDropEnabled", new PresetDragDropEnabled(*this));
+  addSetting("TransitionTime", new TransitionTime(*this));
+  addSetting("RandomizeAmount", new RandomizeAmount(*this));
+  addSetting("RibbonRelFactor", new RibbonRelativeFactor(*this));
+  addSetting("Pedal1Type", new PedalType(*this, PEDAL_1_TYPE));
+  addSetting("Pedal2Type", new PedalType(*this, PEDAL_2_TYPE));
+  addSetting("Pedal3Type", new PedalType(*this, PEDAL_3_TYPE));
+  addSetting("Pedal4Type", new PedalType(*this, PEDAL_4_TYPE));
+  addSetting("EncoderAcceleration", new EncoderAcceleration(*this));
+  addSetting("AftertouchCurve", new AftertouchCurve(*this));
+  addSetting("BenderCurve", new BenderCurve(*this));
+  addSetting("PitchbendOnPressedKeys", new PitchbendOnPressedKey(*this));
+  addSetting("EditSmoothingTime", new EditSmoothingTime(*this));
+  addSetting("SSID", new SSID(*this));
+  addSetting("Passphrase", new Passphrase(*this));
+  addSetting("PresetGlitchSuppression", new PresetGlitchSuppression(*this));
+  addSetting("DateTimeAdjustment", new DateTimeAdjustment(*this));
+  addSetting("SignalFlowIndication", new SignalFlowIndicationSetting(*this));
+  addSetting("KioskMode", new KioskModeSetting(*this));
+  addSetting("IndicateBlockedUI", new BlockingMainThreadIndication(*this, false));
 }
 
-Settings::~Settings ()
+Settings::~Settings()
 {
-  DebugLevel::warning (__PRETTY_FUNCTION__, __LINE__);
-  save ();
-  DebugLevel::warning (__PRETTY_FUNCTION__, __LINE__);
+  DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
+  save();
+  DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 }
 
-Settings::tUpdateID Settings::onChange (uint64_t flags)
+Settings::tUpdateID Settings::onChange(uint64_t flags)
 {
-  m_saveJob.trigger ();
-  return super::onChange (flags);
+  m_saveJob.trigger();
+  return super::onChange(flags);
 }
 
-Glib::ustring Settings::getPrefix () const
+Glib::ustring Settings::getPrefix() const
 {
-  return m_actions.getBasePath ().substr (1);
+  return m_actions.getBasePath().substr(1);
 }
 
-void Settings::init ()
-{
-  load ();
-}
-
-void Settings::reload ()
+void Settings::init()
 {
   load();
 }
 
-void Settings::load ()
+void Settings::reload()
 {
-  auto lock = m_isLoading.lock ();
+  load();
+}
 
-  DebugLevel::gassy (__PRETTY_FUNCTION__, G_STRLOC);
+void Settings::load()
+{
+  auto lock = m_isLoading.lock();
+
+  DebugLevel::gassy(__PRETTY_FUNCTION__, G_STRLOC);
 
   try
   {
-    DebugLevel::gassy (__PRETTY_FUNCTION__, G_STRLOC);
-    FileInStream in (Application::get ().getOptions ()->getSettingsFile (), false);
-    XmlReader reader (in, nullptr);
+    DebugLevel::gassy(__PRETTY_FUNCTION__, G_STRLOC);
+    FileInStream in(Application::get().getOptions()->getSettingsFile(), false);
+    XmlReader reader(in, nullptr);
     reader.read<SettingsSerializer>(std::ref(*this));
   }
-  catch (...)
+  catch(...)
   {
-    DebugLevel::error ("Exception loading the settings!");
+    DebugLevel::error("Exception loading the settings!");
   }
 
-  DebugLevel::gassy (__PRETTY_FUNCTION__, G_STRLOC);
+  DebugLevel::gassy(__PRETTY_FUNCTION__, G_STRLOC);
 
   sanitize();
 }
 
-void Settings::save ()
+void Settings::save()
 {
-  SettingsSerializer serializer (*this);
+  SettingsSerializer serializer(*this);
 
-  shared_ptr<OutStream> out (new FileOutStream (Application::get ().getOptions ()->getSettingsFile (), false));
-  XmlWriter writer (out);
-  serializer.write (writer, VersionAttribute::get ());
+  shared_ptr<OutStream> out(new FileOutStream(Application::get().getOptions()->getSettingsFile(), false));
+  XmlWriter writer(out);
+  serializer.write(writer, VersionAttribute::get());
 }
 
 void Settings::sanitize()
@@ -140,63 +140,59 @@ void Settings::sanitize()
   getSetting<DeviceName>()->sanitize();
 }
 
-void Settings::addSetting (const Glib::ustring &key, Setting *s)
+void Settings::addSetting(const Glib::ustring &key, Setting *s)
 {
-  m_settings[key] = tSettingPtr (s);
+  m_settings[key] = tSettingPtr(s);
 }
 
-void Settings::setSetting (const Glib::ustring &key, const Glib::ustring &value)
+void Settings::setSetting(const Glib::ustring &key, const Glib::ustring &value)
 {
-  if (auto s = getSetting (key))
-    s->load (value);
+  if(auto s = getSetting(key))
+    s->load(value);
 }
 
-const Settings::tMap &Settings::getSettings () const
+const Settings::tMap &Settings::getSettings() const
 {
   return m_settings;
 }
 
-Settings::tSettingPtr Settings::getSetting (const Glib::ustring &key)
+Settings::tSettingPtr Settings::getSetting(const Glib::ustring &key)
 {
-  auto it = m_settings.find (key);
+  auto it = m_settings.find(key);
 
-  if (it != m_settings.end ())
+  if(it != m_settings.end())
     return it->second;
 
   return NULL;
 }
 
-void Settings::writeDocument (Writer &writer, tUpdateID knownRevision) const
+void Settings::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
-  bool changed = knownRevision < getUpdateIDOfLastChange ();
+  bool changed = knownRevision < getUpdateIDOfLastChange();
 
-  writer.writeTag ("settings", Attribute ("changed", changed), [&]()
-  {
-    if (changed)
+  writer.writeTag("settings", Attribute("changed", changed), [&]() {
+    if(changed)
     {
-      for (auto & setting : m_settings)
+      for(auto &setting : m_settings)
       {
-        writer.writeTag (setting.first, [&]()
-            {
-              setting.second->writeDocument (writer, knownRevision);
-            });
+        writer.writeTag(setting.first, [&]() { setting.second->writeDocument(writer, knownRevision); });
       }
     }
   });
 }
 
-void Settings::handleHTTPRequest (shared_ptr<NetworkRequest> request, const Glib::ustring &path)
+void Settings::handleHTTPRequest(shared_ptr<NetworkRequest> request, const Glib::ustring &path)
 {
-  m_actions.handleRequest (request);
+  m_actions.handleRequest(request);
 }
 
-void Settings::sendToLPC ()
+void Settings::sendToLPC()
 {
-  for (auto & s : m_settings)
-    s.second->sendToLPC ();
+  for(auto &s : m_settings)
+    s.second->sendToLPC();
 }
 
-bool Settings::isLoading () const
+bool Settings::isLoading() const
 {
-  return m_isLoading.isLocked ();
+  return m_isLoading.isLocked();
 }

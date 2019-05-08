@@ -6,53 +6,54 @@
 #include "groups/MacroControlsGroup.h"
 #include "proxies/hwui/panel-unit/boled/BOLED.h"
 
-ModulationSourceLabel::ModulationSourceLabel (const Rect &r, Font::Justification justification) :
-    super (r),
-    m_justification (justification)
+ModulationSourceLabel::ModulationSourceLabel(const Rect &r, Font::Justification justification)
+    : super(r)
+    , m_justification(justification)
 {
-  Application::get ().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide<0> (sigc::mem_fun (this, &ModulationSourceLabel::onParameterSelected)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &ModulationSourceLabel::onParameterSelected)));
 }
 
-ModulationSourceLabel::~ModulationSourceLabel ()
+ModulationSourceLabel::~ModulationSourceLabel()
 {
 }
 
-void ModulationSourceLabel::onParameterSelected (Parameter * parameter)
+void ModulationSourceLabel::onParameterSelected(Parameter *parameter)
 {
-  if (parameter)
+  if(parameter)
   {
-    m_paramValueConnection.disconnect ();
-    m_paramValueConnection = parameter->onParameterChanged (sigc::mem_fun (this, &ModulationSourceLabel::onParamValueChanged));
+    m_paramValueConnection.disconnect();
+    m_paramValueConnection
+        = parameter->onParameterChanged(sigc::mem_fun(this, &ModulationSourceLabel::onParamValueChanged));
   }
 }
 
-void ModulationSourceLabel::onParamValueChanged (const Parameter* param)
+void ModulationSourceLabel::onParamValueChanged(const Parameter *param)
 {
-  if (const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter*> (param))
+  if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(param))
   {
-    uint16_t id = MacroControlsGroup::modSrcToParamID (modP->getModulationSource ());
+    uint16_t id = MacroControlsGroup::modSrcToParamID(modP->getModulationSource());
 
-    if (auto mc = Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (id))
+    if(auto mc = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(id))
     {
-      setText (mc->getShortName());
+      setText(mc->getShortName());
       return;
     }
   }
 
-  setText ("[-]");
+  setText("[-]");
 }
 
-bool ModulationSourceLabel::redraw (FrameBuffer &fb)
+bool ModulationSourceLabel::redraw(FrameBuffer &fb)
 {
-  if (!isHighlight () && getText () == "[-]")
+  if(!isHighlight() && getText() == "[-]")
     return true;
 
-  super::redraw (fb);
+  super::redraw(fb);
   return true;
 }
 
-Font::Justification ModulationSourceLabel::getJustification () const
+Font::Justification ModulationSourceLabel::getJustification() const
 {
   return m_justification;
 }

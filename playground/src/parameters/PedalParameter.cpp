@@ -26,14 +26,15 @@ void PedalParameter::writeDocProperties(Writer &writer, UpdateDocumentContributo
   writer.writeTextElement("pedal-mode", to_string(m_mode));
 }
 
-void PedalParameter::writeDifferences(Writer& writer, Parameter* other) const
+void PedalParameter::writeDifferences(Writer &writer, Parameter *other) const
 {
   Parameter::writeDifferences(writer, other);
-  PedalParameter *pOther = static_cast<PedalParameter*>(other);
+  PedalParameter *pOther = static_cast<PedalParameter *>(other);
 
   if(getReturnMode() != pOther->getReturnMode())
   {
-    writer.writeTextElement("return-mode", "", Attribute("a", (int)getReturnMode()), Attribute("b", (int)pOther->getReturnMode()));
+    writer.writeTextElement("return-mode", "", Attribute("a", (int) getReturnMode()),
+                            Attribute("b", (int) pOther->getReturnMode()));
   }
 }
 
@@ -46,17 +47,16 @@ void PedalParameter::undoableSetPedalMode(UNDO::Scope::tTransactionPtr transacti
   {
     auto swapData = UNDO::createSwapData(mode);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_mode);
-      getValue().setScaleConverter (createScaleConverter ());
-      auto defValue = getDefValueAccordingToMode ();
-      getValue().setDefaultValue (defValue);
-      getValue ().setToDefault (Initiator::INDIRECT);
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+      swapData->swapWith(m_mode);
+      getValue().setScaleConverter(createScaleConverter());
+      auto defValue = getDefValueAccordingToMode();
+      getValue().setDefaultValue(defValue);
+      getValue().setToDefault(Initiator::INDIRECT);
 
       setRoutersModeAccordingToReturnMode();
 
-      invalidate ();
+      invalidate();
       sendModeToLpc();
       m_updateIdWhenModeChanged = getUpdateIDOfLastChange();
     });
@@ -71,8 +71,8 @@ void PedalParameter::undoableSetPedalMode(UNDO::Scope::tTransactionPtr transacti
 void PedalParameter::setRoutersModeAccordingToReturnMode()
 {
   bool routersAreBoolean = getReturnMode() == ReturnMode::None;
-  ParameterGroupSet* groups = dynamic_cast<ParameterGroupSet*>(getParentGroup()->getParent());
-  auto mappings = dynamic_cast<MacroControlMappingGroup*>(groups->getParameterGroupByID("MCM"));
+  ParameterGroupSet *groups = dynamic_cast<ParameterGroupSet *>(getParentGroup()->getParent());
+  auto mappings = dynamic_cast<MacroControlMappingGroup *>(groups->getParameterGroupByID("MCM"));
   for(auto router : mappings->getModulationRoutingParametersFor(this))
   {
     router->getValue().setIsBoolean(routersAreBoolean);
@@ -176,7 +176,6 @@ PhysicalControlParameter::ReturnMode PedalParameter::getReturnMode() const
 
     case RETURN_TO_ZERO:
       return ReturnMode::Zero;
-
   }
 
   return ReturnMode::None;
@@ -187,13 +186,13 @@ PedalParameter::PedalModes PedalParameter::getPedalMode() const
   return m_mode;
 }
 
-void PedalParameter::copyFrom(UNDO::Scope::tTransactionPtr transaction, Parameter * other)
+void PedalParameter::copyFrom(UNDO::Scope::tTransactionPtr transaction, Parameter *other)
 {
   if(!isLocked())
   {
     super::copyFrom(transaction, other);
 
-    if(auto pedal = dynamic_cast<PedalParameter*>(other))
+    if(auto pedal = dynamic_cast<PedalParameter *>(other))
     {
       undoableSetPedalMode(transaction, pedal->getPedalMode());
     }
@@ -217,7 +216,6 @@ Glib::ustring PedalParameter::getCurrentBehavior() const
 
     case RETURN_TO_CENTER:
       return "Return Center";
-
   }
 
   return PhysicalControlParameter::getCurrentBehavior();

@@ -4,14 +4,14 @@
 
 class AftertouchParameter : public PhysicalControlParameter
 {
-  private:
-    typedef PhysicalControlParameter super;
+ private:
+  typedef PhysicalControlParameter super;
 
-  public:
-    using super::super;
+ public:
+  using super::super;
 
-    virtual ReturnMode getReturnMode() const override;
+  virtual ReturnMode getReturnMode() const override;
 
-  protected:
-    virtual DFBLayout *createLayout (FocusAndMode focusAndMode) const override;
+ protected:
+  virtual DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
 };

@@ -5,30 +5,32 @@
 #include <proxies/hwui/descriptive-layouts/PropertyOwner.h>
 #include <any>
 
-namespace DescriptiveLayouts {
-    class PrimitiveInstance;
+namespace DescriptiveLayouts
+{
+  class PrimitiveInstance;
 
-    class Circle : public Control, public Styleable, public PropertyOwner {
-    public:
-        Circle(const PrimitiveInstance &e);
-        virtual ~Circle();
+  class Circle : public Control, public Styleable, public PropertyOwner
+  {
+   public:
+    Circle(const PrimitiveInstance &e);
+    virtual ~Circle();
 
-        using Range = std::pair<tControlPositionValue, tControlPositionValue>;
+    using Range = std::pair<tControlPositionValue, tControlPositionValue>;
 
-        void setProperty(PrimitiveProperty key, std::any value) override;
+    void setProperty(PrimitiveProperty key, std::any value) override;
 
-    protected:
-        bool redraw(FrameBuffer &fb) override;
-        void setDirty() override;
-        void drawBackground (FrameBuffer &fb) override;
-        const Point valueToPosition(tControlPositionValue range) const;
+   protected:
+    bool redraw(FrameBuffer &fb) override;
+    void setDirty() override;
+    void drawBackground(FrameBuffer &fb) override;
+    const Point valueToPosition(tControlPositionValue range) const;
 
-        const PrimitiveInstance &getPrimitive() const;
+    const PrimitiveInstance &getPrimitive() const;
 
-    private:
-        PrimitiveInstance m_primitive;
-        Range m_range;
-        Point m_drawPosition;
-        int m_steps;
-    };
+   private:
+    PrimitiveInstance m_primitive;
+    Range m_range;
+    Point m_drawPosition;
+    int m_steps;
+  };
 }

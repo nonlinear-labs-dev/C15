@@ -4,9 +4,9 @@
 
 class OutputMixerGroup : public ParameterGroup
 {
-  public:
-    OutputMixerGroup (ParameterGroupSet *parent);
-    virtual ~OutputMixerGroup ();
+ public:
+  OutputMixerGroup(ParameterGroupSet *parent);
+  virtual ~OutputMixerGroup();
 
-    void init ();
+  void init();
 };

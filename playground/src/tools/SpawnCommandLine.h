@@ -6,15 +6,14 @@
 
 class SpawnCommandLine
 {
-  public:
-    SpawnCommandLine(const std::string &cmd);
+ public:
+  SpawnCommandLine(const std::string &cmd);
 
-    std::string getStdOutputOrFallback(const std::string &fallbackIfEmpty) const;
-    const std::string &getStdOutput() const;
-    const std::string &getStdError() const;
+  std::string getStdOutputOrFallback(const std::string &fallbackIfEmpty) const;
+  const std::string &getStdOutput() const;
+  const std::string &getStdError() const;
 
-  private:
-    std::string m_stdOutput;
-    std::string m_stdError;
+ private:
+  std::string m_stdOutput;
+  std::string m_stdError;
 };
-

@@ -24,193 +24,192 @@
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 #include <proxies/hwui/UsageMode.h>
 
-SingleSoundLayout::SingleSoundLayout (FocusAndMode focusAndMode)
+SingleSoundLayout::SingleSoundLayout(FocusAndMode focusAndMode)
 {
-  addControl (new Caption ("Single", Rect (0, 0, 64, 13)));
+  addControl(new Caption("Single", Rect(0, 0, 64, 13)));
 
-  m_initButton = addControl (new Button ("Init", Buttons::BUTTON_A));
+  m_initButton = addControl(new Button("Init", Buttons::BUTTON_A));
 
-  m_randomizeLabel = addControl (new LabelRegular8 ("Amount", Rect (67, 12, 58, 11)));
-  m_randomizeSlider = addControl (new RandomizeAmountSlider (Rect (67, 28, 58, 4)));
-  m_randomizeAmount = addControl (new RandomizeAmountLabel (Rect (67, 36, 58, 12)));
-  m_randomButton = addControl (new Button ("Randomize", Buttons::BUTTON_B));
+  m_randomizeLabel = addControl(new LabelRegular8("Amount", Rect(67, 12, 58, 11)));
+  m_randomizeSlider = addControl(new RandomizeAmountSlider(Rect(67, 28, 58, 4)));
+  m_randomizeAmount = addControl(new RandomizeAmountLabel(Rect(67, 36, 58, 12)));
+  m_randomButton = addControl(new Button("Randomize", Buttons::BUTTON_B));
 
-  m_transitionTimeLabel = addControl (new LabelRegular8 ("Time", Rect (131, 12, 58, 11)));
-  m_transitionTimeSlider = addControl (new TransitionTimeSlider (Rect (131, 28, 58, 4)));
-  m_transitionTimeAmount = addControl (new TransitionTimeLabel (Rect (131, 36, 58, 12)));
-  m_transitionTimeButton = addControl (new Button ("Transition", Buttons::BUTTON_C));
+  m_transitionTimeLabel = addControl(new LabelRegular8("Time", Rect(131, 12, 58, 11)));
+  m_transitionTimeSlider = addControl(new TransitionTimeSlider(Rect(131, 28, 58, 4)));
+  m_transitionTimeAmount = addControl(new TransitionTimeLabel(Rect(131, 36, 58, 12)));
+  m_transitionTimeButton = addControl(new Button("Transition", Buttons::BUTTON_C));
 
-  m_convertMenu = addControl (new SingleSoundMenu (Rect (195, 1, 58, 63)));
-  m_initMenu = addControl (new SingleSoundEditMenu (Rect (195, 1, 58, 63)));
-  m_edit = addControl (new InvertedLabel ("Edit", Rect (8, 26, 48, 12)));
-  m_edit->setHighlight (true);
+  m_convertMenu = addControl(new SingleSoundMenu(Rect(195, 1, 58, 63)));
+  m_initMenu = addControl(new SingleSoundEditMenu(Rect(195, 1, 58, 63)));
+  m_edit = addControl(new InvertedLabel("Edit", Rect(8, 26, 48, 12)));
+  m_edit->setHighlight(true);
 
-  m_edit->setVisible (false);
-  m_initMenu->setVisible (false);
+  m_edit->setVisible(false);
+  m_initMenu->setVisible(false);
 }
 
-SingleSoundLayout::~SingleSoundLayout ()
+SingleSoundLayout::~SingleSoundLayout()
 {
 }
 
-bool SingleSoundLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
+bool SingleSoundLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if (down)
+  if(down)
   {
     if(m_selectedColumn != Column::Edit)
     {
-      if (i == Buttons::BUTTON_A)
+      if(i == Buttons::BUTTON_A)
       {
-        toggleColumn (Column::Init);
+        toggleColumn(Column::Init);
         return true;
       }
-      else if (i == Buttons::BUTTON_B)
+      else if(i == Buttons::BUTTON_B)
       {
-        toggleColumn (Column::Randomize);
+        toggleColumn(Column::Randomize);
         return true;
       }
-      else if (i == Buttons::BUTTON_C)
+      else if(i == Buttons::BUTTON_C)
       {
-        toggleColumn (Column::TranstionTime);
+        toggleColumn(Column::TranstionTime);
         return true;
       }
     }
 
-    if (i == Buttons::BUTTON_D)
+    if(i == Buttons::BUTTON_D)
     {
-      if (m_selectedColumn == Column::Convert)
-        m_convertMenu->toggle ();
-      else if (m_selectedColumn == Column::Edit)
-        m_initMenu->toggle ();
+      if(m_selectedColumn == Column::Convert)
+        m_convertMenu->toggle();
+      else if(m_selectedColumn == Column::Edit)
+        m_initMenu->toggle();
       else
-        toggleColumn (Column::Convert);
+        toggleColumn(Column::Convert);
       return true;
     }
-    else if (i == Buttons::BUTTON_ENTER)
+    else if(i == Buttons::BUTTON_ENTER)
     {
-      action ();
-      if (m_selectedColumn != Column::Randomize)
+      action();
+      if(m_selectedColumn != Column::Randomize)
         toggleColumn(m_selectedColumn);
       return true;
     }
-    else if (i == Buttons::BUTTON_DEFAULT)
+    else if(i == Buttons::BUTTON_DEFAULT)
     {
-      setDefault ();
+      setDefault();
       return true;
     }
-    else if (i == Buttons::BUTTON_EDIT)
+    else if(i == Buttons::BUTTON_EDIT)
     {
-      toggleColumn (Column::Edit);
+      toggleColumn(Column::Edit);
       return true;
     }
-    else if (i == Buttons::BUTTON_PRESET)
+    else if(i == Buttons::BUTTON_PRESET)
     {
-      Application::get ().getHWUI ()->setFocusAndMode ( { UIFocus::Presets, UIMode::Select });
+      Application::get().getHWUI()->setFocusAndMode({ UIFocus::Presets, UIMode::Select });
       return true;
     }
-    else if (i == Buttons::BUTTON_STORE)
+    else if(i == Buttons::BUTTON_STORE)
     {
-      Application::get ().getHWUI ()->setFocusAndMode ( { UIFocus::Presets, UIMode::Store });
+      Application::get().getHWUI()->setFocusAndMode({ UIFocus::Presets, UIMode::Store });
       return true;
     }
-    else if (i == Buttons::BUTTON_SOUND)
+    else if(i == Buttons::BUTTON_SOUND)
     {
-      Application::get ().getHWUI ()->setFocusAndMode ( { UIFocus::Parameters, UIMode::Select });
+      Application::get().getHWUI()->setFocusAndMode({ UIFocus::Parameters, UIMode::Select });
       return true;
     }
   }
 
-  return super::onButton (i, down, modifiers);
+  return super::onButton(i, down, modifiers);
 }
 
-void SingleSoundLayout::toggleColumn (Column c)
+void SingleSoundLayout::toggleColumn(Column c)
 {
-  if (m_selectedColumn == c)
+  if(m_selectedColumn == c)
     m_selectedColumn = Column::None;
   else
     m_selectedColumn = c;
 
-  setup ();
+  setup();
 }
 
-void SingleSoundLayout::setup ()
+void SingleSoundLayout::setup()
 {
-  setHighlight (false);
+  setHighlight(false);
 
   bool inEditMode = m_selectedColumn == Column::Edit;
 
-  m_edit->setVisible (inEditMode);
-  m_initMenu->setVisible (inEditMode);
-  m_convertMenu->setVisible (!inEditMode);
+  m_edit->setVisible(inEditMode);
+  m_initMenu->setVisible(inEditMode);
+  m_convertMenu->setVisible(!inEditMode);
 
   m_initButton->blind(inEditMode);
   m_randomButton->blind(inEditMode);
   m_transitionTimeButton->blind(inEditMode);
 
-  switch (m_selectedColumn)
+  switch(m_selectedColumn)
   {
     case Column::None:
       break;
 
     case Column::Init:
-      m_initButton->setHighlight (true);
+      m_initButton->setHighlight(true);
       break;
 
     case Column::Randomize:
-      m_randomizeLabel->setHighlight (true);
-      m_randomizeSlider->setHighlight (true);
-      m_randomizeAmount->setHighlight (true);
-      m_randomButton->setHighlight (true);
+      m_randomizeLabel->setHighlight(true);
+      m_randomizeSlider->setHighlight(true);
+      m_randomizeAmount->setHighlight(true);
+      m_randomButton->setHighlight(true);
       break;
 
     case Column::TranstionTime:
-      m_transitionTimeLabel->setHighlight (true);
-      m_transitionTimeSlider->setHighlight (true);
-      m_transitionTimeAmount->setHighlight (true);
-      m_transitionTimeButton->setHighlight (true);
+      m_transitionTimeLabel->setHighlight(true);
+      m_transitionTimeSlider->setHighlight(true);
+      m_transitionTimeAmount->setHighlight(true);
+      m_transitionTimeButton->setHighlight(true);
       break;
 
     case Column::Convert:
-      m_convertMenu->setHighlight (true);
-      m_convertMenu->selectButton (0);
+      m_convertMenu->setHighlight(true);
+      m_convertMenu->selectButton(0);
       break;
 
     case Column::Edit:
-      m_initMenu->setHighlight (true);
-      m_initMenu->selectButton (0);
+      m_initMenu->setHighlight(true);
+      m_initMenu->selectButton(0);
       break;
-
   }
 }
 
-void SingleSoundLayout::setDefault ()
+void SingleSoundLayout::setDefault()
 {
-  if (m_selectedColumn == Column::Randomize)
-    Application::get ().getSettings ()->getSetting<RandomizeAmount> ()->setDefault ();
-  else if (m_selectedColumn == Column::TranstionTime)
-    Application::get ().getSettings ()->getSetting<TransitionTime> ()->setDefault ();
+  if(m_selectedColumn == Column::Randomize)
+    Application::get().getSettings()->getSetting<RandomizeAmount>()->setDefault();
+  else if(m_selectedColumn == Column::TranstionTime)
+    Application::get().getSettings()->getSetting<TransitionTime>()->setDefault();
 }
 
-bool SingleSoundLayout::onRotary (int inc, ButtonModifiers modifiers)
+bool SingleSoundLayout::onRotary(int inc, ButtonModifiers modifiers)
 {
-  if (m_selectedColumn == Column::Randomize)
-    Application::get ().getSettings ()->getSetting<RandomizeAmount> ()->incDec (inc, modifiers);
-  else if (m_selectedColumn == Column::TranstionTime)
-    Application::get ().getSettings ()->getSetting<TransitionTime> ()->incDec (inc, modifiers);
+  if(m_selectedColumn == Column::Randomize)
+    Application::get().getSettings()->getSetting<RandomizeAmount>()->incDec(inc, modifiers);
+  else if(m_selectedColumn == Column::TranstionTime)
+    Application::get().getSettings()->getSetting<TransitionTime>()->incDec(inc, modifiers);
 
-  return DFBLayout::onRotary (inc, modifiers);
+  return DFBLayout::onRotary(inc, modifiers);
 }
 
-void SingleSoundLayout::action ()
+void SingleSoundLayout::action()
 {
-  switch (m_selectedColumn)
+  switch(m_selectedColumn)
   {
     case Column::Init:
-      initSound ();
+      initSound();
       break;
 
     case Column::Randomize:
-      randomize ();
+      randomize();
       break;
 
     case Column::Convert:
@@ -223,17 +222,17 @@ void SingleSoundLayout::action ()
   }
 }
 
-void SingleSoundLayout::initSound ()
+void SingleSoundLayout::initSound()
 {
-  UNDO::Scope::tTransactionScopePtr scope = Application::get ().getUndoScope ()->startTransaction ("Init Sound");
-  Application::get ().getPresetManager ()->getEditBuffer ()->undoableInitSound (scope->getTransaction ());
+  UNDO::Scope::tTransactionScopePtr scope = Application::get().getUndoScope()->startTransaction("Init Sound");
+  Application::get().getPresetManager()->getEditBuffer()->undoableInitSound(scope->getTransaction());
   Application::get().getHWUI()->getPanelUnit().getUsageMode()->bruteForceUpdateLeds();
 }
 
-void SingleSoundLayout::randomize ()
+void SingleSoundLayout::randomize()
 {
-  UNDO::Scope::tTransactionScopePtr scope = Application::get ().getUndoScope ()->startTransaction ("Randomize Sound");
-  auto editBuffer = Application::get ().getPresetManager ()->getEditBuffer ();
-  editBuffer->undoableRandomize (scope->getTransaction (), Initiator::EXPLICIT_HWUI);
+  UNDO::Scope::tTransactionScopePtr scope = Application::get().getUndoScope()->startTransaction("Randomize Sound");
+  auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
+  editBuffer->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_HWUI);
   Application::get().getHWUI()->getPanelUnit().getUsageMode()->bruteForceUpdateLeds();
 }

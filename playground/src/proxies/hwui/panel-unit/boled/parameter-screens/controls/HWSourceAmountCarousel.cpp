@@ -12,30 +12,32 @@
 #include <groups/MacroControlMappingGroup.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MiniParameterBarSlider.h>
 
-HWSourceAmountCarousel::HWSourceAmountCarousel (const Rect &pos) :
-    super (pos)
+HWSourceAmountCarousel::HWSourceAmountCarousel(const Rect &pos)
+    : super(pos)
 {
 }
 
-HWSourceAmountCarousel::~HWSourceAmountCarousel ()
+HWSourceAmountCarousel::~HWSourceAmountCarousel()
 {
 }
 
-void HWSourceAmountCarousel::turn ()
+void HWSourceAmountCarousel::turn()
 {
-  if (auto p = dynamic_cast<MacroControlParameter*> (Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
-    p->toggleUiSelectedHardwareSource ();
+  if(auto p = dynamic_cast<MacroControlParameter *>(
+         Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
+    p->toggleUiSelectedHardwareSource();
 }
 
-void HWSourceAmountCarousel::antiTurn() 
+void HWSourceAmountCarousel::antiTurn()
 {
-  if (auto p = dynamic_cast<MacroControlParameter*> (Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
-    p->toggleUiSelectedHardwareSource (-1);
+  if(auto p = dynamic_cast<MacroControlParameter *>(
+         Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
+    p->toggleUiSelectedHardwareSource(-1);
 }
 
-void HWSourceAmountCarousel::setup (Parameter * newOne)
+void HWSourceAmountCarousel::setup(Parameter *newOne)
 {
-  clear ();
+  clear();
 
   const int ySpaceing = 5;
   const int sliderHeight = 2;
@@ -44,54 +46,55 @@ void HWSourceAmountCarousel::setup (Parameter * newOne)
 
   int yPos = ySpaceing;
 
-  if (auto p = dynamic_cast<MacroControlParameter *> (newOne))
+  if(auto p = dynamic_cast<MacroControlParameter *>(newOne))
   {
-    if (p->getUiSelectedHardwareSource () == 0)
-      p->toggleUiSelectedHardwareSource ();
+    if(p->getUiSelectedHardwareSource() == 0)
+      p->toggleUiSelectedHardwareSource();
 
-    auto group = Application::get ().getPresetManager ()->getEditBuffer ()->getParameterGroupByID ("MCM");
-    auto csGroup = dynamic_cast<MacroControlMappingGroup *> (group);
-    auto routingParams = csGroup->getModulationRoutingParametersFor (p);
+    auto group = Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID("MCM");
+    auto csGroup = dynamic_cast<MacroControlMappingGroup *>(group);
+    auto routingParams = csGroup->getModulationRoutingParametersFor(p);
 
-    for (auto routingParam : routingParams)
+    for(auto routingParam : routingParams)
     {
-      auto miniParam = new MiniParameterBarSlider (static_cast<Parameter *> (routingParam), Rect (0, yPos, paramWidth, sliderHeight));
-      addControl (miniParam);
+      auto miniParam
+          = new MiniParameterBarSlider(static_cast<Parameter *>(routingParam), Rect(0, yPos, paramWidth, sliderHeight));
+      addControl(miniParam);
 
       yPos += sliderHeight;
 
-      if (getNumChildren () == 4)
+      if(getNumChildren() == 4)
         yPos += yGroupSpacing;
       else
         yPos += ySpaceing;
     }
 
-    m_mcConnection.disconnect ();
-    m_mcConnection = p->onParameterChanged (sigc::mem_fun (this, &HWSourceAmountCarousel::onMacroControlChanged));
+    m_mcConnection.disconnect();
+    m_mcConnection = p->onParameterChanged(sigc::mem_fun(this, &HWSourceAmountCarousel::onMacroControlChanged));
   }
 
-  setDirty ();
+  setDirty();
 }
 
-void HWSourceAmountCarousel::highlightSelected ()
+void HWSourceAmountCarousel::highlightSelected()
 {
   setup(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
 }
 
-void HWSourceAmountCarousel::onMacroControlChanged (const Parameter* param)
+void HWSourceAmountCarousel::onMacroControlChanged(const Parameter *param)
 {
-  if (auto mc = dynamic_cast<const MacroControlParameter*> (param))
+  if(auto mc = dynamic_cast<const MacroControlParameter *>(param))
   {
-    forEach ([=](tControlPtr c)
-    {
-      if (auto miniSlider = dynamic_pointer_cast < MiniParameterBarSlider > (c))
-        if (auto p = dynamic_cast < ModulationRoutingParameter *> (miniSlider->getParameter()))
-          miniSlider->setHighlight (isHighlight() || (mc->getUiSelectedHardwareSource () == p->getSourceParameter()->getID ()));
+    forEach([=](tControlPtr c) {
+      if(auto miniSlider = dynamic_pointer_cast<MiniParameterBarSlider>(c))
+        if(auto p = dynamic_cast<ModulationRoutingParameter *>(miniSlider->getParameter()))
+          miniSlider->setHighlight(isHighlight()
+                                   || (mc->getUiSelectedHardwareSource() == p->getSourceParameter()->getID()));
     });
   }
 }
 
-void HWSourceAmountCarousel::setHighlight (bool isHighlight)
+void HWSourceAmountCarousel::setHighlight(bool isHighlight)
 {
-  super::setHighlight (isHighlight);
+  super::setHighlight(isHighlight);
 }

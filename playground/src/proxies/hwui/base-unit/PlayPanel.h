@@ -6,13 +6,13 @@ class Application;
 
 class PlayPanel
 {
-  public:
-    PlayPanel();
-    virtual ~PlayPanel();
+ public:
+  PlayPanel();
+  virtual ~PlayPanel();
 
-    void onTimeout();
-    SOLED &getSOLED();
+  void onTimeout();
+  SOLED &getSOLED();
 
-  private:
-    SOLED m_oled;
+ private:
+  SOLED m_oled;
 };

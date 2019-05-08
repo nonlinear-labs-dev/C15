@@ -4,30 +4,31 @@
 #include <presets/EditBuffer.h>
 #include <parameters/MacroControlParameter.h>
 
-RenameMCLayout::RenameMCLayout () :
-    super ()
+RenameMCLayout::RenameMCLayout()
+    : super()
 {
 }
 
-void RenameMCLayout::commit (const Glib::ustring &newName)
+void RenameMCLayout::commit(const Glib::ustring &newName)
 {
-  if (auto p = getMacroControl ())
+  if(auto p = getMacroControl())
   {
-    p->undoableSetGivenName (newName);
+    p->undoableSetGivenName(newName);
   }
 }
 
-Glib::ustring RenameMCLayout::getInitialText () const
+Glib::ustring RenameMCLayout::getInitialText() const
 {
-  if (auto p = getMacroControl ())
+  if(auto p = getMacroControl())
   {
-    return p->getGivenName ();
+    return p->getGivenName();
   }
 
   return "";
 }
 
-MacroControlParameter *RenameMCLayout::getMacroControl () const
+MacroControlParameter *RenameMCLayout::getMacroControl() const
 {
-  return dynamic_cast<MacroControlParameter*> (Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
+  return dynamic_cast<MacroControlParameter *>(
+      Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
 }

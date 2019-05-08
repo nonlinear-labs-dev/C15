@@ -5,8 +5,8 @@
 
 namespace DescriptiveLayouts
 {
-  ConsistencyChecker::ConsistencyChecker(std::ostream &out) :
-      m_out(out)
+  ConsistencyChecker::ConsistencyChecker(std::ostream &out)
+      : m_out(out)
   {
   }
 
@@ -92,14 +92,13 @@ namespace DescriptiveLayouts
           const auto &targetInstance = c.targetInstance;
           const auto &controlClass = ControlRegistry::get().find(control.controlClass);
 
-          auto findResult = std::find_if(controlClass.primitves.begin(), controlClass.primitves.end(), [&](const auto &i)
-          {
-            return i.primitiveInstance == targetInstance;
-          });
+          auto findResult = std::find_if(controlClass.primitves.begin(), controlClass.primitves.end(),
+                                         [&](const auto &i) { return i.primitiveInstance == targetInstance; });
 
           if(findResult == controlClass.primitves.end())
           {
-            m_out << "Event map for layout " << layout.id << " references unknown primitive instance " << targetInstance << std::endl;
+            m_out << "Event map for layout " << layout.id << " references unknown primitive instance " << targetInstance
+                  << std::endl;
           }
         }
       }
@@ -115,8 +114,7 @@ namespace DescriptiveLayouts
 
     bool result = true;
 
-    styles.iterateStyles([&](const Detail::StyleSelector &selector, const auto &style)
-    {
+    styles.iterateStyles([&](const Detail::StyleSelector &selector, const auto &style) {
       bool foundControlInstance = selector.ci == ControlInstances::Any;
       bool foundLayoutClass = selector.l == LayoutClasses::Any;
       bool foundPrimitiveInstance = selector.pi == PrimitiveInstances::Any;
@@ -201,5 +199,4 @@ namespace DescriptiveLayouts
     }
     return true;
   }
-
 }

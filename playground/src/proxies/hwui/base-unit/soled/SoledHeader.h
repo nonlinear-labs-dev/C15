@@ -7,17 +7,15 @@ class Rect;
 
 class SoledHeader : public LabelRegular8
 {
-  private:
-    typedef LabelRegular8 base_type;
+ private:
+  typedef LabelRegular8 base_type;
 
-  public:
-    SoledHeader (const Glib::ustring &text, const Rect &pos);
-    virtual ~SoledHeader ();
+ public:
+  SoledHeader(const Glib::ustring &text, const Rect &pos);
+  virtual ~SoledHeader();
 
-  private:
-    void setFontColor (FrameBuffer &fb) const override;
-    bool redraw (FrameBuffer &fb) override;
-    int getXOffset () const override;
-
+ private:
+  void setFontColor(FrameBuffer &fb) const override;
+  bool redraw(FrameBuffer &fb) override;
+  int getXOffset() const override;
 };
-

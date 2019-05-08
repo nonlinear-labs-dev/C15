@@ -8,98 +8,93 @@
 #include <giomm/file.h>
 #include "device-settings/DebugLevel.h"
 
-HWTests::HWTests (UpdateDocumentContributor *parent) :
-    ContentSection (parent)
+HWTests::HWTests(UpdateDocumentContributor *parent)
+    : ContentSection(parent)
 {
   m_init = false;
 }
 
-HWTests::~HWTests ()
+HWTests::~HWTests()
 {
-  DebugLevel::warning (__PRETTY_FUNCTION__, __LINE__);
+  DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 }
 
-Glib::ustring HWTests::getPrefix () const
+Glib::ustring HWTests::getPrefix() const
 {
   return "hw_tests";
 }
 
-void HWTests::writeDocument (Writer &writer, tUpdateID knownRevision) const
+void HWTests::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
-
 }
 
-void HWTests::handleHTTPRequest (shared_ptr<NetworkRequest> request, const Glib::ustring &path)
+void HWTests::handleHTTPRequest(shared_ptr<NetworkRequest> request, const Glib::ustring &path)
 {
-  initialize ();
+  initialize();
 
-  Glib::ustring searchPath = path.substr (1);
+  Glib::ustring searchPath = path.substr(1);
 
-  auto it = find_if (m_availableTests.begin (), m_availableTests.end (), [&](tTest test) -> bool
-  {
+  auto it = find_if(m_availableTests.begin(), m_availableTests.end(), [&](tTest test) -> bool {
     Glib::ustring link = getPrefix() + "/" + test->getFileName();
     return searchPath == link;
   });
 
-  if (it != m_availableTests.end ())
+  if(it != m_availableTests.end())
   {
-    (*it)->execute ();
+    (*it)->execute();
   }
 
-  auto stream = request->createStream ("text/html", false);
-  XmlWriter writer (stream);
+  auto stream = request->createStream("text/html", false);
+  XmlWriter writer(stream);
 
-  writer.writeTag ("div", [&]()
-  {
+  writer.writeTag("div", [&]() {
     for(tTest test : m_availableTests)
     {
-      writer.writeTag("div", [&]()
-          {
-            writer.writeTextElement("span", test->getName());
+      writer.writeTag("div", [&]() {
+        writer.writeTextElement("span", test->getName());
 
-            stringstream onclick;
-            onclick << "$.get('" << '/' << getPrefix() << '/' << test->getFileName() << "');";
+        stringstream onclick;
+        onclick << "$.get('" << '/' << getPrefix() << '/' << test->getFileName() << "');";
 
-            if(test->getState() != HWTest::RUNNING)
-            {
-              writer.writeTextElement("span", "execute", Attribute("onclick", onclick.str()));
-              writer.writeTextElement("span", "cancel");
-            }
-            else
-            {
-              writer.writeTextElement("span", "execute");
-              writer.writeTextElement("span", "cancel", Attribute("onclick", onclick.str()));
-            }
+        if(test->getState() != HWTest::RUNNING)
+        {
+          writer.writeTextElement("span", "execute", Attribute("onclick", onclick.str()));
+          writer.writeTextElement("span", "cancel");
+        }
+        else
+        {
+          writer.writeTextElement("span", "execute");
+          writer.writeTextElement("span", "cancel", Attribute("onclick", onclick.str()));
+        }
 
-            writer.writeTextElement("div", test->getOutput());
-          });
+        writer.writeTextElement("div", test->getOutput());
+      });
     }
   });
 }
 
-void HWTests::initialize ()
+void HWTests::initialize()
 {
-  if (!m_init)
+  if(!m_init)
   {
     m_init = true;
 
-    m_availableTests.clear ();
+    m_availableTests.clear();
 
-    Glib::RefPtr<Gio::Cancellable> cancellable = Gio::Cancellable::create ();
+    Glib::RefPtr<Gio::Cancellable> cancellable = Gio::Cancellable::create();
 
-    RefPtr<Gio::File> testFiles = Gio::File::create_for_path (Application::get ().getOptions ()->getHardwareTestsFolder ());
-    RefPtr<Gio::FileEnumerator> childrenEnumerator = testFiles->enumerate_children (cancellable);
+    RefPtr<Gio::File> testFiles = Gio::File::create_for_path(Application::get().getOptions()->getHardwareTestsFolder());
+    RefPtr<Gio::FileEnumerator> childrenEnumerator = testFiles->enumerate_children(cancellable);
 
-    while (RefPtr<Gio::FileInfo> fileInfo = childrenEnumerator->next_file ())
+    while(RefPtr<Gio::FileInfo> fileInfo = childrenEnumerator->next_file())
     {
-      shared_ptr<HWTest> test (new HWTest (fileInfo));
+      shared_ptr<HWTest> test(new HWTest(fileInfo));
 
-      test->onTestChanged ([=]()
-      {
+      test->onTestChanged([=]() {
 
       });
 
-      m_availableTests.insert (test);
+      m_availableTests.insert(test);
     }
   }
 }

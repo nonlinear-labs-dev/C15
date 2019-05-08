@@ -16,13 +16,12 @@
 static const auto c_invalidSnapshotValue = numeric_limits<tControlPositionValue>::max();
 
 Parameter::Parameter(ParameterGroup *group, uint16_t id, const ScaleConverter *scaling, tControlPositionValue def,
-                     tControlPositionValue coarseDenominator, tControlPositionValue fineDenominator) :
-    UpdateDocumentContributor(group),
-    m_id(id),
-    m_value(this, scaling, def, coarseDenominator, fineDenominator),
-    m_lastSnapshotedValue(c_invalidSnapshotValue)
+                     tControlPositionValue coarseDenominator, tControlPositionValue fineDenominator)
+    : UpdateDocumentContributor(group)
+    , m_id(id)
+    , m_value(this, scaling, def, coarseDenominator, fineDenominator)
+    , m_lastSnapshotedValue(c_invalidSnapshotValue)
 {
-
 }
 
 Parameter::~Parameter()
@@ -116,11 +115,10 @@ void Parameter::setIndirect(UNDO::Scope::tTransactionPtr transaction, const tCon
 {
   auto swapData = UNDO::createSwapData(value);
 
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-  {
+  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
     tDisplayValue newVal = m_value.getRawValue();
-    swapData->swapWith (newVal);
-    m_value.setRawValue (Initiator::INDIRECT, newVal);
+    swapData->swapWith(newVal);
+    m_value.setRawValue(Initiator::INDIRECT, newVal);
   });
 }
 
@@ -134,7 +132,8 @@ void Parameter::reset(UNDO::Scope::tTransactionPtr transaction, Initiator initia
   setCpValue(transaction, initiator, getDefaultValue(), true);
 }
 
-void Parameter::setCpValue(UNDO::Scope::tTransactionPtr transaction, Initiator initiator, tControlPositionValue value, bool doSendToLpc)
+void Parameter::setCpValue(UNDO::Scope::tTransactionPtr transaction, Initiator initiator, tControlPositionValue value,
+                           bool doSendToLpc)
 {
   if(m_value.differs(value))
   {
@@ -146,21 +145,20 @@ void Parameter::setCpValue(UNDO::Scope::tTransactionPtr transaction, Initiator i
     {
       auto swapData = UNDO::createSwapData(value);
 
-      transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-      {
+      transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
         tDisplayValue newVal = m_value.getRawValue();
-        swapData->swapWith (newVal);
+        swapData->swapWith(newVal);
 
-        m_value.setRawValue (initiator, newVal);
+        m_value.setRawValue(initiator, newVal);
 
-        if (doSendToLpc)
-        sendToLpc ();
+        if(doSendToLpc)
+          sendToLpc();
       });
     }
   }
 }
 
-void Parameter::copyFrom(UNDO::Scope::tTransactionPtr transaction, Parameter * other)
+void Parameter::copyFrom(UNDO::Scope::tTransactionPtr transaction, Parameter *other)
 {
   if(!isLocked())
   {
@@ -174,10 +172,9 @@ void Parameter::undoableSetDefaultValue(UNDO::Scope::tTransactionPtr transaction
   {
     auto swapData = UNDO::createSwapData(value->getControlPositionValue());
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
       tDisplayValue newVal = m_value.getDefaultValue();
-      swapData->swapWith (newVal);
+      swapData->swapWith(newVal);
       m_value.setDefaultValue(newVal);
       invalidate();
     });
@@ -186,7 +183,7 @@ void Parameter::undoableSetDefaultValue(UNDO::Scope::tTransactionPtr transaction
 
 void Parameter::sendToLpc() const
 {
-  if(dynamic_cast<const EditBuffer*>(getParentGroup()->getParent()))
+  if(dynamic_cast<const EditBuffer *>(getParentGroup()->getParent()))
     Application::get().getLPCProxy()->sendParameter(this);
 }
 
@@ -278,27 +275,24 @@ void Parameter::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
   bool changed = knownRevision < getUpdateIDOfLastChange();
 
-  writer.writeTag("parameter", Attribute("id", getID()), Attribute("changed", changed), Attribute("locked", isLocked()), [&]()
-  {
-    if (changed)
-    {
-      writeDocProperties (writer, knownRevision);
-    }
-  });
+  writer.writeTag("parameter", Attribute("id", getID()), Attribute("changed", changed), Attribute("locked", isLocked()),
+                  [&]() {
+                    if(changed)
+                    {
+                      writeDocProperties(writer, knownRevision);
+                    }
+                  });
 }
 
 void Parameter::writeDiff(Writer &writer, Parameter *other) const
 {
   if(getHash() != other->getHash())
   {
-    writer.writeTag("parameter", Attribute("name", getLongName()), [&]
-    {
-      writeDifferences(writer, other);
-    });
+    writer.writeTag("parameter", Attribute("name", getLongName()), [&] { writeDifferences(writer, other); });
   }
 }
 
-void Parameter::writeDifferences(Writer& writer, Parameter* other) const
+void Parameter::writeDifferences(Writer &writer, Parameter *other) const
 {
   auto myString = getDisplayString();
   auto otherString = other->getDisplayString();
@@ -347,7 +341,8 @@ void Parameter::undoableRandomize(UNDO::Scope::tTransactionPtr transaction, Init
 {
   auto rnd = g_random_double_range(0.0, 1.0);
   auto range = getValue().getScaleConverter()->getControlPositionRange();
-  auto newPos = (getControlPositionValue() * (1.0 - amount)) + ((range.getMin() + rnd * range.getRangeWidth()) * amount);
+  auto newPos
+      = (getControlPositionValue() * (1.0 - amount)) + ((range.getMin() + rnd * range.getRangeWidth()) * amount);
   setCpValue(transaction, initiator, newPos, false);
 }
 
@@ -412,9 +407,8 @@ void Parameter::undoableLock(UNDO::Scope::tTransactionPtr transaction)
   {
     auto swapData = UNDO::createSwapData(true);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_isLocked);
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+      swapData->swapWith(m_isLocked);
       onChange(ChangeFlags::LockState);
     });
   }
@@ -426,9 +420,8 @@ void Parameter::undoableUnlock(UNDO::Scope::tTransactionPtr transaction)
   {
     auto swapData = UNDO::createSwapData(false);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_isLocked);
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+      swapData->swapWith(m_isLocked);
       onChange(ChangeFlags::LockState);
     });
   }

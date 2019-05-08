@@ -4,15 +4,13 @@
 
 class EncoderAccelerationView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    EncoderAccelerationView ();
-    virtual ~EncoderAccelerationView ();
+ public:
+  EncoderAccelerationView();
+  virtual ~EncoderAccelerationView();
 
-  private:
-    void onSettingChanged (const Setting *s);
-
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

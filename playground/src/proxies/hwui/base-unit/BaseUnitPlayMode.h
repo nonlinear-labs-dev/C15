@@ -7,23 +7,22 @@ class Application;
 
 class BaseUnitPlayMode : public UsageMode
 {
-  private:
-    typedef UsageMode super;
+ private:
+  typedef UsageMode super;
 
-  public:
-    BaseUnitPlayMode ();
-    virtual ~BaseUnitPlayMode ();
+ public:
+  BaseUnitPlayMode();
+  virtual ~BaseUnitPlayMode();
 
-    void setup () override;
+  void setup() override;
 
-  protected:
-    virtual void toggleTouchBehaviour ();
+ protected:
+  virtual void toggleTouchBehaviour();
 
-  private:
-    void setupBaseUnitUIModeButton ();
-    void setupBaseUnitMinusButton ();
-    void setupBaseUnitPlusButton ();
+ private:
+  void setupBaseUnitUIModeButton();
+  void setupBaseUnitMinusButton();
+  void setupBaseUnitPlusButton();
 
-    NoteShiftStateMachine m_noteShiftState;
+  NoteShiftStateMachine m_noteShiftState;
 };
-

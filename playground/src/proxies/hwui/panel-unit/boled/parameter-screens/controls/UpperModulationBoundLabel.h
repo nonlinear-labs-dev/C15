@@ -4,12 +4,12 @@
 
 class UpperModulationBoundLabel : public ModulationBoundLabel
 {
-    typedef ModulationBoundLabel super;
-  public:
-    UpperModulationBoundLabel (const Rect &r);
-    virtual ~UpperModulationBoundLabel ();
+  typedef ModulationBoundLabel super;
 
-  protected:
-    void updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam) override;
+ public:
+  UpperModulationBoundLabel(const Rect &r);
+  virtual ~UpperModulationBoundLabel();
+
+ protected:
+  void updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam) override;
 };
-

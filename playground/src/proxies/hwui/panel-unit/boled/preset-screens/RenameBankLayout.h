@@ -5,18 +5,18 @@
 
 class PresetBank;
 
-class RenameBankLayout :  public RenameLayout
+class RenameBankLayout : public RenameLayout
 {
-  private:
-    typedef RenameLayout super;
+ private:
+  typedef RenameLayout super;
 
-  public:
-    RenameBankLayout(UNDO::Scope::tTransactionPtr transaction = nullptr);
+ public:
+  RenameBankLayout(UNDO::Scope::tTransactionPtr transaction = nullptr);
 
-  private:
-    virtual void commit (const Glib::ustring &newName) override;
-    virtual Glib::ustring getInitialText() const override;
+ private:
+  virtual void commit(const Glib::ustring &newName) override;
+  virtual Glib::ustring getInitialText() const override;
 
-    shared_ptr<PresetBank> m_currentBank;
-    UNDO::Scope::tTransactionPtr m_transaction;
+  shared_ptr<PresetBank> m_currentBank;
+  UNDO::Scope::tTransactionPtr m_transaction;
 };

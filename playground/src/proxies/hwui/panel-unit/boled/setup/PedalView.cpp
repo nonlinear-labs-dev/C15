@@ -4,19 +4,18 @@
 #include <device-settings/Settings.h>
 #include <proxies/hwui/panel-unit/boled/setup/PedalView.h>
 
-PedalView::PedalView (shared_ptr<PedalType> s) :
-    base_type ("", Rect (0, 0, 0, 0))
+PedalView::PedalView(shared_ptr<PedalType> s)
+    : base_type("", Rect(0, 0, 0, 0))
 {
-  s->onChange (mem_fun (this, &PedalView::onSettingChanged));
+  s->onChange(mem_fun(this, &PedalView::onSettingChanged));
 }
 
-PedalView::~PedalView ()
+PedalView::~PedalView()
 {
 }
 
-void PedalView::onSettingChanged (const Setting *s)
+void PedalView::onSettingChanged(const Setting *s)
 {
-  auto v = dynamic_cast<const PedalType*> (s);
-  setText (v->getDisplayString ());
+  auto v = dynamic_cast<const PedalType *>(s);
+  setText(v->getDisplayString());
 }
-

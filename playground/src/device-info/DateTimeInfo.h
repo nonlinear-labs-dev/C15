@@ -4,13 +4,13 @@
 
 class DateTimeInfo : public DeviceInformationItem
 {
-  public:
-    DateTimeInfo(DeviceInformation *parent);
+ public:
+  DateTimeInfo(DeviceInformation *parent);
 
-    virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
-  private:
-    Glib::ustring get() const override;
-    Glib::ustring getDisplayString() const override;
-    bool onTimeChanged();
+ private:
+  Glib::ustring get() const override;
+  Glib::ustring getDisplayString() const override;
+  bool onTimeChanged();
 };

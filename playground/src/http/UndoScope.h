@@ -4,19 +4,18 @@
 
 class UndoScope : public UNDO::Scope
 {
-  private:
-    typedef UNDO::Scope super;
-  public:
-    using UNDO::Scope::Scope;
+ private:
+  typedef UNDO::Scope super;
 
-    virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
-    sigc::connection onUndoScopeChanged (slot<void> cb);
+ public:
+  using UNDO::Scope::Scope;
 
-  protected:
-    virtual void onAddTransaction (tTransactionPtr transaction);
+  virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
+  sigc::connection onUndoScopeChanged(slot<void> cb);
 
-  private:
-    Signal<void> m_sigUndoScopeChanged;
+ protected:
+  virtual void onAddTransaction(tTransactionPtr transaction);
 
+ private:
+  Signal<void> m_sigUndoScopeChanged;
 };
-

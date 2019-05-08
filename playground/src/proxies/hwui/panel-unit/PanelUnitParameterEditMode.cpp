@@ -71,83 +71,82 @@ void PanelUnitParameterEditMode::setupFocusAndMode(FocusAndMode focusAndMode)
 void PanelUnitParameterEditMode::assertAllButtonsAssigned()
 {
 #if _TESTS
-  if (Application::get ().getPresetManager ()->getEditBuffer ()->countParameters () != assignedAudioIDs.size ())
+  if(Application::get().getPresetManager()->getEditBuffer()->countParameters() != assignedAudioIDs.size())
   {
     int lastOne = -1;
-    for (int id : assignedAudioIDs)
+    for(int id : assignedAudioIDs)
     {
       int expected = lastOne + 1;
-      if (expected != 122) // unused param
+      if(expected != 122)  // unused param
       {
-        if (id != expected)
+        if(id != expected)
         {
-          auto param = Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (expected);
-          if (param->getLongName ().find ("Pedal") != 0)
-          g_assert(false);
+          auto param = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(expected);
+          if(param->getLongName().find("Pedal") != 0)
+            g_assert(false);
         }
       }
       lastOne = id;
-      auto lastParam = Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (lastOne);
-      if (dynamic_cast<ModulateableParameter*> (lastParam))
-      lastOne++;
+      auto lastParam = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(lastOne);
+      if(dynamic_cast<ModulateableParameter *>(lastParam))
+        lastOne++;
     }
   }
 #endif
 }
 
-static EditPanel& getEditPanel()
+static EditPanel &getEditPanel()
 {
   auto hwui = Application::get().getHWUI();
-  auto& panelUnit = hwui->getPanelUnit();
+  auto &panelUnit = hwui->getPanelUnit();
   return panelUnit.getEditPanel();
 }
 
 void PanelUnitParameterEditMode::setup()
 {
-  m_mappings.forEachButton([=](Buttons buttonID, std::list<int> parameterIDs)
-  {
-    std::vector<int> para
-    { parameterIDs.begin(), parameterIDs.end()};
+  m_mappings.forEachButton([=](Buttons buttonID, std::list<int> parameterIDs) {
+    std::vector<int> para{ parameterIDs.begin(), parameterIDs.end() };
 
-    if(buttonID != Buttons::BUTTON_75 && buttonID != Buttons::BUTTON_79 && buttonID != Buttons::BUTTON_83 && buttonID != Buttons::BUTTON_87)
-    setupButtonConnection (buttonID, createParameterSelectAction (para));
+    if(buttonID != Buttons::BUTTON_75 && buttonID != Buttons::BUTTON_79 && buttonID != Buttons::BUTTON_83
+       && buttonID != Buttons::BUTTON_87)
+      setupButtonConnection(buttonID, createParameterSelectAction(para));
   });
 
-  setupButtonConnection(Buttons::BUTTON_75, bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 243));
+  setupButtonConnection(Buttons::BUTTON_75,
+                        bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 243));
   FOR_TESTS(assignedAudioIDs.insert(243));
 
-  setupButtonConnection(Buttons::BUTTON_79, bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 244));
+  setupButtonConnection(Buttons::BUTTON_79,
+                        bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 244));
   FOR_TESTS(assignedAudioIDs.insert(244));
 
-  setupButtonConnection(Buttons::BUTTON_83, bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 245));
+  setupButtonConnection(Buttons::BUTTON_83,
+                        bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 245));
   FOR_TESTS(assignedAudioIDs.insert(245));
 
-  setupButtonConnection(Buttons::BUTTON_87, bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 246));
+  setupButtonConnection(Buttons::BUTTON_87,
+                        bind(&PanelUnitParameterEditMode::handleMacroControlButton, this, std::placeholders::_3, 246));
   FOR_TESTS(assignedAudioIDs.insert(246));
 
   assertAllButtonsAssigned();
 
-  setupButtonConnection(Buttons::BUTTON_UNDO, [&] (Buttons button, ButtonModifiers modifiers, bool state)
-  {
+  setupButtonConnection(Buttons::BUTTON_UNDO, [&](Buttons button, ButtonModifiers modifiers, bool state) {
     getEditPanel().getUndoStateMachine().traverse(state ? UNDO_PRESSED : UNDO_RELEASED);
     return false;
   });
 
-  setupButtonConnection(Buttons::BUTTON_REDO, [&] (Buttons button, ButtonModifiers modifiers, bool state)
-  {
+  setupButtonConnection(Buttons::BUTTON_REDO, [&](Buttons button, ButtonModifiers modifiers, bool state) {
     getEditPanel().getUndoStateMachine().traverse(state ? REDO_PRESSED : REDO_RELEASED);
     return false;
   });
 
-  setupButtonConnection(Buttons::BUTTON_SOUND, [&] (Buttons button, ButtonModifiers modifiers, bool state)
-  {
+  setupButtonConnection(Buttons::BUTTON_SOUND, [&](Buttons button, ButtonModifiers modifiers, bool state) {
     if(state)
     {
       if(Application::get().getHWUI()->getFocusAndMode().focus == UIFocus::Sound)
-      Application::get ().getHWUI ()->setFocusAndMode (
-          { UIFocus::Parameters, UIMode::Select});
+        Application::get().getHWUI()->setFocusAndMode({ UIFocus::Parameters, UIMode::Select });
       else
-      Application::get().getHWUI()->undoableSetFocusAndMode(UIFocus::Sound);
+        Application::get().getHWUI()->undoableSetFocusAndMode(UIFocus::Sound);
     }
 
     return true;
@@ -156,10 +155,9 @@ void PanelUnitParameterEditMode::setup()
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
       sigc::mem_fun(this, &PanelUnitParameterEditMode::onParamSelectionChanged));
 
-  Glib::MainContext::get_default()->signal_idle().connect_once([=]()
-  {
-    auto hwui = Application::get ().getHWUI ();
-    auto &panelUnit = hwui->getPanelUnit ();
+  Glib::MainContext::get_default()->signal_idle().connect_once([=]() {
+    auto hwui = Application::get().getHWUI();
+    auto &panelUnit = hwui->getPanelUnit();
 
     if(panelUnit.getUsageMode().get() == this)
     {
@@ -167,7 +165,6 @@ void PanelUnitParameterEditMode::setup()
       bruteForceUpdateLeds();
     }
   });
-
 }
 
 bool PanelUnitParameterEditMode::handleMacroControlButton(bool state, int mcParamId)
@@ -175,12 +172,13 @@ bool PanelUnitParameterEditMode::handleMacroControlButton(bool state, int mcPara
   auto &mcStateMachine = getMacroControlAssignmentStateMachine();
   mcStateMachine.setCurrentMCParameter(mcParamId);
 
-  bool isAlreadySelected =
-          Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()->getID() == mcParamId &&
-					Application::get().getHWUI()->getFocusAndMode().focus == UIFocus::Parameters;
+  bool isAlreadySelected
+      = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()->getID() == mcParamId
+      && Application::get().getHWUI()->getFocusAndMode().focus == UIFocus::Parameters;
 
   if(state)
-    if(mcStateMachine.traverse(isAlreadySelected ? MacroControlAssignmentEvents::MCPressedWhileSelected : MacroControlAssignmentEvents::MCPressedWhileUnselected))
+    if(mcStateMachine.traverse(isAlreadySelected ? MacroControlAssignmentEvents::MCPressedWhileSelected
+                                                 : MacroControlAssignmentEvents::MCPressedWhileUnselected))
       return true;
 
   if(!state)
@@ -190,14 +188,14 @@ bool PanelUnitParameterEditMode::handleMacroControlButton(bool state, int mcPara
   return true;
 }
 
-void PanelUnitParameterEditMode::onParamSelectionChanged(Parameter * oldParam, Parameter * newParam)
+void PanelUnitParameterEditMode::onParamSelectionChanged(Parameter *oldParam, Parameter *newParam)
 {
-  if(auto mc = dynamic_cast<MacroControlParameter*>(oldParam))
+  if(auto mc = dynamic_cast<MacroControlParameter *>(oldParam))
   {
-    if(auto ph = dynamic_cast<PhysicalControlParameter*>(newParam))
+    if(auto ph = dynamic_cast<PhysicalControlParameter *>(newParam))
     {
-      if(auto mcm = dynamic_cast<MacroControlMappingGroup*>(Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID(
-          "MCM")))
+      if(auto mcm = dynamic_cast<MacroControlMappingGroup *>(
+             Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID("MCM")))
       {
         if(auto router = mcm->getModulationRoutingParameterFor(ph, mc))
         {
@@ -208,11 +206,11 @@ void PanelUnitParameterEditMode::onParamSelectionChanged(Parameter * oldParam, P
   }
 }
 
-Buttons PanelUnitParameterEditMode::findButtonForParameter(Parameter * param) const
+Buttons PanelUnitParameterEditMode::findButtonForParameter(Parameter *param) const
 {
   int parameterID = param->getID();
 
-  if(dynamic_cast<ScaleParameter*>(param))
+  if(dynamic_cast<ScaleParameter *>(param))
     parameterID = ScaleGroup::getScaleBaseParameterID();
 
   return m_mappings.findButton(parameterID);
@@ -227,13 +225,13 @@ UsageMode::tAction PanelUnitParameterEditMode::createParameterSelectAction(vecto
 {
 #if _TESTS
 
-  for (gint32 id : toggleAudioIDs)
+  for(gint32 id : toggleAudioIDs)
   {
-    if (!Application::get ().getPresetManager()->getEditBuffer()->findParameterByID (id))
-    g_error ("Attempt to link a button to parameter ID %d, which does not exist!", id);
+    if(!Application::get().getPresetManager()->getEditBuffer()->findParameterByID(id))
+      g_error("Attempt to link a button to parameter ID %d, which does not exist!", id);
 
-    g_assert (assignedAudioIDs.find (id) == assignedAudioIDs.end());
-    assignedAudioIDs.insert (id);
+    g_assert(assignedAudioIDs.find(id) == assignedAudioIDs.end());
+    assignedAudioIDs.insert(id);
   }
 
 #endif
@@ -243,7 +241,8 @@ UsageMode::tAction PanelUnitParameterEditMode::createParameterSelectAction(vecto
 
 UsageMode::tAction PanelUnitParameterEditMode::createParameterSelectAction(gint32 audioID)
 {
-  return bind(&PanelUnitParameterEditMode::toggleParameterSelection, this, vector<gint32>(audioID), std::placeholders::_3);
+  return bind(&PanelUnitParameterEditMode::toggleParameterSelection, this, vector<gint32>(audioID),
+              std::placeholders::_3);
 }
 
 bool PanelUnitParameterEditMode::toggleParameterSelection(vector<gint32> ids, bool state)
@@ -253,11 +252,12 @@ bool PanelUnitParameterEditMode::toggleParameterSelection(vector<gint32> ids, bo
 
   auto &mcStateMachine = getMacroControlAssignmentStateMachine();
 
-  if(auto modParam = dynamic_cast<ModulateableParameter*>(firstParameterInList))
+  if(auto modParam = dynamic_cast<ModulateableParameter *>(firstParameterInList))
   {
     mcStateMachine.setCurrentModulateableParameter(ids.front());
 
-    if(mcStateMachine.traverse(state ? MacroControlAssignmentEvents::ModParamPressed : MacroControlAssignmentEvents::ModParamReleased))
+    if(mcStateMachine.traverse(state ? MacroControlAssignmentEvents::ModParamPressed
+                                     : MacroControlAssignmentEvents::ModParamReleased))
       return true;
   }
 
@@ -266,7 +266,7 @@ bool PanelUnitParameterEditMode::toggleParameterSelection(vector<gint32> ids, bo
 
   if(state)
   {
-    Parameter * selParam = editBuffer->getSelectedParameter();
+    Parameter *selParam = editBuffer->getSelectedParameter();
 
     if(tryParameterToggleOnMacroControl(ids, selParam))
       return true;
@@ -317,19 +317,19 @@ bool PanelUnitParameterEditMode::switchToNormalModeInCurrentParameterLayout()
   return false;
 }
 
-bool PanelUnitParameterEditMode::tryParameterToggleOnMacroControl(vector<gint32> ids, Parameter * selParam)
+bool PanelUnitParameterEditMode::tryParameterToggleOnMacroControl(vector<gint32> ids, Parameter *selParam)
 {
   if(auto mc = dynamic_cast<MacroControlParameter *>(selParam))
   {
     list<gint32> a;
-    for (auto x : ids)
+    for(auto x : ids)
     {
       a.push_back(x);
     }
 
-    if (mc->isSourceOfTargetIn(a))
+    if(mc->isSourceOfTargetIn(a))
     {
-      for (gint32 targetId : a)
+      for(gint32 targetId : a)
       {
         if(mc->isSourceOf(targetId))
         {
@@ -356,7 +356,7 @@ bool PanelUnitParameterEditMode::setParameterSelection(gint32 audioID, bool stat
 
     shared_ptr<EditBuffer> editBuffer = Application::get().getPresetManager()->getEditBuffer();
 
-    if(Parameter * p = editBuffer->findParameterByID(audioID))
+    if(Parameter *p = editBuffer->findParameterByID(audioID))
     {
       DebugLevel::gassy("selecting param");
       auto old = editBuffer->getSelectedParameter();
@@ -386,7 +386,7 @@ void PanelUnitParameterEditMode::bruteForceUpdateLeds()
 
   shared_ptr<EditBuffer> editBuffer = Application::get().getPresetManager()->getEditBuffer();
 
-  if(Parameter * selParam = editBuffer->getSelectedParameter())
+  if(Parameter *selParam = editBuffer->getSelectedParameter())
   {
     auto selParamID = selParam->getID();
 
@@ -395,7 +395,7 @@ void PanelUnitParameterEditMode::bruteForceUpdateLeds()
 
     collectLedStates(states, selParamID);
 
-    if(auto p = dynamic_cast<PhysicalControlParameter*>(selParam))
+    if(auto p = dynamic_cast<PhysicalControlParameter *>(selParam))
     {
       auto selModRouter = p->getUiSelectedModulationRouter();
 
@@ -405,7 +405,7 @@ void PanelUnitParameterEditMode::bruteForceUpdateLeds()
       }
     }
 
-    if(auto router = dynamic_cast<ModulationRoutingParameter*>(selParam))
+    if(auto router = dynamic_cast<ModulationRoutingParameter *>(selParam))
     {
       collectLedStates(states, router->getTargetParameter()->getID());
     }
@@ -422,50 +422,50 @@ void PanelUnitParameterEditMode::bruteForceUpdateLeds()
   }
 }
 
-void PanelUnitParameterEditMode::letTargetsBlink(Parameter* selParam)
+void PanelUnitParameterEditMode::letTargetsBlink(Parameter *selParam)
 {
   auto group = selParam->getParentGroup();
 
   if(group->getID() == "Env A")
   {
-    letOtherTargetsBlink( { 62, 73, 96 });
+    letOtherTargetsBlink({ 62, 73, 96 });
   }
   else if(group->getID() == "Env B")
   {
-    letOtherTargetsBlink( { 66, 92, 103 });
+    letOtherTargetsBlink({ 66, 92, 103 });
   }
   else if(group->getID() == "Env C")
   {
-    letOtherTargetsBlink( { 56, 59, 70, 80, 86, 89, 100, 110, 118, 126, 132, 143, 147 });
+    letOtherTargetsBlink({ 56, 59, 70, 80, 86, 89, 100, 110, 118, 126, 132, 143, 147 });
   }
   else if(group->getID() == "Osc A" || group->getID() == "Sh A")
   {
-    letOscAShaperABlink( { 94, 111, 113, 133, 136, 153, 169 });
+    letOscAShaperABlink({ 94, 111, 113, 133, 136, 153, 169 });
   }
   else if(group->getID() == "Osc B" || group->getID() == "Sh B")
   {
-    letOscBShaperBBlink( { 64, 81, 113, 133, 136, 153, 172 });
+    letOscBShaperBBlink({ 64, 81, 113, 133, 136, 153, 172 });
   }
   else if(group->getID() == "Comb")
   {
-    letOtherTargetsBlink( { 138, 175, 156 });
+    letOtherTargetsBlink({ 138, 175, 156 });
   }
   else if(group->getID() == "FB")
   {
-    letOtherTargetsBlink( { 68, 78, 98, 108 });
+    letOtherTargetsBlink({ 68, 78, 98, 108 });
   }
   else if(group->getID() == "SVF")
   {
-    letOtherTargetsBlink( { 178, 158 });
+    letOtherTargetsBlink({ 178, 158 });
   }
-  else if(group->getID() == "Flang" || group->getID() == "Gap Filt" || group->getID() == "Cab" || group->getID() == "Echo"
-          || group->getID() == "Reverb")
+  else if(group->getID() == "Flang" || group->getID() == "Gap Filt" || group->getID() == "Cab"
+          || group->getID() == "Echo" || group->getID() == "Reverb")
   {
-    letOtherTargetsBlink( { 160 });
+    letOtherTargetsBlink({ 160 });
 
     if(group->getID() == "Reverb")
     {
-      letReverbBlink( { 162 });
+      letReverbBlink({ 162 });
     }
   }
 }
@@ -475,7 +475,7 @@ void PanelUnitParameterEditMode::collectLedStates(tLedStates &states, int select
   auto button = m_mappings.findButton(selectedParameterID);
 
   if(button != Buttons::INVALID)
-    states[(int)button] = true;
+    states[(int) button] = true;
 }
 
 shared_ptr<Layout> PanelUnitParameterEditMode::getCurrentBoledLayout() const
@@ -488,7 +488,7 @@ const BOLED &PanelUnitParameterEditMode::getBoled() const
   return Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
 }
 
-BOLED & PanelUnitParameterEditMode::getBoled()
+BOLED &PanelUnitParameterEditMode::getBoled()
 {
   return Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
 }
@@ -498,14 +498,14 @@ void PanelUnitParameterEditMode::setLedStates(const tLedStates &states)
   auto &panelUnit = Application::get().getHWUI()->getPanelUnit();
 
   for(int i = 0; i < NUM_LEDS; i++)
-    panelUnit.getLED((Buttons)i)->setState(states[i] ? TwoStateLED::ON : TwoStateLED::OFF);
+    panelUnit.getLED((Buttons) i)->setState(states[i] ? TwoStateLED::ON : TwoStateLED::OFF);
 }
 
 void PanelUnitParameterEditMode::letMacroControlTargetsBlink()
 {
   auto &panelUnit = Application::get().getHWUI()->getPanelUnit();
   shared_ptr<EditBuffer> editBuffer = Application::get().getPresetManager()->getEditBuffer();
-  Parameter * selParam = editBuffer->getSelectedParameter();
+  Parameter *selParam = editBuffer->getSelectedParameter();
 
   if(auto mc = dynamic_cast<MacroControlParameter *>(selParam))
   {
@@ -515,7 +515,8 @@ void PanelUnitParameterEditMode::letMacroControlTargetsBlink()
       panelUnit.getLED(buttonID)->setState(TwoStateLED::BLINK);
     }
 
-    m_connectionToMacroControl = mc->onTargetListChanged(mem_fun(this, &PanelUnitParameterEditMode::bruteForceUpdateLeds));
+    m_connectionToMacroControl
+        = mc->onTargetListChanged(mem_fun(this, &PanelUnitParameterEditMode::bruteForceUpdateLeds));
   }
 }
 
@@ -562,7 +563,8 @@ void PanelUnitParameterEditMode::letOscAShaperABlink(const std::vector<int> &tar
         }
         break;
       case SVFilterFM:
-        if(currentParam->getControlPositionValue() != currentParam->getDefaultValue() && FMAB->getControlPositionValue() < 1.d)
+        if(currentParam->getControlPositionValue() != currentParam->getDefaultValue()
+           && FMAB->getControlPositionValue() < 1.d)
         {
           panelUnit.getLED(m_mappings.findButton(targetID))->setState(TwoStateLED::BLINK);
         }
@@ -591,15 +593,15 @@ void PanelUnitParameterEditMode::letOscBShaperBBlink(const std::vector<int> &tar
     switch(targetID)
     {
       case CombFilterPM:
-        if(currentParam->getControlPositionValue() != currentParam->getDefaultValue() && combFilterPMAB->getControlPositionValue()
-            != combFilterPMAB->getDefaultValue())
+        if(currentParam->getControlPositionValue() != currentParam->getDefaultValue()
+           && combFilterPMAB->getControlPositionValue() != combFilterPMAB->getDefaultValue())
         {
           panelUnit.getLED(m_mappings.findButton(targetID))->setState(TwoStateLED::BLINK);
         }
         break;
       case SVFilterFM:
-        if(currentParam->getControlPositionValue() != currentParam->getDefaultValue() && stateVariableFilterFMAB->getControlPositionValue()
-            != stateVariableFilterFMAB->getDefaultValue())
+        if(currentParam->getControlPositionValue() != currentParam->getDefaultValue()
+           && stateVariableFilterFMAB->getControlPositionValue() != stateVariableFilterFMAB->getDefaultValue())
         {
           panelUnit.getLED(m_mappings.findButton(targetID))->setState(TwoStateLED::BLINK);
         }

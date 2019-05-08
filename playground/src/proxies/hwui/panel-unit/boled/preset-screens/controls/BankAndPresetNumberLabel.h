@@ -4,16 +4,15 @@
 
 class Application;
 
-class BankAndPresetNumberLabel :  public Label
+class BankAndPresetNumberLabel : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    BankAndPresetNumberLabel(const Rect& pos);
-    virtual bool redraw (FrameBuffer &fb) override;
+ public:
+  BankAndPresetNumberLabel(const Rect& pos);
+  virtual bool redraw(FrameBuffer& fb) override;
 
-  private:
-    void onEditBufferChanged ();
+ private:
+  void onEditBufferChanged();
 };
-

@@ -14,7 +14,8 @@ time_t TimeTools::getRealTimestamp()
 
 time_t TimeTools::getAdjustedTimestamp()
 {
-  auto dateTimeSetting = static_pointer_cast<DateTimeAdjustment>(Application::get().getSettings()->getSetting("DateTimeAdjustment"));
+  auto dateTimeSetting
+      = static_pointer_cast<DateTimeAdjustment>(Application::get().getSettings()->getSetting("DateTimeAdjustment"));
   return getRealTimestamp() + dateTimeSetting->get();
 }
 
@@ -35,7 +36,7 @@ Glib::ustring TimeTools::getIsoTime(const time_t stamp)
   return buf;
 }
 
-Glib::ustring TimeTools::getDisplayStringFromIso(const Glib::ustring & iso)
+Glib::ustring TimeTools::getDisplayStringFromIso(const Glib::ustring &iso)
 {
   return formatTime(iso, "%F %R");
 }
@@ -70,5 +71,3 @@ Glib::ustring TimeTools::formatTime(const tm *tm, const Glib::ustring &format)
   ss << std::put_time(tm, format.c_str());
   return ss.str();
 }
-
-

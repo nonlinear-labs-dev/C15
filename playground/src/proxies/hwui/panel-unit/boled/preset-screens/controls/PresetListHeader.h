@@ -6,18 +6,17 @@ class Application;
 
 class PresetListHeader : public ControlWithChildren
 {
-  private:
-    typedef ControlWithChildren super;
+ private:
+  typedef ControlWithChildren super;
 
-  public:
-    PresetListHeader (const Rect &pos, bool showBankArrows);
-    virtual ~PresetListHeader ();
+ public:
+  PresetListHeader(const Rect &pos, bool showBankArrows);
+  virtual ~PresetListHeader();
 
-    void setup (shared_ptr<PresetBank> bank);
+  void setup(shared_ptr<PresetBank> bank);
 
-  private:
-    void setupWithArrows (shared_ptr<PresetBank> bank);
+ private:
+  void setupWithArrows(shared_ptr<PresetBank> bank);
 
-    bool m_showBankArrows;
+  bool m_showBankArrows;
 };
-

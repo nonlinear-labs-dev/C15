@@ -17,29 +17,28 @@ static const char *c_fileName = "/home/hhoegelo/development/nl/playground/hostap
 static const char *c_fileName = "/etc/hostapd.conf";
 #endif
 
-HostAPDSetting::HostAPDSetting (Settings &parent, const std::string &pattern) :
-    super (parent),
-    m_pattern (pattern)
-{
-
-}
-
-HostAPDSetting::~HostAPDSetting ()
+HostAPDSetting::HostAPDSetting(Settings &parent, const std::string &pattern)
+    : super(parent)
+    , m_pattern(pattern)
 {
 }
 
-void HostAPDSetting::loadFromFile ()
+HostAPDSetting::~HostAPDSetting()
+{
+}
+
+void HostAPDSetting::loadFromFile()
 {
   try
   {
     std::string line;
-    std::stringstream stream (Glib::file_get_contents (c_fileName));
+    std::stringstream stream(Glib::file_get_contents(c_fileName));
 
-    while (std::getline (stream, line))
+    while(std::getline(stream, line))
     {
-      if (line.find (m_pattern) == 0)
+      if(line.find(m_pattern) == 0)
       {
-        m_setting = line.substr (m_pattern.size ());
+        m_setting = line.substr(m_pattern.size());
         break;
       }
     }
@@ -49,53 +48,52 @@ void HostAPDSetting::loadFromFile ()
   }
 }
 
-void HostAPDSetting::saveToFile ()
+void HostAPDSetting::saveToFile()
 {
   try
   {
     std::string line;
-    std::stringstream in (Glib::file_get_contents (c_fileName));
+    std::stringstream in(Glib::file_get_contents(c_fileName));
     std::stringstream out;
 
-    while (std::getline (in, line))
+    while(std::getline(in, line))
     {
-      if (line.find (m_pattern) == 0)
+      if(line.find(m_pattern) == 0)
         out << m_pattern << m_setting << std::endl;
       else
         out << line << std::endl;
     }
 
-    Glib::file_set_contents (c_fileName, out.str ());
-    restartAccessPoint ();
+    Glib::file_set_contents(c_fileName, out.str());
+    restartAccessPoint();
   }
   catch(...)
   {
   }
 }
 
-void HostAPDSetting::restartAccessPoint ()
+void HostAPDSetting::restartAccessPoint()
 {
   static std::thread theThread;
-  static std::atomic<bool> threadFinished (false);
+  static std::atomic<bool> threadFinished(false);
 
-  if (theThread.joinable ())
+  if(theThread.joinable())
   {
-    if (threadFinished)
+    if(threadFinished)
     {
-      theThread.join ();
-      restartAccessPoint ();
+      theThread.join();
+      restartAccessPoint();
     }
     else
     {
-      static Expiration restart(bind (&HostAPDSetting::restartAccessPoint));
-      restart.refresh (std::chrono::seconds (1));
+      static Expiration restart(bind(&HostAPDSetting::restartAccessPoint));
+      restart.refresh(std::chrono::seconds(1));
     }
   }
   else
   {
     threadFinished = false;
-    theThread = thread ([&]()
-    {
+    theThread = thread([&]() {
       DebugLevel::warning("Restarting Accesspoint...");
 
 #if _DEVELOPMENT_PC
@@ -109,27 +107,27 @@ void HostAPDSetting::restartAccessPoint ()
   }
 }
 
-void HostAPDSetting::load (const Glib::ustring &text)
+void HostAPDSetting::load(const Glib::ustring &text)
 {
 }
 
-Glib::ustring HostAPDSetting::save () const
+Glib::ustring HostAPDSetting::save() const
 {
-  return get ();
+  return get();
 }
 
-void HostAPDSetting::set (Glib::ustring v)
+void HostAPDSetting::set(Glib::ustring v)
 {
-  if (m_setting != v)
+  if(m_setting != v)
   {
     DebugLevel::warning("host apd setting", m_pattern, "changed from", m_setting, "to", v);
     m_setting = v;
-    saveToFile ();
-    notify ();
+    saveToFile();
+    notify();
   }
 }
 
-const Glib::ustring &HostAPDSetting::get () const
+const Glib::ustring &HostAPDSetting::get() const
 {
   return m_setting;
 }

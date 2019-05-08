@@ -5,14 +5,14 @@
 
 class SettingsSerializer : public Serializer
 {
-  public:
-    SettingsSerializer(Settings &settings);
+ public:
+  SettingsSerializer(Settings &settings);
 
-    static Glib::ustring getTagName();
+  static Glib::ustring getTagName();
 
-  private:
-    void writeTagContent(Writer &writer) const;
-    void readTagContent(Reader &reader) const;
+ private:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
 
-    Settings &m_settings;
+  Settings &m_settings;
 };

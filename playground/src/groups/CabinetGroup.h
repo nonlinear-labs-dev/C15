@@ -4,9 +4,9 @@
 
 class CabinetGroup : public ParameterGroup
 {
-  public:
-    CabinetGroup (ParameterGroupSet *parent);
-    virtual ~CabinetGroup ();
+ public:
+  CabinetGroup(ParameterGroupSet *parent);
+  virtual ~CabinetGroup();
 
-    void init ();
+  void init();
 };

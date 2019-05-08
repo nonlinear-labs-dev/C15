@@ -8,218 +8,218 @@
 #include "UndoMenu.h"
 #include "PositionInTreeLabel.h"
 
-UndoLayout::UndoLayout ()
+UndoLayout::UndoLayout()
 {
-  m_list = addControl (new UndoList (Rect (0, 0, 192, 64)));
-  m_editButton = addControl (new Button ("", Buttons::BUTTON_D));
-  m_posInTree = addControl (new PositionInTreeLabel (Rect (195, 0, 58, 11)));
+  m_list = addControl(new UndoList(Rect(0, 0, 192, 64)));
+  m_editButton = addControl(new Button("", Buttons::BUTTON_D));
+  m_posInTree = addControl(new PositionInTreeLabel(Rect(195, 0, 58, 11)));
 
-  Application::get ().getUndoScope ()->onUndoScopeChanged (mem_fun (this, &UndoLayout::assignTransactions));
+  Application::get().getUndoScope()->onUndoScopeChanged(mem_fun(this, &UndoLayout::assignTransactions));
 }
 
-UndoLayout::~UndoLayout ()
+UndoLayout::~UndoLayout()
 {
 }
 
-bool UndoLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
+bool UndoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if (down)
+  if(down)
   {
-    switch (i)
+    switch(i)
     {
       case Buttons::BUTTON_ENTER:
-        jumpToTip ();
+        jumpToTip();
         return true;
 
       case Buttons::BUTTON_A:
-        selectPreviousSibling ();
+        selectPreviousSibling();
         return true;
 
       case Buttons::BUTTON_C:
-        selectNextSibling ();
+        selectNextSibling();
         return true;
 
       case Buttons::BUTTON_D:
-        if (m_editMode)
-          doEditAction ();
+        if(m_editMode)
+          doEditAction();
         return true;
 
       case Buttons::BUTTON_EDIT:
-        toggleEdit ();
+        toggleEdit();
         return true;
 
       case Buttons::BUTTON_PRESET:
-        Application::get ().getHWUI ()->undoableSetFocusAndMode (FocusAndMode (UIFocus::Presets, UIMode::Select));
+        Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
         return true;
 
       case Buttons::BUTTON_STORE:
-        Application::get ().getHWUI ()->undoableSetFocusAndMode (FocusAndMode (UIFocus::Presets, UIMode::Store));
+        Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Store));
         return true;
     }
   }
 
-  return super::onButton (i, down, modifiers);
+  return super::onButton(i, down, modifiers);
 }
 
-void UndoLayout::doEditAction ()
+void UndoLayout::doEditAction()
 {
-  if (m_editMode)
+  if(m_editMode)
   {
-    if (auto tip = getTip ())
+    if(auto tip = getTip())
     {
-      if (isTipParentOfCurrentUndo ())
+      if(isTipParentOfCurrentUndo())
       {
-        Application::get ().getUndoScope ()->rebase (tip);
+        Application::get().getUndoScope()->rebase(tip);
       }
       else
       {
-        moveTipBy (-1);
-        Application::get ().getUndoScope ()->eraseBranch (tip);
+        moveTipBy(-1);
+        Application::get().getUndoScope()->eraseBranch(tip);
       }
 
-      assignTransactions ();
+      assignTransactions();
     }
   }
 }
 
-bool UndoLayout::isTipParentOfCurrentUndo () const
+bool UndoLayout::isTipParentOfCurrentUndo() const
 {
-  auto walker = Application::get ().getUndoScope ()->getUndoTransaction ();
-  auto tip = getTip ();
+  auto walker = Application::get().getUndoScope()->getUndoTransaction();
+  auto tip = getTip();
 
-  while (walker)
+  while(walker)
   {
-    if (walker == tip)
+    if(walker == tip)
       return true;
 
-    walker = walker->getPredecessor ();
+    walker = walker->getPredecessor();
   }
 
   return false;
 }
 
-void UndoLayout::toggleEdit ()
+void UndoLayout::toggleEdit()
 {
-  if (m_editMode)
+  if(m_editMode)
   {
-    remove (m_editMode);
+    remove(m_editMode);
     m_editMode = nullptr;
   }
   else
   {
-    m_editMode = addControl (new InvertedLabel ("Edit", Rect (195, 16, 58, 11)));
-    m_editMode->setHighlight (true);
+    m_editMode = addControl(new InvertedLabel("Edit", Rect(195, 16, 58, 11)));
+    m_editMode->setHighlight(true);
   }
 
-  assignTransactions ();
+  assignTransactions();
 }
 
-bool UndoLayout::onRotary (int inc, ButtonModifiers modifiers)
+bool UndoLayout::onRotary(int inc, ButtonModifiers modifiers)
 {
-  moveTipBy (inc);
+  moveTipBy(inc);
   return true;
 }
 
-shared_ptr<UNDO::Transaction> UndoLayout::getTip () const
+shared_ptr<UNDO::Transaction> UndoLayout::getTip() const
 {
-  return m_tip ? m_tip : Application::get ().getUndoScope ()->getUndoTransaction ();
+  return m_tip ? m_tip : Application::get().getUndoScope()->getUndoTransaction();
 }
 
-void UndoLayout::assignTransactions ()
+void UndoLayout::assignTransactions()
 {
-  auto tip = getTip ();
-  m_list->assignTransactions (tip);
+  auto tip = getTip();
+  m_list->assignTransactions(tip);
 
-  m_posInTree->assignTransaction (tip, false, false);
+  m_posInTree->assignTransaction(tip, false, false);
 
-  if (m_editMode)
+  if(m_editMode)
   {
-    if (isTipParentOfCurrentUndo ())
-      m_editButton->setText ("Make Root");
+    if(isTipParentOfCurrentUndo())
+      m_editButton->setText("Make Root");
     else
-      m_editButton->setText ("Delete");
+      m_editButton->setText("Delete");
   }
   else
-    m_editButton->setText ("");
+    m_editButton->setText("");
 }
 
-bool UndoLayout::canNext () const
+bool UndoLayout::canNext() const
 {
-  if (auto tip = getTip ())
-    if (auto parent = tip->getPredecessor ())
-      return parent->getSuccessor (parent->getNumSuccessors () - 1) != tip;
+  if(auto tip = getTip())
+    if(auto parent = tip->getPredecessor())
+      return parent->getSuccessor(parent->getNumSuccessors() - 1) != tip;
 
   return false;
 }
 
-bool UndoLayout::canPrev () const
+bool UndoLayout::canPrev() const
 {
-  if (auto tip = getTip ())
-    if (auto parent = tip->getPredecessor ())
-      return parent->getSuccessor (0) != tip;
+  if(auto tip = getTip())
+    if(auto parent = tip->getPredecessor())
+      return parent->getSuccessor(0) != tip;
 
   return false;
 }
 
-void UndoLayout::moveTipBy (int inc)
+void UndoLayout::moveTipBy(int inc)
 {
-  auto oldTip = getTip ();
-  auto tip = inc > 0 ? jumpForward (oldTip, inc) : jumpBackward (oldTip, inc);
+  auto oldTip = getTip();
+  auto tip = inc > 0 ? jumpForward(oldTip, inc) : jumpBackward(oldTip, inc);
 
-  if (oldTip != tip)
+  if(oldTip != tip)
   {
     m_tip = tip;
-    assignTransactions ();
+    assignTransactions();
   }
 }
 
-shared_ptr<UNDO::Transaction> UndoLayout::jumpForward (shared_ptr<UNDO::Transaction> tip, int inc)
+shared_ptr<UNDO::Transaction> UndoLayout::jumpForward(shared_ptr<UNDO::Transaction> tip, int inc)
 {
-  if (inc > 0)
-    if (auto next = tip->getDefaultRedoRoute ())
-      return jumpForward (next, inc - 1);
+  if(inc > 0)
+    if(auto next = tip->getDefaultRedoRoute())
+      return jumpForward(next, inc - 1);
 
   return tip;
 }
 
-shared_ptr<UNDO::Transaction> UndoLayout::jumpBackward (shared_ptr<UNDO::Transaction> tip, int inc)
+shared_ptr<UNDO::Transaction> UndoLayout::jumpBackward(shared_ptr<UNDO::Transaction> tip, int inc)
 {
-  if (inc < 0)
-    if (auto next = tip->getPredecessor ())
-      return jumpBackward (next, inc + 1);
+  if(inc < 0)
+    if(auto next = tip->getPredecessor())
+      return jumpBackward(next, inc + 1);
 
   return tip;
 }
 
-void UndoLayout::jumpToTip ()
+void UndoLayout::jumpToTip()
 {
-  if (auto tip = getTip ())
+  if(auto tip = getTip())
   {
     Application::get().getHWUI()->freezeFocusAndMode();
-    Application::get ().getUndoScope ()->undoJump (tip);
+    Application::get().getUndoScope()->undoJump(tip);
     Application::get().getHWUI()->thawFocusAndMode();
   }
 }
 
-void UndoLayout::selectPreviousSibling ()
+void UndoLayout::selectPreviousSibling()
 {
-  if (auto tip = getTip ())
+  if(auto tip = getTip())
   {
-    if (auto parent = tip->getPredecessor ())
+    if(auto parent = tip->getPredecessor())
     {
-      size_t numSuccessors = parent->getNumSuccessors ();
+      size_t numSuccessors = parent->getNumSuccessors();
       shared_ptr<UNDO::Transaction> before;
 
-      for (size_t i = 0; i < numSuccessors; i++)
+      for(size_t i = 0; i < numSuccessors; i++)
       {
-        auto currentSuccessor = parent->getSuccessor (i);
+        auto currentSuccessor = parent->getSuccessor(i);
 
-        if (currentSuccessor == tip)
+        if(currentSuccessor == tip)
         {
-          if (before)
+          if(before)
           {
             m_tip = before;
-            assignTransactions ();
+            assignTransactions();
           }
           return;
         }
@@ -229,27 +229,27 @@ void UndoLayout::selectPreviousSibling ()
   }
 }
 
-void UndoLayout::selectNextSibling ()
+void UndoLayout::selectNextSibling()
 {
-  if (auto tip = getTip ())
+  if(auto tip = getTip())
   {
-    if (auto parent = tip->getPredecessor ())
+    if(auto parent = tip->getPredecessor())
     {
-      size_t numSuccessors = parent->getNumSuccessors ();
+      size_t numSuccessors = parent->getNumSuccessors();
       bool foundIt = false;
 
-      for (size_t i = 0; i < numSuccessors; i++)
+      for(size_t i = 0; i < numSuccessors; i++)
       {
-        auto currentSuccessor = parent->getSuccessor (i);
+        auto currentSuccessor = parent->getSuccessor(i);
 
-        if (foundIt)
+        if(foundIt)
         {
           m_tip = currentSuccessor;
-          assignTransactions ();
+          assignTransactions();
           return;
         }
 
-        if (currentSuccessor == tip)
+        if(currentSuccessor == tip)
         {
           foundIt = true;
         }

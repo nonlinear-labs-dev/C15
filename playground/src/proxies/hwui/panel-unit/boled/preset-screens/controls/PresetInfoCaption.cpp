@@ -7,75 +7,74 @@
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetInfoCaption.h>
 
-PresetInfoCaption::PresetInfoCaption (const Rect &pos) :
-    super (pos)
+PresetInfoCaption::PresetInfoCaption(const Rect &pos)
+    : super(pos)
 {
-  Application::get ().getPresetManager ()->onBankSelection (mem_fun (this, &PresetInfoCaption::onBankSelection));
+  Application::get().getPresetManager()->onBankSelection(mem_fun(this, &PresetInfoCaption::onBankSelection));
 }
 
-PresetInfoCaption::~PresetInfoCaption ()
+PresetInfoCaption::~PresetInfoCaption()
 {
 }
 
-void PresetInfoCaption::onBankSelection (PresetManager::tBankPtr bank)
+void PresetInfoCaption::onBankSelection(PresetManager::tBankPtr bank)
 {
-  m_bankConnection.disconnect ();
+  m_bankConnection.disconnect();
 
-  if (bank)
+  if(bank)
   {
-    m_bankConnection = bank->onBankChanged (mem_fun (this, &PresetInfoCaption::onBankChanged));
+    m_bankConnection = bank->onBankChanged(mem_fun(this, &PresetInfoCaption::onBankChanged));
   }
 }
 
-void PresetInfoCaption::onBankChanged ()
+void PresetInfoCaption::onBankChanged()
 {
-  auto pm = Application::get ().getPresetManager ();
-  if (auto bank = pm->getSelectedBank ())
+  auto pm = Application::get().getPresetManager();
+  if(auto bank = pm->getSelectedBank())
   {
-    auto bankNumber = pm->calcOrderNumber (bank.get ());
-    auto selectedPresetUUID = bank->getSelectedPreset ();
+    auto bankNumber = pm->calcOrderNumber(bank.get());
+    auto selectedPresetUUID = bank->getSelectedPreset();
 
-    if (auto selecteddPreset = bank->getPreset (selectedPresetUUID))
+    if(auto selecteddPreset = bank->getPreset(selectedPresetUUID))
     {
-      auto presetNumber = bank->getPresetPosition (selectedPresetUUID) + 1;
+      auto presetNumber = bank->getPresetPosition(selectedPresetUUID) + 1;
 
       ostringstream presetPosStr;
-      presetPosStr.width (3);
-      presetPosStr.fill ('0');
+      presetPosStr.width(3);
+      presetPosStr.fill('0');
       presetPosStr << presetNumber;
 
-      auto text = UNDO::StringTools::buildString (bankNumber, "-", presetPosStr.str ());
-      setText (text);
+      auto text = UNDO::StringTools::buildString(bankNumber, "-", presetPosStr.str());
+      setText(text);
       return;
     }
   }
 
-  setText ("");
+  setText("");
 }
 
-bool PresetInfoCaption::redraw (FrameBuffer &fb)
+bool PresetInfoCaption::redraw(FrameBuffer &fb)
 {
-  const Rect &r = getPosition ();
+  const Rect &r = getPosition();
 
-  fb.setColor (FrameBuffer::Colors::C128);
-  fb.fillRect (r.getX (), r.getY (), r.getWidth (), r.getHeight ());
+  fb.setColor(FrameBuffer::Colors::C128);
+  fb.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 
-  super::redraw (fb);
+  super::redraw(fb);
   return true;
 }
 
-void PresetInfoCaption::setFontColor (FrameBuffer &fb) const
+void PresetInfoCaption::setFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C43);
+  fb.setColor(FrameBuffer::Colors::C43);
 }
 
-shared_ptr<Font> PresetInfoCaption::getFont () const
+shared_ptr<Font> PresetInfoCaption::getFont() const
 {
-  return Oleds::get ().getFont ("Emphase_8_Regular", getFontHeight ());
+  return Oleds::get().getFont("Emphase_8_Regular", getFontHeight());
 }
 
-int PresetInfoCaption::getFontHeight () const
+int PresetInfoCaption::getFontHeight() const
 {
   return 8;
 }
-

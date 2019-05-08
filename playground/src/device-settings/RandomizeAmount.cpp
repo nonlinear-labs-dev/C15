@@ -4,84 +4,84 @@
 #include <parameters/scale-converters/Linear100PercentScaleConverter.h>
 #include <xml/Writer.h>
 
-RandomizeAmount::RandomizeAmount (Settings &parent) :
-    super (parent),
-    m_amount (nullptr, ScaleConverter::get<Linear100PercentScaleConverter> (), 0.1, 100, 1000)
+RandomizeAmount::RandomizeAmount(Settings &parent)
+    : super(parent)
+    , m_amount(nullptr, ScaleConverter::get<Linear100PercentScaleConverter>(), 0.1, 100, 1000)
 {
 }
 
-RandomizeAmount::~RandomizeAmount ()
+RandomizeAmount::~RandomizeAmount()
 {
 }
 
-void RandomizeAmount::load (const Glib::ustring &text)
+void RandomizeAmount::load(const Glib::ustring &text)
 {
   try
   {
-    set (stof (text));
+    set(stof(text));
   }
-  catch (...)
+  catch(...)
   {
-    set (0);
-    DebugLevel::error ("Could not read settings for randomize amount:", text);
-  }
-}
-
-Glib::ustring RandomizeAmount::save () const
-{
-  return to_string (get ());
-}
-
-void RandomizeAmount::set (tControlPositionValue amount)
-{
-  if (m_amount.setRawValue (Initiator::INDIRECT, std::max (0.0, std::min (amount, 100.0))))
-  {
-    notify ();
+    set(0);
+    DebugLevel::error("Could not read settings for randomize amount:", text);
   }
 }
 
-void RandomizeAmount::setDefault ()
+Glib::ustring RandomizeAmount::save() const
 {
-  set (m_amount.getDefaultValue ());
+  return to_string(get());
 }
 
-tControlPositionValue RandomizeAmount::get () const
+void RandomizeAmount::set(tControlPositionValue amount)
 {
-  return m_amount.getQuantizedClipped ();
-}
-
-void RandomizeAmount::incDec (int incs, ButtonModifiers mods)
-{
-  while (incs > 0)
+  if(m_amount.setRawValue(Initiator::INDIRECT, std::max(0.0, std::min(amount, 100.0))))
   {
-    m_amount.inc (Initiator::INDIRECT, mods);
+    notify();
+  }
+}
+
+void RandomizeAmount::setDefault()
+{
+  set(m_amount.getDefaultValue());
+}
+
+tControlPositionValue RandomizeAmount::get() const
+{
+  return m_amount.getQuantizedClipped();
+}
+
+void RandomizeAmount::incDec(int incs, ButtonModifiers mods)
+{
+  while(incs > 0)
+  {
+    m_amount.inc(Initiator::INDIRECT, mods);
     incs--;
   }
 
-  while (incs < 0)
+  while(incs < 0)
   {
-    m_amount.dec (Initiator::INDIRECT, mods);
+    m_amount.dec(Initiator::INDIRECT, mods);
     incs++;
   }
 
-  notify ();
+  notify();
 }
 
-ustring RandomizeAmount::getDisplayString () const
+ustring RandomizeAmount::getDisplayString() const
 {
-  return m_amount.getDisplayString ();
+  return m_amount.getDisplayString();
 }
 
-void RandomizeAmount::writeDocument (Writer &writer, tUpdateID knownRevision) const
+void RandomizeAmount::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
-  super::writeDocument (writer, knownRevision);
+  super::writeDocument(writer, knownRevision);
 
-  if (knownRevision == 0)
+  if(knownRevision == 0)
   {
-    writer.writeTextElement ("default", to_string (m_amount.getDefaultValue ()));
-    writer.writeTextElement ("scaling", m_amount.getScaleConverter ()->controlPositionToDisplayJS ());
-    writer.writeTextElement ("bipolar", to_string (m_amount.isBiPolar ()));
-    writer.writeTextElement ("coarse-denominator", to_string (m_amount.getCoarseDenominator ()));
-    writer.writeTextElement ("fine-denominator", to_string (m_amount.getFineDenominator ()));
+    writer.writeTextElement("default", to_string(m_amount.getDefaultValue()));
+    writer.writeTextElement("scaling", m_amount.getScaleConverter()->controlPositionToDisplayJS());
+    writer.writeTextElement("bipolar", to_string(m_amount.isBiPolar()));
+    writer.writeTextElement("coarse-denominator", to_string(m_amount.getCoarseDenominator()));
+    writer.writeTextElement("fine-denominator", to_string(m_amount.getFineDenominator()));
   }
 }

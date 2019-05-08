@@ -6,14 +6,14 @@ class PresetManager;
 
 class PresetManagerSerializer : public Serializer
 {
-  public:
-    PresetManagerSerializer (PresetManager &pm);
+ public:
+  PresetManagerSerializer(PresetManager &pm);
 
-    static Glib::ustring getTagName();
+  static Glib::ustring getTagName();
 
-  private:
-    void writeTagContent(Writer &writer) const;
-    void readTagContent(Reader &reader) const;
+ private:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
 
-    PresetManager &m_pm;
+  PresetManager &m_pm;
 };

@@ -6,15 +6,14 @@ class Application;
 
 class SelectedParameterDotSlider : public DotSlider
 {
-  private:
-    typedef DotSlider super;
+ private:
+  typedef DotSlider super;
 
-  public:
-    SelectedParameterDotSlider (const Rect &rect);
-    virtual ~SelectedParameterDotSlider ();
+ public:
+  SelectedParameterDotSlider(const Rect& rect);
+  virtual ~SelectedParameterDotSlider();
 
-  private:
-    SelectedParameterDotSlider (const SelectedParameterDotSlider& other);
-    SelectedParameterDotSlider& operator= (const SelectedParameterDotSlider&);
+ private:
+  SelectedParameterDotSlider(const SelectedParameterDotSlider& other);
+  SelectedParameterDotSlider& operator=(const SelectedParameterDotSlider&);
 };
-

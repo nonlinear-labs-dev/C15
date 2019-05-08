@@ -4,15 +4,14 @@
 
 class SendPresetAsLPCWriteFallback : public BooleanSetting
 {
-  private:
-    typedef BooleanSetting super;
+ private:
+  typedef BooleanSetting super;
 
-  public:
-    SendPresetAsLPCWriteFallback (Settings &settings);
-    virtual ~SendPresetAsLPCWriteFallback ();
+ public:
+  SendPresetAsLPCWriteFallback(Settings& settings);
+  virtual ~SendPresetAsLPCWriteFallback();
 
-  private:
-    SendPresetAsLPCWriteFallback (const SendPresetAsLPCWriteFallback& other) = delete;
-    SendPresetAsLPCWriteFallback& operator= (const SendPresetAsLPCWriteFallback&) = delete;
+ private:
+  SendPresetAsLPCWriteFallback(const SendPresetAsLPCWriteFallback& other) = delete;
+  SendPresetAsLPCWriteFallback& operator=(const SendPresetAsLPCWriteFallback&) = delete;
 };
-

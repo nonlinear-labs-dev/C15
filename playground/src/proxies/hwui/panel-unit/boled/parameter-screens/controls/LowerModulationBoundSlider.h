@@ -4,14 +4,13 @@
 
 class LowerModulationBoundSlider : public ModulationBoundSlider
 {
-    typedef ModulationBoundSlider super;
-  public:
-    LowerModulationBoundSlider (const Rect &pos);
-    virtual ~LowerModulationBoundSlider ();
+  typedef ModulationBoundSlider super;
 
-  protected:
-    BoundPosition getBoundPosition () const override;
-    void drawBackground (FrameBuffer &fb) override;
+ public:
+  LowerModulationBoundSlider(const Rect &pos);
+  virtual ~LowerModulationBoundSlider();
 
+ protected:
+  BoundPosition getBoundPosition() const override;
+  void drawBackground(FrameBuffer &fb) override;
 };
-

@@ -5,8 +5,8 @@
 #include "xml/VersionAttribute.h"
 #include "tools/PerformanceTimer.h"
 
-Serializer::Serializer(const Glib::ustring &tagName) :
-    m_tagName(tagName)
+Serializer::Serializer(const Glib::ustring &tagName)
+    : m_tagName(tagName)
 {
 }
 
@@ -21,18 +21,12 @@ const Glib::ustring &Serializer::getTagName() const
 
 void Serializer::write(Writer &writer) const
 {
-  writer.writeTag(m_tagName, [&]()
-  {
-    writeTagContent(writer);
-  });
+  writer.writeTag(m_tagName, [&]() { writeTagContent(writer); });
 }
 
 void Serializer::write(Writer &writer, const Attribute &attr) const
 {
-  writer.writeTag(m_tagName, attr, [&]()
-  {
-    writeTagContent(writer);
-  });
+  writer.writeTag(m_tagName, attr, [&]() { writeTagContent(writer); });
 }
 
 void Serializer::read(Reader &reader) const
@@ -62,4 +56,3 @@ void Serializer::write(RefPtr<Gio::File> folder, const std::string &name)
     DebugLevel::warning("Exception during Serializer::write");
   }
 }
-

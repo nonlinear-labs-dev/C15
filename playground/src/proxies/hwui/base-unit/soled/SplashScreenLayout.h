@@ -4,11 +4,10 @@
 
 class SplashScreenLayout : public DFBLayout
 {
-  private:
-    typedef DFBLayout super;
+ private:
+  typedef DFBLayout super;
 
-  public:
-    SplashScreenLayout ();
-    virtual ~SplashScreenLayout ();
+ public:
+  SplashScreenLayout();
+  virtual ~SplashScreenLayout();
 };
-

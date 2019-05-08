@@ -37,24 +37,24 @@ void quitApp(int sig)
   Application::get().quit();
 }
 
-Application::Application(int numArgs, char **argv) :
-    m_selfPath(initStatic(this, argv[0])),
-    m_options(new Options(numArgs, argv)),
-    m_theMainLoop(MainLoop::create()),
-    m_websocketSession(std::make_unique<WebSocketSession>()),
-    m_http(new HTTPServer()),
-    m_settings(new Settings(m_http->getUpdateDocumentMaster())),
-    m_undoScope(new UndoScope(m_http->getUpdateDocumentMaster())),
-    m_presetManager(new PresetManager(m_http->getUpdateDocumentMaster())),
-    m_lpcProxy(new LPCProxy()),
-    m_hwui(new HWUI()),
-    m_hwtests(new HWTests(m_http->getUpdateDocumentMaster())),
-    m_watchDog(new WatchDog),
-    m_aggroWatchDog(new WatchDog),
-    m_deviceInformation(new DeviceInformation(m_http->getUpdateDocumentMaster())),
-    m_clipboard(new Clipboard(m_http->getUpdateDocumentMaster())),
-    m_heartbeatState(false),
-    m_isQuit(false)
+Application::Application(int numArgs, char **argv)
+    : m_selfPath(initStatic(this, argv[0]))
+    , m_options(new Options(numArgs, argv))
+    , m_theMainLoop(MainLoop::create())
+    , m_websocketSession(std::make_unique<WebSocketSession>())
+    , m_http(new HTTPServer())
+    , m_settings(new Settings(m_http->getUpdateDocumentMaster()))
+    , m_undoScope(new UndoScope(m_http->getUpdateDocumentMaster()))
+    , m_presetManager(new PresetManager(m_http->getUpdateDocumentMaster()))
+    , m_lpcProxy(new LPCProxy())
+    , m_hwui(new HWUI())
+    , m_hwtests(new HWTests(m_http->getUpdateDocumentMaster()))
+    , m_watchDog(new WatchDog)
+    , m_aggroWatchDog(new WatchDog)
+    , m_deviceInformation(new DeviceInformation(m_http->getUpdateDocumentMaster()))
+    , m_clipboard(new Clipboard(m_http->getUpdateDocumentMaster()))
+    , m_heartbeatState(false)
+    , m_isQuit(false)
 {
 #ifdef _PROFILING
   Profiler::get().enable(true);
@@ -107,7 +107,8 @@ Glib::ustring Application::getResourcePath() const
 
 void Application::run()
 {
-  while(!m_isQuit) {
+  while(!m_isQuit)
+  {
     DebugLevel::warning(__PRETTY_FUNCTION__);
     m_theMainLoop->run();
     DebugLevel::warning(__PRETTY_FUNCTION__);
@@ -139,9 +140,8 @@ void Application::runWatchDog()
 
   if(m_aggroWatchDog)
   {
-    m_aggroWatchDog->run(std::chrono::milliseconds(250), [ = ] (int numWarning, int inactiveFoMS)
-    {
-      DebugLevel::warning ("Aggro WatchDog was inactive for ", inactiveFoMS, "ms. Warning #", numWarning);
+    m_aggroWatchDog->run(std::chrono::milliseconds(250), [=](int numWarning, int inactiveFoMS) {
+      DebugLevel::warning("Aggro WatchDog was inactive for ", inactiveFoMS, "ms. Warning #", numWarning);
 
 #ifdef _PROFILING
       Profiler::get().printAllCallstacks();
@@ -248,4 +248,3 @@ bool Application::heartbeat()
 
   return true;
 }
-

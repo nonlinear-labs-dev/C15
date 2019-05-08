@@ -22,7 +22,9 @@ namespace DescriptiveLayouts
       case PrimitiveClasses::Circle:
         return new Circle(primitive);
       default:
-        throw ExceptionTools::TemplateException(Glib::ustring("PrimitiveInstance Type not found: ") + toString(primitive.primitveClass), "__LINE__ __FILE__");
+        throw ExceptionTools::TemplateException(Glib::ustring("PrimitiveInstance Type not found: ")
+                                                    + toString(primitive.primitveClass),
+                                                "__LINE__ __FILE__");
     }
   }
 }

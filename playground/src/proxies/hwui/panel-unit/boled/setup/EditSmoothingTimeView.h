@@ -4,15 +4,13 @@
 
 class EditSmoothingTimeView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    EditSmoothingTimeView ();
-    virtual ~EditSmoothingTimeView ();
+ public:
+  EditSmoothingTimeView();
+  virtual ~EditSmoothingTimeView();
 
-  private:
-    void onSettingChanged (const Setting *s);
-
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

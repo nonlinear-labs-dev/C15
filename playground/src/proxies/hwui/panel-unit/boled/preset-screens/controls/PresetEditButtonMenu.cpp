@@ -17,8 +17,8 @@
 
 int PresetEditButtonMenu::s_lastSelection = PresetEditButtonMenu::Actions::Copy;
 
-PresetEditButtonMenu::PresetEditButtonMenu(const Rect &rect) :
-    super(rect)
+PresetEditButtonMenu::PresetEditButtonMenu(const Rect &rect)
+    : super(rect)
 {
   Application::get().getClipboard()->onClipboardChanged(mem_fun(this, &PresetEditButtonMenu::onClipboardChanged));
 }
@@ -53,16 +53,15 @@ void PresetEditButtonMenu::selectButton(size_t i)
 
 void PresetEditButtonMenu::renamePreset()
 {
-  auto layout = new RenamePresetLayout([=](const Glib::ustring &newName)
-  {
-    if (auto bank = Application::get ().getPresetManager ()->getSelectedBank ())
+  auto layout = new RenamePresetLayout([=](const Glib::ustring &newName) {
+    if(auto bank = Application::get().getPresetManager()->getSelectedBank())
     {
-      const auto &uuid = bank->getSelectedPreset ();
+      const auto &uuid = bank->getSelectedPreset();
 
-      if(auto preset = bank->getPreset (uuid))
+      if(auto preset = bank->getPreset(uuid))
       {
-        auto scope = Application::get ().getUndoScope()->startTransaction("Rename Preset");
-        preset->undoableSetName (scope->getTransaction(), newName);
+        auto scope = Application::get().getUndoScope()->startTransaction("Rename Preset");
+        preset->undoableSetName(scope->getTransaction(), newName);
       }
     }
   });
@@ -118,4 +117,3 @@ void PresetEditButtonMenu::pasteClipboard()
     selectButton(m_lastCopyingAction);
   }
 }
-

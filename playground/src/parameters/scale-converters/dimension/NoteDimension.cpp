@@ -1,29 +1,29 @@
 #include "NoteDimension.h"
 
-NoteDimension::NoteDimension ()
+NoteDimension::NoteDimension()
 {
 }
 
-NoteDimension::~NoteDimension ()
+NoteDimension::~NoteDimension()
 {
 }
 
-const NoteDimension &NoteDimension::get ()
+const NoteDimension &NoteDimension::get()
 {
   static NoteDimension s;
   return s;
 }
 
-Glib::ustring NoteDimension::getStingizerJS () const
+Glib::ustring NoteDimension::getStingizerJS() const
 {
   return "formatNote(cpValue)";
 }
 
-Glib::ustring NoteDimension::stringize (const tDisplayValue &displayValue) const
+Glib::ustring NoteDimension::stringize(const tDisplayValue &displayValue) const
 {
   int v = displayValue;
 
-  switch (v)
+  switch(v)
   {
     case 0:
       return "C";

@@ -8,17 +8,16 @@ class Parameter;
 
 class AnyParameterLockedIndicator : public InvertedLabel
 {
-  private:
-    typedef InvertedLabel super;
+ private:
+  typedef InvertedLabel super;
 
-  public:
-    AnyParameterLockedIndicator (const Rect &pos);
-    virtual ~AnyParameterLockedIndicator ();
+ public:
+  AnyParameterLockedIndicator(const Rect &pos);
+  virtual ~AnyParameterLockedIndicator();
 
-  private:
-    void calcHasLocks();
-    void update ();
+ private:
+  void calcHasLocks();
+  void update();
 
-    DelayedJob m_calcHasLocks;
+  DelayedJob m_calcHasLocks;
 };
-

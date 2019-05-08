@@ -8,34 +8,32 @@
 #include <condition_variable>
 #include "Expiration.h"
 
-
 class WatchDog
 {
-  public:
-    WatchDog ();
-    ~WatchDog ();
-    
-    typedef function<void (int, int)> tCB;
-    
-    void run (std::chrono::system_clock::duration timeout);
-    void run (std::chrono::system_clock::duration timeout, tCB cb);
-    
-    void stop ();
+ public:
+  WatchDog();
+  ~WatchDog();
 
-  private:
-    void onTimer ();
-    void doBackgroundCheck(tCB cb);
-    void killProcess();
-    bool isDebuggerPreset ();
-    
-    std::chrono::system_clock::duration m_timeout;
-    Expiration m_regularTimer;
-    std::atomic<int> m_counter = {0};
-    std::atomic<bool> m_run = {1};
-    
-    std::thread m_bg;
+  typedef function<void(int, int)> tCB;
 
-    std::condition_variable m_condition;
-    std::mutex m_mutex;    
+  void run(std::chrono::system_clock::duration timeout);
+  void run(std::chrono::system_clock::duration timeout, tCB cb);
+
+  void stop();
+
+ private:
+  void onTimer();
+  void doBackgroundCheck(tCB cb);
+  void killProcess();
+  bool isDebuggerPreset();
+
+  std::chrono::system_clock::duration m_timeout;
+  Expiration m_regularTimer;
+  std::atomic<int> m_counter = { 0 };
+  std::atomic<bool> m_run = { 1 };
+
+  std::thread m_bg;
+
+  std::condition_variable m_condition;
+  std::mutex m_mutex;
 };
-

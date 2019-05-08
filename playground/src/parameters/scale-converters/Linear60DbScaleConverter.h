@@ -4,8 +4,7 @@
 
 class Linear60DbScaleConverter : public LinearScaleConverter
 {
-  public:
-    Linear60DbScaleConverter ();
-    virtual ~Linear60DbScaleConverter ();
+ public:
+  Linear60DbScaleConverter();
+  virtual ~Linear60DbScaleConverter();
 };
-

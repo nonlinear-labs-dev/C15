@@ -4,14 +4,13 @@
 
 class PitchbendOnPressedKey : public BooleanSetting
 {
-  private:
-    typedef BooleanSetting super;
+ private:
+  typedef BooleanSetting super;
 
-  public:
-    PitchbendOnPressedKey (Settings &settings);
-    virtual ~PitchbendOnPressedKey ();
+ public:
+  PitchbendOnPressedKey(Settings &settings);
+  virtual ~PitchbendOnPressedKey();
 
-  private:
-    void sendToLPC () const override;
+ private:
+  void sendToLPC() const override;
 };
-

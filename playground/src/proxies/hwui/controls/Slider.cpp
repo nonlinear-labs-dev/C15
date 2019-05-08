@@ -1,74 +1,74 @@
 #include "Slider.h"
 #include "parameters/Parameter.h"
 
-Slider::Slider (Parameter * param, const Rect &rect) :
-    super (rect),
-    m_value (0),
-    m_bipolar (false)
+Slider::Slider(Parameter *param, const Rect &rect)
+    : super(rect)
+    , m_value(0)
+    , m_bipolar(false)
 {
-  setParameter (param);
+  setParameter(param);
 }
 
-Slider::Slider (const Rect &rect) :
-    Slider (nullptr, rect)
-{
-}
-
-Slider::~Slider ()
+Slider::Slider(const Rect &rect)
+    : Slider(nullptr, rect)
 {
 }
 
-void Slider::setParameter (Parameter * param)
+Slider::~Slider()
 {
-  if (m_param != param)
+}
+
+void Slider::setParameter(Parameter *param)
+{
+  if(m_param != param)
   {
     m_param = param;
 
     m_paramValueConnection.disconnect();
 
-    if (param)
-      m_paramValueConnection = param->onParameterChanged (sigc::mem_fun (this, &Slider::onParamValueChanged));
+    if(param)
+      m_paramValueConnection = param->onParameterChanged(sigc::mem_fun(this, &Slider::onParamValueChanged));
     else
-      setValue (0, false);
+      setValue(0, false);
 
     setDirty();
   }
 }
 
-Parameter * Slider::getParameter () const
+Parameter *Slider::getParameter() const
 {
   return m_param;
 }
 
-void Slider::onParamValueChanged (const Parameter* param)
+void Slider::onParamValueChanged(const Parameter *param)
 {
-  setValue (param->getControlPositionValue (), param->isBiPolar ());
+  setValue(param->getControlPositionValue(), param->isBiPolar());
 }
 
-void Slider::setValue (tDisplayValue v, bool bipolar)
+void Slider::setValue(tDisplayValue v, bool bipolar)
 {
-  if (m_value != v || m_bipolar != bipolar)
+  if(m_value != v || m_bipolar != bipolar)
   {
     m_value = v;
     m_bipolar = bipolar;
-    setDirty ();
+    setDirty();
   }
 }
 
-tDisplayValue Slider::getValue () const
+tDisplayValue Slider::getValue() const
 {
   return m_value;
 }
 
-void Slider::setSliderColor (FrameBuffer &fb)
+void Slider::setSliderColor(FrameBuffer &fb)
 {
-  if (isHighlight ())
-    fb.setColor (FrameBuffer::Colors::C255);
+  if(isHighlight())
+    fb.setColor(FrameBuffer::Colors::C255);
   else
-    fb.setColor (FrameBuffer::Colors::C103);
+    fb.setColor(FrameBuffer::Colors::C103);
 }
 
-bool Slider::hasBorder () const
+bool Slider::hasBorder() const
 {
   return true;
 }

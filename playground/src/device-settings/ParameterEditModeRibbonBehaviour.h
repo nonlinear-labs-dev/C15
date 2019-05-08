@@ -10,23 +10,22 @@ enum class ParameterEditModeRibbonBehaviours
 
 class ParameterEditModeRibbonBehaviour : public EnumSetting<ParameterEditModeRibbonBehaviours>
 {
-  private:
-    typedef EnumSetting<ParameterEditModeRibbonBehaviours> super;
+ private:
+  typedef EnumSetting<ParameterEditModeRibbonBehaviours> super;
 
-  public:
-    ParameterEditModeRibbonBehaviour (Settings &settings);
-    virtual ~ParameterEditModeRibbonBehaviour ();
+ public:
+  ParameterEditModeRibbonBehaviour(Settings &settings);
+  virtual ~ParameterEditModeRibbonBehaviour();
 
-    virtual bool set (ParameterEditModeRibbonBehaviours m) override;
-    void sendRelatedSettingToLPC() const;
+  virtual bool set(ParameterEditModeRibbonBehaviours m) override;
+  void sendRelatedSettingToLPC() const;
 
-  private:
-    ParameterEditModeRibbonBehaviour (const ParameterEditModeRibbonBehaviour& other);
-    ParameterEditModeRibbonBehaviour& operator= (const ParameterEditModeRibbonBehaviour&);
+ private:
+  ParameterEditModeRibbonBehaviour(const ParameterEditModeRibbonBehaviour &other);
+  ParameterEditModeRibbonBehaviour &operator=(const ParameterEditModeRibbonBehaviour &);
 
-    void sendToLPC () const override;
+  void sendToLPC() const override;
 
-    const vector<Glib::ustring> &enumToString () const override;
-    const vector<Glib::ustring> &enumToDisplayString () const override;
+  const vector<Glib::ustring> &enumToString() const override;
+  const vector<Glib::ustring> &enumToDisplayString() const override;
 };
-

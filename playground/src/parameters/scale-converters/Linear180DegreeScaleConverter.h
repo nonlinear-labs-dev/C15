@@ -4,8 +4,7 @@
 
 class Linear180DegreeScaleConverter : public LinearScaleConverter
 {
-  public:
-    Linear180DegreeScaleConverter ();
-    virtual ~Linear180DegreeScaleConverter ();
+ public:
+  Linear180DegreeScaleConverter();
+  virtual ~Linear180DegreeScaleConverter();
 };
-

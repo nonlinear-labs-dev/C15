@@ -43,15 +43,15 @@ void Ribbon::setLEDState(int ledPos, char state, bool flush)
 
   for(int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
   {
-    char s = m_leds[i].getState ();
+    char s = m_leds[i].getState();
     if(s == 0)
-    dbg += '-';
+      dbg += '-';
     else if(s == 1)
-    dbg += '.';
+      dbg += '.';
     else if(s == 2)
-    dbg += 'o';
+      dbg += 'o';
     else if(s == 3)
-    dbg += 'O';
+      dbg += 'O';
   }
 
   DebugLevel::warning("Ribbon:", typeid(*this).name(), dbg.c_str());

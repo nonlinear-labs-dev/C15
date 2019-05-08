@@ -4,8 +4,7 @@
 
 class Linear100PercentScaleConverter : public LinearScaleConverter
 {
-  public:
-    Linear100PercentScaleConverter ();
-    virtual ~Linear100PercentScaleConverter ();
+ public:
+  Linear100PercentScaleConverter();
+  virtual ~Linear100PercentScaleConverter();
 };
-

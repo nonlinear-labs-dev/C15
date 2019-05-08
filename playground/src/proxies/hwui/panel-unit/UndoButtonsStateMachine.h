@@ -5,7 +5,10 @@
 
 enum UndoButtonEvents
 {
-  UNDO_PRESSED, UNDO_RELEASED, REDO_PRESSED, REDO_RELEASED,
+  UNDO_PRESSED,
+  UNDO_RELEASED,
+  REDO_PRESSED,
+  REDO_RELEASED,
 };
 
 enum UndoStates
@@ -21,16 +24,17 @@ enum UndoStates
 
 class Application;
 
-class UndoButtonStateMachine : public StateMachine<UndoStates, UndoButtonEvents, UNDO_STATE_INITIAL, UNDO_STATE_INVALID>, public Uncopyable
+class UndoButtonStateMachine
+    : public StateMachine<UndoStates, UndoButtonEvents, UNDO_STATE_INITIAL, UNDO_STATE_INVALID>,
+      public Uncopyable
 {
-  private:
-    typedef StateMachine<UndoStates, UndoButtonEvents, UNDO_STATE_INITIAL, UNDO_STATE_INVALID> super;
+ private:
+  typedef StateMachine<UndoStates, UndoButtonEvents, UNDO_STATE_INITIAL, UNDO_STATE_INVALID> super;
 
-  public:
-    UndoButtonStateMachine ();
-    virtual ~UndoButtonStateMachine ();
+ public:
+  UndoButtonStateMachine();
+  virtual ~UndoButtonStateMachine();
 
-  private:
-    bool setState (UndoStates s) override;
+ private:
+  bool setState(UndoStates s) override;
 };
-

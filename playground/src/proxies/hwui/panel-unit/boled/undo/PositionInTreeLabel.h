@@ -5,13 +5,12 @@
 
 class PositionInTreeLabel : public Label, public UndoTransactionClient
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    PositionInTreeLabel (const Rect &pos);
-    virtual ~PositionInTreeLabel ();
+ public:
+  PositionInTreeLabel(const Rect &pos);
+  virtual ~PositionInTreeLabel();
 
-    virtual void assignTransaction (shared_ptr<UNDO::Transaction> transaction, bool selected, bool current) override;
+  virtual void assignTransaction(shared_ptr<UNDO::Transaction> transaction, bool selected, bool current) override;
 };
-

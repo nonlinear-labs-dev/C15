@@ -20,11 +20,12 @@
 
 static size_t s_lastSelectedButton = 0;
 
-BankEditButtonMenu::BankEditButtonMenu(const Rect &rect) :
-    super(rect)
+BankEditButtonMenu::BankEditButtonMenu(const Rect& rect)
+    : super(rect)
 {
   Application::get().getClipboard()->onClipboardChanged(mem_fun(this, &BankEditButtonMenu::rebuildMenu));
-  Application::get().getPresetManager()->onNumBanksChanged(sigc::hide < 0 > (mem_fun(this, &BankEditButtonMenu::rebuildMenu)));
+  Application::get().getPresetManager()->onNumBanksChanged(
+      sigc::hide<0>(mem_fun(this, &BankEditButtonMenu::rebuildMenu)));
 }
 
 void BankEditButtonMenu::rebuildMenu()
@@ -106,7 +107,7 @@ void BankEditButtonMenu::newBank()
 
 BankEditButtonMenu::FileInfos BankEditButtonMenu::extractFileInfos(std::experimental::filesystem::directory_entry file)
 {
-  return FileInfos { file };
+  return FileInfos{ file };
 }
 
 bool BankEditButtonMenu::applicableBackupFilesFilter(std::experimental::filesystem::directory_entry term)
@@ -131,17 +132,17 @@ void BankEditButtonMenu::importBankFromPath(std::experimental::filesystem::direc
     Application::get().getPresetManager()->importBank(stream, "", "", fileInfos.fileName);
   }
   hwui->getPanelUnit().getEditPanel().getBoled().resetOverlay();
-  hwui->getPanelUnit().setupFocusAndMode( { UIFocus::Presets, UIMode::Select });
+  hwui->getPanelUnit().setupFocusAndMode({ UIFocus::Presets, UIMode::Select });
 }
 
 void BankEditButtonMenu::importBank()
 {
   Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(
-      new FileDialogLayout(&BankEditButtonMenu::applicableBackupFilesFilter,
-          &BankEditButtonMenu::importBankFromPath, "Select Bank for Import"));
+      new FileDialogLayout(&BankEditButtonMenu::applicableBackupFilesFilter, &BankEditButtonMenu::importBankFromPath,
+                           "Select Bank for Import"));
 }
 
-Glib::ustring BankEditButtonMenu::createValidOutputPath(const Glib::ustring &bankName)
+Glib::ustring BankEditButtonMenu::createValidOutputPath(const Glib::ustring& bankName)
 {
   auto fileName = FileTools::findSuitableFileName(bankName, "/mnt/usb-stick/", 0);
   return "/mnt/usb-stick/" + fileName + ".xml";
@@ -154,8 +155,7 @@ void BankEditButtonMenu::exportBank()
 
   if(auto selBank = Application::get().getPresetManager()->getSelectedBank())
   {
-    boled.setOverlay(new RenameExportLayout(selBank, [](Glib::ustring newExportName, std::shared_ptr<PresetBank> bank)
-    {
+    boled.setOverlay(new RenameExportLayout(selBank, [](Glib::ustring newExportName, std::shared_ptr<PresetBank> bank) {
       auto& panelunit = Application::get().getHWUI()->getPanelUnit();
       auto& boled = panelunit.getEditPanel().getBoled();
       auto outPath = BankEditButtonMenu::createValidOutputPath(newExportName);
@@ -167,7 +167,7 @@ void BankEditButtonMenu::exportBank()
   }
 }
 
-void BankEditButtonMenu::writeSelectedBankToFile(PresetManager::tBankPtr selBank, const std::string &outFile)
+void BankEditButtonMenu::writeSelectedBankToFile(PresetManager::tBankPtr selBank, const std::string& outFile)
 {
   SplashLayout::addStatus("Exporting " + selBank->getName(true));
   selBank->setAttribute("Date of Export File", TimeTools::getAdjustedIso());
@@ -250,4 +250,3 @@ void BankEditButtonMenu::correctMenuSelection()
   if(s_lastSelectedButton >= getNumChildren())
     s_lastSelectedButton = 0;
 }
-

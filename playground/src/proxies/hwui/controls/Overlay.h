@@ -4,16 +4,15 @@
 
 class Overlay : public ControlWithChildren
 {
-  public:
-    typedef ControlWithChildren super;
-    
-    Overlay (const Rect &pos);
+ public:
+  typedef ControlWithChildren super;
 
-    using super::clear;
-    using super::addControl;
+  Overlay(const Rect &pos);
 
-    virtual void setBackgroundColor (FrameBuffer &fb) const override;
-    virtual void drawBackground (FrameBuffer &fb) override;
-    virtual bool isTransparent() const override;
+  using super::addControl;
+  using super::clear;
+
+  virtual void setBackgroundColor(FrameBuffer &fb) const override;
+  virtual void drawBackground(FrameBuffer &fb) override;
+  virtual bool isTransparent() const override;
 };
-

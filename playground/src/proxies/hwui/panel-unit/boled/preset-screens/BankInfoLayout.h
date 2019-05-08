@@ -6,22 +6,21 @@ class PresetBank;
 
 class BankInfoLayout : public InfoLayout
 {
-  private:
-    typedef InfoLayout super;
+ private:
+  typedef InfoLayout super;
 
-  public:
-    BankInfoLayout ();
-    virtual ~BankInfoLayout ();
+ public:
+  BankInfoLayout();
+  virtual ~BankInfoLayout();
 
-    virtual bool onButton (Buttons i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
-  protected:
-    virtual void addModuleCaption () override;
-    virtual void addHeadline () override;
-    virtual void addInfoLabel () override;
-    virtual Scrollable * createScrollableContent () override;
+ protected:
+  virtual void addModuleCaption() override;
+  virtual void addHeadline() override;
+  virtual void addInfoLabel() override;
+  virtual Scrollable* createScrollableContent() override;
 
-    void onBankChanged (shared_ptr<PresetBank> bank);
-    void onPresetSelectionChanged ();
+  void onBankChanged(shared_ptr<PresetBank> bank);
+  void onPresetSelectionChanged();
 };
-

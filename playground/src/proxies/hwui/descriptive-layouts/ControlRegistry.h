@@ -8,22 +8,21 @@ namespace DescriptiveLayouts
 
   class ControlRegistry
   {
-    protected:
-      ControlRegistry();
+   protected:
+    ControlRegistry();
 
-    public:
-      static ControlRegistry& get();
+   public:
+    static ControlRegistry& get();
 
-      void registerControl(ControlClass &&cp);
-      const ControlClass& find(ControlClasses id) const;
-      const bool exists(ControlClasses id) const;
-      void clear();
+    void registerControl(ControlClass&& cp);
+    const ControlClass& find(ControlClasses id) const;
+    const bool exists(ControlClasses id) const;
+    void clear();
 
-    private:
-      std::map<ControlClasses, ControlClass> m_controlRegistry;
-      std::vector<ControlClasses> m_discreteRegistry;
+   private:
+    std::map<ControlClasses, ControlClass> m_controlRegistry;
+    std::vector<ControlClasses> m_discreteRegistry;
 
-      friend class ConsistencyChecker;
+    friend class ConsistencyChecker;
   };
 }
-

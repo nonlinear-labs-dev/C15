@@ -5,16 +5,15 @@
 
 class FileInStream : public InStream
 {
-  public:
-    FileInStream (const Glib::ustring &fileName, bool tryZip);
-    virtual ~FileInStream ();
+ public:
+  FileInStream(const Glib::ustring &fileName, bool tryZip);
+  virtual ~FileInStream();
 
-    ustring read() override;
-    vector<uint8_t> readAll() override;
-		bool eof() const;
+  ustring read() override;
+  vector<uint8_t> readAll() override;
+  bool eof() const;
 
-  private:
-    GDataInputStream *m_stream = nullptr;
-    bool m_eof = false;
+ private:
+  GDataInputStream *m_stream = nullptr;
+  bool m_eof = false;
 };
-

@@ -4,8 +4,7 @@
 
 class LinearBipolar33PercentScaleConverter : public LinearScaleConverter
 {
-  public:
-    LinearBipolar33PercentScaleConverter ();
-    virtual ~LinearBipolar33PercentScaleConverter ();
+ public:
+  LinearBipolar33PercentScaleConverter();
+  virtual ~LinearBipolar33PercentScaleConverter();
 };
-

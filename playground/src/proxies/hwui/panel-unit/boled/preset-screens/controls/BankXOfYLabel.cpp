@@ -2,39 +2,39 @@
 #include "Application.h"
 #include "presets/PresetManager.h"
 
-BankXOfYLabel::BankXOfYLabel (const Rect &pos) :
-    super (pos)
+BankXOfYLabel::BankXOfYLabel(const Rect &pos)
+    : super(pos)
 {
-  Application::get().getPresetManager ()->onBankSelection (sigc::mem_fun (this, &BankXOfYLabel::onBankSelectionChanged));
+  Application::get().getPresetManager()->onBankSelection(sigc::mem_fun(this, &BankXOfYLabel::onBankSelectionChanged));
 }
 
-BankXOfYLabel::~BankXOfYLabel ()
+BankXOfYLabel::~BankXOfYLabel()
 {
 }
 
-void BankXOfYLabel::onBankSelectionChanged (shared_ptr<PresetBank> newBank)
+void BankXOfYLabel::onBankSelectionChanged(shared_ptr<PresetBank> newBank)
 {
-  if (newBank)
+  if(newBank)
   {
-    auto bankNumber = to_string (Application::get ().getPresetManager ()->calcOrderNumber (newBank.get()));
-    auto numBanks = to_string (Application::get ().getPresetManager ()->getNumBanks ());
-    setText (bankNumber + " of " + numBanks);
+    auto bankNumber = to_string(Application::get().getPresetManager()->calcOrderNumber(newBank.get()));
+    auto numBanks = to_string(Application::get().getPresetManager()->getNumBanks());
+    setText(bankNumber + " of " + numBanks);
   }
   else
-    setText ("");
+    setText("");
 }
 
-void BankXOfYLabel::setBackgroundColor (FrameBuffer &fb) const
+void BankXOfYLabel::setBackgroundColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C43);
+  fb.setColor(FrameBuffer::Colors::C43);
 }
 
-void BankXOfYLabel::setFontColor (FrameBuffer &fb) const
+void BankXOfYLabel::setFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C179);
+  fb.setColor(FrameBuffer::Colors::C179);
 }
 
-Font::Justification BankXOfYLabel::getJustification () const
+Font::Justification BankXOfYLabel::getJustification() const
 {
   return Font::Justification::Right;
 }

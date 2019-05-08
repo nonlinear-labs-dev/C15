@@ -4,12 +4,11 @@
 
 class Sender
 {
-  public:
-    using tMessage = Glib::RefPtr<Glib::Bytes>;
+ public:
+  using tMessage = Glib::RefPtr<Glib::Bytes>;
 
-    Sender();
-    virtual ~Sender();
+  Sender();
+  virtual ~Sender();
 
-    virtual void send(tMessage msg) = 0;
+  virtual void send(tMessage msg) = 0;
 };
-

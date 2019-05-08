@@ -4,8 +4,8 @@
 #include <chrono>
 #include <tools/FileTools.h>
 
-FileInfoContent::FileInfoContent(std::experimental::filesystem::directory_entry file) :
-    m_file(file)
+FileInfoContent::FileInfoContent(std::experimental::filesystem::directory_entry file)
+    : m_file(file)
 {
   initializeFileInfosFromFile();
 }
@@ -48,10 +48,11 @@ void FileInfoContent::setDirty()
   InfoContent::setDirty();
 }
 
-void FileInfoContent::fixLayout() {
+void FileInfoContent::fixLayout()
+{
   int y = 0;
 
-  for(auto key : {"filename", "path", "date", "size"})
+  for(auto key : { "filename", "path", "date", "size" })
   {
     y = infoFields[key]->format(y);
   }

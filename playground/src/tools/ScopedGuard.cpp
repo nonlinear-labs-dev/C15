@@ -1,24 +1,24 @@
 #include <tools/ScopedGuard.h>
 
-ScopedGuard::ScopedGuard ()
+ScopedGuard::ScopedGuard()
 {
 }
 
-ScopedGuard::~ScopedGuard ()
+ScopedGuard::~ScopedGuard()
 {
 }
 
-shared_ptr<ScopedGuard::Lock> ScopedGuard::lock ()
+shared_ptr<ScopedGuard::Lock> ScopedGuard::lock()
 {
-  if (isLocked ())
+  if(isLocked())
     return nullptr;
 
-  shared_ptr<ScopedGuard::Lock> ptr (new Lock ());
+  shared_ptr<ScopedGuard::Lock> ptr(new Lock());
   m_currentLock = ptr;
   return ptr;
 }
 
-bool ScopedGuard::isLocked () const
+bool ScopedGuard::isLocked() const
 {
-  return m_currentLock.lock () != nullptr;
+  return m_currentLock.lock() != nullptr;
 }

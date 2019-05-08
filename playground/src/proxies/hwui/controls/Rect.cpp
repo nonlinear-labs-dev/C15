@@ -4,15 +4,15 @@
 
 TestDriver<Rect> tester;
 
-Rect::Rect(int x, int y, int w, int h) :
-    m_leftTop(x, y),
-    m_width(w),
-    m_height(h)
+Rect::Rect(int x, int y, int w, int h)
+    : m_leftTop(x, y)
+    , m_width(w)
+    , m_height(h)
 {
 }
 
-Rect::Rect(const Point &leftTop, const Point &rightBottom) :
-    m_leftTop(leftTop)
+Rect::Rect(const Point &leftTop, const Point &rightBottom)
+    : m_leftTop(leftTop)
 {
   setRightBottom(rightBottom);
 }
@@ -219,21 +219,22 @@ void Rect::addMargin(int left, int top, int right, int bottom)
   m_height -= top + bottom;
 }
 
-bool operator ==(const Rect &lhs, const Rect &rhs)
+bool operator==(const Rect &lhs, const Rect &rhs)
 {
-  return lhs.getPosition() == rhs.getPosition() && lhs.getWidth() == rhs.getWidth() && lhs.getHeight() == rhs.getHeight();
+  return lhs.getPosition() == rhs.getPosition() && lhs.getWidth() == rhs.getWidth()
+      && lhs.getHeight() == rhs.getHeight();
 }
 
-bool operator !=(const Rect &lhs, const Rect &rhs)
+bool operator!=(const Rect &lhs, const Rect &rhs)
 {
-  return lhs.getPosition() != rhs.getPosition() || lhs.getWidth() != rhs.getWidth() || lhs.getHeight() != rhs.getHeight();
+  return lhs.getPosition() != rhs.getPosition() || lhs.getWidth() != rhs.getWidth()
+      || lhs.getHeight() != rhs.getHeight();
 }
 
 void Rect::registerTests()
 {
-  g_test_add_func("/rect/basics", []()
-  {
-    Rect a(0,0,0,0);
+  g_test_add_func("/rect/basics", []() {
+    Rect a(0, 0, 0, 0);
     g_assert(a.isEmpty());
     g_assert(a.getWidth() == 0);
     g_assert(a.getHeight() == 0);
@@ -242,7 +243,7 @@ void Rect::registerTests()
     g_assert(a.getRight() < 0);
     g_assert(a.getBottom() < 0);
 
-    Rect b(0,0,1,1);
+    Rect b(0, 0, 1, 1);
     g_assert(!b.isEmpty());
     g_assert(b.getWidth() == 1);
     g_assert(b.getHeight() == 1);
@@ -252,14 +253,12 @@ void Rect::registerTests()
     g_assert(b.getBottom() == 0);
   });
 
-  g_test_add_func("/rect/intersect", []()
-  {
-    Rect a(0,0,10,10);
+  g_test_add_func("/rect/intersect", []() {
+    Rect a(0, 0, 10, 10);
     Rect b(20, 20, 10, 10);
     Rect i = a.getIntersection(b);
     g_assert(i.isEmpty());
     g_assert(i.getWidth() == 0);
     g_assert(i.getHeight() == 0);
   });
-
 }

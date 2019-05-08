@@ -6,17 +6,17 @@ class PresetManager;
 
 class PresetManagerMetadataSerializer : public Serializer
 {
-  private:
-    typedef Serializer super;
-    
-  public:
-    PresetManagerMetadataSerializer (PresetManager &pm);
+ private:
+  typedef Serializer super;
 
-    static Glib::ustring getTagName();
+ public:
+  PresetManagerMetadataSerializer(PresetManager &pm);
 
-  private:
-    void writeTagContent (Writer &writer) const;
-    void readTagContent (Reader &reader) const;
-    
-    PresetManager &m_pm;
+  static Glib::ustring getTagName();
+
+ private:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
+
+  PresetManager &m_pm;
 };

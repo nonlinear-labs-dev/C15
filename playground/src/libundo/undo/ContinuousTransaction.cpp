@@ -3,13 +3,14 @@
 
 namespace UNDO
 {
-  
-  ContinuousTransaction::ContinuousTransaction(Scope &scope, void *id, const Glib::ustring &name, size_t depth) :
-      Transaction(scope, name, depth), m_id(id)
+
+  ContinuousTransaction::ContinuousTransaction(Scope &scope, void *id, const Glib::ustring &name, size_t depth)
+      : Transaction(scope, name, depth)
+      , m_id(id)
   {
     m_creationTimestamp = steady_clock::now();
   }
-  
+
   ContinuousTransaction::~ContinuousTransaction()
   {
   }

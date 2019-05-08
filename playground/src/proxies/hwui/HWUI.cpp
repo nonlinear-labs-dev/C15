@@ -25,10 +25,10 @@
 #include <io/network/WebSocketSession.h>
 #include <proxies/hwui/descriptive-layouts/LayoutFolderMonitor.h>
 
-HWUI::HWUI() :
-    m_blinkCount(0),
-    m_focusAndMode(UIFocus::Parameters, UIMode::Select),
-    m_readersCancel(Gio::Cancellable::create())
+HWUI::HWUI()
+    : m_blinkCount(0)
+    , m_focusAndMode(UIFocus::Parameters, UIMode::Select)
+    , m_readersCancel(Gio::Cancellable::create())
 {
   m_buttonStates.fill(false);
 
@@ -37,7 +37,8 @@ HWUI::HWUI() :
   m_keyboardInput->read_line_async(mem_fun(this, &HWUI::onKeyboardLineRead), m_readersCancel);
 #endif
 
-  Application::get().getWebSocketSession()->onMessageReceived(WebSocketSession::Domain::Buttons, sigc::mem_fun(this, &HWUI::onButtonMessage));
+  Application::get().getWebSocketSession()->onMessageReceived(WebSocketSession::Domain::Buttons,
+                                                              sigc::mem_fun(this, &HWUI::onButtonMessage));
 }
 
 HWUI::~HWUI()
@@ -74,10 +75,7 @@ void HWUI::init()
 
 void HWUI::indicateBlockingMainThread()
 {
-  m_switchOffBlockingMainThreadIndicator.setCallback([ = ]()
-  {
-    m_baseUnit.indicateBlockingMainThread(false);
-  });
+  m_switchOffBlockingMainThreadIndicator.setCallback([=]() { m_baseUnit.indicateBlockingMainThread(false); });
 
   m_switchOffBlockingMainThreadIndicator.refresh(std::chrono::seconds(5));
   m_baseUnit.indicateBlockingMainThread(true);
@@ -205,7 +203,8 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       else if(line.find("z") == 0)
       {
         auto p = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter();
-        p = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(HardwareSourcesGroup::getUpperRibbonParameterID());
+        p = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+            HardwareSourcesGroup::getUpperRibbonParameterID());
 
         if(auto h = dynamic_cast<PhysicalControlParameter *>(p))
         {
@@ -220,9 +219,10 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       else if(line.find("x") == 0)
       {
         auto p = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter();
-        p = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(HardwareSourcesGroup::getUpperRibbonParameterID());
+        p = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+            HardwareSourcesGroup::getUpperRibbonParameterID());
 
-        if(auto h = dynamic_cast<PhysicalControlParameter*>(p))
+        if(auto h = dynamic_cast<PhysicalControlParameter *>(p))
         {
           h->onChangeFromLpc(h->getControlPositionValue() - line.size() * 0.1);
         }
@@ -236,7 +236,7 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       {
         try
         {
-          Buttons i = (Buttons)stoi(line);
+          Buttons i = (Buttons) stoi(line);
           if(i < Buttons::NUM_BUTTONS)
           {
             if(line.back() == 'u')
@@ -291,11 +291,12 @@ const BaseUnit &HWUI::getBaseUnit() const
 
 void HWUI::onButtonPressed(Buttons buttonID, bool state)
 {
-  m_buttonStates[(int)buttonID] = state;
+  m_buttonStates[(int) buttonID] = state;
 
   setModifiers(buttonID, state);
 
-  if(buttonID == Buttons::OLD_LAYOUTS) {
+  if(buttonID == Buttons::OLD_LAYOUTS)
+  {
     m_oldLayouts = state;
     getPanelUnit().getEditPanel().getBoled().setupFocusAndMode(getFocusAndMode());
   }
@@ -314,7 +315,7 @@ void HWUI::onButtonPressed(Buttons buttonID, bool state)
           }
           else
           {
-            undoableSetFocusAndMode( { UIFocus::Setup, UIMode::Select });
+            undoableSetFocusAndMode({ UIFocus::Setup, UIMode::Select });
           }
         }
       }
@@ -440,7 +441,8 @@ sigc::connection HWUI::connectToBlinkTimer(slot<void, int> cb)
   if(m_blinkTimer.size() == 0)
   {
     m_blinkTimerConnection.disconnect();
-    m_blinkTimerConnection = Application::get().getMainContext()->signal_timeout().connect(mem_fun(this, &HWUI::onBlinkTimeout), 500);
+    m_blinkTimerConnection
+        = Application::get().getMainContext()->signal_timeout().connect(mem_fun(this, &HWUI::onBlinkTimeout), 500);
     m_blinkCount = 1;
   }
 
@@ -473,9 +475,8 @@ void HWUI::undoableSetFocusAndMode(UNDO::Scope::tTransactionPtr transaction, Foc
 
   auto swapData = UNDO::createSwapData(restrictFocusAndMode(focusAndMode));
 
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State)
-  {
-    swapData->swapWith (m_focusAndMode);
+  transaction->addSimpleCommand([=](UNDO::Command::State) {
+    swapData->swapWith(m_focusAndMode);
     setupFocusAndMode();
   });
 }
@@ -546,8 +547,7 @@ FocusAndMode HWUI::restrictFocusAndMode(FocusAndMode in) const
 
   if(isDesiredPresetManager)
     if(in.mode == UIMode::Store && Application::get().getPresetManager()->getNumBanks() == 0)
-      return
-      { in.focus, UIMode::Select};
+      return { in.focus, UIMode::Select };
 
   return in;
 }
@@ -556,4 +556,3 @@ bool HWUI::getButtonState(uint16_t buttonId) const
 {
   return m_buttonStates[buttonId];
 }
-

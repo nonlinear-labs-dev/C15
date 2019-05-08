@@ -4,13 +4,13 @@
 
 class RTSoftwareVersion : public DeviceInformationItem
 {
-  public:
-    RTSoftwareVersion (DeviceInformation *parent);
+ public:
+  RTSoftwareVersion(DeviceInformation *parent);
 
-    virtual void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
-    Glib::ustring get () const override;
+  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  Glib::ustring get() const override;
 
-  private:
-    void onVersionChanged(int v);
-    sigc::connection m_connection;
+ private:
+  void onVersionChanged(int v);
+  sigc::connection m_connection;
 };

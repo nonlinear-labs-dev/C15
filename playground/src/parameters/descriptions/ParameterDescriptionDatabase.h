@@ -6,15 +6,15 @@ class Application;
 
 class ParameterDescriptionDatabase
 {
-  public:
-    static ParameterDescriptionDatabase &get ();
+ public:
+  static ParameterDescriptionDatabase &get();
 
-    connection load (int paramID, slot<void, const Glib::ustring &>);
+  connection load(int paramID, slot<void, const Glib::ustring &>);
 
-  private:
-    ParameterDescriptionDatabase ();
+ private:
+  ParameterDescriptionDatabase();
 
-    class Job;
-    typedef shared_ptr<Job> tJob;
-    map<int, tJob> m_jobs;
+  class Job;
+  typedef shared_ptr<Job> tJob;
+  map<int, tJob> m_jobs;
 };

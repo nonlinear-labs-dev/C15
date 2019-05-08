@@ -5,32 +5,31 @@
 
 class SelectedParamValueWithFrame : public SelectedParameterValue
 {
-  private:
-    typedef SelectedParameterValue super;
+ private:
+  typedef SelectedParameterValue super;
 
-  public:
-    SelectedParamValueWithFrame (const Rect &rect);
-    virtual ~SelectedParamValueWithFrame ();
+ public:
+  SelectedParamValueWithFrame(const Rect& rect);
+  virtual ~SelectedParamValueWithFrame();
 
-    bool redraw (FrameBuffer &fb) override;
+  bool redraw(FrameBuffer& fb) override;
 
-  protected:
-    virtual void onModifiersChanged (ButtonModifiers mods) override;
+ protected:
+  virtual void onModifiersChanged(ButtonModifiers mods) override;
 
-  private:
-    SelectedParamValueWithFrame (const SelectedParamValueWithFrame& other) = delete;
-    SelectedParamValueWithFrame& operator= (const SelectedParamValueWithFrame&) = delete;
+ private:
+  SelectedParamValueWithFrame(const SelectedParamValueWithFrame& other) = delete;
+  SelectedParamValueWithFrame& operator=(const SelectedParamValueWithFrame&) = delete;
 
-    shared_ptr<Font> getFont () const override;
-    int getFontHeight () const override;
+  shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 
-    void setSuffixFontColor (FrameBuffer &fb) const override;
-    void onParameterSelected (Parameter * parameter) override;
-    void onParamValueChanged (const Parameter* param) override;
-    void showName();
+  void setSuffixFontColor(FrameBuffer& fb) const override;
+  void onParameterSelected(Parameter* parameter) override;
+  void onParamValueChanged(const Parameter* param) override;
+  void showName();
 
-    Expiration m_showParameterName;
-    bool m_ignoreNextValueChange = true;
-    bool m_ignoreNextModifierChange = true;
+  Expiration m_showParameterName;
+  bool m_ignoreNextValueChange = true;
+  bool m_ignoreNextModifierChange = true;
 };
-

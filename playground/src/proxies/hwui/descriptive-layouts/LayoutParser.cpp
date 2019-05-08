@@ -12,19 +12,20 @@ using json = nlohmann::json;
 
 namespace DescriptiveLayouts
 {
-    using tConditionList = std::list<std::function<bool()>>;
-  template<class T>
-    bool readFieldFromJson(json j, Glib::ustring key, std::function<T(std::string)> converter, std::list<Selector>& outList)
+  using tConditionList = std::list<std::function<bool()>>;
+  template <class T>
+  bool readFieldFromJson(json j, Glib::ustring key, std::function<T(std::string)> converter,
+                         std::list<Selector>& outList)
+  {
+    auto it = j.find(key);
+    if(it != j.end())
     {
-      auto it = j.find(key);
-      if(it != j.end())
-      {
-        T x = converter(*it);
-        outList.push_back(x);
-        return true;
-      }
-      return false;
+      T x = converter(*it);
+      outList.push_back(x);
+      return true;
     }
+    return false;
+  }
 
   std::list<Selector> toSelectors(json selector)
   {
@@ -59,13 +60,14 @@ namespace DescriptiveLayouts
     }
   }
 
-
-  std::string removeSpaces(std::string str) {
+  std::string removeSpaces(std::string str)
+  {
     str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
     return str;
   }
 
-  std::string removeLastCharacter(std::string str) {
+  std::string removeLastCharacter(std::string str)
+  {
     str.pop_back();
     return str;
   }
@@ -77,7 +79,8 @@ namespace DescriptiveLayouts
     if(it != j.end())
     {
       auto connections = StringTools::splitStringOnAnyDelimiter(*it, ',');
-      for(auto& connection: connections) {
+      for(auto& connection : connections)
+      {
 
         if(connection.find("=>") == connection.npos)
           DebugLevel::throwException("Event Routing syntax error: missing \"=>\"", connection);
@@ -89,7 +92,7 @@ namespace DescriptiveLayouts
         auto eventTargetObject = removeSpaces(eventTargetParts[0]);
         auto eventTargetProperty = toPrimitiveProperty(removeSpaces(removeLastCharacter(eventTargetParts[1])));
 
-        ret.push_back( { eventSource, eventTargetObject, eventTargetProperty });
+        ret.push_back({ eventSource, eventTargetObject, eventTargetProperty });
       }
     }
     return ret;
@@ -126,7 +129,8 @@ namespace DescriptiveLayouts
     for(json::iterator condition = j.begin(); condition != j.end(); ++condition)
     {
       auto conditonStrings = StringTools::splitStringOnAnyDelimiter(condition.value(), ',');
-      for(auto conditionString: conditonStrings) {
+      for(auto conditionString : conditonStrings)
+      {
         ret.push_back(ConditionRegistry::get().getLambda(conditionString));
       }
     }
@@ -141,7 +145,6 @@ namespace DescriptiveLayouts
 
       DebugLevel::info("importing layout", name);
 
-
       auto layoutContent = layout.value();
       auto selectorContent = layoutContent.at("Selector");
       tConditionList selectonConditions;
@@ -149,7 +152,8 @@ namespace DescriptiveLayouts
       auto controlContent = layoutContent.at("Controls");
       auto eventSinkContent = layoutContent.at("EventSinks");
 
-      if(layoutContent.find("Conditions") != layoutContent.end()) {
+      if(layoutContent.find("Conditions") != layoutContent.end())
+      {
         auto conditionContent = layoutContent.at("Conditions");
         selectonConditions = toConditions(conditionContent);
       }
@@ -162,7 +166,7 @@ namespace DescriptiveLayouts
     }
   }
 
-  void importLayout(const std::string &fileName)
+  void importLayout(const std::string& fileName)
   {
     DebugLevel::warning("importing layouts from file", fileName);
     std::ifstream i(fileName);

@@ -4,9 +4,9 @@
 
 class CombFilterGroup : public ParameterGroup
 {
-  public:
-    CombFilterGroup (ParameterGroupSet *parent);
-    virtual ~CombFilterGroup ();
+ public:
+  CombFilterGroup(ParameterGroupSet *parent);
+  virtual ~CombFilterGroup();
 
-    void init ();
+  void init();
 };

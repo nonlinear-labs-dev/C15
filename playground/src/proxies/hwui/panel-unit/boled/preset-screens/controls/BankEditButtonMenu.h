@@ -7,57 +7,60 @@ class PresetBank;
 
 class BankEditButtonMenu : public ButtonMenu
 {
-  private:
-    typedef ButtonMenu super;
+ private:
+  typedef ButtonMenu super;
 
-    struct FileInfos
+  struct FileInfos
+  {
+    FileInfos(std::experimental::filesystem::directory_entry file)
     {
-        FileInfos(std::experimental::filesystem::directory_entry file) {
-          filePath = file.path().string();
-          fileName = file.path().filename().string();
-          auto lastModified = std::experimental::filesystem::last_write_time(file);
-          millisecondsFromEpoch = std::chrono::duration_cast<std::chrono::milliseconds>(lastModified.time_since_epoch()).count();
-        }
-        FileInfos(std::string name, std::string path, long stamp) : fileName{name}, filePath{path},
-                                                                    millisecondsFromEpoch{stamp} {
+      filePath = file.path().string();
+      fileName = file.path().filename().string();
+      auto lastModified = std::experimental::filesystem::last_write_time(file);
+      millisecondsFromEpoch
+          = std::chrono::duration_cast<std::chrono::milliseconds>(lastModified.time_since_epoch()).count();
+    }
+    FileInfos(std::string name, std::string path, long stamp)
+        : fileName{ name }
+        , filePath{ path }
+        , millisecondsFromEpoch{ stamp }
+    {
+    }
+    std::string fileName;
+    std::string filePath;
+    long millisecondsFromEpoch;
+  };
 
-        }
-        std::string fileName;
-        std::string filePath;
-        long millisecondsFromEpoch;
-    };
+ public:
+  explicit BankEditButtonMenu(const Rect& rect);
+  virtual ~BankEditButtonMenu() = default;
 
-  public:
-    explicit BankEditButtonMenu(const Rect &rect);
-    virtual ~BankEditButtonMenu() = default;
+  void selectButton(size_t i) override;
+  void rebuildMenu();
 
-    void selectButton(size_t i) override;
-    void rebuildMenu();
+ private:
+  void rebuildFullMenu();
+  void rebuildNoBankAvailableMenu();
 
-  private:
-    void rebuildFullMenu();
-    void rebuildNoBankAvailableMenu();
+  void correctMenuSelection();
 
-    void correctMenuSelection();
+  BankEditButtonMenu(const BankEditButtonMenu& other);
+  BankEditButtonMenu& operator=(const BankEditButtonMenu&);
 
-    BankEditButtonMenu(const BankEditButtonMenu& other);
-    BankEditButtonMenu& operator=(const BankEditButtonMenu&);
+  void newBank();
+  void importBank();
+  void renameBank();
+  void exportBank();
+  void copyBank();
+  void pasteBank();
+  void deleteBank();
+  void moveLeft();
+  void moveRight();
 
-    void newBank();
-    void importBank();
-    void renameBank();
-    void exportBank();
-    void copyBank();
-    void pasteBank();
-    void deleteBank();
-    void moveLeft();
-    void moveRight();
+  static Glib::ustring createValidOutputPath(const Glib::ustring& bankName);
 
-    static Glib::ustring createValidOutputPath(const Glib::ustring& bankName);
-
-    static void writeSelectedBankToFile(PresetManager::tBankPtr selBank, const std::string& outFile);
-    static FileInfos extractFileInfos(std::experimental::filesystem::directory_entry file);
-    static void importBankFromPath(std::experimental::filesystem::directory_entry file);
-    static bool applicableBackupFilesFilter(std::experimental::filesystem::directory_entry term);
+  static void writeSelectedBankToFile(PresetManager::tBankPtr selBank, const std::string& outFile);
+  static FileInfos extractFileInfos(std::experimental::filesystem::directory_entry file);
+  static void importBankFromPath(std::experimental::filesystem::directory_entry file);
+  static bool applicableBackupFilesFilter(std::experimental::filesystem::directory_entry term);
 };
-

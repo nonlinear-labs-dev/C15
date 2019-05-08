@@ -1,19 +1,19 @@
 #include "HardwareUserInterfaceUnit.h"
 #include "UsageMode.h"
 
-HardwareUserInterfaceUnit::HardwareUserInterfaceUnit ()
+HardwareUserInterfaceUnit::HardwareUserInterfaceUnit()
 {
 }
 
-HardwareUserInterfaceUnit::~HardwareUserInterfaceUnit ()
+HardwareUserInterfaceUnit::~HardwareUserInterfaceUnit()
 {
 }
 
-void HardwareUserInterfaceUnit::setupFocusAndMode (FocusAndMode focusAndMode)
+void HardwareUserInterfaceUnit::setupFocusAndMode(FocusAndMode focusAndMode)
 {
 }
 
-void HardwareUserInterfaceUnit::setUsageMode (UsageMode *mode)
+void HardwareUserInterfaceUnit::setUsageMode(UsageMode *mode)
 {
   if(mode && m_usageMode)
   {
@@ -24,21 +24,21 @@ void HardwareUserInterfaceUnit::setUsageMode (UsageMode *mode)
     }
   }
 
-  m_usageMode.reset (mode);
-  m_usageMode->setup ();
+  m_usageMode.reset(mode);
+  m_usageMode->setup();
 }
 
-void HardwareUserInterfaceUnit::restoreUsageMode (shared_ptr<UsageMode> mode)
+void HardwareUserInterfaceUnit::restoreUsageMode(shared_ptr<UsageMode> mode)
 {
   m_usageMode = mode;
 }
 
-shared_ptr<UsageMode> HardwareUserInterfaceUnit::getUsageMode ()
+shared_ptr<UsageMode> HardwareUserInterfaceUnit::getUsageMode()
 {
   return m_usageMode;
 }
 
-shared_ptr<const UsageMode> HardwareUserInterfaceUnit::getUsageMode () const
+shared_ptr<const UsageMode> HardwareUserInterfaceUnit::getUsageMode() const
 {
   return m_usageMode;
 }
@@ -46,7 +46,7 @@ shared_ptr<const UsageMode> HardwareUserInterfaceUnit::getUsageMode () const
 bool HardwareUserInterfaceUnit::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
   if(m_usageMode)
-    return m_usageMode->onButtonPressed (buttonID, modifiers, state);
+    return m_usageMode->onButtonPressed(buttonID, modifiers, state);
 
   return false;
 }

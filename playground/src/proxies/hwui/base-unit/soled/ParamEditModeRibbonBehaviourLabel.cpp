@@ -3,36 +3,36 @@
 #include "device-settings/Settings.h"
 #include "device-settings/ParameterEditModeRibbonBehaviour.h"
 
-ParamEditModeRibbonBehaviourLabel::ParamEditModeRibbonBehaviourLabel (const Rect &rect) :
-    super (rect)
+ParamEditModeRibbonBehaviourLabel::ParamEditModeRibbonBehaviourLabel(const Rect& rect)
+    : super(rect)
 {
-  getSetting ()->onChange (mem_fun (this, &ParamEditModeRibbonBehaviourLabel::updateText));
+  getSetting()->onChange(mem_fun(this, &ParamEditModeRibbonBehaviourLabel::updateText));
 }
 
-ParamEditModeRibbonBehaviourLabel::~ParamEditModeRibbonBehaviourLabel ()
+ParamEditModeRibbonBehaviourLabel::~ParamEditModeRibbonBehaviourLabel()
 {
 }
 
-void ParamEditModeRibbonBehaviourLabel::updateText (const Setting* s)
+void ParamEditModeRibbonBehaviourLabel::updateText(const Setting* s)
 {
-  switch (dynamic_cast<const ParameterEditModeRibbonBehaviour*> (s)->get ())
+  switch(dynamic_cast<const ParameterEditModeRibbonBehaviour*>(s)->get())
   {
-  case ParameterEditModeRibbonBehaviours::PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR_RELATIVE:
-    setText ("r");
-    break;
+    case ParameterEditModeRibbonBehaviours::PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR_RELATIVE:
+      setText("r");
+      break;
 
-  case ParameterEditModeRibbonBehaviours::PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR_ABSOLUTE:
-    setText ("a");
-    break;
+    case ParameterEditModeRibbonBehaviours::PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR_ABSOLUTE:
+      setText("a");
+      break;
   }
 }
 
-shared_ptr<ParameterEditModeRibbonBehaviour> ParamEditModeRibbonBehaviourLabel::getSetting () const
+shared_ptr<ParameterEditModeRibbonBehaviour> ParamEditModeRibbonBehaviourLabel::getSetting() const
 {
-  return getSettings ()->getSetting<ParameterEditModeRibbonBehaviour> ();
+  return getSettings()->getSetting<ParameterEditModeRibbonBehaviour>();
 }
 
-shared_ptr<Settings> ParamEditModeRibbonBehaviourLabel::getSettings () const
+shared_ptr<Settings> ParamEditModeRibbonBehaviourLabel::getSettings() const
 {
-  return Application::get ().getSettings ();
+  return Application::get().getSettings();
 }

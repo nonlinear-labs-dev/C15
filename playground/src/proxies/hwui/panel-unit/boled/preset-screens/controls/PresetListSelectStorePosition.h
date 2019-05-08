@@ -9,31 +9,30 @@ class Preset;
 
 class PresetListSelectStorePosition : public PresetListBase
 {
-    using super = PresetListBase;
+  using super = PresetListBase;
 
-  public:
-    PresetListSelectStorePosition(const Rect &pos, bool showBankArrows);
-    virtual ~PresetListSelectStorePosition();
+ public:
+  PresetListSelectStorePosition(const Rect &pos, bool showBankArrows);
+  virtual ~PresetListSelectStorePosition();
 
-    virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-    virtual void onRotary(int inc, ButtonModifiers modifiers) override;
-    std::pair<int, int> getSelectedPosition() const override;
-    void movePresetSelection();
-    void initBankAndPreset();
-    void sanitizeBankPosition(std::shared_ptr<PresetManager> pm);
-    void sanitizePresetPosition(std::shared_ptr<PresetBank> bank);
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  virtual void onRotary(int inc, ButtonModifiers modifiers) override;
+  std::pair<int, int> getSelectedPosition() const override;
+  void movePresetSelection();
+  void initBankAndPreset();
+  void sanitizeBankPosition(std::shared_ptr<PresetManager> pm);
+  void sanitizePresetPosition(std::shared_ptr<PresetBank> bank);
 
-  private:
-    void movePresetSelection(int moveBy);
-    void moveBankSelection(int moveBy);
-    void onChange();
-    void onBankChanged();
+ private:
+  void movePresetSelection(int moveBy);
+  void moveBankSelection(int moveBy);
+  void onChange();
+  void onBankChanged();
 
-    static constexpr int invalidIndex = -1;
+  static constexpr int invalidIndex = -1;
 
-    int m_presetPosition = invalidIndex;
-    int m_bankPosition = invalidIndex;
-    Glib::ustring m_selectedPreset;
-    sigc::connection m_bankConnection;
+  int m_presetPosition = invalidIndex;
+  int m_bankPosition = invalidIndex;
+  Glib::ustring m_selectedPreset;
+  sigc::connection m_bankConnection;
 };
-

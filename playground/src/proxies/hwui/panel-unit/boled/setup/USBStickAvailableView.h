@@ -4,12 +4,11 @@
 
 class USBStickAvailableView : public SetupLabel
 {
-  public:
-    USBStickAvailableView();
-    virtual ~USBStickAvailableView();
-    static bool usbIsReady();
-  private:
-    bool updateLabel();
+ public:
+  USBStickAvailableView();
+  virtual ~USBStickAvailableView();
+  static bool usbIsReady();
 
+ private:
+  bool updateLabel();
 };
-

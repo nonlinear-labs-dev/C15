@@ -11,8 +11,8 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ModulationRouterParameterLayouts.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h>
 
-ModulationRouterParameterSelectLayout2::ModulationRouterParameterSelectLayout2() :
-    super()
+ModulationRouterParameterSelectLayout2::ModulationRouterParameterSelectLayout2()
+    : super()
 {
   addControl(new Button("HW Source..", Buttons::BUTTON_A));
   addControl(new Button("", Buttons::BUTTON_B));
@@ -33,7 +33,7 @@ bool ModulationRouterParameterSelectLayout2::onButton(Buttons i, bool down, Butt
   {
     if(i == Buttons::BUTTON_A)
     {
-      if(auto p = dynamic_cast<ModulationRoutingParameter*>(getCurrentParameter()))
+      if(auto p = dynamic_cast<ModulationRoutingParameter *>(getCurrentParameter()))
       {
         Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(p->getSourceParameter());
       }
@@ -43,7 +43,7 @@ bool ModulationRouterParameterSelectLayout2::onButton(Buttons i, bool down, Butt
 
     if(i == Buttons::BUTTON_D)
     {
-      if(auto p = dynamic_cast<ModulationRoutingParameter*>(getCurrentParameter()))
+      if(auto p = dynamic_cast<ModulationRoutingParameter *>(getCurrentParameter()))
       {
         p->getSourceParameter()->setUiSelectedModulationRouter(p->getID());
 
@@ -57,8 +57,8 @@ bool ModulationRouterParameterSelectLayout2::onButton(Buttons i, bool down, Butt
   return super::onButton(i, down, modifiers);
 }
 
-ModulationRouterParameterEditLayout2::ModulationRouterParameterEditLayout2() :
-    super()
+ModulationRouterParameterEditLayout2::ModulationRouterParameterEditLayout2()
+    : super()
 {
   addControl(new Button("", Buttons::BUTTON_A));
   addControl(new Button("", Buttons::BUTTON_B));

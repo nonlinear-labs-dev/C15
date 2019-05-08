@@ -4,17 +4,17 @@
 
 class EditBuffer;
 
-class EditBufferSerializer: public Serializer
+class EditBufferSerializer : public Serializer
 {
-  public:
-    EditBufferSerializer(shared_ptr<EditBuffer> editBuffer);
-    virtual ~EditBufferSerializer();
+ public:
+  EditBufferSerializer(shared_ptr<EditBuffer> editBuffer);
+  virtual ~EditBufferSerializer();
 
-    static Glib::ustring getTagName();
+  static Glib::ustring getTagName();
 
-  private:
-    void writeTagContent (Writer &writer) const;
-    void readTagContent (Reader &reader) const;
+ private:
+  void writeTagContent(Writer &writer) const;
+  void readTagContent(Reader &reader) const;
 
-    shared_ptr<EditBuffer> m_editBuffer;
+  shared_ptr<EditBuffer> m_editBuffer;
 };

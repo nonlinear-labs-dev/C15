@@ -35,7 +35,6 @@ namespace DescriptiveLayouts
     }
     catch(...)
     {
-
     }
 
     try
@@ -141,5 +140,4 @@ namespace DescriptiveLayouts
         registerStyle(style.key(), style.value());
     }
   }
-
 }

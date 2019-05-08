@@ -3,12 +3,11 @@
 
 class KioskModeSetting : public BooleanSetting
 {
-  public:
-    KioskModeSetting(Settings& settings);
-    virtual ~KioskModeSetting();
+ public:
+  KioskModeSetting(Settings& settings);
+  virtual ~KioskModeSetting();
 
-    bool set(Glib::ustring value);
-    bool setBool(bool value);
-    void setSetting(Initiator initiator, const Glib::ustring &text) override;
+  bool set(Glib::ustring value);
+  bool setBool(bool value);
+  void setSetting(Initiator initiator, const Glib::ustring& text) override;
 };
-

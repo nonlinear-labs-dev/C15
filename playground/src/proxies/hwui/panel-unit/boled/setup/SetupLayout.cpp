@@ -66,654 +66,652 @@ namespace NavTree
 
   struct Node
   {
-      Node(InnerNode *parent, Glib::ustring name) :
-          parent(parent),
-          name(name)
-      {
-      }
+    Node(InnerNode *parent, Glib::ustring name)
+        : parent(parent)
+        , name(name)
+    {
+    }
 
-      virtual Control *createSelectionControl()
-      {
-        return new SetupSelectionLabel(name);
-      }
+    virtual Control *createSelectionControl()
+    {
+      return new SetupSelectionLabel(name);
+    }
 
-      virtual bool onEditModeEntered()
-      {
-        return false;
-      }
+    virtual bool onEditModeEntered()
+    {
+      return false;
+    }
 
-      virtual Glib::ustring getName() const
-      {
-        return name;
-      }
+    virtual Glib::ustring getName() const
+    {
+      return name;
+    }
 
-      InnerNode *parent;
-      virtual Control *createView() = 0;
+    InnerNode *parent;
+    virtual Control *createView() = 0;
 
-    protected:
-      Glib::ustring name;
+   protected:
+    Glib::ustring name;
   };
 
   struct Leaf : Node
   {
-      Leaf(InnerNode *parent, Glib::ustring name) :
-          Node(parent, name)
-      {
-      }
+    Leaf(InnerNode *parent, Glib::ustring name)
+        : Node(parent, name)
+    {
+    }
   };
 
   struct EditableLeaf : Leaf
   {
-      EditableLeaf(InnerNode *parent, Glib::ustring name) :
-          Leaf(parent, name)
-      {
-      }
+    EditableLeaf(InnerNode *parent, Glib::ustring name)
+        : Leaf(parent, name)
+    {
+    }
 
-      virtual Control *createEditor() = 0;
+    virtual Control *createEditor() = 0;
   };
 
   struct InnerNode : Node
   {
-      InnerNode(InnerNode *parent, Glib::ustring name) :
-          Node(parent, name)
-      {
-      }
+    InnerNode(InnerNode *parent, Glib::ustring name)
+        : Node(parent, name)
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new SetupLabel("...", Rect(0, 0, 0, 0));
-      }
+    virtual Control *createView() override
+    {
+      return new SetupLabel("...", Rect(0, 0, 0, 0));
+    }
 
-      list<unique_ptr<Node>> children;
+    list<unique_ptr<Node>> children;
   };
 
   struct Velocity : EditableLeaf
   {
-      Velocity(InnerNode *parent) :
-          EditableLeaf(parent, "Velocity Curve")
-      {
-      }
+    Velocity(InnerNode *parent)
+        : EditableLeaf(parent, "Velocity Curve")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new VelocityView();
-      }
+    virtual Control *createView() override
+    {
+      return new VelocityView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new VelocityEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new VelocityEditor();
+    }
   };
 
   struct Aftertouch : EditableLeaf
   {
-      Aftertouch(InnerNode *parent) :
-          EditableLeaf(parent, "Aftertouch Curve")
-      {
-      }
+    Aftertouch(InnerNode *parent)
+        : EditableLeaf(parent, "Aftertouch Curve")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new AftertouchView();
-      }
+    virtual Control *createView() override
+    {
+      return new AftertouchView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new AftertouchEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new AftertouchEditor();
+    }
   };
 
   struct BenderCurveSetting : EditableLeaf
   {
-      BenderCurveSetting(InnerNode *parent) :
-          EditableLeaf(parent, "Bender Curve")
-      {
-      }
+    BenderCurveSetting(InnerNode *parent)
+        : EditableLeaf(parent, "Bender Curve")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new BenderCurveView();
-      }
+    virtual Control *createView() override
+    {
+      return new BenderCurveView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new BenderCurveEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new BenderCurveEditor();
+    }
   };
 
   struct PedalSetting : EditableLeaf
   {
-      PedalSetting(InnerNode *parent, int id) :
-          EditableLeaf(parent, "")
-      {
-        param = dynamic_cast<PedalParameter*>(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(id));
-        name = param->getLongName();
-      }
+    PedalSetting(InnerNode *parent, int id)
+        : EditableLeaf(parent, "")
+    {
+      param = dynamic_cast<PedalParameter *>(
+          Application::get().getPresetManager()->getEditBuffer()->findParameterByID(id));
+      name = param->getLongName();
+    }
 
-      virtual Control *createView() override
-      {
-        return new PedalView(param->getAssociatedPedalTypeSetting());
-      }
+    virtual Control *createView() override
+    {
+      return new PedalView(param->getAssociatedPedalTypeSetting());
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new PedalEditor(param->getAssociatedPedalTypeSetting());
-      }
+    virtual Control *createEditor() override
+    {
+      return new PedalEditor(param->getAssociatedPedalTypeSetting());
+    }
 
-      virtual Control *createSelectionControl()
-      {
-        return new PedalSelectionControl(param);
-      }
+    virtual Control *createSelectionControl()
+    {
+      return new PedalSelectionControl(param);
+    }
 
-      PedalParameter* param;
-
+    PedalParameter *param;
   };
 
   struct PresetGlitchSuppression : EditableLeaf
   {
-      PresetGlitchSuppression(InnerNode *parent) :
-          EditableLeaf(parent, "Preset Glitch Suppression ")
-      {
-      }
+    PresetGlitchSuppression(InnerNode *parent)
+        : EditableLeaf(parent, "Preset Glitch Suppression ")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new PresetGlitchSuppressionView();
-      }
+    virtual Control *createView() override
+    {
+      return new PresetGlitchSuppressionView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new PresetGlitchSuppressionEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new PresetGlitchSuppressionEditor();
+    }
   };
 
   struct EditSmoothingTime : EditableLeaf
   {
-      EditSmoothingTime(InnerNode *parent) :
-          EditableLeaf(parent, "Edit Smoothing Time")
-      {
-      }
+    EditSmoothingTime(InnerNode *parent)
+        : EditableLeaf(parent, "Edit Smoothing Time")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new EditSmoothingTimeView();
-      }
+    virtual Control *createView() override
+    {
+      return new EditSmoothingTimeView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new EditSmoothingTimeEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new EditSmoothingTimeEditor();
+    }
   };
 
   struct PedalSettings : InnerNode
   {
-      PedalSettings(InnerNode *parent) :
-          InnerNode(parent, "Pedals")
-      {
-        children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal1ParameterID()));
-        children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal2ParameterID()));
-        children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal3ParameterID()));
-        children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal4ParameterID()));
-      }
+    PedalSettings(InnerNode *parent)
+        : InnerNode(parent, "Pedals")
+    {
+      children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal1ParameterID()));
+      children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal2ParameterID()));
+      children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal3ParameterID()));
+      children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal4ParameterID()));
+    }
   };
 
   struct DeviceSettings : InnerNode
   {
-      DeviceSettings(InnerNode *parent) :
-          InnerNode(parent, "Device Settings")
-      {
-        children.emplace_back(new EditSmoothingTime(this));
-        children.emplace_back(new Velocity(this));
-        children.emplace_back(new Aftertouch(this));
-        children.emplace_back(new BenderCurveSetting(this));
-        children.emplace_back(new PedalSettings(this));
-        children.emplace_back(new PresetGlitchSuppression(this));
-      }
+    DeviceSettings(InnerNode *parent)
+        : InnerNode(parent, "Device Settings")
+    {
+      children.emplace_back(new EditSmoothingTime(this));
+      children.emplace_back(new Velocity(this));
+      children.emplace_back(new Aftertouch(this));
+      children.emplace_back(new BenderCurveSetting(this));
+      children.emplace_back(new PedalSettings(this));
+      children.emplace_back(new PresetGlitchSuppression(this));
+    }
   };
 
   struct DeviceName : EditableLeaf
   {
-      DeviceName(InnerNode *parent) :
-          EditableLeaf(parent, "Device Name")
-      {
-      }
+    DeviceName(InnerNode *parent)
+        : EditableLeaf(parent, "Device Name")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new DeviceNameView();
-      }
+    virtual Control *createView() override
+    {
+      return new DeviceNameView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return nullptr;
-      }
+    virtual Control *createEditor() override
+    {
+      return nullptr;
+    }
 
-      virtual bool onEditModeEntered()
-      {
-        auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
-        boled.setOverlay(new RenameDeviceLayout(boled.getLayout()));
-        return true;
-      }
+    virtual bool onEditModeEntered()
+    {
+      auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
+      boled.setOverlay(new RenameDeviceLayout(boled.getLayout()));
+      return true;
+    }
   };
 
   struct SSID : Leaf
   {
-      SSID(InnerNode *parent) :
-          Leaf(parent, "SSID")
-      {
-      }
+    SSID(InnerNode *parent)
+        : Leaf(parent, "SSID")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new SSIDView();
-      }
+    virtual Control *createView() override
+    {
+      return new SSIDView();
+    }
   };
 
   struct Passphrase : EditableLeaf
   {
-      Passphrase(InnerNode *parent) :
-          EditableLeaf(parent, "Passphrase")
-      {
-      }
+    Passphrase(InnerNode *parent)
+        : EditableLeaf(parent, "Passphrase")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new PassphraseView();
-      }
+    virtual Control *createView() override
+    {
+      return new PassphraseView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new PassphraseEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new PassphraseEditor();
+    }
   };
 
   struct UpdateAvailable : EditableLeaf
   {
-      UpdateAvailable(InnerNode *parent) :
-          EditableLeaf(parent, "Update Available")
-      {
-      }
+    UpdateAvailable(InnerNode *parent)
+        : EditableLeaf(parent, "Update Available")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new UpdateAvailableView();
-      }
+    virtual Control *createView() override
+    {
+      return new UpdateAvailableView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        if(UpdateAvailableView::updateExists())
-          return new UpdateAvailableEditor();
+    virtual Control *createEditor() override
+    {
+      if(UpdateAvailableView::updateExists())
+        return new UpdateAvailableEditor();
 
-        return nullptr;
-      }
+      return nullptr;
+    }
   };
 
   struct FreeInternalMemory : Leaf
   {
-      FreeInternalMemory(InnerNode *parent) :
-          Leaf(parent, "Free Internal Memory")
-      {
-      }
+    FreeInternalMemory(InnerNode *parent)
+        : Leaf(parent, "Free Internal Memory")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new FreeInternalMemoryView();
-      }
+    virtual Control *createView() override
+    {
+      return new FreeInternalMemoryView();
+    }
   };
 
   struct UISoftwareVersion : Leaf
   {
-      UISoftwareVersion(InnerNode *parent) :
-          Leaf(parent, "UI Software Version")
-      {
-      }
+    UISoftwareVersion(InnerNode *parent)
+        : Leaf(parent, "UI Software Version")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        auto info = Application::get().getDeviceInformation()->getItem<::SoftwareVersion>().get();
-        return new DeviceInfoItemView(info);
-      }
+    virtual Control *createView() override
+    {
+      auto info = Application::get().getDeviceInformation()->getItem<::SoftwareVersion>().get();
+      return new DeviceInfoItemView(info);
+    }
   };
 
   struct RTSoftwareVersion : Leaf
   {
-      RTSoftwareVersion(InnerNode *parent) :
-          Leaf(parent, "RT Software Version")
-      {
-      }
+    RTSoftwareVersion(InnerNode *parent)
+        : Leaf(parent, "RT Software Version")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        Application::get().getLPCProxy()->requestLPCSoftwareVersion();
-        auto info = Application::get().getDeviceInformation()->getItem<::RTSoftwareVersion>().get();
-        return new DeviceInfoItemView(info);
-      }
+    virtual Control *createView() override
+    {
+      Application::get().getLPCProxy()->requestLPCSoftwareVersion();
+      auto info = Application::get().getDeviceInformation()->getItem<::RTSoftwareVersion>().get();
+      return new DeviceInfoItemView(info);
+    }
   };
 
   struct DateTime : EditableLeaf
   {
-      DateTime(InnerNode *parent) :
-          EditableLeaf(parent, "Date / Time")
-      {
-      }
+    DateTime(InnerNode *parent)
+        : EditableLeaf(parent, "Date / Time")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        auto info = Application::get().getDeviceInformation()->getItem<::DateTimeInfo>().get();
-        return new DeviceInfoItemView(info, std::chrono::milliseconds(500));
-      }
+    virtual Control *createView() override
+    {
+      auto info = Application::get().getDeviceInformation()->getItem<::DateTimeInfo>().get();
+      return new DeviceInfoItemView(info, std::chrono::milliseconds(500));
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new DateTimeEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new DateTimeEditor();
+    }
   };
 
   struct OSVersion : Leaf
   {
-      OSVersion(InnerNode *parent) :
-          Leaf(parent, "OS Version")
-      {
-      }
+    OSVersion(InnerNode *parent)
+        : Leaf(parent, "OS Version")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        auto info = Application::get().getDeviceInformation()->getItem<::OSVersion>().get();
-        return new DeviceInfoItemView(info);
-      }
+    virtual Control *createView() override
+    {
+      auto info = Application::get().getDeviceInformation()->getItem<::OSVersion>().get();
+      return new DeviceInfoItemView(info);
+    }
   };
 
   struct SystemInfo : InnerNode
   {
-      SystemInfo(InnerNode *parent) :
-          InnerNode(parent, "System Info")
-      {
-        children.emplace_back(new DeviceName(this));
-        children.emplace_back(new SSID(this));
-        children.emplace_back(new Passphrase(this));
-        children.emplace_back(new FreeInternalMemory(this));
-        children.emplace_back(new UISoftwareVersion(this));
-        children.emplace_back(new RTSoftwareVersion(this));
-        children.emplace_back(new OSVersion(this));
-        children.emplace_back(new DateTime(this));
-        children.emplace_back(new UpdateAvailable(this));
-      }
+    SystemInfo(InnerNode *parent)
+        : InnerNode(parent, "System Info")
+    {
+      children.emplace_back(new DeviceName(this));
+      children.emplace_back(new SSID(this));
+      children.emplace_back(new Passphrase(this));
+      children.emplace_back(new FreeInternalMemory(this));
+      children.emplace_back(new UISoftwareVersion(this));
+      children.emplace_back(new RTSoftwareVersion(this));
+      children.emplace_back(new OSVersion(this));
+      children.emplace_back(new DateTime(this));
+      children.emplace_back(new UpdateAvailable(this));
+    }
   };
 
   struct About : EditableLeaf
   {
-      About(InnerNode *parent) :
-          EditableLeaf(parent, "About")
-      {
-      }
+    About(InnerNode *parent)
+        : EditableLeaf(parent, "About")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new SetupLabel("...", Rect(0, 0, 0, 0));
-      }
+    virtual Control *createView() override
+    {
+      return new SetupLabel("...", Rect(0, 0, 0, 0));
+    }
 
-      virtual Control *createEditor() override
-      {
-        return nullptr;
-      }
+    virtual Control *createEditor() override
+    {
+      return nullptr;
+    }
 
-      virtual bool onEditModeEntered()
-      {
-        auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
-        boled.setOverlay(new AboutLayout());
-        return true;
-      }
+    virtual bool onEditModeEntered()
+    {
+      auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
+      boled.setOverlay(new AboutLayout());
+      return true;
+    }
   };
 
   struct EncoderAcceleration : EditableLeaf
   {
-      EncoderAcceleration(InnerNode *parent) :
-          EditableLeaf(parent, "Encoder Acceleration")
-      {
-      }
+    EncoderAcceleration(InnerNode *parent)
+        : EditableLeaf(parent, "Encoder Acceleration")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new EncoderAccelerationView();
-      }
+    virtual Control *createView() override
+    {
+      return new EncoderAccelerationView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new EncoderAccelerationEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new EncoderAccelerationEditor();
+    }
   };
 
   struct RibbonRelativeFactorSetting : EditableLeaf
   {
-      RibbonRelativeFactorSetting(InnerNode *parent) :
-          EditableLeaf(parent, "Ribbon Relative Factor")
-      {
-      }
+    RibbonRelativeFactorSetting(InnerNode *parent)
+        : EditableLeaf(parent, "Ribbon Relative Factor")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new RibbonRelativeFactorSettingView();
-      }
+    virtual Control *createView() override
+    {
+      return new RibbonRelativeFactorSettingView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new RibbonRelativeFactorSettingEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new RibbonRelativeFactorSettingEditor();
+    }
   };
 
   struct SignalFlowIndicationSetting : EditableLeaf
   {
-      SignalFlowIndicationSetting(InnerNode *parent) :
-          EditableLeaf(parent, "Signal Flow Indication")
-      {
+    SignalFlowIndicationSetting(InnerNode *parent)
+        : EditableLeaf(parent, "Signal Flow Indication")
+    {
+    }
 
-      }
+    virtual Control *createView() override
+    {
+      return new SignalFlowIndicationView();
+    }
 
-      virtual Control *createView() override
-      {
-        return new SignalFlowIndicationView();
-      }
-
-      virtual Control *createEditor() override
-      {
-        return new SignalFlowIndicatorEditor();
-      }
-
+    virtual Control *createEditor() override
+    {
+      return new SignalFlowIndicatorEditor();
+    }
   };
 
   struct HardwareUI : InnerNode
   {
-      HardwareUI(InnerNode *parent) :
-          InnerNode(parent, "Hardware UI")
-      {
-        children.emplace_back(new EncoderAcceleration(this));
-        children.emplace_back(new RibbonRelativeFactorSetting(this));
-        children.emplace_back(new SignalFlowIndicationSetting(this));
-      }
+    HardwareUI(InnerNode *parent)
+        : InnerNode(parent, "Hardware UI")
+    {
+      children.emplace_back(new EncoderAcceleration(this));
+      children.emplace_back(new RibbonRelativeFactorSetting(this));
+      children.emplace_back(new SignalFlowIndicationSetting(this));
+    }
   };
 
   struct USBStickAvailable : Leaf
   {
-      USBStickAvailable(InnerNode *parent) :
-          Leaf(parent, "USB Available")
-      {
-      }
+    USBStickAvailable(InnerNode *parent)
+        : Leaf(parent, "USB Available")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new USBStickAvailableView();
-      }
+    virtual Control *createView() override
+    {
+      return new USBStickAvailableView();
+    }
   };
 
   struct BackupExport : EditableLeaf
   {
-      BackupExport(InnerNode *parent) :
-          EditableLeaf(parent, "Save all Banks...")
-      {
-      }
+    BackupExport(InnerNode *parent)
+        : EditableLeaf(parent, "Save all Banks...")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new ExportBackupView();
-      }
+    virtual Control *createView() override
+    {
+      return new ExportBackupView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new ExportBackupEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new ExportBackupEditor();
+    }
   };
 
   struct BackupImport : EditableLeaf
   {
-      BackupImport(InnerNode *parent) :
-          EditableLeaf(parent, "Restore all Banks...")
-      {
-      }
+    BackupImport(InnerNode *parent)
+        : EditableLeaf(parent, "Restore all Banks...")
+    {
+    }
 
-      virtual Control *createView() override
-      {
-        return new ImportBackupView();
-      }
+    virtual Control *createView() override
+    {
+      return new ImportBackupView();
+    }
 
-      virtual Control *createEditor() override
-      {
-        return new ImportBackupEditor();
-      }
+    virtual Control *createEditor() override
+    {
+      return new ImportBackupEditor();
+    }
   };
 
   struct Backup : InnerNode
   {
-      Backup(InnerNode* parent) :
-          InnerNode(parent, "Backup")
-      {
-        children.emplace_back(new USBStickAvailable(this));
-        children.emplace_back(new BackupExport(this));
-        children.emplace_back(new BackupImport(this));
-      }
+    Backup(InnerNode *parent)
+        : InnerNode(parent, "Backup")
+    {
+      children.emplace_back(new USBStickAvailable(this));
+      children.emplace_back(new BackupExport(this));
+      children.emplace_back(new BackupImport(this));
+    }
   };
 
   struct Setup : InnerNode
   {
-      Setup() :
-          InnerNode(nullptr, "Setup")
+    Setup()
+        : InnerNode(nullptr, "Setup")
+    {
+      children.emplace_back(new DeviceSettings(this));
+      children.emplace_back(new HardwareUI(this));
+      children.emplace_back(new SystemInfo(this));
+      children.emplace_back(new About(this));
+      children.emplace_back(new Backup(this));
+      focus = children.begin();
+    }
+
+    Glib::ustring getName() const override
+    {
+      if(FileOutStream::getKioskMode())
+        return "Setup (Kiosk)";
+
+      return "Setup";
+    }
+
+    bool diveInto()
+    {
+      if(auto e = dynamic_cast<InnerNode *>((*focus).get()))
       {
-        children.emplace_back(new DeviceSettings(this));
-        children.emplace_back(new HardwareUI(this));
-        children.emplace_back(new SystemInfo(this));
-        children.emplace_back(new About(this));
-        children.emplace_back(new Backup(this));
-        focus = children.begin();
+        focus = e->children.begin();
+        return true;
       }
+      return false;
+    }
 
-      Glib::ustring getName() const override
+    bool diveUp()
+    {
+      auto focusNode = (*focus).get();
+
+      if(focusNode->parent && focusNode->parent->parent)
       {
-        if(FileOutStream::getKioskMode())
-          return "Setup (Kiosk)";
-
-        return "Setup";
-      }
-
-      bool diveInto()
-      {
-        if(auto e = dynamic_cast<InnerNode*>((*focus).get()))
+        auto pa = focusNode->parent;
+        auto grandpa = focusNode->parent->parent;
+        for(auto it = grandpa->children.begin(); it != grandpa->children.end(); it++)
         {
-          focus = e->children.begin();
-          return true;
-        }
-        return false;
-      }
-
-      bool diveUp()
-      {
-        auto focusNode = (*focus).get();
-
-        if(focusNode->parent && focusNode->parent->parent)
-        {
-          auto pa = focusNode->parent;
-          auto grandpa = focusNode->parent->parent;
-          for(auto it = grandpa->children.begin(); it != grandpa->children.end(); it++)
+          if(pa == it->get())
           {
-            if(pa == it->get())
-            {
-              focus = it;
-              return true;
-            }
+            focus = it;
+            return true;
           }
         }
-        return false;
       }
+      return false;
+    }
 
-      void incFocus(int i)
+    void incFocus(int i)
+    {
+      auto p = (*focus)->parent;
+
+      while(i > 0 && focus != p->children.end())
       {
-        auto p = (*focus)->parent;
-
-        while(i > 0 && focus != p->children.end())
-        {
-          if(++focus == p->children.end())
-            --focus;
-          i--;
-        }
-
-        while(i < 0 && focus != p->children.begin())
-        {
-          focus--;
-          i++;
-        }
+        if(++focus == p->children.end())
+          --focus;
+        i--;
       }
 
-      list<unique_ptr<Node>>::iterator focus;
+      while(i < 0 && focus != p->children.begin())
+      {
+        focus--;
+        i++;
+      }
+    }
+
+    list<unique_ptr<Node>>::iterator focus;
   };
 }
 
 class Breadcrumb : public Control
 {
-  public:
-    Breadcrumb(NavTree::Node *node) :
-        Control(Rect(0, 0, 256, 12)),
-        m_node(node)
-    {
-    }
+ public:
+  Breadcrumb(NavTree::Node *node)
+      : Control(Rect(0, 0, 256, 12))
+      , m_node(node)
+  {
+  }
 
-    bool redraw(FrameBuffer &fb)
-    {
-      fb.setColor(FrameBuffer::C103);
-      fb.fillRect(getPosition());
-      drawNodeRecursivly(fb, m_node);
-      return true;
-    }
+  bool redraw(FrameBuffer &fb)
+  {
+    fb.setColor(FrameBuffer::C103);
+    fb.fillRect(getPosition());
+    drawNodeRecursivly(fb, m_node);
+    return true;
+  }
 
-    int drawNodeRecursivly(FrameBuffer &fb, NavTree::Node *node)
+  int drawNodeRecursivly(FrameBuffer &fb, NavTree::Node *node)
+  {
+    if(node)
     {
-      if(node)
+      auto left = drawNodeRecursivly(fb, node->parent);
+      auto isTip = node == m_node;
+      auto title = node->getName();
+
+      if(isTip)
       {
-        auto left = drawNodeRecursivly(fb, node->parent);
-        auto isTip = node == m_node;
-        auto title = node->getName();
-
-        if(isTip)
-        {
-          fb.setColor(FrameBuffer::C255);
-        }
-        else
-        {
-          fb.setColor(FrameBuffer::C179);
-          title = title + " > ";
-        }
-
-        auto font = Oleds::get().getFont("Emphase_9_Regular", 9);
-        auto width = font->draw(title, left, getPosition().getBottom() - 1);
-        return left + width;
+        fb.setColor(FrameBuffer::C255);
       }
-      return 5;
-    }
+      else
+      {
+        fb.setColor(FrameBuffer::C179);
+        title = title + " > ";
+      }
 
-  private:
-    NavTree::Node *m_node;
+      auto font = Oleds::get().getFont("Emphase_9_Regular", 9);
+      auto width = font->draw(title, left, getPosition().getBottom() - 1);
+      return left + width;
+    }
+    return 5;
+  }
+
+ private:
+  NavTree::Node *m_node;
 };
 
-SetupLayout::SetupLayout(FocusAndMode focusAndMode) :
-    m_tree(new NavTree::Setup()),
-    m_focusAndMode(focusAndMode)
+SetupLayout::SetupLayout(FocusAndMode focusAndMode)
+    : m_tree(new NavTree::Setup())
+    , m_focusAndMode(focusAndMode)
 {
   buildPage();
 }
@@ -727,7 +725,7 @@ void SetupLayout::addBreadcrumb()
   auto focus = m_tree->focus->get();
 
   if(isInEditMode())
-    addControl(new Breadcrumb(dynamic_cast<NavTree::Leaf*>(focus)));
+    addControl(new Breadcrumb(dynamic_cast<NavTree::Leaf *>(focus)));
   else
     addControl(new Breadcrumb(focus->parent));
 }
@@ -762,7 +760,7 @@ void SetupLayout::addSelectionEntries()
 bool SetupLayout::isInSelectionMode() const
 {
   auto focus = m_tree->focus->get();
-  auto focusEditable = dynamic_cast<const NavTree::Leaf*>(focus);
+  auto focusEditable = dynamic_cast<const NavTree::Leaf *>(focus);
   return m_focusAndMode.mode == UIMode::Select || !focusEditable;
 }
 
@@ -781,7 +779,7 @@ void SetupLayout::addValueViews()
 bool SetupLayout::isInEditMode() const
 {
   auto focus = m_tree->focus->get();
-  auto focusEditable = dynamic_cast<NavTree::Leaf*>(focus);
+  auto focusEditable = dynamic_cast<NavTree::Leaf *>(focus);
   return m_focusAndMode.mode == UIMode::Edit && focusEditable;
 }
 
@@ -791,7 +789,7 @@ bool SetupLayout::addEditor()
   {
     auto focus = m_tree->focus->get();
 
-    if(auto leaf = dynamic_cast<NavTree::EditableLeaf*>(focus))
+    if(auto leaf = dynamic_cast<NavTree::EditableLeaf *>(focus))
     {
       if(auto e = leaf->createEditor())
       {
@@ -864,8 +862,8 @@ bool SetupLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 
 void SetupLayout::onEnterInSelectionMode(ButtonModifiers modifiers)
 {
-  bool diveable = dynamic_cast<NavTree::EditableLeaf*>(m_tree->focus->get());
-  diveable |= dynamic_cast<NavTree::InnerNode*>(m_tree->focus->get()) != nullptr;
+  bool diveable = dynamic_cast<NavTree::EditableLeaf *>(m_tree->focus->get());
+  diveable |= dynamic_cast<NavTree::InnerNode *>(m_tree->focus->get()) != nullptr;
 
   if(diveable)
   {
@@ -919,7 +917,7 @@ void SetupLayout::setEditor(Control *c)
 {
   addControl(c);
   c->setPosition(Rect(129, 28, 126, 12));
-  m_editor = dynamic_cast<SetupEditor*>(c);
+  m_editor = dynamic_cast<SetupEditor *>(c);
   m_editor->setSetupLayout(this);
   g_assert(m_editor);
 }

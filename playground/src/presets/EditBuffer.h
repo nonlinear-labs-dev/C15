@@ -14,101 +14,102 @@ class PresetManager;
 
 class EditBuffer : public Preset
 {
-  private:
-    typedef Preset super;
+ private:
+  typedef Preset super;
 
-  public:
-    static shared_ptr<EditBuffer> createEditBuffer (UpdateDocumentContributor *parent);
-    virtual ~EditBuffer ();
+ public:
+  static shared_ptr<EditBuffer> createEditBuffer(UpdateDocumentContributor *parent);
+  virtual ~EditBuffer();
 
-    void undoableClear (UNDO::Scope::tTransactionPtr transaction);
+  void undoableClear(UNDO::Scope::tTransactionPtr transaction);
 
-    void undoableSelectParameter (const Glib::ustring &id);
-    void undoableSelectParameter (uint16_t id);
-    void undoableSelectParameter (Parameter *p);
-    void undoableSelectParameter(UNDO::Scope::tTransactionPtr transaction, Parameter *p);
-    Parameter *getSelectedParameter() const;
+  void undoableSelectParameter(const Glib::ustring &id);
+  void undoableSelectParameter(uint16_t id);
+  void undoableSelectParameter(Parameter *p);
+  void undoableSelectParameter(UNDO::Scope::tTransactionPtr transaction, Parameter *p);
+  Parameter *getSelectedParameter() const;
 
-    void undoableLoad (UNDO::Scope::tTransactionPtr transaction, shared_ptr<Preset> preset);
-    void undoableLoad (shared_ptr<Preset> preset);
-    void undoableLoadSelectedPreset ();
-    void undoableSetLoadedPresetInfo (UNDO::Scope::tTransactionPtr transaction, Preset *preset);
-    void undoableUpdateLoadedPresetInfo (UNDO::Scope::tTransactionPtr transaction);
-    void undoableRandomize(UNDO::Scope::tTransactionPtr transaction, Initiator initiator);
-    void undoableInitSound (UNDO::Scope::tTransactionPtr transaction);
-    void undoableSetDefaultValues (UNDO::Scope::tTransactionPtr transaction, Preset *values);
+  void undoableLoad(UNDO::Scope::tTransactionPtr transaction, shared_ptr<Preset> preset);
+  void undoableLoad(shared_ptr<Preset> preset);
+  void undoableLoadSelectedPreset();
+  void undoableSetLoadedPresetInfo(UNDO::Scope::tTransactionPtr transaction, Preset *preset);
+  void undoableUpdateLoadedPresetInfo(UNDO::Scope::tTransactionPtr transaction);
+  void undoableRandomize(UNDO::Scope::tTransactionPtr transaction, Initiator initiator);
+  void undoableInitSound(UNDO::Scope::tTransactionPtr transaction);
+  void undoableSetDefaultValues(UNDO::Scope::tTransactionPtr transaction, Preset *values);
 
-    void undoableLockAllGroups(UNDO::Scope::tTransactionPtr transaction);
-    void undoableUnlockAllGroups(UNDO::Scope::tTransactionPtr transaction);
-    void undoableToggleGroupLock(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &groupId);
+  void undoableLockAllGroups(UNDO::Scope::tTransactionPtr transaction);
+  void undoableUnlockAllGroups(UNDO::Scope::tTransactionPtr transaction);
+  void undoableToggleGroupLock(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &groupId);
 
-    void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
-    Glib::ustring getUUIDOfLastLoadedPreset () const;
-    PresetManager *getParent ();
-    const PresetManager *getParent () const;
+  void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  Glib::ustring getUUIDOfLastLoadedPreset() const;
+  PresetManager *getParent();
+  const PresetManager *getParent() const;
 
-    void resetModifiedIndicator (UNDO::Scope::tTransactionPtr transaction);
-    void resetModifiedIndicator(UNDO::Scope::tTransactionPtr transaction, size_t hash);
+  void resetModifiedIndicator(UNDO::Scope::tTransactionPtr transaction);
+  void resetModifiedIndicator(UNDO::Scope::tTransactionPtr transaction, size_t hash);
 
-    virtual void copyFrom (UNDO::Scope::tTransactionPtr transaction, Preset *other, bool ignoreUUIDs) override;
+  virtual void copyFrom(UNDO::Scope::tTransactionPtr transaction, Preset *other, bool ignoreUUIDs) override;
 
-    virtual tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
+  virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
-    bool isAnyParameterLocked() const;
-    bool areAllParametersLocked() const;
+  bool isAnyParameterLocked() const;
+  bool areAllParametersLocked() const;
 
-    // CALLBACKS
-    sigc::connection onSelectionChanged (slot<void, Parameter *, Parameter *> s);
-    sigc::connection onModificationStateChanged (slot<void, bool> s);
-    sigc::connection onChange (slot<void> s);
-    sigc::connection onPresetLoaded (slot<void> s);
-    sigc::connection onLocksChanged (slot<void> s);
+  // CALLBACKS
+  sigc::connection onSelectionChanged(slot<void, Parameter *, Parameter *> s);
+  sigc::connection onModificationStateChanged(slot<void, bool> s);
+  sigc::connection onChange(slot<void> s);
+  sigc::connection onPresetLoaded(slot<void> s);
+  sigc::connection onLocksChanged(slot<void> s);
 
-    void undoableImportReaktorPreset (const Glib::ustring &preset);
-    void undoableImportReaktorPreset (UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &preset);
-    Glib::ustring exportReaktorPreset ();
-    bool isModified () const;
-    void sendToLPC ();
-    bool isSelectedPresetLoadedAndUnModified();
+  void undoableImportReaktorPreset(const Glib::ustring &preset);
+  void undoableImportReaktorPreset(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &preset);
+  Glib::ustring exportReaktorPreset();
+  bool isModified() const;
+  void sendToLPC();
+  bool isSelectedPresetLoadedAndUnModified();
 
-  private:
-    Parameter *searchForAnyParameterWithLock() const;
-    Parameter *searchForAnyParameterWithoutLock() const;
+ private:
+  Parameter *searchForAnyParameterWithLock() const;
+  Parameter *searchForAnyParameterWithoutLock() const;
 
-    virtual UNDO::Scope &getUndoScope () override;
+  virtual UNDO::Scope &getUndoScope() override;
 
-    void setParameter (size_t id, double cpValue);
+  void setParameter(size_t id, double cpValue);
 
-    EditBuffer (UpdateDocumentContributor *parent);
+  EditBuffer(UpdateDocumentContributor *parent);
 
-    void undoableSelectParameter (UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &id);
-    void setModulationSource (int src);
-    void setModulationAmount (double amount);
+  void undoableSelectParameter(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &id);
+  void setModulationSource(int src);
+  void setModulationAmount(double amount);
 
-    bool undoableImportReaktorParameter (UNDO::Scope::tTransactionPtr transaction, std::istringstream &input, Parameter *param);
-    bool readReaktorPresetHeader (std::istringstream &input) const;
+  bool undoableImportReaktorParameter(UNDO::Scope::tTransactionPtr transaction, std::istringstream &input,
+                                      Parameter *param);
+  bool readReaktorPresetHeader(std::istringstream &input) const;
 
-    void doDeferedJobs();
-    void checkModified ();
-    void checkAnyLocks ();
+  void doDeferedJobs();
+  void checkModified();
+  void checkAnyLocks();
 
-    Signal<void, Parameter *, Parameter *> m_signalSelectedParameter;
-    Signal<void, bool> m_signalModificationState;
-    Signal<void> m_signalChange;
-    Signal<void> m_signalPresetLoaded;
-    Signal<void> m_signalLocksChanged;
+  Signal<void, Parameter *, Parameter *> m_signalSelectedParameter;
+  Signal<void, bool> m_signalModificationState;
+  Signal<void> m_signalChange;
+  Signal<void> m_signalPresetLoaded;
+  Signal<void> m_signalLocksChanged;
 
-    Parameter *m_selectedParameter = nullptr;
+  Parameter *m_selectedParameter = nullptr;
 
-    friend class EditBufferSerializer;
-    friend class EditBufferActions;
+  friend class EditBufferSerializer;
+  friend class EditBufferActions;
 
-    LastLoadedPresetInfo m_lastLoadedPresetInfo;
+  LastLoadedPresetInfo m_lastLoadedPresetInfo;
 
-    DelayedJob m_deferedJobs;
+  DelayedJob m_deferedJobs;
 
-    size_t m_hashOnStore;
-    bool m_isModified;
+  size_t m_hashOnStore;
+  bool m_isModified;
 
-    friend class PresetManager;
+  friend class PresetManager;
 };

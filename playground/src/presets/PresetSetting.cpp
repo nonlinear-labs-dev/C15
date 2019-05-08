@@ -2,30 +2,30 @@
 #include "PresetSettings.h"
 #include "xml/Writer.h"
 
-PresetSetting::PresetSetting (PresetSettings &parent) :
-    super (&parent)
+PresetSetting::PresetSetting(PresetSettings &parent)
+    : super(&parent)
 {
 }
 
-PresetSetting::~PresetSetting ()
+PresetSetting::~PresetSetting()
 {
 }
 
-connection PresetSetting::onSettingChange (slot<void, const PresetSetting*> slot)
+connection PresetSetting::onSettingChange(slot<void, const PresetSetting *> slot)
 {
-  return m_signal.connectAndInit (slot, this);
+  return m_signal.connectAndInit(slot, this);
 }
 
-PresetSetting::tUpdateID PresetSetting::onChange (uint64_t flags)
+PresetSetting::tUpdateID PresetSetting::onChange(uint64_t flags)
 {
-  m_signal.send (this);
-  return super::onChange (flags);
+  m_signal.send(this);
+  return super::onChange(flags);
 }
 
-void PresetSetting::writeDocument (Writer &writer, tUpdateID knownRevision) const
+void PresetSetting::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
-  bool changed = knownRevision < getUpdateIDOfLastChange ();
-  writer.writeTextElement ("value", save (), Attribute ("changed", changed));
+  bool changed = knownRevision < getUpdateIDOfLastChange();
+  writer.writeTextElement("value", save(), Attribute("changed", changed));
 }
 
 bool PresetSetting::matchesQuery(const Glib::ustring &query) const

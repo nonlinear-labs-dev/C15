@@ -4,8 +4,7 @@
 
 class ImportBackupView : public SetupLabel
 {
-  public:
-    ImportBackupView();
-    virtual ~ImportBackupView();
+ public:
+  ImportBackupView();
+  virtual ~ImportBackupView();
 };
-

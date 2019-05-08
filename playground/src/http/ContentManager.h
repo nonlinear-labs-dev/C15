@@ -16,75 +16,76 @@ class ContentSection;
 
 class ContentManager : public PendingHTTPRequests, public UpdateDocumentMaster, public sigc::trackable
 {
-  public:
-    ContentManager ();
-    virtual ~ContentManager ();
+ public:
+  ContentManager();
+  virtual ~ContentManager();
 
-    void init();
-    void handleRequest (shared_ptr<NetworkRequest> request);
-    void onSectionMessageFinished (SoupMessage *msg);
+  void init();
+  void handleRequest(shared_ptr<NetworkRequest> request);
+  void onSectionMessageFinished(SoupMessage *msg);
 
-    tUpdateID onChange (uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
+  tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
-    UNDO::Scope &getUndoScope () override;
-    const UNDO::Scope &getUndoScope () const override;
-    void connectWebSocket (SoupWebsocketConnection *connection);
+  UNDO::Scope &getUndoScope() override;
+  const UNDO::Scope &getUndoScope() const override;
+  void connectWebSocket(SoupWebsocketConnection *connection);
 
-    bool isSendResponsesScheduled () const;
+  bool isSendResponsesScheduled() const;
 
-    virtual void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
+  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
-  private:
-    typedef shared_ptr<ContentSection> tContentSectionPtr;
-    typedef set<tContentSectionPtr> tSections;
+ private:
+  typedef shared_ptr<ContentSection> tContentSectionPtr;
+  typedef set<tContentSectionPtr> tSections;
 
-    void addContentSections ();
-    void addContentSection (tContentSectionPtr section);
-    void onSectionChanged();
+  void addContentSections();
+  void addContentSection(tContentSectionPtr section);
+  void onSectionChanged();
 
-    void deliverResponse (shared_ptr<HTTPRequest> request, tUpdateID clientsUpdateID);
-    void deliverContentSectionResponse (ContentManager::tContentSectionPtr section, shared_ptr<NetworkRequest> request);
-    void delayResponseUntilChanged (std::shared_ptr< HTTPRequest > request);
+  void deliverResponse(shared_ptr<HTTPRequest> request, tUpdateID clientsUpdateID);
+  void deliverContentSectionResponse(ContentManager::tContentSectionPtr section, shared_ptr<NetworkRequest> request);
+  void delayResponseUntilChanged(std::shared_ptr<HTTPRequest> request);
 
-    bool tryHandlingContentSectionRequest (ContentManager::tContentSectionPtr section, shared_ptr<NetworkRequest> request);
+  bool tryHandlingContentSectionRequest(ContentManager::tContentSectionPtr section, shared_ptr<NetworkRequest> request);
 
-    void writeDocument (Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision, bool omitOracles) const;
-    void sendResponses ();
+  void writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision, bool omitOracles) const;
+  void sendResponses();
 
-    static void onWebSocketMessage (SoupWebsocketConnection *self, gint type, GBytes *message, ContentManager *pThis);
+  static void onWebSocketMessage(SoupWebsocketConnection *self, gint type, GBytes *message, ContentManager *pThis);
 
+  tSections m_sections;
 
-    tSections m_sections;
+  bool m_sendResponsesScheduled = false;
+  list<connection> m_connections;
 
-    bool m_sendResponsesScheduled = false;
-    list<connection> m_connections;
+  std::chrono::system_clock::time_point m_lastUpdateSentAt;
 
-    std::chrono::system_clock::time_point m_lastUpdateSentAt;
+  struct WebsocketConnection
+  {
+   public:
+    WebsocketConnection(SoupWebsocketConnection *c);
+    ~WebsocketConnection();
 
-    struct WebsocketConnection
-    {
-      public:
-        WebsocketConnection (SoupWebsocketConnection *c);
-        ~WebsocketConnection ();
+    void onWebsocketRequestDone(shared_ptr<WebSocketRequest> request, tUpdateID oldID, tUpdateID newId);
+    SoupWebsocketConnection *getConnection();
+    tUpdateID getLastSentUpdateId() const;
+    void setLastSentUpdateId(int currentUpdateId);
+    bool canOmitOracles(int currentUpdateId) const;
 
-        void onWebsocketRequestDone (shared_ptr<WebSocketRequest> request, tUpdateID oldID, tUpdateID newId);
-        SoupWebsocketConnection *getConnection();
-        tUpdateID getLastSentUpdateId() const;
-        void setLastSentUpdateId (int currentUpdateId);
-        bool canOmitOracles (int currentUpdateId) const;
+   private:
+    SoupWebsocketConnection *ws;
+    tUpdateID lastSentUpdateId;
+    tUpdateID lastSelfIssuedUpdateId;
+    bool allChangesWereOracles;
+  };
 
-      private:
-        SoupWebsocketConnection *ws;
-        tUpdateID lastSentUpdateId;
-        tUpdateID lastSelfIssuedUpdateId;
-        bool allChangesWereOracles;
-    };
+  typedef shared_ptr<WebsocketConnection> tWebsocketConnection;
 
-    typedef shared_ptr<WebsocketConnection> tWebsocketConnection;
+  void feedWebSockets();
+  bool feedWebSocket(tWebsocketConnection ws);
+  void onUpdateIdChangedByNetworkRequest(shared_ptr<NetworkRequest> request,
+                                         UpdateDocumentContributor::tUpdateID oldUpdateID,
+                                         UpdateDocumentContributor::tUpdateID newUpdateID);
 
-    void feedWebSockets ();
-    bool feedWebSocket (tWebsocketConnection ws);
-    void onUpdateIdChangedByNetworkRequest (shared_ptr< NetworkRequest > request, UpdateDocumentContributor::tUpdateID oldUpdateID, UpdateDocumentContributor::tUpdateID newUpdateID);
-
-    std::list<tWebsocketConnection> m_webSockets;
+  std::list<tWebsocketConnection> m_webSockets;
 };

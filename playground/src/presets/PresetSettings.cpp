@@ -4,13 +4,12 @@
 #include "xml/Writer.h"
 #include "groups/HardwareSourcesGroup.h"
 
-
-PresetSettings::PresetSettings (Preset &preset) :
-    super (&preset)
+PresetSettings::PresetSettings(Preset &preset)
+    : super(&preset)
 {
 }
 
-PresetSettings::~PresetSettings ()
+PresetSettings::~PresetSettings()
 {
 }
 
@@ -25,55 +24,50 @@ void PresetSettings::set(UNDO::Scope::tTransactionPtr transaction, const Glib::u
     setting->load(transaction, value);
 }
 
-PresetSettings::tSetting PresetSettings::getSetting (const Glib::ustring &key)
+PresetSettings::tSetting PresetSettings::getSetting(const Glib::ustring &key)
 {
-  auto it = m_settings.find (key);
-  if (it != m_settings.end ())
+  auto it = m_settings.find(key);
+  if(it != m_settings.end())
     return it->second;
 
   return nullptr;
 }
 
-PresetSettings::tSettings &PresetSettings::getSettings ()
+PresetSettings::tSettings &PresetSettings::getSettings()
 {
   return m_settings;
 }
 
-const PresetSettings::tSettings &PresetSettings::getSettings () const
+const PresetSettings::tSettings &PresetSettings::getSettings() const
 {
   return m_settings;
 }
 
-void PresetSettings::writeDocument (Writer &writer, tUpdateID knownRevision) const
+void PresetSettings::writeDocument(Writer &writer, tUpdateID knownRevision) const
 {
-  bool changed = knownRevision < getUpdateIDOfLastChange ();
+  bool changed = knownRevision < getUpdateIDOfLastChange();
 
-  writer.writeTag ("preset-settings", Attribute ("changed", changed), [&]()
-  {
+  writer.writeTag("preset-settings", Attribute("changed", changed), [&]() {
     if(changed)
     {
       for(auto &setting : m_settings)
       {
-        writer.writeTag (setting.first, [&]()
-        {
-          setting.second->writeDocument (writer, knownRevision);
-        });
+        writer.writeTag(setting.first, [&]() { setting.second->writeDocument(writer, knownRevision); });
       }
     }
   });
 }
 
-
 void PresetSettings::sendToLPC() const
 {
   for(auto &s : m_settings)
-    s.second->sendToLPC ();
+    s.second->sendToLPC();
 }
 
-void PresetSettings::copyFrom (UNDO::Scope::tTransactionPtr transaction, const PresetSettings &other)
+void PresetSettings::copyFrom(UNDO::Scope::tTransactionPtr transaction, const PresetSettings &other)
 {
   for(const auto &it : other.getSettings())
-    set(transaction, it.first, it.second->save ());
+    set(transaction, it.first, it.second->save());
 }
 
 size_t PresetSettings::getHash() const
@@ -82,8 +76,8 @@ size_t PresetSettings::getHash() const
 
   for(auto &s : m_settings)
   {
-    hash_combine (hash, s.first);
-    hash_combine (hash, s.second);
+    hash_combine(hash, s.first);
+    hash_combine(hash, s.second);
   }
 
   return hash;

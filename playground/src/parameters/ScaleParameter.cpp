@@ -61,4 +61,3 @@ Glib::ustring ScaleParameter::getLongName() const
   }
   return super::getLongName();
 }
-

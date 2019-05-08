@@ -2,8 +2,7 @@
 
 class PleaseWaitLayout : public DFBLayout
 {
-  public:
-    PleaseWaitLayout();
-    bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+ public:
+  PleaseWaitLayout();
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
-

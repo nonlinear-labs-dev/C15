@@ -4,9 +4,9 @@
 
 class EchoGroup : public ParameterGroup
 {
-  public:
-    EchoGroup (ParameterGroupSet *parent);
-    virtual ~EchoGroup ();
+ public:
+  EchoGroup(ParameterGroupSet *parent);
+  virtual ~EchoGroup();
 
-    void init ();
+  void init();
 };

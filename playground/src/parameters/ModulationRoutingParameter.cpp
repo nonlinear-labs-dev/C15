@@ -8,10 +8,10 @@
 #include <cmath>
 
 ModulationRoutingParameter::ModulationRoutingParameter(ParameterGroup *group, uint16_t id, tSrcParameterPtr srcParam,
-                                                       tMCParameterPtr tgtParam, const ScaleConverter *scaling) :
-    super(group, id, scaling, 0, 100, 1000),
-    m_tgtParameter(tgtParam),
-    m_srcParameter(srcParam)
+                                                       tMCParameterPtr tgtParam, const ScaleConverter *scaling)
+    : super(group, id, scaling, 0, 100, 1000)
+    , m_tgtParameter(tgtParam)
+    , m_srcParameter(srcParam)
 {
   srcParam->registerTarget(this);
 }
@@ -20,7 +20,8 @@ ModulationRoutingParameter::~ModulationRoutingParameter()
 {
 }
 
-void ModulationRoutingParameter::onValueChanged(Initiator initiator, tControlPositionValue oldValue, tControlPositionValue newValue)
+void ModulationRoutingParameter::onValueChanged(Initiator initiator, tControlPositionValue oldValue,
+                                                tControlPositionValue newValue)
 {
   Parameter::onValueChanged(initiator, oldValue, newValue);
 
@@ -144,7 +145,7 @@ DFBLayout *ModulationRoutingParameter::createLayout(FocusAndMode focusAndMode) c
   g_return_val_if_reached(nullptr);
 }
 
-void ModulationRoutingParameter::undoableRandomize (UNDO::Scope::tTransactionPtr transaction, Initiator initiator, double amount)
+void ModulationRoutingParameter::undoableRandomize(UNDO::Scope::tTransactionPtr transaction, Initiator initiator,
+                                                   double amount)
 {
-
 }

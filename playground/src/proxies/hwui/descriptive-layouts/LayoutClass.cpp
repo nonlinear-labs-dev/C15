@@ -33,20 +33,17 @@ namespace DescriptiveLayouts
 
   bool LayoutClass::matches(FocusAndMode fam) const
   {
-    return std::all_of(selectors.begin(), selectors.end(), [=](const Selector& s)
-    {
-      return s.test(fam);
-    });
+    return std::all_of(selectors.begin(), selectors.end(), [=](const Selector& s) { return s.test(fam); });
   }
 
   bool LayoutClass::meetsConditions() const
   {
-    return conditions.size() == 0 || std::all_of(conditions.begin(), conditions.end(), [](const std::function<bool()> c) {
-      return c();
-    });
+    return conditions.size() == 0
+        || std::all_of(conditions.begin(), conditions.end(), [](const std::function<bool()> c) { return c(); });
   }
 
-  const unsigned long LayoutClass::getWeight() const {
+  const unsigned long LayoutClass::getWeight() const
+  {
     return conditions.size() + selectors.size();
   }
 }

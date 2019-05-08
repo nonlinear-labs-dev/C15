@@ -7,11 +7,11 @@
 
 using namespace std::chrono_literals;
 
-WebSocketSession::WebSocketSession() :
-    m_soupSession(soup_session_new(), g_object_unref),
-    m_message(nullptr, g_object_unref),
-    m_connection(nullptr, g_object_unref),
-    m_retry(std::bind(&WebSocketSession::connect, this))
+WebSocketSession::WebSocketSession()
+    : m_soupSession(soup_session_new(), g_object_unref)
+    , m_message(nullptr, g_object_unref)
+    , m_connection(nullptr, g_object_unref)
+    , m_retry(std::bind(&WebSocketSession::connect, this))
 {
   connect();
 }
@@ -63,7 +63,7 @@ void WebSocketSession::reconnect()
 
 void WebSocketSession::connectWebSocket(SoupWebsocketConnection *connection)
 {
-  g_signal_connect(connection, "message", G_CALLBACK (&WebSocketSession::receiveMessage), this);
+  g_signal_connect(connection, "message", G_CALLBACK(&WebSocketSession::receiveMessage), this);
   g_object_set(connection, "keepalive-interval", 5, nullptr);
   g_object_ref(connection);
 
@@ -74,7 +74,7 @@ void WebSocketSession::connectWebSocket(SoupWebsocketConnection *connection)
   GSocket *socket = nullptr;
   g_object_get(outStream, "socket", &socket, nullptr);
 
-  auto ret = g_socket_set_option (socket, SOL_TCP, TCP_NODELAY, 1, &error);
+  auto ret = g_socket_set_option(socket, SOL_TCP, TCP_NODELAY, 1, &error);
 
   if(error)
   {
@@ -94,10 +94,10 @@ void WebSocketSession::connectWebSocket(SoupWebsocketConnection *connection)
 void WebSocketSession::sendMessage(Domain d, tMessage msg)
 {
   gsize len = 0;
-  if(auto data = reinterpret_cast<const int8_t*>(msg->get_data(len)))
+  if(auto data = reinterpret_cast<const int8_t *>(msg->get_data(len)))
   {
     auto cp = new int8_t[len + 1];
-    cp[0] = (int8_t)d;
+    cp[0] = (int8_t) d;
     std::copy(data, data + len, cp + 1);
     sendMessage(Glib::Bytes::create(cp, len + 1));
   }
@@ -107,9 +107,9 @@ void WebSocketSession::sendMessage(tMessage msg)
 {
   if(m_connection)
   {
-    auto state = soup_websocket_connection_get_state (m_connection.get());
+    auto state = soup_websocket_connection_get_state(m_connection.get());
 
-    if (state == SOUP_WEBSOCKET_STATE_OPEN)
+    if(state == SOUP_WEBSOCKET_STATE_OPEN)
     {
       gsize len = 0;
       auto data = msg->get_data(len);
@@ -123,11 +123,12 @@ void WebSocketSession::sendMessage(tMessage msg)
   }
 }
 
-void WebSocketSession::receiveMessage(SoupWebsocketConnection *self, gint type, GBytes *message, WebSocketSession *pThis)
+void WebSocketSession::receiveMessage(SoupWebsocketConnection *self, gint type, GBytes *message,
+                                      WebSocketSession *pThis)
 {
   tMessage msg = Glib::wrap(message);
   gsize len = 0;
-  auto data = reinterpret_cast<const uint8_t*>(msg->get_data(len));
+  auto data = reinterpret_cast<const uint8_t *>(msg->get_data(len));
   Domain d = (Domain)(data[0]);
 
   auto dup = g_memdup(data + 1, len - 1);

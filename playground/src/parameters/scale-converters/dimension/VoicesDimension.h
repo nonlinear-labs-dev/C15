@@ -4,14 +4,13 @@
 
 class VoicesDimension : public Dimension
 {
-  private:
-    VoicesDimension ();
+ private:
+  VoicesDimension();
 
-  public:
-    virtual ~VoicesDimension ();
+ public:
+  virtual ~VoicesDimension();
 
-    static const VoicesDimension &get ();
-    Glib::ustring getStingizerJS () const override;
-    Glib::ustring stringize (const tDisplayValue &displayValue) const override;
+  static const VoicesDimension &get();
+  Glib::ustring getStingizerJS() const override;
+  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 };
-

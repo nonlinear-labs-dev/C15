@@ -6,17 +6,16 @@ class Application;
 
 class SelectedParameterBarSlider : public BarSlider
 {
-  private:
-    typedef BarSlider super;
+ private:
+  typedef BarSlider super;
 
-  public:
-    // public methods
-    SelectedParameterBarSlider (const Rect &rect);
-    virtual ~SelectedParameterBarSlider ();
+ public:
+  // public methods
+  SelectedParameterBarSlider(const Rect& rect);
+  virtual ~SelectedParameterBarSlider();
 
-  private:
-    // private methods
-    SelectedParameterBarSlider (const SelectedParameterBarSlider& other);
-    SelectedParameterBarSlider& operator= (const SelectedParameterBarSlider&);
+ private:
+  // private methods
+  SelectedParameterBarSlider(const SelectedParameterBarSlider& other);
+  SelectedParameterBarSlider& operator=(const SelectedParameterBarSlider&);
 };
-

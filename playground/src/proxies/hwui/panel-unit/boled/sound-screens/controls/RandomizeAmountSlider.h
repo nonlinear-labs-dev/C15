@@ -7,14 +7,13 @@ class Application;
 
 class RandomizeAmountSlider : public BarSlider
 {
-  private:
-    typedef BarSlider super;
+ private:
+  typedef BarSlider super;
 
-  public:
-    RandomizeAmountSlider (const Rect &rect);
-    virtual ~RandomizeAmountSlider ();
+ public:
+  RandomizeAmountSlider(const Rect &rect);
+  virtual ~RandomizeAmountSlider();
 
-  private:
-    void onSettingChanged (const Setting *s);
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

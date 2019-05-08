@@ -4,15 +4,13 @@
 
 class PassphraseView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    PassphraseView ();
-    virtual ~PassphraseView ();
+ public:
+  PassphraseView();
+  virtual ~PassphraseView();
 
-  private:
-    void onSettingChanged (const Setting *s);
-
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

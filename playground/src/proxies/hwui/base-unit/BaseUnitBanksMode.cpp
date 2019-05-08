@@ -7,34 +7,31 @@
 #include <proxies/hwui/buttons.h>
 #include <proxies/hwui/HWUIEnums.h>
 
-BaseUnitBanksMode::BaseUnitBanksMode ()
+BaseUnitBanksMode::BaseUnitBanksMode()
 {
 }
 
-BaseUnitBanksMode::~BaseUnitBanksMode ()
+BaseUnitBanksMode::~BaseUnitBanksMode()
 {
 }
 
-void BaseUnitBanksMode::setup ()
+void BaseUnitBanksMode::setup()
 {
   super::setup();
 
-  setupButtonConnection (Buttons::BUTTON_MINUS, [=](Buttons button, ButtonModifiers modifiers, bool state)
-  {
+  setupButtonConnection(Buttons::BUTTON_MINUS, [=](Buttons button, ButtonModifiers modifiers, bool state) {
     if(state)
     {
-      Application::get().getPresetManager()->undoableSelectPrevious ();
+      Application::get().getPresetManager()->undoableSelectPrevious();
     }
     return true;
   });
 
-  setupButtonConnection (Buttons::BUTTON_PLUS, [=](Buttons button, ButtonModifiers modifiers, bool state)
-  {
+  setupButtonConnection(Buttons::BUTTON_PLUS, [=](Buttons button, ButtonModifiers modifiers, bool state) {
     if(state)
     {
-      Application::get().getPresetManager()->undoableSelectNext ();
+      Application::get().getPresetManager()->undoableSelectNext();
     }
     return true;
   });
 }
-

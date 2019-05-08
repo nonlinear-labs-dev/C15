@@ -25,8 +25,8 @@
 #include <memory>
 #include <vector>
 
-PresetManagerLayout::PresetManagerLayout(FocusAndMode focusAndMode) :
-    m_focusAndMode(focusAndMode)
+PresetManagerLayout::PresetManagerLayout(FocusAndMode focusAndMode)
+    : m_focusAndMode(focusAndMode)
 {
   setup();
 }
@@ -195,10 +195,7 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
 
       case Buttons::BUTTON_B:
       case Buttons::BUTTON_C:
-        installButtonRepeat([ = ]()
-        {
-          m_presets->onButton(i, down, modifiers);
-        });
+        installButtonRepeat([=]() { m_presets->onButton(i, down, modifiers); });
 
         return true;
 
@@ -239,7 +236,7 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
         if(m_focusAndMode.focus == UIFocus::Presets && m_focusAndMode.mode == UIMode::Select)
           hwui->undoableSetFocusAndMode(UIFocus::Parameters);
         else
-          hwui->undoableSetFocusAndMode( { UIFocus::Presets, UIMode::Select });
+          hwui->undoableSetFocusAndMode({ UIFocus::Presets, UIMode::Select });
         break;
 
       case Buttons::BUTTON_INFO:
@@ -282,6 +279,5 @@ std::pair<int, int> PresetManagerLayout::getSelectedPosition() const
   if(m_presets)
     return m_presets->getSelectedPosition();
 
-  return
-  {};
+  return {};
 }

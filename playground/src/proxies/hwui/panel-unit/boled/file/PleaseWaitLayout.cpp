@@ -13,4 +13,3 @@ bool PleaseWaitLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }
-

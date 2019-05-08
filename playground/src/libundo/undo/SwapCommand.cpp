@@ -3,27 +3,28 @@
 namespace UNDO
 {
 
-  SwapCommand::SwapCommand (tAction doUndoRedoAction) : m_theAction(doUndoRedoAction)
+  SwapCommand::SwapCommand(tAction doUndoRedoAction)
+      : m_theAction(doUndoRedoAction)
   {
   }
 
-  SwapCommand::~SwapCommand ()
+  SwapCommand::~SwapCommand()
   {
   }
 
-  void SwapCommand::implDoAction () const
+  void SwapCommand::implDoAction() const
   {
-    m_theAction (getState());
+    m_theAction(getState());
   }
 
-  void SwapCommand::implUndoAction () const
+  void SwapCommand::implUndoAction() const
   {
-    m_theAction (getState());
+    m_theAction(getState());
   }
 
-  void SwapCommand::implRedoAction () const
+  void SwapCommand::implRedoAction() const
   {
-    m_theAction (getState());
+    m_theAction(getState());
   }
 
 } /* namespace UNDO */

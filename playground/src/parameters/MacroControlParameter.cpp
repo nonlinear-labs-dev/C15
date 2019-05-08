@@ -15,11 +15,12 @@
 #include "RibbonParameter.h"
 #include <device-settings/DebugLevel.h>
 
-static int lastSelectedMacroControl = MacroControlsGroup::modSrcToParamID(ModulateableParameter::ModulateableParameter::MC1);
+static int lastSelectedMacroControl
+    = MacroControlsGroup::modSrcToParamID(ModulateableParameter::ModulateableParameter::MC1);
 
-MacroControlParameter::MacroControlParameter(ParameterGroup *group, uint16_t id) :
-    Parameter(group, id, ScaleConverter::get<MacroControlScaleConverter>(), 0.5, 100, 1000),
-    m_UiSelectedHardwareSourceParameterID(HardwareSourcesGroup::getPedal1ParameterID())
+MacroControlParameter::MacroControlParameter(ParameterGroup *group, uint16_t id)
+    : Parameter(group, id, ScaleConverter::get<MacroControlScaleConverter>(), 0.5, 100, 1000)
+    , m_UiSelectedHardwareSourceParameterID(HardwareSourcesGroup::getPedal1ParameterID())
 {
 }
 
@@ -36,11 +37,10 @@ void MacroControlParameter::writeDocProperties(Writer &writer, tUpdateID knownRe
   writer.writeTextElement("info", m_info);
 }
 
-
-void MacroControlParameter::writeDifferences(Writer& writer, Parameter* other) const
+void MacroControlParameter::writeDifferences(Writer &writer, Parameter *other) const
 {
   Parameter::writeDifferences(writer, other);
-  MacroControlParameter *pOther = static_cast<MacroControlParameter*>(other);
+  MacroControlParameter *pOther = static_cast<MacroControlParameter *>(other);
 
   if(getGivenName() != pOther->getGivenName())
   {
@@ -75,10 +75,11 @@ void MacroControlParameter::applyAbsoluteLpcPhysicalControl(tControlPositionValu
   getValue().setRawValue(Initiator::EXPLICIT_LPC, v);
 }
 
-void MacroControlParameter::onValueChanged(Initiator initiator, tControlPositionValue oldValue, tControlPositionValue newValue)
+void MacroControlParameter::onValueChanged(Initiator initiator, tControlPositionValue oldValue,
+                                           tControlPositionValue newValue)
 {
   if(initiator != Initiator::INDIRECT)
-    for(ModulateableParameter * target : m_targets)
+    for(ModulateableParameter *target : m_targets)
       target->applyLpcMacroControl(newValue - oldValue);
 
   super::onValueChanged(initiator, oldValue, newValue);
@@ -92,7 +93,7 @@ void MacroControlParameter::onValueChanged(Initiator initiator, tControlPosition
 void MacroControlParameter::updateBoundRibbon()
 {
   auto groups = dynamic_cast<ParameterGroupSet *>(getParentGroup()->getParent());
-  auto mcm = dynamic_cast<MacroControlMappingGroup*>(groups->getParameterGroupByID("MCM"));
+  auto mcm = dynamic_cast<MacroControlMappingGroup *>(groups->getParameterGroupByID("MCM"));
   auto routers = mcm->getModulationRoutingParametersFor(this);
 
   for(auto router : routers)
@@ -129,7 +130,7 @@ void MacroControlParameter::toggleUiSelectedHardwareSource(int inc)
   int id = getUiSelectedHardwareSource();
 
   auto grandPa = dynamic_cast<ParameterGroupSet *>(getParent()->getParent());
-  auto controlSources = dynamic_cast<HardwareSourcesGroup*>(grandPa->getParameterGroupByID("CS"));
+  auto controlSources = dynamic_cast<HardwareSourcesGroup *>(grandPa->getParameterGroupByID("CS"));
   auto availableSources = controlSources->getPhysicalControlParameters();
   setUiSelectedHardwareSource(getIdOfAdvancedParameter(availableSources, id, inc));
 }
@@ -156,9 +157,8 @@ void MacroControlParameter::undoableSetGivenName(UNDO::Scope::tTransactionPtr tr
 
     DebugLevel::info("Set given name of MC to", newName);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_givenName);
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+      swapData->swapWith(m_givenName);
       invalidate();
     });
   }
@@ -179,9 +179,8 @@ void MacroControlParameter::undoableSetInfo(UNDO::Scope::tTransactionPtr transac
   {
     auto swapData = UNDO::createSwapData(info);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
-      swapData->swapWith (m_info);
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+      swapData->swapWith(m_info);
       invalidate();
     });
   }
@@ -218,10 +217,7 @@ void MacroControlParameter::copyFrom(UNDO::Scope::tTransactionPtr transaction, P
       undoableSetInfo(transaction, otherMCP->getInfo());
     }
 
-    transaction->addPostfixCommand([ = ](UNDO::Command::State) mutable
-    {
-      updateBoundRibbon ();
-    });
+    transaction->addPostfixCommand([=](UNDO::Command::State) mutable { updateBoundRibbon(); });
   }
 }
 
@@ -309,7 +305,7 @@ void MacroControlParameter::onSelected()
 void MacroControlParameter::onUnselected()
 {
   auto grandPa = dynamic_cast<ParameterGroupSet *>(getParent()->getParent());
-  auto controlSources = dynamic_cast<HardwareSourcesGroup*>(grandPa->getParameterGroupByID("CS"));
+  auto controlSources = dynamic_cast<HardwareSourcesGroup *>(grandPa->getParameterGroupByID("CS"));
 
   for(auto source : controlSources->getPhysicalControlParameters())
     source->onUnselected();
@@ -320,6 +316,7 @@ int MacroControlParameter::getLastSelectedMacroControl()
   return lastSelectedMacroControl;
 }
 
-void MacroControlParameter::undoableRandomize(UNDO::Scope::tTransactionPtr transaction, Initiator initiator, double amount)
+void MacroControlParameter::undoableRandomize(UNDO::Scope::tTransactionPtr transaction, Initiator initiator,
+                                              double amount)
 {
 }

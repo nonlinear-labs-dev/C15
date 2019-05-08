@@ -20,12 +20,12 @@ namespace FileTools
   static Glib::ustring findSuitableFileName(Glib::ustring desiredName, Glib::ustring directoryPath, int depth)
   {
     auto fileName = desiredName;
-    if (depth != 0)
+    if(depth != 0)
       fileName.append(std::to_string(depth));
 
-    for (auto& p : fs::directory_iterator(directoryPath.c_str()))
+    for(auto& p : fs::directory_iterator(directoryPath.c_str()))
     {
-      if (p.path().filename().stem().string() == fileName)
+      if(p.path().filename().stem().string() == fileName)
       {
         depth++;
         return findSuitableFileName(desiredName, directoryPath, depth);
@@ -37,7 +37,6 @@ namespace FileTools
   static FileList getListOfFiles(Glib::ustring dir, std::function<bool(fs::directory_entry)> filter)
   {
     FileList list;
-
 
     return list;
   }
@@ -55,7 +54,7 @@ namespace FileTools
 
   static bool writeToFile(Glib::ustring path, const char* content)
   {
-    if (fs::exists(fs::path(path.c_str())))
+    if(fs::exists(fs::path(path.c_str())))
     {
       std::ofstream outStream(path, std::ios::binary);
       outStream << content;
@@ -67,7 +66,7 @@ namespace FileTools
 
   static Glib::ustring readFromFile(Glib::ustring path)
   {
-    if (fs::exists(fs::path(path.c_str())))
+    if(fs::exists(fs::path(path.c_str())))
     {
       Glib::ustring ret;
       std::ifstream inStream(path, std::ios::binary);
@@ -86,12 +85,13 @@ namespace FileTools
     return ret;
   }
 
-  static Glib::ustring getFileName(const Glib::RefPtr<Gio::File>& file) {
+  static Glib::ustring getFileName(const Glib::RefPtr<Gio::File>& file)
+  {
     return file->query_info()->get_name();
   }
 
-  static Glib::ustring getFullPath(const Glib::RefPtr<Gio::File>& file) {
+  static Glib::ustring getFullPath(const Glib::RefPtr<Gio::File>& file)
+  {
     return file->get_path();
   }
 };
-

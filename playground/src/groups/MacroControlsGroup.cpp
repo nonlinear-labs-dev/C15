@@ -2,8 +2,8 @@
 #include "parameters/MacroControlParameter.h"
 #include "parameters/scale-converters/EnvelopeAttackDecayTimeMSScaleConverter.h"
 
-MacroControlsGroup::MacroControlsGroup(ParameterGroupSet *parent) :
-    ParameterGroup(parent, "MCs", "Macro Control", "Macro Control", "Macro Control")
+MacroControlsGroup::MacroControlsGroup(ParameterGroupSet *parent)
+    : ParameterGroup(parent, "MCs", "Macro Control", "Macro Control", "Macro Control")
 {
 }
 
@@ -18,10 +18,14 @@ void MacroControlsGroup::init()
   appendParameter(new MacroControlParameter(this, 245));
   appendParameter(new MacroControlParameter(this, 246));
 
-  appendParameter(new Parameter(this, 324, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
-  appendParameter(new Parameter(this, 325, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
-  appendParameter(new Parameter(this, 326, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
-  appendParameter(new Parameter(this, 327, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
+  appendParameter(
+      new Parameter(this, 324, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
+  appendParameter(
+      new Parameter(this, 325, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
+  appendParameter(
+      new Parameter(this, 326, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
+  appendParameter(
+      new Parameter(this, 327, ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
 }
 
 uint16_t MacroControlsGroup::modSrcToParamID(ModulateableParameter::ModulationSource src)

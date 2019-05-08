@@ -29,4 +29,3 @@ const std::string &SpawnCommandLine::getStdError() const
 {
   return m_stdError;
 }
-

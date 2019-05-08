@@ -4,20 +4,19 @@
 #include <proxies/hwui/controls/Rect.h>
 #include <proxies/hwui/panel-unit/boled/setup/FreeInternalMemoryView.h>
 
-FreeInternalMemoryView::FreeInternalMemoryView () :
-    base_type ("", Rect (0, 0, 0, 0))
+FreeInternalMemoryView::FreeInternalMemoryView()
+    : base_type("", Rect(0, 0, 0, 0))
 {
-  Application::get ().getDeviceInformation ()->getItem<FreeDiscSpaceInformation> ()->onChange (
-      mem_fun (this, &FreeInternalMemoryView::onSettingChanged));
+  Application::get().getDeviceInformation()->getItem<FreeDiscSpaceInformation>()->onChange(
+      mem_fun(this, &FreeInternalMemoryView::onSettingChanged));
 }
 
-FreeInternalMemoryView::~FreeInternalMemoryView ()
+FreeInternalMemoryView::~FreeInternalMemoryView()
 {
 }
 
-void FreeInternalMemoryView::onSettingChanged (const DeviceInformationItem *s)
+void FreeInternalMemoryView::onSettingChanged(const DeviceInformationItem *s)
 {
-  auto v = dynamic_cast<const FreeDiscSpaceInformation*> (s);
-  setText (v->get ());
+  auto v = dynamic_cast<const FreeDiscSpaceInformation *>(s);
+  setText(v->get());
 }
-

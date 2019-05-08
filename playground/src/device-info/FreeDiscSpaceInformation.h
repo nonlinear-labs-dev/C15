@@ -4,14 +4,14 @@
 
 class FreeDiscSpaceInformation : public DeviceInformationItem
 {
-  public:
-    FreeDiscSpaceInformation (DeviceInformation *parent);
+ public:
+  FreeDiscSpaceInformation(DeviceInformation *parent);
 
-    virtual void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
-    virtual Glib::ustring get() const override;
+  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  virtual Glib::ustring get() const override;
 
-  private:
-    bool refresh();
+ private:
+  bool refresh();
 
-    Glib::ustring m_value;
+  Glib::ustring m_value;
 };

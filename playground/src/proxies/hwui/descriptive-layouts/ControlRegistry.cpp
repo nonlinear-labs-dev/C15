@@ -3,12 +3,13 @@
 namespace DescriptiveLayouts
 {
 
-    ControlRegistry::ControlRegistry() {
-      m_discreteRegistry.push_back("ParameterEditButtonMenu");
-      m_discreteRegistry.push_back("ModulationCarousel");
-    }
+  ControlRegistry::ControlRegistry()
+  {
+    m_discreteRegistry.push_back("ParameterEditButtonMenu");
+    m_discreteRegistry.push_back("ModulationCarousel");
+  }
 
-  void ControlRegistry::registerControl(ControlClass &&cp)
+  void ControlRegistry::registerControl(ControlClass&& cp)
   {
     m_controlRegistry.insert(std::make_pair(cp.controlClass, std::move(cp)));
   }
@@ -35,5 +36,4 @@ namespace DescriptiveLayouts
     auto discreteIt = std::find(m_discreteRegistry.begin(), m_discreteRegistry.end(), id);
     return genericIt != m_controlRegistry.end() | discreteIt != m_discreteRegistry.end();
   }
-
 }

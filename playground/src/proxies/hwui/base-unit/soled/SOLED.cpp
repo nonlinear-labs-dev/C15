@@ -11,47 +11,47 @@
 #include <proxies/hwui/controls/Rect.h>
 #include <proxies/hwui/FrameBuffer.h>
 
-SOLED::SOLED () :
-    OLEDProxy (Rect (0, 64, 128, 32))
+SOLED::SOLED()
+    : OLEDProxy(Rect(0, 64, 128, 32))
 {
-  Application::get ().getSettings ()->getSetting<BaseUnitUIMode> ()->onChange (mem_fun (this, &SOLED::onBaseUnitUIModeChange));
+  Application::get().getSettings()->getSetting<BaseUnitUIMode>()->onChange(
+      mem_fun(this, &SOLED::onBaseUnitUIModeChange));
 }
 
-SOLED::~SOLED ()
+SOLED::~SOLED()
 {
 }
 
 void SOLED::init()
 {
-	reset(new SplashScreenLayout());
+  reset(new SplashScreenLayout());
 }
 
 void SOLED::resetSplash()
 {
-  onBaseUnitUIModeChange(Application::get ().getSettings ()->getSetting<BaseUnitUIMode> ().get());
+  onBaseUnitUIModeChange(Application::get().getSettings()->getSetting<BaseUnitUIMode>().get());
 }
 
-void SOLED::onBaseUnitUIModeChange (const Setting *s)
+void SOLED::onBaseUnitUIModeChange(const Setting *s)
 {
-  auto d = dynamic_cast<const BaseUnitUIMode*> (s);
+  auto d = dynamic_cast<const BaseUnitUIMode *>(s);
 
-  switch (d->get ())
+  switch(d->get())
   {
     case BaseUnitUIModes::Play:
-      reset (new PlayModeLayout ());
+      reset(new PlayModeLayout());
       break;
 
     case BaseUnitUIModes::ParameterEdit:
-      reset (new EditModeLayout ());
+      reset(new EditModeLayout());
       break;
 
     case BaseUnitUIModes::Banks:
-      reset (new BanksLayout ());
+      reset(new BanksLayout());
       break;
 
     case BaseUnitUIModes::Presets:
-      reset (new PresetsLayout ());
+      reset(new PresetsLayout());
       break;
   }
 }
-

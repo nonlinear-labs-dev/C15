@@ -1,7 +1,7 @@
 #include <proxies/hwui/panel-unit/boled/InfoContent.h>
 
-InfoContent::InfoContent() :
-    super(Rect(0, 0, 0, 64))
+InfoContent::InfoContent()
+    : super(Rect(0, 0, 0, 64))
 {
 }
 
@@ -9,12 +9,12 @@ InfoContent::~InfoContent()
 {
 }
 
-void InfoContent::setPosition(const Rect &rect)
+void InfoContent::setPosition(const Rect& rect)
 {
   super::setPosition(rect);
 }
 
-const Rect &InfoContent::getPosition() const
+const Rect& InfoContent::getPosition() const
 {
   return super::getPosition();
 }
@@ -38,20 +38,19 @@ InfoContent::InfoField* InfoContent::addInfoField(std::string lineIdentifier, Gl
   return addInfoField(lineIdentifier, labelText, new SingleLineContent());
 }
 
-
-InfoContent::SingleLineContent::SingleLineContent() :
-    LeftAlignedLabel("---", Rect(0, 0, 0, 0))
+InfoContent::SingleLineContent::SingleLineContent()
+    : LeftAlignedLabel("---", Rect(0, 0, 0, 0))
 {
 }
 
-InfoContent::SingleLineContent::SingleLineContent(Glib::ustring name) :
-    LeftAlignedLabel(name, Rect(0, 0, 0, 0))
+InfoContent::SingleLineContent::SingleLineContent(Glib::ustring name)
+    : LeftAlignedLabel(name, Rect(0, 0, 0, 0))
 {
 }
 
-InfoContent::InfoField::InfoField(SingleLineContent* l, Control* c) :
-    m_label(l),
-    m_content(c)
+InfoContent::InfoField::InfoField(SingleLineContent* l, Control* c)
+    : m_label(l)
+    , m_content(c)
 {
 }
 
@@ -101,8 +100,8 @@ void InfoContent::InfoField::setPosition(int y)
   }
 }
 
-InfoContent::MultiLineContent::MultiLineContent() :
-    MultiLineLabel("---")
+InfoContent::MultiLineContent::MultiLineContent()
+    : MultiLineLabel("---")
 {
 }
 
@@ -111,5 +110,3 @@ void InfoContent::MultiLineContent::setPosition(Rect rect)
   rect.moveBy(0, 2);
   MultiLineLabel::setPosition(rect);
 }
-
-

@@ -35,17 +35,18 @@ namespace DescriptiveLayouts
     }
   }
 
-  int getDefaultStyleValueForKey(StyleKey s) {
+  int getDefaultStyleValueForKey(StyleKey s)
+  {
     return 0;
   }
 
   int Styleable::getStyleValue(StyleKey s) const
   {
     auto it = m_currentStyle.map.find(s);
-    if(it != m_currentStyle.map.end()) {
+    if(it != m_currentStyle.map.end())
+    {
       return it->second;
     }
     return getDefaultStyleValueForKey(s);
   }
-
 }

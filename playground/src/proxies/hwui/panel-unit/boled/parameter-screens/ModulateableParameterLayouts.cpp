@@ -31,7 +31,6 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ModulateableParameterLayouts.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h>
 
-
 ModulateableParameterLayout2::ModulateableParameterLayout2()
 {
 }
@@ -41,10 +40,10 @@ bool ModulateableParameterLayout2::switchToNormalMode()
   return false;
 }
 
-ModulateableParameterSelectLayout2::ModulateableParameterSelectLayout2() :
-    virtual_base(),
-    super1(),
-    super2()
+ModulateableParameterSelectLayout2::ModulateableParameterSelectLayout2()
+    : virtual_base()
+    , super1()
+    , super2()
 {
   addControl(new MCPositionButton(Buttons::BUTTON_A));
   addControl(new MCSelectButton(Buttons::BUTTON_B));
@@ -57,7 +56,7 @@ ModulateableParameterSelectLayout2::ModulateableParameterSelectLayout2() :
 
 void ModulateableParameterSelectLayout2::copyFrom(Layout *other)
 {
-  if(auto p = dynamic_cast<ModulateableParameterSelectLayout2*>(other))
+  if(auto p = dynamic_cast<ModulateableParameterSelectLayout2 *>(other))
     setMode(p->m_mode);
 
   super1::copyFrom(other);
@@ -91,7 +90,7 @@ bool ModulateableParameterSelectLayout2::onButton(Buttons i, bool down, ButtonMo
         return true;
 
       case Buttons::BUTTON_D:
-        if(auto m = dynamic_cast<ModulationCarousel*>(getCarousel()))
+        if(auto m = dynamic_cast<ModulationCarousel *>(getCarousel()))
         {
           if(m_mode == Mode::CarouselUpperBound)
             toggleMode(Mode::CarouselParameterValue);
@@ -111,7 +110,7 @@ bool ModulateableParameterSelectLayout2::onButton(Buttons i, bool down, ButtonMo
   return super2::onButton(i, down, modifiers);
 }
 
-Parameter * ModulateableParameterSelectLayout2::getCurrentEditParameter() const
+Parameter *ModulateableParameterSelectLayout2::getCurrentEditParameter() const
 {
   if(m_mode == Mode::MacroControlPosition)
   {
@@ -153,7 +152,7 @@ bool ModulateableParameterSelectLayout2::onRotary(int inc, ButtonModifiers modif
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
         auto scope = p->getUndoScope().startContinuousTransaction(p->getAmountCookie(), "Set MC Amount for '%0'",
-            p->getGroupAndParameterName());
+                                                                  p->getGroupAndParameterName());
         p->undoableIncrementMCAmount(scope->getTransaction(), inc, modifiers);
       }
 
@@ -166,7 +165,7 @@ bool ModulateableParameterSelectLayout2::onRotary(int inc, ButtonModifiers modif
     case Mode::CarouselLowerBound:
     case Mode::CarouselUpperBound:
     case Mode::CarouselParameterValue:
-      if(auto m = dynamic_cast<ModulationCarousel*>(getCarousel()))
+      if(auto m = dynamic_cast<ModulationCarousel *>(getCarousel()))
       {
         return m->onRotary(inc, modifiers);
       }
@@ -223,13 +222,12 @@ void ModulateableParameterSelectLayout2::toggleMode(Mode desiredMode)
     setMode(desiredMode);
 }
 
-
 void ModulateableParameterSelectLayout2::installMcAmountScreen()
 {
   setMode(Mode::MacroControlAmount);
 }
 
-void ModulateableParameterSelectLayout2::setMode (Mode desiredMode)
+void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
 {
   m_mode = desiredMode;
 
@@ -345,9 +343,9 @@ void ModulateableParameterSelectLayout2::setMode (Mode desiredMode)
   }
 }
 
-ModulateableParameterEditLayout2::ModulateableParameterEditLayout2() :
-    super1(),
-    super2()
+ModulateableParameterEditLayout2::ModulateableParameterEditLayout2()
+    : super1()
+    , super2()
 {
   addControl(new Button("", Buttons::BUTTON_A));
   addControl(new Button("", Buttons::BUTTON_B));

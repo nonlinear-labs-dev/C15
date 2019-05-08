@@ -4,12 +4,12 @@
 
 class OSVersion : public DeviceInformationItem
 {
-  public:
-    OSVersion (DeviceInformation *parent);
+ public:
+  OSVersion(DeviceInformation *parent);
 
-    virtual void writeDocument (Writer &writer, tUpdateID knownRevision) const override;
-    Glib::ustring get () const override;
+  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  Glib::ustring get() const override;
 
-  private:
-    Glib::ustring m_versionString;
+ private:
+  Glib::ustring m_versionString;
 };

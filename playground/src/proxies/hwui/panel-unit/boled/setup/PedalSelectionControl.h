@@ -6,11 +6,11 @@ class Parameter;
 
 class PedalSelectionControl : public ControlWithChildren
 {
-    typedef ControlWithChildren super;
-  public:
-    PedalSelectionControl (Parameter *param);
-    virtual ~PedalSelectionControl ();
+  typedef ControlWithChildren super;
 
-    void setPosition (const Rect &rect) override;
+ public:
+  PedalSelectionControl(Parameter *param);
+  virtual ~PedalSelectionControl();
+
+  void setPosition(const Rect &rect) override;
 };
-

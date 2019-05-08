@@ -4,21 +4,19 @@
 #include <presets/PresetManager.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenu.h>
 
-SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect) :
-    super(rect)
+SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect)
+    : super(rect)
 {
-  auto pm = Application::get ().getPresetManager ();
+  auto pm = Application::get().getPresetManager();
 
-  addButton("Store Init", [=]()
-  {
-    auto scope = pm->getUndoScope ().startTransaction ("Store Init Sound");
-    pm->undoableStoreInitSound (scope->getTransaction());
+  addButton("Store Init", [=]() {
+    auto scope = pm->getUndoScope().startTransaction("Store Init Sound");
+    pm->undoableStoreInitSound(scope->getTransaction());
     selectButton(-1);
   });
 
-  addButton("Reset Init", [=]()
-  {
-    auto scope = pm->getUndoScope ().startTransaction ("Reset Init Sound");
+  addButton("Reset Init", [=]() {
+    auto scope = pm->getUndoScope().startTransaction("Reset Init Sound");
     pm->undoableResetInitSound(scope->getTransaction());
     selectButton(-1);
   });
@@ -29,4 +27,3 @@ SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect) :
 SingleSoundEditMenu::~SingleSoundEditMenu()
 {
 }
-

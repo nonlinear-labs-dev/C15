@@ -27,8 +27,8 @@
 
 #include "xml/Writer.h"
 
-ParameterGroupSet::ParameterGroupSet(UpdateDocumentContributor *parent) :
-    UpdateDocumentContributor(parent)
+ParameterGroupSet::ParameterGroupSet(UpdateDocumentContributor *parent)
+    : UpdateDocumentContributor(parent)
 {
 }
 
@@ -135,8 +135,7 @@ map<int, Parameter *> ParameterGroupSet::getParametersSortedById() const
 
 void ParameterGroupSet::writeDiff(Writer &writer, ParameterGroupSet *other) const
 {
-  writer.writeTag("groups", [&]
-  {
+  writer.writeTag("groups", [&] {
     for(auto group : getParameterGroups())
     {
       auto otherGroup = other->getParameterGroupByID(group->getID());

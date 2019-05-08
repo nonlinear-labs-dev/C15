@@ -4,16 +4,14 @@
 
 class UpdateAvailableView : public SetupLabel
 {
-    typedef SetupLabel super;
+  typedef SetupLabel super;
 
-  public:
-    UpdateAvailableView ();
-    virtual ~UpdateAvailableView ();
+ public:
+  UpdateAvailableView();
+  virtual ~UpdateAvailableView();
 
-    static bool updateExists();
+  static bool updateExists();
 
-  private:
-    bool poll();
-
+ private:
+  bool poll();
 };
-

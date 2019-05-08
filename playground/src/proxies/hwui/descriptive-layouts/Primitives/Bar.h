@@ -11,24 +11,23 @@ namespace DescriptiveLayouts
 
   class Bar : public Control, public Styleable, public PropertyOwner
   {
-    public:
-      Bar(const PrimitiveInstance &e);
-      virtual ~Bar();
+   public:
+    Bar(const PrimitiveInstance &e);
+    virtual ~Bar();
 
-      using Range = std::pair<tControlPositionValue, tControlPositionValue>;
+    using Range = std::pair<tControlPositionValue, tControlPositionValue>;
 
-      void setProperty(PrimitiveProperty key, std::any value) override;
+    void setProperty(PrimitiveProperty key, std::any value) override;
 
-    protected:
-      bool redraw(FrameBuffer &fb) override;
-      void setDirty() override;
-      void drawBackground (FrameBuffer &fb) override;
+   protected:
+    bool redraw(FrameBuffer &fb) override;
+    void setDirty() override;
+    void drawBackground(FrameBuffer &fb) override;
 
-      const PrimitiveInstance &getPrimitive() const;
+    const PrimitiveInstance &getPrimitive() const;
 
-    private:
-      PrimitiveInstance m_primitive;
-      Range m_range;
+   private:
+    PrimitiveInstance m_primitive;
+    Range m_range;
   };
-
 }

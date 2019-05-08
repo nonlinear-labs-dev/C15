@@ -4,8 +4,7 @@
 
 class Linear12CountScaleConverter : public LinearScaleConverter
 {
-  public:
-    Linear12CountScaleConverter ();
-    virtual ~Linear12CountScaleConverter ();
+ public:
+  Linear12CountScaleConverter();
+  virtual ~Linear12CountScaleConverter();
 };
-

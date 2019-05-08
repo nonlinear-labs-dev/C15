@@ -8,11 +8,11 @@
 
 static TestDriver<RotaryEncoder> tester;
 
-RotaryEncoder::RotaryEncoder() :
-    m_throttler(chrono::milliseconds(25))
+RotaryEncoder::RotaryEncoder()
+    : m_throttler(chrono::milliseconds(25))
 {
   Application::get().getWebSocketSession()->onMessageReceived(WebSocketSession::Domain::Rotary,
-      sigc::mem_fun(this, &RotaryEncoder::onMessage));
+                                                              sigc::mem_fun(this, &RotaryEncoder::onMessage));
 }
 
 RotaryEncoder::~RotaryEncoder()
@@ -37,9 +37,8 @@ void RotaryEncoder::applyIncrement(tIncrement currentInc)
     m_accumulatedIncs = 0;
 
   m_accumulatedIncs += currentInc;
-  m_throttler.doTask([this]()
-  {
-    if (abs(m_accumulatedIncs) > 1)
+  m_throttler.doTask([this]() {
+    if(abs(m_accumulatedIncs) > 1)
     {
       m_accumulatedIncs = std::min(m_accumulatedIncs, 10);
       m_accumulatedIncs = std::max(m_accumulatedIncs, -10);

@@ -4,16 +4,16 @@
 
 class RecursionGuard
 {
-    struct Lock
-    {
-    };
+  struct Lock
+  {
+  };
 
-  public:
-    typedef shared_ptr<Lock> tLock;
-    shared_ptr<Lock> lock ();
+ public:
+  typedef shared_ptr<Lock> tLock;
+  shared_ptr<Lock> lock();
 
-    bool isLocked() const;
+  bool isLocked() const;
 
-  private:
-    weak_ptr<Lock> m_lock;
+ private:
+  weak_ptr<Lock> m_lock;
 };

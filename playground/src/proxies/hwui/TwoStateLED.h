@@ -4,28 +4,28 @@
 
 class Application;
 
-class TwoStateLED: public LED
+class TwoStateLED : public LED
 {
-  public:
-    TwoStateLED(int id);
-    virtual ~TwoStateLED();
+ public:
+  TwoStateLED(int id);
+  virtual ~TwoStateLED();
 
-    enum LedState
-    {
-      OFF,
-      ON,
-      BLINK
-    };
+  enum LedState
+  {
+    OFF,
+    ON,
+    BLINK
+  };
 
-    void setState(LedState state);
-    LedState getState();
-    void init ();
-    void syncBBBB();
+  void setState(LedState state);
+  LedState getState();
+  void init();
+  void syncBBBB();
 
-  private:
-    void switchLED (bool onOrOff);
-    void onBlinkUpdate (int blinkCount);
+ private:
+  void switchLED(bool onOrOff);
+  void onBlinkUpdate(int blinkCount);
 
-    LedState m_state;
-    sigc::connection m_blinkTimer;
+  LedState m_state;
+  sigc::connection m_blinkTimer;
 };

@@ -4,25 +4,24 @@
 
 class DateTimeAdjustment : public Setting
 {
-  private:
-    typedef Setting super;
+ private:
+  typedef Setting super;
 
-  public:
-    DateTimeAdjustment (Settings &parent);
-    virtual ~DateTimeAdjustment ();
+ public:
+  DateTimeAdjustment(Settings& parent);
+  virtual ~DateTimeAdjustment();
 
-    void load(const Glib::ustring &text) override;
-    Glib::ustring save() const override;
+  void load(const Glib::ustring& text) override;
+  Glib::ustring save() const override;
 
-    void set(int64_t adjustment);
-    int64_t get() const;
+  void set(int64_t adjustment);
+  int64_t get() const;
 
-    void adjust(time_t modifiedTime);
+  void adjust(time_t modifiedTime);
 
-  private:
-    DateTimeAdjustment (const DateTimeAdjustment& other) = delete;
-    DateTimeAdjustment& operator= (const DateTimeAdjustment&) = delete;
+ private:
+  DateTimeAdjustment(const DateTimeAdjustment& other) = delete;
+  DateTimeAdjustment& operator=(const DateTimeAdjustment&) = delete;
 
-    int64_t m_adjustment = 0;
+  int64_t m_adjustment = 0;
 };
-

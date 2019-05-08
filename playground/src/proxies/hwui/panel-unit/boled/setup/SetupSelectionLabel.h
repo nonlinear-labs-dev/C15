@@ -4,11 +4,10 @@
 
 class SetupSelectionLabel : public SetupLabel
 {
-  public:
-    SetupSelectionLabel (const Glib::ustring &text);
-    virtual ~SetupSelectionLabel ();
+ public:
+  SetupSelectionLabel(const Glib::ustring &text);
+  virtual ~SetupSelectionLabel();
 
-    bool redraw (FrameBuffer &fb) override;
-    void drawBackground (FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
+  void drawBackground(FrameBuffer &fb) override;
 };
-

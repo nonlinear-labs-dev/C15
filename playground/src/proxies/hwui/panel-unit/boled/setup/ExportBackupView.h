@@ -4,8 +4,7 @@
 
 class ExportBackupView : public SetupLabel
 {
-  public:
-    ExportBackupView();
-    virtual ~ExportBackupView();
+ public:
+  ExportBackupView();
+  virtual ~ExportBackupView();
 };
-

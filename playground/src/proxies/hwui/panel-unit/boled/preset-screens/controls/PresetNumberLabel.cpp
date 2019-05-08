@@ -6,8 +6,8 @@
 
 #include <glib/gprintf.h>
 
-PresetNumberLabel::PresetNumberLabel(const Rect &pos) :
-    super(pos)
+PresetNumberLabel::PresetNumberLabel(const Rect &pos)
+    : super(pos)
 {
 }
 

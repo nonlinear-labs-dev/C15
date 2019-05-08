@@ -1,12 +1,11 @@
 #include "Expiration.h"
 
-
-Expiration::Expiration (Expiration::Callback cb, Expiration::Duration d, int priority )
+Expiration::Expiration(Expiration::Callback cb, Expiration::Duration d, int priority)
 {
-  setCallback (cb);
-  
-  if(d > Duration::zero ())
-    refresh (d, priority);
+  setCallback(cb);
+
+  if(d > Duration::zero())
+    refresh(d, priority);
 }
 
 Expiration::~Expiration()
@@ -14,12 +13,12 @@ Expiration::~Expiration()
   m_timeout.disconnect();
 }
 
-void Expiration::setCallback (Expiration::Callback cb)
+void Expiration::setCallback(Expiration::Callback cb)
 {
   m_cb = cb;
 
-  if (isPending() && !m_cb)
-    cancel ();
+  if(isPending() && !m_cb)
+    cancel();
 }
 
 bool Expiration::isPending() const
@@ -32,24 +31,21 @@ void Expiration::cancel()
   m_timeout.disconnect();
 }
 
-void Expiration::refresh (Expiration::Duration d, int priority)
+void Expiration::refresh(Expiration::Duration d, int priority)
 {
-  cancel ();
+  cancel();
 
-  auto ms = std::chrono::duration_cast<std::chrono::milliseconds> (d).count();
-  m_timeout = Glib::MainContext::get_default()->signal_timeout().connect (mem_fun(this, &Expiration::doCallback), ms, priority);
+  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(d).count();
+  m_timeout = Glib::MainContext::get_default()->signal_timeout().connect(mem_fun(this, &Expiration::doCallback), ms,
+                                                                         priority);
 }
 
 bool Expiration::doCallback()
 {
-  cancel ();
-  
+  cancel();
+
   if(auto cb = m_cb)
-    cb ();
-  
+    cb();
+
   return false;
 }
-
-
-
-

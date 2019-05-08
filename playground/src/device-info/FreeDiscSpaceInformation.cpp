@@ -7,21 +7,22 @@
 #include <xml/Writer.h>
 #include <chrono>
 
-FreeDiscSpaceInformation::FreeDiscSpaceInformation(DeviceInformation *parent) :
-    DeviceInformationItem(parent),
-    m_value("N/A")
+FreeDiscSpaceInformation::FreeDiscSpaceInformation(DeviceInformation *parent)
+    : DeviceInformationItem(parent)
+    , m_value("N/A")
 {
   refresh();
 
   using namespace std::chrono;
   constexpr minutes timeout(5);
   Glib::MainContext::get_default()->signal_timeout().connect(mem_fun(this, &FreeDiscSpaceInformation::refresh),
-      duration_cast<milliseconds>(timeout).count());
+                                                             duration_cast<milliseconds>(timeout).count());
 }
 
 bool FreeDiscSpaceInformation::refresh()
 {
-  SpawnCommandLine cmd("sh -c \"df -h | grep '/dev/root' | sed 's/^\\S*\\s*\\S*\\s*\\S*\\s*\\(\\S*\\)\\s*.*/\\1/' | tr '\\n'  ' ' \" ");
+  SpawnCommandLine cmd(
+      "sh -c \"df -h | grep '/dev/root' | sed 's/^\\S*\\s*\\S*\\s*\\S*\\s*\\(\\S*\\)\\s*.*/\\1/' | tr '\\n'  ' ' \" ");
 
   Glib::ustring newValue = cmd.getStdOutputOrFallback("N/A");
 

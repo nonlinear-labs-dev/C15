@@ -18,12 +18,12 @@
 #include <proxies/hwui/debug-oled/DebugLayout.h>
 #include <tools/ExceptionTools.h>
 
-BOLED::BOLED () :
-    OLEDProxy (Rect (0, 0, 256, 64))
+BOLED::BOLED()
+    : OLEDProxy(Rect(0, 0, 256, 64))
 {
 }
 
-BOLED::~BOLED ()
+BOLED::~BOLED()
 {
 }
 
@@ -39,14 +39,20 @@ void BOLED::bruteForce()
   setupFocusAndMode(Application::get().getHWUI()->getFocusAndMode());
 }
 
-void BOLED::setupFocusAndMode (FocusAndMode focusAndMode) {
-  if(Application::get().getHWUI()->getOldLayoutsSetting()) {
+void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
+{
+  if(Application::get().getHWUI()->getOldLayoutsSetting())
+  {
     installOldLayouts(focusAndMode);
   }
-  else {
-    try {
+  else
+  {
+    try
+    {
       reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
-    } catch(...) {
+    }
+    catch(...)
+    {
       auto description = ExceptionTools::handle_eptr(std::current_exception());
       Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
     }
@@ -71,106 +77,105 @@ void BOLED::setupFocusAndMode (FocusAndMode focusAndMode) {
 
 void BOLED::installOldLayouts(FocusAndMode focusAndMode)
 {
-  switch (focusAndMode.focus)
+  switch(focusAndMode.focus)
   {
     case UIFocus::Parameters:
-      setupParameterScreen (focusAndMode);
+      setupParameterScreen(focusAndMode);
       break;
 
     case UIFocus::Presets:
-      setupPresetScreen (focusAndMode);
+      setupPresetScreen(focusAndMode);
       break;
 
     case UIFocus::Banks:
-      setupBankScreen (focusAndMode);
+      setupBankScreen(focusAndMode);
       break;
 
     case UIFocus::Sound:
-      setupSoundScreen (focusAndMode);
+      setupSoundScreen(focusAndMode);
       break;
 
     case UIFocus::Setup:
-      reset (new SetupLayout (focusAndMode));
+      reset(new SetupLayout(focusAndMode));
       break;
 
     default:
-      g_assert_not_reached()
-              ;
+      g_assert_not_reached();
       break;
   }
 }
 
-void BOLED::setupSoundScreen (FocusAndMode focusAndMode)
+void BOLED::setupSoundScreen(FocusAndMode focusAndMode)
 {
-  reset (new SingleSoundLayout (focusAndMode));
+  reset(new SingleSoundLayout(focusAndMode));
 }
 
-void BOLED::setupParameterScreen (FocusAndMode focusAndMode)
+void BOLED::setupParameterScreen(FocusAndMode focusAndMode)
 {
-  if (auto selParam = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter())
+  if(auto selParam = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter())
   {
-    auto layout = selParam->createLayout (focusAndMode);
+    auto layout = selParam->createLayout(focusAndMode);
 
-    if (getLayout () && typeid(*layout) == typeid(*getLayout ().get ()))
+    if(getLayout() && typeid(*layout) == typeid(*getLayout().get()))
     {
-      getLayout ()->copyFrom (layout);
+      getLayout()->copyFrom(layout);
       delete layout;
     }
     else
     {
-      reset (layout);
+      reset(layout);
     }
   }
 }
 
-void BOLED::setupPresetScreen (FocusAndMode focusAndMode)
+void BOLED::setupPresetScreen(FocusAndMode focusAndMode)
 {
-  switch (focusAndMode.mode)
+  switch(focusAndMode.mode)
   {
     case UIMode::Info:
-      reset (new PresetInfoLayout ());
+      reset(new PresetInfoLayout());
       break;
 
     default:
-      if (auto e = dynamic_pointer_cast<PresetManagerLayout> (getLayout ()))
-        e->setFocusAndMode (focusAndMode);
+      if(auto e = dynamic_pointer_cast<PresetManagerLayout>(getLayout()))
+        e->setFocusAndMode(focusAndMode);
       else
-        reset (new PresetManagerLayout (focusAndMode));
+        reset(new PresetManagerLayout(focusAndMode));
   }
 }
 
-void BOLED::setupBankScreen (FocusAndMode focusAndMode)
+void BOLED::setupBankScreen(FocusAndMode focusAndMode)
 {
-  switch (focusAndMode.mode)
+  switch(focusAndMode.mode)
   {
     case UIMode::Info:
-      reset (new BankInfoLayout ());
+      reset(new BankInfoLayout());
       break;
 
     default:
-      if (auto e = dynamic_pointer_cast<PresetManagerLayout> (getLayout ()))
-        e->setFocusAndMode (focusAndMode);
+      if(auto e = dynamic_pointer_cast<PresetManagerLayout>(getLayout()))
+        e->setFocusAndMode(focusAndMode);
       else
-        reset (new PresetManagerLayout (focusAndMode));
+        reset(new PresetManagerLayout(focusAndMode));
   }
 }
 
-bool BOLED::onButtonPressed (Buttons buttonID, ButtonModifiers modifiers, bool state)
+bool BOLED::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
-  if (shared_ptr<DFBLayout> l = dynamic_pointer_cast<DFBLayout> (getLayout ()))
-    if (l->onButton (buttonID, state, modifiers))
+  if(shared_ptr<DFBLayout> l = dynamic_pointer_cast<DFBLayout>(getLayout()))
+    if(l->onButton(buttonID, state, modifiers))
       return true;
 
   return false;
 }
 
-void BOLED::onRotary (signed char i)
+void BOLED::onRotary(signed char i)
 {
-  if (shared_ptr<DFBLayout> l = dynamic_pointer_cast<DFBLayout> (getLayout ()))
-    l->onRotary (i, Application::get ().getHWUI ()->getButtonModifiers ());
+  if(shared_ptr<DFBLayout> l = dynamic_pointer_cast<DFBLayout>(getLayout()))
+    l->onRotary(i, Application::get().getHWUI()->getButtonModifiers());
 }
 
-void BOLED::showUndoScreen ()
+void BOLED::showUndoScreen()
 {
-  reset (new UndoLayout ());
+  reset(new UndoLayout());
 }

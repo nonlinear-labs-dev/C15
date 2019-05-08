@@ -6,11 +6,12 @@
 
 namespace DescriptiveLayouts
 {
-  ControlInstance::ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position, const EventConnections &eventConnections) :
-      controlInstance(controlInstance),
-      controlClass(control),
-      position(position),
-      eventConnections(eventConnections)
+  ControlInstance::ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
+                                   const EventConnections& eventConnections)
+      : controlInstance(controlInstance)
+      , controlClass(control)
+      , position(position)
+      , eventConnections(eventConnections)
   {
   }
 
@@ -20,7 +21,8 @@ namespace DescriptiveLayouts
     {
       return new MacroControlEditButtonMenu(Rect(position.getX(), position.getY(), 58, 62));
     }
-    if(controlClass == "ModulationCarousel") {
+    if(controlClass == "ModulationCarousel")
+    {
       return new ModulationCarousel(ModulationCarousel::Mode::None, Rect(position.getX(), position.getY(), 58, 62));
     }
     if(controlClass == "ParameterEditButtonMenu")

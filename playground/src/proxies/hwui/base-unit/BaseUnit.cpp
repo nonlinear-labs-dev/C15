@@ -8,19 +8,19 @@
 #include "device-settings/BaseUnitUIMode.h"
 #include "io/network/WebSocketSession.h"
 
-BaseUnit::BaseUnit ()
+BaseUnit::BaseUnit()
 {
-  Application::get ().getSettings ()->getSetting<BaseUnitUIMode> ()->onChange (mem_fun (this, &BaseUnit::respectUsageMode));
+  Application::get().getSettings()->getSetting<BaseUnitUIMode>()->onChange(mem_fun(this, &BaseUnit::respectUsageMode));
   Application::get().getWebSocketSession()->onConnectionEstablished(sigc::mem_fun(this, &BaseUnit::onBBBBConnected));
 }
 
-BaseUnit::~BaseUnit ()
+BaseUnit::~BaseUnit()
 {
 }
 
-void BaseUnit::init ()
+void BaseUnit::init()
 {
-	m_playPanel.getSOLED().init();
+  m_playPanel.getSOLED().init();
 }
 
 void BaseUnit::onBBBBConnected()
@@ -29,42 +29,41 @@ void BaseUnit::onBBBBConnected()
   m_lowerRibbon.syncBBBB();
 }
 
-void BaseUnit::respectUsageMode (const Setting *s)
+void BaseUnit::respectUsageMode(const Setting *s)
 {
-  const BaseUnitUIMode *m = dynamic_cast<const BaseUnitUIMode*> (s);
+  const BaseUnitUIMode *m = dynamic_cast<const BaseUnitUIMode *>(s);
 
-  switch (m->get ())
+  switch(m->get())
   {
     case BaseUnitUIModes::Play:
-      setUsageMode (new BaseUnitPlayMode ());
+      setUsageMode(new BaseUnitPlayMode());
       break;
 
     case BaseUnitUIModes::ParameterEdit:
-      setUsageMode (new BaseUnitEditMode ());
+      setUsageMode(new BaseUnitEditMode());
       break;
 
     case BaseUnitUIModes::Banks:
-      setUsageMode (new BaseUnitBanksMode ());
+      setUsageMode(new BaseUnitBanksMode());
       break;
 
     case BaseUnitUIModes::Presets:
-      setUsageMode (new BaseUnitPresetsMode ());
+      setUsageMode(new BaseUnitPresetsMode());
       break;
   }
 }
 
-void BaseUnit::indicateBlockingMainThread (bool onOff)
+void BaseUnit::indicateBlockingMainThread(bool onOff)
 {
-  m_lowerRibbon.indicateBlockingMainThread (onOff);
+  m_lowerRibbon.indicateBlockingMainThread(onOff);
 }
 
-void BaseUnit::onTimeout ()
+void BaseUnit::onTimeout()
 {
-  m_playPanel.onTimeout ();
+  m_playPanel.onTimeout();
 }
 
-PlayPanel &BaseUnit::getPlayPanel ()
+PlayPanel &BaseUnit::getPlayPanel()
 {
   return m_playPanel;
 }
-

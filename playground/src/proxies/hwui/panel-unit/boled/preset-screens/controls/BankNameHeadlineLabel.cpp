@@ -5,35 +5,34 @@
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/BankNameHeadlineLabel.h>
 
-BankNameHeadlineLabel::BankNameHeadlineLabel (const Rect &pos) :
-    super (pos)
+BankNameHeadlineLabel::BankNameHeadlineLabel(const Rect &pos)
+    : super(pos)
 {
   setText("Bank");
 }
 
-shared_ptr<Font> BankNameHeadlineLabel::getFont () const
+shared_ptr<Font> BankNameHeadlineLabel::getFont() const
 {
-  return Oleds::get ().getFont ("Emphase_9_Bold", getFontHeight ());
+  return Oleds::get().getFont("Emphase_9_Bold", getFontHeight());
 }
 
-int BankNameHeadlineLabel::getFontHeight () const
+int BankNameHeadlineLabel::getFontHeight() const
 {
   return 9;
 }
 
-void BankNameHeadlineLabel::setFontColor (FrameBuffer &fb) const
+void BankNameHeadlineLabel::setFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C255);
+  fb.setColor(FrameBuffer::Colors::C255);
 }
 
-bool BankNameHeadlineLabel::redraw (FrameBuffer &fb)
+bool BankNameHeadlineLabel::redraw(FrameBuffer &fb)
 {
-  const Rect &r = getPosition ();
+  const Rect &r = getPosition();
 
-  fb.setColor (FrameBuffer::Colors::C77);
-  fb.fillRect (r.getX (), r.getY (), r.getWidth (), r.getHeight ());
+  fb.setColor(FrameBuffer::Colors::C77);
+  fb.fillRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 
-  super::redraw (fb);
+  super::redraw(fb);
   return true;
 }
-

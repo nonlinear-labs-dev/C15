@@ -6,17 +6,15 @@ class Application;
 
 class BaseUnitPresetsMode : public BaseUnitPresetsAndBanksMode
 {
-  private:
-    typedef BaseUnitPresetsAndBanksMode super;
+ private:
+  typedef BaseUnitPresetsAndBanksMode super;
 
-  public:
-    BaseUnitPresetsMode ();
-    virtual ~BaseUnitPresetsMode ();
+ public:
+  BaseUnitPresetsMode();
+  virtual ~BaseUnitPresetsMode();
 
-    void setup () override;
+  void setup() override;
 
-  private:
-    void onFuncButtonDown () override;
-
+ private:
+  void onFuncButtonDown() override;
 };
-

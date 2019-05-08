@@ -5,18 +5,18 @@
 #include "parameters/Parameter.h"
 #include "proxies/hwui/panel-unit/boled/BOLED.h"
 
-ParameterNameLabel::ParameterNameLabel (const Rect &pos) :
-    Label (pos)
+ParameterNameLabel::ParameterNameLabel(const Rect &pos)
+    : Label(pos)
 {
-  Application::get().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide < 0 > (sigc::mem_fun (this, &ParameterNameLabel::onParameterSelected)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &ParameterNameLabel::onParameterSelected)));
 }
 
-ParameterNameLabel::~ParameterNameLabel ()
+ParameterNameLabel::~ParameterNameLabel()
 {
 }
 
-void ParameterNameLabel::onParameterSelected(Parameter * param)
+void ParameterNameLabel::onParameterSelected(Parameter *param)
 {
   if(param)
   {
@@ -25,26 +25,25 @@ void ParameterNameLabel::onParameterSelected(Parameter * param)
   }
 }
 
-void ParameterNameLabel::setFontColor (FrameBuffer &fb) const
+void ParameterNameLabel::setFontColor(FrameBuffer &fb) const
 {
-  if (isHighlight ())
-    fb.setColor (FrameBuffer::Colors::C255);
+  if(isHighlight())
+    fb.setColor(FrameBuffer::Colors::C255);
   else
-    fb.setColor (FrameBuffer::Colors::C128);
+    fb.setColor(FrameBuffer::Colors::C128);
 }
 
-shared_ptr<Font> ParameterNameLabel::getFont () const
+shared_ptr<Font> ParameterNameLabel::getFont() const
 {
-  return Oleds::get().getFont ("Emphase_9_Bold", getFontHeight ());
+  return Oleds::get().getFont("Emphase_9_Bold", getFontHeight());
 }
 
-void ParameterNameLabel::onParameterChanged (const Parameter *param)
+void ParameterNameLabel::onParameterChanged(const Parameter *param)
 {
-  setText (param->getLongName());
+  setText(param->getLongName());
 }
 
-
-int ParameterNameLabel::getFontHeight () const
+int ParameterNameLabel::getFontHeight() const
 {
   return 9;
 }

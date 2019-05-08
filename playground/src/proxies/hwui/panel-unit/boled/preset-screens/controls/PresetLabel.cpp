@@ -8,12 +8,12 @@
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetLabel.h>
 
-PresetLabel::PresetLabel (const Rect &pos) :
-    super (pos)
+PresetLabel::PresetLabel(const Rect &pos)
+    : super(pos)
 {
 }
 
-PresetLabel::~PresetLabel ()
+PresetLabel::~PresetLabel()
 {
 }
 
@@ -35,10 +35,10 @@ void PresetLabel::setText(const Glib::ustring &text, bool selected, bool loaded)
   setDirty();
 }
 
-void PresetLabel::setFontColor (FrameBuffer &fb) const
+void PresetLabel::setFontColor(FrameBuffer &fb) const
 {
-  if (m_selected)
-    fb.setColor (FrameBuffer::Colors::C255);
+  if(m_selected)
+    fb.setColor(FrameBuffer::Colors::C255);
   else
-    fb.setColor (FrameBuffer::Colors::C204);
+    fb.setColor(FrameBuffer::Colors::C204);
 }

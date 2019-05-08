@@ -6,11 +6,12 @@
 namespace DescriptiveLayouts
 {
 
-  Text::Text(const PrimitiveInstance &e) :
-      super(e.relativePosition),
-      m_primitive(e)
+  Text::Text(const PrimitiveInstance &e)
+      : super(e.relativePosition)
+      , m_primitive(e)
   {
-    if(!m_primitive.defaultText.empty()) {
+    if(!m_primitive.defaultText.empty())
+    {
       setText(m_primitive.defaultText, 0);
     }
   }
@@ -48,7 +49,8 @@ namespace DescriptiveLayouts
       case StyleValues::Alignment::Right:
         return Font::Justification::Right;
     }
-    throw ExceptionTools::TemplateException("unkown text align style for key: " + getStyleValue(StyleKey::TextAlign), "__LINE__ __FILE__");
+    throw ExceptionTools::TemplateException("unkown text align style for key: " + getStyleValue(StyleKey::TextAlign),
+                                            "__LINE__ __FILE__");
   }
 
   int Text::getFontHeight() const
@@ -62,7 +64,7 @@ namespace DescriptiveLayouts
     {
       case PrimitiveProperty::Text:
       {
-        DisplayString a = std::any_cast < DisplayString > (value);
+        DisplayString a = std::any_cast<DisplayString>(value);
         setText(a.first, a.second);
         break;
       }

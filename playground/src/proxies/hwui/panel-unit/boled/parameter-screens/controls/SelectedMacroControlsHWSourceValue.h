@@ -7,26 +7,25 @@ class Parameter;
 
 class SelectedMacroControlsHWSourceValue : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    SelectedMacroControlsHWSourceValue (const Rect &rect);
-    virtual ~SelectedMacroControlsHWSourceValue ();
+ public:
+  SelectedMacroControlsHWSourceValue(const Rect &rect);
+  virtual ~SelectedMacroControlsHWSourceValue();
 
-  private:
-    SelectedMacroControlsHWSourceValue (const SelectedMacroControlsHWSourceValue& other);
-    SelectedMacroControlsHWSourceValue& operator= (const SelectedMacroControlsHWSourceValue&);
+ private:
+  SelectedMacroControlsHWSourceValue(const SelectedMacroControlsHWSourceValue &other);
+  SelectedMacroControlsHWSourceValue &operator=(const SelectedMacroControlsHWSourceValue &);
 
-    void onModifiersChanged ();
-    void onParameterSelected (Parameter * newOne);
-    void onMCChanged (const Parameter* param);
-    void updateText(const Parameter *param);
-    virtual void setSuffixFontColor (FrameBuffer &fb) const override;
-    int getHWSourceID (const Parameter *param) const;
+  void onModifiersChanged();
+  void onParameterSelected(Parameter *newOne);
+  void onMCChanged(const Parameter *param);
+  void updateText(const Parameter *param);
+  virtual void setSuffixFontColor(FrameBuffer &fb) const override;
+  int getHWSourceID(const Parameter *param) const;
 
-    int m_hwParamID = 0;
-    sigc::connection m_mcChanged;
-    sigc::connection m_hwChanged;
+  int m_hwParamID = 0;
+  sigc::connection m_mcChanged;
+  sigc::connection m_hwChanged;
 };
-

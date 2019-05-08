@@ -23,10 +23,10 @@ shared_ptr<EditBuffer> EditBuffer::createEditBuffer(UpdateDocumentContributor *p
   return shared_ptr<EditBuffer>(e);
 }
 
-EditBuffer::EditBuffer(UpdateDocumentContributor *parent) :
-    Preset(parent),
-    m_isModified(false),
-    m_deferedJobs(100, std::bind(&EditBuffer::doDeferedJobs, this))
+EditBuffer::EditBuffer(UpdateDocumentContributor *parent)
+    : Preset(parent)
+    , m_isModified(false)
+    , m_deferedJobs(100, std::bind(&EditBuffer::doDeferedJobs, this))
 {
   m_selectedParameter = NULL;
   m_hashOnStore = getHash();
@@ -39,21 +39,19 @@ EditBuffer::~EditBuffer()
 void EditBuffer::resetModifiedIndicator(UNDO::Scope::tTransactionPtr transaction)
 {
   resetModifiedIndicator(transaction, getHash());
-
 }
 
 void EditBuffer::resetModifiedIndicator(UNDO::Scope::tTransactionPtr transaction, size_t hash)
 {
   auto swap = UNDO::createSwapData(false, hash);
 
-  transaction->addSimpleCommand([=](UNDO::Command::State)
-  {
+  transaction->addSimpleCommand([=](UNDO::Command::State) {
     bool oldModifiedState = m_isModified;
     swap->swapWith<0>(m_isModified);
     swap->swapWith<1>(m_hashOnStore);
 
     if(oldModifiedState != m_isModified)
-    m_signalModificationState.send (m_isModified);
+      m_signalModificationState.send(m_isModified);
   });
 }
 
@@ -77,7 +75,7 @@ connection EditBuffer::onPresetLoaded(slot<void> s)
   return m_signalPresetLoaded.connect(s);
 }
 
-connection EditBuffer::onLocksChanged (slot<void> s)
+connection EditBuffer::onLocksChanged(slot<void> s)
 {
   return m_signalLocksChanged.connectAndInit(s);
 }
@@ -178,7 +176,8 @@ void EditBuffer::setModulationAmount(double amount)
 {
   if(auto p = dynamic_cast<ModulateableParameter *>(m_selectedParameter))
   {
-    auto scope = getUndoScope().startContinuousTransaction(p->getAmountCookie(), "Set MC Amount for '%0'", p->getGroupAndParameterName());
+    auto scope = getUndoScope().startContinuousTransaction(p->getAmountCookie(), "Set MC Amount for '%0'",
+                                                           p->getGroupAndParameterName());
     p->undoableSetModAmount(scope->getTransaction(), amount);
   }
 }
@@ -198,7 +197,7 @@ void EditBuffer::undoableSelectParameter(Parameter *p)
   if(p != m_selectedParameter)
   {
     auto scope = getUndoScope().startContinuousTransaction(&m_selectedParameter, chrono::hours(1), "Select '%0'",
-        p->getGroupAndParameterName());
+                                                           p->getGroupAndParameterName());
     undoableSelectParameter(scope->getTransaction(), p);
   }
   else
@@ -218,29 +217,28 @@ void EditBuffer::undoableSelectParameter(UNDO::Scope::tTransactionPtr transactio
   {
     auto swapData = UNDO::createSwapData(p);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
       auto oldSelectedParam = m_selectedParameter;
 
-      swapData->swapWith (m_selectedParameter);
+      swapData->swapWith(m_selectedParameter);
 
-      m_signalSelectedParameter.send (oldSelectedParam, m_selectedParameter);
+      m_signalSelectedParameter.send(oldSelectedParam, m_selectedParameter);
 
-      if (oldSelectedParam)
-      oldSelectedParam->onUnselected();
+      if(oldSelectedParam)
+        oldSelectedParam->onUnselected();
 
-      if (m_selectedParameter)
-      m_selectedParameter->onSelected();
+      if(m_selectedParameter)
+        m_selectedParameter->onSelected();
 
       if(!getParent()->isLoading())
       {
-        if (auto hwui = Application::get ().getHWUI ())
+        if(auto hwui = Application::get().getHWUI())
         {
-          hwui->setFocusAndMode (UIFocus::Parameters);
+          hwui->setFocusAndMode(UIFocus::Parameters);
         }
       }
 
-      onChange ();
+      onChange();
     });
 
     if(auto hwui = Application::get().getHWUI())
@@ -260,25 +258,25 @@ void EditBuffer::writeDocument(Writer &writer, tUpdateID knownRevision) const
   bool changed = knownRevision < ParameterGroupSet::getUpdateIDOfLastChange();
 
   writer.writeTag("edit-buffer",
-      {
-        Attribute("selected-parameter", m_selectedParameter ? m_selectedParameter->getID() : 0),
-        Attribute("loaded-preset", m_lastLoadedPresetInfo.presetUUID),
-        Attribute("loaded-presets-name", m_lastLoadedPresetInfo.presetName),
-        Attribute("loaded-presets-bank-name", m_lastLoadedPresetInfo.bankName),
-        Attribute("preset-is-zombie", m_lastLoadedPresetInfo.presetDeleted),
-        Attribute("is-modified", m_isModified),
-        Attribute("hash", getHash()),
-        Attribute("changed",changed),
-      }, [&]()
-      {
-        if (changed)
-        {
-          super::writeDocument (writer, knownRevision);
+                  {
+                      Attribute("selected-parameter", m_selectedParameter ? m_selectedParameter->getID() : 0),
+                      Attribute("loaded-preset", m_lastLoadedPresetInfo.presetUUID),
+                      Attribute("loaded-presets-name", m_lastLoadedPresetInfo.presetName),
+                      Attribute("loaded-presets-bank-name", m_lastLoadedPresetInfo.bankName),
+                      Attribute("preset-is-zombie", m_lastLoadedPresetInfo.presetDeleted),
+                      Attribute("is-modified", m_isModified),
+                      Attribute("hash", getHash()),
+                      Attribute("changed", changed),
+                  },
+                  [&]() {
+                    if(changed)
+                    {
+                      super::writeDocument(writer, knownRevision);
 
-          for (const tParameterGroupPtr p : getParameterGroups())
-          p->writeDocument (writer, knownRevision);
-        }
-      });
+                      for(const tParameterGroupPtr p : getParameterGroups())
+                        p->writeDocument(writer, knownRevision);
+                    }
+                  });
 }
 
 void EditBuffer::undoableLoadSelectedPreset()
@@ -348,17 +346,16 @@ void EditBuffer::undoableSetLoadedPresetInfo(UNDO::Scope::tTransactionPtr transa
 
   auto oldLoadMark = UNDO::createSwapData(info);
 
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-  {
+  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
     auto oldPreset = getParent()->findPreset(m_lastLoadedPresetInfo.presetUUID);
-    oldLoadMark->swapWith<0> (m_lastLoadedPresetInfo);
+    oldLoadMark->swapWith<0>(m_lastLoadedPresetInfo);
     auto newPreset = getParent()->findPreset(m_lastLoadedPresetInfo.presetUUID);
 
     setName(m_lastLoadedPresetInfo.presetName);
     setUuid(m_lastLoadedPresetInfo.presetUUID);
 
     m_signalPresetLoaded.send();
-    onChange ();
+    onChange();
   });
 }
 
@@ -384,17 +381,16 @@ void EditBuffer::undoableUpdateLoadedPresetInfo(UNDO::Scope::tTransactionPtr tra
   {
     auto oldLoadMark = UNDO::createSwapData(info);
 
-    transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-    {
+    transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
       auto oldPreset = getParent()->findPreset(m_lastLoadedPresetInfo.presetUUID);
-      oldLoadMark->swapWith<0> (m_lastLoadedPresetInfo);
+      oldLoadMark->swapWith<0>(m_lastLoadedPresetInfo);
       auto newPreset = getParent()->findPreset(m_lastLoadedPresetInfo.presetUUID);
 
       setName(m_lastLoadedPresetInfo.presetName);
       setUuid(m_lastLoadedPresetInfo.presetUUID);
 
       m_signalPresetLoaded.send();
-      onChange ();
+      onChange();
     });
   }
 }
@@ -436,15 +432,14 @@ void EditBuffer::undoableInitSound(UNDO::Scope::tTransactionPtr transaction)
   ustring emptyUuid;
 
   auto swap = UNDO::createSwapData(initName, emptyUuid);
-  transaction->addSimpleCommand([ = ] (UNDO::Command::State) mutable
-  {
+  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
     auto oldPreset = getParent()->findPreset(m_lastLoadedPresetInfo.presetUUID);
-    swap->swapWith<0> (m_lastLoadedPresetInfo.presetName);
-    swap->swapWith<1> (m_lastLoadedPresetInfo.presetUUID);
+    swap->swapWith<0>(m_lastLoadedPresetInfo.presetName);
+    swap->swapWith<1>(m_lastLoadedPresetInfo.presetUUID);
     auto newPreset = getParent()->findPreset(m_lastLoadedPresetInfo.presetUUID);
 
     m_signalPresetLoaded.send();
-    onChange ();
+    onChange();
   });
 
   undoableSetName(transaction, initName);
@@ -525,7 +520,8 @@ bool EditBuffer::readReaktorPresetHeader(std::istringstream &input) const
   return false;
 }
 
-bool EditBuffer::undoableImportReaktorParameter(UNDO::Scope::tTransactionPtr transaction, std::istringstream &input, Parameter *param)
+bool EditBuffer::undoableImportReaktorParameter(UNDO::Scope::tTransactionPtr transaction, std::istringstream &input,
+                                                Parameter *param)
 {
   Glib::ustring paramValue;
 

@@ -2,14 +2,14 @@
 
 #include "Dimension.h"
 
-class FrequencyDimension: public Dimension
+class FrequencyDimension : public Dimension
 {
-  public:
-    FrequencyDimension();
-    virtual ~FrequencyDimension();
+ public:
+  FrequencyDimension();
+  virtual ~FrequencyDimension();
 
-    static const FrequencyDimension &get();
-    Glib::ustring getStingizerJS() const override;
+  static const FrequencyDimension &get();
+  Glib::ustring getStingizerJS() const override;
 
-    Glib::ustring stringize(const tDisplayValue &displayValue) const override;
+  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 };

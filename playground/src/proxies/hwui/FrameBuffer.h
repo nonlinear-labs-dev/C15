@@ -11,103 +11,107 @@ class UDPSender;
 
 class FrameBuffer : public Uncopyable, public sigc::trackable
 {
-  public:
-    virtual ~FrameBuffer ();
+ public:
+  virtual ~FrameBuffer();
 
-    static inline FrameBuffer &get ()
-    {
-      static FrameBuffer buf;
-      return buf;
-    }
+  static inline FrameBuffer &get()
+  {
+    static FrameBuffer buf;
+    return buf;
+  }
 
-    typedef int32_t tCoordinate;
+  typedef int32_t tCoordinate;
 
+  typedef uint8_t tPixel;
 
-    typedef uint8_t tPixel;
+  enum Colors : tPixel
+  {
+    Undefined = 0xFF,
+    C43 = 0x00,
+    C77 = 0x02,
+    C103 = 0x05,
+    C128 = 0x06,
+    C179 = 0x0A,
+    C204 = 0x0B,
+    C255 = 0x0F,
+    Transparent = 0xFF
+  };
 
-    enum Colors
-      : tPixel
-      {
-        Undefined = 0xFF, C43 = 0x00, C77 = 0x02, C103 = 0x05, C128 = 0x06, C179 = 0x0A, C204 = 0x0B, C255 = 0x0F, Transparent = 0xFF
-    };
+  tPixel interpolateColor(float normalized)
+  {
+    return normalized * 0x0F;
+  }
 
-    tPixel interpolateColor (float normalized)
-    {
-      return normalized * 0x0F;
-    }
+  void setColor(const Colors &c);
+  void fiddleColor(tPixel p);
 
+  Colors getColor() const;
 
-    void setColor (const Colors &c);
-    void fiddleColor (tPixel p);
+  void fillRect(tCoordinate left, tCoordinate top, tCoordinate width, tCoordinate height);
+  void fillRect(const Rect &rect);
+  void fillCircle(const Point &rect, int radius, int steps);
 
-    Colors getColor () const;
+  void drawRect(tCoordinate left, tCoordinate top, tCoordinate width, tCoordinate height);
+  void drawRect(const Rect &rect);
 
-    void fillRect (tCoordinate left, tCoordinate top, tCoordinate width, tCoordinate height);
-    void fillRect (const Rect &rect);
-    void fillCircle(const Point& rect, int radius, int steps);
+  void drawHorizontalLine(tCoordinate x, tCoordinate y, tCoordinate length);
+  void drawVerticalLine(tCoordinate x, tCoordinate y, tCoordinate length);
 
-    void drawRect (tCoordinate left, tCoordinate top, tCoordinate width, tCoordinate height);
-    void drawRect (const Rect &rect);
+  void setPixel(tCoordinate x, tCoordinate y);
+  void clear();
 
-    void drawHorizontalLine (tCoordinate x, tCoordinate y, tCoordinate length);
-    void drawVerticalLine (tCoordinate x, tCoordinate y, tCoordinate length);
+  struct StackScopeGuard
+  {
+    FrameBuffer *m_fb;
 
-    void setPixel (tCoordinate x, tCoordinate y);
-    void clear ();
+    StackScopeGuard(FrameBuffer *fb);
+    StackScopeGuard(StackScopeGuard &&other);
+    virtual ~StackScopeGuard();
+    StackScopeGuard(const Uncopyable &) = delete;
+    StackScopeGuard &operator=(const Uncopyable &) = delete;
+  };
 
-    struct StackScopeGuard
-    {
-        FrameBuffer *m_fb;
+  struct Clip : StackScopeGuard
+  {
+    Clip(FrameBuffer *fb, const Rect &clip);
+    Clip(Clip &&other);
+    ~Clip();
 
-        StackScopeGuard (FrameBuffer *fb);
-        StackScopeGuard (StackScopeGuard &&other);
-        virtual ~StackScopeGuard ();
-        StackScopeGuard (const Uncopyable &) = delete;
-        StackScopeGuard &operator= (const Uncopyable &) = delete;
-    };
+    bool isEmpty() const;
+  };
 
-    struct Clip : StackScopeGuard
-    {
-        Clip (FrameBuffer *fb, const Rect &clip);
-        Clip (Clip &&other);
-        ~Clip ();
+  struct Offset : StackScopeGuard
+  {
+    Offset(FrameBuffer *fb, const Point &offset);
+    Offset(Offset &&other);
+    ~Offset();
+  };
 
-        bool isEmpty () const;
-    };
+  friend struct Clip;
+  friend struct Offset;
 
-    struct Offset : StackScopeGuard
-    {
-        Offset (FrameBuffer *fb, const Point &offset);
-        Offset (Offset &&other);
-        ~Offset ();
-    };
+  Clip clip(const Rect &rect);
+  Clip clipRespectingOffset(const Rect &rect);
+  Offset offset(const Point &offset);
 
-    friend struct Clip;
-    friend struct Offset;
+  void swapBuffers();
+  bool isValidColor(Colors c) const;
 
-    Clip clip (const Rect &rect);
-    Clip clipRespectingOffset (const Rect &rect);
-    Offset offset (const Point &offset);
+ private:
+  FrameBuffer();
 
-    void swapBuffers();
-    bool isValidColor(Colors c) const;
+  void setOffsetPixel(tCoordinate x, tCoordinate y);
+  void setRawPixel(tCoordinate x, tCoordinate y);
+  void drawRawHorizontalLine(tCoordinate x, tCoordinate y, tCoordinate length);
 
-  private:
-    FrameBuffer ();
+  void initStacks();
+  void openAndMap();
+  void unmapAndClose();
 
-    void setOffsetPixel (tCoordinate x, tCoordinate y);
-    void setRawPixel (tCoordinate x, tCoordinate y);
-    void drawRawHorizontalLine (tCoordinate x, tCoordinate y, tCoordinate length);
+  long getIndex(tCoordinate x, tCoordinate y) const;
 
-    void initStacks ();
-    void openAndMap ();
-    void unmapAndClose ();
-
-    long getIndex(tCoordinate x, tCoordinate y) const;
-
-    Colors m_currentColor = C43;
-    vector<tPixel> m_backBuffer;
-    std::stack<Rect> m_clips;
-    std::stack<Point> m_offsets;
+  Colors m_currentColor = C43;
+  vector<tPixel> m_backBuffer;
+  std::stack<Rect> m_clips;
+  std::stack<Point> m_offsets;
 };
-

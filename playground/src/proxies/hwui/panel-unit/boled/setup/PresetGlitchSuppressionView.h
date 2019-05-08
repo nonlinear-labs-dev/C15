@@ -4,15 +4,13 @@
 
 class PresetGlitchSuppressionView : public SetupLabel
 {
-  private:
-    typedef SetupLabel base_type;
+ private:
+  typedef SetupLabel base_type;
 
-  public:
-    PresetGlitchSuppressionView ();
-    virtual ~PresetGlitchSuppressionView ();
+ public:
+  PresetGlitchSuppressionView();
+  virtual ~PresetGlitchSuppressionView();
 
-  private:
-    void onSettingChanged (const Setting *s);
-
+ private:
+  void onSettingChanged(const Setting *s);
 };
-

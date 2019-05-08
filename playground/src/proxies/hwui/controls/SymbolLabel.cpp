@@ -1,21 +1,21 @@
 #include "SymbolLabel.h"
 #include "proxies/hwui/Oleds.h"
 
-SymbolLabel::SymbolLabel (const Glib::ustring &text, const Rect &pos) :
-    super (text, pos)
+SymbolLabel::SymbolLabel(const Glib::ustring &text, const Rect &pos)
+    : super(text, pos)
 {
 }
 
-SymbolLabel::~SymbolLabel ()
+SymbolLabel::~SymbolLabel()
 {
 }
 
-shared_ptr<Font> SymbolLabel::getFont () const
+shared_ptr<Font> SymbolLabel::getFont() const
 {
-  return Oleds::get().getFont ("Emphase_8_Symbol", getFontHeight ());
+  return Oleds::get().getFont("Emphase_8_Symbol", getFontHeight());
 }
 
-int SymbolLabel::getFontHeight () const
+int SymbolLabel::getFontHeight() const
 {
   return 8;
 }

@@ -6,28 +6,28 @@ class PresetBank;
 
 class MacroControlEditButtonMenu : public ButtonMenu
 {
-  private:
-    typedef ButtonMenu super;
+ private:
+  typedef ButtonMenu super;
 
-  public:
-    MacroControlEditButtonMenu(const Rect &rect);
-    virtual ~MacroControlEditButtonMenu();
+ public:
+  MacroControlEditButtonMenu(const Rect &rect);
+  virtual ~MacroControlEditButtonMenu();
 
-    void selectButton(size_t i) override;
+  void selectButton(size_t i) override;
 
-  private:
-    void setup();
-    void onGroupChanged();
+ private:
+  void setup();
+  void onGroupChanged();
 
-    void editInfo();
-    void rename();
-    void reset();
-    void smoothing();
+  void editInfo();
+  void rename();
+  void reset();
+  void smoothing();
 
-    void unlockGroup();
-    void lockGroup();
-    void unlockAll();
-    void lockAll();
+  void unlockGroup();
+  void lockGroup();
+  void unlockAll();
+  void lockAll();
 
-    static int s_lastAction;
+  static int s_lastAction;
 };

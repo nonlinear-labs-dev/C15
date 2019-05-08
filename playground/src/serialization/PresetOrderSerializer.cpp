@@ -7,32 +7,30 @@
 #include "PresetOrderSerializer.h"
 #include <device-settings/DebugLevel.h>
 
-PresetOrderSerializer::PresetOrderSerializer (shared_ptr<PresetBank> bank, bool ignoreUUIDs) :
-    Serializer (getTagName ()),
-    m_bank (bank),
-    m_ignoreUUIDs (ignoreUUIDs)
+PresetOrderSerializer::PresetOrderSerializer(shared_ptr<PresetBank> bank, bool ignoreUUIDs)
+    : Serializer(getTagName())
+    , m_bank(bank)
+    , m_ignoreUUIDs(ignoreUUIDs)
 {
 }
 
-Glib::ustring PresetOrderSerializer::getTagName ()
+Glib::ustring PresetOrderSerializer::getTagName()
 {
   return "preset-order";
 }
 
-void PresetOrderSerializer::writeTagContent (Writer &writer) const
+void PresetOrderSerializer::writeTagContent(Writer &writer) const
 {
-  for (auto p : m_bank->m_presets)
+  for(auto p : m_bank->m_presets)
   {
-    writer.writeTextElement ("uuid", p->getUuid ());
+    writer.writeTextElement("uuid", p->getUuid());
   }
 }
 
-void PresetOrderSerializer::readTagContent (Reader &reader) const
+void PresetOrderSerializer::readTagContent(Reader &reader) const
 {
-  reader.onTextElement ("uuid", [&] (const Glib::ustring & text, const Attributes & attributes) mutable
-  {
+  reader.onTextElement("uuid", [&](const Glib::ustring &text, const Attributes &attributes) mutable {
     Uuid uuid = m_ignoreUUIDs ? Uuid() : Uuid(text);
     m_bank->undoableAppendPreset(reader.getTransaction(), uuid);
   });
 }
-

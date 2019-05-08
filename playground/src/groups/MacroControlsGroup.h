@@ -5,12 +5,12 @@
 
 class MacroControlsGroup : public ParameterGroup
 {
-  public:
-    MacroControlsGroup(ParameterGroupSet *parent);
-    virtual ~MacroControlsGroup();
+ public:
+  MacroControlsGroup(ParameterGroupSet *parent);
+  virtual ~MacroControlsGroup();
 
-    void init();
+  void init();
 
-    static uint16_t modSrcToParamID(ModulateableParameter::ModulationSource src);
-    static ModulateableParameter::ModulationSource paramIDToModSrc(uint16_t pid);
+  static uint16_t modSrcToParamID(ModulateableParameter::ModulationSource src);
+  static ModulateableParameter::ModulationSource paramIDToModSrc(uint16_t pid);
 };

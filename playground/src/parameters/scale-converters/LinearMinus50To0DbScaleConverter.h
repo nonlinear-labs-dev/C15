@@ -4,8 +4,7 @@
 
 class LinearMinus50To0DbScaleConverter : public LinearScaleConverter
 {
-  public:
-    LinearMinus50To0DbScaleConverter ();
-    virtual ~LinearMinus50To0DbScaleConverter ();
+ public:
+  LinearMinus50To0DbScaleConverter();
+  virtual ~LinearMinus50To0DbScaleConverter();
 };
-

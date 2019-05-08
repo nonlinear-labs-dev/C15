@@ -8,108 +8,103 @@ using namespace Glib;
 using namespace std;
 using namespace sigc;
 
-template<typename tFirst, typename ... tArgs>
-  class Signal : public sigc::signal<tFirst, tArgs...>
+template <typename tFirst, typename... tArgs> class Signal : public sigc::signal<tFirst, tArgs...>
+{
+ private:
+  typedef sigc::signal<tFirst, tArgs...> super;
+
+ public:
+  Signal()
+      : m_initCallbackScheduled(false)
   {
-    private:
-      typedef sigc::signal<tFirst, tArgs...> super;
+  }
 
-    public:
+  virtual ~Signal()
+  {
+    m_initCallbackConnection.disconnect();
+    m_deferedCallbackConnection.disconnect();
+  }
 
-      Signal() :
-          m_initCallbackScheduled(false)
-      {
-      }
+  sigc::connection connectAndInit(const typename super::slot_type &slot, const tArgs &... args)
+  {
+    auto cb = std::bind(&super::slot_type::operator(), slot, args...);
+    scheduleInitCallback(cb);
+    return super::connect(slot);
+  }
 
-      virtual ~Signal()
-      {
-        m_initCallbackConnection.disconnect();
-        m_deferedCallbackConnection.disconnect();
-      }
+  typename super::result_type send(tArgs... args)
+  {
+    m_initRecords.clear();
+    return this->emit(args...);
+  }
 
-      sigc::connection connectAndInit(const typename super::slot_type &slot, const tArgs &... args)
-      {
-        auto cb = std::bind(&super::slot_type::operator(), slot, args...);
-        scheduleInitCallback(cb);
-        return super::connect(slot);
-      }
+  void deferedSend(const tArgs &... args)
+  {
+    m_deferedSend = [=]() { send(args...); };
 
-      typename super::result_type send(tArgs ... args)
-      {
-        m_initRecords.clear();
-        return this->emit(args...);
-      }
+    if(!m_deferedCallbackConnection.connected())
+    {
+      auto ctx = MainContext::get_default();
+      m_deferedCallbackConnection
+          = ctx->signal_idle().connect(mem_fun(this, &Signal::emitDefered), Glib::PRIORITY_DEFAULT);
+    }
+  }
 
-      void deferedSend(const tArgs &... args)
-      {
-        m_deferedSend = [=]()
-        {
-          send(args...);
-        };
+  static void registerTests();
 
-        if(!m_deferedCallbackConnection.connected())
-        {
-          auto ctx = MainContext::get_default();
-          m_deferedCallbackConnection = ctx->signal_idle().connect(mem_fun(this, &Signal::emitDefered), Glib::PRIORITY_DEFAULT);
-        }
-      }
+ private:
+  Signal(const Signal &other);
+  Signal &operator=(const Signal &);
 
-      static void registerTests();
+  typedef function<void()> tCallback;
+  typedef tCallback tRecord;
+  typedef list<tCallback> tInitRecords;
+  tInitRecords m_initRecords;
+  atomic<bool> m_initCallbackScheduled;
+  sigc::connection m_initCallbackConnection;
 
-    private:
-      Signal(const Signal &other);
-      Signal &operator=(const Signal &);
+  tCallback m_deferedSend;
+  sigc::connection m_deferedCallbackConnection;
 
-      typedef function<void()> tCallback;
-      typedef tCallback tRecord;
-      typedef list<tCallback> tInitRecords;
-      tInitRecords m_initRecords;
-      atomic<bool> m_initCallbackScheduled;
-      sigc::connection m_initCallbackConnection;
+  using super::emit;
+  using super::operator();
 
-      tCallback m_deferedSend;
-      sigc::connection m_deferedCallbackConnection;
+  void scheduleInitCallback(tCallback cb)
+  {
+    m_initRecords.push_back(cb);
 
-      using super::emit;
-      using super::operator();
+    if(!m_initCallbackScheduled.exchange(true))
+    {
+      m_initCallbackConnection = MainContext::get_default()->signal_idle().connect(
+          mem_fun(this, &Signal::doTheCallbacks), Glib::PRIORITY_HIGH);
+    }
+  }
 
-      void scheduleInitCallback(tCallback cb)
-      {
-        m_initRecords.push_back(cb);
+  bool doTheCallbacks()
+  {
+    m_initCallbackScheduled.exchange(false);
 
-        if(!m_initCallbackScheduled.exchange(true))
-        {
-          m_initCallbackConnection = MainContext::get_default()->signal_idle().connect(mem_fun(this, &Signal::doTheCallbacks),
-              Glib::PRIORITY_HIGH);
-        }
-      }
+    tInitRecords initRecords;
+    swap(initRecords, m_initRecords);
 
-      bool doTheCallbacks()
-      {
-        m_initCallbackScheduled.exchange(false);
+    m_initCallbackConnection.disconnect();
 
-        tInitRecords initRecords;
-        swap(initRecords, m_initRecords);
+    for(const auto &r : initRecords)
+      r();
 
-        m_initCallbackConnection.disconnect();
+    return false;
+  }
 
-        for(const auto & r : initRecords)
-          r();
+  bool emitDefered()
+  {
+    m_deferedCallbackConnection.disconnect();
 
-        return false;
-      }
+    tCallback c;
+    std::swap(c, m_deferedSend);
 
-      bool emitDefered()
-      {
-        m_deferedCallbackConnection.disconnect();
+    if(c)
+      c();
 
-        tCallback c;
-        std::swap(c, m_deferedSend);
-
-        if(c)
-          c();
-
-        return false;
-      }
-  };
-
+    return false;
+  }
+};

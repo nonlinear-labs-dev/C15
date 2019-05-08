@@ -4,11 +4,10 @@
 
 class ValueScaling
 {
-  public:
-    typedef gint32 tValue;
+ public:
+  typedef gint32 tValue;
 
-
-    static tValue identity(tValue in);
-    static tValue linear(tValue in, tValue factor);
-    static tValue expCtrl(tValue in, tValue factor);
+  static tValue identity(tValue in);
+  static tValue linear(tValue in, tValue factor);
+  static tValue expCtrl(tValue in, tValue factor);
 };

@@ -11,8 +11,8 @@
 #include <functional>
 #include <memory>
 
-PresetListBase::PresetListBase(const Rect &pos, bool showBankArrows) :
-    super(pos)
+PresetListBase::PresetListBase(const Rect &pos, bool showBankArrows)
+    : super(pos)
 {
   m_header = addControl(new PresetListHeader(Rect(1, 1, 126, 13), showBankArrows));
   m_content = addControl(new PresetListContent(Rect(1, 14, 126, 49)));
@@ -44,4 +44,3 @@ bool PresetListBase::animateSelectedPreset(function<void()> cb)
 {
   return m_content->animateSelectedPreset(cb);
 }
-

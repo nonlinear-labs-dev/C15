@@ -4,9 +4,9 @@
 
 class EnvelopeAGroup : public ParameterGroup
 {
-  public:
-    EnvelopeAGroup (ParameterGroupSet *parent);
-    virtual ~EnvelopeAGroup ();
+ public:
+  EnvelopeAGroup(ParameterGroupSet *parent);
+  virtual ~EnvelopeAGroup();
 
-    void init ();
+  void init();
 };

@@ -6,22 +6,21 @@ class Settings;
 
 class DeviceName : public Setting
 {
-  private:
-    typedef Setting super;
+ private:
+  typedef Setting super;
 
-  public:
-    DeviceName (Settings &parent);
-    virtual ~DeviceName ();
+ public:
+  DeviceName(Settings &parent);
+  virtual ~DeviceName();
 
-    void sanitize();
+  void sanitize();
 
-    void load(const Glib::ustring &text) override;
-    Glib::ustring save() const override;
+  void load(const Glib::ustring &text) override;
+  Glib::ustring save() const override;
 
-    void set(Glib::ustring name);
-    const Glib::ustring &get() const;
+  void set(Glib::ustring name);
+  const Glib::ustring &get() const;
 
-  private:
-    Glib::ustring m_name;
+ private:
+  Glib::ustring m_name;
 };
-

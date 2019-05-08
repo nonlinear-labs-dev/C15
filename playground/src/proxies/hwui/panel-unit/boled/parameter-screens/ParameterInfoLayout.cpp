@@ -17,42 +17,42 @@
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 
-ParameterInfoLayout::ParameterInfoLayout () :
-  super ()
+ParameterInfoLayout::ParameterInfoLayout()
+    : super()
 {
 }
 
 void ParameterInfoLayout::addHeadline()
 {
-  addControl (new HeadlineLabel (Rect (64, 0, 128, 13)));
+  addControl(new HeadlineLabel(Rect(64, 0, 128, 13)));
 }
 
 void ParameterInfoLayout::addInfoLabel()
 {
-  addControl (new InfoLabel (Rect (192, 0, 64, 13)));
+  addControl(new InfoLabel(Rect(192, 0, 64, 13)));
 }
 
 void ParameterInfoLayout::addModuleCaption()
 {
-  addControl (new ModuleCaption (Rect (0, 0, 64, 13)));
+  addControl(new ModuleCaption(Rect(0, 0, 64, 13)));
 }
 
 Scrollable *ParameterInfoLayout::createScrollableContent()
 {
-  return new ParameterInfoText (this);
+  return new ParameterInfoText(this);
 }
 
-bool ParameterInfoLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
+bool ParameterInfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(i == Buttons::BUTTON_EDIT && down)
   {
-    if(dynamic_cast<MacroControlParameter*>(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
+    if(dynamic_cast<MacroControlParameter *>(
+           Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
     {
-      Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ().setOverlay (new EditMCInfoLayout ());
+      Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(new EditMCInfoLayout());
       return true;
     }
   }
 
-  return super::onButton (i, down, modifiers);
+  return super::onButton(i, down, modifiers);
 }
-

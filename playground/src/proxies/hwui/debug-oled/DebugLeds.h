@@ -4,17 +4,16 @@
 
 class DebugLeds : public DFBLayout
 {
-  private:
-    typedef DFBLayout super;
+ private:
+  typedef DFBLayout super;
 
-  public:
-    DebugLeds (OLEDProxy &oled);
-    virtual ~DebugLeds ();
+ public:
+  DebugLeds(OLEDProxy& oled);
+  virtual ~DebugLeds();
 
-    void setLedState(int led, bool onOrOff);
+  void setLedState(int led, bool onOrOff);
 
-  private:
-    DebugLeds (const DebugLeds& other) = delete;
-    DebugLeds& operator= (const DebugLeds&) = delete;
+ private:
+  DebugLeds(const DebugLeds& other) = delete;
+  DebugLeds& operator=(const DebugLeds&) = delete;
 };
-

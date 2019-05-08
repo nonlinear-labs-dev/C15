@@ -5,8 +5,8 @@
 #include "parameters/Parameter.h"
 #include "proxies/hwui/panel-unit/boled/BOLED.h"
 
-ModuleCaption::ModuleCaption(const Rect &pos) :
-    super(pos)
+ModuleCaption::ModuleCaption(const Rect &pos)
+    : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
       sigc::hide<0>(sigc::mem_fun(this, &ModuleCaption::onParameterSelected)));
@@ -16,7 +16,7 @@ ModuleCaption::~ModuleCaption()
 {
 }
 
-void ModuleCaption::onParameterSelected(Parameter * newOne)
+void ModuleCaption::onParameterSelected(Parameter *newOne)
 {
   if(newOne)
   {
@@ -51,4 +51,3 @@ int ModuleCaption::getFontHeight() const
 {
   return 8;
 }
-

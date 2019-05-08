@@ -7,16 +7,16 @@ namespace UNDO
 
   class TransactionCreationScope
   {
-    public:
-      typedef std::shared_ptr<Transaction> tTransactionPtr;
-      typedef std::shared_ptr<TransactionCreationScope> tTransactionScopePtr;
-      TransactionCreationScope (tTransactionPtr transaction);
-      virtual ~TransactionCreationScope ();
+   public:
+    typedef std::shared_ptr<Transaction> tTransactionPtr;
+    typedef std::shared_ptr<TransactionCreationScope> tTransactionScopePtr;
+    TransactionCreationScope(tTransactionPtr transaction);
+    virtual ~TransactionCreationScope();
 
-      tTransactionPtr getTransaction();
+    tTransactionPtr getTransaction();
 
-    private:
-      tTransactionPtr m_transaction;
+   private:
+    tTransactionPtr m_transaction;
   };
 
 } /* namespace UNDO */

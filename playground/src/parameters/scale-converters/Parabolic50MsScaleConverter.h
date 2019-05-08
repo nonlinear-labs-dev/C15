@@ -4,8 +4,7 @@
 
 class Parabolic50MsScaleConverter : public ParabolicScaleConverter
 {
-  public:
-    Parabolic50MsScaleConverter ();
-    virtual ~Parabolic50MsScaleConverter ();
+ public:
+  Parabolic50MsScaleConverter();
+  virtual ~Parabolic50MsScaleConverter();
 };
-

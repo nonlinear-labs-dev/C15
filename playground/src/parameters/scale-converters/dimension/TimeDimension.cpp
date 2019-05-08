@@ -19,7 +19,7 @@ Glib::ustring TimeDimension::getStingizerJS() const
   return "formatDimensionDigits(cpValue, 'ms', withUnit, 3)";
 }
 
-Glib::ustring TimeDimension::stringize (const tDisplayValue &displayValue) const
+Glib::ustring TimeDimension::stringize(const tDisplayValue &displayValue) const
 {
   return formatDimensionDigits(displayValue, "ms", 3);
 }

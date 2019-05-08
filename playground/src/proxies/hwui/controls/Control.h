@@ -11,37 +11,36 @@ class FrameBuffer;
 
 class Control : public sigc::trackable, public Uncopyable
 {
-  public:
-    Control (const Rect &pos);
-    virtual ~Control ();
+ public:
+  Control(const Rect &pos);
+  virtual ~Control();
 
-    virtual bool redraw (FrameBuffer &fb);
-    virtual void drawBackground (FrameBuffer &fb);
+  virtual bool redraw(FrameBuffer &fb);
+  virtual void drawBackground(FrameBuffer &fb);
 
-    virtual const Rect &getPosition() const;
-    virtual bool isDirty () const;
-    void setClean();
+  virtual const Rect &getPosition() const;
+  virtual bool isDirty() const;
+  void setClean();
 
-    virtual void collectDirtyRects(std::list<Rect> &rects) const;
-    bool overlapsWithAny(const std::list<Rect> &rects) const;
-    virtual void setDirtyIfOverlapsWithAny(const std::list<Rect> &rects);
+  virtual void collectDirtyRects(std::list<Rect> &rects) const;
+  bool overlapsWithAny(const std::list<Rect> &rects) const;
+  virtual void setDirtyIfOverlapsWithAny(const std::list<Rect> &rects);
 
-    virtual void setHighlight(bool isHighlight);
-    bool isHighlight() const;
+  virtual void setHighlight(bool isHighlight);
+  bool isHighlight() const;
 
-    virtual void setDirty();
-    virtual bool isVisible () const;
-    void setVisible(bool b);
-    int getHeight() const;
-    virtual void setPosition (const Rect &rect);
+  virtual void setDirty();
+  virtual bool isVisible() const;
+  void setVisible(bool b);
+  int getHeight() const;
+  virtual void setPosition(const Rect &rect);
 
-  protected:
-    virtual void setBackgroundColor (FrameBuffer &fb) const;
+ protected:
+  virtual void setBackgroundColor(FrameBuffer &fb) const;
 
-  private:
-    Rect m_rect;
-    bool m_isDirty;
-    bool m_highlight;
-    bool m_visible;
+ private:
+  Rect m_rect;
+  bool m_isDirty;
+  bool m_highlight;
+  bool m_visible;
 };
-

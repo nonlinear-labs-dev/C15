@@ -7,20 +7,19 @@ class Parameter;
 
 class ModuleCaption : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    ModuleCaption (const Rect &pos);
-    virtual ~ModuleCaption ();
+ public:
+  ModuleCaption(const Rect &pos);
+  virtual ~ModuleCaption();
 
-    bool redraw (FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
 
-  private:
-    virtual void setFontColor (FrameBuffer &fb) const override;
-    virtual shared_ptr<Font> getFont () const override;
-    virtual int getFontHeight () const override;
+ private:
+  virtual void setFontColor(FrameBuffer &fb) const override;
+  virtual shared_ptr<Font> getFont() const override;
+  virtual int getFontHeight() const override;
 
-    void onParameterSelected (Parameter * newOne);
+  void onParameterSelected(Parameter *newOne);
 };
-

@@ -4,9 +4,9 @@
 
 class UnisonGroup : public ParameterGroup
 {
-  public:
-    UnisonGroup (ParameterGroupSet *parent);
-    virtual ~UnisonGroup ();
+ public:
+  UnisonGroup(ParameterGroupSet *parent);
+  virtual ~UnisonGroup();
 
-    void init ();
+  void init();
 };

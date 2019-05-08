@@ -5,12 +5,12 @@ class Parameter;
 
 class ParameterValueLabel : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    ParameterValueLabel (Parameter * param, const Rect &pos);
+ public:
+  ParameterValueLabel(Parameter *param, const Rect &pos);
 
-  private:
-    void updateText (const Parameter *param);
+ private:
+  void updateText(const Parameter *param);
 };

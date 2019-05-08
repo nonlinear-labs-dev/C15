@@ -2,10 +2,11 @@
 
 #include "LinearScaleConverter.h"
 
-class EditSmoothingTimeMSScaleConverter: public LinearScaleConverter
+class EditSmoothingTimeMSScaleConverter : public LinearScaleConverter
 {
-    typedef LinearScaleConverter super;
-  public:
-    EditSmoothingTimeMSScaleConverter();
-    virtual ~EditSmoothingTimeMSScaleConverter();
+  typedef LinearScaleConverter super;
+
+ public:
+  EditSmoothingTimeMSScaleConverter();
+  virtual ~EditSmoothingTimeMSScaleConverter();
 };

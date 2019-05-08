@@ -3,17 +3,18 @@
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
 
-Carousel::Carousel (const Rect &pos) :
-    super (pos)
+Carousel::Carousel(const Rect &pos)
+    : super(pos)
 {
-  Application::get().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide < 0 > (sigc::mem_fun (this, &Carousel::setup)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &Carousel::setup)));
 }
 
-Carousel::~Carousel ()
+Carousel::~Carousel()
 {
 }
 
-void Carousel::antiTurn() {
+void Carousel::antiTurn()
+{
   turn();
 }

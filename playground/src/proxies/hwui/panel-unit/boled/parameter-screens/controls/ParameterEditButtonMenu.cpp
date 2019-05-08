@@ -13,8 +13,8 @@
 
 int ParameterEditButtonMenu::s_lastAction = 0;
 
-ParameterEditButtonMenu::ParameterEditButtonMenu(const Rect &rect) :
-    super(rect)
+ParameterEditButtonMenu::ParameterEditButtonMenu(const Rect &rect)
+    : super(rect)
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   eb->onLocksChanged(mem_fun(this, &ParameterEditButtonMenu::setup));

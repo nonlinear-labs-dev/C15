@@ -4,13 +4,12 @@
 
 class UpperModulationBoundSlider : public ModulationBoundSlider
 {
-    typedef ModulationBoundSlider super;
-  public:
-    UpperModulationBoundSlider (const Rect &pos);
-    virtual ~UpperModulationBoundSlider ();
+  typedef ModulationBoundSlider super;
 
-  protected:
-    BoundPosition getBoundPosition () const override;
+ public:
+  UpperModulationBoundSlider(const Rect &pos);
+  virtual ~UpperModulationBoundSlider();
 
+ protected:
+  BoundPosition getBoundPosition() const override;
 };
-

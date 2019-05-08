@@ -5,21 +5,20 @@
 
 class PresetList : public PresetListBase
 {
-    using super = PresetListBase;
+  using super = PresetListBase;
 
-  public:
-    PresetList(const Rect &pos, bool showBankArrows);
-    virtual ~PresetList();
+ public:
+  PresetList(const Rect &pos, bool showBankArrows);
+  virtual ~PresetList();
 
-    virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-    virtual void onRotary(int inc, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  virtual void onRotary(int inc, ButtonModifiers modifiers) override;
 
-    std::pair<int, int> getSelectedPosition() const override;
+  std::pair<int, int> getSelectedPosition() const override;
 
-  private:
-    void onBankSelectionChanged(shared_ptr<PresetBank> bank);
-    void onBankChanged();
+ private:
+  void onBankSelectionChanged(shared_ptr<PresetBank> bank);
+  void onBankChanged();
 
-    sigc::connection m_bankChangedConnection;
+  sigc::connection m_bankChangedConnection;
 };
-

@@ -29,25 +29,25 @@ enum NoteShiftStates
 
 class Application;
 
-class NoteShiftStateMachine : public StateMachine<NoteShiftStates, NoteShiftEvents, NOTE_SHIFT_STATE_INITIAL, NOTE_SHIFT_STATE_INVALID>
+class NoteShiftStateMachine
+    : public StateMachine<NoteShiftStates, NoteShiftEvents, NOTE_SHIFT_STATE_INITIAL, NOTE_SHIFT_STATE_INVALID>
 {
-  private:
-    typedef StateMachine<NoteShiftStates, NoteShiftEvents, NOTE_SHIFT_STATE_INITIAL, NOTE_SHIFT_STATE_INVALID> super;
+ private:
+  typedef StateMachine<NoteShiftStates, NoteShiftEvents, NOTE_SHIFT_STATE_INITIAL, NOTE_SHIFT_STATE_INVALID> super;
 
-  public:
-    NoteShiftStateMachine ();
-    virtual ~NoteShiftStateMachine ();
+ public:
+  NoteShiftStateMachine();
+  virtual ~NoteShiftStateMachine();
 
-    bool traverse (NoteShiftEvents event) override;
+  bool traverse(NoteShiftEvents event) override;
 
-  private:
-    bool setState(NoteShiftStates s) override;
+ private:
+  bool setState(NoteShiftStates s) override;
 
-    NoteShiftStateMachine (const NoteShiftStateMachine& other) = delete;
-    NoteShiftStateMachine& operator= (const NoteShiftStateMachine&) = delete;
+  NoteShiftStateMachine(const NoteShiftStateMachine& other) = delete;
+  NoteShiftStateMachine& operator=(const NoteShiftStateMachine&) = delete;
 
-    bool m_plusButtonState;
-    bool m_minusButtonState;
-    Expiration m_resetTimeout;
+  bool m_plusButtonState;
+  bool m_minusButtonState;
+  Expiration m_resetTimeout;
 };
-

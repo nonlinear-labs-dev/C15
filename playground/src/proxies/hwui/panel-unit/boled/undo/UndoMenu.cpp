@@ -2,21 +2,19 @@
 #include <Application.h>
 #include <http/UndoScope.h>
 
-UndoMenu::UndoMenu(shared_ptr<UNDO::Transaction> tip, const Rect &r) :
-    super(r, 2)
+UndoMenu::UndoMenu(shared_ptr<UNDO::Transaction> tip, const Rect &r)
+    : super(r, 2)
 {
   assignTransaction(tip);
 
-  addButton("Delete", [=]()
-  {
-    if (!isParentOfCurrentUndo ())
+  addButton("Delete", [=]() {
+    if(!isParentOfCurrentUndo())
     {
-      Application::get ().getUndoScope ()->eraseBranch (m_tip);
+      Application::get().getUndoScope()->eraseBranch(m_tip);
     }
   });
 
-  addButton("Make Root", [=]()
-  {
+  addButton("Make Root", [=]() {
     if(isParentOfCurrentUndo())
     {
       Application::get().getUndoScope()->rebase(m_tip);
@@ -47,5 +45,3 @@ bool UndoMenu::isParentOfCurrentUndo()
 
   return false;
 }
-
-

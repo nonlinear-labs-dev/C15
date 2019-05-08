@@ -8,15 +8,14 @@ class ModulateableParameter;
 
 class CurrentModulatedValueLabel : public ModulationBoundLabel, public RotaryEncoder::Receiver
 {
-    typedef ModulationBoundLabel super;
+  typedef ModulationBoundLabel super;
 
-  public:
-    CurrentModulatedValueLabel (const Rect &r);
-    virtual ~CurrentModulatedValueLabel ();
+ public:
+  CurrentModulatedValueLabel(const Rect &r);
+  virtual ~CurrentModulatedValueLabel();
 
-    bool onRotary (int inc, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
 
-  protected:
-    void updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam) override;
+ protected:
+  void updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam) override;
 };
-

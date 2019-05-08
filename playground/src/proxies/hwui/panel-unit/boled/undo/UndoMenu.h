@@ -9,18 +9,17 @@ namespace UNDO
 
 class UndoMenu : public ButtonMenu
 {
-  private:
-    typedef ButtonMenu super;
+ private:
+  typedef ButtonMenu super;
 
-  public:
-    UndoMenu (shared_ptr<UNDO::Transaction> tip, const Rect &r);
-    virtual ~UndoMenu ();
+ public:
+  UndoMenu(shared_ptr<UNDO::Transaction> tip, const Rect &r);
+  virtual ~UndoMenu();
 
-    void assignTransaction (shared_ptr<UNDO::Transaction> tip);
+  void assignTransaction(shared_ptr<UNDO::Transaction> tip);
 
-  private:
-    bool isParentOfCurrentUndo ();
+ private:
+  bool isParentOfCurrentUndo();
 
-    shared_ptr<UNDO::Transaction> m_tip;
+  shared_ptr<UNDO::Transaction> m_tip;
 };
-

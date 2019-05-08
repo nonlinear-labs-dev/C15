@@ -13,342 +13,339 @@ namespace UNDO
 
   static int numTransactionsCreated = 0;
 
-  Transaction::Transaction (Scope &scope, const Glib::ustring &name, size_t depth) :
-      Command (),
-      UpdateDocumentContributor (&scope),
-      m_scope (scope),
-      m_name (name),
-      m_isClosed (false),
-      m_depth (depth)
+  Transaction::Transaction(Scope &scope, const Glib::ustring &name, size_t depth)
+      : Command()
+      , UpdateDocumentContributor(&scope)
+      , m_scope(scope)
+      , m_name(name)
+      , m_isClosed(false)
+      , m_depth(depth)
   {
-    DebugLevel::info ("Creating UNDO::Transaction:", name);
+    DebugLevel::info("Creating UNDO::Transaction:", name);
     numTransactionsCreated++;
   }
 
-  Transaction::~Transaction ()
+  Transaction::~Transaction()
   {
   }
 
-  int Transaction::getAndResetNumTransactions ()
+  int Transaction::getAndResetNumTransactions()
   {
     int ret = numTransactionsCreated;
     numTransactionsCreated = 0;
     return ret;
   }
 
-  Glib::ustring Transaction::getName () const
+  Glib::ustring Transaction::getName() const
   {
     return m_name;
   }
 
-  void Transaction::setName (const Glib::ustring &name)
+  void Transaction::setName(const Glib::ustring &name)
   {
     m_name = name;
   }
 
-  void Transaction::close ()
+  void Transaction::close()
   {
     tCommandList todo;
 
-    swap (todo, m_postfixCommands);
+    swap(todo, m_postfixCommands);
 
-    for (auto h : todo)
-      addCommand (h);
+    for(auto h : todo)
+      addCommand(h);
 
     m_isClosed = true;
   }
 
-  void Transaction::reopen ()
+  void Transaction::reopen()
   {
-    g_assert(isClosed ());
+    g_assert(isClosed());
     m_isClosed = false;
   }
 
-  bool Transaction::isClosed () const
+  bool Transaction::isClosed() const
   {
     return m_isClosed;
   }
 
-  void Transaction::addSimpleCommand (ActionCommand::tAction doAndRedo, ActionCommand::tAction undo)
+  void Transaction::addSimpleCommand(ActionCommand::tAction doAndRedo, ActionCommand::tAction undo)
   {
-    tCommandPtr cmd (new ActionCommand (doAndRedo, undo));
-    addCommand (cmd);
+    tCommandPtr cmd(new ActionCommand(doAndRedo, undo));
+    addCommand(cmd);
   }
 
-  void Transaction::addSimpleCommand (ActionCommand::tAction doRedoUndo)
+  void Transaction::addSimpleCommand(ActionCommand::tAction doRedoUndo)
   {
-    tCommandPtr cmd (new SwapCommand (doRedoUndo));
-    addCommand (cmd);
+    tCommandPtr cmd(new SwapCommand(doRedoUndo));
+    addCommand(cmd);
   }
 
-  void Transaction::addCommand (tCommandPtr cmd)
+  void Transaction::addCommand(tCommandPtr cmd)
   {
     assert(!m_isClosed);
-    cmd->setParentTransaction (this);
-    m_commands.push_back (cmd);
-    cmd->doAction ();
-    onChange ();
+    cmd->setParentTransaction(this);
+    m_commands.push_back(cmd);
+    cmd->doAction();
+    onChange();
   }
 
-  void Transaction::implDoAction () const
+  void Transaction::implDoAction() const
   {
   }
 
-  void Transaction::implUndoAction () const
-  {
-    assert(m_isClosed);
-
-    onImplUndoActionStart ();
-
-    for (auto it = m_commands.rbegin (); it != m_commands.rend (); ++it)
-    {
-      (*it)->undoAction ();
-    }
-  }
-
-  void Transaction::implRedoAction () const
+  void Transaction::implUndoAction() const
   {
     assert(m_isClosed);
 
-    for (auto it = m_commands.begin (); it != m_commands.end (); ++it)
+    onImplUndoActionStart();
+
+    for(auto it = m_commands.rbegin(); it != m_commands.rend(); ++it)
     {
-      (*it)->redoAction ();
+      (*it)->undoAction();
+    }
+  }
+
+  void Transaction::implRedoAction() const
+  {
+    assert(m_isClosed);
+
+    for(auto it = m_commands.begin(); it != m_commands.end(); ++it)
+    {
+      (*it)->redoAction();
     }
 
-    onImplRedoActionFinished ();
+    onImplRedoActionFinished();
   }
 
-  void Transaction::onImplUndoActionStart () const
+  void Transaction::onImplUndoActionStart() const
   {
-    if (!hasParentTransaction ())
-      m_scope.onTransactionUndoStart ();
+    if(!hasParentTransaction())
+      m_scope.onTransactionUndoStart();
   }
 
-  void Transaction::onImplRedoActionFinished () const
+  void Transaction::onImplRedoActionFinished() const
   {
-    if (!hasParentTransaction ())
-      m_scope.onTransactionRedone (this);
+    if(!hasParentTransaction())
+      m_scope.onTransactionRedone(this);
   }
 
-  bool Transaction::hasSuccessors () const
+  bool Transaction::hasSuccessors() const
   {
-    return !m_successors.empty ();
+    return !m_successors.empty();
   }
 
-  size_t Transaction::getNumSuccessors () const
+  size_t Transaction::getNumSuccessors() const
   {
-    return m_successors.size ();
+    return m_successors.size();
   }
 
-  const Transaction::tTransactionPtr Transaction::getSuccessor (size_t num) const
+  const Transaction::tTransactionPtr Transaction::getSuccessor(size_t num) const
   {
-    if (!hasSuccessors ())
-      return Transaction::tTransactionPtr (NULL);
+    if(!hasSuccessors())
+      return Transaction::tTransactionPtr(NULL);
 
     return m_successors[num];
   }
 
-  void Transaction::addSuccessor (tTransactionPtr successor)
+  void Transaction::addSuccessor(tTransactionPtr successor)
   {
-    m_successors.push_back (successor);
+    m_successors.push_back(successor);
     m_defaultRedoRoute = successor;
-    onChange ();
+    onChange();
   }
 
-  void Transaction::setPredecessor (tTransactionPtr predecessor)
+  void Transaction::setPredecessor(tTransactionPtr predecessor)
   {
     m_predecessor = predecessor;
-    onChange ();
+    onChange();
   }
 
-  void Transaction::eraseSuccessor (tTransactionPtr successor)
+  void Transaction::eraseSuccessor(tTransactionPtr successor)
   {
-    eraseSuccessor (successor.get ());
+    eraseSuccessor(successor.get());
   }
 
-  void Transaction::eraseSuccessor (const Transaction *successor)
+  void Transaction::eraseSuccessor(const Transaction *successor)
   {
-    auto end = std::remove_if (m_successors.begin (), m_successors.end (), [successor](auto p)
+    auto end = std::remove_if(m_successors.begin(), m_successors.end(),
+                              [successor](auto p) { return p.get() == successor; });
+
+    m_successors.erase(end, m_successors.end());
+
+    if(m_defaultRedoRoute.get() == successor)
     {
-      return p.get() == successor;
-    });
+      m_defaultRedoRoute.reset();
 
-    m_successors.erase (end, m_successors.end ());
-
-    if (m_defaultRedoRoute.get () == successor)
-    {
-      m_defaultRedoRoute.reset ();
-
-      if (!m_successors.empty ())
+      if(!m_successors.empty())
       {
-        m_defaultRedoRoute = m_successors.front ();
+        m_defaultRedoRoute = m_successors.front();
       }
     }
 
-    onChange ();
+    onChange();
   }
 
-  const Transaction::tTransactionPtr Transaction::getPredecessor () const
+  const Transaction::tTransactionPtr Transaction::getPredecessor() const
   {
-    return m_predecessor.lock ();
+    return m_predecessor.lock();
   }
 
-  size_t Transaction::getDepth () const
+  size_t Transaction::getDepth() const
   {
     return m_depth;
   }
 
-  void Transaction::rollBack ()
+  void Transaction::rollBack()
   {
-    close ();
+    close();
     m_scope.undoAndHushUp();
   }
 
-  void Transaction::redoUntil (tTransactionPtr target)
+  void Transaction::redoUntil(tTransactionPtr target)
   {
-    std::list<tTransactionPtr> steps = Algorithm::getPathAsList (target, this);
+    std::list<tTransactionPtr> steps = Algorithm::getPathAsList(target, this);
 
-    for (tTransactionPtr step : steps)
+    for(tTransactionPtr step : steps)
     {
-      step->redoAction ();
+      step->redoAction();
     }
   }
 
-  void Transaction::undoUntil (tTransactionPtr target)
+  void Transaction::undoUntil(tTransactionPtr target)
   {
-    undoAction ();
+    undoAction();
 
-    if (getPredecessor () != target)
-      getPredecessor ()->undoUntil (target);
+    if(getPredecessor() != target)
+      getPredecessor()->undoUntil(target);
   }
 
-  void Transaction::addChildren (std::list<tTransactionPtr> &list) const
+  void Transaction::addChildren(std::list<tTransactionPtr> &list) const
   {
-    for (tTransactionPtr c : m_successors)
-      list.push_back (c);
+    for(tTransactionPtr c : m_successors)
+      list.push_back(c);
   }
 
-  void Transaction::setDefaultRedoRoute (Transaction::tTransactionPtr route)
+  void Transaction::setDefaultRedoRoute(Transaction::tTransactionPtr route)
   {
     m_defaultRedoRoute = route;
-    onChange ();
+    onChange();
   }
 
-  Transaction::tTransactionPtr Transaction::getDefaultRedoRoute () const
+  Transaction::tTransactionPtr Transaction::getDefaultRedoRoute() const
   {
     return m_defaultRedoRoute;
   }
 
-  void Transaction::addPostfixCommand (ActionCommand::tAction doRedoUndo)
+  void Transaction::addPostfixCommand(ActionCommand::tAction doRedoUndo)
   {
-    m_postfixCommands.emplace_back (new SwapCommand (doRedoUndo));
+    m_postfixCommands.emplace_back(new SwapCommand(doRedoUndo));
   }
 
-  void Transaction::writeDocument (Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
+  void Transaction::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
   {
-    bool changed = knownRevision < getUpdateIDOfLastChange ();
+    bool changed = knownRevision < getUpdateIDOfLastChange();
 
-    if (changed)
+    if(changed)
     {
-      writer.writeTag ("transaction", Attribute ("name", getName ()), Attribute ("id", StringTools::buildString (this)),
-          Attribute ("predecessor", StringTools::buildString (getPredecessor ().get ())), Attribute ("successors", getSuccessorsString ()),
-          Attribute ("default-redo-route", StringTools::buildString (m_defaultRedoRoute.get ())), Attribute ("changed", changed), [&]()
-          {
-          });
+      writer.writeTag("transaction", Attribute("name", getName()), Attribute("id", StringTools::buildString(this)),
+                      Attribute("predecessor", StringTools::buildString(getPredecessor().get())),
+                      Attribute("successors", getSuccessorsString()),
+                      Attribute("default-redo-route", StringTools::buildString(m_defaultRedoRoute.get())),
+                      Attribute("changed", changed), [&]() {});
     }
   }
 
-  Glib::ustring Transaction::getSuccessorsString () const
+  Glib::ustring Transaction::getSuccessorsString() const
   {
     stringstream str;
 
-    for (auto s : m_successors)
+    for(auto s : m_successors)
     {
-      if (str.tellp ())
+      if(str.tellp())
         str << ',';
-      str << StringTools::buildString (s.get ());
+      str << StringTools::buildString(s.get());
     }
 
-    return str.str ();
+    return str.str();
   }
 
-  void Transaction::recurse (function<void (const Transaction *)> cb) const
+  void Transaction::recurse(function<void(const Transaction *)> cb) const
   {
-    cb (this);
+    cb(this);
 
-    for (auto s : m_successors)
-      s->recurse (cb);
+    for(auto s : m_successors)
+      s->recurse(cb);
   }
 
-  int Transaction::countPredecessors () const
+  int Transaction::countPredecessors() const
   {
     int i = 0;
-    auto walker = getPredecessor ();
+    auto walker = getPredecessor();
 
-    while (walker)
+    while(walker)
     {
       i++;
-      walker = walker->getPredecessor ();
+      walker = walker->getPredecessor();
     }
 
     return i;
   }
 
-  int Transaction::countSuccessorsOnDefaultRoute () const
+  int Transaction::countSuccessorsOnDefaultRoute() const
   {
     int i = 0;
-    auto walker = getDefaultRedoRoute ();
+    auto walker = getDefaultRedoRoute();
 
-    while (walker)
+    while(walker)
     {
       i++;
-      walker = walker->getDefaultRedoRoute ();
+      walker = walker->getDefaultRedoRoute();
     }
 
     return i;
   }
 
-  bool Transaction::isDefaultRouteLeft () const
+  bool Transaction::isDefaultRouteLeft() const
   {
-    return getDirectionToDefaultRoute () > 0;
+    return getDirectionToDefaultRoute() > 0;
   }
 
-  bool Transaction::isDefaultRouteRight () const
+  bool Transaction::isDefaultRouteRight() const
   {
-    return getDirectionToDefaultRoute () < 0;
+    return getDirectionToDefaultRoute() < 0;
   }
 
-  int Transaction::getDirectionToDefaultRoute () const
+  int Transaction::getDirectionToDefaultRoute() const
   {
-    auto path = m_scope.getUndoTransaction ();
-    auto parent = getPredecessor ();
+    auto path = m_scope.getUndoTransaction();
+    auto parent = getPredecessor();
 
-    while (path)
+    while(path)
     {
-      if (parent == path->getPredecessor ())
+      if(parent == path->getPredecessor())
       {
-        return parent->getOrder (this, path.get ());
+        return parent->getOrder(this, path.get());
       }
-      path = path->getPredecessor ();
+      path = path->getPredecessor();
     }
 
-    return parent->getOrder (this, parent->m_defaultRedoRoute.get ());
+    return parent->getOrder(this, parent->m_defaultRedoRoute.get());
   }
 
-  int Transaction::getOrder (const Transaction *a, const Transaction *b) const
+  int Transaction::getOrder(const Transaction *a, const Transaction *b) const
   {
-    if (a == b)
+    if(a == b)
       return 0;
 
-    for (auto p : m_successors)
+    for(auto p : m_successors)
     {
-      if (p.get () == a)
+      if(p.get() == a)
         return -1;
-      else if (p.get () == b)
+      else if(p.get() == b)
         return 1;
     }
     return 0;
-
   }
 
 } /* namespace UNDO */

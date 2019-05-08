@@ -21,5 +21,5 @@ Glib::ustring DBPerSTDimension::getStingizerJS() const
 
 Glib::ustring DBPerSTDimension::stringize(const tDisplayValue &displayValue) const
 {
-  return formatDimensionRounded(displayValue,  "dB/st", 0.001);
+  return formatDimensionRounded(displayValue, "dB/st", 0.001);
 }

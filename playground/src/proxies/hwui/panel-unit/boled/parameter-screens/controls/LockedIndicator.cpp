@@ -5,8 +5,8 @@
 #include "parameters/Parameter.h"
 #include "proxies/hwui/panel-unit/boled/BOLED.h"
 
-LockedIndicator::LockedIndicator(const Rect &pos) :
-    super(pos)
+LockedIndicator::LockedIndicator(const Rect &pos)
+    : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
       sigc::hide<0>(sigc::mem_fun(this, &LockedIndicator::onParameterSelected)));
@@ -16,12 +16,13 @@ LockedIndicator::~LockedIndicator()
 {
 }
 
-void LockedIndicator::onParameterSelected(Parameter * newOne)
+void LockedIndicator::onParameterSelected(Parameter *newOne)
 {
   if(newOne)
   {
     m_groupConnection.disconnect();
-    m_groupConnection = newOne->getParentGroup()->onGroupChanged(sigc::mem_fun(this, &LockedIndicator::onParameterGroupChanged));
+    m_groupConnection
+        = newOne->getParentGroup()->onGroupChanged(sigc::mem_fun(this, &LockedIndicator::onParameterGroupChanged));
   }
 }
 
@@ -45,4 +46,3 @@ int LockedIndicator::getFontHeight() const
 {
   return 8;
 }
-

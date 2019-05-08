@@ -1,17 +1,17 @@
 #include <glib.h>
 #include "PlayPanel.h"
 
-PlayPanel::PlayPanel ()
+PlayPanel::PlayPanel()
 {
 }
 
-PlayPanel::~PlayPanel ()
+PlayPanel::~PlayPanel()
 {
 }
 
-void PlayPanel::onTimeout ()
+void PlayPanel::onTimeout()
 {
-  m_oled.redraw ();
+  m_oled.redraw();
 }
 
 SOLED &PlayPanel::getSOLED()

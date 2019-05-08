@@ -18,38 +18,36 @@ namespace DescriptiveLayouts
 
   class BoledLayoutFactory
   {
-    public:
-      static BoledLayoutFactory& get();
+   public:
+    static BoledLayoutFactory& get();
 
-      void clear();
+    void clear();
 
-      std::shared_ptr<DFBLayout> instantiate(FocusAndMode fam);
+    std::shared_ptr<DFBLayout> instantiate(FocusAndMode fam);
 
-      template<typename ... Args>
+    template <typename... Args>
 
-      void registerLayout(LayoutClasses id, Args ... args)
-      {
-        m_layouts.emplace_back(id, args...);
-        DebugLevel::warning("registered Layout:", id);
-      }
+    void registerLayout(LayoutClasses id, Args... args)
+    {
+      m_layouts.emplace_back(id, args...);
+      DebugLevel::warning("registered Layout:", id);
+    }
 
-      void registerLayout(LayoutClasses id,
-                          std::list<Selector> sel,
-                          std::list<ControlInstance> ci,
-                          std::list<EventSinkMapping> esm,
-                          std::list<std::function<bool()>> con) {
-        m_layouts.emplace_back(id, sel, ci, esm, con);
-        DebugLevel::warning("registered Layout:", id);
-      }
-      void sortByPriority();
-    private:
-      BoledLayoutFactory();
+    void registerLayout(LayoutClasses id, std::list<Selector> sel, std::list<ControlInstance> ci,
+                        std::list<EventSinkMapping> esm, std::list<std::function<bool()>> con)
+    {
+      m_layouts.emplace_back(id, sel, ci, esm, con);
+      DebugLevel::warning("registered Layout:", id);
+    }
+    void sortByPriority();
 
-      const LayoutClass& find(FocusAndMode fam) const;
+   private:
+    BoledLayoutFactory();
 
-      std::list<LayoutClass> m_layouts;
+    const LayoutClass& find(FocusAndMode fam) const;
 
-      friend class ConsistencyChecker;
+    std::list<LayoutClass> m_layouts;
+
+    friend class ConsistencyChecker;
   };
-
 }

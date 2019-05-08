@@ -4,17 +4,16 @@
 
 class VerticalLine : public Control
 {
-  private:
-    typedef Control super;
+ private:
+  typedef Control super;
 
-  public:
-    VerticalLine (const Rect &rect);
-    virtual ~VerticalLine ();
+ public:
+  VerticalLine(const Rect& rect);
+  virtual ~VerticalLine();
 
-    bool redraw (FrameBuffer &fb);
+  bool redraw(FrameBuffer& fb);
 
-  private:
-    VerticalLine (const VerticalLine& other);
-    VerticalLine& operator= (const VerticalLine&);
+ private:
+  VerticalLine(const VerticalLine& other);
+  VerticalLine& operator=(const VerticalLine&);
 };
-

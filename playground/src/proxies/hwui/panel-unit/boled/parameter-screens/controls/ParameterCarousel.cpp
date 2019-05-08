@@ -10,76 +10,76 @@
 
 class NeverHighlitButton : public Button
 {
-  public:
-    using Button::Button;
+ public:
+  using Button::Button;
 
-    virtual void setHighlight (bool isHighlight) override
-    {
-    }
-
+  virtual void setHighlight(bool isHighlight) override
+  {
+  }
 };
 
-ParameterCarousel::ParameterCarousel (const Rect &pos) :
-    super (pos)
+ParameterCarousel::ParameterCarousel(const Rect& pos)
+    : super(pos)
 {
 }
 
-ParameterCarousel::~ParameterCarousel ()
+ParameterCarousel::~ParameterCarousel()
 {
 }
 
-void ParameterCarousel::setup (Parameter *selectedParameter)
+void ParameterCarousel::setup(Parameter* selectedParameter)
 {
-  clear ();
+  clear();
 
-  auto um = Application::get ().getHWUI ()->getPanelUnit ().getUsageMode ();
+  auto um = Application::get().getHWUI()->getPanelUnit().getUsageMode();
 
-  if (shared_ptr<PanelUnitParameterEditMode> edit = dynamic_pointer_cast<PanelUnitParameterEditMode> (um))
+  if(shared_ptr<PanelUnitParameterEditMode> edit = dynamic_pointer_cast<PanelUnitParameterEditMode>(um))
   {
-    if (selectedParameter)
+    if(selectedParameter)
     {
-      auto button = edit->findButtonForParameter (selectedParameter);
+      auto button = edit->findButtonForParameter(selectedParameter);
 
-      if (button != Buttons::INVALID)
+      if(button != Buttons::INVALID)
       {
-        setupChildControls (edit, selectedParameter, button);
+        setupChildControls(edit, selectedParameter, button);
       }
     }
   }
 
-  if (getNumChildren () == 0)
+  if(getNumChildren() == 0)
   {
-    addControl (new NeverHighlitButton ("", Rect (0, 51, 58, 11)));
+    addControl(new NeverHighlitButton("", Rect(0, 51, 58, 11)));
   }
 
-  setDirty ();
+  setDirty();
 }
 
-void ParameterCarousel::setupChildControls (const shared_ptr<PanelUnitParameterEditMode>& edit, Parameter* selectedParameter, Buttons button)
+void ParameterCarousel::setupChildControls(const shared_ptr<PanelUnitParameterEditMode>& edit,
+                                           Parameter* selectedParameter, Buttons button)
 {
-  list<int> buttonAssignments = edit->getButtonAssignments (button);
+  list<int> buttonAssignments = edit->getButtonAssignments(button);
 
-  if (buttonAssignments.size () > 1)
+  if(buttonAssignments.size() > 1)
   {
-    setupChildControls (selectedParameter, buttonAssignments);
+    setupChildControls(selectedParameter, buttonAssignments);
   }
 }
 
-void ParameterCarousel::setupChildControls (Parameter* selectedParameter, const list<int>& buttonAssignments)
+void ParameterCarousel::setupChildControls(Parameter* selectedParameter, const list<int>& buttonAssignments)
 {
   const int ySpaceing = 3;
   const int miniParamHeight = 12;
   const int miniParamWidth = 56;
   int yPos = ySpaceing;
   size_t maxNumParameters = 4;
-  size_t missingParams = maxNumParameters - buttonAssignments.size ();
+  size_t missingParams = maxNumParameters - buttonAssignments.size();
   yPos += missingParams * (miniParamHeight + ySpaceing);
-  for (int i : buttonAssignments)
+  for(int i : buttonAssignments)
   {
-    auto param = Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (i);
-    auto miniParam = new MiniParameter (param, Rect (0, yPos, miniParamWidth, miniParamHeight));
-    miniParam->setSelected (param == selectedParameter);
-    addControl (miniParam);
+    auto param = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(i);
+    auto miniParam = new MiniParameter(param, Rect(0, yPos, miniParamWidth, miniParamHeight));
+    miniParam->setSelected(param == selectedParameter);
+    addControl(miniParam);
     yPos += ySpaceing;
     yPos += miniParamHeight;
   }
@@ -88,14 +88,14 @@ void ParameterCarousel::setupChildControls (Parameter* selectedParameter, const 
 void ParameterCarousel::antiTurn()
 {
   auto foundCtrl = dynamic_pointer_cast<MiniParameter>(*getControls().rbegin());
-  for(auto ctrl: getControls())
+  for(auto ctrl : getControls())
   {
-    if (auto p = dynamic_pointer_cast < MiniParameter > (ctrl))
+    if(auto p = dynamic_pointer_cast<MiniParameter>(ctrl))
     {
       if(p->isSelected())
       {
         Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(
-                to_string(foundCtrl->getParameter()->getID()));
+            to_string(foundCtrl->getParameter()->getID()));
         return;
       }
       foundCtrl = p;
@@ -103,22 +103,22 @@ void ParameterCarousel::antiTurn()
   }
 }
 
-void ParameterCarousel::turn ()
+void ParameterCarousel::turn()
 {
   bool found = false;
   bool handled = false;
-  tIfCallback cb = ([&] (tControlPtr ctrl) -> bool
-  {
-    if (auto p = dynamic_pointer_cast < MiniParameter > (ctrl))
+  tIfCallback cb = ([&](tControlPtr ctrl) -> bool {
+    if(auto p = dynamic_pointer_cast<MiniParameter>(ctrl))
     {
-      if (found)
+      if(found)
       {
-        Application::get ().getPresetManager ()->getEditBuffer ()->undoableSelectParameter (to_string (p->getParameter ()->getID ()));
+        Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(
+            to_string(p->getParameter()->getID()));
         handled = true;
         return false;
       }
 
-      if (p->isSelected())
+      if(p->isSelected())
       {
         found = true;
       }
@@ -127,9 +127,10 @@ void ParameterCarousel::turn ()
     return true;
   });
 
-  forEach (cb);
+  forEach(cb);
 
-  if (!handled)
-    if (auto p = dynamic_pointer_cast<MiniParameter> (first ()))
-      Application::get ().getPresetManager ()->getEditBuffer ()->undoableSelectParameter (to_string (p->getParameter ()->getID ()));
+  if(!handled)
+    if(auto p = dynamic_pointer_cast<MiniParameter>(first()))
+      Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(
+          to_string(p->getParameter()->getID()));
 }

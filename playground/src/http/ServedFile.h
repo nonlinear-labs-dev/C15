@@ -9,15 +9,15 @@ class HTTPRequest;
 
 class ServedFile : public ServedStream
 {
-  public:
-    ServedFile (HTTPServer &server, shared_ptr<HTTPRequest> request);
-    virtual ~ServedFile ();
+ public:
+  ServedFile(HTTPServer &server, shared_ptr<HTTPRequest> request);
+  virtual ~ServedFile();
 
-    void startServing();
+  void startServing();
 
-  private:
-    Glib::ustring getFilePathFromMessagePath () const;
-    void startServingLocalFile (RefPtr<Gio::File> file);
-    void setFilesContentType (RefPtr<Gio::File> file);
-    void onAsyncFileRead (RefPtr<Gio::AsyncResult> res, RefPtr<Gio::File> file);
+ private:
+  Glib::ustring getFilePathFromMessagePath() const;
+  void startServingLocalFile(RefPtr<Gio::File> file);
+  void setFilesContentType(RefPtr<Gio::File> file);
+  void onAsyncFileRead(RefPtr<Gio::AsyncResult> res, RefPtr<Gio::File> file);
 };

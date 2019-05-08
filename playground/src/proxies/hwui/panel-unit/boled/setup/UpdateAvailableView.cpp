@@ -2,31 +2,31 @@
 
 static const auto c_updateFileName = "/mnt/usb-stick/nonlinear-c15-update.tar";
 
-UpdateAvailableView::UpdateAvailableView () :
-    super ("", Rect (0, 0, 0, 0))
+UpdateAvailableView::UpdateAvailableView()
+    : super("", Rect(0, 0, 0, 0))
 {
-  poll ();
-  Glib::MainContext::get_default ()->signal_timeout ().connect_seconds (mem_fun (this, &UpdateAvailableView::poll), 5);
+  poll();
+  Glib::MainContext::get_default()->signal_timeout().connect_seconds(mem_fun(this, &UpdateAvailableView::poll), 5);
 }
 
-UpdateAvailableView::~UpdateAvailableView ()
+UpdateAvailableView::~UpdateAvailableView()
 {
 }
 
-bool UpdateAvailableView::poll ()
+bool UpdateAvailableView::poll()
 {
-  if (updateExists ())
+  if(updateExists())
   {
-    setText ("Yes");
+    setText("Yes");
   }
   else
   {
-    setText ("No");
+    setText("No");
   }
   return true;
 }
 
-bool UpdateAvailableView::updateExists ()
+bool UpdateAvailableView::updateExists()
 {
-  return g_file_test (c_updateFileName, GFileTest::G_FILE_TEST_EXISTS);
+  return g_file_test(c_updateFileName, GFileTest::G_FILE_TEST_EXISTS);
 }

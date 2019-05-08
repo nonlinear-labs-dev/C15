@@ -4,9 +4,9 @@
 
 class ShaperAGroup : public ParameterGroup
 {
-  public:
-    ShaperAGroup (ParameterGroupSet *parent);
-    virtual ~ShaperAGroup ();
+ public:
+  ShaperAGroup(ParameterGroupSet *parent);
+  virtual ~ShaperAGroup();
 
-    void init ();
+  void init();
 };

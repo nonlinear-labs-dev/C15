@@ -5,73 +5,73 @@
 #include "parameters/MacroControlParameter.h"
 #include <parameters/PhysicalControlParameter.h>
 
-SelectedMacroControlsHWSourceSlider::SelectedMacroControlsHWSourceSlider (const Rect &rect) :
-    super (rect),
+SelectedMacroControlsHWSourceSlider::SelectedMacroControlsHWSourceSlider(const Rect &rect)
+    : super(rect)
+    ,
 
-    m_hwParamID (0)
+    m_hwParamID(0)
 {
-  Application::get ().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-      sigc::hide < 0 > (sigc::mem_fun (this, &SelectedMacroControlsHWSourceSlider::onParameterSelected)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceSlider::onParameterSelected)));
 }
 
-SelectedMacroControlsHWSourceSlider::~SelectedMacroControlsHWSourceSlider ()
+SelectedMacroControlsHWSourceSlider::~SelectedMacroControlsHWSourceSlider()
 {
 }
 
-void SelectedMacroControlsHWSourceSlider::onParameterSelected (Parameter * newOne)
+void SelectedMacroControlsHWSourceSlider::onParameterSelected(Parameter *newOne)
 {
-  m_mcChanged.disconnect ();
-  m_mcChanged = newOne->onParameterChanged (sigc::mem_fun (this, &SelectedMacroControlsHWSourceSlider::onMCChanged));
+  m_mcChanged.disconnect();
+  m_mcChanged = newOne->onParameterChanged(sigc::mem_fun(this, &SelectedMacroControlsHWSourceSlider::onMCChanged));
 }
 
-void SelectedMacroControlsHWSourceSlider::onMCChanged (const Parameter *param)
+void SelectedMacroControlsHWSourceSlider::onMCChanged(const Parameter *param)
 {
-  if (auto mc = dynamic_cast<const MacroControlParameter *> (param))
+  if(auto mc = dynamic_cast<const MacroControlParameter *>(param))
   {
-    int hwSourceID = mc->getUiSelectedHardwareSource ();
+    int hwSourceID = mc->getUiSelectedHardwareSource();
 
-    if (m_hwParamID != hwSourceID)
+    if(m_hwParamID != hwSourceID)
     {
       m_hwParamID = hwSourceID;
 
-      if (hwSourceID > 0)
-        setParameter (Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (hwSourceID));
+      if(hwSourceID > 0)
+        setParameter(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(hwSourceID));
     }
   }
 }
 
-void SelectedMacroControlsHWSourceSlider::onParamValueChanged (const Parameter *param)
+void SelectedMacroControlsHWSourceSlider::onParamValueChanged(const Parameter *param)
 {
-  Slider::onParamValueChanged (param);
-  setDirty ();
+  Slider::onParamValueChanged(param);
+  setDirty();
 }
 
-void SelectedMacroControlsHWSourceSlider::drawSliderBackground (FrameBuffer &fb)
+void SelectedMacroControlsHWSourceSlider::drawSliderBackground(FrameBuffer &fb)
 {
-  super::drawSliderBackground (fb);
+  super::drawSliderBackground(fb);
 
-  if (auto p = dynamic_cast<PhysicalControlParameter*> (getParameter ()))
+  if(auto p = dynamic_cast<PhysicalControlParameter *>(getParameter()))
   {
-    auto returnMode = p->getReturnMode ();
-    const auto &r = getPosition ();
+    auto returnMode = p->getReturnMode();
+    const auto &r = getPosition();
     const int centerMarkWidth = 4;
 
-    switch (returnMode)
+    switch(returnMode)
     {
-    case PhysicalControlParameter::ReturnMode::Center:
-      fb.setColor (FrameBuffer::Colors::C128);
-      fb.fillRect (r.getCenter ().getX () - centerMarkWidth / 2, r.getTop (), centerMarkWidth, r.getHeight ());
-      break;
+      case PhysicalControlParameter::ReturnMode::Center:
+        fb.setColor(FrameBuffer::Colors::C128);
+        fb.fillRect(r.getCenter().getX() - centerMarkWidth / 2, r.getTop(), centerMarkWidth, r.getHeight());
+        break;
 
-    case PhysicalControlParameter::ReturnMode::Zero:
-      fb.setColor (FrameBuffer::Colors::C128);
-      fb.fillRect (r.getLeft (), r.getTop (), centerMarkWidth, r.getHeight ());
-      break;
+      case PhysicalControlParameter::ReturnMode::Zero:
+        fb.setColor(FrameBuffer::Colors::C128);
+        fb.fillRect(r.getLeft(), r.getTop(), centerMarkWidth, r.getHeight());
+        break;
 
-    case PhysicalControlParameter::ReturnMode::None:
-    default:
-      break;
+      case PhysicalControlParameter::ReturnMode::None:
+      default:
+        break;
     }
   }
 }
-

@@ -4,76 +4,73 @@
 
 class Settings;
 
-template<typename tEnum>
-class EnumPresetSetting : public PresetSetting
+template <typename tEnum> class EnumPresetSetting : public PresetSetting
 {
-  private:
-    typedef PresetSetting super;
+ private:
+  typedef PresetSetting super;
 
-  public:
-    EnumPresetSetting (PresetSettings &settings, tEnum def) :
-        super (settings),
-        m_mode (def)
+ public:
+  EnumPresetSetting(PresetSettings &settings, tEnum def)
+      : super(settings)
+      , m_mode(def)
+  {
+  }
+
+  virtual void set(UNDO::Scope::tTransactionPtr transaction, tEnum m)
+  {
+    if(m_mode != m)
     {
+      auto swapData = UNDO::createSwapData(m);
+
+      transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
+        swapData->swapWith(m_mode);
+        onChange(false);
+      });
     }
+  }
 
-    virtual void set (UNDO::Scope::tTransactionPtr transaction, tEnum m)
+  tEnum get() const
+  {
+    return m_mode;
+  }
+
+  void load(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &text)
+  {
+    int i = 0;
+    for(const auto &it : enumToString())
     {
-      if(m_mode != m)
+      if(text == it)
       {
-        auto swapData = UNDO::createSwapData (m);
-
-         transaction->addSimpleCommand ([=](UNDO::Command::State) mutable
-         {
-           swapData->swapWith(m_mode);
-           onChange(false);
-         });
+        set(transaction, (tEnum) i);
+        return;
       }
+      i++;
     }
+  }
 
-    tEnum get () const
-    {
-      return m_mode;
-    }
+  void inc(UNDO::Scope::tTransactionPtr transaction)
+  {
+    int e = (int) m_mode;
+    e++;
 
-    void load(UNDO::Scope::tTransactionPtr transaction, const Glib::ustring &text)
-    {
-      int i = 0;
-      for(const auto &it : enumToString())
-      {
-        if(text == it)
-        {
-          set(transaction, (tEnum)i);
-          return;
-        }
-        i++;
-      }
-    }
+    if(e >= (int) enumToString().size())
+      e = 0;
 
-    void inc(UNDO::Scope::tTransactionPtr transaction)
-    {
-      int e = (int)m_mode;
-      e++;
+    set(transaction, (tEnum) e);
+  }
 
-      if(e >= (int)enumToString().size())
-        e = 0;
+  Glib::ustring save() const
+  {
+    int idx = static_cast<int>(get());
+    return enumToString()[idx];
+  }
 
-      set(transaction, (tEnum)e);
-    }
+ protected:
+  virtual const vector<Glib::ustring> &enumToString() const = 0;
 
-    Glib::ustring save() const
-    {
-      int idx = static_cast<int>(get());
-      return enumToString()[idx];
-    }
+ private:
+  EnumPresetSetting(const EnumPresetSetting &other);
+  EnumPresetSetting &operator=(const EnumPresetSetting &);
 
-  protected:
-    virtual const vector<Glib::ustring> &enumToString() const = 0;
-
-  private:
-    EnumPresetSetting (const EnumPresetSetting& other);
-    EnumPresetSetting& operator= (const EnumPresetSetting&);
-
-    tEnum m_mode;
+  tEnum m_mode;
 };
-

@@ -14,58 +14,61 @@
 
 // static TestDriver<UpperRibbon> tests;
 
-UpperRibbon::UpperRibbon ()
+UpperRibbon::UpperRibbon()
 {
-  initLEDs ();
+  initLEDs();
 
-  Application::get().getPresetManager ()->getEditBuffer ()->onSelectionChanged (sigc::mem_fun (this, &UpperRibbon::onParamSelectionChanged));
-  Application::get().getSettings()->getSetting <BaseUnitUIMode> ()->onChange(sigc::mem_fun (this, &UpperRibbon::onSettingChanged));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::mem_fun(this, &UpperRibbon::onParamSelectionChanged));
+  Application::get().getSettings()->getSetting<BaseUnitUIMode>()->onChange(
+      sigc::mem_fun(this, &UpperRibbon::onSettingChanged));
 }
 
-UpperRibbon::~UpperRibbon ()
+UpperRibbon::~UpperRibbon()
 {
 }
 
-void UpperRibbon::onParamSelectionChanged (Parameter * oldOne, Parameter * newOne)
+void UpperRibbon::onParamSelectionChanged(Parameter* oldOne, Parameter* newOne)
 {
-  reconnect ();
+  reconnect();
 }
 
-void UpperRibbon::onSettingChanged (const Setting* setting)
+void UpperRibbon::onSettingChanged(const Setting* setting)
 {
-  reconnect ();
+  reconnect();
 }
 
-void UpperRibbon::reconnect ()
+void UpperRibbon::reconnect()
 {
-  m_paramConnection.disconnect ();
+  m_paramConnection.disconnect();
 
-  if (auto p = getResponsibleParameter ())
-    m_paramConnection = p->onParameterChanged (sigc::mem_fun (this, &UpperRibbon::onParamValueChanged));
+  if(auto p = getResponsibleParameter())
+    m_paramConnection = p->onParameterChanged(sigc::mem_fun(this, &UpperRibbon::onParamValueChanged));
 }
 
-Parameter * UpperRibbon::getResponsibleParameter ()
+Parameter* UpperRibbon::getResponsibleParameter()
 {
-  auto s = Application::get ().getSettings()->getSetting <BaseUnitUIMode> ();
+  auto s = Application::get().getSettings()->getSetting<BaseUnitUIMode>();
 
   if(s->get() == BaseUnitUIModes::ParameterEdit)
     return Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter();
 
-  return Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID(HardwareSourcesGroup::getUpperRibbonParameterID());
+  return Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+      HardwareSourcesGroup::getUpperRibbonParameterID());
 }
 
-void UpperRibbon::onParamValueChanged (const Parameter* param)
+void UpperRibbon::onParamValueChanged(const Parameter* param)
 {
   bool bipol = false;
 
-  auto paramVal = param->getControlPositionValue ();
-  auto s = Application::get ().getSettings()->getSetting <BaseUnitUIMode> ();
+  auto paramVal = param->getControlPositionValue();
+  auto s = Application::get().getSettings()->getSetting<BaseUnitUIMode>();
 
   if(s->get() == BaseUnitUIModes::ParameterEdit)
   {
-    bipol = param->isBiPolar ();
+    bipol = param->isBiPolar();
   }
-  else // BASE_UNIT_UI_MODE_PLAY
+  else  // BASE_UNIT_UI_MODE_PLAY
   {
     if(auto ribbonParameter = dynamic_cast<const RibbonParameter*>(param))
     {
@@ -73,18 +76,18 @@ void UpperRibbon::onParamValueChanged (const Parameter* param)
     }
   }
 
-  if (!bipol)
-    setLEDsForValueUniPolar (paramVal, false);
+  if(!bipol)
+    setLEDsForValueUniPolar(paramVal, false);
   else
-    setLEDsForValueBiPolar (paramVal, false);
+    setLEDsForValueBiPolar(paramVal, false);
 }
 
-int UpperRibbon::posToLedID (int pos) const
+int UpperRibbon::posToLedID(int pos) const
 {
   return 2 * pos + 1;
 }
 
-void UpperRibbon::registerTests ()
+void UpperRibbon::registerTests()
 {
 #if 0
   class TestRibbon : public UpperRibbon

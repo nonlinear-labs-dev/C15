@@ -10,19 +10,18 @@
 #include <proxies/hwui/buttons.h>
 #include <proxies/hwui/HWUIEnums.h>
 
-BaseUnitPresetsAndBanksMode::BaseUnitPresetsAndBanksMode () :
-    m_fireLongPress (bind (&BaseUnitPresetsAndBanksMode::onLongPress, this))
+BaseUnitPresetsAndBanksMode::BaseUnitPresetsAndBanksMode()
+    : m_fireLongPress(bind(&BaseUnitPresetsAndBanksMode::onLongPress, this))
 {
 }
 
-BaseUnitPresetsAndBanksMode::~BaseUnitPresetsAndBanksMode ()
+BaseUnitPresetsAndBanksMode::~BaseUnitPresetsAndBanksMode()
 {
 }
 
-void BaseUnitPresetsAndBanksMode::setup ()
+void BaseUnitPresetsAndBanksMode::setup()
 {
-  setupButtonConnection (Buttons::BUTTON_FUNCTION, [=](Buttons button, ButtonModifiers modifiers, bool state)
-  {
+  setupButtonConnection(Buttons::BUTTON_FUNCTION, [=](Buttons button, ButtonModifiers modifiers, bool state) {
     if(state)
     {
       onFuncButtonDown();
@@ -36,23 +35,21 @@ void BaseUnitPresetsAndBanksMode::setup ()
     return true;
   });
 
-  setupButtonConnection (Buttons::BUTTON_MODE, [ = ] (Buttons buttonID, ButtonModifiers modifiers, bool state)
-  {
-    if (state)
+  setupButtonConnection(Buttons::BUTTON_MODE, [=](Buttons buttonID, ButtonModifiers modifiers, bool state) {
+    if(state)
     {
-      Application::get ().getSettings ()->getSetting<BaseUnitUIMode> ()->inc ();
+      Application::get().getSettings()->getSetting<BaseUnitUIMode>()->inc();
     }
 
     return true;
   });
 }
 
-void BaseUnitPresetsAndBanksMode::onLongPress ()
+void BaseUnitPresetsAndBanksMode::onLongPress()
 {
-  Application::get ().getSettings ()->getSetting<AutoLoadSelectedPreset> ()->toggle ();
+  Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->toggle();
 }
 
-void BaseUnitPresetsAndBanksMode::onFuncButtonDown ()
+void BaseUnitPresetsAndBanksMode::onFuncButtonDown()
 {
 }
-

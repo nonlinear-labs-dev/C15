@@ -10,18 +10,17 @@ namespace DescriptiveLayouts
 
   class Border : public Control, public Styleable
   {
-    public:
-      Border(const PrimitiveInstance &e);
-      virtual ~Border();
+   public:
+    Border(const PrimitiveInstance &e);
+    virtual ~Border();
 
-    protected:
-      bool redraw(FrameBuffer &fb) override;
-      void setDirty() override;
-      void drawBackground(FrameBuffer &fb) override;
-      const PrimitiveInstance &getPrimitive() const override;
+   protected:
+    bool redraw(FrameBuffer &fb) override;
+    void setDirty() override;
+    void drawBackground(FrameBuffer &fb) override;
+    const PrimitiveInstance &getPrimitive() const override;
 
-    private:
-      PrimitiveInstance m_primitive;
+   private:
+    PrimitiveInstance m_primitive;
   };
-
 }

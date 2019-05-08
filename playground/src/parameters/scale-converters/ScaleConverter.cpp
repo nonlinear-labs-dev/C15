@@ -1,8 +1,8 @@
 #include "ScaleConverter.h"
 #include <parameters/value/QuantizedValue.h>
 
-ScaleConverter::ScaleConverter(const Dimension &dim) :
-  m_dimension(dim)
+ScaleConverter::ScaleConverter(const Dimension &dim)
+    : m_dimension(dim)
 {
 }
 
@@ -38,14 +38,14 @@ ScaleConverter::tTcdRange ScaleConverter::getTcdRange() const
   return tTcdRange(controlPositionToTcd(cpRange.getMin()), controlPositionToTcd(cpRange.getMax()));
 }
 
-tControlPositionValue ScaleConverter::getCoarseDenominator (const QuantizedValue &v) const
+tControlPositionValue ScaleConverter::getCoarseDenominator(const QuantizedValue &v) const
 {
-  return v.getCoarseDenominator ();
+  return v.getCoarseDenominator();
 }
 
-tControlPositionValue ScaleConverter::getFineDenominator (const QuantizedValue &v) const
+tControlPositionValue ScaleConverter::getFineDenominator(const QuantizedValue &v) const
 {
-  return v.getFineDenominator ();
+  return v.getFineDenominator();
 }
 
 const ScaleConverter::tControlPositionRange ScaleConverter::getControlPositionRange() const

@@ -14,43 +14,43 @@
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 
-PresetInfoLayout::PresetInfoLayout () :
-    super ()
+PresetInfoLayout::PresetInfoLayout()
+    : super()
 {
 }
 
-PresetInfoLayout::~PresetInfoLayout ()
+PresetInfoLayout::~PresetInfoLayout()
 {
 }
 
-void PresetInfoLayout::addModuleCaption ()
+void PresetInfoLayout::addModuleCaption()
 {
-  addControl (new PresetInfoCaption (Rect (0, 0, 64, 13)));
+  addControl(new PresetInfoCaption(Rect(0, 0, 64, 13)));
 }
 
-void PresetInfoLayout::addHeadline ()
+void PresetInfoLayout::addHeadline()
 {
-  addControl (new PresetNameHeadlineLabel (Rect (64, 0, 128, 13)));
+  addControl(new PresetNameHeadlineLabel(Rect(64, 0, 128, 13)));
 }
 
-void PresetInfoLayout::addInfoLabel ()
+void PresetInfoLayout::addInfoLabel()
 {
-  addControl (new InfoLabel (Rect (192, 0, 64, 13)));
+  addControl(new InfoLabel(Rect(192, 0, 64, 13)));
 }
 
-Scrollable * PresetInfoLayout::createScrollableContent ()
+Scrollable* PresetInfoLayout::createScrollableContent()
 {
-  return new PresetInfoContent ();
+  return new PresetInfoContent();
 }
 
-bool PresetInfoLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
+bool PresetInfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if (i == Buttons::BUTTON_EDIT && down)
+  if(i == Buttons::BUTTON_EDIT && down)
   {
-    auto layout = new EditPresetInfoLayout ();
-    Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ().setOverlay (layout);
+    auto layout = new EditPresetInfoLayout();
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
     return true;
   }
 
-  return super::onButton (i, down, modifiers);
+  return super::onButton(i, down, modifiers);
 }

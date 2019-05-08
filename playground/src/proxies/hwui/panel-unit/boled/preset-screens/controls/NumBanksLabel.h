@@ -4,17 +4,15 @@
 
 class Application;
 
-class NumBanksLabel :  public Label
+class NumBanksLabel : public Label
 {
-  private:
-    typedef Label super;
+ private:
+  typedef Label super;
 
-  public:
-    NumBanksLabel(const Rect& pos);
-    virtual ~NumBanksLabel();
-    
-  private:
-    
+ public:
+  NumBanksLabel(const Rect& pos);
+  virtual ~NumBanksLabel();
 
-    void onNumBanksChanged(int numBanks);
+ private:
+  void onNumBanksChanged(int numBanks);
 };

@@ -4,22 +4,22 @@
 namespace UNDO
 {
 
-  Command::Command () :
-    m_parent (nullptr),
-    m_state (INITIAL)
+  Command::Command()
+      : m_parent(nullptr)
+      , m_state(INITIAL)
   {
   }
 
-  Command::~Command ()
+  Command::~Command()
   {
   }
 
-  void Command::setParentTransaction (Transaction *parent)
+  void Command::setParentTransaction(Transaction *parent)
   {
     m_parent = parent;
   }
 
-  bool Command::hasParentTransaction () const
+  bool Command::hasParentTransaction() const
   {
     return m_parent != nullptr;
   }
@@ -29,23 +29,23 @@ namespace UNDO
     return m_state;
   }
 
-  void Command::doAction () const
+  void Command::doAction() const
   {
-    assert (getState() == INITIAL);
+    assert(getState() == INITIAL);
     m_state = DOING;
     implDoAction();
     m_state = DONE;
   }
 
-  void Command::undoAction () const
+  void Command::undoAction() const
   {
-    assert (getState() == DONE || getState() == REDONE);
+    assert(getState() == DONE || getState() == REDONE);
     m_state = UNDOING;
     implUndoAction();
     m_state = UNDONE;
   }
 
-  void Command::redoAction () const
+  void Command::redoAction() const
   {
     assert(getState() == UNDONE);
     m_state = REDOING;

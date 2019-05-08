@@ -4,18 +4,17 @@
 
 class SetupSelectionEntries : public ControlWithChildren
 {
-  public:
-    SetupSelectionEntries (const Rect &pos);
-    virtual ~SetupSelectionEntries ();
+ public:
+  SetupSelectionEntries(const Rect &pos);
+  virtual ~SetupSelectionEntries();
 
-    void addEntry (Control *s);
-    void finish (bool selectMode);
+  void addEntry(Control *s);
+  void finish(bool selectMode);
 
-  private:
-    typedef std::list<Control *> tEntries;
+ private:
+  typedef std::list<Control *> tEntries;
 
-    void assignDownwards (tEntries::iterator entryIt, tControls::const_iterator controlIt, bool selectMode);
+  void assignDownwards(tEntries::iterator entryIt, tControls::const_iterator controlIt, bool selectMode);
 
-    tEntries m_entries;
+  tEntries m_entries;
 };
-

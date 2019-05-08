@@ -4,19 +4,18 @@
 #include <device-settings/SSID.h>
 #include <proxies/hwui/panel-unit/boled/setup/SSIDView.h>
 
-SSIDView::SSIDView () :
-    base_type ("", Rect (0, 0, 0, 0))
+SSIDView::SSIDView()
+    : base_type("", Rect(0, 0, 0, 0))
 {
-  Application::get ().getSettings ()->getSetting<SSID> ()->onChange (mem_fun (this, &SSIDView::onSettingChanged));
+  Application::get().getSettings()->getSetting<SSID>()->onChange(mem_fun(this, &SSIDView::onSettingChanged));
 }
 
-SSIDView::~SSIDView ()
+SSIDView::~SSIDView()
 {
 }
 
-void SSIDView::onSettingChanged (const Setting *s)
+void SSIDView::onSettingChanged(const Setting *s)
 {
-  auto v = dynamic_cast<const SSID*> (s);
-  setText (v->get ());
+  auto v = dynamic_cast<const SSID *>(s);
+  setText(v->get());
 }
-

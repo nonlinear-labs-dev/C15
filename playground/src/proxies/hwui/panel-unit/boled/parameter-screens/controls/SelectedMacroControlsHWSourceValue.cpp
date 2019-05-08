@@ -5,73 +5,72 @@
 #include "presets/EditBuffer.h"
 #include "parameters/MacroControlParameter.h"
 
-SelectedMacroControlsHWSourceValue::SelectedMacroControlsHWSourceValue (const Rect &rect) :
-  super (rect)
+SelectedMacroControlsHWSourceValue::SelectedMacroControlsHWSourceValue(const Rect &rect)
+    : super(rect)
 {
-  Application::get().getPresetManager ()->getEditBuffer ()->onSelectionChanged (
-    sigc::hide < 0 > (sigc::mem_fun (this, &SelectedMacroControlsHWSourceValue::onParameterSelected)));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceValue::onParameterSelected)));
 
-  Application::get().getHWUI()->onModifiersChanged (
-      sigc::hide(sigc::mem_fun (this, &SelectedMacroControlsHWSourceValue::onModifiersChanged)));
+  Application::get().getHWUI()->onModifiersChanged(
+      sigc::hide(sigc::mem_fun(this, &SelectedMacroControlsHWSourceValue::onModifiersChanged)));
 }
 
-SelectedMacroControlsHWSourceValue::~SelectedMacroControlsHWSourceValue ()
+SelectedMacroControlsHWSourceValue::~SelectedMacroControlsHWSourceValue()
 {
 }
 
-void SelectedMacroControlsHWSourceValue::onParameterSelected (Parameter * newOne)
+void SelectedMacroControlsHWSourceValue::onParameterSelected(Parameter *newOne)
 {
-  m_mcChanged.disconnect ();
-  m_mcChanged = newOne->onParameterChanged (sigc::mem_fun (this, &SelectedMacroControlsHWSourceValue::onMCChanged));
+  m_mcChanged.disconnect();
+  m_mcChanged = newOne->onParameterChanged(sigc::mem_fun(this, &SelectedMacroControlsHWSourceValue::onMCChanged));
 }
 
-int SelectedMacroControlsHWSourceValue::getHWSourceID (const Parameter *param) const
+int SelectedMacroControlsHWSourceValue::getHWSourceID(const Parameter *param) const
 {
-  if (auto mc = dynamic_cast<const MacroControlParameter *> (param))
-    return mc->getUiSelectedHardwareSource ();
+  if(auto mc = dynamic_cast<const MacroControlParameter *>(param))
+    return mc->getUiSelectedHardwareSource();
   return 0;
 }
 
-void SelectedMacroControlsHWSourceValue::onMCChanged (const Parameter *param)
+void SelectedMacroControlsHWSourceValue::onMCChanged(const Parameter *param)
 {
-  int hwSourceID = getHWSourceID (param);
+  int hwSourceID = getHWSourceID(param);
 
-  if (m_hwParamID != hwSourceID)
+  if(m_hwParamID != hwSourceID)
   {
     m_hwParamID = hwSourceID;
-    m_hwChanged.disconnect ();
+    m_hwChanged.disconnect();
 
-    if (hwSourceID > 0)
+    if(hwSourceID > 0)
     {
-      if (auto hwParam = Application::get ().getPresetManager ()->getEditBuffer ()->findParameterByID (hwSourceID))
+      if(auto hwParam = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(hwSourceID))
       {
-        m_hwChanged = hwParam->onParameterChanged (sigc::mem_fun (this, &SelectedMacroControlsHWSourceValue::updateText));
+        m_hwChanged = hwParam->onParameterChanged(sigc::mem_fun(this, &SelectedMacroControlsHWSourceValue::updateText));
       }
     }
   }
 }
 
-void SelectedMacroControlsHWSourceValue::updateText (const Parameter *param)
+void SelectedMacroControlsHWSourceValue::updateText(const Parameter *param)
 {
   auto str = param->getDisplayString();
 
-  if (isHighlight() && Application::get ().getHWUI()->isModifierSet(ButtonModifier::FINE))
+  if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
   {
-    setText (str + " F", 2);
+    setText(str + " F", 2);
   }
   else
   {
-    setText (str);
+    setText(str);
   }
 }
 
-void SelectedMacroControlsHWSourceValue::setSuffixFontColor (FrameBuffer &fb) const
+void SelectedMacroControlsHWSourceValue::setSuffixFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C103);
+  fb.setColor(FrameBuffer::Colors::C103);
 }
 
-void SelectedMacroControlsHWSourceValue::onModifiersChanged ()
+void SelectedMacroControlsHWSourceValue::onModifiersChanged()
 {
-  updateText (Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
+  updateText(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
 }
-

@@ -15,47 +15,47 @@
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 
-BankInfoLayout::BankInfoLayout () :
-    super ()
+BankInfoLayout::BankInfoLayout()
+    : super()
 {
 }
 
-BankInfoLayout::~BankInfoLayout ()
+BankInfoLayout::~BankInfoLayout()
 {
 }
 
-void BankInfoLayout::addModuleCaption ()
+void BankInfoLayout::addModuleCaption()
 {
-  addControl (new BankInfoCaption (Rect (0, 0, 64, 13)));
+  addControl(new BankInfoCaption(Rect(0, 0, 64, 13)));
 }
 
-void BankInfoLayout::addHeadline ()
+void BankInfoLayout::addHeadline()
 {
-  addControl (new BankNameHeadlineLabel (Rect (64, 0, 128, 13)));
+  addControl(new BankNameHeadlineLabel(Rect(64, 0, 128, 13)));
 }
 
-void BankInfoLayout::addInfoLabel ()
+void BankInfoLayout::addInfoLabel()
 {
-  addControl (new InfoLabel (Rect (192, 0, 64, 13)));
+  addControl(new InfoLabel(Rect(192, 0, 64, 13)));
 }
 
-Scrollable * BankInfoLayout::createScrollableContent ()
+Scrollable* BankInfoLayout::createScrollableContent()
 {
-  return new BankInfoContent ();
+  return new BankInfoContent();
 }
 
-bool BankInfoLayout::onButton (Buttons i, bool down, ButtonModifiers modifiers)
+bool BankInfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if (i == Buttons::BUTTON_EDIT && down)
+  if(i == Buttons::BUTTON_EDIT && down)
   {
-    auto layout = new EditBankInfoLayout ();
-    Application::get ().getHWUI ()->getPanelUnit ().getEditPanel ().getBoled ().setOverlay (layout);
+    auto layout = new EditBankInfoLayout();
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
     return true;
   }
-  else if (i == Buttons::BUTTON_PRESET && down)
+  else if(i == Buttons::BUTTON_PRESET && down)
   {
     Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
   }
 
-  return super::onButton (i, down, modifiers);
+  return super::onButton(i, down, modifiers);
 }

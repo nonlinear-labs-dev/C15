@@ -18,13 +18,11 @@ void Layout::onInit()
 {
 }
 
-void Layout::copyFrom (Layout *other)
+void Layout::copyFrom(Layout *other)
 {
-
 }
 
 bool Layout::isInitialized() const
 {
   return m_initialized;
 }
-

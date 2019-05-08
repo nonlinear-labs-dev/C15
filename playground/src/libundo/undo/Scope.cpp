@@ -11,9 +11,9 @@
 namespace UNDO
 {
 
-  Scope::Scope(UpdateDocumentContributor *parent) :
-      ContentSection(parent),
-      m_undoActions(*this)
+  Scope::Scope(UpdateDocumentContributor *parent)
+      : ContentSection(parent)
+      , m_undoActions(*this)
   {
     tTransactionScopePtr rootScope = startTransaction("Root");
     m_root = rootScope->getTransaction();
@@ -99,7 +99,8 @@ namespace UNDO
     m_cuckooTransaction.reset();
   }
 
-  Scope::tTransactionScopePtr Scope::startContinuousTransaction(void *id, steady_clock::duration timeout, const Glib::ustring &name)
+  Scope::tTransactionScopePtr Scope::startContinuousTransaction(void *id, steady_clock::duration timeout,
+                                                                const Glib::ustring &name)
   {
     assert(m_undoPosition == NULL || m_undoPosition->isClosed());
 
@@ -302,19 +303,15 @@ namespace UNDO
   {
     if(knownRevision < getUpdateIDOfLastChange())
     {
-      writer.writeTag("undo", [&]()
-      {
-        if (getUndoTransaction() && canUndo())
-        writer.writeTextElement ("undo", StringTools::buildString (getUndoTransaction().get()));
+      writer.writeTag("undo", [&]() {
+        if(getUndoTransaction() && canUndo())
+          writer.writeTextElement("undo", StringTools::buildString(getUndoTransaction().get()));
         else
-        writer.writeTextElement ("undo", "0");
+          writer.writeTextElement("undo", "0");
 
-        writer.writeTextElement ("redo", StringTools::buildString (getRedoTransaction().get()));
+        writer.writeTextElement("redo", StringTools::buildString(getRedoTransaction().get()));
 
-        getRootTransaction()->recurse ([&] (const Transaction * p) mutable
-            {
-              p->writeDocument (writer, knownRevision);
-            });
+        getRootTransaction()->recurse([&](const Transaction *p) mutable { p->writeDocument(writer, knownRevision); });
       });
     }
   }

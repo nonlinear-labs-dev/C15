@@ -7,41 +7,41 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/Oleds.h>
 
-SelectedParamValueWithFrame::SelectedParamValueWithFrame (const Rect &rect) :
-    super (rect),
-    m_showParameterName(bind(&SelectedParamValueWithFrame::showName, this))
+SelectedParamValueWithFrame::SelectedParamValueWithFrame(const Rect &rect)
+    : super(rect)
+    , m_showParameterName(bind(&SelectedParamValueWithFrame::showName, this))
 {
 }
 
-SelectedParamValueWithFrame::~SelectedParamValueWithFrame ()
+SelectedParamValueWithFrame::~SelectedParamValueWithFrame()
 {
 }
 
-bool SelectedParamValueWithFrame::redraw (FrameBuffer &fb)
+bool SelectedParamValueWithFrame::redraw(FrameBuffer &fb)
 {
-  super::redraw (fb);
-  getPosition ().drawRounded (fb);
+  super::redraw(fb);
+  getPosition().drawRounded(fb);
   return true;
 }
 
-shared_ptr<Font> SelectedParamValueWithFrame::getFont () const
+shared_ptr<Font> SelectedParamValueWithFrame::getFont() const
 {
-  return Oleds::get ().getFont ("Emphase_8_Regular", getFontHeight ());
+  return Oleds::get().getFont("Emphase_8_Regular", getFontHeight());
 }
 
-int SelectedParamValueWithFrame::getFontHeight () const
+int SelectedParamValueWithFrame::getFontHeight() const
 {
   return 8;
 }
 
-void SelectedParamValueWithFrame::onParameterSelected (Parameter * parameter)
+void SelectedParamValueWithFrame::onParameterSelected(Parameter *parameter)
 {
   m_ignoreNextValueChange = true;
   super::onParameterSelected(parameter);
   showName();
 }
 
-void SelectedParamValueWithFrame::onParamValueChanged (const Parameter* param)
+void SelectedParamValueWithFrame::onParamValueChanged(const Parameter *param)
 {
   if(m_ignoreNextValueChange)
   {
@@ -64,12 +64,12 @@ void SelectedParamValueWithFrame::showName()
     setText(p->getShortName());
 }
 
-void SelectedParamValueWithFrame::setSuffixFontColor (FrameBuffer &fb) const
+void SelectedParamValueWithFrame::setSuffixFontColor(FrameBuffer &fb) const
 {
-  fb.setColor (FrameBuffer::Colors::C103);
+  fb.setColor(FrameBuffer::Colors::C103);
 }
 
-void SelectedParamValueWithFrame::onModifiersChanged (ButtonModifiers mods)
+void SelectedParamValueWithFrame::onModifiersChanged(ButtonModifiers mods)
 {
   if(m_ignoreNextModifierChange)
     m_ignoreNextModifierChange = false;

@@ -2,11 +2,11 @@
 
 #include "LinearScaleConverter.h"
 
-class LevelScaleConverter: public LinearScaleConverter
+class LevelScaleConverter : public LinearScaleConverter
 {
-    typedef LinearScaleConverter super;
+  typedef LinearScaleConverter super;
 
-  public:
-    LevelScaleConverter();
-    virtual ~LevelScaleConverter();
+ public:
+  LevelScaleConverter();
+  virtual ~LevelScaleConverter();
 };

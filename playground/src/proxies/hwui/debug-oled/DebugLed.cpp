@@ -1,43 +1,42 @@
 #include "DebugLed.h"
 
-DebugLed::DebugLed (const Rect &pos, int led) :
-    super (pos),
-    m_ledId (led),
-    m_onOrOff (false)
-{
-
-}
-
-DebugLed::~DebugLed ()
+DebugLed::DebugLed(const Rect &pos, int led)
+    : super(pos)
+    , m_ledId(led)
+    , m_onOrOff(false)
 {
 }
 
-void DebugLed::setLedState (bool onOrOff)
+DebugLed::~DebugLed()
 {
-  if (m_onOrOff != onOrOff)
+}
+
+void DebugLed::setLedState(bool onOrOff)
+{
+  if(m_onOrOff != onOrOff)
   {
     m_onOrOff = onOrOff;
-    setDirty ();
+    setDirty();
   }
 }
 
-int DebugLed::getId () const
+int DebugLed::getId() const
 {
   return m_ledId;
 }
 
-bool DebugLed::redraw (FrameBuffer &fb)
+bool DebugLed::redraw(FrameBuffer &fb)
 {
-  super::redraw (fb);
+  super::redraw(fb);
 
-  Rect r = getPosition ();
-  r.reduceByMargin (2);
+  Rect r = getPosition();
+  r.reduceByMargin(2);
 
   if(m_onOrOff)
-    fb.setColor (FrameBuffer::Colors::C255);
+    fb.setColor(FrameBuffer::Colors::C255);
   else
-    fb.setColor (FrameBuffer::Colors::C77);
+    fb.setColor(FrameBuffer::Colors::C77);
 
-  fb.fillRect (r.getLeft (), r.getTop (), r.getWidth (), r.getHeight ());
+  fb.fillRect(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
   return true;
 }

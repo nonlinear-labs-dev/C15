@@ -6,18 +6,18 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-SoftwareVersion::SoftwareVersion (DeviceInformation *parent) :
-    DeviceInformationItem (parent),
-    m_versionString (TOSTRING(LAST_COMMIT_TIME))
+SoftwareVersion::SoftwareVersion(DeviceInformation *parent)
+    : DeviceInformationItem(parent)
+    , m_versionString(TOSTRING(LAST_COMMIT_TIME))
 {
 }
 
-void SoftwareVersion::writeDocument (Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
+void SoftwareVersion::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
 {
-  writer.writeTextElement ("software-version", m_versionString);
+  writer.writeTextElement("software-version", m_versionString);
 }
 
-Glib::ustring SoftwareVersion::get () const
+Glib::ustring SoftwareVersion::get() const
 {
   return m_versionString;
 }

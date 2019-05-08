@@ -4,19 +4,19 @@
 #include <device-settings/EncoderAcceleration.h>
 #include <proxies/hwui/panel-unit/boled/setup/EncoderAccelerationView.h>
 
-EncoderAccelerationView::EncoderAccelerationView () :
-    base_type ("", Rect (0, 0, 0, 0))
+EncoderAccelerationView::EncoderAccelerationView()
+    : base_type("", Rect(0, 0, 0, 0))
 {
-  Application::get ().getSettings ()->getSetting<EncoderAcceleration> ()->onChange (mem_fun (this, &EncoderAccelerationView::onSettingChanged));
+  Application::get().getSettings()->getSetting<EncoderAcceleration>()->onChange(
+      mem_fun(this, &EncoderAccelerationView::onSettingChanged));
 }
 
-EncoderAccelerationView::~EncoderAccelerationView ()
+EncoderAccelerationView::~EncoderAccelerationView()
 {
 }
 
-void EncoderAccelerationView::onSettingChanged (const Setting *s)
+void EncoderAccelerationView::onSettingChanged(const Setting *s)
 {
-  auto v = dynamic_cast<const EncoderAcceleration*> (s);
-  setText (v->getDisplayString ());
+  auto v = dynamic_cast<const EncoderAcceleration *>(s);
+  setText(v->getDisplayString());
 }
-

@@ -2,5 +2,5 @@
 
 namespace DescriptiveLayouts
 {
-    void importControls(const std::string &fileName);
+  void importControls(const std::string &fileName);
 }

@@ -5,17 +5,15 @@
 #include "xml/Reader.h"
 #include "xml/Writer.h"
 
-
-LastLoadedPresetInfoSerializer::LastLoadedPresetInfoSerializer(LastLoadedPresetInfo &info) :
-Serializer(getTagName()), m_info(info)
+LastLoadedPresetInfoSerializer::LastLoadedPresetInfoSerializer(LastLoadedPresetInfo &info)
+    : Serializer(getTagName())
+    , m_info(info)
 {
-  
 }
 
 LastLoadedPresetInfoSerializer::~LastLoadedPresetInfoSerializer()
 {
 }
-
 
 Glib::ustring LastLoadedPresetInfoSerializer::getTagName()
 {
