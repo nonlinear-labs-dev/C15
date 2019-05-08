@@ -1,6 +1,5 @@
 #include "UndoScope.h"
 #include "xml/Writer.h"
-#include <presets/EditBufferSnapshotMaker.h>
 
 void UndoScope::onAddTransaction(UNDO::Transaction* transaction)
 {

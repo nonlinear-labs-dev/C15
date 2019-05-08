@@ -8,7 +8,6 @@
 #include <presets/Preset.h>
 #include <presets/Bank.h>
 #include "presets/PresetManager.h"
-#include "EditBufferSnapshotMaker.h"
 #include "proxies/lpc/LPCProxy.h"
 #include <proxies/hwui/HWUI.h>
 #include "parameters/ModulateableParameter.h"
