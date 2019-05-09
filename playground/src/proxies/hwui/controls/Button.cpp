@@ -2,12 +2,12 @@
 #include <proxies/hwui/FrameBuffer.h>
 
 Button::Button(const Glib::ustring &caption, int buttonID)
-    : super(caption, getButtonPos(buttonID))
+    : Button(caption, (Buttons) buttonID)
 {
 }
 
-Button::Button(const Glib::ustring& caption, Buttons button)
-    : Button(caption, (int)button)
+Button::Button(const Glib::ustring &caption, Buttons button)
+    : super(caption, getButtonPos(button))
 {
 }
 
@@ -64,20 +64,20 @@ bool Button::redraw(FrameBuffer &fb)
   return true;
 }
 
-Rect Button::getButtonPos(int n)
+Rect Button::getButtonPos(Buttons n)
 {
   switch(n)
   {
-    case BUTTON_A:
+    case Buttons::BUTTON_A:
       return Rect(3, 51, 58, 11);
 
-    case BUTTON_B:
+    case Buttons::BUTTON_B:
       return Rect(67, 51, 58, 11);
 
-    case BUTTON_C:
+    case Buttons::BUTTON_C:
       return Rect(131, 51, 58, 11);
 
-    case BUTTON_D:
+    case Buttons::BUTTON_D:
       return Rect(195, 51, 58, 11);
   }
   return Rect(3, 51, 58, 11);

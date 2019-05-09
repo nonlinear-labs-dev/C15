@@ -12,7 +12,7 @@ void BaseUnitPresetsMode::setup()
 {
   super::setup();
 
-  setupButtonConnection(BUTTON_MINUS, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_MINUS, [=](auto, auto, auto state) {
     if(state)
       if(auto bank = Application::get().getPresetManager()->getSelectedBank())
         bank->selectPreviousPreset();
@@ -20,7 +20,7 @@ void BaseUnitPresetsMode::setup()
     return true;
   });
 
-  setupButtonConnection(BUTTON_PLUS, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_PLUS, [=](auto, auto, auto state) {
     if(state)
       if(auto bank = Application::get().getPresetManager()->getSelectedBank())
         bank->selectNextPreset();

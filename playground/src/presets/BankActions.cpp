@@ -99,8 +99,9 @@ BankActions::BankActions(PresetManager &presetManager)
         srcBank->movePresetBetweenBanks(transaction, toMove, tgtBank, anchor);
         tgtBank->selectPreset(transaction, presetToMoveUuid);
         m_presetManager.selectBank(transaction, tgtBank->getUuid());
-	}
-    });
+      }
+    }
+  });
 
   addAction("move-preset-below", [&](std::shared_ptr<NetworkRequest> request) {
     auto presetToMoveUuid = request->get("presetToMove");

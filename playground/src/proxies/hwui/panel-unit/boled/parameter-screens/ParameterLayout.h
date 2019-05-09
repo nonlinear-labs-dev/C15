@@ -66,7 +66,7 @@ class ParameterEditLayout2 : public virtual ParameterLayout2
 
  protected:
   void init() override;
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual ButtonMenu *createMenu(const Rect &rect) = 0;
 
   ButtonMenu *getMenu();
@@ -84,7 +84,7 @@ class ParameterRecallLayout2 : public virtual ParameterLayout2
 
  protected:
   void init() override;
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   bool onRotary(int inc, ButtonModifiers modifiers) override;
   ButtonMenu *createMenu(const Rect &rect);
 

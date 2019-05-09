@@ -16,14 +16,14 @@ ConditionRegistry& ConditionRegistry::get()
   return theRegistry;
 }
 
-std::shared_ptr<PresetManager> getPresetManager()
+PresetManager* getPresetManager()
 {
   return Application::get().getPresetManager();
 }
 
 Parameter* getSelectedParam()
 {
-  return getPresetManager()->getEditBuffer()->getSelectedParameter();
+  return getPresetManager()->getEditBuffer()->getSelected();
 }
 
 ConditionRegistry::ConditionRegistry()
@@ -39,7 +39,7 @@ ConditionRegistry::ConditionRegistry()
     auto modParam = dynamic_cast<ModulateableParameter*>(getSelectedParam());
     if(modParam != nullptr)
     {
-      return ModulateableParameter::ModulationSource::NONE == modParam->getModulationSource();
+      return ModulationSource::NONE == modParam->getModulationSource();
     }
     return false;
   };

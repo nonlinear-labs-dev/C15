@@ -26,7 +26,7 @@ class PanelUnitParameterEditMode : public UsageMode, public sigc::trackable
 
   void setup() override;
   Buttons findButtonForParameter(Parameter *param) const;
-  list<int> getButtonAssignments(Buttons button) const;
+  std::list<int> getButtonAssignments(Buttons button) const;
   virtual void setupFocusAndMode(FocusAndMode focusAndMode) override;
 
   static const int NUM_LEDS = 96;

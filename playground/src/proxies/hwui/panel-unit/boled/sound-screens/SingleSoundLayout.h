@@ -20,6 +20,8 @@ class SingleSoundLayout : public DFBLayout
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  private:
+  void toggleEditMenu(bool);
+
   enum class Column
   {
     None,

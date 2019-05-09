@@ -2,7 +2,7 @@
 
 #include <proxies/hwui/panel-unit/boled/parameter-screens/InfoLayout.h>
 
-class PresetBank;
+class Bank;
 
 class PresetInfoLayout : public InfoLayout
 {

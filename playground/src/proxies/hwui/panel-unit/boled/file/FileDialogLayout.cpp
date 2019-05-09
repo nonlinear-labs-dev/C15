@@ -81,7 +81,7 @@ bool FileDialogLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
         return true;
     }
   }
-  return Application::get().getHWUI()->getPanelUnit().getUsageMode()->onButtonPressed((int)i, modifiers, down);
+  return Application::get().getHWUI()->getPanelUnit().getUsageMode()->onButtonPressed(i, modifiers, down);
 }
 
 void FileDialogLayout::overlayInfo()

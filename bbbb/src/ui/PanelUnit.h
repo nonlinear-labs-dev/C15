@@ -7,7 +7,6 @@
 
 class PanelUnit : public Gtk::HBox
 {
-<<<<<<< HEAD
  public:
   PanelUnit();
   virtual ~PanelUnit();
@@ -16,16 +15,6 @@ class PanelUnit : public Gtk::HBox
 
  private:
   ButtonPanel* m_panels[4];
-=======
-  public:
-    PanelUnit();
-    virtual ~PanelUnit();
-
-    void setLed(int idx, bool state);
-
-  private:
-    std::array<ButtonPanel, 4> m_panels;
->>>>>>> layouts-reloaded
 };
 
 #endif

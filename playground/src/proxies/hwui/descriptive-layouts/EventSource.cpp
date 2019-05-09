@@ -192,9 +192,9 @@ namespace DescriptiveLayouts
     {
       if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
       {
-        auto lower = std::min(modP->getModulationRange().first, modP->getModulationRange().second);
+        auto lower = std::min(modP->getModulationRange(true).first, modP->getModulationRange(true).second);
         lower = std::max(0., lower);
-        auto upper = std::max(modP->getModulationRange().first, modP->getModulationRange().second);
+        auto upper = std::max(modP->getModulationRange(true).first, modP->getModulationRange(true).second);
         upper = std::min(1., upper);
         setValue(std::make_pair(lower, upper));
       }
@@ -263,7 +263,7 @@ namespace DescriptiveLayouts
 
     void onModifierChanged(::ButtonModifiers mods)
     {
-      onParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
+      onParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
     }
 
     void onParameterChanged(const Parameter *p)
@@ -303,7 +303,7 @@ namespace DescriptiveLayouts
 
     void onLockChanged()
     {
-      setValue(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()->isLocked());
+      setValue(Application::get().getPresetManager()->getEditBuffer()->getSelected()->isLocked());
     }
   };
 
@@ -326,10 +326,10 @@ namespace DescriptiveLayouts
 
     void onChange()
     {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(
-             Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()))
+      if(auto modParam
+         = dynamic_cast<ModulateableParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
       {
-        setValue(modParam->getModulationSource() != ModulateableParameter::NONE);
+        setValue(modParam->getModulationSource() != ModulationSource::NONE);
         return;
       }
       setValue(false);
@@ -377,9 +377,9 @@ namespace DescriptiveLayouts
     virtual void onChange() override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelectedParameter()))
+      if(const auto *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
       {
-        setValue(DisplayString(modP->getModAmountAsDisplayValue(), 0));
+        setValue(DisplayString(modP->stringizeModulationAmount(), 0));
       }
     }
   };
@@ -389,7 +389,7 @@ namespace DescriptiveLayouts
     virtual void onChange() override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelectedParameter()))
+      if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
       {
         if(auto mc = modP->getMacroControl())
         {

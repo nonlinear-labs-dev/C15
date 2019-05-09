@@ -54,6 +54,11 @@ void TextEditUsageMode::setup()
   }
 }
 
+ustring TextEditUsageMode::getKeyLabel(int button) const
+{
+  return getKeyLabel((Buttons) button);
+}
+
 ustring TextEditUsageMode::getKeyLabel(Buttons buttonID) const
 {
   try

@@ -182,6 +182,12 @@ void ModulateableParameter::undoableSetMCAmountToDefault()
   }
 }
 
+void ModulateableParameter::undoableIncrementMCSelect(int inc)
+{
+  auto scope = getUndoScope().startTransaction("Set MC Select for " + getShortName());
+  undoableIncrementMCSelect(scope->getTransaction(), inc);
+}
+
 void ModulateableParameter::undoableIncrementMCSelect(UNDO::Transaction *transaction, int inc)
 {
   auto src = (int) getModulationSource();
@@ -195,6 +201,13 @@ void ModulateableParameter::undoableIncrementMCSelect(UNDO::Transaction *transac
     src -= numChoices;
 
   setModulationSource(transaction, (ModulationSource) src);
+}
+
+void ModulateableParameter::undoableIncrementMCAmount(int inc, ButtonModifiers modifiers)
+{
+  auto scope = getUndoScope().startContinuousTransaction(getAmountCookie(), "Set MC Amount for '%0'",
+                                                         getGroupAndParameterName());
+  undoableIncrementMCAmount(scope->getTransaction(), inc, modifiers);
 }
 
 void ModulateableParameter::undoableIncrementMCAmount(UNDO::Transaction *transaction, int inc,

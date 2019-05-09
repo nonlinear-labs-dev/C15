@@ -11,5 +11,5 @@ class ModulationBoundControl : public ControlWithChildren, public RotaryEncoder:
  public:
   using ControlWithChildren::ControlWithChildren;
 
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };

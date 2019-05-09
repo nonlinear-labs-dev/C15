@@ -68,7 +68,6 @@ void ExportBackupEditor::installState(State s)
   }
 }
 
-<<<<<<< HEAD
 void ExportBackupEditor::writeBackupToStream(std::shared_ptr<OutStream> stream)
 {
   XmlWriter writer(std::move(stream));

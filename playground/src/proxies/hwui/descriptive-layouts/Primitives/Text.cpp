@@ -12,7 +12,7 @@ namespace DescriptiveLayouts
   {
     if(!m_primitive.defaultText.empty())
     {
-      setText(m_primitive.defaultText, 0);
+      setText({ m_primitive.defaultText });
     }
   }
 
@@ -65,7 +65,7 @@ namespace DescriptiveLayouts
       case PrimitiveProperty::Text:
       {
         DisplayString a = std::any_cast<DisplayString>(value);
-        setText(a.first, a.second);
+        setText(StringAndSuffix(a.first, a.second));
         break;
       }
       case PrimitiveProperty::Visibility:

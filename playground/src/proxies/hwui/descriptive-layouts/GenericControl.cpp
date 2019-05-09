@@ -48,7 +48,7 @@ namespace DescriptiveLayouts
 
     for(auto &p : getControls())
     {
-      if(auto a = dynamic_pointer_cast<Styleable>(p))
+      if(auto a = std::dynamic_pointer_cast<Styleable>(p))
       {
         a->style(layout, m_prototype.controlClass, m_prototype.controlInstance);
       }
@@ -69,13 +69,13 @@ namespace DescriptiveLayouts
   {
     for(auto c : getControls())
     {
-      if(auto a = dynamic_pointer_cast<Styleable>(c))
+      if(auto a = std::dynamic_pointer_cast<Styleable>(c))
       {
         const auto &primitive = a->getPrimitive();
 
         if(primitive.primitiveInstance == connection.targetInstance)
         {
-          if(auto p = dynamic_pointer_cast<PropertyOwner>(c))
+          if(auto p = std::dynamic_pointer_cast<PropertyOwner>(c))
           {
             p->setProperty(connection.targetProperty, v);
           }

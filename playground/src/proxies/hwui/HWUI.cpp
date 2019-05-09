@@ -280,7 +280,7 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       {
         try
         {
-          auto i = (Buttons)std::stoi(line);
+          auto i = (Buttons) std::stoi(line);
           if(i < Buttons::NUM_BUTTONS)
           {
             if(line.back() == 'u')
@@ -575,6 +575,7 @@ FocusAndMode HWUI::restrictFocusAndMode(FocusAndMode in) const
 {
   bool isCurrentPresetManager = (m_focusAndMode.focus == UIFocus::Banks) || (m_focusAndMode.focus == UIFocus::Presets);
   bool isDesiredParameter = (in.focus == UIFocus::Parameters);
+  bool isDesiredPresetManager = (in.focus == UIFocus::Banks) || (in.focus == UIFocus::Presets);
 
   bool switchFromPresetManagerToParameter = (isCurrentPresetManager && isDesiredParameter);
 

@@ -20,7 +20,7 @@ BaseUnitPresetsAndBanksMode::BaseUnitPresetsAndBanksMode()
 
 void BaseUnitPresetsAndBanksMode::setup()
 {
-  setupButtonConnection(BUTTON_FUNCTION, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_FUNCTION, [=](auto, auto, auto state) {
     if(state)
       onFuncButtonDown();
 
@@ -28,7 +28,7 @@ void BaseUnitPresetsAndBanksMode::setup()
     return true;
   });
 
-  setupButtonConnection(BUTTON_MODE, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_MODE, [=](auto, auto, auto state) {
     m_modeButtonHandler.onButtonEvent(state);
     return true;
   });

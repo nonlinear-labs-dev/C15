@@ -78,7 +78,8 @@ namespace DescriptiveLayouts
     auto it = j.find("Events");
     if(it != j.end())
     {
-      auto connections = StringTools::splitStringOnAnyDelimiter(*it, ',');
+      std::string text = *it;
+      auto connections = StringTools::splitStringOnAnyDelimiter(text, ',');
       for(auto& connection : connections)
       {
 
@@ -128,7 +129,7 @@ namespace DescriptiveLayouts
     tConditionList ret;
     for(json::iterator condition = j.begin(); condition != j.end(); ++condition)
     {
-      auto conditonStrings = StringTools::splitStringOnAnyDelimiter(condition.value(), ',');
+      auto conditonStrings = StringTools::splitStringOnAnyDelimiter(std::string(condition.value()), ',');
       for(auto conditionString : conditonStrings)
       {
         ret.push_back(ConditionRegistry::get().getLambda(conditionString));

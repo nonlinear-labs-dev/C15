@@ -26,6 +26,7 @@ class ButtonMenu : public ControlWithChildren
   int sanitizeIndex(int index);
 
   void doAction();
+  const size_t getItemCount() const;
 
  protected:
   void clearActions();

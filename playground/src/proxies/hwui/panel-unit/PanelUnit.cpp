@@ -29,7 +29,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Selected, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto p = editBuffer->getSelectedParameter();
+    auto p = editBuffer->getSelected();
 
     if(auto mrp = dynamic_cast<ModulationRoutingParameter *>(p))
     {
@@ -43,7 +43,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Assign, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto selParam = editBuffer->getSelectedParameter();
+    auto selParam = editBuffer->getSelected();
     auto mc = MacroControlsGroup::paramIDToModSrc(selParam->getID());
 
     auto targetId = m_macroControlAssignmentStateMachine.getCurrentModulateableParameter();
@@ -82,7 +82,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::SelectSource, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto p = editBuffer->getSelectedParameter();
+    auto p = editBuffer->getSelected();
     auto currentSource = choseHWBestSourceForMC(p->getID());
     editBuffer->undoableSelectParameter(currentSource);
     m_macroControlAssignmentStateMachine.setState(MacroControlAssignmentStates::Initial);

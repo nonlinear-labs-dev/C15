@@ -68,3 +68,9 @@ Oleds::tFont Oleds::getFont(const Glib::ustring &name, int height)
   m_fonts[key] = font;
   return font;
 }
+
+bool Oleds::regularRedraw()
+{
+  syncRedraw();
+  return true;
+}

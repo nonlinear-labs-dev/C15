@@ -12,7 +12,7 @@ class ButtonParameterMapping
   virtual ~ButtonParameterMapping();
 
   void forEachButton(std::function<void(Buttons, const std::list<int> &)> cb);
-  int findButton(int param) const;
+  Buttons findButton(int param) const;
   std::list<int> findParameters(Buttons button) const;
 
  private:

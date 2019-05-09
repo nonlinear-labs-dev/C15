@@ -21,7 +21,7 @@ void BaseUnitPlayMode::setup()
   setupBaseUnitMinusButton();
   setupBaseUnitPlusButton();
 
-  setupButtonConnection(BUTTON_FUNCTION, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_FUNCTION, [=](auto, auto, auto state) {
     if(state)
       toggleTouchBehaviour();
 
@@ -43,7 +43,7 @@ void BaseUnitPlayMode::toggleTouchBehaviour()
 
 void BaseUnitPlayMode::setupBaseUnitUIModeButton()
 {
-  setupButtonConnection(BUTTON_MODE, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_MODE, [=](auto, auto, auto state) {
     m_modeButtonHandler.onButtonEvent(state);
     return true;
   });
@@ -66,7 +66,7 @@ void BaseUnitPlayMode::modeButtonLongPress()
 
 void BaseUnitPlayMode::setupBaseUnitMinusButton()
 {
-  setupButtonConnection(BUTTON_MINUS, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_MINUS, [=](auto, auto, auto state) {
     if(state)
       m_noteShiftState.traverse(NOTE_SHIFT_EVENT_MINUS_PRESSED);
     else
@@ -78,7 +78,7 @@ void BaseUnitPlayMode::setupBaseUnitMinusButton()
 
 void BaseUnitPlayMode::setupBaseUnitPlusButton()
 {
-  setupButtonConnection(BUTTON_PLUS, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_PLUS, [=](auto, auto, auto state) {
     if(state)
       m_noteShiftState.traverse(NOTE_SHIFT_EVENT_PLUS_PRESSED);
     else

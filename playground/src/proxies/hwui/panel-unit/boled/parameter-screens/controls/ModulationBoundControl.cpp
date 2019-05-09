@@ -5,11 +5,11 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 
-bool ModulationBoundControl::onButton(int i, bool down, ButtonModifiers)
+bool ModulationBoundControl::onButton(Buttons i, bool down, ButtonModifiers)
 {
   switch(i)
   {
-    case BUTTON_DEFAULT:
+    case Buttons::BUTTON_DEFAULT:
       if(down)
       {
         if(auto modulatedParam = dynamic_cast<ModulateableParameter *>(

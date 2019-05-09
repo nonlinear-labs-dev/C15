@@ -30,12 +30,12 @@ namespace DescriptiveLayouts
     auto hwui = Application::get().getHWUI();
 
     registerEvent(EventSinks::IncParam, [eb, hwui]() {
-      if(auto p = eb->getSelectedParameter())
+      if(auto p = eb->getSelected())
         p->getValue().inc(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
     });
 
     registerEvent(EventSinks::IncMCPos, [eb, hwui]() {
-      if(auto mc = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter())->getMacroControl())
+      if(auto mc = dynamic_cast<ModulateableParameter*>(eb->getSelected())->getMacroControl())
       {
         UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction("Big Bang");
         auto trans = rootScope->getTransaction();
@@ -44,7 +44,7 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::DecParam, [eb, hwui]() {
-      if(auto p = eb->getSelectedParameter())
+      if(auto p = eb->getSelected())
         p->getValue().dec(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
     });
 
@@ -53,7 +53,7 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::SwitchToSelectMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Select); });
 
     registerEvent(EventSinks::SwitchToMCSelectDetail, [hwui, eb]() {
-      if(dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()) != nullptr)
+      if(dynamic_cast<ModulateableParameter*>(eb->getSelected()) != nullptr)
       {
         hwui->setUiModeDetail(UIDetail::MCSelect);
       }
@@ -62,9 +62,9 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::SwitchToInitDetail, [hwui]() { hwui->setUiModeDetail(UIDetail::Init); });
 
     registerEvent(EventSinks::SwitchToMCModRangeDetail, [hwui, eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelected()))
       {
-        if(modParam->getModulationSource() != ModulateableParameter::ModulationSource::NONE)
+        if(modParam->getModulationSource() != ModulationSource::NONE)
         {
           hwui->setUiModeDetail(UIDetail::MCModRange);
         }
@@ -72,36 +72,36 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::IncMCSel, [eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelected()))
         modParam->undoableIncrementMCSelect(1);
     });
 
     registerEvent(EventSinks::DecMCSel, [eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelected()))
         modParam->undoableIncrementMCSelect(-1);
     });
 
     registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelected()))
       {
-        if(modParam->getModulationSource() != ModulateableParameter::ModulationSource::NONE)
+        if(modParam->getModulationSource() != ModulationSource::NONE)
         {
           hwui->setUiModeDetail(UIDetail::MCAmount);
         }
       }
     });
 
-    registerEvent(EventSinks::DecMCAmt, [hwui, eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+    registerEvent(EventSinks::DecMCAmt, [eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelected()))
       {
-        modParam->undoableIncrementMCAmount(-1);
+        modParam->undoableIncrementMCAmount(-1, {});
       }
     });
 
-    registerEvent(EventSinks::IncMCAmt, [hwui, eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelectedParameter()))
+    registerEvent(EventSinks::IncMCAmt, [eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter*>(eb->getSelected()))
       {
-        modParam->undoableIncrementMCAmount(1);
+        modParam->undoableIncrementMCAmount(1, {});
       }
     });
   }

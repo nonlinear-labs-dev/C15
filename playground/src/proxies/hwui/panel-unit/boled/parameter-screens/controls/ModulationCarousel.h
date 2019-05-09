@@ -2,6 +2,7 @@
 
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/Carousel.h>
 #include <proxies/hwui/panel-unit/RotaryEncoder.h>
+#include <proxies/hwui/buttons.h>
 
 class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
 {
@@ -20,7 +21,7 @@ class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
   ModulationCarousel(Mode mode, const Rect &pos);
 
   bool onRotary(int inc, ButtonModifiers modifiers) override;
-  bool onButton(int i, bool down, ButtonModifiers modifiers);
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers);
 
   void setup(Parameter *selectedParameter) override;
   void turn() override;

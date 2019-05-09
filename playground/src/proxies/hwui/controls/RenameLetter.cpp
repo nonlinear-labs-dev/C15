@@ -1,7 +1,7 @@
 #include "RenameLetter.h"
 #include <proxies/hwui/TextEditUsageMode.h>
 
-RenameLetter::RenameLetter(std::shared_ptr<TextEditUsageMode> mode, int buttonID, const Rect &pos)
+RenameLetter::RenameLetter(std::shared_ptr<TextEditUsageMode> mode, Buttons buttonID, const Rect &pos)
     : super(pos)
     , m_mode(mode)
     , m_buttonID(buttonID)
@@ -35,11 +35,12 @@ bool RenameLetter::highlightLetter() const
     return true;
 
   if(m_mode->getLayout() == TextEditUsageMode::TextEditUsageMode::Layout::Symbol
-     && (m_buttonID == 43 || m_buttonID == 47))
+     && (m_buttonID == Buttons::BUTTON_43 || m_buttonID == Buttons::BUTTON_47))
     return true;
 
   if(m_mode->getLayout() == TextEditUsageMode::TextEditUsageMode::Layout::SymbolShift
-     && (m_buttonID == 3 || m_buttonID == 7 || m_buttonID == 43 || m_buttonID == 47))
+     && (m_buttonID == Buttons::BUTTON_3 || m_buttonID == Buttons::BUTTON_7 || m_buttonID == Buttons::BUTTON_43
+         || m_buttonID == Buttons::BUTTON_47))
     return true;
 
   return false;

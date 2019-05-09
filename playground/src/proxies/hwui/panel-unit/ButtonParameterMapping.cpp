@@ -116,7 +116,7 @@ ButtonParameterMapping::~ButtonParameterMapping()
 {
 }
 
-void ButtonParameterMapping::addMapping(Buttons buttonID, initializer_list<int> parameterIDs)
+void ButtonParameterMapping::addMapping(Buttons buttonID, std::initializer_list<int> parameterIDs)
 {
   for(int paramID : parameterIDs)
   {

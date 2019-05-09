@@ -380,7 +380,7 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
         if(mod->isMacroControlAssignedAndChanged())
         {
           m_modeOverlay->addControl(new RecallMCPositionLabel(Rect(0, BUTTON_VALUE_Y_POSITION, 64, 12)));
-          m_modeOverlay->addControl(new RecallButton("Recall", BUTTON_A));
+          m_modeOverlay->addControl(new RecallButton("Recall", Buttons::BUTTON_A));
         }
         else
         {
@@ -389,7 +389,7 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
         if(mod->isModSourceChanged())
         {
           m_modeOverlay->addControl(new RecallModulationSourceLabel(Rect(64, BUTTON_VALUE_Y_POSITION, 64, 12)));
-          m_modeOverlay->addControl(new RecallButton("Recall", BUTTON_B));
+          m_modeOverlay->addControl(new RecallButton("Recall", Buttons::BUTTON_B));
         }
         else
         {
@@ -398,7 +398,7 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
         if(mod->isModAmountChanged())
         {
           m_modeOverlay->addControl(new RecallMCAmountLabel(Rect(131, BUTTON_VALUE_Y_POSITION, 58, 12)));
-          m_modeOverlay->addControl(new RecallButton("Recall", BUTTON_C));
+          m_modeOverlay->addControl(new RecallButton("Recall", Buttons::BUTTON_C));
         }
         else
         {
@@ -498,21 +498,21 @@ bool ModulateableParameterSelectLayout2::handleMCRecall(Buttons i, bool down)
     {
       switch(i)
       {
-          case Buttons::BUTTON_A:
+        case Buttons::BUTTON_A:
           if(modP->isMacroControlAssignedAndChanged())
           {
             modP->undoableRecallMCPos();
             return true;
           }
           break;
-          case Buttons::BUTTON_B:
+        case Buttons::BUTTON_B:
           if(modP->isModSourceChanged())
           {
             modP->undoableRecallMCSource();
             return true;
           }
           break;
-          case Buttons::BUTTON_C:
+        case Buttons::BUTTON_C:
           if(modP->isModAmountChanged())
           {
             modP->undoableRecallMCAmount();

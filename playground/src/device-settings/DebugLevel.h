@@ -109,6 +109,13 @@ class DebugLevel : public EnumSetting<DebugLevels>
   const std::vector<Glib::ustring>& enumToString() const override;
   const std::vector<Glib::ustring>& enumToDisplayString() const override;
 
+  template <typename... tArgs> static std::string concat(tArgs&... args)
+  {
+    std::stringstream str;
+    (void) std::initializer_list<bool>{ (str << args << " ", false)... };
+    return str.str();
+  }
+
   template <typename... tArgs> static void printTrace(DebugLevels level, tArgs&... args)
   {
     std::stringstream str;

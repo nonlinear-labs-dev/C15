@@ -19,7 +19,7 @@ class Button : public LabelRegular8
   bool redraw(FrameBuffer &fb) override;
   void blind(bool b);
 
-  static Rect getButtonPos(int n);
+  static Rect getButtonPos(Buttons n);
 
  protected:
   void setFontColor(FrameBuffer &fb) const override;

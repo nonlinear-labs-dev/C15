@@ -92,7 +92,7 @@ void LayoutFolderMonitor::bruteForce()
   catch(std::exception& e)
   {
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(
-        new DebugLayout("Uncaught Exception of Type: "s + e.what()));
+        new DebugLayout(std::string("Uncaught Exception of Type: ") + e.what()));
   }
   catch(...)
   {

@@ -66,7 +66,7 @@ bool ModulationCarousel::onRotary(int inc, ButtonModifiers modifiers)
   return false;
 }
 
-bool ModulationCarousel::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ModulationCarousel::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   for(auto &c : getControls())
   {

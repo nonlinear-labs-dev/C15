@@ -1,8 +1,8 @@
 #pragma once
 
+#include <proxies/hwui/buttons.h>
 #include "Carousel.h"
 
-class Buttons;
 class Application;
 class Parameter;
 class PanelUnitParameterEditMode;

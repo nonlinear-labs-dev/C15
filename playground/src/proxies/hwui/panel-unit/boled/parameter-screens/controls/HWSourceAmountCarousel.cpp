@@ -25,7 +25,7 @@ void HWSourceAmountCarousel::turn()
 {
   if(auto p
      = dynamic_cast<MacroControlParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
-    p->toggleUiSelectedHardwareSource();
+    p->toggleUiSelectedHardwareSource(1);
 }
 
 void HWSourceAmountCarousel::antiTurn()
@@ -49,7 +49,7 @@ void HWSourceAmountCarousel::setup(Parameter *newOne)
   if(auto p = dynamic_cast<MacroControlParameter *>(newOne))
   {
     if(p->getUiSelectedHardwareSource() == 0)
-      p->toggleUiSelectedHardwareSource();
+      p->toggleUiSelectedHardwareSource(1);
 
     auto group = Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID("MCM");
     auto csGroup = dynamic_cast<MacroControlMappingGroup *>(group);

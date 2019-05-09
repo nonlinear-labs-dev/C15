@@ -45,7 +45,7 @@ void RibbonRelativeFactorSettingEditor::onSettingChanged(const Setting *s)
     setText(p->getDisplayString());
 }
 
-bool RibbonRelativeFactorSettingEditor::onButton(int i, bool down, ButtonModifiers modifiers)
+bool RibbonRelativeFactorSettingEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }

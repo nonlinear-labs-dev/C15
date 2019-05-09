@@ -56,9 +56,9 @@ Parameter *ParameterLayout2::getCurrentEditParameter() const
   return getCurrentParameter();
 }
 
-bool ParameterLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(i == BUTTON_SHIFT)
+  if(i == Buttons::BUTTON_SHIFT)
   {
     if(down)
     {
@@ -71,19 +71,19 @@ bool ParameterLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
   {
     switch(i)
     {
-      case BUTTON_PRESET:
+      case Buttons::BUTTON_PRESET:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
         return true;
 
-      case BUTTON_STORE:
+      case Buttons::BUTTON_STORE:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Store));
         return true;
 
-      case BUTTON_INFO:
+      case Buttons::BUTTON_INFO:
         Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Info);
         return true;
 
-      case BUTTON_DEFAULT:
+      case Buttons::BUTTON_DEFAULT:
         setDefault();
         return true;
 
@@ -152,13 +152,13 @@ Carousel *ParameterSelectLayout2::getCarousel()
   return m_carousel;
 }
 
-bool ParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
     switch(i)
     {
-      case BUTTON_D:
+      case Buttons::BUTTON_D:
         if(m_carousel)
         {
           if(modifiers[SHIFT] == 1)
@@ -173,7 +173,7 @@ bool ParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifier
 
         return true;
 
-      case BUTTON_EDIT:
+      case Buttons::BUTTON_EDIT:
         Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
         return true;
     }
@@ -205,13 +205,13 @@ ButtonMenu *ParameterEditLayout2::getMenu()
   return m_menu;
 }
 
-bool ParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
     if(m_menu)
     {
-      if(BUTTON_D == i)
+      if(Buttons::BUTTON_D == i)
       {
         if(modifiers[SHIFT] == 1)
           m_menu->antiToggle();
@@ -219,14 +219,14 @@ bool ParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
           m_menu->toggle();
         return true;
       }
-      if(BUTTON_ENTER == i)
+      if(Buttons::BUTTON_ENTER == i)
       {
         m_menu->doAction();
         return true;
       }
     }
 
-    if(BUTTON_EDIT == i)
+    if(Buttons::BUTTON_EDIT == i)
     {
       Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Select);
       return true;
@@ -242,10 +242,10 @@ ParameterRecallLayout2::ParameterRecallLayout2()
   Application::get().getSettings()->getSetting<ForceHighlightChangedParametersSetting>()->set(
       BooleanSetting::tEnum::BOOLEAN_SETTING_TRUE);
 
-  m_buttonA = addControl(new Button("", BUTTON_A));
-  m_buttonB = addControl(new Button("", BUTTON_B));
-  m_buttonC = addControl(new Button("", BUTTON_C));
-  m_buttonD = addControl(new Button("", BUTTON_D));
+  m_buttonA = addControl(new Button("", Buttons::BUTTON_A));
+  m_buttonB = addControl(new Button("", Buttons::BUTTON_B));
+  m_buttonC = addControl(new Button("", Buttons::BUTTON_C));
+  m_buttonD = addControl(new Button("", Buttons::BUTTON_D));
 
   if(auto p = getCurrentParameter())
   {
@@ -286,24 +286,24 @@ void ParameterRecallLayout2::init()
 {
 }
 
-bool ParameterRecallLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ParameterRecallLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(down && m_paramLikeInPreset && i == BUTTON_C)
+  if(down && m_paramLikeInPreset && i == Buttons::BUTTON_C)
     undoRecall();
-  else if(down && !m_paramLikeInPreset && i == BUTTON_B)
+  else if(down && !m_paramLikeInPreset && i == Buttons::BUTTON_B)
     doRecall();
 
-  if(i == BUTTON_C || i == BUTTON_B)
+  if(i == Buttons::BUTTON_C || i == Buttons::BUTTON_B)
     return true;
 
-  if(i == BUTTON_INC || i == BUTTON_DEC)
+  if(i == Buttons::BUTTON_INC || i == Buttons::BUTTON_DEC)
   {
     auto ret = super::onButton(i, down, modifiers);
     getOLEDProxy().resetOverlay();
     return ret;
   }
 
-  if(i == BUTTON_PRESET)
+  if(i == Buttons::BUTTON_PRESET)
   {
     if(down)
       Application::get().getHWUI()->setFocusAndMode(FocusAndMode{ UIFocus::Presets, UIMode::Select });

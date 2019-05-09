@@ -19,7 +19,7 @@ SelectedParameterValue::~SelectedParameterValue()
 
 void SelectedParameterValue::onModifiersChanged(ButtonModifiers mods)
 {
-  onParamValueChanged(Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter());
+  onParamValueChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
 }
 
 void SelectedParameterValue::onParameterSelected(Parameter *parameter)
@@ -38,7 +38,7 @@ void SelectedParameterValue::onParamValueChanged(const Parameter *param)
 
 bool SelectedParameterValue::redraw(FrameBuffer &fb)
 {
-  auto amount = Application::get().getPresetManager()->getEditBuffer()->getSelectedParameter()->getDisplayString();
+  auto amount = Application::get().getPresetManager()->getEditBuffer()->getSelected()->getDisplayString();
 
   if(Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
   {

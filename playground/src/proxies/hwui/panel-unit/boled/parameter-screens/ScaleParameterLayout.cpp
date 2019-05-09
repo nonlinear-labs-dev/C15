@@ -21,9 +21,9 @@ void ScaleParameterSelectLayout::init()
 
 void ScaleParameterSelectLayout::addButtons()
 {
-  m_resetButton = addControl(new Button("", BUTTON_A));
-  addControl(new Button("<", BUTTON_B));
-  addControl(new Button(">", BUTTON_C));
+  m_resetButton = addControl(new Button("", Buttons::BUTTON_A));
+  addControl(new Button("<", Buttons::BUTTON_B));
+  addControl(new Button(">", Buttons::BUTTON_C));
   updateResetButton();
 }
 

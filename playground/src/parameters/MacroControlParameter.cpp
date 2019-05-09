@@ -72,6 +72,11 @@ void MacroControlParameter::unregisterTarget(ModulateableParameter *target)
   m_targetListChanged();
 }
 
+void MacroControlParameter::setLastMCViewUUID(const Glib::ustring &uuid)
+{
+  m_lastMCViewUuid = uuid;
+}
+
 void MacroControlParameter::applyLpcPhysicalControl(tControlPositionValue diff)
 {
   getValue().changeRawValue(Initiator::EXPLICIT_LPC, diff);
@@ -80,11 +85,6 @@ void MacroControlParameter::applyLpcPhysicalControl(tControlPositionValue diff)
 void MacroControlParameter::applyAbsoluteLpcPhysicalControl(tControlPositionValue v)
 {
   getValue().setRawValue(Initiator::EXPLICIT_LPC, v);
-}
-
-void MacroControlParameter::setLastMCViewUUID(const Glib::ustring &uuid)
-{
-  m_lastMCViewUuid = uuid;
 }
 
 void MacroControlParameter::onValueChanged(Initiator initiator, tControlPositionValue oldValue,

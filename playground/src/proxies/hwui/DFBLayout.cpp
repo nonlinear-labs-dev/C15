@@ -21,23 +21,18 @@ DFBLayout::~DFBLayout()
 {
 }
 
-bool DFBLayout::redrawLayout(OLEDProxy& oled)
+bool DFBLayout::redrawLayout()
 {
   bool doRedraw = m_clear || isDirty();
 
   if(m_clear)
   {
     m_clear = false;
-    oled.clear();
+    m_oled.clear();
   }
 
   if(doRedraw)
-  {
-    std::list<Rect> dirtyRects;
-    collectDirtyRects(dirtyRects);
-    setDirtyIfOverlapsWithAny(dirtyRects);
     return redraw(getFrameBuffer());
-  }
 
   return doRedraw;
 }
@@ -94,4 +89,9 @@ void DFBLayout::removeButtonRepeat()
 bool DFBLayout::isResolutionFine() const
 {
   return Application::get().getHWUI()->isResolutionFine();
+}
+
+OLEDProxy &DFBLayout::getOLEDProxy()
+{
+  return m_oled;
 }

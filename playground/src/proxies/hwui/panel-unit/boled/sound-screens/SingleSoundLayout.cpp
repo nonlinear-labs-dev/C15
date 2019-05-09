@@ -42,7 +42,7 @@ SingleSoundLayout::SingleSoundLayout(FocusAndMode focusAndMode)
   m_transitionTimeLabel = addControl(new LabelRegular8("Time", Rect(131, 12, 58, 11)));
   m_transitionTimeSlider = addControl(new TransitionTimeSlider(Rect(131, 28, 58, 4)));
   m_transitionTimeAmount = addControl(new TransitionTimeLabel(Rect(131, 36, 58, 12)));
-  m_transitionTimeButton = addControl(new Button("Transition", BUTTON_C));
+  m_transitionTimeButton = addControl(new Button("Transition", Buttons::BUTTON_C));
 
   toggleEditMenu(false);
 
@@ -52,7 +52,6 @@ SingleSoundLayout::SingleSoundLayout(FocusAndMode focusAndMode)
   m_edit->setVisible(false);
   m_paramLocked = addControl(new AnyParameterLockedIndicator(Rect(244, 2, 10, 11)));
 
-  m_convertMenu = addControl(new SingleSoundMenu(Rect(195, 1, 58, 63)));
   m_initMenu = addControl(new SingleSoundEditMenu(Rect(195, 1, 58, 63)));
   m_initMenu->setVisible(false);
 }
@@ -152,7 +151,7 @@ void SingleSoundLayout::toggleEditMenu(bool inEdit)
   }
   else
   {
-    m_emptyButton = addControl(new Button("", BUTTON_D));
+    m_emptyButton = addControl(new Button("", Buttons::BUTTON_D));
     m_emptyButton->setVisible(true);
   }
 }

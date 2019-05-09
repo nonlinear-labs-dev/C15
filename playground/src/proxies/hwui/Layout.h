@@ -12,7 +12,7 @@ class Layout : public sigc::trackable, public Uncopyable
   Layout();
   virtual ~Layout();
 
-  virtual bool redrawLayout(OLEDProxy& oled) = 0;
+  virtual bool redrawLayout() = 0;
   virtual void init();
 
   virtual void copyFrom(Layout* other);

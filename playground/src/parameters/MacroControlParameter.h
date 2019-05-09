@@ -24,6 +24,7 @@ class MacroControlParameter : public Parameter
   void unregisterTarget(ModulateableParameter *target);
 
   void setCPFromMCView(UNDO::Transaction *transaction, const tControlPositionValue &cpValue);
+  void undoableSetGivenName(const ustring &newName);
   void undoableSetGivenName(UNDO::Transaction *transaction, const ustring &newName);
   void undoableSetInfo(const Glib::ustring &newName);
   void undoableSetInfo(UNDO::Transaction *transaction, const Glib::ustring &newName);
@@ -49,6 +50,13 @@ class MacroControlParameter : public Parameter
   void onUnselected() override;
 
   static int getLastSelectedMacroControl();
+
+  void applyAbsoluteLpcPhysicalControl(tControlPositionValue v);
+  void applyLpcPhysicalControl(tControlPositionValue diff);
+  void onValueChanged(Initiator initiator, tControlPositionValue oldValue, tControlPositionValue newValue) override;
+  void setUiSelectedHardwareSource(int pos);
+  void toggleUiSelectedHardwareSource(int inc);
+  int getUiSelectedHardwareSource() const;
 
   DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
 

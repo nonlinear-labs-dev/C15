@@ -49,8 +49,6 @@ class ParameterGroup : public UpdateDocumentContributor, public IntrusiveListIte
 
   virtual void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount);
   void undoableSetDefaultValues(UNDO::Transaction *transaction, const PresetParameterGroup *values);
-  void undoableSetType(UNDO::Transaction *transaction, PresetType oldType, PresetType desiredType);
-
 
   Glib::ustring getID() const;
   size_t getHash() const;

@@ -7,14 +7,14 @@ void BaseUnitBanksMode::setup()
 {
   super::setup();
 
-  setupButtonConnection(BUTTON_MINUS, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_MINUS, [=](auto, auto, auto state) {
     if(state)
       Application::get().getPresetManager()->selectPreviousBank();
 
     return true;
   });
 
-  setupButtonConnection(BUTTON_PLUS, [=](auto, auto, auto state) {
+  setupButtonConnection(Buttons::BUTTON_PLUS, [=](auto, auto, auto state) {
     if(state)
       Application::get().getPresetManager()->selectNextBank();
 

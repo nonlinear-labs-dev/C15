@@ -13,7 +13,6 @@ FromButtonsBridge::~FromButtonsBridge()
 
 void FromButtonsBridge::sendKey(int key, bool down)
 {
-<<<<<<< HEAD
   int8_t data[1];
   *data = static_cast<int8_t>(key);
 
@@ -23,13 +22,3 @@ void FromButtonsBridge::sendKey(int key, bool down)
   auto msg = Glib::Bytes::create(data, 1);
   m_sender->send(msg);
 }
-=======
-  auto data = new int8_t[1];
-  *data = key;
-  if(down)
-    *data |= 1 << 7;
-
-  auto msg = Glib::Bytes::create(data,1);
-  m_sender->send(msg);
-}
->>>>>>> layouts-reloaded

@@ -210,12 +210,6 @@ void ParameterGroup::undoableRandomize(UNDO::Transaction *transaction, Initiator
   }
 }
 
-void ParameterGroup::undoableSetType(UNDO::Transaction *transaction, PresetType oldType, PresetType desiredType)
-{
-  for(auto p : getParameters())
-    p->undoableSetType(transaction, oldType, desiredType);
-}
-
 void ParameterGroup::check()
 {
   for(auto p : getParameters())

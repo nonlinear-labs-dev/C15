@@ -55,9 +55,6 @@ class PresetManagerLayout : public DFBLayout
   BankAndPresetNumberLabel *m_bankAndPresetNumberLabel = nullptr;
   PresetListBase *m_presets = nullptr;
   FocusAndMode m_focusAndMode;
-<<<<<<< HEAD
   StoreModeData *getStoreModeData();
   void setStoreModeData(std::unique_ptr<StoreModeData> ptr);
-=======
->>>>>>> layouts-reloaded
 };

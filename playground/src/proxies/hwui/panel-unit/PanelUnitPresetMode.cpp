@@ -68,7 +68,7 @@ void PanelUnitPresetMode::letChangedButtonsBlink(Buttons buttonId, const std::li
   {
     anyChanged |= ebParameters[paramID]->isChangedFromLoaded();
   }
-  states[buttonId] = anyChanged ? TwoStateLED::BLINK : TwoStateLED::OFF;
+  states[(int) buttonId] = anyChanged ? TwoStateLED::BLINK : TwoStateLED::OFF;
 }
 
 void PanelUnitPresetMode::setStateForButton(Buttons buttonId, const std::list<int> parameters,
@@ -85,7 +85,7 @@ void PanelUnitPresetMode::setStateForButton(Buttons buttonId, const std::list<in
     {
       if(!mc->getTargets().empty())
       {
-        states[buttonId] = TwoStateLED::ON;
+        states[(int) buttonId] = TwoStateLED::ON;
         break;
       }
     }
@@ -93,7 +93,7 @@ void PanelUnitPresetMode::setStateForButton(Buttons buttonId, const std::list<in
     {
       if(parameter->getControlPositionValue() != signalFlowIndicator)
       {
-        states[buttonId] = TwoStateLED::ON;
+        states[(int) buttonId] = TwoStateLED::ON;
         break;
       }
     }

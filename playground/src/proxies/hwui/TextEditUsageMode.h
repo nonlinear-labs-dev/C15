@@ -22,6 +22,7 @@ class TextEditUsageMode : public UsageMode
 
   connection onTextChanged(slot<void, const ustring &> cb);
   ustring getKeyLabel(Buttons buttonID) const;
+  ustring getKeyLabel(int buttonID) const;
 
   gunichar getCharAtRelativeToCursorPosition(int pos) const;
   bool isInserting() const;

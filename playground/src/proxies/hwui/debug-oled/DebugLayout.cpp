@@ -5,8 +5,8 @@
 #include "proxies/hwui/HWUI.h"
 
 DebugLayout::DebugLayout(Glib::ustring e)
+    : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
 {
-  super();
   auto text = addControl(new MultiLineLabel(e + "\nPress Enter to continue!"));
   auto pos = text->getPosition();
   text->setPosition(Rect(0, 0, 250, 100));

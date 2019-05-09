@@ -4,5 +4,5 @@
 class RecallButton : public Button
 {
  public:
-  RecallButton(const Glib::ustring& caption, int buttonID);
+  RecallButton(const Glib::ustring& caption, Buttons buttonID);
 };

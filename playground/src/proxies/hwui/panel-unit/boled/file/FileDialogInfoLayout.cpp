@@ -59,5 +59,5 @@ bool FileDialogInfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifi
     }
   }
 
-  return InfoLayout::onButton((int)i, down, modifiers);
+  return InfoLayout::onButton(i, down, modifiers);
 }

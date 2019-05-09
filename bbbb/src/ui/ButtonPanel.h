@@ -7,7 +7,6 @@
 
 class ButtonPanel : public Gtk::HBox
 {
-<<<<<<< HEAD
  public:
   ButtonPanel(int firstButtonId);
   virtual ~ButtonPanel();
@@ -16,16 +15,6 @@ class ButtonPanel : public Gtk::HBox
 
  private:
   ButtonColumn* m_columns[6];
-=======
-  public:
-    ButtonPanel(int firstButtonId);
-    virtual ~ButtonPanel();
-
-    void setLed(int idx, bool state);
-
-  private:
-    std::array<ButtonColumn, 6> m_columns;
->>>>>>> layouts-reloaded
 };
 
 #endif

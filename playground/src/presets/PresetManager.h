@@ -7,11 +7,11 @@
 #include <string>
 
 #include <http/UpdateDocumentContributor.h>
-#include <presets/SearchQuery.h>
 #include <serialization/PresetManagerSerializer.h>
 #include <tools/ScopedGuard.h>
 #include <tools/Throttler.h>
 #include <tools/Uuid.h>
+#include <presets/SearchQuery.h>
 #include <tools/RecursionGuard.h>
 
 class Bank;
