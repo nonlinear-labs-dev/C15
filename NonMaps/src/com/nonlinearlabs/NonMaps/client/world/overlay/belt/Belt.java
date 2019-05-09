@@ -81,11 +81,7 @@ public class Belt extends OverlayLayout {
 		return new RGB(51, 51, 51);
 	}
 
-<<<<<<< HEAD
 	public void toggle() {
-=======
-	void toggle() {
->>>>>>> layouts-reloaded
 		if (desiredHeight == 1) {
 			desiredHeight = 2;
 		} else {

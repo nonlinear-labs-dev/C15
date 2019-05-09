@@ -98,27 +98,12 @@ public class BankControl extends OverlayLayout implements IBank {
 		presets.doLayout(inset, listTop, w - 2 * inset, h - listTop - inset);
 		double emptyLabelHeight = (h - listTop) / 3;
 
-<<<<<<< HEAD
 		if (emptyLabel != null)
 			emptyLabel.doLayout(inset, listTop + presets.getRelativePosition().getHeight() / 2 - emptyLabelHeight / 2,
 					w - 2 * inset, emptyLabelHeight);
 
 		selRectangle.doLayout(0, 0, w - 2 * inset, presets.getPixRect().getHeight() / 3);
 
-=======
-		header.doLayout(border, border, w - 2 * border, headerHeight);
-
-		double listTop = header.getRelativePosition().getBottom() + getSpaceBetweenChildren();
-
-		presets.doLayout(border, listTop, w - 2 * border, h - listTop - border);
-
-		double emptyLabelHeight = (h - listTop - border) / 3;
-
-		if (emptyLabel != null)
-			emptyLabel.doLayout(border / 2, listTop / 2 + emptyLabelHeight / 2, w - 2 * border, emptyLabelHeight);
-
-		selRectangle.doLayout(0, 0, w - 2 * border, presets.getPixRect().getHeight() / 3 - border / 3);
->>>>>>> layouts-reloaded
 	}
 
 	@Override

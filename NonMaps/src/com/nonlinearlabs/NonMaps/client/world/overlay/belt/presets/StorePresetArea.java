@@ -1,10 +1,7 @@
 package com.nonlinearlabs.NonMaps.client.world.overlay.belt.presets;
 
 import com.google.gwt.xml.client.Node;
-<<<<<<< HEAD
 import com.nonlinearlabs.NonMaps.client.Millimeter;
-=======
->>>>>>> layouts-reloaded
 import com.nonlinearlabs.NonMaps.client.NonMaps;
 import com.nonlinearlabs.NonMaps.client.world.Control;
 import com.nonlinearlabs.NonMaps.client.world.maps.presets.PresetManager;

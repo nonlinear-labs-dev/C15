@@ -53,10 +53,11 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	private static final PresetColorPack filterMatch = new PresetColorPack(new Gray(0), new RGB(50, 65, 110),
 			new Gray(77));
 	private static final PresetColorPack filterMatchLoaded = new PresetColorPack(new Gray(0), RGB.blue(), new Gray(77));
-	private static final PresetColorPack filterMatchHighlighted = new PresetColorPack(new Gray(0), new RGB(50, 65, 110),new Gray(255));
-	private static final PresetColorPack filterMatchHighlightedLoaded = new PresetColorPack(new Gray(0), RGB.blue(),new Gray(255));
-	
-	
+	private static final PresetColorPack filterMatchHighlighted = new PresetColorPack(new Gray(0), new RGB(50, 65, 110),
+			new Gray(255));
+	private static final PresetColorPack filterMatchHighlightedLoaded = new PresetColorPack(new Gray(0), RGB.blue(),
+			new Gray(255));
+
 	public Preset(Bank parent) {
 		super(parent);
 
@@ -84,21 +85,21 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		});
 
 		PresetSearch.get().loadPreset.onChange(r -> {
-			if(isCurrentFilterMatch && r.equals(BooleanValues.on)) {
+			if (isCurrentFilterMatch && r.equals(BooleanValues.on)) {
 				onSearchHighlight(true);
 			}
 			return true;
 		});
-		
+
 		PresetSearch.get().currentFilterMatch.onChange(r -> {
 			boolean isFilterMatch = r.equals(uuid);
 			if (isCurrentFilterMatch != isFilterMatch) {
 				isCurrentFilterMatch = isFilterMatch;
-				
-				if(isCurrentFilterMatch) {
+
+				if (isCurrentFilterMatch) {
 					onSearchHighlight(PresetSearch.get().loadPreset.getBool());
 				}
-				
+
 				invalidate(INVALIDATION_FLAG_UI_CHANGED);
 			}
 			return true;
@@ -111,11 +112,11 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	private void onSearchHighlight(boolean loadActive) {
-		if(loadActive) {
+		if (loadActive) {
 			load();
 		}
 	}
-	
+
 	@Override
 	public RGB getColorFont() {
 		boolean selected = isSelected();
@@ -233,7 +234,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	public void draw(Context2d ctx, int invalidationMask) {
 
 		PresetColorPack currentPresetColorPack = getActiveColorPack();
-		
+
 		double cp = getConturPixels();
 		cp = Math.ceil(cp);
 		cp = Math.max(1, cp);
@@ -244,14 +245,14 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		r.reduceHeightBy(2 * cp);
 		r.reduceWidthBy(2 * cp);
 		r.stroke(ctx, cp, currentPresetColorPack.contour);
-		
+
 		super.draw(ctx, invalidationMask);
 		r.fill(ctx, currentPresetColorPack.overlay);
 	}
-	
+
 	@Override
 	public void drawPost(Context2d ctx, int invalidationMask) {
-		if(isCurrentFilterMatch) {
+		if (isCurrentFilterMatch) {
 			double cp = getConturPixels();
 			cp = Math.ceil(cp);
 			cp = Math.max(1, cp);
@@ -450,7 +451,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	public void select() {
 		getParent().getPresetList().selectPreset(getUUID(), Initiator.EXPLICIT_USER_ACTION);
 	}
-	
+
 	public void load() {
 		getNonMaps().getServerProxy().loadPreset(this);
 	}
@@ -501,11 +502,8 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		RenameDialog.open(this);
 	}
 
-<<<<<<< HEAD
 	public boolean isInCurrentFilterSet() {
 		return filterActive && isInFilterSet;
 	}
 
-=======
->>>>>>> layouts-reloaded
 }

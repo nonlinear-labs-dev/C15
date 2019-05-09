@@ -17,7 +17,6 @@ public class BeltPresetLayout extends OverlayLayout {
 	DirectLoadButton autoLoad;
 	LockSymbol lock;
 
-
 	private LinkedList<PresetBeltLayouter> layouters = new LinkedList<PresetBeltLayouter>();
 
 	public BeltPresetLayout(Belt parent) {
@@ -92,12 +91,8 @@ public class BeltPresetLayout extends OverlayLayout {
 	public void storeSelectOff() {
 		store.storeSelectOff();
 	}
-<<<<<<< HEAD
-	
+
 	public boolean isDirectLoadActive() {
 		return autoLoad.isDirectLoadActive();
 	}
-=======
->>>>>>> layouts-reloaded
-
 }
