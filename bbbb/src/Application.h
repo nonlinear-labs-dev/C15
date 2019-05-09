@@ -18,9 +18,15 @@ class Application
 
   void run();
 
+<<<<<<< HEAD
   Options *getOptions();
   WebSocketServer *getWebsocketServer();
   Bridges *getBridges();
+=======
+    Options *getOptions();
+    WebSocketServer *getWebsocketServer();
+    Bridges* getBridges();
+>>>>>>> layouts-reloaded
 
  private:
   static char *initStatic(Application *app, char *argv);

@@ -10,7 +10,7 @@ class PlayControlParameterLayout2 : public virtual ParameterLayout2
   PlayControlParameterLayout2();
   virtual ~PlayControlParameterLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  protected:
@@ -38,7 +38,7 @@ class RibbonParameterLayout2 : public virtual PlayControlParameterLayout2
   typedef PlayControlParameterLayout2 super;
   RibbonParameterLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class PedalParameterLayout2 : public virtual PlayControlParameterLayout2
@@ -47,7 +47,7 @@ class PedalParameterLayout2 : public virtual PlayControlParameterLayout2
   typedef PlayControlParameterLayout2 super;
   PedalParameterLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class AftertouchParameterLayout2 : public virtual PlayControlParameterLayout2
@@ -71,7 +71,7 @@ class PlayControlParameterSelectLayout2 : public ParameterSelectLayout2
   PlayControlParameterSelectLayout2();
 
   virtual Carousel *createCarousel(const Rect &rect) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class PlayControlParameterEditLayout2 : public ParameterEditLayout2
@@ -80,7 +80,7 @@ class PlayControlParameterEditLayout2 : public ParameterEditLayout2
   typedef ParameterEditLayout2 super;
   PlayControlParameterEditLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class PlayControlWithBehaviourEditLayout2 : public PlayControlParameterEditLayout2,
@@ -92,7 +92,7 @@ class PlayControlWithBehaviourEditLayout2 : public PlayControlParameterEditLayou
 
   PlayControlWithBehaviourEditLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
   bool isModeSupported(uint8_t desiredMode) const override;
   void setMode(uint8_t desiredMode) override;
@@ -112,7 +112,7 @@ class RibbonParameterSelectLayout2 : public PlayControlParameterSelectLayout2, p
 
   RibbonParameterSelectLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class PedalParameterSelectLayout2 : public PlayControlParameterSelectLayout2, public PedalParameterLayout2
@@ -123,7 +123,7 @@ class PedalParameterSelectLayout2 : public PlayControlParameterSelectLayout2, pu
 
   PedalParameterSelectLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class AftertouchParameterSelectLayout2 : public PlayControlParameterSelectLayout2, public AftertouchParameterLayout2
@@ -134,7 +134,7 @@ class AftertouchParameterSelectLayout2 : public PlayControlParameterSelectLayout
 
   AftertouchParameterSelectLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class AftertouchParameterEditLayout2 : public PlayControlParameterEditLayout2, public AftertouchParameterLayout2
@@ -145,7 +145,7 @@ class AftertouchParameterEditLayout2 : public PlayControlParameterEditLayout2, p
 
   AftertouchParameterEditLayout2();
   virtual ButtonMenu *createMenu(const Rect &rect) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class PitchbendParameterSelectLayout2 : public PlayControlParameterSelectLayout2, public PitchbendParameterLayout2
@@ -156,7 +156,7 @@ class PitchbendParameterSelectLayout2 : public PlayControlParameterSelectLayout2
 
   PitchbendParameterSelectLayout2();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class PitchbendParameterEditLayout2 : public PlayControlParameterEditLayout2, public PitchbendParameterLayout2
@@ -168,7 +168,7 @@ class PitchbendParameterEditLayout2 : public PlayControlParameterEditLayout2, pu
   PitchbendParameterEditLayout2();
 
   virtual ButtonMenu *createMenu(const Rect &rect) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class RibbonParameterEditLayout2 : public PlayControlWithBehaviourEditLayout2, public RibbonParameterLayout2
@@ -180,7 +180,7 @@ class RibbonParameterEditLayout2 : public PlayControlWithBehaviourEditLayout2, p
   RibbonParameterEditLayout2();
 
   virtual ButtonMenu *createMenu(const Rect &rect) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  protected:
@@ -197,6 +197,6 @@ class PedalParameterEditLayout2 : public PlayControlWithBehaviourEditLayout2, pu
   PedalParameterEditLayout2();
 
   virtual ButtonMenu *createMenu(const Rect &rect) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 };

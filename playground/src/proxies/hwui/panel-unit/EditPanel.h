@@ -20,7 +20,7 @@ class EditPanel
   BOLED &getBoled();
   const BOLED &getBoled() const;
 
-  bool onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state);
+  bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
   void setupFocusAndMode(FocusAndMode focusAndMode);
   UndoButtonStateMachine &getUndoStateMachine();
 

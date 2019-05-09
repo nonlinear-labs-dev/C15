@@ -12,9 +12,9 @@ UsageMode::~UsageMode()
 {
 }
 
-bool UsageMode::onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state)
+bool UsageMode::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
-  DebugLevel::info("button id:", buttonID);
+  DebugLevel::info("button id:", (int) buttonID);
 
   const auto &it = m_actions.find(buttonID);
 
@@ -24,9 +24,9 @@ bool UsageMode::onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool
   return false;
 }
 
-void UsageMode::setupButtonConnection(gint32 buttonID, tAction action)
+void UsageMode::setupButtonConnection(Buttons buttonID, tAction action)
 {
-  if(buttonID < num_buttons)
+  if(buttonID < Buttons::NUM_BUTTONS)
   {
     g_assert(!m_actions[buttonID]);
     m_actions[buttonID] = action;

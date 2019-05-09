@@ -27,7 +27,6 @@
 #include <proxies/lpc/LPCParameterChangeSurpressor.h>
 #include <tools/TimeTools.h>
 #include <proxies/hwui/panel-unit/boled/setup/ExportBackupEditor.h>
-#include "SearchQuery.h"
 #include <device-settings/DebugLevel.h>
 
 PresetManagerActions::PresetManagerActions(PresetManager &presetManager)

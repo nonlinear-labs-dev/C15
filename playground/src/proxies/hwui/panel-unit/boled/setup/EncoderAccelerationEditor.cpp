@@ -46,7 +46,8 @@ void EncoderAccelerationEditor::onSettingChanged(const Setting *s)
     setText(p->getDisplayString());
 }
 
-bool EncoderAccelerationEditor::onButton(int i, bool down, ButtonModifiers modifiers)
+
+bool EncoderAccelerationEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   return false;
 }

@@ -29,7 +29,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Selected, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto p = editBuffer->getSelected();
+    auto p = editBuffer->getSelectedParameter();
 
     if(auto mrp = dynamic_cast<ModulationRoutingParameter *>(p))
     {
@@ -43,7 +43,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Assign, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto selParam = editBuffer->getSelected();
+    auto selParam = editBuffer->getSelectedParameter();
     auto mc = MacroControlsGroup::paramIDToModSrc(selParam->getID());
 
     auto targetId = m_macroControlAssignmentStateMachine.getCurrentModulateableParameter();
@@ -82,7 +82,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::SelectSource, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto p = editBuffer->getSelected();
+    auto p = editBuffer->getSelectedParameter();
     auto currentSource = choseHWBestSourceForMC(p->getID());
     editBuffer->undoableSelectParameter(currentSource);
     m_macroControlAssignmentStateMachine.setState(MacroControlAssignmentStates::Initial);
@@ -160,9 +160,9 @@ void PanelUnit::installUsageMode(FocusAndMode focusAndMode)
   }
 }
 
-PanelUnit::tLed PanelUnit::getLED(int id)
+PanelUnit::tLed PanelUnit::getLED(Buttons id)
 {
-  return m_leds[id];
+  return m_leds[(int) id];
 }
 
 void PanelUnit::onTimeout()
@@ -180,7 +180,7 @@ const EditPanel &PanelUnit::getEditPanel() const
   return m_editPanel;
 }
 
-bool PanelUnit::onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state)
+bool PanelUnit::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
   if(super::onButtonPressed(buttonID, modifiers, state))
   {

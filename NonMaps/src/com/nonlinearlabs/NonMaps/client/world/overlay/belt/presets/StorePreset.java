@@ -195,7 +195,11 @@ class StorePreset extends SVGImage {
 
 	public Control handleEnterKey() {
 		fire();
+<<<<<<< HEAD
 		return this;
+=======
+		return null;
+>>>>>>> layouts-reloaded
 	}
 
 }

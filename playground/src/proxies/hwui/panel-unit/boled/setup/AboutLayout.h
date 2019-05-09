@@ -13,7 +13,7 @@ class AboutLayout : public DFBLayout
   virtual ~AboutLayout();
 
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
  private:
   ScrollArea *m_scrollArea = nullptr;

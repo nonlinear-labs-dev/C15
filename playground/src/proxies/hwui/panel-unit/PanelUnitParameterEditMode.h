@@ -25,8 +25,8 @@ class PanelUnitParameterEditMode : public UsageMode, public sigc::trackable
   virtual ~PanelUnitParameterEditMode();
 
   void setup() override;
-  int findButtonForParameter(Parameter *param) const;
-  std::list<int> getButtonAssignments(int button) const;
+  Buttons findButtonForParameter(Parameter *param) const;
+  list<int> getButtonAssignments(Buttons button) const;
   virtual void setupFocusAndMode(FocusAndMode focusAndMode) override;
 
   static const int NUM_LEDS = 96;
@@ -61,9 +61,7 @@ class PanelUnitParameterEditMode : public UsageMode, public sigc::trackable
   void letOtherTargetsBlink(const std::vector<int> &targets);
   void letReverbBlink(const std::vector<int> &targets);
   bool isSignalFlowingThrough(const Parameter *p) const;
-
   void setLedStates(const tLedStates &states);
-
   std::shared_ptr<Layout> getCurrentBoledLayout() const;
   const BOLED &getBoled() const;
   BOLED &getBoled();

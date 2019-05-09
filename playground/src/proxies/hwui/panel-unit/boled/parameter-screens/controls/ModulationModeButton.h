@@ -10,7 +10,8 @@ class ModulationModeButton : public Button
   typedef Button super;
 
  public:
-  ModulationModeButton(const Glib::ustring &caption, int id);
+  ModulationModeButton(const Glib::ustring &caption, Buttons id);
+
   virtual ~ModulationModeButton();
 
  protected:

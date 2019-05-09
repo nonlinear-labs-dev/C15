@@ -10,7 +10,7 @@ class MCPositionButton : public ModulationModeButton
   typedef ModulationModeButton super;
 
  public:
-  MCPositionButton(int id);
+  MCPositionButton(Buttons id);
   virtual ~MCPositionButton();
 
   void update(const Parameter *parameter);

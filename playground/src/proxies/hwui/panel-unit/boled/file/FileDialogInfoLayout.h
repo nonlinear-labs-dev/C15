@@ -9,7 +9,7 @@ class FileDialogInfoLayout : public InfoLayout
   FileDialogInfoLayout(std::experimental::filesystem::directory_entry file, std::string header);
   virtual ~FileDialogInfoLayout() = default;
 
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
   void addModuleCaption() override;
   void addHeadline() override;

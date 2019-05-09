@@ -32,6 +32,7 @@ enum LPCSettingIDs
   RIBBON_REL_FACTOR = 9,  // ==> tTcdRange(256, 2560)
   // obsolete LOWER_RIBBON_REL_FACTOR = 10, // ==> tTcdRange(256, 2560)
   VELOCITY_CURVE = 11,  // ==> VERY_SOFT = 0, SOFT = 1, NORMAL = 2, HARD = 3, VERY_HARD = 4
+
   TRANSITION_TIME = 12,  // ==> tTcdRange(0, 16000)
 
   PEDAL_1_TYPE = 26,  // ==> PotTipActive = 0
@@ -40,7 +41,7 @@ enum LPCSettingIDs
   PEDAL_4_TYPE = 29,  // ... SwitchOpening = 3
 
   AFTERTOUCH_CURVE = 30,  // SOFT = 0, NORMAL = 1, HARD = 2
-  BENDER_CURVE = 31,  // ZERO = 0, NARROW = 1, WIDE = 2
+  BENDER_CURVE = 31,      // ZERO = 0, NARROW = 1, WIDE = 2
 
   PITCHBEND_ON_PRESSED_KEYS = 32,  // OFF = 0, ON = 1
 

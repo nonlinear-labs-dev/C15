@@ -12,6 +12,7 @@ class Button : public LabelRegular8
 
  public:
   Button(const Glib::ustring &caption, int buttonID);
+  Button(const Glib::ustring &caption, Buttons button);
   Button(const Glib::ustring &caption, const Rect &rect);
   virtual ~Button();
 

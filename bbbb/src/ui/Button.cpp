@@ -3,8 +3,13 @@
 #include <Application.h>
 #include <io/Bridges.h>
 
+<<<<<<< HEAD
 Button::Button(int buttonId, const std::string& title)
     : m_buttonId(buttonId)
+=======
+Button::Button(int buttonId, const std::string &title) :
+    m_buttonId(buttonId)
+>>>>>>> layouts-reloaded
 {
   set_size_request(1, 1);
 
@@ -63,3 +68,7 @@ void Button::on_released()
   auto b = Application::get().getBridges()->getBridge<FromButtonsBridge>();
   b->sendKey(m_buttonId, false);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> layouts-reloaded

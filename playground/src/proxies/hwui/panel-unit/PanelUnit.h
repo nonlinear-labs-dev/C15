@@ -24,11 +24,11 @@ class PanelUnit : public HardwareUserInterfaceUnit, public sigc::trackable
   virtual void setupFocusAndMode(FocusAndMode focusAndMode) override;
   void onTimeout();
 
-  tLed getLED(int id);
+  tLed getLED(Buttons id);
   EditPanel &getEditPanel();
   const EditPanel &getEditPanel() const;
 
-  virtual bool onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state) override;
+  virtual bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state) override;
   void init();
   void turnLedsOff();
 

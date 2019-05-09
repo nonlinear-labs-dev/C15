@@ -96,6 +96,12 @@ class DebugLevel : public EnumSetting<DebugLevels>
     g_printerr("%s\n", str.str().c_str());
   }
 
+  template <typename... tArgs> static void throwException(const tArgs&... args)
+  {
+    auto str = concat(args...);
+    throw std::runtime_error(str);
+  }
+
  private:
   DebugLevel(const DebugLevel& other);
   DebugLevel& operator=(const DebugLevel&);

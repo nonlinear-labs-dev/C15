@@ -21,9 +21,9 @@ class PanelUnitPresetMode : public PanelUnitParameterEditMode
   static constexpr auto numLeds = 96;
   static constexpr auto invalidSignalFlowIndicator = ParameterDB::getInvalidSignalPathIndication();
 
-  void setStateForButton(int buttonId, const std::list<int> parameters,
+  void setStateForButton(Buttons buttonId, const std::list<int> parameters,
                          std::array<TwoStateLED::LedState, numLeds>& states);
-  void letChangedButtonsBlink(int buttonId, const std::list<int> parameters,
+  void letChangedButtonsBlink(Buttons buttonId, const std::list<int> parameters,
                               std::array<TwoStateLED::LedState, numLeds>& states);
   void applyStateToLeds(std::array<TwoStateLED::LedState, numLeds>& states);
 };

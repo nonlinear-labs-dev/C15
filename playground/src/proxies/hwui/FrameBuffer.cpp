@@ -13,6 +13,9 @@
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 #include <proxies/hwui/panel-unit/RotaryEncoder.h>
 #include <tools/PerformanceTimer.h>
+#include <cmath>
+#include <complex>
+#include <complex.h>
 
 FrameBuffer::StackScopeGuard::StackScopeGuard(FrameBuffer *fb)
     : m_fb(fb)
@@ -110,8 +113,11 @@ inline void FrameBuffer::setOffsetPixel(tCoordinate x, tCoordinate y)
 
 inline void FrameBuffer::setRawPixel(tCoordinate x, tCoordinate y)
 {
-  const long index = getIndex(x, y);
-  m_backBuffer[index] = m_currentColor;
+  if(m_currentColor != Transparent)
+  {
+    const long index = getIndex(x, y);
+    m_backBuffer[index] = m_currentColor;
+  }
 }
 
 inline long FrameBuffer::getIndex(tCoordinate x, tCoordinate y) const
@@ -131,11 +137,13 @@ void FrameBuffer::clear()
 void FrameBuffer::setColor(const Colors &c)
 {
   m_currentColor = c;
+  g_assert(isValidColor(c));
 }
 
 void FrameBuffer::fiddleColor(tPixel p)
 {
   m_currentColor = (Colors)(p);
+  g_assert(m_currentColor);
 }
 
 FrameBuffer::Colors FrameBuffer::getColor() const
@@ -163,13 +171,41 @@ void FrameBuffer::fillRect(const Rect &rect)
   }
 }
 
+void FrameBuffer::fillCircle(const Point &pos, int radius, int steps)
+{
+  if(radius <= 6)
+  {
+    fillRect(pos.getX() - radius / 2, pos.getY() - radius, radius, radius * 2);
+    fillRect(pos.getX() - radius, pos.getY() - radius / 2, radius * 2, radius);
+  }
+  else
+  {
+    auto theta = 0;
+    auto h = pos.getX();
+    auto k = pos.getY();
+    auto step = steps;
+
+    while(theta <= 360)
+    {
+      const auto x = h + radius * cos(theta);
+      const auto y = k + radius * sin(theta);
+      if(abs(x - h) <= radius + 0.5 && abs(x - h) >= radius - 0.5)
+        setPixel(x, y);
+      theta += step;
+    }
+  }
+}
+
 inline void FrameBuffer::drawRawHorizontalLine(tCoordinate x, tCoordinate y, tCoordinate length)
 {
-  auto fromIdx = getIndex(x, y);
-  auto data = m_backBuffer.data() + fromIdx;
+  if(m_currentColor != Transparent)
+  {
+    auto fromIdx = getIndex(x, y);
+    auto data = m_backBuffer.data() + fromIdx;
 
-  for(long i = 0; i < length; i++)
-    data[i] = m_currentColor;
+    for(long i = 0; i < length; i++)
+      data[i] = m_currentColor;
+  }
 }
 
 void FrameBuffer::drawRect(tCoordinate x, tCoordinate y, tCoordinate width, tCoordinate height)
@@ -239,6 +275,18 @@ void FrameBuffer::swapBuffers()
     auto bytes = Glib::Bytes::create(m_backBuffer.data(), m_backBuffer.size());
     Application::get().getWebSocketSession()->sendMessage(WebSocketSession::Domain::Oled, bytes);
   }
+#if _DEVELOPMENT_PC
+  for(int i = 0; i < m_backBuffer.size(); i++)
+  {
+    auto c = m_backBuffer.data()[i];
+    g_assert(isValidColor((Colors) c));
+  }
+#endif
+}
+
+bool FrameBuffer::isValidColor(Colors c) const
+{
+  return c == C43 || c == C77 || c == C103 || c == C128 || c == C179 || c == C204 || c == C255 || c == Transparent;
 }
 
 FrameBuffer::Clip FrameBuffer::clip(const Rect &rect)

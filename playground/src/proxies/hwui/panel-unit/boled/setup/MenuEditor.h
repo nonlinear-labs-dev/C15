@@ -15,7 +15,7 @@ class MenuEditor : public ControlWithChildren, public SetupEditor
   virtual ~MenuEditor();
 
   void setPosition(const Rect &r) override;
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  protected:

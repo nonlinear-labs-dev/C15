@@ -1,0 +1,67 @@
+{
+	"layouts": {
+		"UnmodulateableParameterLayout-EditMode": {
+			"Selector": {
+				"UIFocus": "Parameters",
+				"UIMode": "Edit",
+                "UIDetail": "Any"
+			},
+			"Controls": {
+				"GroupHeader": {
+					"Class": "ParameterGroupName",
+					"Position": "0,0",
+					"Events": "ParameterGroupName => Text[Text]"
+				},
+				"Slider": {
+					"Class": "BigSlider",
+					"Position": "77,24",
+					"Events": "SliderRange => Slider[Range], IsBipolar => CenterMark[Visibility]"
+				},
+				"ParameterValue": {
+					"Class": "ParameterValueLabel",
+					"Position": "90,33",
+					"Events": "ParameterDisplayString => Text[Text]"
+				},
+				"ParameterName": {
+					"Class": "ParameterNameLabel",
+					"Position": "72,8",
+					"Events": "ParameterName => Text[Text]"
+				},
+				"ButtonA": {
+					"Class": "EmptyButton",
+					"Position": "0,52"
+				},
+				"ButtonB": {
+					"Class": "EmptyButton",
+					"Position": "64,52"
+				},
+				"ButtonC": {
+					"Class": "EmptyButton",
+					"Position": "128,52"
+				},
+				"Menu": {
+					"Class": "ParameterEditButtonMenu",
+					"Position": "195,1"
+				},
+				"EditLabel": {
+					"Class": "EditLabel",
+					"Position": "8,26"
+				},
+				"LockIndicator": {
+					"Class": "LockIndicator1Letter",
+					"Position": "65,1",
+					"Events": "LockStatus => Text[Visibility]"
+				}
+			},
+			"EventSinks": {
+				"BUTTON_INC": "IncParam",
+				"BUTTON_DEC": "DecParam",
+				"ROTARY_PLUS": "IncParam",
+				"ROTARY_MINUS": "DecParam",
+				"BUTTON_EDIT": "SwitchToSelectMode",
+				"BUTTON_D": "IncButtonMenu",
+				"BUTTON_ENTER": "FireButtonMenu"
+			}
+		}
+	}
+}

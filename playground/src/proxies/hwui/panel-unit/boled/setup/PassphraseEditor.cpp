@@ -33,12 +33,12 @@ int PassphraseEditor::getSelectedIndex() const
   return m_selection;
 }
 
-bool PassphraseEditor::onButton(int i, bool down, ButtonModifiers modifiers)
+bool PassphraseEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(MenuEditor::onButton(i, down, modifiers))
     return true;
 
-  if(down && i == BUTTON_ENTER)
+  if(down && i == Buttons::BUTTON_ENTER)
   {
     if(m_selection == 1)
     {

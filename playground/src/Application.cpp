@@ -19,6 +19,9 @@
 #include <unistd.h>
 #include <clipboard/Clipboard.h>
 #include <io/network/WebSocketSession.h>
+#include <assert.h>
+#include <proxies/hwui/debug-oled/DebugLayout.h>
+#include <tools/ExceptionTools.h>
 
 Application *Application::theApp = nullptr;
 
@@ -114,9 +117,12 @@ Glib::ustring Application::getResourcePath() const
 
 void Application::run()
 {
-  DebugLevel::warning(__PRETTY_FUNCTION__);
-  m_theMainLoop->run();
-  DebugLevel::warning(__PRETTY_FUNCTION__);
+  while(!m_isQuit)
+  {
+    DebugLevel::warning(__PRETTY_FUNCTION__);
+    m_theMainLoop->run();
+    DebugLevel::warning(__PRETTY_FUNCTION__);
+  }
 }
 
 void Application::quit()

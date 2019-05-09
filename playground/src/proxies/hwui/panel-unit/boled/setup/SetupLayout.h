@@ -20,7 +20,7 @@ class SetupLayout : public DFBLayout
   SetupLayout(FocusAndMode focusAndMode);
   virtual ~SetupLayout();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
   virtual bool redraw(FrameBuffer &fb) override;
   void diveUp();

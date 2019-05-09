@@ -14,6 +14,7 @@ FromEncoderBridge::~FromEncoderBridge()
 {
 }
 
+<<<<<<< HEAD
 Domain FromEncoderBridge::getDomain()
 {
   return Application::get().getOptions()->doTimeStamps() ? Domain::TimeStampedRotary : Domain::Rotary;
@@ -51,5 +52,10 @@ void FromEncoderBridge::scheduleTimestampedEvent(int8_t inc)
 void FromEncoderBridge::scheduleSimpleEvent(int8_t inc)
 {
   auto msg = Glib::Bytes::create(&inc, 1);
+=======
+void FromEncoderBridge::sendRotary(int8_t inc)
+{
+  auto msg = Glib::Bytes::create(g_memdup(&inc, 1), 1);
+>>>>>>> layouts-reloaded
   m_sender->send(msg);
 }

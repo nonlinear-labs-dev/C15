@@ -44,15 +44,15 @@ Scrollable* BankInfoLayout::createScrollableContent()
   return new BankInfoContent();
 }
 
-bool BankInfoLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool BankInfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(i == BUTTON_EDIT && down)
+  if(i == Buttons::BUTTON_EDIT && down)
   {
     auto layout = new EditBankInfoLayout();
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
     return true;
   }
-  else if(i == BUTTON_PRESET && down)
+  else if(i == Buttons::BUTTON_PRESET && down)
   {
     Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
   }

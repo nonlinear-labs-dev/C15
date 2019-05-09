@@ -35,7 +35,7 @@ void ScaleParameterSelectLayout::updateResetButton()
   m_resetButton->setText(changed ? "Reset" : "");
 }
 
-bool ScaleParameterSelectLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ScaleParameterSelectLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super::onButton(i, down, modifiers))
     return true;
@@ -44,19 +44,21 @@ bool ScaleParameterSelectLayout::onButton(int i, bool down, ButtonModifiers modi
   {
     switch(i)
     {
-      case BUTTON_A:
+
+      case Buttons::BUTTON_A:
         toggleHightlight(m_resetButton);
+        reset();
         return true;
 
-      case BUTTON_B:
+      case Buttons::BUTTON_B:
         selectParameter(-1);
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         selectParameter(+1);
         return true;
 
-      case BUTTON_ENTER:
+      case Buttons::BUTTON_ENTER:
         if(m_resetButton->isHighlight())
         {
           reset();

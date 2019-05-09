@@ -6,6 +6,11 @@ Button::Button(const Glib::ustring &caption, int buttonID)
 {
 }
 
+Button::Button(const Glib::ustring& caption, Buttons button)
+    : Button(caption, (int)button)
+{
+}
+
 Button::Button(const Glib::ustring &caption, const Rect &rect)
     : super(caption, rect)
 {

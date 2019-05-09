@@ -85,6 +85,7 @@ void WebSocketSession::reconnect()
 void WebSocketSession::connectWebSocket(SoupWebsocketConnection *connection)
 {
   g_signal_connect(connection, "message", G_CALLBACK(&WebSocketSession::receiveMessage), this);
+  g_object_set(connection, "keepalive-interval", 5, nullptr);
   g_object_ref(connection);
 
   auto stream = soup_websocket_connection_get_io_stream(connection);
@@ -154,9 +155,8 @@ void WebSocketSession::receiveMessage(SoupWebsocketConnection *self, gint type, 
     tMessage msg = Glib::wrap(message);
     gsize len = 0;
     auto data = reinterpret_cast<const uint8_t *>(msg->get_data(len));
-    Domain d = (Domain)(data[0]);
+    auto d = static_cast<Domain>(data[0]);
     auto byteMessage = Glib::Bytes::create(data + 1, len - 1);
-
     pThis->m_defaultContextQueue->pushMessage([=]() { pThis->m_onMessageReceived[d](byteMessage); });
   }
 }

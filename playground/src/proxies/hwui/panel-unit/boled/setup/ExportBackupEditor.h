@@ -12,7 +12,7 @@ class ExportBackupEditor : public ControlWithChildren, public SetupEditor
   virtual ~ExportBackupEditor();
 
   void setPosition(const Rect &) override;
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   void exportBanks();
 
   static void writeBackupToStream(std::shared_ptr<OutStream> stream);

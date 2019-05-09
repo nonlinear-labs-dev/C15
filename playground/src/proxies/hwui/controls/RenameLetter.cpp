@@ -30,7 +30,8 @@ bool RenameLetter::redraw(FrameBuffer &fb)
 
 bool RenameLetter::highlightLetter() const
 {
-  if(m_mode->getLayout() == TextEditUsageMode::TextEditUsageMode::Layout::Shift && (m_buttonID == 3 || m_buttonID == 7))
+  if(m_mode->getLayout() == TextEditUsageMode::TextEditUsageMode::Layout::Shift
+     && (m_buttonID == Buttons::BUTTON_3 || m_buttonID == Buttons::BUTTON_7))
     return true;
 
   if(m_mode->getLayout() == TextEditUsageMode::TextEditUsageMode::Layout::Symbol

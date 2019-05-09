@@ -13,7 +13,7 @@ class BankInfoLayout : public InfoLayout
   BankInfoLayout();
   virtual ~BankInfoLayout();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
  protected:
   virtual void addModuleCaption() override;

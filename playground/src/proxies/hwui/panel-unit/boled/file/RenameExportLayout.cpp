@@ -1,9 +1,11 @@
+#include <utility>
+
 #include <proxies/hwui/panel-unit/boled/file/RenameExportLayout.h>
 
 RenameExportLayout::RenameExportLayout(Bank *bank, Callback callBack)
     : initialName(bank->getName(true))
     , m_bank(bank)
-    , callBackAfterCommit(callBack)
+    , callBackAfterCommit(std::move(callBack))
 {
 }
 

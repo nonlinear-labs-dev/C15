@@ -1,0 +1,69 @@
+{
+  "layouts": {
+    "ModulateableParameter-SelectMode-MCModRange": {
+      "Selector": {
+        "UIFocus": "Parameters",
+        "UIMode": "Select",
+        "UIDetail": "MCAmount"
+      },
+      "Conditions":"isParameterModulateable",
+      "Controls": {
+        "GroupHeader": {
+          "Class": "ParameterGroupName",
+          "Position": "0,0",
+          "Events": "ParameterGroupName => Text[Text]"
+        },
+        "Slider": {
+          "Class": "BigSlider",
+          "Position": "77,24",
+          "Events": "IsBipolar => CenterMark[Visibility], SliderRange => Slider[Range]"
+        },
+        "ParameterName": {
+          "Class": "ParameterNameLabel",
+          "Position": "72,8",
+          "Events": "ParameterName => Text[Text]"
+        },
+        "MCName": {
+          "Class": "MCName",
+          "Position": "72, 35",
+          "Events": "MacroControlSymbol => Text[Text]"
+        },
+        "MCAmt": {
+          "Class": "MCAmtLabel",
+          "Position": "128, 35",
+          "Events": "MacroControlAmount => Text[Text]"
+        },
+        "ButtonB-MCSel": {
+          "Class": "McSelButton",
+          "Position": "64,52"
+        },
+        "ButtonA-MCPos": {
+          "Class": "EmptyButton",
+          "Position": "0,52"
+        },
+        "ButtonC-MCAmt": {
+          "Class": "McAmtButton",
+          "Position": "128,52"
+        },
+        "MCMenu": {
+          "Class": "ModulationCarousel",
+          "Position": "194,2"
+        },
+        "LockIndicator": {
+          "Class": "LockIndicator1Letter",
+          "Position": "65,1",
+          "Events": "LockStatus => Text[Visibility]"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_INC": "IncMCAmt",
+        "BUTTON_DEC": "DecMCAmt",
+        "ROTARY_PLUS": "IncMCAmt",
+        "ROTARY_MINUS": "DecMCAmt",
+        "BUTTON_EDIT": "SwitchToEditMode",
+        "BUTTON_B": "SwitchToMCSelectDetail",
+        "BUTTON_D": "SwitchToMCModRangeDetail"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "controls": {
+    "MCName": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0,0,48,12",
+        "Default": "[-]"
+      }
+    }
+  },
+  "styles": {
+    "EditLabel-Colors": {
+      "selector": {
+        "ControlClasses": "MCName"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C255"
+      }
+    }
+  }
+}

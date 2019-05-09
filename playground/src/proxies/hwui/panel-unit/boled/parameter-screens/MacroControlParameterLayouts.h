@@ -11,7 +11,7 @@ class MacroControlParameterLayout2 : public virtual ParameterLayout2
   virtual void copyFrom(Layout *other) override;
 
  protected:
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
   virtual Parameter *getCurrentEditParameter() const override;
 
@@ -47,7 +47,7 @@ class MacroControlParameterSelectLayout2 : public ParameterSelectLayout2, public
   virtual Carousel *createCarousel(const Rect &rect) override;
 
   virtual void setMode(Mode desiredMode) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class MacroControlParameterEditLayout2 : public ParameterEditLayout2, public MacroControlParameterLayout2
@@ -60,6 +60,6 @@ class MacroControlParameterEditLayout2 : public ParameterEditLayout2, public Mac
 
  protected:
   virtual void setMode(Mode desiredMode) override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual ButtonMenu *createMenu(const Rect &rect) override;
 };

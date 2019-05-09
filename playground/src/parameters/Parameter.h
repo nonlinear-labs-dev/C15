@@ -74,7 +74,6 @@ class Parameter : public UpdateDocumentContributor,
   virtual void copyFrom(UNDO::Transaction *transaction, const PresetParameter *other);
   virtual void copyTo(UNDO::Transaction *transaction, PresetParameter *other) const;
 
-  virtual void undoableSetType(UNDO::Transaction *transaction, PresetType oldType, PresetType desiredType);
   virtual void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount);
 
   void undoableLoadValue(UNDO::Transaction *transaction, const Glib::ustring &value);

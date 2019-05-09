@@ -15,6 +15,11 @@ class ParameterDescriptionDatabase
   ParameterDescriptionDatabase();
 
   class Job;
+<<<<<<< HEAD
   typedef std::shared_ptr<Job> tJob;
   std::map<int, tJob> m_jobs;
+=======
+  typedef shared_ptr<Job> tJob;
+  map<int, tJob> m_jobs;
+>>>>>>> layouts-reloaded
 };

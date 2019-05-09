@@ -2,23 +2,36 @@
 
 #include <Application.h>
 #include <ui/Window.h>
+#include <io/FromButtonsBridge.h>
+#include <io/Bridges.h>
 
 class WebSocketReceiver;
 
 constexpr auto framebufferDimX = 256;
 constexpr auto framebufferDimY = 96;
 
-Window::Window()
+Window::Window() : m_oldScreen("show old layouts")
 {
   set_default_size(framebufferDimX, framebufferDimY * 2);
   set_size_request(framebufferDimX, framebufferDimY * 2);
 
+<<<<<<< HEAD
   Application::get().getWebsocketServer()->onMessageReceived(
       Domain::Oled, sigc::mem_fun(this, &Window::onFrameBufferMessageReceived));
   Application::get().getWebsocketServer()->onMessageReceived(
       Domain::TimeStampedOled, sigc::mem_fun(this, &Window::onTimeStampedFrameBufferMessageReceived));
   Application::get().getWebsocketServer()->onMessageReceived(Domain::PanelLed,
                                                              sigc::mem_fun(this, &Window::onPanelLEDsMessageReceived));
+=======
+  Application::get().getWebsocketServer()->onMessageReceived(Domain::Oled, sigc::mem_fun(this, &Window::onFrameBufferMessageReceived));
+  Application::get().getWebsocketServer()->onMessageReceived(Domain::PanelLed, sigc::mem_fun(this, &Window::onPanelLEDsMessageReceived));
+
+  m_oldScreen.signal_clicked().connect([=](void){
+    auto b = Application::get().getBridges()->getBridge<FromButtonsBridge>();
+    b->sendKey(127, m_oldScreen.get_active());
+  });
+
+>>>>>>> layouts-reloaded
   m_ribbonUp.set_vexpand(false);
   m_ribbonDown.set_vexpand(false);
   m_ribbonBox.pack_start(m_ribbonUp, false, false);
@@ -26,9 +39,16 @@ Window::Window()
   m_ribbonBox.set_homogeneous(true);
   m_box.pack_start(m_playPanel, true, true);
   m_box.pack_end(m_editPanel, false, false);
+<<<<<<< HEAD
   m_box.pack_start(m_ribbonBox, false, false);
 
   add(m_box);
+=======
+  m_box.pack_start(m_oldScreen, false, false);
+  m_box.pack_start(m_ribbonBox, false, false);
+  add(m_box);
+
+>>>>>>> layouts-reloaded
   show_all_children(true);
 }
 
@@ -45,6 +65,7 @@ void Window::onTimeStampedFrameBufferMessageReceived(WebSocketServer::tMessage m
 {
   gsize len = 0;
   const int8_t *data = reinterpret_cast<const int8_t *>(msg->get_data(len));
+<<<<<<< HEAD
   onFrameBufferMessageReceived(Glib::Bytes::create(data + 8, len - 8));
 }
 
@@ -56,5 +77,12 @@ void Window::onPanelLEDsMessageReceived(WebSocketServer::tMessage msg)
   auto val = data[0] >> 7;
   m_editPanel.setLed(idx, val);
 }
+=======
+  auto idx = data[0] & 0x7F;
+  auto val = data[0] >> 7;
+  m_editPanel.setLed(idx, val);
+}
+
+>>>>>>> layouts-reloaded
 
 #endif

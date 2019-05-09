@@ -42,9 +42,9 @@ Scrollable *ParameterInfoLayout::createScrollableContent()
   return new ParameterInfoText(this);
 }
 
-bool ParameterInfoLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ParameterInfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(i == BUTTON_EDIT && down)
+  if(i == Buttons::BUTTON_EDIT && down)
   {
     if(dynamic_cast<MacroControlParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
     {

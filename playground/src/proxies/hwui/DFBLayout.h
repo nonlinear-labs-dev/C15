@@ -14,9 +14,9 @@ class DFBLayout : public Layout, public ControlOwner
   DFBLayout(OLEDProxy &oled);
   virtual ~DFBLayout();
 
-  virtual bool redrawLayout() override;
+  virtual bool redrawLayout(OLEDProxy &oled) override;
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers);
+  virtual bool onButton(Buttons i, bool down, ::ButtonModifiers modifiers);
   virtual bool onRotary(int inc, ButtonModifiers modifiers);
 
   virtual void setDirty() override;

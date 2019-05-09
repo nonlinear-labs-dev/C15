@@ -2,7 +2,7 @@
 #include "parameters/ModulateableParameter.h"
 #include <proxies/hwui/buttons.h>
 
-MCAmountButton::MCAmountButton(int id)
+MCAmountButton::MCAmountButton(Buttons id)
     : super("MC Amt", id)
 {
 }

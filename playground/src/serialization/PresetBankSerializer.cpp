@@ -3,7 +3,6 @@
 
 #include <presets/Bank.h>
 #include <proxies/hwui/panel-unit/boled/SplashLayout.h>
-
 #include <tools/TimeTools.h>
 
 PresetBankSerializer::PresetBankSerializer(Bank *bank, bool ignoreUUIDs)

@@ -19,8 +19,6 @@ class RawValue
     MorphB = 2
   };
 
-  void undoableSetType(UNDO::Transaction *transaction, PresetType oldType, PresetType desiredType);
-
   tValueType getRawValue() const;
   bool setRawValue(Initiator initiator, tValueType newRawValue);
   bool differs(tValueType other) const;
@@ -28,6 +26,7 @@ class RawValue
   void setDefaultValue(tValueType defaultValue);
   tValueType getDefaultValue() const;
   tValueType getFactoryDefaultValue() const;
+
   bool isBiPolar() const;
   bool isBoolean() const;
   void setToDefault(Initiator initiator);
@@ -47,6 +46,7 @@ class RawValue
   std::vector<tValueType> m_rawValue;
   tValueType m_defaultValue;
   tValueType m_factoryDefaultValue;
+
   const ScaleConverter *m_scaleConverter;
   bool m_isBoolean = false;
 };

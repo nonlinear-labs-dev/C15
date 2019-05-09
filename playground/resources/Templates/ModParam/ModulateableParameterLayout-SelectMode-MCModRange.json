@@ -1,0 +1,70 @@
+{
+  "layouts": {
+    "ModulateableParameter-SelectMode-MCModRange": {
+      "Selector": {
+        "UIFocus": "Parameters",
+        "UIMode": "Select",
+        "UIDetail": "MCModRange"
+      },
+      "Conditions":"isParameterModulateable",
+      "Controls": {
+        "GroupHeader": {
+          "Class": "ParameterGroupName",
+          "Position": "0,0",
+          "Events": "ParameterGroupName => Text[Text]"
+        },
+        "Slider": {
+          "Class": "BigSlider",
+          "Position": "77,24",
+          "Events": "IsBipolar => CenterMark[Visibility], SliderRange => Slider[Range]"
+        },
+        "ParameterName": {
+          "Class": "ParameterNameLabel",
+          "Position": "72,8",
+          "Events": "ParameterName => Text[Text]"
+        },
+        "MCName": {
+          "Class": "MCName",
+          "Position": "72, 35",
+          "Events": "MacroControlSymbol => Text[Text]"
+        },
+        "ButtonB-MCSel": {
+          "Class": "McSelButton",
+          "Position": "64,52"
+        },
+        "ButtonA-MCPos": {
+          "Class": "EmptyButton",
+          "Position": "0,52"
+        },
+        "MCAmt": {
+          "Class": "MCAmtLabel",
+          "Position": "128, 35",
+          "Events": "MacroControlAmount => Text[Text]"
+        },
+        "ButtonC-MCAmt": {
+          "Class": "McAmtButton",
+          "Position": "128,52"
+        },
+        "MCMenu": {
+          "Class": "ModulationCarousel",
+          "Position": "194,2"
+        },
+        "LockIndicator": {
+          "Class": "LockIndicator1Letter",
+          "Position": "65,1",
+          "Events": "LockStatus => Text[Visibility]"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_INC": "IncParam",
+        "BUTTON_DEC": "DecParam",
+        "ROTARY_PLUS": "IncParam",
+        "ROTARY_MINUS": "DecParam",
+        "BUTTON_EDIT": "SwitchToEditMode",
+        "BUTTON_B": "SwitchToMCSelectDetail",
+        "BUTTON_C": "SwitchToMCAmtDetail",
+        "BUTTON_D": "IncButtonMenu"
+      }
+    }
+  }
+}

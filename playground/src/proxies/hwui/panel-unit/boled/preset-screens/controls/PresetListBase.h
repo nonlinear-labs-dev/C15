@@ -2,6 +2,7 @@
 
 #include <proxies/hwui/controls/ControlWithChildren.h>
 #include <proxies/hwui/HWUIEnums.h>
+#include <proxies/hwui/buttons.h>
 #include <functional>
 
 class Application;
@@ -23,7 +24,7 @@ class PresetListBase : public ControlWithChildren
 
   virtual std::pair<size_t, size_t> getSelectedPosition() const = 0;
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) = 0;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) = 0;
   virtual void onRotary(int inc, ButtonModifiers modifiers) = 0;
 
  protected:

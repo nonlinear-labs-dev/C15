@@ -16,6 +16,4 @@ class ScaleParameter : public Parameter
   void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
   virtual Glib::ustring getLongName() const override;
   virtual size_t getHash() const override;
-
- private:
 };

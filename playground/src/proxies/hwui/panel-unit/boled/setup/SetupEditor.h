@@ -1,6 +1,7 @@
 #pragma once
 
 #include <proxies/hwui/HWUIEnums.h>
+#include <proxies/hwui/buttons.h>
 
 class SetupLayout;
 
@@ -10,7 +11,7 @@ class SetupEditor
   SetupEditor();
   virtual ~SetupEditor();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers);
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers);
   virtual bool onRotary(int inc, ButtonModifiers modifiers);
 
   void setSetupLayout(SetupLayout* layout);

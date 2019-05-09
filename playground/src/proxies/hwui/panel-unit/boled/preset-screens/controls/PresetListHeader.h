@@ -2,6 +2,7 @@
 
 #include "proxies/hwui/controls/ControlWithChildren.h"
 
+class Bank;
 class Application;
 
 class PresetListHeader : public ControlWithChildren
@@ -17,6 +18,5 @@ class PresetListHeader : public ControlWithChildren
 
  private:
   void setupWithArrows(Bank *bank);
-
   bool m_showBankArrows;
 };

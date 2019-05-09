@@ -89,16 +89,16 @@ void ParameterEditButtonMenu::selectButton(size_t i)
 void ParameterEditButtonMenu::toggleGroupLock()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto group = eb->getSelected()->getParentGroup();
+  auto group = eb->getSelectedParameter()->getParentGroup();
   if(group->areAllParametersLocked())
   {
     auto scope = Application::get().getUndoScope()->startTransaction("Unlock Group");
-    eb->getSelected()->getParentGroup()->undoableUnlock(scope->getTransaction());
+    eb->getSelectedParameter()->getParentGroup()->undoableUnlock(scope->getTransaction());
   }
   else
   {
     auto scope = Application::get().getUndoScope()->startTransaction("Lock Group");
-    eb->getSelected()->getParentGroup()->undoableLock(scope->getTransaction());
+    eb->getSelectedParameter()->getParentGroup()->undoableLock(scope->getTransaction());
   }
   setup();
 }

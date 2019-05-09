@@ -6,6 +6,7 @@
 ToLPCBridge::ToLPCBridge()
     : super(new FileIOSender("/dev/lpc_bb_driver"), new WebSocketReceiver(Domain::Lpc))
 {
+
 }
 
 ToLPCBridge::~ToLPCBridge()

@@ -4,7 +4,7 @@
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
 
-ModulationModeButton::ModulationModeButton(const Glib::ustring &caption, int id)
+ModulationModeButton::ModulationModeButton(const Glib::ustring &caption, Buttons id)
     : super(caption, id)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(

@@ -10,7 +10,7 @@ class MCSelectButton : public ModulationModeButton
   typedef ModulationModeButton super;
 
  public:
-  MCSelectButton(int id);
+  MCSelectButton(Buttons id);
   virtual ~MCSelectButton();
 
  protected:

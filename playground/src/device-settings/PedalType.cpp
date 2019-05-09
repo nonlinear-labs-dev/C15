@@ -22,6 +22,7 @@ void PedalType::sendToLPC() const
 const std::vector<Glib::ustring> &PedalType::enumToString() const
 {
   static std::vector<Glib::ustring> s_modeNames
+
       = { "pot-tip-active", "pot-ring-active", "switch-closing", "switch-opening" };
   return s_modeNames;
 }

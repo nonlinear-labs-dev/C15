@@ -15,7 +15,7 @@ class ScaleParameterSelectLayout : public UnmodulateableParameterSelectLayout2
 
  private:
   void addButtons() override;
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   void reset();
   void selectParameter(int inc);
   void updateResetButton();

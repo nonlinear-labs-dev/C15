@@ -57,9 +57,9 @@ ModulateableParameterSelectLayout2::ModulateableParameterSelectLayout2()
     , super1()
     , super2()
 {
-  m_mcPosButton = addControl(new MCPositionButton(BUTTON_A));
-  m_mcSelButton = addControl(new MCSelectButton(BUTTON_B));
-  m_mcAmtButton = addControl(new MCAmountButton(BUTTON_C));
+  m_mcPosButton = addControl(new MCPositionButton(Buttons::BUTTON_A));
+  m_mcSelButton = addControl(new MCSelectButton(Buttons::BUTTON_B));
+  m_mcAmtButton = addControl(new MCAmountButton(Buttons::BUTTON_C));
 
   m_modeOverlay = addControl(new Overlay(Rect(0, 0, 256, 64)));
 
@@ -150,7 +150,7 @@ void ModulateableParameterSelectLayout2::init()
   super2::init();
 }
 
-bool ModulateableParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ModulateableParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(auto m = dynamic_cast<ModulationCarousel *>(getCarousel()))
   {
@@ -172,7 +172,7 @@ bool ModulateableParameterSelectLayout2::onButton(int i, bool down, ButtonModifi
         return true;
       }
 
-      if(i == BUTTON_SHIFT)
+      if(i == Buttons::BUTTON_SHIFT)
       {
         return true;
       }
@@ -183,21 +183,21 @@ bool ModulateableParameterSelectLayout2::onButton(int i, bool down, ButtonModifi
   {
     switch(i)
     {
-      case BUTTON_A:
+      case Buttons::BUTTON_A:
         if(hasModulationSource())
           toggleMode(Mode::MacroControlPosition);
         return true;
 
-      case BUTTON_B:
+      case Buttons::BUTTON_B:
         toggleMode(Mode::MacroControlSelection);
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         if(hasModulationSource())
           toggleMode(Mode::MacroControlAmount);
         return true;
 
-      case BUTTON_D:
+      case Buttons::BUTTON_D:
         if(auto m = dynamic_cast<ModulationCarousel *>(getCarousel()))
         {
           if(m_mode == Mode::CarouselUpperBound)
@@ -490,7 +490,7 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
   setAllDirty();
 }
 
-bool ModulateableParameterSelectLayout2::handleMCRecall(int i, bool down)
+bool ModulateableParameterSelectLayout2::handleMCRecall(Buttons i, bool down)
 {
   if(down)
   {
@@ -498,21 +498,21 @@ bool ModulateableParameterSelectLayout2::handleMCRecall(int i, bool down)
     {
       switch(i)
       {
-        case BUTTON_A:
+          case Buttons::BUTTON_A:
           if(modP->isMacroControlAssignedAndChanged())
           {
             modP->undoableRecallMCPos();
             return true;
           }
           break;
-        case BUTTON_B:
+          case Buttons::BUTTON_B:
           if(modP->isModSourceChanged())
           {
             modP->undoableRecallMCSource();
             return true;
           }
           break;
-        case BUTTON_C:
+          case Buttons::BUTTON_C:
           if(modP->isModAmountChanged())
           {
             modP->undoableRecallMCAmount();
@@ -539,9 +539,9 @@ ModulateableParameterEditLayout2::ModulateableParameterEditLayout2()
     : super1()
     , super2()
 {
-  addControl(new Button("", BUTTON_A));
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_A));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
 
   if(auto p = getCurrentParameter())
   {

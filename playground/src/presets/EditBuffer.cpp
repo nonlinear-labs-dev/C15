@@ -620,9 +620,11 @@ Parameter *EditBuffer::searchForAnyParameterWithLock() const
 void EditBuffer::setMacroControlValueFromMCView(int id, double value, Glib::ustring uuid)
 {
   if(auto mcs = getParameterGroupByID("MCs"))
+  {
     if(auto mc = dynamic_cast<MacroControlParameter *>(mcs->getParameterByID(id)))
     {
       mc->setCPFromMCView(mc->getUndoScope().startTrashTransaction()->getTransaction(), value);
       mc->setLastMCViewUUID(uuid);
     }
+  }
 }

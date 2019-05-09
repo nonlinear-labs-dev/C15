@@ -40,13 +40,13 @@ void InfoLayout::scrollToMax()
   m_scrollArea->scroll(std::numeric_limits<int>::max() / 2);
 }
 
-bool InfoLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool InfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
     switch(i)
     {
-      case BUTTON_A:
+      case Buttons::BUTTON_A:
         if(Application::get().getHWUI()->getFocusAndMode().mode == UIMode::Info)
         {
           if(Application::get().getHWUI()->getFocusAndMode().focus == UIFocus::Presets)
@@ -60,7 +60,7 @@ bool InfoLayout::onButton(int i, bool down, ButtonModifiers modifiers)
           return true;
         }
         break;
-      case BUTTON_PRESET:
+      case Buttons::BUTTON_PRESET:
         if(Application::get().getHWUI()->getFocusAndMode().focus == UIFocus::Presets)
         {
           Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Select);
@@ -71,16 +71,16 @@ bool InfoLayout::onButton(int i, bool down, ButtonModifiers modifiers)
         }
         return true;
 
-      case BUTTON_STORE:
+      case Buttons::BUTTON_STORE:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Store));
         return true;
 
-      case BUTTON_EDIT:
+      case Buttons::BUTTON_EDIT:
         Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
         return true;
 
-      case BUTTON_INFO:
-      case BUTTON_ENTER:
+      case Buttons::BUTTON_INFO:
+      case Buttons::BUTTON_ENTER:
         Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Select);
         return true;
     }

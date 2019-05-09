@@ -31,7 +31,7 @@ void EditBufferSerializer::writeTagContent(Writer &writer) const
   ParameterGroupsSerializer groups(m_editBuffer);
   groups.write(writer);
 
-  if(auto selectedParam = m_editBuffer->getSelected())
+  if(auto selectedParam = m_editBuffer->getSelectedParameter())
     writer.writeTextElement("selected-parameter", to_string(selectedParam->getID()));
 
   LastLoadedPresetInfoSerializer lastLoaded(m_editBuffer);

@@ -71,7 +71,11 @@ WebSocketServer *Application::getWebsocketServer()
   return m_websocketServer.get();
 }
 
+<<<<<<< HEAD
 Bridges *Application::getBridges()
+=======
+Bridges* Application::getBridges()
+>>>>>>> layouts-reloaded
 {
   return m_bridges.get();
 }

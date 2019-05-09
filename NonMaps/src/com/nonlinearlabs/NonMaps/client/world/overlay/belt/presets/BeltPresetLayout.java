@@ -92,9 +92,12 @@ public class BeltPresetLayout extends OverlayLayout {
 	public void storeSelectOff() {
 		store.storeSelectOff();
 	}
+<<<<<<< HEAD
 	
 	public boolean isDirectLoadActive() {
 		return autoLoad.isDirectLoadActive();
 	}
+=======
+>>>>>>> layouts-reloaded
 
 }

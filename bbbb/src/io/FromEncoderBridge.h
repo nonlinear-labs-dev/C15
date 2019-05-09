@@ -10,10 +10,16 @@ class FromEncoderBridge : public Bridge
   FromEncoderBridge();
   virtual ~FromEncoderBridge();
 
+<<<<<<< HEAD
   void sendRotary(int8_t inc);
 
  private:
   void transmit(Receiver::tMessage msg) override;
+=======
+    void sendRotary(int8_t inc);
+
+};
+>>>>>>> layouts-reloaded
 
   void scheduleSimpleEvent(int8_t inc);
   void scheduleTimestampedEvent(int8_t inc);

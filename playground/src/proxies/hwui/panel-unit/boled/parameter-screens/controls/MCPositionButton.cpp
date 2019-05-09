@@ -2,7 +2,7 @@
 #include "parameters/ModulateableParameter.h"
 #include <proxies/hwui/buttons.h>
 
-MCPositionButton::MCPositionButton(int id)
+MCPositionButton::MCPositionButton(Buttons id)
     : super("MC Pos", id)
 {
 }

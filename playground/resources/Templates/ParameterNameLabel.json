@@ -1,0 +1,24 @@
+{
+	"controls": {
+		"ParameterNameLabel": {
+			"Text": {
+				"Class": "Text",
+				"Rect": "0,0,112,11",
+				"Property": "Text"
+			}
+		}
+	},
+	"styles": {
+		"ParamNameLabel-Selected": {
+			"selector": {
+				"ControlClasses": "ParameterNameLabel"
+			},
+			"styles": {
+				"FontSize": 9,
+				"BackgroundColor": "C43",
+				"Color": "C255",
+				"TextAlign": "Center"
+			}
+		}
+	}
+}

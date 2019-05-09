@@ -21,6 +21,7 @@ namespace UNDO
       , UpdateDocumentContributor(&scope)
       , m_scope(scope)
       , m_name(name)
+      , m_isClosed(false)
       , m_depth(depth)
   {
     DebugLevel::info("Creating UNDO::Transaction:", name);
@@ -375,5 +376,4 @@ namespace UNDO
     }
     return nullptr;
   }
-
 } /* namespace UNDO */

@@ -102,22 +102,22 @@ Parameter *MacroControlParameterLayout2::getCurrentPlayControl() const
   return nullptr;
 }
 
-bool MacroControlParameterLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool MacroControlParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
     switch(i)
     {
-      case BUTTON_A:
+      case Buttons::BUTTON_A:
         toggleMode(Mode::PlayControlPosition);
         return true;
 
-      case BUTTON_B:
-      case BUTTON_D:
+      case Buttons::BUTTON_B:
+      case Buttons::BUTTON_D:
         toggleMode(Mode::PlayControlSelection);
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         toggleMode(Mode::PlayControlAmount);
         return true;
     }
@@ -215,9 +215,9 @@ MacroControlParameterSelectLayout2::MacroControlParameterSelectLayout2()
     , super1()
     , super2()
 {
-  addControl(new Button("HW Pos", BUTTON_A));
-  addControl(new Button("HW Sel", BUTTON_B));
-  addControl(new Button("HW Amt", BUTTON_C));
+  addControl(new Button("HW Pos", Buttons::BUTTON_A));
+  addControl(new Button("HW Sel", Buttons::BUTTON_B));
+  addControl(new Button("HW Amt", Buttons::BUTTON_C));
 }
 
 void MacroControlParameterSelectLayout2::init()
@@ -231,9 +231,9 @@ Carousel *MacroControlParameterSelectLayout2::createCarousel(const Rect &rect)
   return new HWSourceAmountCarousel(Rect(195, 0, 58, 64));
 }
 
-bool MacroControlParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool MacroControlParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(down && BUTTON_D == i && getMode() == Mode::MacroControlValue)
+  if(Buttons::BUTTON_D == i && getMode() == Mode::MacroControlValue)
   {
     toggleMode(Mode::PlayControlAmount);
     return true;
@@ -255,9 +255,9 @@ MacroControlParameterEditLayout2::MacroControlParameterEditLayout2()
     , super1()
     , super2()
 {
-  addControl(new Button("", BUTTON_A));
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_A));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
 }
 
 ButtonMenu *MacroControlParameterEditLayout2::createMenu(const Rect &rect)
@@ -271,12 +271,12 @@ void MacroControlParameterEditLayout2::setMode(Mode desiredMode)
   getMenu()->highlightSelectedButton();
 }
 
-bool MacroControlParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool MacroControlParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;
 
-  if(i == BUTTON_A || i == BUTTON_B || i == BUTTON_C)
+  if(i == Buttons::BUTTON_A || i == Buttons::BUTTON_B || i == Buttons::BUTTON_C)
     return true;
 
   return super2::onButton(i, down, modifiers);

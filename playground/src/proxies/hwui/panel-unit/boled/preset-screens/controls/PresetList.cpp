@@ -51,7 +51,7 @@ void PresetList::onBankChanged()
   }
 }
 
-bool PresetList::onButton(int i, bool down, ButtonModifiers)
+bool PresetList::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
@@ -60,7 +60,7 @@ bool PresetList::onButton(int i, bool down, ButtonModifiers)
 
     switch(i)
     {
-      case BUTTON_B:
+      case Buttons::BUTTON_B:
         if(focusAndMode.focus == UIFocus::Banks)
         {
           if(auto bank = pm->getSelectedBank())
@@ -72,7 +72,7 @@ bool PresetList::onButton(int i, bool down, ButtonModifiers)
         }
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         if(focusAndMode.focus == UIFocus::Banks)
         {
           if(auto bank = pm->getSelectedBank())

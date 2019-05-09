@@ -2,7 +2,7 @@
 #include <proxies/hwui/buttons.h>
 #include <parameters/ModulateableParameter.h>
 
-MCSelectButton::MCSelectButton(int id)
+MCSelectButton::MCSelectButton(Buttons id)
     : super("MC Sel", id)
 {
 }

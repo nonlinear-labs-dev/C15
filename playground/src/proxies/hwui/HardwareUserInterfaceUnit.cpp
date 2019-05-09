@@ -46,7 +46,7 @@ std::shared_ptr<const UsageMode> HardwareUserInterfaceUnit::getUsageMode() const
   return m_usageMode;
 }
 
-bool HardwareUserInterfaceUnit::onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state)
+bool HardwareUserInterfaceUnit::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
   if(m_usageMode)
     return m_usageMode->onButtonPressed(buttonID, modifiers, state);

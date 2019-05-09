@@ -10,7 +10,7 @@ class ParameterInfoLayout : public InfoLayout
  public:
   ParameterInfoLayout();
 
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
  protected:
   virtual void addHeadline() override;

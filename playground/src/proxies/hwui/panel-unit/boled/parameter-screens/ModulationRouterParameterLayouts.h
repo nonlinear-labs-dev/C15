@@ -10,7 +10,7 @@ class ModulationRouterParameterSelectLayout2 : public virtual ParameterSelectLay
   ModulationRouterParameterSelectLayout2();
 
  protected:
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class ModulationRouterParameterEditLayout2 : public virtual ParameterEditLayout2

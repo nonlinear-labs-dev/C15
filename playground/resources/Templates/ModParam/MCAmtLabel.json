@@ -1,0 +1,22 @@
+{
+  "controls": {
+    "MCAmtLabel": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0,0,68,12",
+        "Default": "0"
+      }
+    }
+  },
+  "styles": {
+    "MCAmtLabel-Colors": {
+      "selector": {
+        "ControlClasses": "MCAmtLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C255"
+      }
+    }
+  }
+}

@@ -475,10 +475,11 @@ bool ModulateableParameter::isMacroControlAssignedAndChanged() const
   return false;
 }
 
-Parameter *ModulateableParameter::getMacroControl() const
+MacroControlParameter *ModulateableParameter::getMacroControl() const
 {
   auto myMCID = MacroControlsGroup::modSrcToParamID(getModulationSource());
-  return Application::get().getPresetManager()->getEditBuffer()->findParameterByID(myMCID);
+  return dynamic_cast<MacroControlParameter *>(
+      Application::get().getPresetManager()->getEditBuffer()->findParameterByID(myMCID));
 }
 
 void ModulateableParameter::undoableRecallMCPos()

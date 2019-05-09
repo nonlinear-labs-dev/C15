@@ -24,5 +24,4 @@ public class SoundBeltButton extends BeltButton {
 	public boolean isActive() {
 		return belt.isSoundView();
 	}
-
 }

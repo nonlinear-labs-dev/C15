@@ -501,8 +501,11 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		RenameDialog.open(this);
 	}
 
+<<<<<<< HEAD
 	public boolean isInCurrentFilterSet() {
 		return filterActive && isInFilterSet;
 	}
 
+=======
+>>>>>>> layouts-reloaded
 }

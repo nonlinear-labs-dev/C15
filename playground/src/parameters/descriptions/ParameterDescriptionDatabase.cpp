@@ -141,7 +141,11 @@ connection ParameterDescriptionDatabase::load(int paramID, slot<void, const Glib
   if(it != m_jobs.end())
     return it->second->connect(cb);
 
+<<<<<<< HEAD
   auto job = std::make_shared<Job>(paramID);
+=======
+  auto job = make_shared<Job>(paramID);
+>>>>>>> layouts-reloaded
   m_jobs[paramID] = job;
   return job->connect(cb);
 }

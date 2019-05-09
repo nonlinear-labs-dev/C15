@@ -24,15 +24,6 @@ class MacroControlParameter : public Parameter
   void unregisterTarget(ModulateableParameter *target);
 
   void setCPFromMCView(UNDO::Transaction *transaction, const tControlPositionValue &cpValue);
-  void applyLpcPhysicalControl(tControlPositionValue diff);
-  void applyAbsoluteLpcPhysicalControl(tControlPositionValue v);
-  void onValueChanged(Initiator initiator, tControlPositionValue oldValue, tControlPositionValue newValue) override;
-
-  void setUiSelectedHardwareSource(int paramID);
-  void toggleUiSelectedHardwareSource(int inc = 1);
-  int getUiSelectedHardwareSource() const;
-
-  void undoableSetGivenName(const Glib::ustring &newName);
   void undoableSetGivenName(UNDO::Transaction *transaction, const ustring &newName);
   void undoableSetInfo(const Glib::ustring &newName);
   void undoableSetInfo(UNDO::Transaction *transaction, const Glib::ustring &newName);

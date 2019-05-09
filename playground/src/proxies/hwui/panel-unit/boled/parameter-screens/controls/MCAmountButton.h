@@ -10,7 +10,7 @@ class MCAmountButton : public DimmingModulationModeButton
   typedef DimmingModulationModeButton super;
 
  public:
-  MCAmountButton(int id);
+  MCAmountButton(Buttons id);
   virtual ~MCAmountButton();
 
   void update(const Parameter *parameter) override;

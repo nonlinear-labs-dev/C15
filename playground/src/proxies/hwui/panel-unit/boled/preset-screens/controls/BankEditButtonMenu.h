@@ -45,6 +45,9 @@ class BankEditButtonMenu : public ButtonMenu
 
   void correctMenuSelection();
 
+  BankEditButtonMenu(const BankEditButtonMenu& other);
+  BankEditButtonMenu& operator=(const BankEditButtonMenu&);
+
   void newBank();
   void importBank();
   void renameBank();

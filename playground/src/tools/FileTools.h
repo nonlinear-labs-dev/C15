@@ -21,7 +21,7 @@ namespace FileTools
   {
     auto fileName = desiredName;
     if(depth != 0)
-      fileName.append(to_string(depth));
+      fileName.append(std::to_string(depth));
 
     for(auto& p : fs::directory_iterator(directoryPath.c_str()))
     {
@@ -83,5 +83,15 @@ namespace FileTools
     Glib::ustring ret(stringPtr);
     g_free(stringPtr);
     return ret;
+  }
+
+  static Glib::ustring getFileName(const Glib::RefPtr<Gio::File>& file)
+  {
+    return file->query_info()->get_name();
+  }
+
+  static Glib::ustring getFullPath(const Glib::RefPtr<Gio::File>& file)
+  {
+    return file->get_path();
   }
 };

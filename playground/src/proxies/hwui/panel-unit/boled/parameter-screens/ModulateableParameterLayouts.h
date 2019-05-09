@@ -7,9 +7,7 @@ class ModulateableParameterLayout2 : public virtual ParameterLayout2
  public:
   typedef ParameterLayout2 super;
   ModulateableParameterLayout2();
-
   virtual bool switchToNormalMode();
-
  protected:
   void addModAmountSliders(ControlOwner *o);
 };
@@ -26,7 +24,7 @@ class ModulateableParameterSelectLayout2 : public ParameterSelectLayout2, public
 
  protected:
   virtual void init() override;
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
   virtual Parameter *getCurrentEditParameter() const override;
   virtual void setDefault() override;
@@ -62,7 +60,7 @@ class ModulateableParameterSelectLayout2 : public ParameterSelectLayout2, public
   Overlay *m_modeOverlay = nullptr;
   sigc::connection m_paramConnection;
 
-  bool handleMCRecall(int i, bool down);
+  bool handleMCRecall(Buttons i, bool down);
 };
 
 class ModulateableParameterEditLayout2 : public ParameterEditLayout2, public ModulateableParameterLayout2

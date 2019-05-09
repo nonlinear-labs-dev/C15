@@ -392,11 +392,6 @@ void Parameter::undoableRandomize(UNDO::Transaction *transaction, Initiator init
   setCpValue(transaction, initiator, newPos, false);
 }
 
-void Parameter::undoableSetType(UNDO::Transaction *transaction, PresetType oldType, PresetType desiredType)
-{
-  m_value.undoableSetType(transaction, oldType, desiredType);
-}
-
 void Parameter::onPresetSentToLpc() const
 {
 }

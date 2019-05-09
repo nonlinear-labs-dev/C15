@@ -30,7 +30,6 @@ class ButtonMenu : public ControlWithChildren
  protected:
   void clearActions();
   void setItemTitle(size_t i, const Glib::ustring &caption);
-  const size_t getItemCount() const;
 
  private:
   void bruteForce();

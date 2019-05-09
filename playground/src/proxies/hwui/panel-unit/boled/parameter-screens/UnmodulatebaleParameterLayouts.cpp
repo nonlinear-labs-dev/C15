@@ -19,9 +19,9 @@ void UnmodulateableParameterLayout2::init()
 
 void UnmodulateableParameterLayout2::addButtons()
 {
-  addControl(new Button("", BUTTON_A));
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_A));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
 }
 
 UnmodulateableParameterSelectLayout2::UnmodulateableParameterSelectLayout2()
@@ -83,7 +83,7 @@ ButtonMenu *UnmodulateableParameterEditLayout2::createMenu(const Rect &rect)
   return new ParameterEditButtonMenu(rect);
 }
 
-bool UnmodulateableParameterEditLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool UnmodulateableParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(super1::onButton(i, down, modifiers))
     return true;

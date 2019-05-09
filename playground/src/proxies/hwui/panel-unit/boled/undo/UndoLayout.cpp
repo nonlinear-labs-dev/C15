@@ -12,7 +12,8 @@ UndoLayout::UndoLayout()
     : super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
 {
   m_list = addControl(new UndoList(Rect(0, 0, 192, 64)));
-  m_editButton = addControl(new Button("", BUTTON_D));
+  m_editButton = addControl(new Button("", Buttons::BUTTON_D));
+
   m_posInTree = addControl(new PositionInTreeLabel(Rect(195, 0, 58, 11)));
 
   Application::get().getUndoScope()->onUndoScopeChanged(mem_fun(this, &UndoLayout::assignTransactions));
@@ -22,38 +23,38 @@ UndoLayout::~UndoLayout()
 {
 }
 
-bool UndoLayout::onButton(int i, bool down, ButtonModifiers modifiers)
+bool UndoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
     switch(i)
     {
-      case BUTTON_ENTER:
+      case Buttons::BUTTON_ENTER:
         jumpToTip();
         return true;
 
-      case BUTTON_A:
+      case Buttons::BUTTON_A:
         selectPreviousSibling();
         return true;
 
-      case BUTTON_C:
+      case Buttons::BUTTON_C:
         selectNextSibling();
         return true;
 
-      case BUTTON_D:
+      case Buttons::BUTTON_D:
         if(m_editMode)
           doEditAction();
         return true;
 
-      case BUTTON_EDIT:
+      case Buttons::BUTTON_EDIT:
         toggleEdit();
         return true;
 
-      case BUTTON_PRESET:
+      case Buttons::BUTTON_PRESET:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
         return true;
 
-      case BUTTON_STORE:
+      case Buttons::BUTTON_STORE:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Store));
         return true;
     }

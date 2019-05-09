@@ -99,10 +99,3 @@ void RawValue::setToDefault(Initiator initiator)
 void RawValue::onRawValueChanged(Initiator initiator, tValueType oldRawValue, tValueType newRawValue)
 {
 }
-
-void RawValue::undoableSetType(UNDO::Transaction *transaction, PresetType oldType, PresetType desiredType)
-{
-  if(oldType != desiredType)
-  {
-  }
-}

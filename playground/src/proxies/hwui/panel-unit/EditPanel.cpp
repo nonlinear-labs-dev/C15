@@ -40,7 +40,7 @@ const BOLED &EditPanel::getBoled() const
   return m_oled;
 }
 
-bool EditPanel::onButtonPressed(gint32 buttonID, ButtonModifiers modifiers, bool state)
+bool EditPanel::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
   return m_oled.onButtonPressed(buttonID, modifiers, state);
 }

@@ -16,7 +16,7 @@ class SingleSoundLayout : public DFBLayout
   SingleSoundLayout(FocusAndMode focusAndMode);
   virtual ~SingleSoundLayout();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  private:
@@ -29,7 +29,6 @@ class SingleSoundLayout : public DFBLayout
     Edit
   };
 
-  void toggleEditMenu(bool inEdit);
   void toggleColumn(Column c);
   void setup();
   void randomize();

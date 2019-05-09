@@ -14,10 +14,10 @@
 ModulationRouterParameterSelectLayout2::ModulationRouterParameterSelectLayout2()
     : super()
 {
-  addControl(new Button("HW Source..", BUTTON_A));
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
-  addControl(new Button("MC..", BUTTON_D));
+  addControl(new Button("HW Source..", Buttons::BUTTON_A));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
+  addControl(new Button("MC..", Buttons::BUTTON_D));
 
   addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));
@@ -32,11 +32,11 @@ Carousel *ModulationRouterParameterSelectLayout2::createCarousel(const Rect &rec
   return nullptr;
 }
 
-bool ModulationRouterParameterSelectLayout2::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ModulationRouterParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
-    if(i == BUTTON_A)
+    if(i == Buttons::BUTTON_A)
     {
       if(auto p = dynamic_cast<ModulationRoutingParameter *>(getCurrentParameter()))
       {
@@ -46,7 +46,7 @@ bool ModulationRouterParameterSelectLayout2::onButton(int i, bool down, ButtonMo
       return true;
     }
 
-    if(i == BUTTON_D)
+    if(i == Buttons::BUTTON_D)
     {
       if(auto p = dynamic_cast<ModulationRoutingParameter *>(getCurrentParameter()))
       {
@@ -65,9 +65,9 @@ bool ModulationRouterParameterSelectLayout2::onButton(int i, bool down, ButtonMo
 ModulationRouterParameterEditLayout2::ModulationRouterParameterEditLayout2()
     : super()
 {
-  addControl(new Button("", BUTTON_A));
-  addControl(new Button("", BUTTON_B));
-  addControl(new Button("", BUTTON_C));
+  addControl(new Button("", Buttons::BUTTON_A));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
 
   addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));

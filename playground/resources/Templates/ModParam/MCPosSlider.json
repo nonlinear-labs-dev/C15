@@ -1,0 +1,49 @@
+{
+  "controls": {
+    "MCPosSlider": {
+      "BG": {
+        "Class": "Bar",
+        "Rect": "3,0,44,4"
+      },
+      "Border": {
+        "Class": "Border",
+        "Rect": "3,0,44,4"
+      },
+      "CenterDot": {
+        "Class": "Circle",
+        "Rect": "5,0,40,5"
+      },
+      "dots": {
+        "Class": "Text",
+        "Rect": "50, -6, 20, 10",
+        "Default": "....."
+      },
+      "MCPos-Label": {
+        "Class": "Text",
+        "Rect": "5, 10, 50, 9",
+        "Default": "0%"
+      }
+    }
+  },
+  "styles":  {
+    "CenterDot": {
+      "selector": {
+        "ControlClasses": "MCPosSlider",
+        "PrimitiveClasses": "Circle"
+      },
+      "styles": {
+        "Color": "C255"
+      }
+    },
+    "TransparentBackground": {
+      "selector": {
+        "ControlClasses": "MCPosSlider",
+        "PrimitiveClasses": "Bar",
+        "PrimitveInstances": "BG"
+      },
+      "styles": {
+        "Color": "C103"
+      }
+    }
+  }
+}

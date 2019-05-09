@@ -1,5 +1,4 @@
 #include "ContentSection.h"
-
 #include <device-settings/DebugLevel.h>
 
 ContentSection::ContentSection(UpdateDocumentContributor *parent)

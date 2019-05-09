@@ -20,19 +20,19 @@ class FileDialogLayout : public DFBLayout
   FileDialogLayout(tFilterFunction filter, tCallBackFunction cb, std::string header);
   virtual ~FileDialogLayout();
 
-  bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   bool onRotary(int inc, ButtonModifiers modifiers) override;
 
   std::experimental::filesystem::directory_entry getSelectedFile();
 
  private:
+  bool redraw(FrameBuffer& fb);
   void updateLabels();
   void overlayInfo();
 
   int fileCount = 0;
   FileListControl* fileList = nullptr;
   Label* positionLabel = nullptr;
-
   InvertedLabel* headerLabel = nullptr;
   tCallBackFunction commitFunction;
   FileCrawlerJob crawler;

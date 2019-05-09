@@ -22,7 +22,7 @@ class UndoLayout : public DFBLayout
   UndoLayout();
   virtual ~UndoLayout();
 
-  virtual bool onButton(int i, bool down, ButtonModifiers modifiers) override;
+  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  private:
@@ -42,6 +42,7 @@ class UndoLayout : public DFBLayout
   void toggleEdit();
 
   UNDO::Transaction *m_tip = nullptr;
+
   UndoList *m_list = nullptr;
   Button *m_editButton = nullptr;
   Label *m_editMode = nullptr;

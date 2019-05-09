@@ -43,20 +43,19 @@ Scrollable* PresetInfoLayout::createScrollableContent()
   return new PresetInfoContent();
 }
 
-bool PresetInfoLayout::onButton(int button, bool down, ButtonModifiers modifiers)
+bool PresetInfoLayout::onButton(Buttons button, bool down, ButtonModifiers modifiers)
 {
-
   Layout* l;
 
   if(down)
   {
     switch(button)
     {
-      case BUTTON_EDIT:
+        case Buttons::BUTTON_EDIT:
         l = new EditPresetInfoLayout();
         Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(l);
         return true;
-      case BUTTON_PRESET:
+        case Buttons::BUTTON_PRESET:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
         return true;
     }

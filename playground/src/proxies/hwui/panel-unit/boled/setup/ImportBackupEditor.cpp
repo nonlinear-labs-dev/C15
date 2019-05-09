@@ -37,14 +37,14 @@ ImportBackupEditor::ImportBackupEditor()
   if(USBStickAvailableView::usbIsReady())
   {
     addLabel("Attention! This action will delete all current banks!");
-    addControl(new Button("OK", Button::getButtonPos(BUTTON_C).getMovedBy(Point(-128, -16))));
-    addControl(new Button("Cancel", Button::getButtonPos(BUTTON_D).getMovedBy(Point(-128, -16))));
+    addControl(new Button("OK", Button::getButtonPos(Buttons::BUTTON_C).getMovedBy(Point(-128, -16))));
+    addControl(new Button("Cancel", Button::getButtonPos(Buttons::BUTTON_D).getMovedBy(Point(-128, -16))));
   }
   else
   {
     addControl(new MultiLineLabel("Please insert an USB-Stick and reload this page!"))
         ->setPosition(Rect(3, 0, 119, 24));
-    addControl(new Button("Back", Button::getButtonPos(BUTTON_D).getMovedBy(Point(-128, -16))));
+    addControl(new Button("Back", Button::getButtonPos(Buttons::BUTTON_D).getMovedBy(Point(-128, -16))));
   }
 }
 
@@ -60,16 +60,16 @@ void ImportBackupEditor::setPosition(const Rect &)
   ControlWithChildren::setPosition(c_fullRightSidePosition);
 }
 
-bool ImportBackupEditor::onButton(int i, bool down, ButtonModifiers modifiers)
+bool ImportBackupEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   if(down)
   {
-    if(i == BUTTON_C && USBStickAvailableView::usbIsReady())
+    if(i == Buttons::BUTTON_C && USBStickAvailableView::usbIsReady())
     {
       importBackup();
       return true;
     }
-    else if(i == BUTTON_D)
+    else if(i == Buttons::BUTTON_D)
     {
       diveUp();
       return true;

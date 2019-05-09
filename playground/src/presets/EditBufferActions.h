@@ -13,7 +13,7 @@ class EditBufferActions : public RPCActionManager
  public:
   typedef Parameter* tParameterPtr;
   EditBufferActions(EditBuffer* editBuffer);
-  virtual ~EditBufferActions();
+  virtual ~EditBufferActions() = default;
 
  private:
   EditBufferActions(const EditBufferActions& other) = delete;

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "playground.h"
+#include "Rect.h"
 #include <tools/Uncopyable.h>
+#include <list>
 
 class Control;
 class FrameBuffer;
@@ -63,6 +65,7 @@ class ControlOwner : public Uncopyable
     this->setDirty();
     return ctrl;
   }
+
 
  protected:
   void remove(const Control *ctrl);

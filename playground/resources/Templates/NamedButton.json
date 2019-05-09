@@ -1,0 +1,137 @@
+{
+  "controls": {
+    "McSelButton": {
+      "Background": {
+        "Class": "Bar",
+        "Tag": "Button",
+        "Rect": "3, 2, 56,9"
+      },
+      "Text": {
+        "Class": "Text",
+        "Rect": "3, 2, 56,9",
+        "Default": "MC Sel"
+      },
+      "Border": {
+        "Class": "Border",
+        "Rect": "2,1,58,11"
+      },
+      "CoverLT": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "2,1,1,1"
+      },
+      "CoverRT": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "59,1,1,1"
+      },
+      "CoverLB": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "2,11,1,1"
+      },
+      "CoverRB": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "59,11,1,1"
+      }
+    },
+    "McAmtButton": {
+      "Background": {
+        "Class": "Bar",
+        "Tag": "Button",
+        "Rect": "3, 2, 56,9"
+      },
+      "Text": {
+        "Class": "Text",
+        "Rect": "3, 2, 56,9",
+        "Default": "MC Amt"
+      },
+      "Border": {
+        "Class": "Border",
+        "Tag": "ButtonBorder",
+        "Rect": "2,1,58,11"
+      },
+      "CoverLT": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "2,1,1,1"
+      },
+      "CoverRT": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "59,1,1,1"
+      },
+      "CoverLB": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "2,11,1,1"
+      },
+      "CoverRB": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "59,11,1,1"
+      }
+    }
+  },
+  "styles": {
+    "Button-Border": {
+      "selector": {
+        "PrimitiveClasses": "Border",
+        "Tag": "ButtonBorder"
+      },
+      "styles": {
+        "Color": "C103",
+        "TextAlign": "Left"
+      }
+    },
+    "McAmtButton-Text-Highlight": {
+      "selector": {
+        "ControlClasses": "McAmtButton",
+        "UIDetail": "MCAmount",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "BackgroundColor": "C128"
+      }
+    },
+    "McAmtButton-Text-NonHighlight": {
+      "selector": {
+        "ControlClasses": "McAmtButton",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "BackgroundColor": "C77"
+      }
+    },
+    "McSelButton-Text-Highlight": {
+      "selector": {
+        "ControlClasses": "McSelButton",
+        "UIDetail": "MCSelect",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "BackgroundColor": "C128"
+      }
+    },
+    "McSelButton-Text-NonHighlight": {
+      "selector": {
+        "ControlClasses": "McSelButton",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "BackgroundColor": "C77"
+      }
+    },
+    "McSelButton-Covers": {
+      "selector": {
+        "Tag": "Cover",
+        "PrimitiveClasses": "Bar"
+      },
+      "styles": {
+        "Color": "C43",
+        "TextAlign": "Left"
+      }
+    }
+  }
+}
