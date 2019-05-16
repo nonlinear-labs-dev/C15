@@ -391,7 +391,7 @@ namespace DescriptiveLayouts
     virtual void onChange() override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
+      if(const auto *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
       {
         if(auto mc = modP->getMacroControl())
         {
@@ -405,7 +405,7 @@ namespace DescriptiveLayouts
   {
   protected:
       std::any getLastValue() const override {
-          return "";
+          return DisplayString("",0);
       }
   };
 

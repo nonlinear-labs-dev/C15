@@ -77,7 +77,7 @@ namespace DescriptiveLayouts
           if(auto p = std::dynamic_pointer_cast<PropertyOwner>(c))
           {
               if(connection.src == EventSources::String) {
-                  p->setProperty(connection.targetProperty, connection.textdata);
+                  p->setProperty(connection.targetProperty, std::pair<Glib::ustring, int>(connection.textdata, 0));
               } else {
                   p->setProperty(connection.targetProperty, v);
               }

@@ -77,7 +77,7 @@ namespace DescriptiveLayouts
   }
 
   Glib::ustring toEventText(const Glib::ustring& text) {
-      return text.substr(7, text.find(")"));
+      return text.substr(7, text.length() - 8);
   }
 
   ControlInstance::EventConnections parseEventConnections(json j)

@@ -28,15 +28,15 @@
 					"Events": "ParameterName => Text[Text]"
 				},
 				"ButtonA": {
-					"Class": "EmptyButton",
+					"Class": "GenericButton",
 					"Position": "0,52"
 				},
 				"ButtonB": {
-					"Class": "EmptyButton",
+					"Class": "GenericButton",
 					"Position": "64,52"
 				},
 				"ButtonC": {
-					"Class": "EmptyButton",
+					"Class": "GenericButton",
 					"Position": "128,52"
 				},
 				"Menu": {

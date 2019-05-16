@@ -33,8 +33,9 @@
           "Position": "0,52"
         },
         "ButtonB": {
-          "Class": "McSelButton",
-          "Position": "64,52"
+          "Class": "GenericButton",
+          "Position": "64,52",
+          "Events": "String(MC Select) => Text[Text]"
         },
         "ButtonC": {
           "Class": "EmptyButton",
