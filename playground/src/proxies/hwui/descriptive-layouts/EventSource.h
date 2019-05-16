@@ -13,11 +13,12 @@ namespace DescriptiveLayouts
    public:
     using Callback = std::function<void(std::any)>;
 
-    sigc::connection connect(Callback cb)
+    sigc::connection connect(const Callback &cb)
     {
       cb(getLastValue());
       return m_outputSignal.connect(cb);
     }
+
 
    protected:
     virtual std::any getLastValue() const = 0;
