@@ -46,7 +46,11 @@ ConditionRegistry::ConditionRegistry()
 
   m_theConditonMap["hasMcSelected"] = [&]() { return !m_theConditonMap["hasNoMcSelected"]; };
 
-  m_theConditonMap["isSingleSound"] = [&]() { return true; };
+  auto getEditBufferType = [] { return Application::get().getPresetManager()->getEditBuffer()->getType(); };
 
-  m_theConditonMap["isDualSound"] = [&]() { return false; };
+  m_theConditonMap["isSingleSound"] = [&]() { return getEditBufferType() == EditBuffer::Type::Single; };
+
+  m_theConditonMap["isSplitSound"] = [&]() { return getEditBufferType() == EditBuffer::Type::Split; };
+
+  m_theConditonMap["isLayerSound"] = [&]() { return getEditBufferType() == EditBuffer::Type::Layer; };
 }

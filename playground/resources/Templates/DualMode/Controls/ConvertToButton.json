@@ -1,48 +1,42 @@
 {
-  "controls":{
-    "ConvertToButton":{
-      "Background":{
-        "Class":"Bar",
-        "Tag":"Button",
-        "Rect":"3, 2, 56,9"
+  "controls": {
+    "ConvertToButton": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "3, 2, 56, 9",
+        "Default": "Convert to"
       },
-      "Text":{
-        "Class":"Text",
-        "Rect":"3, 2, 56,9",
-        "Default":"Convert to"
+      "Border": {
+        "Class": "Border",
+        "Tag": "ButtonBorder",
+        "Rect": "2,1,58,11"
       },
-      "Border":{
-        "Class":"Border",
-        "Tag":"ButtonBorder",
-        "Rect":"2,1,58,11"
+      "CoverLT": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "2,1,1,1"
       },
-      "CoverLT":{
-        "Class":"Bar",
-        "Tag":"Cover",
-        "Rect":"2,1,1,1"
+      "CoverRT": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "59,1,1,1"
       },
-      "CoverRT":{
-        "Class":"Bar",
-        "Tag":"Cover",
-        "Rect":"59,1,1,1"
+      "CoverLB": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "2,11,1,1"
       },
-      "CoverLB":{
-        "Class":"Bar",
-        "Tag":"Cover",
-        "Rect":"2,11,1,1"
-      },
-      "CoverRB":{
-        "Class":"Bar",
-        "Tag":"Cover",
-        "Rect":"59,11,1,1"
+      "CoverRB": {
+        "Class": "Bar",
+        "Tag": "Cover",
+        "Rect": "59,11,1,1"
       }
     }
   },
   "styles": {
-    "ConvertToButton-Highlight": {
+    "ConvertButton-Text-Highlight": {
       "selector": {
         "ControlClasses": "ConvertToButton",
-        "UIFocus": "Sound",
         "UIDetail": "ButtonA",
         "PrimitiveClasses": "Text"
       },
@@ -50,17 +44,16 @@
         "BackgroundColor": "C128"
       }
     },
-    "ConvertToButton-NonHighlight": {
+    "ConvertButton-Text-NonHighlight": {
       "selector": {
         "ControlClasses": "ConvertToButton",
-        "UIFocus": "Sound",
         "PrimitiveClasses": "Text"
       },
       "styles": {
         "BackgroundColor": "C77"
       }
     },
-    "ConvertToButton-Covers": {
+    "ConvertButton-Covers": {
       "selector": {
         "ControlClasses": "ConvertToButton",
         "Tag": "Cover",
@@ -68,6 +61,17 @@
       },
       "styles": {
         "Color": "C43",
+        "TextAlign": "Left"
+      }
+    },
+    "ConvertButton-Border": {
+      "selector": {
+        "ControlClasses": "ConvertButton",
+        "PrimitiveClasses": "Border",
+        "Tag": "ButtonBorder"
+      },
+      "styles": {
+        "Color": "C103",
         "TextAlign": "Left"
       }
     }

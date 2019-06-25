@@ -1,19 +1,23 @@
 {
   "layouts": {
-    "SplitSoundLayout-Select-Init": {
+    "SplitSoundLayout-Convert-Init": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIDetail": "ButtonA"
       },
       "Conditions": [
-        "isSingleSound"
+        "isSplitSound"
       ],
       "Controls": {
         "SoundHeader": {
           "Class": "SoundHeader",
           "Position": "0,0",
           "Events": "SoundHeaderText => Text[Text]"
+        },
+        "ButtonMenu": {
+          "Class": "ConvertSoundMenu",
+          "Position": "2, 24"
         },
         "ButtonA": {
           "Class": "ConvertToButton",
@@ -33,7 +37,8 @@
         }
       },
       "EventSinks": {
-        "BUTTON_A": "SwitchToButtonADetail"
+        "BUTTON_A": "IncButtonMenu",
+        "BUTTON_ENTER": "FireButtonMenu"
       }
     }
   }

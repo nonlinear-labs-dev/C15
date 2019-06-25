@@ -38,8 +38,7 @@ namespace DescriptiveLayouts
 
   bool LayoutClass::meetsConditions() const
   {
-    return conditions.size() == 0
-        || std::all_of(conditions.begin(), conditions.end(), [](const std::function<bool()> c) { return c(); });
+    return conditions.empty() || std::all_of(conditions.begin(), conditions.end(), [](const auto c) { return c(); });
   }
 
   const unsigned long LayoutClass::getWeight() const

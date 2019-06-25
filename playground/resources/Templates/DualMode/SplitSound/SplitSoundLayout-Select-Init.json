@@ -7,7 +7,7 @@
         "UIDetail": "Init"
       },
       "Conditions": [
-        "isSingleSound"
+        "isSplitSound"
       ],
       "Controls": {
         "SoundHeader": {

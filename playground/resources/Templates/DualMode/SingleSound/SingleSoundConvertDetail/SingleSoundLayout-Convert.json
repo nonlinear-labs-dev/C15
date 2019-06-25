@@ -1,12 +1,12 @@
 {
   "layouts": {
-    "SingleSoundLayout-Select-Init": {
+    "SingleSoundLayout-Convert-Init": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIDetail": "ButtonA"
       },
-      "Contiditons": [
+      "Conditions": [
         "isSingleSound"
       ],
       "Controls": {
@@ -14,6 +14,10 @@
           "Class": "SoundHeader",
           "Position": "0,0",
           "Events": "SoundHeaderText => Text[Text]"
+        },
+        "ButtonMenu": {
+          "Class": "ConvertSoundMenu",
+          "Position": "2, 24"
         },
         "ButtonA": {
           "Class": "ConvertToButton",
@@ -30,13 +34,11 @@
         "ButtonD": {
           "Class": "EmptyButton",
           "Position": "192,52"
-        },
-        "ConvertMenu": {
-
         }
       },
       "EventSinks": {
-        "BUTTON_EDIT": "SwitchToEditMode"
+        "BUTTON_A": "IncButtonMenu",
+        "BUTTON_ENTER": "FireButtonMenu"
       }
     }
   }

@@ -1,5 +1,6 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MacroControlEditButtonMenu.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/ConvertSoundMenu.h>
 #include "ControlInstance.h"
 #include "GenericControl.h"
 #include "proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h"
@@ -28,6 +29,10 @@ namespace DescriptiveLayouts
     if(controlClass == "ParameterEditButtonMenu")
     {
       return new ParameterEditButtonMenu(Rect(position.getX(), position.getY(), 58, 62));
+    }
+    if(controlClass == "ConvertSoundMenu")
+    {
+        return new ConvertSoundMenu(Rect(position.getX(), position.getY(), 58, 26));
     }
     return new GenericControl(*this);
   }
