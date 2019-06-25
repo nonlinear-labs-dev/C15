@@ -45,4 +45,8 @@ ConditionRegistry::ConditionRegistry()
   };
 
   m_theConditonMap["hasMcSelected"] = [&]() { return !m_theConditonMap["hasNoMcSelected"]; };
+
+  m_theConditonMap["isSingleSound"] = [&]() { return true; };
+
+  m_theConditonMap["isDualSound"] = [&]() { return false; };
 }

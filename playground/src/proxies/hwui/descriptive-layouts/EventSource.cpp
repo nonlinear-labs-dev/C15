@@ -399,6 +399,29 @@ namespace DescriptiveLayouts
     }
   };
 
+  class SoundHeaderText : public EventSource<DisplayString>
+  {
+   protected:
+    std::any getLastValue() const override
+    {
+      auto type = Application::get().getPresetManager()->getEditBuffer()->getType();
+      auto typeString = [&type] {
+        switch(type)
+        {
+          case EditBuffer::Type::Single:
+            return "Single";
+          case EditBuffer::Type::Split:
+            return "Split";
+          case EditBuffer::Type::Layer:
+            return "Layer";
+          default:
+            return "";
+        }
+      }();
+      return DisplayString{ typeString, 0 };
+    }
+  };
+
   EventSourceBroker &EventSourceBroker::get()
   {
     static EventSourceBroker s;
@@ -419,6 +442,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::MacroControlPosition] = std::make_unique<CurrentMacroControlPosition>();
     m_map[EventSources::MacroControlPositionText] = std::make_unique<CurrentMacroControlPositionText>();
     m_map[EventSources::MCModRange] = std::make_unique<MCModRangeEventSource>();
+    m_map[EventSources::SoundHeaderText] = std::make_unique<SoundHeaderText>();
   }
 
   sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)

@@ -19,6 +19,16 @@ class EditBuffer : public ParameterGroupSet
   EditBuffer(PresetManager *parent);
   ~EditBuffer() override;
 
+  enum Type
+  {
+    Single,
+    Split,
+    Layer
+  };
+
+  Type getType() const;
+  void setType(Type t);
+
   Glib::ustring getName() const;
   size_t getHash() const;
   const Preset *getOrigin() const;
@@ -116,6 +126,7 @@ class EditBuffer : public ParameterGroupSet
   DelayedJob m_deferedJobs;
 
   bool m_isModified;
+  Type m_type;
   size_t m_hashOnStore;
 
   mutable Preset *m_originCache = nullptr;

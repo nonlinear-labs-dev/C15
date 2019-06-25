@@ -1,0 +1,75 @@
+{
+  "controls":{
+    "ConvertToButton":{
+      "Background":{
+        "Class":"Bar",
+        "Tag":"Button",
+        "Rect":"3, 2, 56,9"
+      },
+      "Text":{
+        "Class":"Text",
+        "Rect":"3, 2, 56,9",
+        "Default":"Convert to"
+      },
+      "Border":{
+        "Class":"Border",
+        "Tag":"ButtonBorder",
+        "Rect":"2,1,58,11"
+      },
+      "CoverLT":{
+        "Class":"Bar",
+        "Tag":"Cover",
+        "Rect":"2,1,1,1"
+      },
+      "CoverRT":{
+        "Class":"Bar",
+        "Tag":"Cover",
+        "Rect":"59,1,1,1"
+      },
+      "CoverLB":{
+        "Class":"Bar",
+        "Tag":"Cover",
+        "Rect":"2,11,1,1"
+      },
+      "CoverRB":{
+        "Class":"Bar",
+        "Tag":"Cover",
+        "Rect":"59,11,1,1"
+      }
+    }
+  },
+  "styles": {
+    "ConvertToButton-Highlight": {
+      "selector": {
+        "ControlClasses": "ConvertToButton",
+        "UIFocus": "Sound",
+        "UIDetail": "ButtonA",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "BackgroundColor": "C128"
+      }
+    },
+    "ConvertToButton-NonHighlight": {
+      "selector": {
+        "ControlClasses": "ConvertToButton",
+        "UIFocus": "Sound",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "BackgroundColor": "C77"
+      }
+    },
+    "ConvertToButton-Covers": {
+      "selector": {
+        "ControlClasses": "ConvertToButton",
+        "Tag": "Cover",
+        "PrimitiveClasses": "Bar"
+      },
+      "styles": {
+        "Color": "C43",
+        "TextAlign": "Left"
+      }
+    }
+  }
+}

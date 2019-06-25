@@ -1,0 +1,24 @@
+{
+  "controls": {
+    "SoundHeader": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 64,13",
+        "Property": "Text"
+      }
+    }
+  },
+  "styles": {
+    "ParameterGroupNameText": {
+      "selector": {
+        "ControlClasses": "SoundHeader",
+        "PrimitveClasses": "Text",
+        "UIFocus": "Sound"
+      },
+      "styles": {
+        "BackgroundColor": "C255",
+        "Color": "C43"
+      }
+    }
+  }
+}

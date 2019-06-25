@@ -231,11 +231,14 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
         pedalMove[2] = HardwareSourcesGroup::getUpperRibbonParameterID();
         pedalMove[3] = 1 * step;
 
+        auto incButtonDown = (int)Buttons::BUTTON_INC | 0x80;
+        auto incButtonUp = (int)Buttons::BUTTON_INC | 0x80;
+
         auto delay = 20ms;
 
         w->simulateReceivedDebugMessage({ delay, Domain::Lpc, Msg::create(&pedalMove, 8) });
-        w->simulateReceivedDebugMessage({ delay, BUTTON_INC, true });
-        w->simulateReceivedDebugMessage({ delay, BUTTON_INC, false });
+        w->simulateReceivedDebugMessage({ delay, Domain::Buttons, Msg::create(&incButtonDown, 1) });
+        w->simulateReceivedDebugMessage({ delay, Domain::Buttons, Msg::create(&incButtonUp, 1) });
 
         for(int i = 0; i < 10; i++)
         {

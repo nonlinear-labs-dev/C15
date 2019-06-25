@@ -1,0 +1,45 @@
+{
+  "layouts": {
+    "SingleSoundLayout-Select-Init": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Edit",
+        "UIDetail": "Init"
+      },
+      "Contiditons": [
+        "isSingleSound"
+      ],
+      "Controls": {
+        "SoundHeader": {
+          "Class": "SoundHeader",
+          "Position": "0,0",
+          "Events": "SoundHeaderText => Text[Text]"
+        },
+        "EditIndication": {
+          "Class": "EditLabel",
+          "Position": "8,26"
+        },
+        "ButtonA": {
+          "Class": "ConvertToButton",
+          "Position": "0,52"
+        },
+        "ButtonB": {
+          "Class": "EmptyButton",
+          "Position": "64,52"
+        },
+        "ButtonC": {
+          "Class": "EmptyButton",
+          "Position": "128,52"
+        },
+        "ButtonD": {
+          "Class": "EmptyButton",
+          "Position": "192,52"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_EDIT": "SwitchToSelectMode",
+        "BUTTON_A": "SwitchToButtonADetail"
+      }
+    }
+  }
+}
