@@ -11,4 +11,10 @@ class SingleSoundEditMenu : public ButtonMenu
 
  public:
   SingleSoundEditMenu(const Rect &rect);
+
+protected:
+
+
+
+    Font::Justification getDefaultButtonJustification() const override;
 };

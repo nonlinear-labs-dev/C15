@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "ButtonMenu.h"
 #include "ButtonMenuButton.h"
 #include "ArrowUp.h"
@@ -11,6 +13,7 @@ ButtonMenu::ButtonMenu(const Rect &rect, size_t numButtonPlaces)
     : super(rect)
     , m_selected(0)
     , m_numButtonPlaces(numButtonPlaces)
+    , entryWidth(rect.getWidth())
 {
 }
 
@@ -75,7 +78,7 @@ int ButtonMenu::sanitizeIndex(int index)
 
 size_t ButtonMenu::addButton(const Glib::ustring &caption, Action action)
 {
-  m_items.push_back({ caption, action });
+  m_items.push_back({ caption, std::move(action)});
   bruteForce();
   return m_items.size();
 }
@@ -106,19 +109,21 @@ void ButtonMenu::bruteForce()
 
     if(itemToShow == c_arrowUp)
     {
-      addControl(new ArrowUp(Rect(0, y, 58, buttonHeight)));
+      addControl(new ArrowUp(Rect(0, y, entryWidth, buttonHeight)));
     }
     else if(itemToShow == c_arrowDown)
     {
-      addControl(new ArrowDown(Rect(0, y, 58, buttonHeight)));
+      addControl(new ArrowDown(Rect(0, y, entryWidth, buttonHeight)));
     }
     else if(itemToShow != c_empty)
     {
-      Rect buttonPosition(0, y, 58, buttonHeight);
+      Rect buttonPosition(0, y, entryWidth, buttonHeight);
       bool isFirst = (i == 0) || (itemToShow == 0);
       bool isLast = i == (m_numButtonPlaces - 1);
       const Glib::ustring &caption = m_items[itemToShow].title;
       auto button = new ButtonMenuButton(isFirst, isLast, caption, buttonPosition);
+
+      button->setJustification(getDefaultButtonJustification());
 
       if(itemToShow == m_selected)
         selectedButton = button;
@@ -193,6 +198,12 @@ void ButtonMenu::setItemTitle(size_t i, const Glib::ustring &caption)
     bruteForce();
   }
 }
+
+Font::Justification ButtonMenu::getDefaultButtonJustification() const
+{
+    return Font::Justification::Center;
+}
+
 
 const size_t ButtonMenu::getItemCount() const
 {

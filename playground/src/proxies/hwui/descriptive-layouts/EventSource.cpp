@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "EventSource.h"
 #include "LayoutFactory.h"
 #include <Application.h>
@@ -422,6 +424,33 @@ namespace DescriptiveLayouts
     }
   };
 
+  class EditBufferName : public EventSource<DisplayString>
+  {
+   protected:
+    std::any getLastValue() const override
+    {
+      auto name = Application::get().getPresetManager()->getEditBuffer()->getName();
+      return DisplayString{ name, 0 };
+    }
+  };
+
+  class StaticText : public EventSource<DisplayString>
+  {
+   public:
+    StaticText(Glib::ustring string)
+        : EventSource()
+        , m_text{ std::move(string) }
+    {
+    }
+
+   protected:
+    Glib::ustring m_text;
+    std::any getLastValue() const override
+    {
+      return DisplayString{ m_text, 0 };
+    }
+  };
+
   EventSourceBroker &EventSourceBroker::get()
   {
     static EventSourceBroker s;
@@ -443,6 +472,9 @@ namespace DescriptiveLayouts
     m_map[EventSources::MacroControlPositionText] = std::make_unique<CurrentMacroControlPositionText>();
     m_map[EventSources::MCModRange] = std::make_unique<MCModRangeEventSource>();
     m_map[EventSources::SoundHeaderText] = std::make_unique<SoundHeaderText>();
+    m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
+    m_map[EventSources::MasterTuneValueText] = std::make_unique<StaticText>("-3.5 dB");
+    m_map[EventSources::OutputLevelValueText] = std::make_unique<StaticText>("+12.00 st");
   }
 
   sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)

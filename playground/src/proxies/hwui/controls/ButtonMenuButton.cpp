@@ -4,12 +4,12 @@ ButtonMenuButton::ButtonMenuButton(bool isFirst, bool isLast, const Glib::ustrin
     : super(text, pos)
     , m_isFirst(isFirst)
     , m_isLast(isLast)
+    , m_justification(Font::Justification::Center)
 {
 }
 
 ButtonMenuButton::~ButtonMenuButton()
-{
-}
+= default;
 
 void ButtonMenuButton::drawBackground(FrameBuffer &fb)
 {
@@ -24,4 +24,12 @@ void ButtonMenuButton::drawBackground(FrameBuffer &fb)
   {
     super::drawBackground(fb);
   }
+}
+
+Font::Justification ButtonMenuButton::getJustification() const {
+    return m_justification;
+}
+
+void ButtonMenuButton::setJustification(Font::Justification justi) {
+    m_justification = justi;
 }

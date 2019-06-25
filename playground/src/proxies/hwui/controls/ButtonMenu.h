@@ -32,6 +32,8 @@ class ButtonMenu : public ControlWithChildren
   void clearActions();
   void setItemTitle(size_t i, const Glib::ustring &caption);
 
+    virtual Font::Justification getDefaultButtonJustification() const;
+
  private:
   void bruteForce();
   size_t getItemToShowAtPlace(size_t place) const;
@@ -45,4 +47,5 @@ class ButtonMenu : public ControlWithChildren
   std::vector<Item> m_items;
   size_t m_selected;
   size_t m_numButtonPlaces;
+  int entryWidth;
 };

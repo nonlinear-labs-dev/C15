@@ -13,6 +13,11 @@ class ButtonMenuButton : public Label
 
   void drawBackground(FrameBuffer &fb);
 
+  void setJustification(Font::Justification justi);
+
+ protected:
+  Font::Justification getJustification() const override;
+
  private:
   // private methods
   ButtonMenuButton(const ButtonMenuButton &other);
@@ -20,4 +25,5 @@ class ButtonMenuButton : public Label
 
   bool m_isFirst;
   bool m_isLast;
+  Font::Justification m_justification;
 };

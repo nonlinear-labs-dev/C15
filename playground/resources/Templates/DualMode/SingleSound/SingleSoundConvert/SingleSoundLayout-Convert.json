@@ -1,13 +1,13 @@
 {
   "layouts": {
-    "SplitSoundLayout-Convert-Init": {
+    "SingleSoundLayout-Convert-Init": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
         "UIDetail": "ButtonA"
       },
       "Conditions": [
-        "isSplitSound"
+        "isSingleSound"
       ],
       "Controls": {
         "SoundHeader": {
@@ -19,6 +19,11 @@
           "Class": "ConvertSoundMenu",
           "Position": "2, 24"
         },
+        "EditbufferName": {
+          "Class": "EditBufferNameLabel",
+          "Position": "0, 0",
+          "Events": "EditBufferName => Text[Text]"
+        },
         "ButtonA": {
           "Class": "ConvertToButton",
           "Position": "0,52"
@@ -28,17 +33,20 @@
           "Position": "64,52"
         },
         "ButtonC": {
-          "Class": "EmptyButton",
+          "Class": "UnisonButton",
           "Position": "128,52"
         },
         "ButtonD": {
-          "Class": "EmptyButton",
+          "Class": "MasterButton",
           "Position": "192,52"
         }
       },
       "EventSinks": {
+        "BUTTON_ENTER": "FireButtonMenu",
         "BUTTON_A": "IncButtonMenu",
-        "BUTTON_ENTER": "FireButtonMenu"
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail",
+        "BUTTON_EDIT": "SwitchToEditMode"
       }
     }
   }

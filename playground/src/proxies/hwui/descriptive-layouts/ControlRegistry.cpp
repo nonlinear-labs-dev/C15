@@ -9,6 +9,7 @@ namespace DescriptiveLayouts
     m_discreteRegistry.emplace_back("MacroControlEditButtonMenu");
     m_discreteRegistry.emplace_back("ModulationCarousel");
     m_discreteRegistry.emplace_back("ConvertSoundMenu");
+    m_discreteRegistry.emplace_back("SingleSoundEditMenu");
   }
 
   void ControlRegistry::registerControl(ControlClass&& cp)

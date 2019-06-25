@@ -4,7 +4,7 @@
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
-        "UIDetail": "ButtonA"
+        "UIDetail": "ButtonC"
       },
       "Conditions": [
         "isSingleSound"
@@ -15,9 +15,20 @@
           "Position": "0,0",
           "Events": "SoundHeaderText => Text[Text]"
         },
-        "ButtonMenu": {
-          "Class": "ConvertSoundMenu",
-          "Position": "2, 24"
+        "EditbufferName": {
+          "Class": "EditBufferNameLabel",
+          "Position": "0, 0",
+          "Events": "EditBufferName => Text[Text]"
+        },
+        "MasterTune": {
+          "Class": "ParameterValueLabel",
+          "Position": "34, 15",
+          "Events": "MasterTuneValueText => Text[Text]"
+        },
+        "OutputLevel": {
+          "Class": "ParameterValueLabel",
+          "Position": "143, 15",
+          "Events": "OutputLevelValueText => Text[Text]"
         },
         "ButtonA": {
           "Class": "ConvertToButton",
@@ -28,17 +39,18 @@
           "Position": "64,52"
         },
         "ButtonC": {
-          "Class": "EmptyButton",
+          "Class": "UnisonButton",
           "Position": "128,52"
         },
         "ButtonD": {
-          "Class": "EmptyButton",
+          "Class": "MasterButton",
           "Position": "192,52"
         }
       },
       "EventSinks": {
-        "BUTTON_A": "IncButtonMenu",
-        "BUTTON_ENTER": "FireButtonMenu"
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_D": "SwitchToButtonDDetail",
+        "BUTTON_EDIT": "SwitchToEditMode"
       }
     }
   }

@@ -85,6 +85,33 @@ namespace DescriptiveLayouts
           }
           return true;
         }
+
+      case EventSinks::DecButtonMenu:
+        if(auto m = findControlOfType<ButtonMenu>())
+        {
+          if(Application::get().getHWUI()->getButtonModifiers()[ButtonModifier::SHIFT])
+          {
+            m->toggle();
+          }
+          else
+          {
+            m->antiToggle();
+          }
+          return true;
+        }
+        if(auto car = findControlOfType<ModulationCarousel>())
+        {
+          if(Application::get().getHWUI()->getButtonModifiers()[ButtonModifier::SHIFT])
+          {
+            car->turn();
+          }
+          else
+          {
+            car->antiTurn();
+          }
+          return true;
+        }
+
       case EventSinks::FireButtonMenu:
         if(auto m = findControlOfType<ButtonMenu>())
         {

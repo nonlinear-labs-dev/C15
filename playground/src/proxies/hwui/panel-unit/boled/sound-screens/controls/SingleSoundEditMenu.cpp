@@ -3,6 +3,7 @@
 #include <libundo/undo/TransactionCreationScope.h>
 #include <presets/PresetManager.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenu.h>
+#include <presets/EditBuffer.h>
 
 SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect)
     : super(rect)
@@ -21,5 +22,21 @@ SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect)
     selectButton(-1);
   });
 
+  addButton("Randomize", [=]() {
+    auto scope = pm->getUndoScope().startTransaction("Randomize Sound");
+    pm->getEditBuffer()->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_WEBUI);
+  });
+
+  addButton("Mono Mode ..", [] {});
+
+  addButton("Transition Time ..", [] {});
+
+  addButton("Tune Reference ..", [] {});
+
   selectButton(-1);
+}
+
+Font::Justification SingleSoundEditMenu::getDefaultButtonJustification() const
+{
+  return Font::Justification::Left;
 }
