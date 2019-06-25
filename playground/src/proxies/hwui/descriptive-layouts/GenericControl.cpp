@@ -57,17 +57,16 @@ namespace DescriptiveLayouts
 
   void GenericControl::connect()
   {
-
     for(auto &c : m_prototype.eventConnections)
     {
       m_connections.push_back(EventSourceBroker::get().connect(
-          c.src, sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onEventFired), c)));
+              c.src, sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onEventFired), c)));
     }
   }
 
   void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
   {
-    for(auto c : getControls())
+    for(const auto &c : getControls())
     {
       if(auto a = std::dynamic_pointer_cast<Styleable>(c))
       {
@@ -77,7 +76,11 @@ namespace DescriptiveLayouts
         {
           if(auto p = std::dynamic_pointer_cast<PropertyOwner>(c))
           {
-            p->setProperty(connection.targetProperty, v);
+              if(connection.src == EventSources::String) {
+                  p->setProperty(connection.targetProperty, std::pair<Glib::ustring, int>(connection.textdata, 0));
+              } else {
+                  p->setProperty(connection.targetProperty, v);
+              }
           }
         }
       }

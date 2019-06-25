@@ -15,6 +15,7 @@ namespace DescriptiveLayouts
       EventSources src;
       PrimitiveInstances targetInstance;
       PrimitiveProperty targetProperty;
+      Glib::ustring textdata;
     };
 
     using EventConnections = std::list<EventConnection>;

@@ -5,8 +5,8 @@ namespace DescriptiveLayouts
 
   ControlRegistry::ControlRegistry()
   {
-    m_discreteRegistry.push_back("ParameterEditButtonMenu");
-    m_discreteRegistry.push_back("ModulationCarousel");
+    m_discreteRegistry.emplace_back("ParameterEditButtonMenu");
+    m_discreteRegistry.emplace_back("ModulationCarousel");
   }
 
   void ControlRegistry::registerControl(ControlClass&& cp)

@@ -72,6 +72,14 @@ namespace DescriptiveLayouts
     return str;
   }
 
+  EventSources toStringEventSource(const std::string& rawEventDescription) {
+      return EventSources::String;
+  }
+
+  Glib::ustring toEventText(const Glib::ustring& text) {
+      return text.substr(7, text.length() - 8);
+  }
+
   ControlInstance::EventConnections parseEventConnections(json j)
   {
     ControlInstance::EventConnections ret;
@@ -89,11 +97,21 @@ namespace DescriptiveLayouts
         auto parts = StringTools::splitStringOnStringDelimiter(connection, "=>");
         auto eventTargetParts = StringTools::splitStringOnAnyDelimiter(parts[1], '[');
 
-        auto eventSource = toEventSources(removeSpaces(parts[0]));
+        auto rawEventSource = removeSpaces(parts[0]);
+
+        EventSources source;
+        Glib::ustring text;
+
+        if(rawEventSource.find("String(") != rawEventSource.npos) {
+            source = toStringEventSource(rawEventSource);
+            text = toEventText(rawEventSource);
+        } else {
+            source = toEventSources(rawEventSource);
+        }
         auto eventTargetObject = removeSpaces(eventTargetParts[0]);
         auto eventTargetProperty = toPrimitiveProperty(removeSpaces(removeLastCharacter(eventTargetParts[1])));
 
-        ret.push_back({ eventSource, eventTargetObject, eventTargetProperty });
+        ret.push_back({ source, eventTargetObject, eventTargetProperty, text });
       }
     }
     return ret;

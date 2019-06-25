@@ -31,6 +31,8 @@ namespace DescriptiveLayouts
     }
 
     T m_lastValue{};
+
+    friend class EventSourceBroker;
   };
 
   class GenericParameterDisplayValueEvent : public EventSource<DisplayString>
@@ -389,7 +391,7 @@ namespace DescriptiveLayouts
     virtual void onChange() override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
+      if(const auto *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
       {
         if(auto mc = modP->getMacroControl())
         {
@@ -397,6 +399,14 @@ namespace DescriptiveLayouts
         }
       }
     }
+  };
+
+  class GenericStringEvent : public EventSource<DisplayString>
+  {
+  protected:
+      std::any getLastValue() const override {
+          return DisplayString("",0);
+      }
   };
 
   EventSourceBroker &EventSourceBroker::get()
@@ -419,9 +429,10 @@ namespace DescriptiveLayouts
     m_map[EventSources::MacroControlPosition] = std::make_unique<CurrentMacroControlPosition>();
     m_map[EventSources::MacroControlPositionText] = std::make_unique<CurrentMacroControlPositionText>();
     m_map[EventSources::MCModRange] = std::make_unique<MCModRangeEventSource>();
+    m_map[EventSources::String] = std::make_unique<GenericStringEvent>();
   }
 
-  sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)
+  sigc::connection EventSourceBroker::connect(EventSources source, Callback cb)
   {
     if(source == EventSources::None)
       return {};
