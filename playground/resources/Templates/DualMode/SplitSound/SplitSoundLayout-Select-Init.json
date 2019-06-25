@@ -15,8 +15,13 @@
           "Position": "0,0",
           "Events": "SoundHeaderText => Text[Text]"
         },
+        "VoiceGroupLabel": {
+          "Class": "VoiceGroupNameLabel",
+          "Position": "0,0",
+          "Events": "CurrentVoiceGroupName => Text[Text]"
+        },
         "ButtonA": {
-          "Class": "ConvertToButton",
+          "Class": "EmptyButton",
           "Position": "0,52"
         },
         "ButtonB": {
@@ -31,9 +36,6 @@
           "Class": "EmptyButton",
           "Position": "192,52"
         }
-      },
-      "EventSinks": {
-        "BUTTON_A": "SwitchToButtonADetail"
       }
     }
   }

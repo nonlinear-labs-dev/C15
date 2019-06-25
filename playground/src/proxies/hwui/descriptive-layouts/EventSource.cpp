@@ -434,6 +434,15 @@ namespace DescriptiveLayouts
     }
   };
 
+  class CurrentVoiceGroupName : public EventSource<DisplayString>
+  {
+  protected:
+      std::any getLastValue() const override {
+          auto name = Application::get().getPresetManager()->getEditBuffer()->getCurrentVoiceGroupName();
+          return DisplayString{ name, 0 };
+      }
+  };
+
   class StaticText : public EventSource<DisplayString>
   {
    public:
@@ -475,6 +484,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
     m_map[EventSources::MasterTuneValueText] = std::make_unique<StaticText>("-3.5 dB");
     m_map[EventSources::OutputLevelValueText] = std::make_unique<StaticText>("+12.00 st");
+    m_map[EventSources::CurrentVoiceGroupName] = std::make_unique<CurrentVoiceGroupName>();
   }
 
   sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)

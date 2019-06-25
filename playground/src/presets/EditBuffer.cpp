@@ -52,6 +52,12 @@ void EditBuffer::setType(EditBuffer::Type t)
   m_type = t;
 }
 
+
+Glib::ustring EditBuffer::getCurrentVoiceGroupName() const
+{
+    return "I " + getName();
+}
+
 Glib::ustring EditBuffer::getName() const
 {
   if(auto o = getOrigin())
@@ -59,6 +65,8 @@ Glib::ustring EditBuffer::getName() const
 
   return m_name;
 }
+
+
 
 size_t EditBuffer::getHash() const
 {

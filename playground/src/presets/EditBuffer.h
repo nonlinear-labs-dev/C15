@@ -29,6 +29,7 @@ class EditBuffer : public ParameterGroupSet
   Type getType() const;
   void setType(Type t);
 
+  Glib::ustring getCurrentVoiceGroupName() const;
   Glib::ustring getName() const;
   size_t getHash() const;
   const Preset *getOrigin() const;
