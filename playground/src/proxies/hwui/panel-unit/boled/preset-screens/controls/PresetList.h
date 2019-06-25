@@ -2,6 +2,7 @@
 
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListBase.h>
+#include <tools/Uuid.h>
 
 class PresetList : public PresetListBase
 {
@@ -9,7 +10,7 @@ class PresetList : public PresetListBase
 
  public:
   PresetList(const Rect &pos, bool showBankArrows);
-  virtual ~PresetList();
+  ~PresetList() override;
 
   virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   virtual void onRotary(int inc, ButtonModifiers modifiers) override;
@@ -17,8 +18,10 @@ class PresetList : public PresetListBase
   std::pair<size_t, size_t> getSelectedPosition() const override;
 
  private:
-  void onBankSelectionChanged();
+  void onBankSelectionChanged(const Uuid &selectedBank);
   void onBankChanged();
+  void onEditBufferChanged();
 
   sigc::connection m_bankChangedConnection;
+  Uuid m_uuidOfLastLoadedPreset;
 };

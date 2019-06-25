@@ -933,6 +933,8 @@ Bank *BankActions::importBank(InStream &stream, Glib::ustring x, Glib::ustring y
   newBank->setAttribute(transaction, "Name of Export File", "");
   newBank->setAttribute(transaction, "Date of Export File", "");
 
+  m_presetManager.ensureBankSelection(transaction);
+
   Application::get().getHWUI()->setFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
 
   return newBank;

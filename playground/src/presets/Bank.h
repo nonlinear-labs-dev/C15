@@ -141,7 +141,7 @@ class Bank : public AttributesOwner
   std::string m_attachDirection;
   std::map<std::string, std::string> m_attributes;
 
-  UndoableVector<Preset> m_presets;
+  UndoableVector<Bank, Preset> m_presets;
 
   uint64_t m_lastChangedTimestamp = 0;
   tUpdateID m_metadataLastSavedForUpdateID = 0;

@@ -103,7 +103,6 @@ void ImportBackupEditor::importBackupFileFromPath(std::experimental::filesystem:
 
   if(file != std::experimental::filesystem::directory_entry())
   {
-
     auto path = generateFileDialogCompliantNameFromPath(file);
 
     FileInStream in(path, true);

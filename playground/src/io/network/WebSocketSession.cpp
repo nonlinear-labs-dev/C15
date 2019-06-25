@@ -49,6 +49,32 @@ sigc::connection WebSocketSession::onConnectionEstablished(const sigc::slot<void
   return m_onConnectionEstablished.connect(cb);
 }
 
+#if _DEVELOPMENT_PC
+void WebSocketSession::simulateReceivedDebugMessage(WebSocketSession::DebugScriptEntry &&e)
+{
+  debugScriptExpiration.setCallback([this] {
+    if(!debugScriptEntries.empty())
+    {
+      const auto &s = debugScriptEntries.front();
+      DebugLevel::warning("Executing simulated debug message.");
+      m_onMessageReceived[s.domain](s.msg);
+      debugScriptEntries.pop_front();
+
+      if(!debugScriptEntries.empty())
+      {
+        const auto &s = debugScriptEntries.front();
+        debugScriptExpiration.refresh(s.delay);
+      }
+    }
+  });
+
+  debugScriptEntries.push_back(std::move(e));
+
+  if(!debugScriptExpiration.isPending())
+    debugScriptExpiration.refresh(debugScriptEntries.front().delay);
+}
+#endif
+
 void WebSocketSession::connect()
 {
   auto uri = "http://" + Application::get().getOptions()->getBBBB() + ":11111";

@@ -20,7 +20,7 @@ class PresetListEntry : public ControlWithChildren
   using tCallback = std::function<void()>;
 
   PresetListEntry(const Rect &pos);
-  virtual ~PresetListEntry();
+  ~PresetListEntry() override;
 
   void setPreset(Preset *preset, bool selected);
   bool redraw(FrameBuffer &fb) override;
@@ -29,7 +29,7 @@ class PresetListEntry : public ControlWithChildren
  private:
   bool animationProgress();
   void doAnimationCallback();
-  void onPresetChanged();
+  void onPresetChanged(const Preset *preset);
 
   float m_animationProgress;
   tCallback m_animationCallback;
@@ -41,5 +41,4 @@ class PresetListEntry : public ControlWithChildren
   connection m_presetConnection;
 
   bool m_selected = false;
-  Preset *m_preset;
 };

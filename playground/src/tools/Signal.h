@@ -3,6 +3,8 @@
 #include "playground.h"
 #include <atomic>
 #include <sigc++/signal.h>
+#include <type_traits>
+#include <tuple>
 
 using namespace Glib;
 using namespace sigc;
@@ -27,8 +29,11 @@ template <typename tFirst, typename... tArgs> class Signal : public sigc::signal
   sigc::connection connectAndInit(const typename super::slot_type &slot, const tArgs &... args)
   {
     auto cb = std::bind(&super::slot_type::operator(), slot, args...);
-    scheduleInitCallback(cb);
-    return super::connect(slot);
+    auto ret = super::connect(slot);
+    const auto &addedSlot = *this->slots().rbegin();
+    const void *cookie = &addedSlot;
+    scheduleInitCallback(cookie, cb);
+    return ret;
   }
 
   typename super::result_type send(tArgs... args)
@@ -56,8 +61,13 @@ template <typename tFirst, typename... tArgs> class Signal : public sigc::signal
   Signal &operator=(const Signal &);
 
   typedef std::function<void()> tCallback;
-  typedef tCallback tRecord;
-  typedef std::list<tCallback> tInitRecords;
+  struct Record
+  {
+    tCallback cb;
+    const void *cookie;
+  };
+
+  typedef std::list<Record> tInitRecords;
   tInitRecords m_initRecords;
   std::atomic<bool> m_initCallbackScheduled;
   sigc::connection m_initCallbackConnection;
@@ -68,9 +78,9 @@ template <typename tFirst, typename... tArgs> class Signal : public sigc::signal
   using super::emit;
   using super::operator();
 
-  void scheduleInitCallback(tCallback cb)
+  void scheduleInitCallback(const void *cookie, tCallback cb)
   {
-    m_initRecords.push_back(cb);
+    m_initRecords.push_back({ cb, cookie });
 
     if(!m_initCallbackScheduled.exchange(true))
     {
@@ -89,7 +99,9 @@ template <typename tFirst, typename... tArgs> class Signal : public sigc::signal
     m_initCallbackConnection.disconnect();
 
     for(const auto &r : initRecords)
-      r();
+      for(auto &s : this->slots())
+        if(&s == r.cookie)
+          r.cb();
 
     return false;
   }
@@ -106,4 +118,24 @@ template <typename tFirst, typename... tArgs> class Signal : public sigc::signal
 
     return false;
   }
+};
+
+template <typename tFirst, typename... tArgs> class SignalWithCache : public Signal<tFirst, tArgs...>
+{
+ public:
+  using super = Signal<tFirst, tArgs...>;
+  using super::super;
+
+  typename super::result_type send(tArgs... args)
+  {
+    auto newValue = std::make_tuple(args...);
+    if(newValue != m_cache)
+    {
+      m_cache = newValue;
+      super::send(args...);
+    }
+  }
+
+ private:
+  std::tuple<tArgs...> m_cache;
 };

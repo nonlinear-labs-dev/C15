@@ -18,9 +18,6 @@ PresetListEntry::PresetListEntry(const Rect &pos)
 {
   m_number = addControl(new PresetNumberLabel(Rect(0, 0, 21, 16)));
   m_name = addControl(new PresetNameLabel(Rect(21, 0, 105, 16)));
-
-  auto eb = Application::get().getPresetManager()->getEditBuffer();
-  eb->onPresetLoaded(mem_fun(this, &PresetListEntry::onPresetChanged));
 }
 
 PresetListEntry::~PresetListEntry()
@@ -32,31 +29,25 @@ PresetListEntry::~PresetListEntry()
 void PresetListEntry::setPreset(Preset *preset, bool selected)
 {
   m_presetConnection.disconnect();
-
-  m_preset = preset;
   m_selected = selected;
 
-  if(m_preset)
-  {
-    m_presetConnection = m_preset->onChanged(mem_fun(this, &PresetListEntry::onPresetChanged));
-  }
+  if(preset)
+    m_presetConnection = preset->onChanged(sigc::bind<0>(mem_fun(this, &PresetListEntry::onPresetChanged), preset));
   else
-  {
-    onPresetChanged();
-  }
+    onPresetChanged(nullptr);
 }
 
-void PresetListEntry::onPresetChanged()
+void PresetListEntry::onPresetChanged(const Preset *preset)
 {
-  if(m_preset)
+  if(preset)
   {
     bool isLoaded
-        = m_preset->getUuid() == Application::get().getPresetManager()->getEditBuffer()->getUUIDOfLastLoadedPreset();
-    if(auto bank = dynamic_cast<Bank *>(m_preset->getParent()))
+        = preset->getUuid() == Application::get().getPresetManager()->getEditBuffer()->getUUIDOfLastLoadedPreset();
+    if(auto bank = dynamic_cast<Bank *>(preset->getParent()))
     {
-      auto num = bank->getPresetPosition(m_preset->getUuid());
+      auto num = bank->getPresetPosition(preset->getUuid());
       m_number->update(num, m_selected, isLoaded);
-      m_name->update(m_preset->getName(), m_selected, isLoaded);
+      m_name->update(preset->getName(), m_selected, isLoaded);
       return;
     }
   }

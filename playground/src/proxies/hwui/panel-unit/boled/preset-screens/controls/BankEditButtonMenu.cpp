@@ -127,7 +127,6 @@ void BankEditButtonMenu::importBankFromPath(std::experimental::filesystem::direc
   auto hwui = Application::get().getHWUI();
   if(file != std::experimental::filesystem::directory_entry())
   {
-
     auto fileInfos = extractFileInfos(file);
 
     hwui->getPanelUnit().getEditPanel().getBoled().setOverlay(new SplashLayout());

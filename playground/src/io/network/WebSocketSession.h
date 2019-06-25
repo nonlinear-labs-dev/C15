@@ -1,6 +1,7 @@
 #pragma once
 
 #include "playground.h"
+#include <proxies/hwui/buttons.h>
 #include <libsoup/soup.h>
 #include <functional>
 #include <memory>
@@ -8,6 +9,7 @@
 #include <tools/Expiration.h>
 #include <thread>
 #include <tools/ContextBoundMessageQueue.h>
+#include <chrono>
 
 class WebSocketSession
 {
@@ -34,6 +36,35 @@ class WebSocketSession
   void sendMessage(Domain d, tMessage msg);
   sigc::connection onMessageReceived(Domain d, const sigc::slot<void, tMessage> &cb);
   sigc::connection onConnectionEstablished(const sigc::slot<void> &cb);
+
+#if _DEVELOPMENT_PC
+  struct DebugScriptEntry
+  {
+    DebugScriptEntry(std::chrono::milliseconds delay, Domain domain, tMessage msg)
+        : delay(delay)
+        , domain(domain)
+        , msg(msg)
+    {
+    }
+
+    DebugScriptEntry(std::chrono::milliseconds delay, Buttons b, bool down)
+        : delay(delay)
+        , domain(Domain::Buttons)
+    {
+      uint16_t m = b | (down ? 0x80 : 0x00);
+      msg = Glib::Bytes::create(&m, 2);
+    }
+
+    std::chrono::milliseconds delay;
+    Domain domain;
+    tMessage msg;
+  };
+
+  std::list<DebugScriptEntry> debugScriptEntries;
+  Expiration debugScriptExpiration;
+
+  void simulateReceivedDebugMessage(DebugScriptEntry &&e);
+#endif
 
  private:
   void connect();

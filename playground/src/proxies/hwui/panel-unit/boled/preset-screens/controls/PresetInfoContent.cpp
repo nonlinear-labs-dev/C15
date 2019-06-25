@@ -45,7 +45,7 @@ PresetInfoContent::~PresetInfoContent()
 {
 }
 
-void PresetInfoContent::onBankChanged()
+void PresetInfoContent::onBankChanged(const Uuid &selectedBank)
 {
   m_bankConnection.disconnect();
 

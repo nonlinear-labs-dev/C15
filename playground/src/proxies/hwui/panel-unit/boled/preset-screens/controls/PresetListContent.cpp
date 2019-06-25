@@ -10,9 +10,7 @@ PresetListContent::PresetListContent(const Rect &pos)
 {
 }
 
-PresetListContent::~PresetListContent()
-{
-}
+PresetListContent::~PresetListContent() = default;
 
 bool PresetListContent::animateSelectedPreset(std::function<void()> cb)
 {
@@ -33,7 +31,12 @@ Preset *PresetListContent::getPresetAtPosition(Bank *bank, int pos) const
 
 void PresetListContent::setup(Bank *bank, size_t focussedPresetPos)
 {
-  if(bank && bank->getNumPresets())
+  auto hasBank = bank != nullptr;
+  auto hasPresets = bank && bank->getNumPresets();
+  auto hasEmptyBankLabel = dynamic_cast<EmptyBankLabel *>(m_emptyLabel);
+  auto hasNoBankLabel = m_emptyLabel && m_emptyLabel->getText().text == "no bank";
+
+  if(hasBank && hasPresets)
   {
     if(!m_firstPreset)
     {
@@ -49,7 +52,7 @@ void PresetListContent::setup(Bank *bank, size_t focussedPresetPos)
     m_secondPreset->setPreset(getPresetAtPosition(bank, focussedPresetPos), true);
     m_thirdPreset->setPreset(getPresetAtPosition(bank, focussedPresetPos + 1), false);
   }
-  else if(bank == nullptr || !m_emptyLabel)
+  else if((hasBank && !hasEmptyBankLabel) || (!hasBank && !hasNoBankLabel))
   {
     clear();
     if(bank == nullptr)

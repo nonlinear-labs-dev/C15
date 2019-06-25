@@ -17,8 +17,8 @@ EditBuffer *getEditBuffer()
 Bank::Bank(UpdateDocumentContributor *parent)
     : super(parent)
     , m_attachedToBankWithUuid(Uuid::none())
-    , m_presets(std::bind(&Bank::clonePreset, this, std::placeholders::_1))
     , m_name("<Untitled Bank>")
+    , m_presets(*this, std::bind(&Bank::clonePreset, this, std::placeholders::_1))
 {
 }
 
@@ -345,8 +345,8 @@ void Bank::setUuid(UNDO::Transaction *transaction, const Uuid &uuid)
 
 void Bank::selectPreset(UNDO::Transaction *transaction, const Uuid &uuid)
 {
-  m_presets.select(transaction, uuid, [this] { invalidate(); });
-  static_cast<PresetManager *>(getParent())->onPresetSelectionChanged();
+  if(m_presets.select(transaction, uuid))
+    static_cast<PresetManager *>(getParent())->onPresetSelectionChanged();
 }
 
 void Bank::ensurePresetSelection(UNDO::Transaction *transaction)

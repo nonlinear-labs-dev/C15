@@ -6,6 +6,7 @@ class Label;
 class Bank;
 class Setting;
 class DirectLoadIndicator;
+class Uuid;
 
 class BanksLayout : public DFBLayout
 {
@@ -19,7 +20,7 @@ class BanksLayout : public DFBLayout
 
  private:
   void updateFromBank(const Bank *bank) const;
-  void onBankSelected();
+  void onBankSelected(const Uuid &selectedBank);
   void onAutoLoadSettingChanged(const Setting *s);
   void onBankChanged();
 

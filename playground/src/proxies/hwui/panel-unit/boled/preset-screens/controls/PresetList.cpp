@@ -1,6 +1,7 @@
 #include <Application.h>
 #include <presets/Bank.h>
 #include <presets/PresetManager.h>
+#include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/buttons.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
@@ -13,13 +14,13 @@ PresetList::PresetList(const Rect &pos, bool showBankArrows)
 {
   Application::get().getPresetManager()->onBankSelection(mem_fun(this, &PresetList::onBankSelectionChanged));
   Application::get().getPresetManager()->onRestoreHappened(mem_fun(this, &PresetList::onBankChanged));
+  Application::get().getPresetManager()->getEditBuffer()->onPresetLoaded(
+      mem_fun(this, &PresetList::onEditBufferChanged));
 }
 
-PresetList::~PresetList()
-{
-}
+PresetList::~PresetList() = default;
 
-void PresetList::onBankSelectionChanged()
+void PresetList::onBankSelectionChanged(const Uuid &selectedBank)
 {
   m_bankChangedConnection.disconnect();
 
@@ -29,6 +30,17 @@ void PresetList::onBankSelectionChanged()
   }
   else
   {
+    onBankChanged();
+  }
+}
+
+void PresetList::onEditBufferChanged()
+{
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+
+  if(m_uuidOfLastLoadedPreset != eb->getUUIDOfLastLoadedPreset())
+  {
+    m_uuidOfLastLoadedPreset = eb->getUUIDOfLastLoadedPreset();
     onBankChanged();
   }
 }

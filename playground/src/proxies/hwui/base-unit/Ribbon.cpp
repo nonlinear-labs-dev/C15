@@ -37,7 +37,6 @@ void Ribbon::initLEDs()
 void Ribbon::setLEDState(int ledPos, char state)
 {
   m_leds[ledPos].setState(state);
-  //debugTrace();
 }
 
 void Ribbon::debugTrace()
@@ -67,7 +66,7 @@ void Ribbon::resetLEDs()
   for(int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
     setLEDState(i, 0);
 
-  // debugTrace();
+  //debugTrace();
 }
 
 void Ribbon::setLEDsForValueUniPolar(tDisplayValue paramVal)
@@ -75,6 +74,7 @@ void Ribbon::setLEDsForValueUniPolar(tDisplayValue paramVal)
   int numRepresentableStates = NUM_LEDS_PER_RIBBON * 3 + 1;
   int paramValIdx = lround(paramVal * numRepresentableStates);
   setLEDsUniPolar(paramValIdx);
+  // debugTrace();
 }
 
 void Ribbon::setLEDsUniPolar(int paramValIdx)
@@ -144,4 +144,6 @@ void Ribbon::setLEDsForValueBiPolar(tDisplayValue paramValue)
   {
     setLEDState(i, getLEDStateForBipolarValue(i, paramValue));
   }
+
+  // debugTrace();
 }

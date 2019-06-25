@@ -19,6 +19,7 @@
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/RotaryEncoder.h>
 #include <proxies/hwui/TestLayout.h>
+#include <proxies/lpc/LPCProxy.h>
 #include <tools/Signal.h>
 #include <xml/FileOutStream.h>
 #include <groups/HardwareSourcesGroup.h>
@@ -214,6 +215,34 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       else if(line == "inc-all-fine")
       {
         Application::get().getPresetManager()->incAllParamsFine();
+      }
+      else if(line == "issue938")
+      {
+#if _DEVELOPMENT_PC
+        using namespace std::chrono_literals;
+        using Domain = WebSocketSession::Domain;
+        using Msg = Glib::Bytes;
+
+        auto w = Application::get().getWebSocketSession();
+        auto step = 16000 / 50;
+        uint16_t pedalMove[4] = {};
+        pedalMove[0] = MessageParser::PARAM;
+        pedalMove[1] = 2;
+        pedalMove[2] = HardwareSourcesGroup::getUpperRibbonParameterID();
+        pedalMove[3] = 1 * step;
+
+        auto delay = 20ms;
+
+        w->simulateReceivedDebugMessage({ delay, Domain::Lpc, Msg::create(&pedalMove, 8) });
+        w->simulateReceivedDebugMessage({ delay, BUTTON_INC, true });
+        w->simulateReceivedDebugMessage({ delay, BUTTON_INC, false });
+
+        for(int i = 0; i < 10; i++)
+        {
+          pedalMove[3] = (i + 2) * step;
+          w->simulateReceivedDebugMessage({ delay, Domain::Lpc, Msg::create(&pedalMove, 8) });
+        }
+#endif
       }
       else if(line.at(0) == '!')
       {

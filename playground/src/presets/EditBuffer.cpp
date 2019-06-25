@@ -83,12 +83,9 @@ void EditBuffer::resetModifiedIndicator(UNDO::Transaction *transaction, size_t h
   auto swap = UNDO::createSwapData(false, hash);
 
   transaction->addSimpleCommand([=](UNDO::Command::State) {
-    bool oldModifiedState = m_isModified;
     swap->swapWith<0>(m_isModified);
     swap->swapWith<1>(m_hashOnStore);
-
-    if(oldModifiedState != m_isModified)
-      m_signalModificationState.send(m_isModified);
+    m_signalModificationState.send(m_isModified);
   });
 }
 

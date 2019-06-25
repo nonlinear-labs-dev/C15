@@ -17,7 +17,7 @@ class PresetsLayout : public DFBLayout
   virtual ~PresetsLayout();
 
  private:
-  void onBankSelected();
+  void onBankSelected(const Uuid &selectedBank);
   void onBankChanged();
   void onPresetLoaded();
   void onAutoLoadSettingChanged(const Setting *s);

@@ -18,7 +18,7 @@ PresetInfoCaption::~PresetInfoCaption()
 {
 }
 
-void PresetInfoCaption::onBankSelection()
+void PresetInfoCaption::onBankSelection(const Uuid &selectedBank)
 {
   m_bankConnection.disconnect();
 

@@ -3,6 +3,7 @@
 #include <proxies/hwui/panel-unit/boled/InfoContent.h>
 
 class Preset;
+class Uuid;
 
 class PresetInfoContent : public InfoContent
 {
@@ -14,7 +15,7 @@ class PresetInfoContent : public InfoContent
   virtual ~PresetInfoContent();
 
  private:
-  void onBankChanged();
+  void onBankChanged(const Uuid &selectedBank);
   void onPresetSelectionChanged();
 
   void fixLayout();

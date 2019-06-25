@@ -17,7 +17,7 @@ BankInfoCaption::~BankInfoCaption()
 {
 }
 
-void BankInfoCaption::onBankSelection()
+void BankInfoCaption::onBankSelection(const Uuid &selectedBank)
 {
   m_bankConnection.disconnect();
 

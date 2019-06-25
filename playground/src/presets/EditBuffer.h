@@ -97,7 +97,7 @@ class EditBuffer : public ParameterGroupSet
   void checkModified();
 
   Signal<void, Parameter *, Parameter *> m_signalSelectedParameter;
-  Signal<void, bool> m_signalModificationState;
+  SignalWithCache<void, bool> m_signalModificationState;
   Signal<void> m_signalChange;
   Signal<void> m_signalPresetLoaded;
   Signal<void> m_signalLocksChanged;

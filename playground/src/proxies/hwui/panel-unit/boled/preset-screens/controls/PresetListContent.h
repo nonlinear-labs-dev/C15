@@ -21,6 +21,7 @@ class PresetListContent : public ControlWithChildren
   bool animateSelectedPreset(std::function<void()> cb);
 
  private:
+  void onEditBufferChanged();
   Preset *getPresetAtPosition(Bank *bank, int pos) const;
 
   PresetListEntry *m_firstPreset = nullptr;

@@ -24,8 +24,8 @@ void ShortVsLongPress::onButtonUp()
 {
   if(m_exp.isPending())
   {
-    m_shortPressAction();
     m_exp.cancel();
+    m_shortPressAction();
   }
 }
 

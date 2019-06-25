@@ -13,7 +13,7 @@ BankNumberLabel::~BankNumberLabel()
 {
 }
 
-void BankNumberLabel::onBankSelectionChanged()
+void BankNumberLabel::onBankSelectionChanged(const Uuid &selectedBank)
 {
   if(auto newBank = Application::get().getPresetManager()->getSelectedBank())
     setText({ to_string(Application::get().getPresetManager()->getBankPosition(newBank->getUuid()) + 1) });

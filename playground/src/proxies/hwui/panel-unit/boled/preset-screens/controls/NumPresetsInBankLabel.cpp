@@ -14,7 +14,7 @@ NumPresetsInBankLabel::~NumPresetsInBankLabel()
 {
 }
 
-void NumPresetsInBankLabel::updateText()
+void NumPresetsInBankLabel::updateText(const Uuid &selectedBank)
 {
   if(auto bank = Application::get().getPresetManager()->getSelectedBank())
   {

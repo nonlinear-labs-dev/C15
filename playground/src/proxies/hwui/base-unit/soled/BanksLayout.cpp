@@ -51,7 +51,7 @@ BanksLayout::~BanksLayout()
 {
 }
 
-void BanksLayout::onBankSelected()
+void BanksLayout::onBankSelected(const Uuid &selectedBank)
 {
   m_bank = Application::get().getPresetManager()->getSelectedBank();
   m_bankconnection.disconnect();

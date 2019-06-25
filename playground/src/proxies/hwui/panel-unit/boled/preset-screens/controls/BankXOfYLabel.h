@@ -4,6 +4,7 @@
 
 class Application;
 class PresetBank;
+class Uuid;
 
 class BankXOfYLabel : public Label
 {
@@ -20,5 +21,5 @@ class BankXOfYLabel : public Label
   Font::Justification getJustification() const override;
 
  private:
-  void onBankSelectionChanged();
+  void onBankSelectionChanged(const Uuid &selectedBank);
 };

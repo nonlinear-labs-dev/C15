@@ -54,6 +54,8 @@ std::string getStackTrace(const std::string& prefix)
 
     free(symbollist);
   }
+
+  DebugLevel::error("Collected StackTrace: ", str.str());
   return str.str();
 }
 

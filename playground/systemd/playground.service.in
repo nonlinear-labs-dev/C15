@@ -3,7 +3,7 @@ Description=Nonlinear-Labs Playground
 After=syslog.target network.target systemd-modules-load.service
 
 [Service]
-ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/playground/playground --bbbb=192.168.8.2
+ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/playground/playground --bbbb=localhost
 Restart=on-failure
 RestartSec=1
 

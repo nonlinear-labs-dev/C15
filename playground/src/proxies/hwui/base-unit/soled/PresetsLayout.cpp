@@ -58,7 +58,7 @@ PresetsLayout::~PresetsLayout()
 {
 }
 
-void PresetsLayout::onBankSelected()
+void PresetsLayout::onBankSelected(const Uuid &selectedBank)
 {
   m_connection.disconnect();
 

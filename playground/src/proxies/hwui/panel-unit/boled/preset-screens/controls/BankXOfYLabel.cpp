@@ -13,7 +13,7 @@ BankXOfYLabel::~BankXOfYLabel()
 {
 }
 
-void BankXOfYLabel::onBankSelectionChanged()
+void BankXOfYLabel::onBankSelectionChanged(const Uuid &selectedBank)
 {
   if(auto newBank = Application::get().getPresetManager()->getSelectedBank())
   {

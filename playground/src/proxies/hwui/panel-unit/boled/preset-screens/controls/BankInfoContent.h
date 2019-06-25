@@ -7,6 +7,7 @@
 
 class MultiLineLabel;
 class Label;
+class Uuid;
 
 class BankInfoContent : public InfoContent
 {
@@ -22,7 +23,7 @@ class BankInfoContent : public InfoContent
   void setDirty() override;
 
  private:
-  void onBankSelectionChanged();
+  void onBankSelectionChanged(const Uuid &selectedBank);
   void onBankChanged(Bank *bank);
 
   void fixLayout();

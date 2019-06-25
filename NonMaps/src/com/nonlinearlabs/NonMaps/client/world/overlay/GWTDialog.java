@@ -74,7 +74,10 @@ public abstract class GWTDialog extends DialogBox implements ScreenResizeListene
 
 	protected void pushDialogToFront() {
 		getElement().getStyle().setZIndex(maxZIndexSoFar + 1);
-		close.getElement().getStyle().setZIndex(maxZIndexSoFar + 2);
+
+		if (close != null)
+			close.getElement().getStyle().setZIndex(maxZIndexSoFar + 2);
+
 		maxZIndexSoFar++;
 	}
 

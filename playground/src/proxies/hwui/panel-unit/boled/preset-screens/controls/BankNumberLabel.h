@@ -4,6 +4,7 @@
 
 class Application;
 class PresetBank;
+class Uuid;
 
 class BankNumberLabel : public Label
 {
@@ -24,5 +25,5 @@ class BankNumberLabel : public Label
   BankNumberLabel(const BankNumberLabel &other);
   BankNumberLabel &operator=(const BankNumberLabel &);
 
-  void onBankSelectionChanged();
+  void onBankSelectionChanged(const Uuid &selectedBank);
 };

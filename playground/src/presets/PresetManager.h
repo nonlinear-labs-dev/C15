@@ -28,6 +28,7 @@ class PresetManager : public ContentSection
   ~PresetManager() override;
 
   void init();
+  void invalidate();
 
   // debug
   void stress(int numTransactions);
@@ -97,6 +98,7 @@ class PresetManager : public ContentSection
   void setOrderNumber(UNDO::Transaction *transaction, const Uuid &bank, size_t targetPos);
   void sanitizeBankClusterRelations(UNDO::Transaction *transaction);
   void resolveCyclicAttachments(UNDO::Transaction *transaction);
+  void ensureBankSelection(UNDO::Transaction *transaction);
 
   // algorithms
   Glib::ustring createPresetNameBasedOn(const Glib::ustring &basedOn) const;
@@ -104,7 +106,7 @@ class PresetManager : public ContentSection
                      std::vector<SearchQuery::Fields> &&fieldsToSearch) const;
 
   // signals
-  sigc::connection onBankSelection(sigc::slot<void> cb);
+  sigc::connection onBankSelection(sigc::slot<void, Uuid> cb);
   sigc::connection onNumBanksChanged(sigc::slot<void, size_t> cb);
   sigc::connection onRestoreHappened(sigc::slot<void> cb);
 
@@ -112,6 +114,7 @@ class PresetManager : public ContentSection
   void loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transaction, RefPtr<Gio::File> pmFolder);
   void loadInitSound(UNDO::Transaction *transaction, RefPtr<Gio::File> pmFolder);
   void loadBanks(UNDO::Transaction *transaction, RefPtr<Gio::File> pmFolder);
+  void fixMissingPresetSelections(UNDO::Transaction *transaction);
   Glib::ustring getBaseName(const ustring &basedOn) const;
   void scheduleAutoLoadSelectedPreset();
 
@@ -132,7 +135,7 @@ class PresetManager : public ContentSection
   bool selectBank(UNDO::Transaction *transaction, size_t idx);
   void invalidateAllBanks();
 
-  UndoableVector<Bank> m_banks;
+  UndoableVector<PresetManager, Bank> m_banks;
 
   typedef std::shared_ptr<RPCActionManager> tRPCActionManagerPtr;
   std::list<tRPCActionManagerPtr> m_actionManagers;
@@ -140,8 +143,8 @@ class PresetManager : public ContentSection
   std::unique_ptr<Preset> m_initSound;
 
   ScopedGuard m_isLoading;
-  Signal<void> m_sigBankSelection;
-  Signal<void, size_t> m_sigNumBanksChanged;
+  SignalWithCache<void, Uuid> m_sigBankSelection;
+  SignalWithCache<void, size_t> m_sigNumBanksChanged;
   Signal<void> m_sigRestoreHappened;
 
   Throttler m_autoLoadThrottler;

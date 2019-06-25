@@ -50,7 +50,7 @@ BankInfoContent::~BankInfoContent()
 {
 }
 
-void BankInfoContent::onBankSelectionChanged()
+void BankInfoContent::onBankSelectionChanged(const Uuid &selectedBank)
 {
   m_bankConnection.disconnect();
 
