@@ -64,7 +64,7 @@ namespace DescriptiveLayouts
     {
       case PrimitiveProperty::Text:
       {
-        DisplayString a = std::any_cast<DisplayString>(value);
+          auto a = std::any_cast<DisplayString>(value);
         setText(StringAndSuffix(a.first, a.second));
         break;
       }
