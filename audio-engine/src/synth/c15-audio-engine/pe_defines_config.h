@@ -42,7 +42,7 @@
 
 #define test_comb_decay_gate_mode  1  // 0: apply in slow post processing (like prototype), 1: audio fade min, max by gate signal (recommended)
 
-#define test_svf_types 1        // 0: SVF first Proto NAN, 1: SVF noFIR, 2: SVF FIR, 3: SVF Original Primary (later)
+#define test_svf_types 3        // 0: SVF first Proto NAN, 1: SVF noFIR, 2: SVF FIR, 3: SVF NI
 #define test_svf_fm_limit 1.5f  // SVF fm clipping maximum
 
 #define test_fast_fold_asym 1  // 0: slow clock (producing audible artifacts), 1: fast clock (recommended)

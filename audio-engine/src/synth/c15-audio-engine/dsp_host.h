@@ -28,6 +28,7 @@
 #include "ae_svfilter.h"
 #include "ae_svfilter_fir.h"
 #include "ae_svfilter_proto.h"
+#include "ae_svfilter_ni.h"
 
 #include "ae_soundgenerator.h"
 #include "ae_combfilter.h"
@@ -136,7 +137,7 @@ public:
 #elif test_svf_types == 2   /// Fir
     ae_svfilter_fir m_svfilter[dsp_number_of_voices];
 #elif test_svf_types == 3   /// Primary
-
+    ae_svfilter_ni m_svfilter[dsp_number_of_voices];
 #endif
 
     ae_feedbackmixer m_feedbackmixer[dsp_number_of_voices];
