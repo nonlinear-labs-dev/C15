@@ -84,11 +84,12 @@
 #define SVF_F2_CUT      52          // SVF Lower Filter Frequency (Cutoff, Cutoff KT, Cutoff Env C Amount, Env C, Spread, Master Tune, Reference, Key Pitch)
 #define SVF_F1_FM       53          // SVF Upper Filter FM Amount (Cutoff, Cutoff KT, Cutoff Env C Amount, Env C, Spread, FM, Master Tune, Reference, Key Pitch)
 #define SVF_F2_FM       54          // SVF Lower Filter FM Amount (Cutoff, Cutoff KT, Cutoff Env C Amount, Env C, Spread, FM, Master Tune, Reference, Key Pitch)
-// <SVF: RES FIX>
-#define SVF_RES         55          // OLD: SVF Resonance (Resonance, Res KT, Res Env C Amount, Env C, Master Tune, Key Pitch)
+
+                                    /// SVF: RES FIX
+#define SVF_RES         55          // OLD: SVF Resonance (Resonance, Res KT, Res Env C Amount, Env C, Master Tune, Key Pitch) // keep that for now (svf type 0,1,2 compability)
 #define SVF_RES_DAMP    55          // FIX: SVF Damping Factor derived from Resonance (Res, ResKT, Res EnvC, EnvC, MasterTune, KeyPitch)
 #define SVF_RES_FMAX    56          // FIX: SVF Maximum Frequency derived from Resonance (...)
-// </SVF: RES FIX>
+
 #define SVF_LBH_1       57          // SVF Upper LBH Mix (Amount)
 #define SVF_LBH_2       58          // SVF Lower LBH Mix (Amount)
 #define SVF_PAR_1       59          // SVF Parallel Amount 1 (Amount)

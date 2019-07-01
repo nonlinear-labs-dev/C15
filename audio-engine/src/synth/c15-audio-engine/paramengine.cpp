@@ -1187,12 +1187,15 @@ void paramengine::postProcessPoly_slow(float* _signal, const uint32_t _voiceId)
   /* - Resonance */
   keyTracking = m_body[m_head[P_SVF_RKT].m_index].m_signal * m_svfResFactor;
   envMod = _signal[ENV_C_CLIP] * m_body[m_head[P_SVF_REC].m_index].m_signal;
-  unitPitch = m_body[m_head[P_SVF_RES].m_index].m_signal + envMod + (notePitch * keyTracking);
-  //_signal[SVF_RES] = m_svfResonanceCurve.applyCurve(std::clamp(unitPitch, 0.f, 1.f));
-  float res = 1.f
-      - m_svfResonanceCurve.applyCurve(
-            std::clamp(unitPitch, 0.f, 1.f));  // NEW resonance handling directly in post processing
-  _signal[SVF_RES] = std::max(res + res, 0.02f);
+  /// SVF Resonance FIX
+  unitPitch = m_svfResonanceCurve.applyCurve(std::clamp(m_body[m_head[P_SVF_RES].m_index].m_signal + envMod + (notePitch * keyTracking), 0.0f, 1.0f));
+#if test_svf_types != 3
+  // not quite sure here, but it's working
+  _signal[SVF_RES] = unitPitch;
+#elif test_svf_types == 3
+  _signal[SVF_RES_DAMP] = 2.0f - (2.0f * unitPitch); // FIX: damping factor (maybe with std::max([...], 0.02f) ??)
+  _signal[SVF_RES_FMAX] = 0.7352f + (0.2930f * unitPitch * (1.3075f + unitPitch)); // FIX: maximum frequency
+#endif
   /* - Feedback Mixer */
   /*   - determine Highpass Filter Frequency */
   _signal[FBM_HPF] = evalNyquist(m_convert.eval_lin_pitch(12.f + notePitch) * 440.f);
@@ -1545,12 +1548,15 @@ void paramengine::postProcessPoly_key(float* _signal, const uint32_t _voiceId)
   /* - Resonance */
   keyTracking = m_body[m_head[P_SVF_RKT].m_index].m_signal * m_svfResFactor;
   envMod = _signal[ENV_C_CLIP] * m_body[m_head[P_SVF_REC].m_index].m_signal;
-  unitPitch = m_body[m_head[P_SVF_RES].m_index].m_signal + envMod + (notePitch * keyTracking);
-  //_signal[SVF_RES] = m_svfResonanceCurve.applyCurve(std::clamp(unitPitch, 0.f, 1.f));
-  float res = 1.f
-      - m_svfResonanceCurve.applyCurve(
-            std::clamp(unitPitch, 0.f, 1.f));  // NEW resonance handling directly in post processing
-  _signal[SVF_RES] = std::max(res + res, 0.02f);
+  /// SVF Resonance FIX
+  unitPitch = m_svfResonanceCurve.applyCurve(std::clamp(m_body[m_head[P_SVF_RES].m_index].m_signal + envMod + (notePitch * keyTracking), 0.0f, 1.0f));
+#if test_svf_types != 3
+  // not quite sure here, but it's working
+  _signal[SVF_RES] = unitPitch;
+#elif test_svf_types == 3
+  _signal[SVF_RES_DAMP] = 2.0f - (2.0f * unitPitch); // FIX: damping factor (maybe with std::max([...], 0.02f) ??)
+  _signal[SVF_RES_FMAX] = 0.7352f + (0.2930f * unitPitch * (1.3075f + unitPitch)); // FIX: maximum frequency
+#endif
 #if test_key_update_pan == 1
   /* Output Mixer */
   float tmp_lvl, tmp_pan;

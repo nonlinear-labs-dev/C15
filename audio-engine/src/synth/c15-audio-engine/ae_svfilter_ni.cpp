@@ -48,10 +48,12 @@ void ae_svfilter_ni::init(float _samplerate)
 
 void ae_svfilter_ni::apply(float _sampleA, float _sampleB, float _sampleComb, float *_signal)
 {
-    float tmpRes = _signal[SVF_RES];
+    /// FIX: now directly transmitted by _signal[SVF_RES_DAMP] and _signal[SVF_RES_FMAX]
+
+    //float tmpRes = _signal[SVF_RES];
 
     /* Setting max clipping for omega later on - this should go into the paramengine*/
-    float omegaMax =  0.7352f + 0.2930f * tmpRes * (1.3075f + tmpRes);
+    //float omegaMax =  0.7352f + 0.2930f * tmpRes * (1.3075f + tmpRes);
 
     //******************************** Sample Mix ****************************//
     float tmpVar = _signal[SVF_AB];
@@ -70,18 +72,19 @@ void ae_svfilter_ni::apply(float _sampleA, float _sampleB, float _sampleComb, fl
     float omega = (_signal[SVF_F1_CUT] + fmVar * _signal[SVF_F1_FM]) * m_warpConst_2PI;
 
     /*Here we will now perofmr clipping depending on the resonance!*/
-    omega = std::clamp(omega, 0.f, omegaMax);
+    omega = std::clamp(omega, 0.f, _signal[SVF_RES_FMAX]);
 
     /*NI suggests a different approach ... */
 //    float attenuation = ((2.f + omega) * (2.f - omega) * tmpRes)
 //                      / (((tmpRes * omega) + (2.f - omega)) * 2.f);
-    float attenuation = 2.f - 2.f * tmpRes;
+    //float attenuation = 2.f - 2.f * tmpRes;
 
-    float highpassOutput = inputSample - (m_first_int1_stateVar * attenuation + m_first_int2_stateVar);
+    float highpassOutput = inputSample - (m_first_int1_stateVar * _signal[SVF_RES_DAMP] + m_first_int2_stateVar);
     float bandpassOutput = highpassOutput * omega + m_first_int1_stateVar;
     float lowpassOutput  = bandpassOutput * omega + m_first_int2_stateVar;
 
-    m_first_int1_stateVar = bandpassOutput + DNC_const;
+    //m_first_int1_stateVar = bandpassOutput + DNC_const;
+    m_first_int1_stateVar = bandpassOutput; // strictly following ni code here
     m_first_int2_stateVar = lowpassOutput + DNC_const;
 
     float outputSample_1 = lowpassOutput  * std::max(-(_signal[SVF_LBH_1]), 0.f);
@@ -100,17 +103,18 @@ void ae_svfilter_ni::apply(float _sampleA, float _sampleB, float _sampleComb, fl
                 + (m_second_sat_stateVar * 0.1f);
 
     omega = (_signal[SVF_F2_CUT] + fmVar * _signal[SVF_F2_FM]) * m_warpConst_2PI;
-    omega = std::clamp(omega, 0.f, omegaMax);             /// initially 1.5f
+    omega = std::clamp(omega, 0.f, _signal[SVF_RES_FMAX]);             /// initially 1.5f
 
 
 //    attenuation = ((2.f + omega) * (2.f - omega) * tmpRes)
 //            / (((tmpRes * omega) + (2.f - omega)) * 2.f);
 
-    highpassOutput = inputSample - (m_second_int1_stateVar * attenuation + m_second_int2_stateVar);
+    highpassOutput = inputSample - (m_second_int1_stateVar * _signal[SVF_RES_DAMP] + m_second_int2_stateVar);
     bandpassOutput = highpassOutput * omega + m_second_int1_stateVar;
     lowpassOutput  = bandpassOutput * omega + m_second_int2_stateVar;
 
-    m_second_int1_stateVar = bandpassOutput + DNC_const;
+    //m_second_int1_stateVar = bandpassOutput + DNC_const;
+    m_second_int1_stateVar = bandpassOutput; // strictly following ni code here
     m_second_int2_stateVar = lowpassOutput + DNC_const;
 
     tmpVar  =  lowpassOutput  * std::max(-(_signal[SVF_LBH_2]), 0.f);
