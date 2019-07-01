@@ -100,7 +100,7 @@ const uint32_t dsp_clock_rates[2] = {
 
 #define sig_number_of_params 198        // see Linux Engine LPC Status / Overview, Parameter List
 #define sig_number_of_param_items 274   // number of required (single-voice) rendering items for all parameters
-#define sig_number_of_signal_items 136  // signals shared between the parameter and audio engine
+#define sig_number_of_signal_items 137  // signals shared between the parameter and audio engine
 
 /* TCD List Handling */
 
@@ -114,7 +114,7 @@ const uint32_t dsp_clock_rates[2] = {
 
 #define sig_number_of_params 197        // see Linux Engine 1.55 LPC Status / Overview, Parameter List
 #define sig_number_of_param_items 254   // number of required (single-voice) rendering items for all parameters
-#define sig_number_of_signal_items 136  // signals shared between the parameter and audio engine
+#define sig_number_of_signal_items 137  // signals shared between the parameter and audio engine
 
 /* TCD List Handling */
 
@@ -128,7 +128,7 @@ const uint32_t dsp_clock_rates[2] = {
 
 #define sig_number_of_params 195        // see Linux Engine 1.56 LPC Status / Overview, Parameter List
 #define sig_number_of_param_items 214   // number of required (single-voice) rendering items for all parameters
-#define sig_number_of_signal_items 136  // signals shared between the parameter and audio engine
+#define sig_number_of_signal_items 137  // signals shared between the parameter and audio engine
 
 /* TCD List Handling */
 
