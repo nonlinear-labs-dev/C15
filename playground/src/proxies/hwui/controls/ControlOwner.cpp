@@ -26,18 +26,42 @@ bool ControlOwner::isDirty() const
 
 void ControlOwner::setHighlight(bool isHighlight)
 {
-  for(auto c : m_controls)
+  for(const auto &c : m_controls)
     c->setHighlight(isHighlight);
+}
+
+std::vector<Control *> collectOverlappingControls(const Control *c)
+{
+  std::vector<Control *> ret;
+
+  return ret;
 }
 
 bool ControlOwner::redraw(FrameBuffer &fb)
 {
   bool didRedraw = false;
 
-  for(auto c : m_controls)
+  for(const auto &c : m_controls)
   {
     if(c->isDirty())
     {
+      bool did = false;
+
+      forEach((tIfCallback)[&did, &c, &fb](tControlPtr child) -> bool {
+          if(c.get() != child.get()) {
+              if(c->getPosition().intersects(child->getPosition())) {
+                child->redraw(fb);
+                  did = true;
+              }
+          }
+          return true;
+      });
+
+      if(!did) {
+          fb.setColor(FrameBuffer::C43);
+          fb.fillRect(c->getPosition());
+      }
+
       c->drawBackground(fb);
 
       if(c->isVisible())

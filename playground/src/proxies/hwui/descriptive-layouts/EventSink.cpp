@@ -18,123 +18,131 @@ namespace DescriptiveLayouts
   {
   }
 
-  EventSinkBroker& EventSinkBroker::get()
+  EventSinkBroker &EventSinkBroker::get()
   {
     static EventSinkBroker s;
     return s;
   }
 
-  EventSinkBroker::EventSinkBroker() {
-      auto eb = Application::get().getPresetManager()->getEditBuffer();
-      auto hwui = Application::get().getHWUI();
+  EventSinkBroker::EventSinkBroker()
+  {
+    auto eb = Application::get().getPresetManager()->getEditBuffer();
+    auto hwui = Application::get().getHWUI();
 
-      /*
+    /*
        * Basic Parameter Events
        */
-       registerEvent(EventSinks::IncParam, [eb, hwui]() {
-          if (auto p = eb->getSelected())
-              p->getValue().inc(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
-      });
+    registerEvent(EventSinks::IncParam, [eb, hwui]() {
+      if(auto p = eb->getSelected())
+        p->getValue().inc(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
+    });
 
-      registerEvent(EventSinks::DecParam, [eb, hwui]() {
-          if (auto p = eb->getSelected())
-              p->getValue().dec(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
-      });
+    registerEvent(EventSinks::DecParam, [eb, hwui]() {
+      if(auto p = eb->getSelected())
+        p->getValue().dec(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
+    });
 
-
-      /*
+    /*
        * Modulation Events
        */
-      registerEvent(EventSinks::IncMCSel, [eb]() {
-          if (auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
-              modParam->undoableIncrementMCSelect(1);
-      });
+    registerEvent(EventSinks::IncMCSel, [eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+        modParam->undoableIncrementMCSelect(1);
+    });
 
-      registerEvent(EventSinks::DecMCSel, [eb]() {
-          if (auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
-              modParam->undoableIncrementMCSelect(-1);
-      });
+    registerEvent(EventSinks::DecMCSel, [eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+        modParam->undoableIncrementMCSelect(-1);
+    });
 
-      registerEvent(EventSinks::IncMCAmt, [eb]() {
-          if (auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected())) {
-              modParam->undoableIncrementMCAmount(1, {});
-          }
-      });
+    registerEvent(EventSinks::IncMCAmt, [eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      {
+        modParam->undoableIncrementMCAmount(1, {});
+      }
+    });
 
-      registerEvent(EventSinks::DecMCAmt, [eb]() {
-          if (auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected())) {
-              modParam->undoableIncrementMCAmount(-1, {});
-          }
-      });
+    registerEvent(EventSinks::DecMCAmt, [eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      {
+        modParam->undoableIncrementMCAmount(-1, {});
+      }
+    });
 
-      registerEvent(EventSinks::IncMCPos, [eb, hwui]() {
-          if (auto mc = dynamic_cast<ModulateableParameter *>(eb->getSelected())->getMacroControl()) {
-              UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction(
-                      "Inc. MC Pos");
-              auto trans = rootScope->getTransaction();
-              mc->stepCPFromHwui(trans, 1, hwui->getButtonModifiers());
-          }
-      });
+    registerEvent(EventSinks::IncMCPos, [eb, hwui]() {
+      if(auto modP = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      {
+        if(auto mc = modP->getMacroControl())
+        {
+          UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction("Inc. MC Pos");
+          auto trans = rootScope->getTransaction();
+          mc->stepCPFromHwui(trans, 1, hwui->getButtonModifiers());
+        }
+      }
+    });
 
-      registerEvent(EventSinks::DecMCPos, [eb, hwui]() {
-          if (auto mc = dynamic_cast<ModulateableParameter *>(eb->getSelected())->getMacroControl()) {
-              UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction(
-                      "Dec. MC Pos");
-              auto trans = rootScope->getTransaction();
-              mc->stepCPFromHwui(trans, -1, hwui->getButtonModifiers());
-          }
-      });
+    registerEvent(EventSinks::DecMCPos, [eb, hwui]() {
+      if(auto modP = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      {
+        if(auto mc = modP->getMacroControl())
+        {
+          UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction("Dec. MC Pos");
+          auto trans = rootScope->getTransaction();
+          mc->stepCPFromHwui(trans, -1, hwui->getButtonModifiers());
+        }
+      }
+    });
 
-      /*
+    /*
        * UIFocus
        */
-      registerEvent(EventSinks::SwitchToParameterFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Parameters); });
-      registerEvent(EventSinks::SwitchToSoundFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Sound); });
-      registerEvent(EventSinks::SwitchToPresetFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Presets); });
-      registerEvent(EventSinks::SwitchToBankFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Banks); });
-      registerEvent(EventSinks::SwitchToSetupFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Setup); });
+    registerEvent(EventSinks::SwitchToParameterFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Parameters); });
+    registerEvent(EventSinks::SwitchToSoundFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Sound); });
+    registerEvent(EventSinks::SwitchToPresetFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Presets); });
+    registerEvent(EventSinks::SwitchToBankFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Banks); });
+    registerEvent(EventSinks::SwitchToSetupFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Setup); });
 
-
-      /*
+    /*
        * UIMode
        */
-      registerEvent(EventSinks::SwitchToEditMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Edit); });
-      registerEvent(EventSinks::SwitchToSelectMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Select); });
+    registerEvent(EventSinks::SwitchToEditMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Edit); });
+    registerEvent(EventSinks::SwitchToSelectMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Select); });
 
-      /*
+    /*
        * UIDetail
        */
-      registerEvent(EventSinks::SwitchToInitDetail, [hwui]() { hwui->setUiModeDetail(UIDetail::Init); });
-      registerEvent(EventSinks::SwitchToButtonADetail, [hwui] {
-          hwui->setUiModeDetail(UIDetail::ButtonA);
-      });
-      registerEvent(EventSinks::SwitchToButtonBDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonB); });
-      registerEvent(EventSinks::SwitchToButtonCDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonC); });
-      registerEvent(EventSinks::SwitchToButtonDDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonD); });
+    registerEvent(EventSinks::SwitchToInitDetail, [hwui]() { hwui->setUiModeDetail(UIDetail::Init); });
+    registerEvent(EventSinks::SwitchToButtonADetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonA); });
+    registerEvent(EventSinks::SwitchToButtonBDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonB); });
+    registerEvent(EventSinks::SwitchToButtonCDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonC); });
+    registerEvent(EventSinks::SwitchToButtonDDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonD); });
 
-      registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
-          if (auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected())) {
-              if (modParam->getModulationSource() != ModulationSource::NONE) {
-                  hwui->setUiModeDetail(UIDetail::MCAmount);
-              }
-          }
-      });
+    registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      {
+        if(modParam->getModulationSource() != ModulationSource::NONE)
+        {
+          hwui->setUiModeDetail(UIDetail::MCAmount);
+        }
+      }
+    });
 
-      registerEvent(EventSinks::SwitchToMCModRangeDetail, [hwui, eb]() {
-          if (auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected())) {
-              if (modParam->getModulationSource() != ModulationSource::NONE) {
-                  hwui->setUiModeDetail(UIDetail::MCModRange);
-              }
-          }
-      });
+    registerEvent(EventSinks::SwitchToMCModRangeDetail, [hwui, eb]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      {
+        if(modParam->getModulationSource() != ModulationSource::NONE)
+        {
+          hwui->setUiModeDetail(UIDetail::MCModRange);
+        }
+      }
+    });
 
-      registerEvent(EventSinks::SwitchToMCSelectDetail, [hwui, eb]() {
-          if(dynamic_cast<ModulateableParameter*>(eb->getSelected()) != nullptr)
-          {
-              hwui->setUiModeDetail(UIDetail::MCSelect);
-          }
-      });
-
+    registerEvent(EventSinks::SwitchToMCSelectDetail, [hwui, eb]() {
+      if(dynamic_cast<ModulateableParameter *>(eb->getSelected()) != nullptr)
+      {
+        hwui->setUiModeDetail(UIDetail::MCSelect);
+      }
+    });
   }
 
   void EventSinkBroker::registerEvent(EventSinks sink, tAction action)

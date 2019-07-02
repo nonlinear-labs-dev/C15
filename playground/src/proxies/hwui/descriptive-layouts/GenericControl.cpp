@@ -1,16 +1,18 @@
 #include "GenericControl.h"
-
+#include "GenericLayout.h"
 #include <tools/EnumTools.h>
 #include "Styleable.h"
 #include "EventSource.h"
 #include "PropertyOwner.h"
 #include "ControlRegistry.h"
 
+
 namespace DescriptiveLayouts
 {
-  GenericControl::GenericControl(const ControlInstance &prototype)
+  GenericControl::GenericControl(const ControlInstance &prototype, GenericLayout* pLayout)
       : ControlWithChildren(Rect(prototype.position, Point(0, 0)))
       , m_prototype(prototype)
+      , m_genericLayout(pLayout)
   {
     addPrimitives();
   }
@@ -67,7 +69,7 @@ namespace DescriptiveLayouts
 
   void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
   {
-    for(auto c : getControls())
+    for(const auto &c : getControls())
     {
       if(auto a = std::dynamic_pointer_cast<Styleable>(c))
       {
@@ -83,4 +85,8 @@ namespace DescriptiveLayouts
       }
     }
   }
+
+    void GenericControl::setDirty() {
+        ControlWithChildren::setDirty();
+    }
 }

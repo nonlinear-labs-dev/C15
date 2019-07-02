@@ -5,20 +5,26 @@
 
 namespace DescriptiveLayouts
 {
+  class GenericLayout;
+
   class GenericControl : public ControlWithChildren
   {
    public:
-    GenericControl(const ControlInstance &prototype);
+    GenericControl(const ControlInstance& prototype, GenericLayout* pLayout = nullptr);
     virtual ~GenericControl();
 
     void style(LayoutClasses layout);
     void connect();
 
-   private:
+      void setDirty() override;
+
+  private:
     void addPrimitives();
-    void onEventFired(std::any v, const ControlInstance::EventConnection &c);
+    void onEventFired(std::any v, const ControlInstance::EventConnection& c);
 
     ControlInstance m_prototype;
     std::list<sigc::connection> m_connections;
+  protected:
+    GenericLayout* m_genericLayout;
   };
 }

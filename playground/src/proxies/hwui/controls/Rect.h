@@ -12,6 +12,7 @@ class Rect
   virtual ~Rect();
 
   bool contains(int x, int y) const;
+  bool intersects(const Rect& other) const;
   Rect getIntersection(const Rect &other) const;
 
   const Point &getPosition() const;

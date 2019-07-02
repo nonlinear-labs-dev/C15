@@ -170,6 +170,12 @@ bool Rect::isEmpty() const
   return m_width <= 0 || m_height <= 0;
 }
 
+bool Rect::intersects(const Rect& other) const
+{
+    return other.contains(getX(), getY()) || other.contains(getX() + getWidth(), getY()) ||
+            other.contains(getX(), getY() + getHeight()) || other.contains(getX() + getWidth(), getY() + getHeight());
+}
+
 Rect Rect::getIntersection(const Rect &other) const
 {
   auto left = std::max(other.getLeft(), getLeft());

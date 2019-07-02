@@ -155,8 +155,7 @@ namespace DescriptiveLayouts
       if(p->isBiPolar())
       {
         auto value = (v + 1) / 2;
-        auto width = value - 0.5;
-        setValue(std::make_pair(0.5, width));
+        setValue(std::make_pair(0.5, value));
       }
       else
       {
@@ -220,6 +219,24 @@ namespace DescriptiveLayouts
         {
           setValue(mc->getControlPositionValue());
         }
+      }
+    }
+  };
+
+  class CurrentParameterControlPosition : public GenericValueEventSource
+  {
+   public:
+    explicit CurrentParameterControlPosition()
+        : GenericValueEventSource()
+    {
+    }
+
+   private:
+    virtual void onParameterChanged(const Parameter *p) override
+    {
+      if(p)
+      {
+        setValue(p->getControlPositionValue());
       }
     }
   };
@@ -436,11 +453,12 @@ namespace DescriptiveLayouts
 
   class CurrentVoiceGroupName : public EventSource<DisplayString>
   {
-  protected:
-      std::any getLastValue() const override {
-          auto name = Application::get().getPresetManager()->getEditBuffer()->getCurrentVoiceGroupName();
-          return DisplayString{ name, 0 };
-      }
+   protected:
+    std::any getLastValue() const override
+    {
+      auto name = Application::get().getPresetManager()->getEditBuffer()->getCurrentVoiceGroupName();
+      return DisplayString{ name, 0 };
+    }
   };
 
   class StaticText : public EventSource<DisplayString>
@@ -485,6 +503,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::MasterTuneValueText] = std::make_unique<StaticText>("-3.5 dB");
     m_map[EventSources::OutputLevelValueText] = std::make_unique<StaticText>("+12.00 st");
     m_map[EventSources::CurrentVoiceGroupName] = std::make_unique<CurrentVoiceGroupName>();
+    m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
   }
 
   sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)

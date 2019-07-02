@@ -39,6 +39,7 @@ namespace DescriptiveLayouts
     {
         return new SingleSoundEditMenu(Rect(position.getX(), position.getY(), 256, 64));
     }
+
     return new GenericControl(*this);
   }
 }

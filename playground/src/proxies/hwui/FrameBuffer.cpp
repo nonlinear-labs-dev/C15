@@ -173,26 +173,13 @@ void FrameBuffer::fillRect(const Rect &rect)
 
 void FrameBuffer::fillCircle(const Point &pos, int radius, int steps)
 {
-  if(radius <= 6)
-  {
-    fillRect(pos.getX() - radius / 2, pos.getY() - radius, radius, radius * 2);
-    fillRect(pos.getX() - radius, pos.getY() - radius / 2, radius * 2, radius);
-  }
-  else
-  {
-    auto theta = 0;
-    auto h = pos.getX();
-    auto k = pos.getY();
-    auto step = steps;
-
-    while(theta <= 360)
-    {
-      const auto x = h + radius * cos(theta);
-      const auto y = k + radius * sin(theta);
-      if(abs(x - h) <= radius + 0.5 && abs(x - h) >= radius - 0.5)
-        setPixel(x, y);
-      theta += step;
-    }
+  for(auto y = pos.getY() - radius; y <= pos.getY() + radius; y++) {
+      for (auto x = pos.getX() - radius; x <= pos.getX() + radius; x++) {
+          auto distance = sqrt(pow(x - pos.getX(), 2) + pow(y - pos.getY(), 2));
+          if (distance <= radius) {
+              setPixel(x, y);
+          }
+      }
   }
 }
 
