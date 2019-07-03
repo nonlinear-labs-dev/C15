@@ -2,13 +2,9 @@
 #include "Control.h"
 #include "Button.h"
 
-ControlOwner::ControlOwner()
-{
-}
+ControlOwner::ControlOwner() = default;
 
-ControlOwner::~ControlOwner()
-{
-}
+ControlOwner::~ControlOwner() = default;
 
 const ControlOwner::tControls &ControlOwner::getControls() const
 {
@@ -17,7 +13,7 @@ const ControlOwner::tControls &ControlOwner::getControls() const
 
 bool ControlOwner::isDirty() const
 {
-  for(auto c : m_controls)
+  for(const auto &c : m_controls)
     if(c->isDirty())
       return true;
 
@@ -30,48 +26,47 @@ void ControlOwner::setHighlight(bool isHighlight)
     c->setHighlight(isHighlight);
 }
 
-std::vector<Control *> collectOverlappingControls(const Control *c)
-{
-  std::vector<Control *> ret;
-
-  return ret;
-}
-
 bool ControlOwner::redraw(FrameBuffer &fb)
 {
-  bool didRedraw = false;
+  std::vector<tControlPtr> dirtyControls;
+  std::vector<tControlPtr> underlyingControls;
 
   for(const auto &c : m_controls)
   {
     if(c->isDirty())
     {
-      bool did = false;
-
-      forEach((tIfCallback)[&did, &c, &fb](tControlPtr child) -> bool {
-          if(c.get() != child.get()) {
-              if(c->getPosition().intersects(child->getPosition())) {
-                child->redraw(fb);
-                  did = true;
-              }
+      forEach((tCallback)[&underlyingControls, &c, &fb](tControlPtr child) {
+        if(c.get() != child.get())
+        {
+          if(c->getPosition().intersects(child->getPosition()))
+          {
+            underlyingControls.emplace_back(child);
           }
-          return true;
+        }
       });
 
-      if(!did) {
-          fb.setColor(FrameBuffer::C43);
-          fb.fillRect(c->getPosition());
-      }
-
-      c->drawBackground(fb);
-
       if(c->isVisible())
-        c->redraw(fb);
-
-      c->setClean();
-      didRedraw = true;
+      {
+        dirtyControls.emplace_back(c);
+      }
     }
   }
-  return didRedraw;
+
+  std::for_each(dirtyControls.begin(), dirtyControls.end(), [&underlyingControls](auto& e) {
+     underlyingControls.emplace_back(e);
+  });
+
+  for(const auto &c : underlyingControls)
+  {
+    c->drawBackground(fb);
+
+    if(c->isVisible())
+      c->redraw(fb);
+
+    c->setClean();
+  }
+
+  return dirtyControls.size() > 0;
 }
 
 void ControlOwner::remove(const Control *ctrl)
@@ -100,20 +95,20 @@ void ControlOwner::clear()
 
 void ControlOwner::setAllDirty()
 {
-  for(auto c : m_controls)
+  for(const auto &c : m_controls)
     c->setDirty();
 }
 
 void ControlOwner::forEach(tIfCallback cb) const
 {
-  for(auto c : m_controls)
+  for(const auto &c : m_controls)
     if(!cb(c))
       return;
 }
 
 void ControlOwner::forEach(tCallback cb) const
 {
-  for(auto c : m_controls)
+  for(const auto &c : m_controls)
     cb(c);
 }
 

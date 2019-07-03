@@ -1,0 +1,38 @@
+{
+  "layouts": {
+    "SetupLayoutA": {
+      "Selector": {
+        "UIFocus": "Setup",
+        "UIDetail": "Init"
+      },
+      "Controls": {
+       "myComplexButtonA": {
+         "Class": "ComplexButton",
+         "Position": "64, 22"
+       }
+      },
+      "EventSinks": {
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
+      }
+    },
+    "SetupLayoutB": {
+      "Selector": {
+        "UIFocus": "Setup",
+        "UIDetail": "ButtonB"
+      },
+      "Controls": {
+        "myComplexButtonB": {
+          "Class": "ComplexButton",
+          "Position": "64, 22"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_A": "SwitchToInitDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
+      }
+    }
+  }
+}

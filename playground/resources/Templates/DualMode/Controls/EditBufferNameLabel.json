@@ -3,7 +3,7 @@
     "EditBufferNameLabel": {
       "Text": {
         "Class": "Text",
-        "Rect": "0,0,256,20",
+        "Rect": "0,0,128,13",
         "Property": "Text"
       }
     }
@@ -11,11 +11,13 @@
   "styles": {
     "EditBufferNameLabel-Selected": {
       "selector": {
-        "ControlClasses": "EditBufferNameLabel"
+        "ControlClasses": "EditBufferNameLabel",
+        "PrimitiveClasses": "Text",
+        "UIFocus": "Sound",
+        "UIMode": "Select"
       },
       "styles": {
         "FontSize": 9,
-        "BackgroundColor": "C43",
         "Color": "C255",
         "TextAlign": "Center"
       }

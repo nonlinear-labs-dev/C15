@@ -60,7 +60,6 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
 
   void setPixel(tCoordinate x, tCoordinate y);
   void clear();
-  void clearRect(Rect r);
 
   struct StackScopeGuard
   {

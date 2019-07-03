@@ -27,7 +27,7 @@ namespace DescriptiveLayouts
 
   DFBLayout* LayoutClass::instantiate() const
   {
-    DebugLevel::warning("instantiating Layout:", id);
+    DebugLevel::info("instantiating Layout:", id);
     return new GenericLayout(*this);
   }
 

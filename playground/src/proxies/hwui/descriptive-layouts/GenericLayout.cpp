@@ -11,10 +11,58 @@
 
 namespace DescriptiveLayouts
 {
+
+  struct ConditionResult
+  {
+    explicit ConditionResult(const LayoutClass::ConditionList &c)
+        : m_conditions{ c }
+    {
+      for(auto &condition : m_conditions)
+      {
+        m_result.push_back(condition());
+      }
+      assert(m_result.size() == m_conditions.size());
+    }
+
+    bool hasChanged() const
+    {
+      std::vector<bool> res;
+      for(auto &c : m_conditions)
+      {
+        res.push_back(c());
+      }
+
+      for(auto i = 0; i < res.size(); i++)
+      {
+        if(res[i] != m_result[i])
+          return false;
+      }
+
+      return true;
+    }
+
+    LayoutClass::ConditionList m_conditions;
+    std::vector<bool> m_result;
+  };
+
   GenericLayout::GenericLayout(const LayoutClass &prototype)
       : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
       , m_prototype(prototype)
   {
+
+    //TODO change to Throttled Job + more sophisticated evaluation process
+    ConditionResult result{ prototype.conditions };
+
+    Application::get().getMainContext()->signal_idle().connect([result]() {
+      if(result.hasChanged())
+      {
+        const auto &hwui = Application::get().getHWUI();
+        hwui->getPanelUnit().getEditPanel().getBoled().setupFocusAndMode(
+            Application::get().getHWUI()->getFocusAndMode());
+        return false;
+      }
+      return true;
+    });
   }
 
   void GenericLayout::init()

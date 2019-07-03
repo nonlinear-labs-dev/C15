@@ -1,0 +1,49 @@
+{
+  "controls": {
+    "ComplexButton": {
+      "label1": {
+        "Class": "Text",
+        "Rect": "1, 1, 62, 15",
+        "Default": "Foo"
+      },
+      "Button": {
+        "Class": "Border",
+        "Rect": "0, 0, 64, 32"
+      },
+      "label2": {
+        "Class": "Text",
+        "Rect": "1, 16, 62, 15",
+        "Default": "Bar"
+      }
+    }
+  },
+  "styles": {
+    "MyVerySpecificStyle": {
+      "selector": {
+        "UIFocus": "Setup",
+        "UIDetail": "Init",
+        "ControlClasses": "ComplexButton",
+        "ControlInstances": "myComplexButtonA",
+        "PrimitiveInstances": "label1"
+      },
+      "styles": {
+        "Color": "C103",
+        "BackgroundColor": "C179"
+      }
+    },
+    "MyVerySpecificStyle2": {
+      "selector": {
+        "UIFocus": "Setup",
+        "UIDetail": "ButtonB",
+        "ControlClasses": "ComplexButton",
+        "ControlInstances": "myComplexButtonB",
+        "PrimitiveInstances": "label1"
+      },
+      "styles": {
+        "Color": "C179",
+        "BackgroundColor": "C103"
+      }
+    }
+  }
+  }
+}

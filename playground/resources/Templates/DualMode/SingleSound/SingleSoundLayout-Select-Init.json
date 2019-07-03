@@ -17,7 +17,7 @@
         },
         "EditbufferName": {
           "Class": "EditBufferNameLabel",
-          "Position": "0, 0",
+          "Position": "64, 0",
           "Events": "EditBufferName => Text[Text]"
         },
         "MasterTune": {

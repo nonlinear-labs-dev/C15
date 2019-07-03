@@ -149,9 +149,15 @@ namespace DescriptiveLayouts
       auto layoutContent = layout.value();
       auto selectorContent = layoutContent.at("Selector");
       tConditionList selectonConditions;
+      LayoutClass::EventSinkList sinkMappings;
 
       auto controlContent = layoutContent.at("Controls");
-      auto eventSinkContent = layoutContent.at("EventSinks");
+
+      if(layoutContent.find("EventSinks") != layoutContent.end())
+      {
+        auto eventSinkContent = layoutContent.at("EventSinks");
+        sinkMappings = toEventSinkList(eventSinkContent);
+      }
 
       if(layoutContent.find("Conditions") != layoutContent.end())
       {
@@ -159,17 +165,16 @@ namespace DescriptiveLayouts
         selectonConditions = toConditions(conditionContent);
       }
 
-      auto id = name;
+      const auto& id = name;
       auto selectors = toSelectors(selectorContent);
       auto controls = toControlInstanceList(controlContent);
-      auto sinkMappings = toEventSinkList(eventSinkContent);
       BoledLayoutFactory::get().registerLayout(id, selectors, controls, sinkMappings, selectonConditions);
     }
   }
 
   void importLayout(const std::string& fileName)
   {
-    DebugLevel::warning("importing layouts from file", fileName);
+    DebugLevel::info("importing layouts from file", fileName);
     std::ifstream i(fileName);
     json j;
     i >> j;
