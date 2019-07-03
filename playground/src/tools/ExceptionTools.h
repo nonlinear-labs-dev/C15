@@ -1,3 +1,5 @@
+#include <utility>
+
 #pragma once
 #include <exception>
 #include <string>
@@ -42,8 +44,8 @@ namespace ExceptionTools
 
    public:
     TemplateException(ustring what, ustring where)
-        : m_what(what)
-        , m_where(where)
+        : m_what(std::move(what))
+        , m_where(std::move(where))
     {
     }
 

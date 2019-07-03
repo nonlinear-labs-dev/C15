@@ -20,12 +20,15 @@ namespace DescriptiveLayouts
 
     using DisplayString = std::pair<Glib::ustring, int>;
 
-    void setProperty(PrimitiveProperty key, std::any value);
+      std::shared_ptr<Font> getFont() const override;
+
+      void setProperty(PrimitiveProperty key, std::any value);
     void setDirty() override;
     const PrimitiveInstance &getPrimitive() const override;
 
    protected:
     void setFontColor(FrameBuffer &fb) const override;
+
     Font::Justification getJustification() const override;
     int getFontHeight() const override;
     void drawBackground(FrameBuffer &fb) override;

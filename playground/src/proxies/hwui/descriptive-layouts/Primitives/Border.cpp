@@ -39,7 +39,7 @@ namespace DescriptiveLayouts
         fb.drawRect(getPosition());
         return true;
     }
-    throw ExceptionTools::TemplateException("unkown border style: " + getStyleValue(StyleKey::BorderStyle),
+    throw ExceptionTools::TemplateException("unkown border style: " + std::to_string(getStyleValue(StyleKey::BorderStyle)),
                                             "__LINE__ __FILE__");
     return true;
   }

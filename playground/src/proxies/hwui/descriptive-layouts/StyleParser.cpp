@@ -112,6 +112,9 @@ namespace DescriptiveLayouts
         case StyleKey::TextAlign:
           theStyles.map.emplace(styleKey, (int) StyleValues::toAlignment(style.value()));
           break;
+        case StyleKey::FontDecoration:
+          theStyles.map.emplace(styleKey, (int) StyleValues::toFont(style.value()));
+          break;
       }
     }
     return theStyles;

@@ -16,9 +16,7 @@ namespace DescriptiveLayouts
     }
   }
 
-  Text::~Text()
-  {
-  }
+  Text::~Text() = default;
 
   void Text::drawBackground(FrameBuffer &fb)
   {
@@ -48,9 +46,12 @@ namespace DescriptiveLayouts
 
       case StyleValues::Alignment::Right:
         return Font::Justification::Right;
+
+      default:
+        throw ExceptionTools::TemplateException("unkown text align style for key: "
+                                                    + std::to_string(getStyleValue(StyleKey::TextAlign)),
+                                                "__LINE__ __FILE__");
     }
-    throw ExceptionTools::TemplateException("unkown text align style for key: " + getStyleValue(StyleKey::TextAlign),
-                                            "__LINE__ __FILE__");
   }
 
   int Text::getFontHeight() const
@@ -64,8 +65,8 @@ namespace DescriptiveLayouts
     {
       case PrimitiveProperty::Text:
       {
-          auto a = std::any_cast<DisplayString>(value);
-        setText(StringAndSuffix(a.first, a.second));
+        auto a = std::any_cast<DisplayString>(value);
+        setText(StringAndSuffix(a.first, static_cast<size_t>(a.second)));
         break;
       }
       case PrimitiveProperty::Visibility:
@@ -87,5 +88,17 @@ namespace DescriptiveLayouts
   const PrimitiveInstance &Text::getPrimitive() const
   {
     return m_primitive;
+  }
+
+  std::shared_ptr<Font> Text::getFont() const
+  {
+    switch((StyleValues::Font) getStyleValue(StyleKey::FontDecoration))
+    {
+      case StyleValues::Font::Bold:
+        return Oleds::get().getFont("Emphase_9_Bold", getFontHeight());
+      case StyleValues::Font::Regular:
+      default:
+        return Oleds::get().getFont("Emphase_9_Regular", getFontHeight());
+    }
   }
 }
