@@ -12,7 +12,7 @@
          "Init": {
            "label[Text]": "Test Test ...",
            "bar[Range]": "0.25, 0.75",
-           "circle[ControlPosition]": "0.25",
+           "circle[ControlPosition]": "0.2",
            "border[Visibility]": "true"
          }
        }

@@ -64,11 +64,10 @@ namespace DescriptiveLayouts
         setVisible(boolean);
       }
       break;
-
-      case PrimitiveProperty::None:
-      case PrimitiveProperty::Text:
       case PrimitiveProperty::Range:
       case PrimitiveProperty::ControlPosition:
+      case PrimitiveProperty::None:
+      case PrimitiveProperty::Text:
         break;
     }
   }

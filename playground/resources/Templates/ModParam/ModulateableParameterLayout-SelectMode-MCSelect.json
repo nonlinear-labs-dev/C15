@@ -51,16 +51,6 @@
           "Position": "5,25",
           "Events": "MacroControlPosition => CenterDot[ControlPosition], MacroControlPositionText => MCPos-Label[Text]"
         },
-        "MCAmt": {
-          "Class": "MCAmtLabel",
-          "Position": "128, 35",
-          "Events": "MacroControlAmount => Text[Text], MacroControlAsignment => Text[Visibility]"
-        },
-        "ButtonC-MCAmt": {
-          "Class": "McAmtButton",
-          "Position": "128,52",
-          "Events": "MacroControlAsignment => Text[Visibility]"
-        },
         "MCMenu": {
           "Class": "ModulationCarousel",
           "Position": "194,2"

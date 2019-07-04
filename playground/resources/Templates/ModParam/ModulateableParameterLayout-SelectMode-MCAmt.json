@@ -28,11 +28,6 @@
           "Position": "72, 35",
           "Events": "MacroControlSymbol => Text[Text]"
         },
-        "MCAmt": {
-          "Class": "MCAmtLabel",
-          "Position": "128, 35",
-          "Events": "MacroControlAmount => Text[Text]"
-        },
         "ButtonB-MCSel": {
           "Class": "McSelButton",
           "Position": "64,52"
@@ -40,10 +35,6 @@
         "ButtonA-MCPos": {
           "Class": "EmptyButton",
           "Position": "0,52"
-        },
-        "ButtonC-MCAmt": {
-          "Class": "McAmtButton",
-          "Position": "128,52"
         },
         "MCMenu": {
           "Class": "ModulationCarousel",
