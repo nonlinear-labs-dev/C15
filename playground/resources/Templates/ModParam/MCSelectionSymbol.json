@@ -3,8 +3,7 @@
     "MCName": {
       "Text": {
         "Class": "Text",
-        "Rect": "0,0,48,12",
-        "Default": "[-]"
+        "Rect": "0,0,48,12"
       }
     }
   },

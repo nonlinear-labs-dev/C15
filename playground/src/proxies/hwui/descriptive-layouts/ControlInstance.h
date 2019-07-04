@@ -1,3 +1,5 @@
+#include <utility>
+
 #pragma once
 
 #include "TemplateEnums.h"
@@ -17,10 +19,37 @@ namespace DescriptiveLayouts
       PrimitiveProperty targetProperty;
     };
 
+    struct StaticInitList
+    {
+
+      using tPrimitiveInstance = Glib::ustring;
+      using tPrimitiveProperty = PrimitiveProperty;
+      using tValue = std::any;
+
+      struct InitEntry
+      {
+        tPrimitiveInstance m_instance;
+        tPrimitiveProperty m_property;
+        tValue m_value;
+
+        InitEntry(tPrimitiveInstance i, tPrimitiveProperty p, tValue v)
+            : m_instance{std::move(i)}
+            , m_property{ p }
+            , m_value{std::move(v)} {};
+      };
+
+      void addToList(tPrimitiveInstance i, tPrimitiveProperty p, tValue v)
+      {
+        m_inits.emplace_back(InitEntry(std::move(i), p, std::move(v)));
+      };
+
+      std::vector<InitEntry> m_inits;
+    };
+
     using EventConnections = std::list<EventConnection>;
 
     ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
-                    const EventConnections& eventConnections);
+                    const EventConnections& eventConnections, StaticInitList staticInit);
 
     Control* instantiate() const;
 
@@ -28,6 +57,7 @@ namespace DescriptiveLayouts
     ControlClasses controlClass;
     Point position;
     EventConnections eventConnections;
+    StaticInitList staticInitList;
 
     friend class GenericControl;
     friend class ConsistencyChecker;

@@ -58,7 +58,7 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
     }
   }
   /*try {
- /* } catch (nlohmann::json::out_of_range &e) {
+  } catch (nlohmann::json::out_of_range &e) {
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("nlohmann::json::out_of_range\n"s + e.what()));
   } catch (nlohmann::json::parse_error &e) {
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("nlohmann::json::parse_error:\n"s + e.what()));
@@ -159,7 +159,6 @@ void BOLED::setupBankScreen(FocusAndMode focusAndMode)
         reset(new PresetManagerLayout(focusAndMode));
   }
 }
-
 
 bool BOLED::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {

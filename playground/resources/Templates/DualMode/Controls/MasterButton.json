@@ -3,8 +3,7 @@
     "MasterButton": {
       "Text": {
         "Class": "Text",
-        "Rect": "3, 2, 56, 9",
-        "Default": "Master .."
+        "Rect": "3, 2, 56, 9"
       },
       "Border": {
         "Class": "Border",

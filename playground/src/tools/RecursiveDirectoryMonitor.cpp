@@ -1,10 +1,12 @@
+#include <utility>
+
 #include "RecursiveDirectoryMonitor.h"
 
 namespace FileTools
 {
   RecursiveDirectoryMonitor::RecursiveDirectoryMonitor(const tFile& rootFolder, tCallBack callback)
       : m_rootFolder(rootFolder)
-      , m_callBack(callback)
+      , m_callBack(std::move(callback))
       , m_monitors(0)
   {
     rebuildDirectoryList();

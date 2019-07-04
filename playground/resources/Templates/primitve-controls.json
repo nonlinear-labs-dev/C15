@@ -1,49 +1,32 @@
 {
   "controls": {
-    "ComplexButton": {
-      "label1": {
+    "GenericButton": {
+      "label": {
         "Class": "Text",
-        "Rect": "1, 1, 62, 15",
-        "Default": "Foo"
+        "Rect": "1, 1, 62, 10"
       },
-      "Button": {
+      "border": {
         "Class": "Border",
-        "Rect": "0, 0, 64, 32"
+        "Rect": "0, 0, 64, 12"
       },
-      "label2": {
-        "Class": "Text",
-        "Rect": "1, 16, 62, 15",
-        "Default": "Bar"
+      "bar": {
+        "Class": "Bar",
+        "Rect": "0, 15, 64, 5"
+      },
+      "circle": {
+        "Class": "Circle",
+        "Rect": "0, 25, 64, 9"
       }
     }
   },
   "styles": {
-    "MyVerySpecificStyle": {
+    "Test": {
       "selector": {
-        "UIFocus": "Setup",
-        "UIDetail": "Init",
-        "ControlClasses": "ComplexButton",
-        "ControlInstances": "myComplexButtonA",
-        "PrimitiveInstances": "label1"
+        "LayoutClasses": "SetupLayoutA"
       },
       "styles": {
-        "Color": "C103",
-        "BackgroundColor": "C179"
-      }
-    },
-    "MyVerySpecificStyle2": {
-      "selector": {
-        "UIFocus": "Setup",
-        "UIDetail": "ButtonB",
-        "ControlClasses": "ComplexButton",
-        "ControlInstances": "myComplexButtonB",
-        "PrimitiveInstances": "label1"
-      },
-      "styles": {
-        "Color": "C179",
-        "BackgroundColor": "C103"
+        "Color": "C255"
       }
     }
-  }
   }
 }

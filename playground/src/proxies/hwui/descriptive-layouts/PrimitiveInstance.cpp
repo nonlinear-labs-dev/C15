@@ -1,3 +1,4 @@
+#include <utility>
 #include "PrimitiveInstance.h"
 #include "PrimitivesFactory.h"
 #include "Styles.h"
@@ -5,14 +6,12 @@
 namespace DescriptiveLayouts
 {
   PrimitiveInstance::PrimitiveInstance(PrimitiveInstances primitiveInstance, PrimitiveClasses type,
-                                       Rect relativePosition, PrimitiveTag t, DefaultText defaultText,
-                                       Converter converter)
-      : primitiveInstance(primitiveInstance)
-      , tag(t)
+                                       Rect relativePosition, PrimitiveTag t, Converter converter)
+      : primitiveInstance(std::move(primitiveInstance))
+      , tag(std::move(t))
       , primitveClass(type)
       , relativePosition(relativePosition)
-      , defaultText(defaultText)
-      , converter(converter)
+      , converter(std::move(converter))
   {
   }
 

@@ -22,8 +22,6 @@ namespace DescriptiveLayouts
     bool handleEventSink(EventSinks s);
     void createControls();
 
-    void testForChangedConditions();
-
     LayoutClass m_prototype;
   };
 }

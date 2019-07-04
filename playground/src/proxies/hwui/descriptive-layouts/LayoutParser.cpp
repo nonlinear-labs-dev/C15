@@ -7,6 +7,9 @@
 #include "ConditionRegistry.h"
 #include <boost/algorithm/string.hpp>
 #include <tools/StringTools.h>
+#include <proxies/hwui/descriptive-layouts/Primitives/Text.h>
+#include <boost/lexical_cast.hpp>
+#include <proxies/hwui/descriptive-layouts/Primitives/Bar.h>
 
 using json = nlohmann::json;
 
@@ -72,6 +75,62 @@ namespace DescriptiveLayouts
     return str;
   }
 
+  ControlInstance::StaticInitList parseInit(json j)
+  {
+    ControlInstance::StaticInitList ret{};
+
+    if(!j["Init"].empty())
+    {
+      for(auto it = j["Init"].begin(); it != j["Init"].end(); ++it)
+      {
+        auto parts = StringTools::splitStringOnStringDelimiter(it.key(), "[");
+        auto eventTargetObject = removeSpaces(parts[0]);
+        auto eventTargetProperty = toPrimitiveProperty(removeSpaces(removeLastCharacter(parts[1])));
+
+        std::any value;
+
+        try
+        {
+          switch(eventTargetProperty)
+          {
+            case PrimitiveProperty::ControlPosition:
+              value = std::stod((std::string) it.value());
+              break;
+            case PrimitiveProperty::Range:
+            {
+              auto values = StringTools::splitStringOnStringDelimiter(it.value(), ",");
+              value = Bar::Range(std::stof(values[0]), std::stof(values[1]));
+            }
+            break;
+            case PrimitiveProperty::Text:
+              value = Text::DisplayString((std::string)it.value(), 0);
+              break;
+            case PrimitiveProperty::Visibility:
+            {
+                bool val{};
+                auto str = (std::string)it.value();
+                std::istringstream(str) >> std::boolalpha >> val;
+                value = val;
+            }
+              break;
+            default:
+            case PrimitiveProperty::None:
+              break;
+          }
+        }
+        catch(...)
+        {
+          DebugLevel::warning("Could not create value from init:", it.key(), ":", it.value());
+          continue;
+        }
+
+        ret.addToList(eventTargetObject, eventTargetProperty, value);
+      }
+    }
+
+    return ret;
+  }
+
   ControlInstance::EventConnections parseEventConnections(json j)
   {
     ControlInstance::EventConnections ret;
@@ -83,7 +142,7 @@ namespace DescriptiveLayouts
       for(auto& connection : connections)
       {
 
-        if(connection.find("=>") == connection.npos)
+        if(connection.find("=>") == Glib::ustring::npos)
           DebugLevel::throwException("Event Routing syntax error: missing \"=>\"", connection);
 
         auto parts = StringTools::splitStringOnStringDelimiter(connection, "=>");
@@ -96,27 +155,29 @@ namespace DescriptiveLayouts
         ret.push_back({ eventSource, eventTargetObject, eventTargetProperty });
       }
     }
+
     return ret;
   }
 
   LayoutClass::ControlInstanceList toControlInstanceList(json j)
   {
-    LayoutClass::ControlInstanceList l;
+    LayoutClass::ControlInstanceList l{};
 
     for(json::iterator control = j.begin(); control != j.end(); ++control)
     {
       auto controlInstances = control.key();
       auto controlClasses = control.value().at("Class");
       auto point = toPoint(control.value().at("Position"));
+      auto staticInit = parseInit(control.value());
       auto eventConnections = parseEventConnections(control.value());
-      l.emplace_back(controlInstances, controlClasses, point, eventConnections);
+      l.emplace_back(controlInstances, controlClasses, point, eventConnections, staticInit);
     }
     return l;
   }
 
   LayoutClass::EventSinkList toEventSinkList(json j)
   {
-    LayoutClass::EventSinkList l;
+    LayoutClass::EventSinkList l{};
     for(json::iterator eventSink = j.begin(); eventSink != j.end(); ++eventSink)
     {
       l.push_back(EventSinkMapping(toButtons(eventSink.key()), toEventSinks(eventSink.value())));
@@ -130,7 +191,7 @@ namespace DescriptiveLayouts
     for(json::iterator condition = j.begin(); condition != j.end(); ++condition)
     {
       auto conditonStrings = StringTools::splitStringOnAnyDelimiter(std::string(condition.value()), ',');
-      for(auto conditionString : conditonStrings)
+      for(const auto& conditionString : conditonStrings)
       {
         ret.push_back(ConditionRegistry::get().getLambda(conditionString));
       }

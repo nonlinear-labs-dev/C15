@@ -3,8 +3,7 @@
 		"ParameterGroupName": {
 			"Text": {
 				"Class": "Text",
-				"Rect": "0, 0, 64,13",
-				"Property": "Text"
+				"Rect": "0, 0, 64,13"
 			}
 		}
 	},

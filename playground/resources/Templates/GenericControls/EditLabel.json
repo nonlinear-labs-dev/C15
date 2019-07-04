@@ -3,8 +3,7 @@
 		"EditLabel": {
 			"Text": {
 				"Class": "Text",
-				"Rect": "0,0,48,12",
-				"Default": "Edit"
+				"Rect": "0,0,48,12"
 			}
 		}
 	},

@@ -4,8 +4,7 @@
 			"Text": {
 				"Class": "Text",
 				"Rect": "0,0,11,11",
-				"Property": "Text",
-				"Default": "L"
+				"Property": "Text"
 			}
 		}
 	},

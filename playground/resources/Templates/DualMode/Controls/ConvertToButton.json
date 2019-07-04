@@ -3,8 +3,7 @@
     "ConvertToButton": {
       "Text": {
         "Class": "Text",
-        "Rect": "3, 2, 56, 9",
-        "Default": "Convert to"
+        "Rect": "3, 2, 56, 9"
       },
       "Border": {
         "Class": "Border",

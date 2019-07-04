@@ -1,8 +1,10 @@
+#include <utility>
+
 #include "Expiration.h"
 
 Expiration::Expiration(Expiration::Callback cb, Expiration::Duration d, int priority)
 {
-  setCallback(cb);
+  setCallback(std::move(cb));
 
   if(d > Duration::zero())
     refresh(d, priority);
@@ -15,7 +17,7 @@ Expiration::~Expiration()
 
 void Expiration::setCallback(Expiration::Callback cb)
 {
-  m_cb = cb;
+  m_cb = std::move(cb);
 
   if(isPending() && !m_cb)
     cancel();

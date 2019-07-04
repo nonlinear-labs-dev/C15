@@ -15,13 +15,11 @@
       },
       "dots": {
         "Class": "Text",
-        "Rect": "50, -6, 20, 10",
-        "Default": "....."
+        "Rect": "50, -6, 20, 10"
       },
       "MCPos-Label": {
         "Class": "Text",
-        "Rect": "5, 10, 50, 9",
-        "Default": "0%"
+        "Rect": "5, 10, 50, 9"
       }
     }
   },

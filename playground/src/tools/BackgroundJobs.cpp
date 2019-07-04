@@ -1,13 +1,15 @@
+#include <utility>
+
 #include "BackgroundJobs.h"
 
 BackgroundJob::BackgroundJob(BackgroundJob::tCallback cb)
-    : callback(cb)
+    : callback(std::move(cb))
 {
 }
 
 BackgroundJob::~BackgroundJob()
 {
-  assert(m_close == true);
+  assert(m_close);
 }
 
 void BackgroundJob::start()

@@ -7,8 +7,14 @@
       },
       "Controls": {
        "myComplexButtonA": {
-         "Class": "ComplexButton",
-         "Position": "64, 22"
+         "Class": "GenericButton",
+         "Position": "64, 0",
+         "Init": {
+           "label[Text]": "Test Test ...",
+           "bar[Range]": "0.25, 0.75",
+           "circle[ControlPosition]": "0.25",
+           "border[Visibility]": "true"
+         }
        }
       },
       "EventSinks": {

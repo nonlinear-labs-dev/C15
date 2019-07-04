@@ -35,6 +35,15 @@ namespace DescriptiveLayouts
     for(auto &p : controlClass.primitves)
     {
       auto c = addControl(p.instantiate());
+
+      for(auto& init: m_prototype.staticInitList.m_inits) {
+          if(p.primitiveInstance == init.m_instance) {
+              if(auto propertyOwner = dynamic_cast<PropertyOwner*>(c)) {
+                  propertyOwner->setProperty(init.m_property, init.m_value);
+              }
+          }
+      }
+
       maxX = std::max(maxX, c->getPosition().getRight());
       maxY = std::max(maxY, c->getPosition().getBottom());
     }

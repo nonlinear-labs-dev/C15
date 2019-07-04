@@ -39,8 +39,8 @@ namespace DescriptiveLayouts
         fb.drawRect(getPosition());
         return true;
     }
-    throw ExceptionTools::TemplateException("unkown border style: " + std::to_string(getStyleValue(StyleKey::BorderStyle)),
-                                            "__LINE__ __FILE__");
+    throw ExceptionTools::TemplateException(
+        "unkown border style: " + std::to_string(getStyleValue(StyleKey::BorderStyle)), "__LINE__ __FILE__");
     return true;
   }
 
@@ -52,5 +52,24 @@ namespace DescriptiveLayouts
   const PrimitiveInstance &Border::getPrimitive() const
   {
     return m_primitive;
+  }
+
+  void Border::setProperty(PrimitiveProperty key, std::any value)
+  {
+    switch(key)
+    {
+      case PrimitiveProperty::Visibility:
+      {
+        auto boolean = std::any_cast<bool>(value);
+        setVisible(boolean);
+      }
+      break;
+
+      case PrimitiveProperty::None:
+      case PrimitiveProperty::Text:
+      case PrimitiveProperty::Range:
+      case PrimitiveProperty::ControlPosition:
+        break;
+    }
   }
 }

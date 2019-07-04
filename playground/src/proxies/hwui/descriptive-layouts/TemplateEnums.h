@@ -91,7 +91,6 @@ namespace DescriptiveLayouts
   }
 
   using PrimitiveTag = StringId<traits::Primitives::Tag>;
-  using DefaultText = StringId<traits::Primitives::Text>;
   using PrimitiveInstances = StringId<traits::Primitives::Instance>;
   using ControlClasses = StringId<traits::Controls::Class>;
   using ControlInstances = StringId<traits::Controls::Instance>;

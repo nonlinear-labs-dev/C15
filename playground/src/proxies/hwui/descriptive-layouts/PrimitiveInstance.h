@@ -16,14 +16,13 @@ namespace DescriptiveLayouts
     using Converter = std::function<std::any(std::any)>;
 
     PrimitiveInstance(PrimitiveInstances primitiveInstance, PrimitiveClasses type, Rect relativePosition,
-                      PrimitiveTag t = PrimitiveTag::Any, DefaultText defaultText = "", Converter converter = nullptr);
+                      PrimitiveTag t = PrimitiveTag::Any, Converter converter = nullptr);
 
     Control* instantiate() const;
 
     PrimitiveInstances primitiveInstance;
     PrimitiveClasses primitveClass;
     Rect relativePosition;
-    DefaultText defaultText;
     PrimitiveTag tag;
     std::function<std::any(std::any)> converter;
   };

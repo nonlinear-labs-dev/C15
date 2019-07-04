@@ -9,11 +9,12 @@
 namespace DescriptiveLayouts
 {
   ControlInstance::ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
-                                   const EventConnections& eventConnections)
+                                   const EventConnections& eventConnections, StaticInitList staticInit)
       : controlInstance(controlInstance)
       , controlClass(control)
       , position(position)
       , eventConnections(eventConnections)
+      , staticInitList(staticInit)
   {
   }
 

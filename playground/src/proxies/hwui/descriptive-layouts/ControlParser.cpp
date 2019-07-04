@@ -76,11 +76,9 @@ namespace DescriptiveLayouts
       auto value = primitive.value();
 
       auto primClass = getFromJson<PrimitiveClasses>(value, "Class", toPrimitiveClasses);
-      auto prop = getFromJson<PrimitiveProperty>(value, "Property", toPrimitiveProperty);
       auto tag = getFromJson<PrimitiveTag>(value, "Tag");
-      auto defaultText = getFromJson<DefaultText>(value, "Default");
       auto rect = parseRect(value, key);
-      lP.emplace_back(key, primClass, rect, tag, defaultText);
+      lP.emplace_back(key, primClass, rect, tag);
     }
     return lP;
   }
