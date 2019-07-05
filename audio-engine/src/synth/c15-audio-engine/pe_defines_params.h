@@ -304,7 +304,7 @@ const ParameterDefinition param_definition[sig_number_of_params] = {
     8000 },  // 117 SVF_CUTOFF_ENV_C
   { 148, Parameters::P_SVF_SPR, ClockTypes::Slow, PolyTypes::Mono, 100, 1, 0.5f, Signals::Invalid, SpreadTypes::Single,
     1, 6000 },  // 118 SVF_SPREAD
-  { 153, Parameters::P_SVF_FM, ClockTypes::Slow, PolyTypes::Mono, 8000, 0, 0, Signals::Invalid, SpreadTypes::Single, 1,
+  { 153, Parameters::P_SVF_FM, ClockTypes::Slow, PolyTypes::Mono, 8000, 1, 5, Signals::Invalid, SpreadTypes::Single, 1,
     8000 },  // 119 SVF_FM
   { 144, Parameters::P_SVF_RES, ClockTypes::Slow, PolyTypes::Mono, 16000, 0, 0, Signals::Invalid, SpreadTypes::Single,
     0, 16000 },  // 120 SVF_RESONANCE
@@ -316,7 +316,7 @@ const ParameterDefinition param_definition[sig_number_of_params] = {
     0, 16000 },  // 123 SVF_LBH
   { 152, Parameters::P_SVF_PAR, ClockTypes::Fast, PolyTypes::Mono, 8000, 0, 0, Signals::Invalid, SpreadTypes::Single, 1,
     8000 },  // 124 SVF_PARALLEL
-  { 155, Parameters::P_SVF_FMAB, ClockTypes::Slow, PolyTypes::Mono, 16000, 2, 1, Signals::SVF_FMAB, SpreadTypes::Single,
+  { 155, Parameters::P_SVF_FMAB, ClockTypes::Slow, PolyTypes::Mono, 16000, 0, 0, Signals::SVF_FMAB, SpreadTypes::Single,
     0, 16000 },  // 125 SVF_FM_AB
 
   // - - - FEEDBACK MIXER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
