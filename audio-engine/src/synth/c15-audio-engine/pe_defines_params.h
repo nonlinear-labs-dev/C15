@@ -316,7 +316,7 @@ const ParameterDefinition param_definition[sig_number_of_params] = {
     0, 16000 },  // 123 SVF_LBH
   { 152, Parameters::P_SVF_PAR, ClockTypes::Fast, PolyTypes::Mono, 8000, 0, 0, Signals::Invalid, SpreadTypes::Single, 1,
     8000 },  // 124 SVF_PARALLEL
-  { 155, Parameters::P_SVF_FMAB, ClockTypes::Slow, PolyTypes::Mono, 16000, 2, 1, Signals::SVF_FMAB, SpreadTypes::Single,
+  { 155, Parameters::P_SVF_FMAB, ClockTypes::Slow, PolyTypes::Mono, 16000, 0, 0, Signals::SVF_FMAB, SpreadTypes::Single,
     0, 16000 },  // 125 SVF_FM_AB
 
   // - - - FEEDBACK MIXER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
