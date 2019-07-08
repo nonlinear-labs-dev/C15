@@ -30,6 +30,12 @@ namespace DescriptiveLayouts
     fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::Color));
   }
 
+  void Text::setSuffixFontColor(FrameBuffer &fb) const
+  {
+    auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::SuffixColor);
+    fb.setColor(color);
+  }
+
   Font::Justification Text::getJustification() const
   {
     switch((StyleValues::Alignment) getStyleValue(StyleKey::TextAlign))

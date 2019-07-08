@@ -9,6 +9,7 @@
 #include <parameters/ModulateableParameter.h>
 #include <groups/MacroControlsGroup.h>
 #include <parameters/MacroControlParameter.h>
+#include <tools/OnParameterChangedNotifier.h>
 
 namespace DescriptiveLayouts
 {
@@ -42,6 +43,7 @@ namespace DescriptiveLayouts
     {
       Application::get().getPresetManager()->getEditBuffer()->onChange(
           sigc::mem_fun(this, &GenericParameterDisplayValueEvent::onChange));
+
       Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
           sigc::mem_fun(this, &GenericParameterDisplayValueEvent::onParameterSelectionChanged));
     }
@@ -63,55 +65,36 @@ namespace DescriptiveLayouts
   {
    public:
     explicit GenericRangeEventSource()
+        : m_notifier(this)
     {
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &GenericRangeEventSource::onParameterSelectionChanged));
     }
 
    private:
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      m_connection.disconnect();
-      if(newParam)
-        m_connection
-            = newParam->onParameterChanged(sigc::mem_fun(this, &GenericRangeEventSource::onParameterChanged), true);
-    }
-
     virtual void onParameterChanged(const Parameter *p) = 0;
 
-    sigc::connection m_connection;
+    OnParameterChangedNotifier<GenericRangeEventSource> m_notifier;
   };
 
   class GenericValueEventSource : public EventSource<tControlPositionValue>
   {
    public:
     explicit GenericValueEventSource()
+        : m_notifier(this)
     {
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &GenericValueEventSource::onParameterSelectionChanged));
     }
 
    private:
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      m_connection.disconnect();
-      if(newParam)
-        m_connection
-            = newParam->onParameterChanged(sigc::mem_fun(this, &GenericValueEventSource::onParameterChanged), true);
-    }
-
     virtual void onParameterChanged(const Parameter *p) = 0;
 
-    sigc::connection m_connection;
+    OnParameterChangedNotifier<GenericValueEventSource> m_notifier;
   };
 
   class ParameterGroupNameEventSource : public EventSource<DisplayString>
   {
    public:
     explicit ParameterGroupNameEventSource()
+        : m_notifier(this)
     {
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &ParameterGroupNameEventSource::onParameterSelectionChanged));
     }
 
    private:
@@ -119,15 +102,16 @@ namespace DescriptiveLayouts
     {
       setValue({ newParam ? newParam->getParentGroup()->getShortName() : "", 0 });
     }
+
+    OnParameterSelectionChangedNotifier<ParameterGroupNameEventSource> m_notifier;
   };
 
   class ParamIsBipolarEventSource : public EventSource<bool>
   {
    public:
     explicit ParamIsBipolarEventSource()
+        : m_notifier(this)
     {
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &ParamIsBipolarEventSource::onParameterSelectionChanged));
     }
 
    private:
@@ -135,6 +119,8 @@ namespace DescriptiveLayouts
     {
       setValue(newParam ? newParam->isBiPolar() : false);
     }
+
+    OnParameterSelectionChangedNotifier<ParamIsBipolarEventSource> m_notifier;
   };
 
   class SliderRangeEventSource : public GenericRangeEventSource
@@ -146,7 +132,7 @@ namespace DescriptiveLayouts
     }
 
    private:
-    virtual void onParameterChanged(const Parameter *p) override
+    void onParameterChanged(const Parameter *p) override
     {
       auto v = p->getControlPositionValue();
       if(p->isBiPolar())
@@ -170,11 +156,6 @@ namespace DescriptiveLayouts
     }
 
    private:
-    void setRange(float from, float to)
-    {
-      setRangeOrdered(std::min(from, to), std::max(from, to));
-    }
-
     void setRangeOrdered(float from, float to)
     {
       from = std::min(from, 1.0f);
@@ -186,7 +167,7 @@ namespace DescriptiveLayouts
       setValue(std::make_pair(from, to));
     }
 
-    virtual void onParameterChanged(const Parameter *p) override
+    void onParameterChanged(const Parameter *p) override
     {
       if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
       {
@@ -208,7 +189,7 @@ namespace DescriptiveLayouts
     }
 
    private:
-    virtual void onParameterChanged(const Parameter *p) override
+    void onParameterChanged(const Parameter *p) override
     {
       if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
       {
@@ -229,7 +210,7 @@ namespace DescriptiveLayouts
     }
 
    private:
-    virtual void onParameterChanged(const Parameter *p) override
+    void onParameterChanged(const Parameter *p) override
     {
       if(p)
       {
@@ -243,8 +224,6 @@ namespace DescriptiveLayouts
    public:
     explicit ParameterNameEventSource()
     {
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &ParameterNameEventSource::onParameterSelectionChanged));
     }
 
    private:
@@ -255,28 +234,44 @@ namespace DescriptiveLayouts
     }
   };
 
+  class ParameterNameWithStateSuffixEventSource : public EventSource<DisplayString>
+  {
+   public:
+    explicit ParameterNameWithStateSuffixEventSource()
+        : m_notifier(this)
+    {
+    }
+
+    void onParameterChanged(const Parameter *parameter)
+    {
+      if(parameter)
+      {
+        auto changed = parameter->isChangedFromLoaded();
+        auto displayStr = parameter->getLongName().append(changed ? "*" : "");
+        setValue(DisplayString{ displayStr, changed ? 1 : 0 });
+      }
+      else
+      {
+        setValue(DisplayString{ "", 0 });
+      }
+    }
+
+   protected:
+    OnParameterChangedNotifier<ParameterNameWithStateSuffixEventSource> m_notifier;
+  };
+
   class ParameterDisplayStringEventSource : public EventSource<DisplayString>
   {
    public:
     explicit ParameterDisplayStringEventSource()
+        : m_notifier(this)
     {
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &ParameterDisplayStringEventSource::onParameterSelectionChanged));
 
       Application::get().getHWUI()->onModifiersChanged(
           sigc::mem_fun(this, &ParameterDisplayStringEventSource::onModifierChanged));
     }
 
    private:
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      m_connection.disconnect();
-
-      if(newParam)
-        m_connection = newParam->onParameterChanged(
-            sigc::mem_fun(this, &ParameterDisplayStringEventSource::onParameterChanged), true);
-    }
-
     void onModifierChanged(::ButtonModifiers mods)
     {
       onParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
@@ -296,6 +291,7 @@ namespace DescriptiveLayouts
       }
     }
 
+    OnParameterChangedNotifier<ParameterDisplayStringEventSource> m_notifier;
     sigc::connection m_connection;
   };
 
@@ -390,7 +386,7 @@ namespace DescriptiveLayouts
 
   class CurrentMacroControlAmount : public GenericParameterDisplayValueEvent
   {
-    virtual void onChange() override
+    void onChange() override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
       if(const auto *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
@@ -402,10 +398,10 @@ namespace DescriptiveLayouts
 
   class CurrentMacroControlPositionText : public GenericParameterDisplayValueEvent
   {
-    virtual void onChange() override
+    void onChange() override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
+      if(const auto *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
       {
         if(auto mc = modP->getMacroControl())
         {
@@ -461,7 +457,7 @@ namespace DescriptiveLayouts
   class StaticText : public EventSource<DisplayString>
   {
    public:
-    StaticText(Glib::ustring string)
+    explicit StaticText(Glib::ustring string)
         : EventSource()
         , m_text{ std::move(string) }
     {
@@ -487,6 +483,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::SliderRange] = std::make_unique<SliderRangeEventSource>();
     m_map[EventSources::IsBipolar] = std::make_unique<ParamIsBipolarEventSource>();
     m_map[EventSources::ParameterName] = std::make_unique<ParameterNameEventSource>();
+    m_map[EventSources::ParameterNameWithStateSuffix] = std::make_unique<ParameterNameWithStateSuffixEventSource>();
     m_map[EventSources::ParameterDisplayString] = std::make_unique<ParameterDisplayStringEventSource>();
     m_map[EventSources::LockStatus] = std::make_unique<CurrentParameterGroupLockStatus>();
     m_map[EventSources::MacroControlSymbol] = std::make_unique<CurrentMacroControlSymbol>();
@@ -497,8 +494,6 @@ namespace DescriptiveLayouts
     m_map[EventSources::MCModRange] = std::make_unique<MCModRangeEventSource>();
     m_map[EventSources::SoundHeaderText] = std::make_unique<SoundHeaderText>();
     m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
-    m_map[EventSources::MasterTuneValueText] = std::make_unique<StaticText>("-3.5 dB");
-    m_map[EventSources::OutputLevelValueText] = std::make_unique<StaticText>("+12.00 st");
     m_map[EventSources::CurrentVoiceGroupName] = std::make_unique<CurrentVoiceGroupName>();
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
   }

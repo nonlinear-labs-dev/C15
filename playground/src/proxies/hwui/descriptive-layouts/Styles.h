@@ -166,7 +166,7 @@ namespace DescriptiveLayouts
    public:
     static StyleSheet &get();
 
-    void registerStyle(Detail::StyleSelector s, StyleMap style)
+    void registerStyle(Detail::StyleSelector s, const StyleMap &style)
     {
       registerStyleFull(s.f, s.m, s.d, s.l, s.cc, s.ci, s.pc, s.pt, s.pi, style);
     }
@@ -180,17 +180,13 @@ namespace DescriptiveLayouts
     void iterateStyles(Detail::IterationCallback cb) const
     {
       Detail::StyleSelector sel;
-      m_styles.iterateStyles(sel, cb);
+      m_styles.iterateStyles(sel, std::move(cb));
     }
 
     void clear();
 
    private:
     StyleSheet();
-
-   public:
-    void registerStyle(UIFocus f, UIMode m, UIDetail d, LayoutClasses l, ControlClasses cc, ControlInstances ci,
-                       PrimitiveClasses pc, PrimitiveTag pt, PrimitiveInstances pi, const StyleMap &s);
 
    private:
     using Styles = SubTree<UIFocus, UIMode, UIDetail, LayoutClasses, ControlClasses, ControlInstances, PrimitiveClasses,

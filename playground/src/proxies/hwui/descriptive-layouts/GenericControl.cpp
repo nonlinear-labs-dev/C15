@@ -8,10 +8,9 @@
 
 namespace DescriptiveLayouts
 {
-  GenericControl::GenericControl(const ControlInstance &prototype, GenericLayout *pLayout)
+  GenericControl::GenericControl(const ControlInstance &prototype)
       : ControlWithChildren(Rect(prototype.position, Point(0, 0)))
       , m_prototype(prototype)
-      , m_genericLayout(pLayout)
   {
     addPrimitives();
   }

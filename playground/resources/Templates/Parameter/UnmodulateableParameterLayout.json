@@ -12,7 +12,7 @@
           "Position": "3, 51"
         },
         "ButtonB": {
-          "Class": "HighlightButton",
+          "Class": "Button",
           "Position": "67, 51"
         },
         "ButtonC": {
@@ -36,10 +36,12 @@
         "ParameterName": {
           "Class": "ParameterNameLabel",
           "Position": "77, 10",
-          "Events": "ParameterName => Label[Text]",
-          "Init": {
-            "Label[Text]": "Foo"
-          }
+          "Events": "ParameterNameWithStateSuffix => Label[Text]"
+        },
+        "ParameterValue": {
+          "Class": "ParameterValueLabel",
+          "Position": "77, 35",
+          "Events": "ParameterDisplayString => Label[Text]"
         }
       },
       "EventSinks": {

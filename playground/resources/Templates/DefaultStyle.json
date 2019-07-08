@@ -22,9 +22,18 @@
       },
       "styles": {
         "Color": "C128",
-        "BackgroundColor": "Transparent",
+        "BackgroundColor": "C43",
         "TextAlign": "Center",
-        "FontSize": 8
+        "FontSize": 8,
+        "FontDecoration": "Regular"
+      }
+    },
+    "Default-Circle-Style": {
+      "selector": {
+        "PrimitiveClasses": "Circle"
+      },
+      "styles": {
+        "Color": "C128"
       }
     }
   }

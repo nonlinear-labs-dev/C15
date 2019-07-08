@@ -16,22 +16,23 @@ namespace DescriptiveLayouts
     using super = LabelRegular8;
 
    public:
-    Text(const PrimitiveInstance &e);
-    virtual ~Text();
-
     using DisplayString = std::pair<Glib::ustring, int>;
 
-    std::shared_ptr<Font> getFont() const override;
+    explicit Text(const PrimitiveInstance &e);
+    ~Text() override;
 
-    void setProperty(PrimitiveProperty key, std::any value);
+    std::shared_ptr<Font> getFont() const override;
+    void setProperty(PrimitiveProperty key, std::any value) override;
     void setDirty() override;
     const PrimitiveInstance &getPrimitive() const override;
 
    protected:
     void setFontColor(FrameBuffer &fb) const override;
+    void setSuffixFontColor(FrameBuffer &fb) const override;
 
     Font::Justification getJustification() const override;
     int getFontHeight() const override;
+
     void drawBackground(FrameBuffer &fb) override;
 
    private:

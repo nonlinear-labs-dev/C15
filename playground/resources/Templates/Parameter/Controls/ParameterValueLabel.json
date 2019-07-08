@@ -1,6 +1,6 @@
 {
   "controls": {
-    "ParameterNameLabel": {
+    "ParameterValueLabel": {
       "Label": {
         "Class": "Text",
         "Rect": "0, 0, 102, 12"
@@ -8,16 +8,17 @@
     }
   },
   "styles": {
-    "DefaultStyle-ParameterNameLabel": {
+    "DefaultStyle-ParameterValueLabel": {
       "selector": {
-        "ControlClasses": "ParameterNameLabel",
+        "ControlClasses": "ParameterValueLabel",
         "PrimtiveClasses": "Text",
         "PrimitiveInstances": "Label"
       },
       "styles": {
         "Color": "C255",
-        "FontDecoration": "Bold",
-        "FontSize": 8
+        "BackgroundColor": "C43",
+        "SuffixColor": "C128",
+        "TextAlign": "Center"
       }
     }
   }

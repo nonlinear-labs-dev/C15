@@ -100,9 +100,15 @@ namespace DescriptiveLayouts
         case StyleKey::BorderStyle:
           theStyles.map.emplace(styleKey, (int) StyleValues::toBorderStyle(style.value()));
           break;
+        case StyleKey::SuffixColor:
+        {
+          auto rawValue = style.value();
+          auto color = StyleValues::toColor(rawValue);
+          auto colorInt = (int) color;
+          theStyles.map.emplace(styleKey, colorInt);
+        }
+        break;
         case StyleKey::BackgroundColor:
-          theStyles.map.emplace(styleKey, (int) StyleValues::toColor(style.value()));
-          break;
         case StyleKey::Color:
           theStyles.map.emplace(styleKey, (int) StyleValues::toColor(style.value()));
           break;
@@ -120,7 +126,7 @@ namespace DescriptiveLayouts
     return theStyles;
   }
 
-  void registerStyle(std::string name, json style)
+  void registerStyle(const std::string &name, json style)
   {
     auto selector = parseSelector(style.at("selector"));
     auto styles = parseStylePairs(style.at("styles"));

@@ -37,6 +37,11 @@ namespace DescriptiveLayouts
 
   int getDefaultStyleValueForKey(StyleKey s)
   {
+    switch(s)
+    {
+      case StyleKey::SuffixColor:
+        return 6;
+    }
     return 0;
   }
 
