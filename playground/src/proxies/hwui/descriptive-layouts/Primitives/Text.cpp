@@ -91,10 +91,10 @@ namespace DescriptiveLayouts
     switch((StyleValues::Font) getStyleValue(StyleKey::FontDecoration))
     {
       case StyleValues::Font::Bold:
-        return Oleds::get().getFont("Emphase_9_Bold", getFontHeight());
+        return Oleds::get().getFont("Emphase_8_Bold", getFontHeight());
       case StyleValues::Font::Regular:
       default:
-        return Oleds::get().getFont("Emphase_9_Regular", getFontHeight());
+        return Oleds::get().getFont("Emphase_8_Regular", getFontHeight());
     }
   }
 }

@@ -5,14 +5,15 @@
 #include "proxies/hwui/descriptive-layouts/PropertyOwner.h"
 #include "proxies/hwui/descriptive-layouts/PrimitiveInstance.h"
 #include <proxies/hwui/controls/Label.h>
+#include <proxies/hwui/controls/LabelRegular8.h>
 
 namespace DescriptiveLayouts
 {
   struct PrimitiveInstance;
 
-  class Text : public Label, public Styleable, public PropertyOwner
+  class Text : public LabelRegular8, public Styleable, public PropertyOwner
   {
-    using super = Label;
+    using super = LabelRegular8;
 
    public:
     Text(const PrimitiveInstance &e);
@@ -20,9 +21,9 @@ namespace DescriptiveLayouts
 
     using DisplayString = std::pair<Glib::ustring, int>;
 
-      std::shared_ptr<Font> getFont() const override;
+    std::shared_ptr<Font> getFont() const override;
 
-      void setProperty(PrimitiveProperty key, std::any value);
+    void setProperty(PrimitiveProperty key, std::any value);
     void setDirty() override;
     const PrimitiveInstance &getPrimitive() const override;
 

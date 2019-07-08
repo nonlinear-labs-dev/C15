@@ -26,6 +26,12 @@ namespace DescriptiveLayouts
       }
     }
 
+    void forceValue(const T &v)
+    {
+      m_lastValue = v;
+      m_outputSignal.send(m_lastValue);
+    }
+
    private:
     std::any getLastValue() const override
     {
@@ -135,7 +141,11 @@ namespace DescriptiveLayouts
     {
       if(newParam)
       {
-        setValue(newParam->isBiPolar());
+        forceValue(newParam->isBiPolar());
+      }
+      else
+      {
+        forceValue(false);
       }
     }
   };

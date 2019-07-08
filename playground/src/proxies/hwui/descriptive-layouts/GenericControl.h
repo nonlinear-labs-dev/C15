@@ -18,6 +18,8 @@ namespace DescriptiveLayouts
 
       void setDirty() override;
 
+      bool redraw(FrameBuffer &fb) override;
+
   private:
     void addPrimitives();
     void onEventFired(std::any v, const ControlInstance::EventConnection& c);

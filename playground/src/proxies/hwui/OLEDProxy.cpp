@@ -9,9 +9,7 @@ OLEDProxy::OLEDProxy(const Rect &posInFrameBuffer)
   Oleds::get().registerProxy(this);
 }
 
-OLEDProxy::~OLEDProxy()
-{
-}
+OLEDProxy::~OLEDProxy() = default;
 
 const Rect &OLEDProxy::getPosInFrameBuffer() const
 {
@@ -49,7 +47,7 @@ void OLEDProxy::reset(tLayoutPtr layout)
   if(!layout->isInitialized())
     layout->init();
 
-  DebugLevel::info(G_STRLOC, typeid(*layout).name());
+  DebugLevel::info(G_STRLOC, typeid(layout.get()).name());
   invalidate();
 }
 
@@ -66,13 +64,8 @@ void OLEDProxy::setOverlay(tLayoutPtr layout)
   if(!layout->isInitialized())
     layout->init();
 
-  DebugLevel::info(G_STRLOC, typeid(*layout).name());
+  DebugLevel::info(G_STRLOC, typeid(layout.get()).name());
   invalidate();
-}
-
-OLEDProxy::tLayoutPtr OLEDProxy::getOverlay() const
-{
-  return m_overlay;
 }
 
 void OLEDProxy::resetOverlay()

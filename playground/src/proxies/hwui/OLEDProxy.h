@@ -23,8 +23,8 @@ class OLEDProxy : public Uncopyable
 
   void setOverlay(Layout *layout);
   void setOverlay(tLayoutPtr layout);
-  tLayoutPtr getOverlay() const;
-  void resetOverlay();
+
+    void resetOverlay();
 
   void invalidate();
   void clear();

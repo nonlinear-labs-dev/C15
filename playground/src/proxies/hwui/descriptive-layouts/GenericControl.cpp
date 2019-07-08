@@ -6,10 +6,9 @@
 #include "PropertyOwner.h"
 #include "ControlRegistry.h"
 
-
 namespace DescriptiveLayouts
 {
-  GenericControl::GenericControl(const ControlInstance &prototype, GenericLayout* pLayout)
+  GenericControl::GenericControl(const ControlInstance &prototype, GenericLayout *pLayout)
       : ControlWithChildren(Rect(prototype.position, Point(0, 0)))
       , m_prototype(prototype)
       , m_genericLayout(pLayout)
@@ -21,6 +20,16 @@ namespace DescriptiveLayouts
   {
     for(auto &c : m_connections)
       c.disconnect();
+  }
+
+  bool GenericControl::redraw(FrameBuffer &fb)
+  {
+    for(auto &c : getControls())
+    {
+      c->setDirty();
+    }
+
+    return ControlWithChildren::redraw(fb);
   }
 
   void GenericControl::addPrimitives()
@@ -36,12 +45,15 @@ namespace DescriptiveLayouts
     {
       auto c = addControl(p.instantiate());
 
-      for(auto& init: m_prototype.staticInitList.m_inits) {
-          if(p.primitiveInstance == init.m_instance) {
-              if(auto propertyOwner = dynamic_cast<PropertyOwner*>(c)) {
-                  propertyOwner->setProperty(init.m_property, init.m_value);
-              }
+      for(auto &init : m_prototype.staticInitList.m_inits)
+      {
+        if(p.primitiveInstance == init.m_instance)
+        {
+          if(auto propertyOwner = dynamic_cast<PropertyOwner *>(c))
+          {
+            propertyOwner->setProperty(init.m_property, init.m_value);
           }
+        }
       }
 
       maxX = std::max(maxX, c->getPosition().getRight());
@@ -95,7 +107,8 @@ namespace DescriptiveLayouts
     }
   }
 
-    void GenericControl::setDirty() {
-        ControlWithChildren::setDirty();
-    }
+  void GenericControl::setDirty()
+  {
+    ControlWithChildren::setDirty();
+  }
 }
