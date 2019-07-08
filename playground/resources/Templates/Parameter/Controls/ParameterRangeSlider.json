@@ -1,0 +1,64 @@
+{
+  "controls": {
+    "ParameterSlider": {
+      "Border": {
+        "Class": "Border",
+        "Rect": "0,0,102,6"
+      },
+      "Slider": {
+        "Class": "Bar",
+        "Rect": "1,1,100,4"
+      },
+      "CenterMark": {
+        "Class": "Bar",
+        "Rect": "50,1,2,4"
+      },
+      "BackgroundFull": {
+        "Class": "Bar",
+        "Rect": "1,1,100,4"
+      }
+    }
+  },
+  "styles": {
+    "DefaultParameterSliderStyle-Middle": {
+      "selector": {
+        "ControlClasses": "ParameterSlider",
+        "PrimitiveClasses": "Bar",
+        "PrimitiveInstances": "CenterMark"
+      },
+      "styles": {
+        "Color": "C128"
+      }
+    },
+    "DefaultParameterSliderStyle-Border": {
+      "selector": {
+        "ControlClasses": "ParameterSlider",
+        "PrimitiveClasses": "Border",
+        "PrimitiveInstances": "Border"
+      },
+      "styles": {
+        "Color": "C128"
+      }
+    },
+    "DefaultParameterSliderStyle-BackgroundFull": {
+      "selector": {
+        "ControlClasses": "ParameterSlider",
+        "PrimitiveClasses": "Bar",
+        "PrimitiveInstances": "BackgroundFull"
+      },
+      "styles": {
+        "Color": "C43"
+      }
+    },
+    "DefaultParameterSliderStyle-Value": {
+      "selector": {
+        "ControlClasses": "ParameterSlider",
+        "PrimitiveClasses": "Bar",
+        "PrimitiveInstances": "Slider"
+      },
+      "styles": {
+        "Color": "C255"
+      }
+    }
+  }
+}

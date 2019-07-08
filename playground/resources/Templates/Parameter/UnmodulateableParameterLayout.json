@@ -1,0 +1,51 @@
+{
+  "layouts": {
+    "Unmodulateable-Parameter-Select-Layout": {
+      "Selector": {
+        "UIFocus": "Parameters",
+        "UIMode": "Select",
+        "UIDetail": "Init"
+      },
+      "Controls": {
+        "ButtonA": {
+          "Class": "Button",
+          "Position": "3, 51"
+        },
+        "ButtonB": {
+          "Class": "HighlightButton",
+          "Position": "67, 51"
+        },
+        "ButtonC": {
+          "Class": "Button",
+          "Position": "131, 51"
+        },
+        "ButtonD": {
+          "Class": "Button",
+          "Position": "195, 51"
+        },
+        "GroupLabel": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Events": "ParameterGroupName => Text[Text]"
+        },
+        "Slider": {
+          "Class": "ParameterSlider",
+          "Position": "77,  24 ",
+          "Events": "SliderRange => Slider[Range], IsBipolar => CenterMark[Visibility]"
+        },
+        "ParameterName": {
+          "Class": "ParameterNameLabel",
+          "Position": "77, 10",
+          "Events": "ParameterName => Label[Text]",
+          "Init": {
+            "Label[Text]": "Foo"
+          }
+        }
+      },
+      "EventSinks": {
+        "BUTTON_INC": "IncParam",
+        "BUTTON_DEC": "DecParam"
+      }
+    }
+  }
+}

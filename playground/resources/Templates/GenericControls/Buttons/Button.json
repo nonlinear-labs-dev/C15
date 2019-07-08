@@ -1,0 +1,67 @@
+{
+  "controls": {
+    "Button": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "1, 1, 56, 9"
+      },
+      "Border": {
+        "Class": "Border",
+        "Rect": "0, 0, 58, 11"
+      },
+      "CoverLT": {
+        "Class": "Bar",
+        "Rect": "0, 0, 1, 1",
+        "Tag": "ButtonCover"
+      },
+      "CoverRT": {
+        "Class": "Bar",
+        "Rect": "57, 0, 1, 1",
+        "Tag": "ButtonCover"
+      },
+      "CoverLB": {
+        "Class": "Bar",
+        "Rect": "0, 10, 1, 1",
+        "Tag": "ButtonCover"
+      },
+      "CoverRB": {
+        "Class": "Bar",
+        "Rect": "57, 10, 1, 1",
+        "Tag": "ButtonCover"
+      }
+    }
+  },
+  "styles": {
+    "DefaultButtonStyle-Cover": {
+      "selector": {
+        "ControlClasses": "Button",
+        "PrimitiveClasses": "Bar",
+        "Tag": "ButtonCover"
+      },
+      "styles": {
+        "Color": "C43"
+      }
+    },
+    "DefaultButtonStyle-Border": {
+      "selector": {
+        "ControlClasses": "Button",
+        "PrimitiveClasses": "Border"
+      },
+      "styles": {
+        "Color": "C103"
+      }
+    },
+    "DefaultButtonStyle-Text": {
+      "selector": {
+        "ControlClasses": "Button",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "Color": "C204",
+        "BackgroundColor": "C77",
+        "FontSize": 9,
+        "TextAlign": "Center"
+      }
+    }
+  }
+}

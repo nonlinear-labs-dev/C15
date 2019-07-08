@@ -1,0 +1,24 @@
+{
+  "controls": {
+    "InvertedLabel": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 64, 13"
+      }
+    }
+  },
+  "styles": {
+    "DefaultInverted-Label": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "InvertedLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C128",
+        "Color": "C43",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    }
+  }
+}

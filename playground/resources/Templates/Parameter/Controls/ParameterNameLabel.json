@@ -1,0 +1,22 @@
+{
+  "controls": {
+    "ParameterNameLabel": {
+      "Label": {
+        "Class": "Text",
+        "Rect": "0, 0, 102, 12"
+      }
+    }
+  },
+  "styles": {
+    "DefaultStyle-ParameterNameLabel": {
+      "selector": {
+        "ControlClasses": "ParameterNameLabel",
+        "PrimtiveClasses": "Text",
+        "PrimitiveInstances": "Label"
+      },
+      "styles": {
+        "Color": "C255"
+      }
+    }
+  }
+}
