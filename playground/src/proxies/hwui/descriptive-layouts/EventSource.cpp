@@ -69,9 +69,9 @@ namespace DescriptiveLayouts
     {
     }
 
-   private:
     virtual void onParameterChanged(const Parameter *p) = 0;
 
+   protected:
     OnParameterChangedNotifier<GenericRangeEventSource> m_notifier;
   };
 
@@ -83,9 +83,9 @@ namespace DescriptiveLayouts
     {
     }
 
-   private:
     virtual void onParameterChanged(const Parameter *p) = 0;
 
+   private:
     OnParameterChangedNotifier<GenericValueEventSource> m_notifier;
   };
 
@@ -97,12 +97,12 @@ namespace DescriptiveLayouts
     {
     }
 
-   private:
     void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
     {
       setValue({ newParam ? newParam->getParentGroup()->getShortName() : "", 0 });
     }
 
+   private:
     OnParameterSelectionChangedNotifier<ParameterGroupNameEventSource> m_notifier;
   };
 
@@ -114,12 +114,12 @@ namespace DescriptiveLayouts
     {
     }
 
-   private:
     void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
     {
       setValue(newParam ? newParam->isBiPolar() : false);
     }
 
+   private:
     OnParameterSelectionChangedNotifier<ParamIsBipolarEventSource> m_notifier;
   };
 
@@ -131,7 +131,6 @@ namespace DescriptiveLayouts
     {
     }
 
-   private:
     void onParameterChanged(const Parameter *p) override
     {
       auto v = p->getControlPositionValue();
@@ -167,6 +166,7 @@ namespace DescriptiveLayouts
       setValue(std::make_pair(from, to));
     }
 
+   public:
     void onParameterChanged(const Parameter *p) override
     {
       if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
@@ -277,6 +277,7 @@ namespace DescriptiveLayouts
       onParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
     }
 
+   public:
     void onParameterChanged(const Parameter *p)
     {
       auto str = p->getDisplayString();
@@ -291,6 +292,7 @@ namespace DescriptiveLayouts
       }
     }
 
+   private:
     OnParameterChangedNotifier<ParameterDisplayStringEventSource> m_notifier;
     sigc::connection m_connection;
   };
@@ -298,25 +300,25 @@ namespace DescriptiveLayouts
   class CurrentParameterGroupLockStatus : public EventSource<bool>
   {
    public:
-    explicit CurrentParameterGroupLockStatus()
+    explicit CurrentParameterGroupLockStatus() : m_notifier(this)
     {
       Application::get().getPresetManager()->getEditBuffer()->onLocksChanged(
           sigc::mem_fun(this, &CurrentParameterGroupLockStatus::onLockChanged));
 
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &CurrentParameterGroupLockStatus::onParameterSelectionChanged));
     }
 
-   private:
     void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
     {
       onLockChanged();
     }
+  private:
 
     void onLockChanged()
     {
       setValue(Application::get().getPresetManager()->getEditBuffer()->getSelected()->isLocked());
     }
+
+    OnParameterSelectionChangedNotifier<CurrentParameterGroupLockStatus> m_notifier;
   };
 
   class CurrentMacroControlAsignment : public EventSource<bool>
