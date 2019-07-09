@@ -60,7 +60,7 @@ void PedalParameter::undoableSetPedalMode(UNDO::Transaction *transaction, PedalM
 void PedalParameter::setRoutersModeAccordingToReturnMode()
 {
   bool routersAreBoolean = getReturnMode() == ReturnMode::None;
-  ParameterGroupSet *groups = dynamic_cast<ParameterGroupSet *>(getParentGroup()->getParent());
+  auto *groups = dynamic_cast<ParameterGroupSet *>(getParentGroup()->getParent());
   auto mappings = dynamic_cast<MacroControlMappingGroup *>(groups->getParameterGroupByID("MCM"));
   for(auto router : mappings->getModulationRoutingParametersFor(this))
   {

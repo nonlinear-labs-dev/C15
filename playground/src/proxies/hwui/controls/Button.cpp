@@ -68,6 +68,7 @@ Rect Button::getButtonPos(Buttons n)
 {
   switch(n)
   {
+    default:
     case Buttons::BUTTON_A:
       return Rect(3, 51, 58, 11);
 
@@ -80,5 +81,4 @@ Rect Button::getButtonPos(Buttons n)
     case Buttons::BUTTON_D:
       return Rect(195, 51, 58, 11);
   }
-  return Rect(3, 51, 58, 11);
 }

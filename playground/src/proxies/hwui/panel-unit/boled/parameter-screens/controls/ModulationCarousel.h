@@ -11,8 +11,10 @@ class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
 {
  private:
   typedef Carousel super;
+public:
+    bool redraw(FrameBuffer &fb) override;
 
- public:
+public:
   enum class Mode
   {
     None,

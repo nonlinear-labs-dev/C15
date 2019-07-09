@@ -25,10 +25,6 @@
           "Class": "Button",
           "Position": "131, 51"
         },
-        "ButtonD": {
-          "Class": "Button",
-          "Position": "195, 51"
-        },
         "MCSelection-Label": {
           "Class": "Label",
           "Position": "67, 35",

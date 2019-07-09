@@ -27,7 +27,7 @@ namespace DescriptiveLayouts
     }
     if(controlClass == "ModulationCarousel")
     {
-      return new ModulationCarousel(ModulationCarousel::Mode::None, Rect(position.getX(), position.getY(), 58, 62));
+      return new ModulationCarousel(ModulationCarousel::Mode::None, Rect(position.getX(), position.getY(), 58, 72));
     }
     if(controlClass == "ParameterEditButtonMenu")
     {

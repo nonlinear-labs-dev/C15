@@ -45,28 +45,32 @@ bool ControlOwner::redraw(FrameBuffer &fb)
         }
       });
 
-      if(c->isVisible())
-      {
-        dirtyControls.emplace_back(c);
-      }
+      dirtyControls.emplace_back(c);
     }
   }
 
-  std::for_each(dirtyControls.begin(), dirtyControls.end(), [&underlyingControls](auto& e) {
-     underlyingControls.emplace_back(e);
-  });
+  std::for_each(dirtyControls.begin(), dirtyControls.end(),
+                [&underlyingControls](auto &e) { underlyingControls.emplace_back(e); });
 
   for(const auto &c : underlyingControls)
   {
-    c->drawBackground(fb);
 
     if(c->isVisible())
+    {
+      c->drawBackground(fb);
       c->redraw(fb);
+    }
+    else
+    {
+      auto pos = c->getPosition();
+      fb.setColor(FrameBuffer::Colors::C43);
+      fb.fillRect(pos);
+    }
 
     c->setClean();
   }
 
-  return dirtyControls.size() > 0;
+  return !dirtyControls.empty();
 }
 
 void ControlOwner::remove(const Control *ctrl)
