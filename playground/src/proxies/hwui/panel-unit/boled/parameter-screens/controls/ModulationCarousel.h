@@ -5,6 +5,8 @@
 #include <proxies/hwui/buttons.h>
 #include <tools/OnParameterChangedNotifier.h>
 
+class Button;
+
 class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
 {
  private:
@@ -31,4 +33,6 @@ class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
   void onModulationSourceChanged(const ModulateableParameter *modP);
 
   OnModulationChangedNotifier<ModulationCarousel> m_modulationNotifier;
+  Button *m_button;
+  Control *m_upper, *m_lower, *m_middle;
 };

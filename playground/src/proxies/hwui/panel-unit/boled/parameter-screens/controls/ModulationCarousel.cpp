@@ -6,15 +6,21 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/UpperModulationBoundControl.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ModulateableParameterLayouts.h>
 #include "ModulationCarousel.h"
+#include <proxies/hwui/controls/Button.h>
 
 ModulationCarousel::ModulationCarousel(Mode mode, const Rect &pos)
     : super(pos)
     , m_modulationNotifier(this)
 {
-  addControl(new UpperModulationBoundControl(Rect(0, 1, pos.getWidth(), 20)))->setHighlight(mode == Mode::UpperBound);
-  addControl(new CurrentModulatedValueLabel(Rect(0, 21, pos.getWidth(), 20)))
-      ->setHighlight(mode == Mode::ParameterValue);
-  addControl(new LowerModulationBoundControl(Rect(0, 41, pos.getWidth(), 20)))->setHighlight(mode == Mode::LowerBound);
+    m_upper = addControl(new UpperModulationBoundControl(Rect(0, 1, pos.getWidth(), 20)));
+    m_upper->setHighlight(mode == Mode::UpperBound);
+    m_middle = addControl(new CurrentModulatedValueLabel(Rect(0, 21, pos.getWidth(), 20)));
+    m_middle->setHighlight(mode == Mode::ParameterValue);
+    m_lower = addControl(new LowerModulationBoundControl(Rect(0, 41, pos.getWidth(), 20)));
+    m_lower->setHighlight(mode == Mode::LowerBound);
+
+    m_button = addControl(new Button("", Buttons::BUTTON_D));
+    m_button->setVisible(false);
 }
 
 void ModulationCarousel::setup(Parameter *p)
@@ -96,7 +102,14 @@ bool ModulationCarousel::onButton(Buttons i, bool down, ButtonModifiers modifier
   return false;
 }
 
+
+
 void ModulationCarousel::onModulationSourceChanged(const ModulateableParameter *modP)
 {
-  setVisible(modP->getModulationSource() != ModulationSource::NONE);
+    auto visible = modP->getModulationSource() != ModulationSource::NONE;
+    m_upper->setVisible(visible);
+    m_lower->setVisible(visible);
+    m_middle->setVisible(visible);
+    m_button->setVisible(!visible);
+    setDirty();
 }
