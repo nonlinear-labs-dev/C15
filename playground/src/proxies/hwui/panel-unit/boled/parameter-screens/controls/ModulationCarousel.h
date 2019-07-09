@@ -3,6 +3,7 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/Carousel.h>
 #include <proxies/hwui/panel-unit/RotaryEncoder.h>
 #include <proxies/hwui/buttons.h>
+#include <tools/OnParameterChangedNotifier.h>
 
 class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
 {
@@ -26,4 +27,8 @@ class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
   void setup(Parameter *selectedParameter) override;
   void turn() override;
   void antiTurn() override;
+
+  void onModulationSourceChanged(const ModulateableParameter *modP);
+
+  OnModulationChangedNotifier<ModulationCarousel> m_modulationNotifier;
 };

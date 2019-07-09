@@ -18,10 +18,29 @@ namespace DescriptiveLayouts
 
   template <typename T> class EventSource : public EventSourceBase
   {
-   protected:
+   public:
     void setValue(const T &v)
     {
+      set_as(v);
+    }
+
+   private:
+    template <class TT> void set_as(const TT &v)
+    {
       if(v != m_lastValue)
+      {
+        m_lastValue = v;
+        m_outputSignal.send(m_lastValue);
+      }
+    }
+
+    void set_as(const DisplayString &v)
+    {
+      auto hasher = std::hash<std::string>();
+      const auto hashNew = hasher(v.first);
+      const auto hashOld = hasher(m_lastValue.first);
+
+      if(v.first != m_lastValue.first || hashOld != hashNew)
       {
         m_lastValue = v;
         m_outputSignal.send(m_lastValue);
@@ -490,10 +509,11 @@ namespace DescriptiveLayouts
 
   class IsNotOnlyParameterOnButton : public IsOnlyParameterOnButton
   {
-  protected:
-      void forwardValue(bool value) override {
-          setValue(!value);
-      }
+   protected:
+    void forwardValue(bool value) override
+    {
+      setValue(!value);
+    }
   };
 
   class StaticText : public EventSource<DisplayString>
@@ -538,6 +558,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
     m_map[EventSources::CurrentVoiceGroupName] = std::make_unique<CurrentVoiceGroupName>();
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
+
     m_map[EventSources::IsOnlyParameterOnButton] = std::make_unique<IsOnlyParameterOnButton>();
     m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();
   }

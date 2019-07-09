@@ -6,6 +6,9 @@
         "UIMode": "Select",
         "UIDetail": "Init"
       },
+      "Conditions": [
+        "isParameterModulateable"
+      ],
       "Controls": {
         "ButtonA": {
           "Class": "Button",
@@ -13,7 +16,10 @@
         },
         "ButtonB": {
           "Class": "Button",
-          "Position": "67, 51"
+          "Position": "67, 51",
+          "Init": {
+            "Text[Text]": "MC Sel"
+          }
         },
         "ButtonC": {
           "Class": "Button",
@@ -47,7 +53,8 @@
       "EventSinks": {
         "BUTTON_INC": "IncParam",
         "BUTTON_DEC": "DecParam",
-        "BUTTON_D": "IncParamSelection"
+        "BUTTON_D": "IncParamSelection",
+        "BUTTON_B": "SwitchToButtonBDetail"
       }
     }
   }

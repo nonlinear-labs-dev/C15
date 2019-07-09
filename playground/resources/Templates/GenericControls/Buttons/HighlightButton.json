@@ -59,7 +59,7 @@
       "styles": {
         "Color": "C255",
         "BackgroundColor": "C128",
-        "FontSize": 9,
+        "FontSize": 8,
         "TextAlign": "Center"
       }
     }

@@ -30,7 +30,7 @@ void ModulationSourceLabel::onParameterSelected(Parameter *parameter)
 
 void ModulationSourceLabel::onParamValueChanged(const Parameter *param)
 {
-  if(const ModulateableParameter *modP = dynamic_cast<const ModulateableParameter *>(param))
+  if(const auto *modP = dynamic_cast<const ModulateableParameter *>(param))
   {
     uint16_t id = MacroControlsGroup::modSrcToParamID(modP->getModulationSource());
 

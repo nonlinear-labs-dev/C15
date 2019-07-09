@@ -1,23 +1,38 @@
 {
   "layouts": {
-    "Unmodulateable-Parameter-Select-Layout": {
+    "Modulateable-Parameter-MC-Select-Layout": {
       "Selector": {
         "UIFocus": "Parameters",
         "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIDetail": "ButtonB"
       },
+      "Conditions": [
+        "isParameterModulateable"
+      ],
       "Controls": {
         "ButtonA": {
           "Class": "Button",
           "Position": "3, 51"
         },
         "ButtonB": {
-          "Class": "Button",
-          "Position": "67, 51"
+          "Class": "HighlightButton",
+          "Position": "67, 51",
+          "Init": {
+            "Text[Text]": "MC Sel"
+          }
         },
         "ButtonC": {
           "Class": "Button",
           "Position": "131, 51"
+        },
+        "ButtonD": {
+          "Class": "Button",
+          "Position": "195, 51"
+        },
+        "MCSelection-Label": {
+          "Class": "Label",
+          "Position": "67, 35",
+          "Events": "MacroControlSymbol => Text[Text]"
         },
         "GroupLabel": {
           "Class": "InvertedLabel",
@@ -34,20 +49,15 @@
           "Position": "77, 10",
           "Events": "ParameterNameWithStateSuffix => Label[Text]"
         },
-        "ParameterValue": {
-          "Class": "ParameterValueLabel",
-          "Position": "77, 35",
-          "Events": "ParameterDisplayString => Label[Text]"
-        },
-        "ParameterCarousel": {
-          "Class": "ParameterCarousel",
+        "ModulationCarousel": {
+          "Class": "ModulationCarousel",
           "Position": "195, 0"
         }
       },
       "EventSinks": {
-        "BUTTON_INC": "IncParam",
-        "BUTTON_DEC": "DecParam",
-        "BUTTON_D": "IncParamSelection"
+        "BUTTON_INC": "IncMCSel",
+        "BUTTON_DEC": "DecMCSel",
+        "BUTTON_B": "SwitchToInitDetail"
       }
     }
   }

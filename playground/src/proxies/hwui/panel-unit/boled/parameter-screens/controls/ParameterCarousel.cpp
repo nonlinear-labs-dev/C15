@@ -52,6 +52,10 @@ void ParameterCarousel::setup(Parameter* selectedParameter)
   {
     addControl(new NeverHighlitButton("", Rect(0, 51, 58, 11)));
   }
+  else
+  {
+    setHighlight(true);
+  }
 
   setDirty();
 }
@@ -97,7 +101,7 @@ void ParameterCarousel::setupChildControls(Parameter* selectedParameter, const s
 void ParameterCarousel::antiTurn()
 {
   auto foundCtrl = std::dynamic_pointer_cast<MiniParameter>(*getControls().rbegin());
-  for(auto ctrl : getControls())
+  for(const auto &ctrl : getControls())
   {
     if(auto p = std::dynamic_pointer_cast<MiniParameter>(ctrl))
     {
