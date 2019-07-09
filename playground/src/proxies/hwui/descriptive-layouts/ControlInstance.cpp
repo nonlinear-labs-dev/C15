@@ -2,6 +2,7 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/ConvertSoundMenu.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenu.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
 #include "ControlInstance.h"
 #include "GenericControl.h"
 #include "proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h"
@@ -34,11 +35,15 @@ namespace DescriptiveLayouts
     }
     if(controlClass == "ConvertSoundMenu")
     {
-        return new ConvertSoundMenu(Rect(position.getX(), position.getY(), 58, 26));
+      return new ConvertSoundMenu(Rect(position.getX(), position.getY(), 58, 26));
     }
     if(controlClass == "SingleSoundEditMenu")
     {
-        return new SingleSoundEditMenu(Rect(position.getX(), position.getY(), 256, 64));
+      return new SingleSoundEditMenu(Rect(position.getX(), position.getY(), 256, 64));
+    }
+    if(controlClass == "ParameterCarousel")
+    {
+        return new ParameterCarousel(Rect(position.getX(), position.getY(), 58, 62));
     }
 
     return new GenericControl(*this);

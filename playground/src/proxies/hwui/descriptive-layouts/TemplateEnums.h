@@ -28,7 +28,7 @@ namespace DescriptiveLayouts
   ENUM(EventSources, uint8_t, Any, None, ParameterName, SliderRange, ParameterDisplayString, ParameterGroupName,
        IsBipolar, LockStatus, MacroControlSymbol, MacroControlAsignment, MacroControlAmount, MacroControlPosition,
        MacroControlPositionText, MCModRange, SoundHeaderText, EditBufferName, CurrentVoiceGroupName,
-       ParameterControlPosition, ParameterNameWithStateSuffix);
+       ParameterControlPosition, ParameterNameWithStateSuffix, IsNotOnlyParameterOnButton, IsOnlyParameterOnButton);
 
   ENUM(PrimitiveClasses, uint8_t, Any, Bar, Border, Text, Circle);
 

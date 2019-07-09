@@ -16,12 +16,15 @@ namespace DescriptiveLayouts
 
   void Text::drawBackground(FrameBuffer &fb)
   {
-    auto bg = (FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor);
-
-    if(bg != FrameBuffer::Colors::Transparent)
+    if(isVisible())
     {
-      fb.setColor(bg);
-      fb.fillRect(getPosition());
+      auto bg = (FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor);
+
+      if(bg != FrameBuffer::Colors::Transparent)
+      {
+        fb.setColor(bg);
+        fb.fillRect(getPosition());
+      }
     }
   }
 

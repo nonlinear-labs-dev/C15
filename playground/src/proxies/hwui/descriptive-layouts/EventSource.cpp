@@ -10,6 +10,7 @@
 #include <groups/MacroControlsGroup.h>
 #include <parameters/MacroControlParameter.h>
 #include <tools/OnParameterChangedNotifier.h>
+#include <proxies/hwui/panel-unit/ButtonParameterMapping.h>
 
 namespace DescriptiveLayouts
 {
@@ -300,19 +301,19 @@ namespace DescriptiveLayouts
   class CurrentParameterGroupLockStatus : public EventSource<bool>
   {
    public:
-    explicit CurrentParameterGroupLockStatus() : m_notifier(this)
+    explicit CurrentParameterGroupLockStatus()
+        : m_notifier(this)
     {
       Application::get().getPresetManager()->getEditBuffer()->onLocksChanged(
           sigc::mem_fun(this, &CurrentParameterGroupLockStatus::onLockChanged));
-
     }
 
     void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
     {
       onLockChanged();
     }
-  private:
 
+   private:
     void onLockChanged()
     {
       setValue(Application::get().getPresetManager()->getEditBuffer()->getSelected()->isLocked());
@@ -456,6 +457,45 @@ namespace DescriptiveLayouts
     }
   };
 
+  class IsOnlyParameterOnButton : public EventSource<bool>
+  {
+   public:
+    IsOnlyParameterOnButton()
+        : m_notifier(this)
+    {
+    }
+
+    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
+    {
+      if(newParam)
+      {
+        auto button = m_mapping.findButton(newParam->getID());
+        forwardValue(m_mapping.findParameters(button).size() == 1);
+      }
+      else
+      {
+        setValue(false);
+      }
+    }
+
+   protected:
+    virtual void forwardValue(bool value)
+    {
+      setValue(value);
+    }
+
+    ButtonParameterMapping m_mapping{};
+    OnParameterSelectionChangedNotifier<IsOnlyParameterOnButton> m_notifier;
+  };
+
+  class IsNotOnlyParameterOnButton : public IsOnlyParameterOnButton
+  {
+  protected:
+      void forwardValue(bool value) override {
+          setValue(!value);
+      }
+  };
+
   class StaticText : public EventSource<DisplayString>
   {
    public:
@@ -498,6 +538,8 @@ namespace DescriptiveLayouts
     m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
     m_map[EventSources::CurrentVoiceGroupName] = std::make_unique<CurrentVoiceGroupName>();
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
+    m_map[EventSources::IsOnlyParameterOnButton] = std::make_unique<IsOnlyParameterOnButton>();
+    m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();
   }
 
   sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)

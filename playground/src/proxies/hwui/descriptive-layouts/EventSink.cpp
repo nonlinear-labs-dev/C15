@@ -1,5 +1,6 @@
 #include <parameters/ModulateableParameter.h>
 #include <libundo/undo/Scope.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
 #include "EventSink.h"
 #include "Application.h"
 #include "presets/PresetManager.h"
@@ -7,6 +8,8 @@
 #include "parameters/MacroControlParameter.h"
 #include "parameters/Parameter.h"
 #include "proxies/hwui/HWUI.h"
+#include "proxies/hwui/Layout.h"
+#include "GenericLayout.h"
 
 namespace DescriptiveLayouts
 {
@@ -141,6 +144,19 @@ namespace DescriptiveLayouts
       if(dynamic_cast<ModulateableParameter *>(eb->getSelected()) != nullptr)
       {
         hwui->setUiModeDetail(UIDetail::MCSelect);
+      }
+    });
+
+    //TODO implement EventSink for ParameterCarousel
+
+    registerEvent(EventSinks::IncParamSelection, [hwui, eb]() {
+      auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+      if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
+      {
+        if(auto carousel = genericLayout->findControlOfType<ParameterCarousel>())
+        {
+          carousel->turn();
+        }
       }
     });
   }

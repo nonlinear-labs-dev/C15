@@ -19,10 +19,6 @@
           "Class": "Button",
           "Position": "131, 51"
         },
-        "ButtonD": {
-          "Class": "Button",
-          "Position": "195, 51"
-        },
         "GroupLabel": {
           "Class": "InvertedLabel",
           "Position": "0, 0",
@@ -42,11 +38,16 @@
           "Class": "ParameterValueLabel",
           "Position": "77, 35",
           "Events": "ParameterDisplayString => Label[Text]"
+        },
+        "ParameterCarousel": {
+          "Class": "ParameterCarousel",
+          "Position": "195, 0" 
         }
       },
       "EventSinks": {
         "BUTTON_INC": "IncParam",
-        "BUTTON_DEC": "DecParam"
+        "BUTTON_DEC": "DecParam",
+        "BUTTON_D": "IncParamSelection"
       }
     }
   }
