@@ -1,6 +1,7 @@
 #include <parameters/ModulateableParameter.h>
 #include <libundo/undo/Scope.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
 #include "EventSink.h"
 #include "Application.h"
 #include "presets/PresetManager.h"
@@ -147,8 +148,6 @@ namespace DescriptiveLayouts
       }
     });
 
-    //TODO implement EventSink for ParameterCarousel
-
     registerEvent(EventSinks::IncParamSelection, [hwui, eb]() {
       auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
       if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
@@ -156,6 +155,28 @@ namespace DescriptiveLayouts
         if(auto carousel = genericLayout->findControlOfType<ParameterCarousel>())
         {
           carousel->turn();
+        }
+      }
+    });
+
+    registerEvent(EventSinks::IncModulationCarousel, [hwui]() {
+      auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+      if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
+      {
+        if(auto carousel = genericLayout->findControlOfType<ModulationCarousel>())
+        {
+          carousel->onRotary(1, hwui->getButtonModifiers());
+        }
+      }
+    });
+
+    registerEvent(EventSinks::DecModulationCarousel, [hwui]() {
+      auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+      if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
+      {
+        if(auto carousel = genericLayout->findControlOfType<ModulationCarousel>())
+        {
+          carousel->onRotary(-1, hwui->getButtonModifiers());
         }
       }
     });

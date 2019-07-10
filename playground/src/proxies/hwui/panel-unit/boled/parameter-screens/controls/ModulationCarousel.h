@@ -11,10 +11,11 @@ class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
 {
  private:
   typedef Carousel super;
-public:
-    bool redraw(FrameBuffer &fb) override;
 
-public:
+ public:
+  bool redraw(FrameBuffer &fb) override;
+
+ public:
   enum class Mode
   {
     None,
@@ -23,6 +24,7 @@ public:
     LowerBound
   };
 
+  ModulationCarousel(const Rect &pos);
   ModulationCarousel(Mode mode, const Rect &pos);
 
   bool onRotary(int inc, ButtonModifiers modifiers) override;
@@ -34,7 +36,10 @@ public:
 
   void onModulationSourceChanged(const ModulateableParameter *modP);
 
+  void forceHighlights();
+
   OnModulationChangedNotifier<ModulationCarousel> m_modulationNotifier;
   Button *m_button;
   Control *m_upper, *m_lower, *m_middle;
+  static Mode s_lastMode;
 };

@@ -48,6 +48,11 @@
         "ParameterCarousel": {
           "Class": "ParameterCarousel",
           "Position": "195, 0"
+        },
+        "ModulationRange": {
+          "Class": "ModRangeSlider",
+          "Position": "77, 22",
+          "Events": "MCModRange => UpperBar[Range], MCModRange => LowerBar[Range]"
         }
       },
       "EventSinks": {

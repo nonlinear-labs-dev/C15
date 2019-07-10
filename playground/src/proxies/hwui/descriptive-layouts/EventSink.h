@@ -11,7 +11,8 @@ namespace DescriptiveLayouts
        SwitchToSetupFocus, SwitchToParameterFocus, SwitchToBankFocus, SwitchToPresetFocus, SwitchToSoundFocus,
        SwitchToMCSelectDetail, SwitchToButtonADetail, SwitchToButtonBDetail, SwitchToButtonCDetail,
        SwitchToButtonDDetail, SwitchToMCModRangeDetail, SwitchToMCAmtDetail, IncMCSel, DecMCSel, IncMCAmt, DecMCAmt,
-       IncMCPos, DecMCPos, IncButtonMenu, DecButtonMenu, FireButtonMenu, IncParamSelection);
+       IncMCPos, DecMCPos, IncButtonMenu, DecButtonMenu, FireButtonMenu, IncParamSelection, IncModulationCarousel,
+       DecModulationCarousel);
 
   struct EventSinkMapping
   {

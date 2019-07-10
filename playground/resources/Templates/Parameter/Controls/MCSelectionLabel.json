@@ -1,0 +1,24 @@
+{
+  "controls": {
+    "MCSelectionLabel": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 20, 13"
+      }
+    }
+  },
+  "styles": {
+    "DefaultMCSelectionLabel": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "MCSelectionLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C128",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    }
+  }
+}

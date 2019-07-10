@@ -1,0 +1,27 @@
+{
+  "controls": {
+    "ModRangeSlider": {
+      "UpperBar": {
+        "Class": "Bar",
+        "Rect": "1, 1, 100, 1",
+        "Tag": "slider"
+      },
+      "LowerBar": {
+        "Class": "Bar",
+        "Rect": "1, 8, 100, 1",
+        "Tag": "slider"
+      }
+    }
+  },
+  "styles": {
+    "Default-ModRange-Style": {
+      "selector": {
+        "ControlClasses": "ModRangeSlider",
+        "PrimitiveClasses": "Bar"
+      },
+      "styles": {
+        "Color": "C179"
+      }
+    }
+  }
+}

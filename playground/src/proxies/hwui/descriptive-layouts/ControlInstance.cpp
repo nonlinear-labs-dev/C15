@@ -19,15 +19,21 @@ namespace DescriptiveLayouts
   {
   }
 
+  struct RuntimeUICache
+  {
+    ModulationCarousel::Mode m_lastModulationCarouselMode = ModulationCarousel::Mode::UpperBound;
+  };
+
   Control* ControlInstance::instantiate() const
   {
+
     if(controlClass == "MacroControlEditButtonMenu")
     {
       return new MacroControlEditButtonMenu(Rect(position.getX(), position.getY(), 58, 62));
     }
     if(controlClass == "ModulationCarousel")
     {
-      return new ModulationCarousel(ModulationCarousel::Mode::None, Rect(position.getX(), position.getY(), 58, 72));
+      return new ModulationCarousel(Rect(position.getX(), position.getY(), 58, 72));
     }
     if(controlClass == "ParameterEditButtonMenu")
     {
@@ -43,7 +49,7 @@ namespace DescriptiveLayouts
     }
     if(controlClass == "ParameterCarousel")
     {
-        return new ParameterCarousel(Rect(position.getX(), position.getY(), 58, 62));
+      return new ParameterCarousel(Rect(position.getX(), position.getY(), 58, 62));
     }
 
     return new GenericControl(*this);

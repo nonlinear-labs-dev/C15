@@ -1,0 +1,35 @@
+{
+  "controls": {
+    "MiniDotSlider": {
+      "Border": {
+        "Class": "Border",
+        "Rect": "0, 0, 50, 7"
+      },
+      "ValueDot": {
+        "Class": "Circle",
+        "Rect": "1, 1, 48, 4"
+      }
+    }
+  },
+  "styles": {
+    "Default-MiniDotSlider-Border-Style": {
+      "selector": {
+        "ControlClasses": "MiniDotSlider",
+        "PrimitiveClasses": "Border"
+      },
+      "styles": {
+        "Color": "C204"
+      }
+    },
+    "Default-MiniDotSlider-Dot-Style": {
+      "selector": {
+        "ControlClasses": "MiniDotSlider",
+        "PrimitiveClasses": "Circle"
+      },
+      "styles": {
+        "Color": "C255",
+        "BackgroundColor": "C179"
+      }
+    }
+  }
+}

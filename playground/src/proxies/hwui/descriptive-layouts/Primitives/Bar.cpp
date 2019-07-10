@@ -41,6 +41,8 @@ namespace DescriptiveLayouts
 
   void Bar::drawBackground(FrameBuffer &fb)
   {
+      fb.setColor((FrameBuffer::Colors)getStyleValue(StyleKey::BackgroundColor));
+      fb.fillRect(getPosition());
   }
 
   void Bar::setDirty()

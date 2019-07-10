@@ -41,6 +41,8 @@ namespace DescriptiveLayouts
     {
       case StyleKey::SuffixColor:
         return 6;
+      case StyleKey::BackgroundColor:
+        return (int) StyleValues::Color::C43;
     }
     return 0;
   }

@@ -4,7 +4,7 @@
       "Selector": {
         "UIFocus": "Parameters",
         "UIMode": "Select",
-        "UIDetail": "ButtonB"
+        "UIDetail": "ButtonD"
       },
       "Conditions": [
         "isParameterModulateable"
@@ -15,7 +15,7 @@
           "Position": "3, 51"
         },
         "ButtonB": {
-          "Class": "HighlightButton",
+          "Class": "Button",
           "Position": "67, 51",
           "Init": {
             "Text[Text]": "MC Sel"
@@ -26,9 +26,14 @@
           "Position": "131, 51"
         },
         "MCSelection-Label": {
-          "Class": "Label",
-          "Position": "67, 35",
+          "Class": "MCSelectionLabel",
+          "Position": "40, 21",
           "Events": "MacroControlSymbol => Text[Text]"
+        },
+        "ParameterValue": {
+          "Class": "ParameterValueLabel",
+          "Position": "77, 35",
+          "Events": "ParameterDisplayString => Label[Text]"
         },
         "GroupLabel": {
           "Class": "InvertedLabel",
@@ -45,26 +50,21 @@
           "Position": "77, 10",
           "Events": "ParameterNameWithStateSuffix => Label[Text]"
         },
-        "ModulationCarousel": {
-          "Class": "ModulationCarousel",
-          "Position": "195, 0"
-        },
         "ModulationRange": {
           "Class": "ModRangeSlider",
           "Position": "77, 22",
           "Events": "MCModRange => UpperBar[Range], MCModRange => LowerBar[Range]"
         },
-        "MCPositionSlider": {
-          "Class": "MiniDotSlider",
-          "Position": "0, 20",
-          "Events": "MacroControlPosition => ValueDot[ControlPosition]"
+        "ModulationCarousel": {
+          "Class": "ModulationCarousel",
+          "Position": "195, 0"
         }
       },
       "EventSinks": {
-        "BUTTON_INC": "IncMCSel",
-        "BUTTON_DEC": "DecMCSel",
+        "BUTTON_INC": "IncModulationCarousel",
+        "BUTTON_DEC": "DecModulationCarousel",
         "BUTTON_B": "SwitchToInitDetail",
-        "BUTTON_D": "SwitchToButtonDDetail"
+        "BUTTON_D": "IncButtonMenu"
       }
     }
   }

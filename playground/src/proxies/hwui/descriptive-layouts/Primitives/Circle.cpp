@@ -9,7 +9,7 @@ namespace DescriptiveLayouts
       , m_range(0.0, 1.0)
       , m_primitive(e)
       , m_steps(5)
-      , m_drawPosition(getPosition().getLeft(), getPosition().getCenter().getY() - e.relativePosition.getHeight() / 2)
+      , m_drawPosition(getPosition().getLeft(), getPosition().getTop() + getPosition().getHeight() / 2)
   {
   }
 
@@ -27,6 +27,9 @@ namespace DescriptiveLayouts
 
   void Circle::drawBackground(FrameBuffer &fb)
   {
+      auto color =(FrameBuffer::Colors)getStyleValue(StyleKey::BackgroundColor);
+      fb.setColor(color);
+      fb.fillRect(getPosition());
   }
 
   void Circle::setDirty()
