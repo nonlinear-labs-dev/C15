@@ -1,3 +1,4 @@
+#include <proxies/hwui/descriptive-layouts/ConditionRegistry.h>
 #include "ParameterConditions.h"
 
 using namespace DescriptiveLayouts;
@@ -31,11 +32,6 @@ namespace conditiondetail {
 
 }
 
-void ParameterConditions::IsParameterModulateable::onConditionChanged() const
-{
-  conditiondetail::bruteForceLayouts();
-}
-
 bool ParameterConditions::IsParameterModulateable::check() const
 {
   return conditiondetail::getModulateableParameter() != nullptr;
@@ -59,11 +55,6 @@ bool ParameterConditions::IsParameterUnmodulateable::check() const
 ParameterConditions::HasNoMcSelected::HasNoMcSelected()
     : m_paramSig{ this }
 {
-}
-
-void ParameterConditions::HasNoMcSelected::onConditionChanged() const
-{
-  conditiondetail::bruteForceLayouts();
 }
 
 bool ParameterConditions::HasNoMcSelected::check() const

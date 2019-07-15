@@ -2,15 +2,22 @@
 #include <functional>
 #include <memory>
 #include <proxies/hwui/descriptive-layouts/Conditions/ConditionBase.h>
+#include <tools/Signal.h>
 
-class ConditionRegistry
+class ConditionRegistry : public sigc::trackable
 {
  public:
   typedef ConditionBase* tCondition;
   tCondition getLambda(std::string key);
   static ConditionRegistry& get();
+  sigc::connection onChange(std::function<void()> cb);
 
  private:
   ConditionRegistry();
+  void onConditionChanged();
+
+  Signal<void> m_signal;
   std::unordered_map<std::string, std::unique_ptr<ConditionBase>> m_theConditionMap;
+
+  friend class ConditionBase;
 };

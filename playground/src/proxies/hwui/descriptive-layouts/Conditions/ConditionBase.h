@@ -22,7 +22,7 @@ class ConditionBase
   }
 
  protected:
-  virtual void onConditionChanged() const = 0;
+  void onConditionChanged() const;
   virtual bool check() const = 0;
   mutable std::atomic_bool m_cache;
 };

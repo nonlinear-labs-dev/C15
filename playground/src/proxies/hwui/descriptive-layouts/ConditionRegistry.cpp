@@ -8,28 +8,13 @@
 
 ConditionRegistry::tCondition ConditionRegistry::getLambda(std::string key)
 {
-  try {
-    return m_theConditionMap.at(key).get();
-  } catch(...) {
-    DebugLevel::warning("Could not find condition:", key, "in condition map.");
-    return nullptr;
-  }
+  return m_theConditionMap.at(key).get();
 }
 
 ConditionRegistry& ConditionRegistry::get()
 {
   static ConditionRegistry theRegistry;
   return theRegistry;
-}
-
-PresetManager* getPresetManager()
-{
-  return Application::get().getPresetManager();
-}
-
-Parameter* getSelectedParam()
-{
-  return getPresetManager()->getEditBuffer()->getSelected();
 }
 
 ConditionRegistry::ConditionRegistry()
@@ -39,4 +24,14 @@ ConditionRegistry::ConditionRegistry()
   m_theConditionMap["isParameterUnmodulateable"] = std::make_unique<ParameterConditions::IsParameterUnmodulateable>();
   m_theConditionMap["hasNoMcSelected"] = std::make_unique<ParameterConditions::HasNoMcSelected>();
   m_theConditionMap["hasMcSelected"] = std::make_unique<ParameterConditions::HasMcSelected>();
+}
+
+sigc::connection ConditionRegistry::onChange(std::function<void()> cb)
+{
+  return m_signal.connect(cb);
+}
+
+void ConditionRegistry::onConditionChanged()
+{
+  m_signal.send();
 }

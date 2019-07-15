@@ -17,21 +17,21 @@
 #include <proxies/hwui/descriptive-layouts/LayoutFolderMonitor.h>
 #include <proxies/hwui/debug-oled/DebugLayout.h>
 #include <tools/ExceptionTools.h>
+#include <proxies/hwui/descriptive-layouts/ConditionRegistry.h>
 
 BOLED::BOLED()
     : OLEDProxy(Rect(0, 0, 256, 64))
 {
 }
 
-BOLED::~BOLED()
-{
-}
+BOLED::~BOLED() = default;
 
 void BOLED::init()
 {
   reset(new SplashLayout());
 
   LayoutFolderMonitor::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
+  ConditionRegistry::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
 }
 
 void BOLED::bruteForce()

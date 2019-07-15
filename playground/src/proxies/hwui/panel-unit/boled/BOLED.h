@@ -11,7 +11,7 @@ class BOLED : public OLEDProxy, public sigc::trackable
 {
  public:
   BOLED();
-  virtual ~BOLED();
+  ~BOLED() override;
 
   void init();
 

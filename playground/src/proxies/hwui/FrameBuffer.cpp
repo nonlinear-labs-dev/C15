@@ -173,32 +173,30 @@ void FrameBuffer::fillRect(const Rect &rect)
 
 void FrameBuffer::fillCircle(const Point &pos, int radius, int steps)
 {
-    if(radius == 1) {
-        setPixel(pos.getX(), pos.getY());
-    }
-    else if(radius == 2) {
-        fillRect(pos.getX(), pos.getY(), 2, 2);
-    }
-    else if(radius == 3) {
-        fillRect(pos.getX(), pos.getY() + 1, 3, 1);
-        fillRect(pos.getX() + 1, pos.getY(), 1, 3);
-    }
-    else if(radius == 4) {
-
-    }
-
-  fillRect(x + 1 - halfHandle, r.getTop(), c_handleWidth - 2, handleHeight);
-  fillRect(x - halfHandle, r.getTop() + 1, c_handleWidth, handleHeight - 2);
-  fillRect(x - 1 - halfHandle, r.getTop() + 2, c_handleWidth + 2, handleHeight - 4);
-
-  for(auto y = pos.getY() - (radius); y <= pos.getY() + radius; y++)
+  if(radius == 1)
   {
-    for(auto x = pos.getX() - radius; x <= pos.getX() + radius; x++)
+    setPixel(pos.getX(), pos.getY());
+  }
+  else if(radius == 2)
+  {
+    fillRect(pos.getX(), pos.getY(), 2, 2);
+  }
+  else if(radius == 3)
+  {
+    fillRect(pos.getX(), pos.getY() + 1, 3, 1);
+    fillRect(pos.getX() + 1, pos.getY(), 1, 3);
+  }
+  else
+  {
+    for(auto y = pos.getY() - (radius); y <= pos.getY() + radius; y++)
     {
-      auto distance = sqrt(pow(x - pos.getX(), 2) + pow(y - pos.getY(), 2));
-      if(distance <= radius)
+      for(auto x = pos.getX() - radius; x <= pos.getX() + radius; x++)
       {
-        setPixel(x, y);
+        auto distance = sqrt(pow(x - pos.getX(), 2) + pow(y - pos.getY(), 2));
+        if(distance <= radius)
+        {
+          setPixel(x, y);
+        }
       }
     }
   }

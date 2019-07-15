@@ -20,7 +20,6 @@ namespace DescriptiveLayouts
       void onParameterSelectionChanged(const Parameter *o, Parameter *n);
 
      protected:
-      void onConditionChanged() const override;
       OnParameterSelectionChangedNotifier<IsParameterModulateable> m_selChanged;
     };
 
@@ -38,7 +37,6 @@ namespace DescriptiveLayouts
       void onParameterChanged(const Parameter *parameter);
 
      protected:
-      void onConditionChanged() const override;
       OnParameterChangedNotifier<HasNoMcSelected> m_paramSig;
     };
 
