@@ -4,10 +4,16 @@
 #include <presets/EditBuffer.h>
 #include <parameters/ModulateableParameter.h>
 #include "ConditionRegistry.h"
+#include "Conditions/ParameterConditions.h"
 
 ConditionRegistry::tCondition ConditionRegistry::getLambda(std::string key)
 {
-  return m_theConditonMap.at(key);
+  try {
+    return m_theConditionMap.at(key).get();
+  } catch(...) {
+    DebugLevel::warning("Could not find condition:", key, "in condition map.");
+    return nullptr;
+  }
 }
 
 ConditionRegistry& ConditionRegistry::get()
@@ -28,29 +34,9 @@ Parameter* getSelectedParam()
 
 ConditionRegistry::ConditionRegistry()
 {
-  m_theConditonMap["isParameterModulateable"] = []() {
-    auto modParam = dynamic_cast<ModulateableParameter*>(getSelectedParam());
-    return modParam != nullptr;
-  };
-
-  m_theConditonMap["isParameterUnmodulateable"] = [&]() { return !m_theConditonMap["isParameterModulateable"]; };
-
-  m_theConditonMap["hasNoMcSelected"] = []() {
-    auto modParam = dynamic_cast<ModulateableParameter*>(getSelectedParam());
-    if(modParam != nullptr)
-    {
-      return ModulationSource::NONE == modParam->getModulationSource();
-    }
-    return false;
-  };
-
-  m_theConditonMap["hasMcSelected"] = [&]() { return !m_theConditonMap["hasNoMcSelected"]; };
-
-  auto getEditBufferType = [] { return Application::get().getPresetManager()->getEditBuffer()->getType(); };
-
-  m_theConditonMap["isSingleSound"] = [&]() { return getEditBufferType() == EditBuffer::Type::Single; };
-
-  m_theConditonMap["isSplitSound"] = [&]() { return getEditBufferType() == EditBuffer::Type::Split; };
-
-  m_theConditonMap["isLayerSound"] = [&]() { return getEditBufferType() == EditBuffer::Type::Layer; };
+  using namespace DescriptiveLayouts;
+  m_theConditionMap["isParameterModulateable"] = std::make_unique<ParameterConditions::IsParameterModulateable>();
+  m_theConditionMap["isParameterUnmodulateable"] = std::make_unique<ParameterConditions::IsParameterUnmodulateable>();
+  m_theConditionMap["hasNoMcSelected"] = std::make_unique<ParameterConditions::HasNoMcSelected>();
+  m_theConditionMap["hasMcSelected"] = std::make_unique<ParameterConditions::HasMcSelected>();
 }

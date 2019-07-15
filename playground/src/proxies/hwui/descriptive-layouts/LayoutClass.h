@@ -1,10 +1,12 @@
 #pragma once
 
+#include <utility>
 #include <proxies/hwui/HWUIEnums.h>
 #include "Selector.h"
 #include "EventSink.h"
 #include "ControlInstance.h"
 #include <set>
+#include <proxies/hwui/descriptive-layouts/Conditions/ConditionBase.h>
 
 class DFBLayout;
 
@@ -18,22 +20,22 @@ namespace DescriptiveLayouts
    public:
     using ControlInstanceList = std::list<ControlInstance>;
     using EventSinkList = std::list<EventSinkMapping>;
-    using ConditionList = std::list<std::function<bool()>>;
+    using ConditionList = std::list<ConditionBase *>;
 
     template <typename... Args>
-    LayoutClass(LayoutClasses id, Args... args)
-        : id(id)
+    explicit LayoutClass(LayoutClasses id, Args... args)
+        : id(std::move(id))
     {
       (void) std::initializer_list<int>{ (addToList(args), 0)... };
     }
 
     LayoutClass(LayoutClasses id, std::list<Selector> sel, std::list<ControlInstance> ci,
-                std::list<EventSinkMapping> esm, ConditionList con)
-        : id(id)
+                std::list<EventSinkMapping> esm, const ConditionList &con)
+        : id(std::move(id))
     {
-      for(auto s : sel)
+      for(const auto &s : sel)
         addToList(s);
-      for(auto c : ci)
+      for(const auto &c : ci)
         addToList(c);
       for(auto e : esm)
         addToList(e);
@@ -45,13 +47,13 @@ namespace DescriptiveLayouts
     bool meetsConditions() const;
     const unsigned long getWeight() const;
 
-    DFBLayout* instantiate() const;
+    DFBLayout *instantiate() const;
 
    private:
     void addToList(Selector s);
     void addToList(ControlInstance s);
     void addToList(EventSinkMapping s);
-    void addToList(std::function<bool()> c);
+    void addToList(ConditionBase *c);
 
     LayoutClasses id;
     std::list<Selector> selectors;

@@ -20,7 +20,7 @@ namespace DescriptiveLayouts
     selectors.push_back(s);
   }
 
-  void LayoutClass::addToList(std::function<bool()> c)
+  void LayoutClass::addToList(ConditionBase* c)
   {
     conditions.push_back(c);
   }
@@ -38,7 +38,7 @@ namespace DescriptiveLayouts
 
   bool LayoutClass::meetsConditions() const
   {
-    return conditions.empty() || std::all_of(conditions.begin(), conditions.end(), [](const auto c) { return c(); });
+    return conditions.empty() || std::all_of(conditions.begin(), conditions.end(), [](ConditionBase* c) { return c->get(); });
   }
 
   const unsigned long LayoutClass::getWeight() const

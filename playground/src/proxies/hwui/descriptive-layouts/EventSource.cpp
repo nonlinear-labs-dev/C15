@@ -300,7 +300,7 @@ namespace DescriptiveLayouts
    public:
     void onParameterChanged(const Parameter *p)
     {
-      auto str = p->getDisplayString();
+      auto str = p ? p->getDisplayString() : Glib::ustring{};
 
       if(Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
       {
@@ -335,7 +335,8 @@ namespace DescriptiveLayouts
    private:
     void onLockChanged()
     {
-      setValue(Application::get().getPresetManager()->getEditBuffer()->getSelected()->isLocked());
+      auto param = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+      setValue(param ? param->isLocked() : false);
     }
 
     OnParameterSelectionChangedNotifier<CurrentParameterGroupLockStatus> m_notifier;

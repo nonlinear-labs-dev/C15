@@ -15,7 +15,7 @@ using json = nlohmann::json;
 
 namespace DescriptiveLayouts
 {
-  using tConditionList = std::list<std::function<bool()>>;
+  using tConditionList = std::list<ConditionBase*>;
   template <class T>
   bool readFieldFromJson(json j, Glib::ustring key, std::function<T(std::string)> converter,
                          std::list<Selector>& outList)

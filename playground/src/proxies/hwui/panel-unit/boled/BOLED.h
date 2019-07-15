@@ -20,12 +20,12 @@ class BOLED : public OLEDProxy, public sigc::trackable
   void setupFocusAndMode(FocusAndMode focusAndMode);
   void showUndoScreen();
 
+  void bruteForce();
+
  private:
   void installOldLayouts(FocusAndMode foucsAndMode);
   void setupSoundScreen(FocusAndMode focusAndMode);
   void setupParameterScreen(FocusAndMode focusAndMode);
   void setupPresetScreen(FocusAndMode focusAndMode);
   void setupBankScreen(FocusAndMode focusAndMode);
-
-  void bruteForce();
 };

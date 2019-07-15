@@ -9,7 +9,6 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/controls/Button.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
-#include <proxies/hwui/descriptive-layouts/UICache.h>
 
 ModulationCarousel::Mode ModulationCarousel::s_lastMode = ModulationCarousel::Mode::None;
 
