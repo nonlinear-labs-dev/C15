@@ -1,13 +1,9 @@
 {
   "controls": {
     "MiniDotSlider": {
-      "Border": {
-        "Class": "Border",
-        "Rect": "0, 0, 48, 4"
-      },
       "ValueDot": {
         "Class": "Circle",
-        "Rect": "1, 0, 46, 4"
+        "Rect": "0, 0, 48, 4"
       }
     }
   },
@@ -28,7 +24,8 @@
       },
       "styles": {
         "Color": "C255",
-        "BackgroundColor": "Transparent"
+        "BackgroundColor": "C43",
+        "BorderColor": "C128"
       }
     }
   }

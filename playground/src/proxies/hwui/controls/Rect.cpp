@@ -112,6 +112,11 @@ int Rect::getHeight() const
   return std::max(0, m_height);
 }
 
+Point Rect::getLeftTop() const
+{
+  return m_leftTop;
+}
+
 Point Rect::getCenter() const
 {
   return Point(getX() + getWidth() / 2, getY() + getHeight() / 2);
@@ -170,10 +175,10 @@ bool Rect::isEmpty() const
   return m_width <= 0 || m_height <= 0;
 }
 
-bool Rect::intersects(const Rect& other) const
+bool Rect::intersects(const Rect &other) const
 {
-    return other.contains(getX(), getY()) || other.contains(getX() + getWidth(), getY()) ||
-            other.contains(getX(), getY() + getHeight()) || other.contains(getX() + getWidth(), getY() + getHeight());
+  return other.contains(getX(), getY()) || other.contains(getX() + getWidth(), getY())
+      || other.contains(getX(), getY() + getHeight()) || other.contains(getX() + getWidth(), getY() + getHeight());
 }
 
 Rect Rect::getIntersection(const Rect &other) const

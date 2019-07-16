@@ -15,7 +15,7 @@
       },
       "styles": {
         "BackgroundColor": "C43",
-        "Color": "C128",
+        "Color": "C255",
         "FontSize": 8,
         "TextAlign": "Center"
       }

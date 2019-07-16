@@ -7,24 +7,23 @@ namespace DescriptiveLayouts
   Circle::Circle(const PrimitiveInstance &e)
       : Control(e.relativePosition)
       , m_range(0.0, 1.0)
+      , m_valueDimension(e.relativePosition.getX() + e.relativePosition.getHeight() / 2, e.relativePosition.getY(),
+                         e.relativePosition.getWidth() - e.relativePosition.getHeight(), e.relativePosition.getHeight())
       , m_primitive(e)
-      , m_steps(5)
-      , m_drawPosition(getPosition().getLeft(), getPosition().getTop())
+      , m_drawPosition(getPosition().getLeftTop())
   {
   }
 
-  Circle::~Circle()
-  {
-  }
+  Circle::~Circle() = default;
 
   bool Circle::redraw(FrameBuffer &fb)
   {
+    auto borderColor = (FrameBuffer::Colors) getStyleValue(StyleKey::BorderColor);
+    fb.setColor(borderColor);
+    fb.drawRect(getPosition());
     auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
     fb.setColor(color);
-    auto pos = m_drawPosition;
-    auto moveBy = m_primitive.relativePosition.getHeight() / 2;
-    pos.moveBy(moveBy, moveBy);
-    fb.fillCircle(pos, moveBy);
+    fb.fillCircle(getPosition().getPosition() + m_drawPosition, getHeight() / 2);
     return true;
   }
 
@@ -60,12 +59,10 @@ namespace DescriptiveLayouts
     return m_primitive;
   }
 
-  const Point Circle::valueToPosition(tControlPositionValue range) const
+  const Point Circle::valueToPosition(tControlPositionValue controlPos) const
   {
-    Point p(getPosition().getLeft(), getPosition().getCenter().getY());
-    const auto controlPos = range;
-    const auto totalWidth = getPosition().getWidth();
-    p.moveBy(totalWidth * controlPos, 0);
+    Point p(getPosition().getLeft(), getPosition().getTop());
+    p.moveBy(static_cast<int>(m_valueDimension.getWidth() * controlPos), 0);
     return p;
   }
 }

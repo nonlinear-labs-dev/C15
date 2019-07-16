@@ -57,7 +57,7 @@
         "MCPositionSlider": {
           "Class": "MiniDotSlider",
           "Position": "8, 25",
-          "Events": "MacroControlPosition => ValueDot[ControlPosition]"
+          "Events": "MacroControlPosition => ValueDot[ControlPosition], MacroControlAsignment => ValueDot[Visibility]"
         }
       },
       "EventSinks": {
