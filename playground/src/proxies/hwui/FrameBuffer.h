@@ -50,7 +50,7 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
 
   void fillRect(tCoordinate left, tCoordinate top, tCoordinate width, tCoordinate height);
   void fillRect(const Rect &rect);
-  void fillCircle(const Point &rect, int radius, int steps);
+  void fillCircle(const Point &rect, int radius);
 
   void drawRect(tCoordinate left, tCoordinate top, tCoordinate width, tCoordinate height);
   void drawRect(const Rect &rect);

@@ -9,7 +9,7 @@ namespace DescriptiveLayouts
       , m_range(0.0, 1.0)
       , m_primitive(e)
       , m_steps(5)
-      , m_drawPosition(getPosition().getLeft(), getPosition().getTop() + getPosition().getHeight() / 2)
+      , m_drawPosition(getPosition().getLeft(), getPosition().getTop())
   {
   }
 
@@ -21,15 +21,18 @@ namespace DescriptiveLayouts
   {
     auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
     fb.setColor(color);
-    fb.fillCircle(m_drawPosition, m_primitive.relativePosition.getHeight() / 2, m_steps);
+    auto pos = m_drawPosition;
+    auto moveBy = m_primitive.relativePosition.getHeight() / 2;
+    pos.moveBy(moveBy, moveBy);
+    fb.fillCircle(pos, moveBy);
     return true;
   }
 
   void Circle::drawBackground(FrameBuffer &fb)
   {
-      auto color =(FrameBuffer::Colors)getStyleValue(StyleKey::BackgroundColor);
-      fb.setColor(color);
-      fb.fillRect(getPosition());
+    auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor);
+    fb.setColor(color);
+    fb.fillRect(getPosition());
   }
 
   void Circle::setDirty()

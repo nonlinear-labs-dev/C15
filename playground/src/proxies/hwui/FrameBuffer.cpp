@@ -171,32 +171,18 @@ void FrameBuffer::fillRect(const Rect &rect)
   }
 }
 
-void FrameBuffer::fillCircle(const Point &pos, int radius, int steps)
+void FrameBuffer::fillCircle(const Point &middle_pos, int radius)
 {
-  if(radius == 1)
+  assert(radius % 2 == 0);
+
+  for(auto y = middle_pos.getY() - radius; y <= middle_pos.getY() + radius; y++)
   {
-    setPixel(pos.getX(), pos.getY());
-  }
-  else if(radius == 2)
-  {
-    fillRect(pos.getX(), pos.getY(), 2, 2);
-  }
-  else if(radius == 3)
-  {
-    fillRect(pos.getX(), pos.getY() + 1, 3, 1);
-    fillRect(pos.getX() + 1, pos.getY(), 1, 3);
-  }
-  else
-  {
-    for(auto y = pos.getY() - (radius); y <= pos.getY() + radius; y++)
+    for(auto x = middle_pos.getX() - radius; x <= middle_pos.getX() + radius; x++)
     {
-      for(auto x = pos.getX() - radius; x <= pos.getX() + radius; x++)
+      auto distance = sqrt(pow(x - middle_pos.getX(), 2) + pow(y - middle_pos.getY(), 2));
+      if(distance <= radius)
       {
-        auto distance = sqrt(pow(x - pos.getX(), 2) + pow(y - pos.getY(), 2));
-        if(distance <= radius)
-        {
-          setPixel(x, y);
-        }
+        setPixel(x, y);
       }
     }
   }
