@@ -127,13 +127,15 @@ bool ModulationCarousel::onButton(Buttons i, bool down, ButtonModifiers modifier
 
 void ModulationCarousel::onModulationSourceChanged(const ModulateableParameter *modP)
 {
-  forceHighlights();
-
-  auto visible = modP->getModulationSource() != ModulationSource::NONE;
-  m_upper->setVisible(visible);
-  m_lower->setVisible(visible);
-  m_middle->setVisible(visible);
-  m_button->setVisible(!visible);
+  if(modP)
+  {
+    forceHighlights();
+    auto visible = modP->getModulationSource() != ModulationSource::NONE;
+    m_upper->setVisible(visible);
+    m_lower->setVisible(visible);
+    m_middle->setVisible(visible);
+    m_button->setVisible(!visible);
+  }
 }
 
 bool ModulationCarousel::redraw(FrameBuffer &fb)

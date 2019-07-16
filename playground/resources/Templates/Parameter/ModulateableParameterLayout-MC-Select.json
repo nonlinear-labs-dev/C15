@@ -32,7 +32,16 @@
         },
         "ButtonC": {
           "Class": "Button",
-          "Position": "131, 51"
+          "Position": "131, 51",
+          "Visibility": "!MacroControlAsignment"
+        },
+        "ButtonCHighlight": {
+          "Class": "Button",
+          "Position": "131, 51",
+          "Init": {
+            "Text[Text]": "MC Amt"
+          },
+          "Visibility": "MacroControlAsignment"
         },
         "MCSelection-Label": {
           "Class": "Label",
@@ -66,12 +75,14 @@
         "MCPositionSlider": {
           "Class": "MiniDotSlider",
           "Position": "8, 25",
-          "Events": "MacroControlPosition => ValueDot[ControlPosition], MacroControlAsignment => ValueDot[Visibility]"
+          "Events": "MacroControlPosition => ValueDot[ControlPosition], MacroControlAsignment => ValueDot[Visibility]",
+          "Visibility": "MacroControlAsignment"
         },
         "MCPositionLabel": {
           "Class": "Label",
           "Position": "6, 30",
-          "Events": "MacroControlPositionText => Text[Text], MacroControlAsignment => Text[Visibility]"
+          "Events": "MacroControlPositionText => Text[Text], MacroControlAsignment => Text[Visibility]",
+          "Visibility": "MacroControlAsignment"
         }
       },
       "EventSinks": {

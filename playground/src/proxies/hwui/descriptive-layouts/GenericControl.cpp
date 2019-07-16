@@ -97,13 +97,9 @@ namespace DescriptiveLayouts
           c.src, sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onEventFired), c)));
     }
 
-    if(m_prototype.visibility.m_source != EventSources::BooleanTrue
-       && m_prototype.visibility.m_source != EventSources::BooleanFalse)
-    {
-      m_connections.push_back(EventSourceBroker::get().connect(
-          m_prototype.visibility.m_source,
-          sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype)));
-    }
+    m_connections.push_back(EventSourceBroker::get().connect(
+        m_prototype.visibility.m_source,
+        sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype)));
   }
 
   void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
@@ -126,7 +122,7 @@ namespace DescriptiveLayouts
     }
   }
 
-  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance& instance)
+  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance &instance)
   {
     if(m_prototype.controlInstance == instance.controlInstance)
     {
@@ -142,7 +138,8 @@ namespace DescriptiveLayouts
       }
       catch(...)
       {
-        DebugLevel::warning("Could not connect:", toString(instance.visibility.m_source), "to visibility of:", instance.controlInstance, "! event does not evaluate to boolean!");
+        DebugLevel::warning("Could not connect:", toString(instance.visibility.m_source),
+                            "to visibility of:", instance.controlInstance, "! event does not evaluate to boolean!");
       }
     }
   }

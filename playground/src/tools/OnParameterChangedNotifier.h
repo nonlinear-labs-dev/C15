@@ -6,7 +6,7 @@
 #include <presets/EditBuffer.h>
 #include <parameters/ModulateableParameter.h>
 
-template <class T> class OnParameterChangedNotifier
+template <class T> class OnParameterChangedNotifier : public sigc::trackable
 {
  public:
   explicit OnParameterChangedNotifier(T *parent)
@@ -35,7 +35,7 @@ template <class T> class OnParameterChangedNotifier
   sigc::connection m_connection;
 };
 
-template <class T> class OnParameterSelectionChangedNotifier
+template <class T> class OnParameterSelectionChangedNotifier : public sigc::trackable
 {
  public:
   explicit OnParameterSelectionChangedNotifier(T *parent)
@@ -54,7 +54,7 @@ template <class T> class OnParameterSelectionChangedNotifier
   sigc::connection m_connection;
 };
 
-template <class T> class OnModulationChangedNotifier
+template <class T> class OnModulationChangedNotifier : public sigc::trackable
 {
  public:
   explicit OnModulationChangedNotifier(T *parent)
@@ -66,14 +66,13 @@ template <class T> class OnModulationChangedNotifier
 
   ~OnModulationChangedNotifier()
   {
-    m_onParameterChangedSignal.disconnect();
     m_onSelectionChangedSignal.disconnect();
+    m_onParameterChangedSignal.disconnect();
   }
 
   void onParameterSelectionChanged(const Parameter *o, Parameter *n)
   {
-    if(m_onParameterChangedSignal.connected())
-      m_onParameterChangedSignal.disconnect();
+    m_onParameterChangedSignal.disconnect();
 
     if(n)
     {
@@ -86,8 +85,18 @@ template <class T> class OnModulationChangedNotifier
   {
     if(auto modP = dynamic_cast<const ModulateableParameter *>(param))
     {
-      m_parent->onModulationSourceChanged(modP);
+      if(m_parent)
+      {
+        m_parent->onModulationSourceChanged(modP);
+      }
     }
+  }
+
+  void disconnect()
+  {
+    m_onSelectionChangedSignal.disconnect();
+    m_onParameterChangedSignal.disconnect();
+    m_parent = nullptr;
   }
 
  protected:
