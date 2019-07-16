@@ -101,13 +101,7 @@ namespace DescriptiveLayouts
           theStyles.map.emplace(styleKey, (int) StyleValues::toBorderStyle(style.value()));
           break;
         case StyleKey::SuffixColor:
-        {
-          auto rawValue = style.value();
-          auto color = StyleValues::toColor(rawValue);
-          auto colorInt = (int) color;
-          theStyles.map.emplace(styleKey, colorInt);
-        }
-        break;
+        case StyleKey::BorderColor:
         case StyleKey::BackgroundColor:
         case StyleKey::Color:
           theStyles.map.emplace(styleKey, (int) StyleValues::toColor(style.value()));

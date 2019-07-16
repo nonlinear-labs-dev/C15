@@ -10,7 +10,7 @@ namespace DescriptiveLayouts
   using ComponentID = Glib::ustring;
 
   ENUM(PrimitiveProperty, uint8_t, None, Text, Range, Visibility, ControlPosition);
-  ENUM(StyleKey, uint8_t, BackgroundColor, Color, TextAlign, FontSize, BorderStyle, FontDecoration, SuffixColor);
+  ENUM(StyleKey, uint8_t, BackgroundColor, Color, TextAlign, FontSize, BorderStyle, FontDecoration, SuffixColor, BorderColor);
   ENUM(ParameterType, uint8_t, Unipolar = 1 << 0, Bipolar = 1 << 1);
   ENUM(ButtonEvents, uint8_t, Down = true, Up = false);
   ENUM(ButtonModifiers, uint8_t, None = 0, Shift = 1 << 0);

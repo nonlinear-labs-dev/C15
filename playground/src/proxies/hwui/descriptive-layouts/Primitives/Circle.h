@@ -28,9 +28,10 @@ namespace DescriptiveLayouts
     const PrimitiveInstance &getPrimitive() const;
 
    private:
+    Rect m_valueDimension;
+    Point m_drawPosition;
+
     PrimitiveInstance m_primitive;
     Range m_range;
-    Point m_drawPosition;
-    int m_steps;
   };
 }
