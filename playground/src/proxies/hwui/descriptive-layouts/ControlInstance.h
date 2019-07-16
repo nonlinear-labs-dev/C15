@@ -19,6 +19,12 @@ namespace DescriptiveLayouts
       PrimitiveProperty targetProperty;
     };
 
+    typedef struct VisibilityEvent
+    {
+      EventSources m_source = EventSources::BooleanTrue;
+      bool inverted = false;
+    } VisibilityEvent;
+
     struct StaticInitList
     {
 
@@ -33,9 +39,9 @@ namespace DescriptiveLayouts
         tValue m_value;
 
         InitEntry(tPrimitiveInstance i, tPrimitiveProperty p, tValue v)
-            : m_instance{std::move(i)}
+            : m_instance{ std::move(i) }
             , m_property{ p }
-            , m_value{std::move(v)} {};
+            , m_value{ std::move(v) } {};
       };
 
       void addToList(tPrimitiveInstance i, tPrimitiveProperty p, tValue v)
@@ -49,7 +55,7 @@ namespace DescriptiveLayouts
     using EventConnections = std::list<EventConnection>;
 
     ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
-                    const EventConnections& eventConnections, StaticInitList staticInit);
+                    const EventConnections& eventConnections, StaticInitList staticInit, VisibilityEvent visibility);
 
     Control* instantiate() const;
 
@@ -58,6 +64,7 @@ namespace DescriptiveLayouts
     Point position;
     EventConnections eventConnections;
     StaticInitList staticInitList;
+    VisibilityEvent visibility;
 
     friend class GenericControl;
     friend class ConsistencyChecker;

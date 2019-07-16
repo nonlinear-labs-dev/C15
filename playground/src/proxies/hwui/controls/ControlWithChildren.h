@@ -9,16 +9,18 @@ class ControlWithChildren : public Control, public ControlOwner
   typedef Control super;
 
  public:
-  ControlWithChildren(const Rect &pos);
-  virtual ~ControlWithChildren();
+  explicit ControlWithChildren(const Rect &pos);
+  ~ControlWithChildren() override;
 
-  virtual bool isDirty() const override;
   bool redraw(FrameBuffer &fb) override;
   void drawBackground(FrameBuffer &fb) override;
-  virtual bool isHighlight() const override;
-  virtual void setDirty() override;
+
+  bool isDirty() const override;
+  void setDirty() override;
+  void setChildrenDirty();
 
   void setHighlight(bool isHighlight) override;
+  bool isHighlight() const override;
 
  protected:
   virtual bool isTransparent() const;

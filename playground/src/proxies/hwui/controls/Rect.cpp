@@ -143,6 +143,11 @@ void Rect::drawRounded(FrameBuffer &fb) const
   fb.setPixel(getRight() - 1, getBottom() - 1);
 }
 
+void Rect::draw(FrameBuffer& fb) const
+{
+  fb.drawRect(*this);
+}
+
 void Rect::moveBy(int x, int y)
 {
   m_leftTop.moveBy(x, y);

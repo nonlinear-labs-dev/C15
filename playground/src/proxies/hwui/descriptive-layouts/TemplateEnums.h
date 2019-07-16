@@ -10,7 +10,8 @@ namespace DescriptiveLayouts
   using ComponentID = Glib::ustring;
 
   ENUM(PrimitiveProperty, uint8_t, None, Text, Range, Visibility, ControlPosition);
-  ENUM(StyleKey, uint8_t, BackgroundColor, Color, TextAlign, FontSize, BorderStyle, FontDecoration, SuffixColor, BorderColor);
+  ENUM(StyleKey, uint8_t, BackgroundColor, Color, TextAlign, FontSize, BorderStyle, FontDecoration, SuffixColor,
+       BorderColor);
   ENUM(ParameterType, uint8_t, Unipolar = 1 << 0, Bipolar = 1 << 1);
   ENUM(ButtonEvents, uint8_t, Down = true, Up = false);
   ENUM(ButtonModifiers, uint8_t, None = 0, Shift = 1 << 0);
@@ -28,7 +29,8 @@ namespace DescriptiveLayouts
   ENUM(EventSources, uint8_t, Any, None, ParameterName, SliderRange, ParameterDisplayString, ParameterGroupName,
        IsBipolar, LockStatus, MacroControlSymbol, MacroControlAsignment, MacroControlAmount, MacroControlPosition,
        MacroControlPositionText, MCModRange, SoundHeaderText, EditBufferName, CurrentVoiceGroupName,
-       ParameterControlPosition, ParameterNameWithStateSuffix, IsNotOnlyParameterOnButton, IsOnlyParameterOnButton);
+       ParameterControlPosition, ParameterNameWithStateSuffix, IsNotOnlyParameterOnButton, IsOnlyParameterOnButton,
+       BooleanTrue, BooleanFalse);
 
   ENUM(PrimitiveClasses, uint8_t, Any, Bar, Border, Text, Circle);
 

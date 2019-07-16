@@ -16,11 +16,30 @@ namespace DescriptiveLayouts
 
   Circle::~Circle() = default;
 
+  void Circle::redrawBorder(FrameBuffer &fb)
+  {
+    auto style = (StyleValues::BorderStyle) getStyleValue(StyleKey::BorderStyle);
+    auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::BorderColor);
+
+    switch(style)
+    {
+      case StyleValues::BorderStyle::None:
+        break;
+      case StyleValues::BorderStyle::Rounded:
+        fb.setColor(color);
+        getPosition().drawRounded(fb);
+        break;
+      case StyleValues::BorderStyle::Solid:
+        fb.setColor(color);
+        getPosition().draw(fb);
+        break;
+    }
+  }
+
   bool Circle::redraw(FrameBuffer &fb)
   {
-    auto borderColor = (FrameBuffer::Colors) getStyleValue(StyleKey::BorderColor);
-    fb.setColor(borderColor);
-    fb.drawRect(getPosition());
+    redrawBorder(fb);
+
     auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
     fb.setColor(color);
     fb.fillCircle(getPosition().getPosition() + m_drawPosition, getHeight() / 2);
@@ -50,6 +69,10 @@ namespace DescriptiveLayouts
       case PrimitiveProperty::ControlPosition:
         m_drawPosition = valueToPosition(std::any_cast<tControlPositionValue>(value));
         setDirty();
+        break;
+      case PrimitiveProperty::None:
+      case PrimitiveProperty::Text:
+      case PrimitiveProperty::Range:
         break;
     }
   }

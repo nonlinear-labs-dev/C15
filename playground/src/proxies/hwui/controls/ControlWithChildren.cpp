@@ -5,9 +5,7 @@ ControlWithChildren::ControlWithChildren(const Rect &pos)
 {
 }
 
-ControlWithChildren::~ControlWithChildren()
-{
-}
+ControlWithChildren::~ControlWithChildren() = default;
 
 bool ControlWithChildren::isDirty() const
 {
@@ -15,6 +13,14 @@ bool ControlWithChildren::isDirty() const
     return true;
 
   return ControlOwner::isDirty();
+}
+
+void ControlWithChildren::setChildrenDirty()
+{
+  for(auto &c : getControls())
+  {
+    c->setDirty();
+  }
 }
 
 void ControlWithChildren::setDirty()

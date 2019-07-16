@@ -12,7 +12,16 @@
       "Controls": {
         "ButtonA": {
           "Class": "Button",
-          "Position": "3, 51"
+          "Position": "3, 51",
+          "Visibility": "!MacroControlAsignment"
+        },
+        "ButtonAHighlight": {
+          "Class": "Button",
+          "Position": "3, 51",
+          "Init": {
+            "Text[Text]": "MC Pos"
+          },
+          "Visibility": "MacroControlAsignment"
         },
         "ButtonB": {
           "Class": "HighlightButton",
@@ -58,6 +67,11 @@
           "Class": "MiniDotSlider",
           "Position": "8, 25",
           "Events": "MacroControlPosition => ValueDot[ControlPosition], MacroControlAsignment => ValueDot[Visibility]"
+        },
+        "MCPositionLabel": {
+          "Class": "Label",
+          "Position": "6, 30",
+          "Events": "MacroControlPositionText => Text[Text], MacroControlAsignment => Text[Visibility]"
         }
       },
       "EventSinks": {

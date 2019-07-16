@@ -477,6 +477,24 @@ namespace DescriptiveLayouts
     }
   };
 
+  class BooleanTrue : public EventSource<bool>
+  {
+   protected:
+    std::any getLastValue() const override
+    {
+      return std::any(true);
+    }
+  };
+
+  class BooleanFalse : public EventSource<bool>
+  {
+   protected:
+    std::any getLastValue() const override
+    {
+      return std::any(false);
+    }
+  };
+
   class IsOnlyParameterOnButton : public EventSource<bool>
   {
    public:
@@ -559,6 +577,8 @@ namespace DescriptiveLayouts
     m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
     m_map[EventSources::CurrentVoiceGroupName] = std::make_unique<CurrentVoiceGroupName>();
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
+    m_map[EventSources::BooleanTrue] = std::make_unique<BooleanTrue>();
+    m_map[EventSources::BooleanFalse] = std::make_unique<BooleanFalse>();
 
     m_map[EventSources::IsOnlyParameterOnButton] = std::make_unique<IsOnlyParameterOnButton>();
     m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();

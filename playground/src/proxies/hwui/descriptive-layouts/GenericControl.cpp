@@ -21,14 +21,25 @@ namespace DescriptiveLayouts
       c.disconnect();
   }
 
+  bool GenericControl::drawBackgroundTransparent(FrameBuffer &fb) const
+  {
+    auto color = FrameBuffer::Colors::Transparent;
+    fb.setColor(color);
+    getPosition().draw(fb);
+    return true;
+  }
+
   bool GenericControl::redraw(FrameBuffer &fb)
   {
-    for(auto &c : getControls())
+    if(m_controlVisible)
     {
-      c->setDirty();
+      setChildrenDirty();
+      return ControlWithChildren::redraw(fb);
     }
-
-    return ControlWithChildren::redraw(fb);
+    else
+    {
+      return drawBackgroundTransparent(fb);
+    }
   }
 
   void GenericControl::addPrimitives()
@@ -85,10 +96,19 @@ namespace DescriptiveLayouts
       m_connections.push_back(EventSourceBroker::get().connect(
           c.src, sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onEventFired), c)));
     }
+
+    if(m_prototype.visibility.m_source != EventSources::BooleanTrue
+       && m_prototype.visibility.m_source != EventSources::BooleanFalse)
+    {
+      m_connections.push_back(EventSourceBroker::get().connect(
+          m_prototype.visibility.m_source,
+          sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype)));
+    }
   }
 
   void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
   {
+
     for(const auto &c : getControls())
     {
       if(auto a = std::dynamic_pointer_cast<Styleable>(c))
@@ -106,8 +126,24 @@ namespace DescriptiveLayouts
     }
   }
 
-  void GenericControl::setDirty()
+  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance& instance)
   {
-    ControlWithChildren::setDirty();
+    if(m_prototype.controlInstance == instance.controlInstance)
+    {
+      try
+      {
+        auto visible = std::any_cast<bool>(visibility);
+
+        if(m_prototype.visibility.inverted)
+          visible = !visible;
+
+        m_controlVisible = visible;
+        setDirty();
+      }
+      catch(...)
+      {
+        DebugLevel::warning("Could not connect:", toString(instance.visibility.m_source), "to visibility of:", instance.controlInstance, "! event does not evaluate to boolean!");
+      }
+    }
   }
 }

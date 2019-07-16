@@ -47,6 +47,7 @@ class Rect
   void reduceByMargin(int i);
   void addMargin(int left, int top, int right, int bottom);
 
+  void draw(FrameBuffer& fb) const;
   void drawRounded(FrameBuffer &fb) const;
 
   static void registerTests();

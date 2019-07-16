@@ -25,7 +25,8 @@
       "styles": {
         "Color": "C255",
         "BackgroundColor": "C43",
-        "BorderColor": "C128"
+        "BorderColor": "C128",
+        "BorderStyle": "Rounded"
       }
     }
   }

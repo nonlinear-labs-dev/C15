@@ -30,18 +30,18 @@ namespace DescriptiveLayouts
     return false;
   }
 
-  std::list<Selector> toSelectors(json selector)
+  std::list<Selector> toSelectors(const json& selector)
   {
     std::list<Selector> selectors;
 
     if(!readFieldFromJson<UIFocus>(selector, "UIFocus", toUIFocus, selectors))
-      selectors.push_back(UIFocus::Any);
+      selectors.emplace_back(UIFocus::Any);
 
     if(!readFieldFromJson<UIMode>(selector, "UIMode", toUIMode, selectors))
-      selectors.push_back(UIMode::Any);
+      selectors.emplace_back(UIMode::Any);
 
     if(!readFieldFromJson<UIDetail>(selector, "UIDetail", toUIDetail, selectors))
-      selectors.push_back(UIDetail::Any);
+      selectors.emplace_back(UIDetail::Any);
 
     return selectors;
   }
@@ -103,16 +103,16 @@ namespace DescriptiveLayouts
             }
             break;
             case PrimitiveProperty::Text:
-              value = Text::DisplayString((std::string)it.value(), 0);
+              value = Text::DisplayString((std::string) it.value(), 0);
               break;
             case PrimitiveProperty::Visibility:
             {
-                bool val{};
-                auto str = (std::string)it.value();
-                std::istringstream(str) >> std::boolalpha >> val;
-                value = val;
+              bool val{};
+              auto str = (std::string) it.value();
+              std::istringstream(str) >> std::boolalpha >> val;
+              value = val;
             }
-              break;
+            break;
             default:
             case PrimitiveProperty::None:
               break;
@@ -159,6 +159,25 @@ namespace DescriptiveLayouts
     return ret;
   }
 
+  ControlInstance::VisibilityEvent parseVisibility(json j)
+  {
+    ControlInstance::VisibilityEvent ret{};
+    auto it = j.find("Visibility");
+    if(it != j.end())
+    {
+      std::string text = *it;
+
+      if(text[0] == '!')
+      {
+        ret.inverted = true;
+        text = text.substr(1);
+      }
+
+      ret.m_source = toEventSources(text);
+    }
+    return ret;
+  }
+
   LayoutClass::ControlInstanceList toControlInstanceList(json j)
   {
     LayoutClass::ControlInstanceList l{};
@@ -170,7 +189,8 @@ namespace DescriptiveLayouts
       auto point = toPoint(control.value().at("Position"));
       auto staticInit = parseInit(control.value());
       auto eventConnections = parseEventConnections(control.value());
-      l.emplace_back(controlInstances, controlClasses, point, eventConnections, staticInit);
+      auto visibility = parseVisibility(control.value());
+      l.emplace_back(controlInstances, controlClasses, point, eventConnections, staticInit, visibility);
     }
     return l;
   }

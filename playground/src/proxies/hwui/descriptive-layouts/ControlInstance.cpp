@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MacroControlEditButtonMenu.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/ConvertSoundMenu.h>
@@ -10,12 +12,14 @@
 namespace DescriptiveLayouts
 {
   ControlInstance::ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
-                                   const EventConnections& eventConnections, StaticInitList staticInit)
-      : controlInstance(controlInstance)
-      , controlClass(control)
+                                   const EventConnections& eventConnections, StaticInitList staticInit,
+                                   VisibilityEvent visibilitySource)
+      : controlInstance(std::move(controlInstance))
+      , controlClass(std::move(control))
       , position(position)
       , eventConnections(eventConnections)
-      , staticInitList(staticInit)
+      , staticInitList(std::move(staticInit))
+      , visibility(visibilitySource)
   {
   }
 

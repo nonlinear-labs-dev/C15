@@ -21,6 +21,7 @@ namespace DescriptiveLayouts
 
    protected:
     bool redraw(FrameBuffer &fb) override;
+    void redrawBorder(FrameBuffer &fb);
     void setDirty() override;
     void drawBackground(FrameBuffer &fb) override;
     const Point valueToPosition(tControlPositionValue range) const;
