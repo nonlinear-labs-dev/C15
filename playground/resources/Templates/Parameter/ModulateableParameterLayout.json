@@ -53,6 +53,16 @@
           "Class": "ModRangeSlider",
           "Position": "77, 22",
           "Events": "MCModRange => UpperBar[Range], MCModRange => LowerBar[Range]"
+        },
+        "AssignedMCLabel": {
+          "Class": "Label",
+          "Position": "19, 21",
+          "Events": "MacroControlSymbol => Text[Text]",
+          "Visibility": "MacroControlAsignment"
+        },
+        "Dots": {
+          "Class": "Dots",
+          "Position": "40, 19"
         }
       },
       "EventSinks": {

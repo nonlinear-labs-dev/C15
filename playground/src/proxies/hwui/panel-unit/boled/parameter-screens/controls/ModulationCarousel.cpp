@@ -10,7 +10,7 @@
 #include <proxies/hwui/controls/Button.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 
-ModulationCarousel::Mode ModulationCarousel::s_lastMode = ModulationCarousel::Mode::None;
+ModulationCarousel::Mode ModulationCarousel::s_lastMode = ModulationCarousel::Mode::UpperBound;
 
 ModulationCarousel::ModulationCarousel(Mode mode, const Rect &pos)
     : super(pos)
