@@ -370,12 +370,6 @@ void HWUI::onButtonPressed(Buttons buttonID, bool state)
 
   setModifiers(buttonID, state);
 
-  if(buttonID == Buttons::OLD_LAYOUTS)
-  {
-    m_oldLayouts = state;
-    getPanelUnit().getEditPanel().getBoled().setupFocusAndMode(getFocusAndMode());
-  }
-
   if(!detectAffengriff(buttonID, state))
   {
     if(!m_baseUnit.onButtonPressed(buttonID, m_modifiers, state))

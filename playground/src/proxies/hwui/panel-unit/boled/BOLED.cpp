@@ -18,6 +18,7 @@
 #include <proxies/hwui/debug-oled/DebugLayout.h>
 #include <tools/ExceptionTools.h>
 #include <proxies/hwui/descriptive-layouts/ConditionRegistry.h>
+#include <device-settings/LayoutMode.h>
 
 BOLED::BOLED()
     : OLEDProxy(Rect(0, 0, 256, 64))
@@ -39,40 +40,50 @@ void BOLED::bruteForce()
   setupFocusAndMode(Application::get().getHWUI()->getFocusAndMode());
 }
 
+static int failcounter = 0;
+
 void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
 {
-  if(Application::get().getHWUI()->getOldLayoutsSetting())
+  switch(Application::get().getSettings()->getSetting<LayoutMode>()->get())
   {
-    installOldLayouts(focusAndMode);
-  }
-  else
-  {
-    try
+    case LayoutVersionMode::Old:
     {
-      reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
+        installOldLayouts(focusAndMode);
+        break;
     }
-    catch(...)
+    case LayoutVersionMode::New:
     {
-      auto description = ExceptionTools::handle_eptr(std::current_exception());
-      Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
+      try
+      {
+        reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
+      }
+      catch(...)
+      {
+        if(focusAndMode.focus == UIFocus::Setup) {
+          if(failcounter >= 3) {
+            installOldLayouts(focusAndMode);
+            failcounter = 0;
+            return;
+          } else {
+            failcounter++;
+          }
+        }
+        auto description = ExceptionTools::handle_eptr(std::current_exception());
+        Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
+      }
+      break;
     }
+    case LayoutVersionMode::Mixed:
+      try
+      {
+        reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
+      }
+      catch(...)
+      {
+        installOldLayouts(focusAndMode);
+      }
+      break;
   }
-  /*try {
-  } catch (nlohmann::json::out_of_range &e) {
-    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("nlohmann::json::out_of_range\n"s + e.what()));
-  } catch (nlohmann::json::parse_error &e) {
-    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("nlohmann::json::parse_error:\n"s + e.what()));
-  } catch (std::out_of_range &e) {
-    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("std::out_of_range\n "s + e.what()));
-  } catch (std::runtime_error &e) {
-    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("runtime_error\n"s + e.what()));
-  } catch(std::exception& e) {
-    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("Uncaught Exception of Type:\n"s
-    + e.what()));
-  } catch(...) {
-    auto description = ExceptionTools::handle_eptr(std::current_exception());
-    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout("...\n"s + description));
-  }*/
 }
 
 void BOLED::installOldLayouts(FocusAndMode focusAndMode)

@@ -54,14 +54,6 @@ namespace DescriptiveLayouts
 
   std::shared_ptr<DFBLayout> BoledLayoutFactory::instantiate(FocusAndMode fam)
   {
-    try
-    {
       return std::shared_ptr<DFBLayout>(find(fam).instantiate());
-    }
-    catch(...)
-    {
-      auto desc = ExceptionTools::handle_eptr(std::current_exception());
-      return std::make_shared<DebugLayout>(desc);
-    }
   }
 }

@@ -42,6 +42,7 @@
 #include <proxies/lpc/LPCProxy.h>
 #include "WifiSetting.h"
 #include "CrashOnError.h"
+#include "LayoutMode.h"
 
 Settings::Settings(UpdateDocumentMaster *master)
     : super(master)
@@ -66,6 +67,7 @@ Settings::Settings(UpdateDocumentMaster *master)
   addSetting("Pedal3Type", new PedalType(*this, PEDAL_3_TYPE));
   addSetting("Pedal4Type", new PedalType(*this, PEDAL_4_TYPE));
   addSetting("EncoderAcceleration", new EncoderAcceleration(*this));
+  addSetting("LayoutVersionMode", new LayoutMode(this));
   addSetting("AftertouchCurve", new AftertouchCurve(*this));
   addSetting("BenderCurve", new BenderCurve(*this));
   addSetting("PitchbendOnPressedKeys", new PitchbendOnPressedKey(*this));

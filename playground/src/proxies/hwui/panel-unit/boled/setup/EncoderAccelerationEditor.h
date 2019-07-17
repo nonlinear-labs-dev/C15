@@ -12,9 +12,8 @@ class EncoderAccelerationEditor : public SetupLabel, public SetupEditor
 
  public:
   EncoderAccelerationEditor();
-  virtual ~EncoderAccelerationEditor();
-
-  virtual Font::Justification getJustification() const override;
+  ~EncoderAccelerationEditor() override;
+  Font::Justification getJustification() const override;
 
  private:
   bool redraw(FrameBuffer &fb) override;
