@@ -26,9 +26,6 @@ class UsageMode : public Uncopyable
 
   void setupButtonConnection(Buttons buttonID, tAction action);
 
-  Application &getApp();
-  const Application &getApp() const;
-
 #if _TESTS
   std::set<gint32> assignedAudioIDs;
 #endif
