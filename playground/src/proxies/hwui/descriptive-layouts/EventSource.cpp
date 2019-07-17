@@ -53,7 +53,7 @@ namespace DescriptiveLayouts
       return m_lastValue;
     }
 
-    T m_lastValue{};
+    T m_lastValue {};
   };
 
   class GenericParameterDisplayValueEvent : public EventSource<DisplayString>
@@ -200,18 +200,18 @@ namespace DescriptiveLayouts
     }
   };
 
-  class CurrentMacroControlPosition : public GenericValueEventSource
+  class CurrentMacroControlPosition : public EventSource<tControlPositionValue>
   {
    public:
     explicit CurrentMacroControlPosition()
-        : GenericValueEventSource()
+        : EventSource()
+        , m_notifier { this }
     {
     }
 
-   private:
-    void onParameterChanged(const Parameter *p) override
+    void onModulationSourceChanged(const ModulateableParameter *modP)
     {
-      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
+      if(modP)
       {
         if(auto mc = modP->getMacroControl())
         {
@@ -219,6 +219,9 @@ namespace DescriptiveLayouts
         }
       }
     }
+
+   protected:
+    OnModulationChangedNotifier<CurrentMacroControlPosition> m_notifier;
   };
 
   class CurrentParameterControlPosition : public GenericValueEventSource
@@ -268,11 +271,11 @@ namespace DescriptiveLayouts
       {
         auto changed = parameter->isChangedFromLoaded();
         auto displayStr = parameter->getLongName().append(changed ? "*" : "");
-        setValue(DisplayString{ displayStr, changed ? 1 : 0 });
+        setValue(DisplayString { displayStr, changed ? 1 : 0 });
       }
       else
       {
-        setValue(DisplayString{ "", 0 });
+        setValue(DisplayString { "", 0 });
       }
     }
 
@@ -300,7 +303,7 @@ namespace DescriptiveLayouts
    public:
     void onParameterChanged(const Parameter *p)
     {
-      auto str = p ? p->getDisplayString() : Glib::ustring{};
+      auto str = p ? p->getDisplayString() : Glib::ustring {};
 
       if(Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
       {
@@ -453,7 +456,7 @@ namespace DescriptiveLayouts
             return "";
         }
       }();
-      return DisplayString{ typeString, 0 };
+      return DisplayString { typeString, 0 };
     }
   };
 
@@ -463,7 +466,7 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto name = Application::get().getPresetManager()->getEditBuffer()->getName();
-      return DisplayString{ name, 0 };
+      return DisplayString { name, 0 };
     }
   };
 
@@ -473,7 +476,7 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto name = Application::get().getPresetManager()->getEditBuffer()->getCurrentVoiceGroupName();
-      return DisplayString{ name, 0 };
+      return DisplayString { name, 0 };
     }
   };
 
@@ -522,7 +525,7 @@ namespace DescriptiveLayouts
       setValue(value);
     }
 
-    ButtonParameterMapping m_mapping{};
+    ButtonParameterMapping m_mapping {};
     OnParameterSelectionChangedNotifier<IsOnlyParameterOnButton> m_notifier;
   };
 
@@ -540,7 +543,7 @@ namespace DescriptiveLayouts
    public:
     explicit StaticText(Glib::ustring string)
         : EventSource()
-        , m_text{ std::move(string) }
+        , m_text { std::move(string) }
     {
     }
 
@@ -548,7 +551,7 @@ namespace DescriptiveLayouts
     Glib::ustring m_text;
     std::any getLastValue() const override
     {
-      return DisplayString{ m_text, 0 };
+      return DisplayString { m_text, 0 };
     }
   };
 

@@ -4,7 +4,7 @@
       "Selector": {
         "UIFocus": "Parameters",
         "UIMode": "Select",
-        "UIDetail": "ButtonB"
+        "UIDetail": "ButtonA"
       },
       "Conditions": [
         "isParameterModulateable"
@@ -16,7 +16,7 @@
           "Visibility": "!MacroControlAsignment"
         },
         "ButtonAHighlight": {
-          "Class": "Button",
+          "Class": "HighlightButton",
           "Position": "3, 51",
           "Init": {
             "Text[Text]": "MC Pos"
@@ -24,7 +24,7 @@
           "Visibility": "MacroControlAsignment"
         },
         "ButtonB": {
-          "Class": "HighlightButton",
+          "Class": "Button",
           "Position": "67, 51",
           "Init": {
             "Text[Text]": "MC Sel"
@@ -75,13 +75,13 @@
         "MCPositionSlider": {
           "Class": "MiniDotSlider",
           "Position": "8, 25",
-          "Events": "MacroControlPosition => ValueDot[ControlPosition], MacroControlAsignment => ValueDot[Visibility]",
+          "Events": "MacroControlPosition => ValueDot[ControlPosition]",
           "Visibility": "MacroControlAsignment"
         },
         "MCPositionLabel": {
-          "Class": "Label",
+          "Class": "HighlightLabel",
           "Position": "6, 30",
-          "Events": "MacroControlPositionText => Text[Text], MacroControlAsignment => Text[Visibility]",
+          "Events": "MacroControlPositionText => Text[Text]",
           "Visibility": "MacroControlAsignment"
         },
         "MCAmountLabel": {
@@ -92,10 +92,11 @@
         }
       },
       "EventSinks": {
-        "BUTTON_INC": "IncMCSel",
-        "BUTTON_DEC": "DecMCSel",
-        "BUTTON_A": "SwitchToButtonADetail",
-        "BUTTON_B": "SwitchToInitDetail",
+        "BUTTON_INC": "IncMCPos",
+        "BUTTON_DEC": "DecMCPos",
+        "BUTTON_A": "SwitchToInitDetail",
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
         "BUTTON_D": "SwitchToButtonDDetail"
       }
     }

@@ -56,7 +56,7 @@ class HWUI
   const bool getOldLayoutsSetting() const;
 
  private:
-  void onButtonMessage(WebSocketSession::tMessage msg);
+  void onButtonMessage(const WebSocketSession::tMessage& msg);
   void onButtonPressed(Buttons buttonID, bool state);
   void onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res);
 

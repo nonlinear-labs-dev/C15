@@ -53,11 +53,6 @@ namespace DescriptiveLayouts
     fb.fillRect(getPosition());
   }
 
-  void Circle::setDirty()
-  {
-    Control::setDirty();
-  }
-
   void Circle::setProperty(PrimitiveProperty key, std::any value)
   {
     switch(key)
@@ -68,7 +63,7 @@ namespace DescriptiveLayouts
 
       case PrimitiveProperty::ControlPosition:
         m_drawPosition = valueToPosition(std::any_cast<tControlPositionValue>(value));
-        setDirty();
+        Control::setDirty();
         break;
       case PrimitiveProperty::None:
       case PrimitiveProperty::Text:
@@ -87,5 +82,10 @@ namespace DescriptiveLayouts
     Point p(getPosition().getLeft(), getPosition().getTop());
     p.moveBy(static_cast<int>(m_valueDimension.getWidth() * controlPos), 0);
     return p;
+  }
+
+  void Circle::setDirty()
+  {
+    Control::setDirty();
   }
 }

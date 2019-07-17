@@ -59,17 +59,15 @@
           "Position": "19, 21",
           "Events": "MacroControlSymbol => Text[Text]",
           "Visibility": "MacroControlAsignment"
-        },
-        "Dots": {
-          "Class": "Dots",
-          "Position": "40, 19"
         }
       },
       "EventSinks": {
         "BUTTON_INC": "IncParam",
         "BUTTON_DEC": "DecParam",
-        "BUTTON_D": "IncParamSelection",
-        "BUTTON_B": "SwitchToButtonBDetail"
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
       }
     }
   }

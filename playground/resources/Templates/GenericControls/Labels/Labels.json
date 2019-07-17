@@ -5,10 +5,16 @@
         "Class": "Text",
         "Rect": "0, 0, 58, 13"
       }
+    },
+    "HighlightLabel": {
+      "Text": {
+        "Class":"Text",
+        "Rect": "0, 0, 58, 13"
+      }
     }
   },
   "styles": {
-    "DefaultInverted-Label": {
+    "Default-Label-NonHighlight": {
       "selector": {
         "PrimitiveClass": "Text",
         "ControlClasses": "Label"
@@ -16,6 +22,18 @@
       "styles": {
         "BackgroundColor": "C43",
         "Color": "C128",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    },
+    "Default-Label-Highlight": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "HighlightLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C255",
         "FontSize": 8,
         "TextAlign": "Center"
       }

@@ -31,9 +31,8 @@ HWUI::HWUI()
     : m_readersCancel(Gio::Cancellable::create())
     , m_focusAndMode(UIFocus::Parameters, UIMode::Select)
     , m_blinkCount(0)
+    , m_buttonStates{false}
 {
-  m_buttonStates.fill(false);
-
 #ifdef _DEVELOPMENT_PC
   if(isatty(fileno(stdin)))
   {
@@ -62,7 +61,7 @@ const bool HWUI::getOldLayoutsSetting() const
   return m_oldLayouts;
 }
 
-void HWUI::onButtonMessage(WebSocketSession::tMessage msg)
+void HWUI::onButtonMessage(const WebSocketSession::tMessage& msg)
 {
   gsize numBytes = 0;
   auto buffer = (const char *) msg->get_data(numBytes);
@@ -264,7 +263,7 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
         float f = line.size();
         float sign = f < 0 ? -1 : 1;
         f = powf(f, 1.5f) * sign;
-        signed char c = static_cast<signed char>(roundf(f));
+        auto c = static_cast<signed char>(roundf(f));
         m_panelUnit.getEditPanel().getKnob().fake(c);
       }
       else if(line.at(0) == '-')
@@ -273,7 +272,7 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
         f = -f;
         float sign = f < 0 ? -1 : 1;
         f = powf(fabsf(f), 1.5f) * sign;
-        signed char c = static_cast<signed char>(roundf(f));
+        auto c = static_cast<signed char>(roundf(f));
         m_panelUnit.getEditPanel().getKnob().fake(c);
       }
       else if(line.find("z") == 0)

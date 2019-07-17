@@ -5,6 +5,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/ModulateableParameter.h>
+#include <parameters/MacroControlParameter.h>
 
 template <class T> class OnParameterChangedNotifier : public sigc::trackable
 {
@@ -66,18 +67,26 @@ template <class T> class OnModulationChangedNotifier : public sigc::trackable
 
   ~OnModulationChangedNotifier()
   {
+    m_onModulationSourceChangedSignal.disconnect();
     m_onSelectionChangedSignal.disconnect();
     m_onParameterChangedSignal.disconnect();
   }
 
   void onParameterSelectionChanged(const Parameter *o, Parameter *n)
   {
+    m_onModulationSourceChangedSignal.disconnect();
     m_onParameterChangedSignal.disconnect();
 
     if(n)
     {
       m_onParameterChangedSignal
           = n->onParameterChanged(sigc::mem_fun(this, &OnModulationChangedNotifier::onParameterChanged), true);
+
+      if(auto modP = dynamic_cast<const ModulateableParameter*>(n)) {
+          if(auto mc = modP->getMacroControl()) {
+              m_onModulationSourceChangedSignal = mc->onParameterChanged(sigc::mem_fun(this, &OnModulationChangedNotifier::onParameterChanged), true);
+          }
+      }
     }
   }
 
@@ -89,11 +98,21 @@ template <class T> class OnModulationChangedNotifier : public sigc::trackable
       {
         m_parent->onModulationSourceChanged(modP);
       }
+    } else if(auto mc = dynamic_cast<const MacroControlParameter*>(param)) {
+      if(!mc->getTargets().empty())
+      {
+        if(m_parent)
+        {
+          for(const auto& target: mc->getTargets())
+            m_parent->onModulationSourceChanged(target);
+        }
+      }
     }
   }
 
   void disconnect()
   {
+    m_onModulationSourceChangedSignal.disconnect();
     m_onSelectionChangedSignal.disconnect();
     m_onParameterChangedSignal.disconnect();
     m_parent = nullptr;
@@ -103,4 +122,5 @@ template <class T> class OnModulationChangedNotifier : public sigc::trackable
   T *m_parent;
   sigc::connection m_onParameterChangedSignal;
   sigc::connection m_onSelectionChangedSignal;
+  sigc::connection m_onModulationSourceChangedSignal;
 };
