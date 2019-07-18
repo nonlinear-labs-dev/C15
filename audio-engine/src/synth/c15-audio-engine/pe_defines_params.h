@@ -287,7 +287,7 @@ const ParameterDefinition param_definition[sig_number_of_params] = {
     8000 },  // 110 CMB_HICUT_ENV_C
   { 133, Parameters::P_CMB_PM, ClockTypes::Slow, PolyTypes::Mono, 8000, 4, 0.9f, Signals::CMB_PM, SpreadTypes::Spread,
     1, 8000 },  // 111 CMB_PM
-  { 135, Parameters::P_CMB_PMAB, ClockTypes::Slow, PolyTypes::Mono, 16000, 2, 1, Signals::CMB_PMAB, SpreadTypes::Spread,
+  { 135, Parameters::P_CMB_PMAB, ClockTypes::Slow, PolyTypes::Mono, 16000, 0, 0, Signals::CMB_PMAB, SpreadTypes::Spread,
     0, 16000 },  // 112 CMB_PM_AB
 
   // - - - STATE VARIABLE FILTER  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
