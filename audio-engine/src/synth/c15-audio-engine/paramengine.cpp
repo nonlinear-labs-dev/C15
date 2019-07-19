@@ -665,7 +665,7 @@ void paramengine::newEnvUpdateStop(const uint32_t _voiceId, const float _pitch, 
 
   /* envelope a update */
 
-  timeKT = -getParameterValue(Parameters::P_EA_TKT)
+  timeKT = -0.5f * getParameterValue(Parameters::P_EA_TKT)
       * _pitch;  // determine time key tracking according to pitch and parameter
   releaseVel = -getParameterValue(Parameters::P_EA_RV)
       * _velocity;  // determine release velocity according to velocity and parameter
@@ -690,7 +690,7 @@ void paramengine::newEnvUpdateStop(const uint32_t _voiceId, const float _pitch, 
 
   /* envelope b update */
 
-  timeKT = -getParameterValue(Parameters::P_EB_TKT)
+  timeKT = -0.5f * getParameterValue(Parameters::P_EB_TKT)
       * _pitch;  // determine time key tracking according to pitch and parameter
   releaseVel = -getParameterValue(Parameters::P_EB_RV)
       * _velocity;  // determine release velocity according to velocity and parameter
@@ -715,7 +715,7 @@ void paramengine::newEnvUpdateStop(const uint32_t _voiceId, const float _pitch, 
 
   /* envelope c update */
 
-  timeKT = -getParameterValue(Parameters::P_EC_TKT)
+  timeKT = -0.5f * getParameterValue(Parameters::P_EC_TKT)
       * _pitch;  // determine time key tracking according to pitch and parameter
   releaseVel = -getParameterValue(Parameters::P_EC_RV)
       * _velocity;  // determine release velocity according to velocity and parameter
