@@ -899,7 +899,8 @@ void dsp_host::keyDown156(const float _velocity)
   const uint32_t uVoice = static_cast<uint32_t>(m_params.getParameterValue(Parameters::P_UN_V));
   const uint32_t unisonVoices = 1 + uVoice;
   const uint32_t index = m_params.getHead(Parameters::P_KEY_BP).m_index + voiceId;
-  const float pitch = m_params.getBody(index).m_dest;
+  m_params.applySync(index);
+  const float pitch = m_params.getBody(index).m_value;
   const float velocity = m_params.scale(m_params.m_utilities[0].m_scaleId, m_params.m_utilities[0].m_scaleArg,
                                         _velocity * m_params.m_utilities[0].m_normalize);
   const float noteShift = m_params.getParameterValue(Parameters::P_MA_SH);
