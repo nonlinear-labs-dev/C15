@@ -1,7 +1,7 @@
 #pragma once
 
 #include <tools/StateMachine.h>
-#include <tools/Expiration.h>
+#include <nltools/threading/Expiration.h>
 
 enum NoteShiftEvents
 {

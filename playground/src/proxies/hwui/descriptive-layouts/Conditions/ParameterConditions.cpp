@@ -61,7 +61,7 @@ bool ParameterConditions::HasNoMcSelected::check() const
 {
   if(auto parameter = conditiondetail::getModulateableParameter())
   {
-    return parameter->getModulationSource() == ModulationSource::NONE;
+    return parameter->getModulationSource() == MacroControls::NONE;
   }
   return true;
 }

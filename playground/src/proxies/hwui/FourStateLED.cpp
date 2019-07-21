@@ -1,8 +1,8 @@
 #include <glib.h>
 #include "FourStateLED.h"
 #include "device-settings/DebugLevel.h"
-#include <io/network/WebSocketSession.h>
 #include <Application.h>
+#include <nltools/messaging/Message.h>
 
 FourStateLED::FourStateLED()
 {
@@ -22,12 +22,11 @@ void FourStateLED::setState(char state)
 
 void FourStateLED::syncBBBB()
 {
-  uint8_t data[2];
-  data[0] = getID();
-  data[1] = (m_state & 0x03);
-
-  auto msg = Glib::Bytes::create(data, 2);
-  Application::get().getWebSocketSession()->sendMessage(WebSocketSession::Domain::RibbonLed, msg);
+  using namespace nltools::msg;
+  SetRibbonLEDMessage msg;
+  msg.id = static_cast<uint8_t>(getID());
+  msg.brightness = static_cast<uint8_t>(m_state & 0x03);
+  send(EndPoint::RibbonLed, msg);
 }
 
 char FourStateLED::getState() const

@@ -54,7 +54,7 @@ foreach(lib ${LIBS})
   addLib(${lib})
 endforeach(lib)
 
-include_directories(src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion")
 
@@ -67,7 +67,9 @@ filter_items(SOURCE_FILES "/ui/")
 
 add_executable(bbbb ${SOURCE_FILES})
 
-TARGET_LINK_LIBRARIES(bbbb pthread)
+target_link_libraries(bbbb pthread)
+target_link_libraries(bbbb nltools)
+include_directories(audio-engine ${CMAKE_SOURCE_DIR}/nltools/include/)
 
 function(linkLib name)
   pkg_check_modules(${name} REQUIRED ${name})

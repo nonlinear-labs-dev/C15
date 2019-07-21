@@ -4,6 +4,7 @@
 #include "Application.h"
 
 Options::Options(int &argc, char **&argv)
+    : m_selfPath(argv[0])
 {
   setDefaults();
 
@@ -14,7 +15,7 @@ Options::Options(int &argc, char **&argv)
   pmPath.set_flags(OptionEntry::FLAG_FILENAME);
   pmPath.set_long_name("pm-path");
   pmPath.set_short_name('p');
-  pmPath.set_description("name of the folder that stores preset-managers banks as XML files");
+  pmPath.set_description("Name of the folder that stores preset-managers banks as XML files");
   mainGroup.add_entry_filename(pmPath, sigc::mem_fun(this, &Options::setPMPathName));
 
   OptionEntry layoutPath;
@@ -25,26 +26,21 @@ Options::Options(int &argc, char **&argv)
   mainGroup.add_entry_filename(layoutPath, sigc::mem_fun(this, &Options::setLayoutFolder));
 
   OptionEntry bbbb;
-  bbbb.set_long_name("bbbb");
+  bbbb.set_long_name("bbbb-host");
   bbbb.set_short_name('b');
-  bbbb.set_description("IP of the device running the BeagleBoneBlackBridge (bbbb)");
+  bbbb.set_description("Where to find the bbbb");
   mainGroup.add_entry(bbbb, m_bbbb);
 
-  Glib::OptionEntry doTimestamps;
-  doTimestamps.set_long_name("timestamps");
-  doTimestamps.set_short_name('t');
-  doTimestamps.set_description("measure turn around time encoder -> playground -> oled");
-  mainGroup.add_entry(doTimestamps, m_doTimeStamps);
+  OptionEntry ae;
+  ae.set_long_name("audio-engine-host");
+  ae.set_short_name('a');
+  ae.set_description("Where to find the audio-engine");
+  mainGroup.add_entry(ae, m_audioEngineHost);
 
   ctx.set_main_group(mainGroup);
   ctx.set_help_enabled(true);
 
   ctx.parse(argc, argv);
-}
-
-Options::~Options()
-{
-  DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 }
 
 void Options::setDefaults()
@@ -65,7 +61,7 @@ void Options::setDefaults()
   m_settingsFile = "./settings.xml";
   m_kioskModeFile = "./kiosk-mode.stamp";
 
-  Glib::ustring p = Application::get().getSelfPath();
+  Glib::ustring p = m_selfPath;
   size_t lastSlash = p.rfind('/');
   Glib::ustring path = "/resources/Templates/";
   p = p.substr(0, lastSlash) + path;
@@ -110,9 +106,14 @@ Glib::ustring Options::getBBBB() const
   return m_bbbb;
 }
 
-bool Options::sendBBBBTurnaroundTimestamps()
+ustring Options::getAudioEngineHost() const
 {
-  return m_doTimeStamps;
+  return m_audioEngineHost;
+}
+
+Glib::ustring Options::getSelfPath() const
+{
+  return m_selfPath;
 }
 
 Glib::ustring Options::getSettingsFile() const

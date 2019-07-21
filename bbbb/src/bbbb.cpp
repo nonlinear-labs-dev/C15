@@ -3,6 +3,8 @@
 #include <execinfo.h>
 #include <iostream>
 #include <chrono>
+#include <nltools/logging/Log.h>
+
 #include "Application.h"
 #ifdef _DEVELOPMENT_PC
 #include <ui/Window.h>
@@ -10,7 +12,7 @@
 
 void printStackTrace(int i)
 {
-  TRACE("Crash signal caught!");
+  nltools::Log::error("Crash signal caught!");
 
   const size_t max_frames = 64;
   void* addrlist[max_frames + 1];
@@ -20,18 +22,18 @@ void printStackTrace(int i)
 
   if(addrlen == 0)
   {
-    TRACE("");
+    nltools::Log::error("");
     return;
   }
 
-  TRACE("\n\nThe stack trace:");
+  nltools::Log::error("\n\nThe stack trace:");
 
   // create readable strings to each frame. __attribute__((no_instrument_function))
   char** symbollist = backtrace_symbols(addrlist, addrlen);
 
   // print the stack trace.
   for(guint32 i = 0; i < addrlen; i++)
-    TRACE(symbollist[i]);
+    nltools::Log::error(symbollist[i]);
 
   free(symbollist);
   exit(EXIT_FAILURE);
@@ -40,8 +42,6 @@ void printStackTrace(int i)
 int main(int numArgs, char** argv)
 {
   Gio::init();
-
-  TRACE("bbbb 1");
 
   ::signal(SIGSEGV, printStackTrace);
   ::signal(SIGILL, printStackTrace);

@@ -13,6 +13,7 @@
 #include "proxies/hwui/debug-oled/DebugOLED.h"
 #include "proxies/hwui/HWUI.h"
 #include "proxies/lpc/LPCProxy.h"
+#include "proxies/audio-engine/AudioEngineProxy.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <tools/WatchDog.h>
@@ -22,13 +23,29 @@
 #include <assert.h>
 #include <proxies/hwui/debug-oled/DebugLayout.h>
 #include <tools/ExceptionTools.h>
+#include <nltools/messaging/Messaging.h>
 
 Application *Application::theApp = nullptr;
 
-char *Application::initStatic(Application *app, char *argv)
+void setupMessaging(const Options *options)
+{
+  using namespace nltools::msg;
+
+  auto bbbb = options->getBBBB();
+  auto ae = options->getAudioEngineHost();
+
+  Configuration conf;
+  conf.offerEndpoints = { EndPoint::Playground };
+  conf.useEndpoints = { { EndPoint::Playground }, { EndPoint::AudioEngine, ae }, { EndPoint::Lpc, bbbb },
+                        { EndPoint::Oled, bbbb }, { EndPoint::PanelLed, bbbb },  { EndPoint::RibbonLed, bbbb } };
+  nltools::msg::init(conf);
+}
+
+std::unique_ptr<Options> Application::initStatic(Application *app, std::unique_ptr<Options> options)
 {
   theApp = app;
-  return argv;
+  setupMessaging(options.get());
+  return options;
 }
 
 void quitApp(int sig)
@@ -38,15 +55,14 @@ void quitApp(int sig)
 }
 
 Application::Application(int numArgs, char **argv)
-    : m_selfPath(initStatic(this, argv[0]))
+    : m_options(initStatic(this, std::make_unique<Options>(numArgs, argv)))
     , m_theMainLoop(MainLoop::create())
-    , m_options(new Options(numArgs, argv))
-    , m_websocketSession(std::make_unique<WebSocketSession>())
     , m_http(new HTTPServer())
     , m_settings(new Settings(m_http->getUpdateDocumentMaster()))
     , m_undoScope(new UndoScope(m_http->getUpdateDocumentMaster()))
     , m_presetManager(new PresetManager(m_http->getUpdateDocumentMaster()))
     , m_lpcProxy(new LPCProxy())
+    , m_audioEngineProxy(new AudioEngineProxy)
     , m_hwui(new HWUI())
     , m_hwtests(new HWTests(m_http->getUpdateDocumentMaster()))
     , m_watchDog(new WatchDog)
@@ -66,8 +82,6 @@ Application::Application(int numArgs, char **argv)
   m_presetManager->init();
   m_hwui->setFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Select));
   runWatchDog();
-
-  m_websocketSession->startListening();
 
   getMainContext()->signal_timeout().connect(sigc::mem_fun(this, &Application::heartbeat), 500);
 
@@ -104,12 +118,12 @@ Application &Application::get()
 
 Glib::ustring Application::getSelfPath() const
 {
-  return m_selfPath;
+  return getOptions()->getSelfPath();
 }
 
 Glib::ustring Application::getResourcePath() const
 {
-  RefPtr<Gio::File> app = Gio::File::create_for_path(m_selfPath);
+  RefPtr<Gio::File> app = Gio::File::create_for_path(getSelfPath());
   RefPtr<Gio::File> parent = app->get_parent();
   Glib::ustring parentPath = parent->get_path();
   return parentPath + "/resources/";
@@ -192,7 +206,7 @@ Clipboard *Application::getClipboard()
   return m_clipboard.get();
 }
 
-Options *Application::getOptions()
+const Options *Application::getOptions() const
 {
   return m_options.get();
 }
@@ -200,6 +214,11 @@ Options *Application::getOptions()
 LPCProxy *Application::getLPCProxy() const
 {
   return m_lpcProxy.get();
+}
+
+AudioEngineProxy *Application::getAudioEngineProxy() const
+{
+  return m_audioEngineProxy.get();
 }
 
 Settings *Application::getSettings()
@@ -230,11 +249,6 @@ UndoScope *Application::getUndoScope()
 DeviceInformation *Application::getDeviceInformation()
 {
   return m_deviceInformation.get();
-}
-
-WebSocketSession *Application::getWebSocketSession()
-{
-  return m_websocketSession.get();
 }
 
 bool Application::heartbeat()

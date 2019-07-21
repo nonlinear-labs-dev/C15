@@ -1,10 +1,11 @@
 #include <io/files/FileIOReceiver.h>
+#include <nltools/logging/Log.h>
 
 FileIOReceiver::FileIOReceiver(const char *path, size_t blockSize)
     : m_cancel(Gio::Cancellable::create())
     , m_blockSize(blockSize)
 {
-  TRACE("open file for reading: " << path);
+  nltools::Log::notify("open file for reading: ", path);
   auto file = Gio::File::create_for_path(path);
   file->read_async(sigc::bind(sigc::mem_fun(this, &FileIOReceiver::onFileOpened), file), m_cancel);
 }
@@ -22,7 +23,7 @@ void FileIOReceiver::onFileOpened(Glib::RefPtr<Gio::AsyncResult> &result, Glib::
   }
   catch(...)
   {
-    TRACE("Could not open file for reading: " << file->get_path());
+    nltools::Log::error("Could not open file for reading: ", file->get_path());
   }
 }
 

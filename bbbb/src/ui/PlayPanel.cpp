@@ -2,6 +2,7 @@
 #include <io/FromEncoderBridge.h>
 #include <Application.h>
 #include <io/Bridges.h>
+#include <nltools/logging/Log.h>
 
 enum Buttons
 {
@@ -95,14 +96,14 @@ PlayPanel::~PlayPanel()
 {
 }
 
-void PlayPanel::setFrameBuffer(WebSocketServer::tMessage msg)
+void PlayPanel::setFrameBuffer(const nltools::msg::SetOLEDMessage &msg)
 {
   m_boled.setBuffer(msg);
 }
 
 bool PlayPanel::onRotary(Gtk::ScrollType s, double v)
 {
-  TRACE(__PRETTY_FUNCTION__ << " " << (int) s);
+  nltools::Log::debug(__PRETTY_FUNCTION__, (int) s);
   auto b = Application::get().getBridges()->getBridge<FromEncoderBridge>();
   b->sendRotary(v);
   m_rotary.set_value(0);

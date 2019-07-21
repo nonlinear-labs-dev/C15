@@ -8,17 +8,16 @@
 #include <proxies/hwui/Oleds.h>
 #include <tools/PerformanceTimer.h>
 #include <string.h>
+#include <nltools/messaging/Messaging.h>
+#include <nltools/messaging/Message.h>
 
 static TestDriver<RotaryEncoder> tester;
 
 RotaryEncoder::RotaryEncoder()
     : m_throttler(std::chrono::milliseconds(2))
 {
-  Application::get().getWebSocketSession()->onMessageReceived(WebSocketSession::Domain::Rotary,
-                                                              sigc::mem_fun(this, &RotaryEncoder::onMessage));
-
-  Application::get().getWebSocketSession()->onMessageReceived(
-      WebSocketSession::Domain::TimeStampedRotary, sigc::mem_fun(this, &RotaryEncoder::onTimeStampedMessage));
+  nltools::msg::receive<nltools::msg::RotaryChangedMessage>(nltools::msg::EndPoint::Playground,
+                                                            sigc::mem_fun(this, &RotaryEncoder::onMessage));
 }
 
 RotaryEncoder::~RotaryEncoder()
@@ -26,29 +25,9 @@ RotaryEncoder::~RotaryEncoder()
   m_stress.disconnect();
 }
 
-void RotaryEncoder::onMessage(WebSocketSession::tMessage msg)
+void RotaryEncoder::onMessage(const nltools::msg::RotaryChangedMessage &msg)
 {
-  gsize numBytes = 0;
-  const char *buffer = (const char *) msg->get_data(numBytes);
-
-  if(numBytes > 0)
-    applyIncrement(buffer[0]);
-}
-
-void RotaryEncoder::onTimeStampedMessage(WebSocketSession::tMessage msg)
-{
-  gsize numBytes = 0;
-  const char *buffer = (const char *) msg->get_data(numBytes);
-  g_assert(numBytes == 9);
-
-  bool wasDirty = Oleds::get().isDirty();
-  applyIncrement(buffer[8]);
-  bool isDirty = Oleds::get().isDirty();
-
-  if(!wasDirty && isDirty && m_oldestPendingTimestamp == 0)
-  {
-    memcpy(&m_oldestPendingTimestamp, buffer, 8);
-  }
+  applyIncrement(msg.increment);
 }
 
 void RotaryEncoder::applyIncrement(tIncrement currentInc)
@@ -76,11 +55,6 @@ void RotaryEncoder::applyIncrement(tIncrement currentInc)
 void RotaryEncoder::fake(tIncrement i)
 {
   m_signalRotaryChanged.send(i);
-}
-
-int64_t RotaryEncoder::resetOldestPendingTimestamp()
-{
-  return std::exchange(m_oldestPendingTimestamp, 0);
 }
 
 sigc::connection RotaryEncoder::onRotaryChanged(slot<void, tIncrement> slot)

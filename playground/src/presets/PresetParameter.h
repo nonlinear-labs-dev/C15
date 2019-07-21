@@ -34,7 +34,7 @@ class PresetParameter
 
   // accessors
   tControlPositionValue getValue() const;
-  ModulationSource getModulationSource() const;
+  MacroControls getModulationSource() const;
   double getModulationAmount() const;
   std::string getGivenName() const;
   std::string getInfo() const;

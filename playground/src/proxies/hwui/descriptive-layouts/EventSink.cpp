@@ -124,7 +124,7 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
       {
-        if(modParam->getModulationSource() != ModulationSource::NONE)
+        if(modParam->getModulationSource() != MacroControls::NONE)
         {
           hwui->setUiModeDetail(UIDetail::MCAmount);
         }
@@ -134,7 +134,7 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::SwitchToMCModRangeDetail, [hwui, eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
       {
-        if(modParam->getModulationSource() != ModulationSource::NONE)
+        if(modParam->getModulationSource() != MacroControls::NONE)
         {
           hwui->setUiModeDetail(UIDetail::MCModRange);
         }

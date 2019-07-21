@@ -3,7 +3,7 @@
 ShortVsLongPress::ShortVsLongPress(Callback shortPressAction, Callback longPressAction)
     : m_shortPressAction(shortPressAction)
     , m_longPressAction(longPressAction)
-    , m_exp(bind(&ShortVsLongPress::expired, this))
+    , m_exp(std::bind(&ShortVsLongPress::expired, this))
 {
 }
 

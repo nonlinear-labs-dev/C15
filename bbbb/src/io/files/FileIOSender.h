@@ -9,6 +9,7 @@ class FileIOSender : public Sender
   virtual ~FileIOSender();
 
   void send(tMessage msg) override;
+  void write(const char *bytes, size_t numBytes);
 
  private:
   Glib::RefPtr<Glib::IOChannel> m_channel;

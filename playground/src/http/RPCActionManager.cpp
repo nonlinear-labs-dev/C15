@@ -8,7 +8,6 @@ RPCActionManager::RPCActionManager(const Glib::ustring &basePath)
 
 RPCActionManager::~RPCActionManager()
 {
-  DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 }
 
 const Glib::ustring &RPCActionManager::getBasePath() const

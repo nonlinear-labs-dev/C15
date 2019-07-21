@@ -1,9 +1,11 @@
 [Unit]
 Description=Nonlinear-Labs BeagleBoneBlackBridge
-After=syslog.target network.target systemd-modules-load.service
+After=syslog.target network.target systemd-modules-load.service install-update-from-usb.service
+Wants=install-update-from-usb.service
 
 [Service]
 ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/playground/bbbb
+ExecStartPost=-@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/scripts/restart-pg-if-running.sh
 Restart=on-failure
 RestartSec=1
 

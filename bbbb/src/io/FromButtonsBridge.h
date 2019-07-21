@@ -6,6 +6,7 @@ class FromButtonsBridge : public Bridge
 {
  public:
   FromButtonsBridge();
-  virtual ~FromButtonsBridge();
-  void sendKey(int key, bool down);
+  void sendKey(int8_t key, bool down);
+
+  void transmit(Receiver::tMessage msg) override;
 };

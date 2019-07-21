@@ -9,8 +9,7 @@ class PositionInTreeLabel : public Label, public UndoTransactionClient
   typedef Label super;
 
  public:
-  PositionInTreeLabel(const Rect &pos);
-  virtual ~PositionInTreeLabel();
-
-  virtual void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
+  explicit PositionInTreeLabel(const Rect &pos);
+  ~PositionInTreeLabel() override;
+  void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
 };

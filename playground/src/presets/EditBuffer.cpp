@@ -11,6 +11,7 @@
 #include "EditBufferSnapshotMaker.h"
 #include "proxies/lpc/LPCProxy.h"
 #include <proxies/hwui/HWUI.h>
+#include <proxies/audio-engine/AudioEngineProxy.h>
 #include "parameters/ModulateableParameter.h"
 #include <parameters/PhysicalControlParameter.h>
 #include <tools/TimeTools.h>
@@ -20,6 +21,7 @@
 #include "device-info/DeviceInformation.h"
 #include "parameters/MacroControlParameter.h"
 #include <libundo/undo/Transaction.h>
+#include "parameters/MacroControlParameter.h"
 
 EditBuffer::EditBuffer(PresetManager *parent)
     : ParameterGroupSet(parent)
@@ -222,7 +224,7 @@ void EditBuffer::setParameter(size_t id, double cpValue)
   }
 }
 
-void EditBuffer::setModulationSource(ModulationSource src)
+void EditBuffer::setModulationSource(MacroControls src)
 {
   if(auto p = dynamic_cast<ModulateableParameter *>(m_selectedParameter))
   {
@@ -385,7 +387,9 @@ void EditBuffer::undoableLoad(Preset *preset)
 void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset)
 {
   auto lpc = Application::get().getLPCProxy();
+  auto ae = Application::get().getAudioEngineProxy();
   lpc->toggleSuppressParameterChanges(transaction);
+  ae->toggleSuppressParameterChanges(transaction);
 
   copyFrom(transaction, preset);
   undoableSetLoadedPresetInfo(transaction, preset);
@@ -398,6 +402,7 @@ void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset)
   }
 
   lpc->toggleSuppressParameterChanges(transaction);
+  ae->toggleSuppressParameterChanges(transaction);
   resetModifiedIndicator(transaction, getHash());
 }
 
@@ -527,6 +532,7 @@ void EditBuffer::undoableImportReaktorPreset(UNDO::Transaction *transaction, con
   }
 
   Application::get().getLPCProxy()->sendEditBuffer();
+  Application::get().getAudioEngineProxy()->sendEditBuffer();
 }
 
 bool EditBuffer::readReaktorPresetHeader(std::istringstream &input) const
@@ -600,6 +606,7 @@ Glib::ustring EditBuffer::exportReaktorPreset()
 void EditBuffer::sendToLPC()
 {
   Application::get().getLPCProxy()->sendEditBuffer();
+  Application::get().getAudioEngineProxy()->sendEditBuffer();
 }
 
 void EditBuffer::undoableUnlockAllGroups(UNDO::Transaction *transaction)

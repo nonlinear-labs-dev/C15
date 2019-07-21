@@ -1,11 +1,12 @@
 #include "Application.h"
 #include "io/Bridges.h"
-#include "io/network/WebSocketServer.h"
 #include <fcntl.h>
 #include "Options.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <nltools/messaging/Messaging.h>
+
 #ifdef _DEVELOPMENT_PC
 #include <ui/Window.h>
 #endif
@@ -21,13 +22,22 @@ char *Application::initStatic(Application *app, char *argv)
 Application::Application(int numArgs, char **argv)
     : m_selfPath(initStatic(this, argv[0]))
     , m_options(std::make_unique<Options>(numArgs, argv))
-    , m_websocketServer(std::make_unique<WebSocketServer>())
     , m_bridges(std::make_unique<Bridges>())
 {
+  setupMessaging();
 }
 
 Application::~Application()
 {
+}
+
+void Application::setupMessaging()
+{
+  using namespace nltools::msg;
+  Configuration conf;
+  conf.offerEndpoints = { EndPoint::Lpc, EndPoint::Oled, EndPoint::PanelLed, EndPoint::RibbonLed };
+  conf.useEndpoints = { { EndPoint::Playground, m_options->getPlaygroundHost() } };
+  nltools::msg::init(conf);
 }
 
 Application &Application::get()
@@ -64,11 +74,6 @@ void Application::run()
 Options *Application::getOptions()
 {
   return m_options.get();
-}
-
-WebSocketServer *Application::getWebsocketServer()
-{
-  return m_websocketServer.get();
 }
 
 Bridges *Application::getBridges()

@@ -25,7 +25,7 @@ ModulateableParameter::ModulateableParameter(ParameterGroup *group, uint16_t id,
                                              tControlPositionValue fineDenominator)
     : Parameter(group, id, scaling, def, coarseDenominator, fineDenominator)
     , m_modulationAmount(0)
-    , m_modSource(ModulationSource::NONE)
+    , m_modSource(MacroControls::NONE)
 {
 }
 
@@ -52,7 +52,7 @@ void ModulateableParameter::writeToLPC(MessageComposer &cmp) const
 
 uint16_t ModulateableParameter::getModulationSourceAndAmountPacked() const
 {
-  if(getModulationSource() == ModulationSource::NONE)
+  if(getModulationSource() == MacroControls::NONE)
     return 0;
 
   auto scaled = static_cast<gint16>(round(m_modulationAmount * getModulationAmountFineDenominator()));
@@ -86,7 +86,7 @@ void ModulateableParameter::setModulationAmount(UNDO::Transaction *transaction, 
   }
 }
 
-ModulationSource ModulateableParameter::getModulationSource() const
+MacroControls ModulateableParameter::getModulationSource() const
 {
   return m_modSource;
 }
@@ -108,7 +108,7 @@ void ModulateableParameter::copyTo(UNDO::Transaction *transaction, PresetParamet
   other->setField(transaction, PresetParameter::Fields::ModAmount, to_string(getModulationAmount()));
 }
 
-void ModulateableParameter::setModulationSource(UNDO::Transaction *transaction, ModulationSource src)
+void ModulateableParameter::setModulationSource(UNDO::Transaction *transaction, MacroControls src)
 {
   if(m_modSource != src)
   {
@@ -117,7 +117,7 @@ void ModulateableParameter::setModulationSource(UNDO::Transaction *transaction, 
     transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
       if(auto groups = static_cast<ParameterGroupSet *>(getParentGroup()->getParent()))
       {
-        if(m_modSource != ModulationSource::NONE)
+        if(m_modSource != MacroControls::NONE)
         {
           auto modSrc = dynamic_cast<MacroControlParameter *>(
               groups->findParameterByID(MacroControlsGroup::modSrcToParamID(m_modSource)));
@@ -126,7 +126,7 @@ void ModulateableParameter::setModulationSource(UNDO::Transaction *transaction, 
 
         swapData->swapWith(m_modSource);
 
-        if(m_modSource != ModulationSource::NONE)
+        if(m_modSource != MacroControls::NONE)
         {
           auto modSrc = dynamic_cast<MacroControlParameter *>(
               groups->findParameterByID(MacroControlsGroup::modSrcToParamID(m_modSource)));
@@ -155,7 +155,7 @@ void ModulateableParameter::applyLpcMacroControl(tDisplayValue diff)
   getValue().changeRawValue(Initiator::EXPLICIT_LPC, diff * m_modulationAmount);
 }
 
-void ModulateableParameter::undoableSelectModSource(UNDO::Transaction *transaction, ModulationSource src)
+void ModulateableParameter::undoableSelectModSource(UNDO::Transaction *transaction, MacroControls src)
 {
   setModulationSource(transaction, src);
 }
@@ -191,7 +191,7 @@ void ModulateableParameter::undoableIncrementMCSelect(int inc)
 void ModulateableParameter::undoableIncrementMCSelect(UNDO::Transaction *transaction, int inc)
 {
   auto src = (int) getModulationSource();
-  auto numChoices = static_cast<int>(ModulationSource::NUM_CHOICES);
+  auto numChoices = static_cast<int>(MacroControls::NUM_CHOICES);
   src += inc;
 
   while(src < 0)
@@ -200,7 +200,7 @@ void ModulateableParameter::undoableIncrementMCSelect(UNDO::Transaction *transac
   while(src >= numChoices)
     src -= numChoices;
 
-  setModulationSource(transaction, (ModulationSource) src);
+  setModulationSource(transaction, (MacroControls) src);
 }
 
 void ModulateableParameter::undoableIncrementMCAmount(int inc, ButtonModifiers modifiers)
@@ -241,7 +241,7 @@ void ModulateableParameter::writeDocProperties(Writer &writer, tUpdateID knownRe
 
 void ModulateableParameter::loadDefault(UNDO::Transaction *transaction)
 {
-  undoableSelectModSource(transaction, ModulationSource::NONE);
+  undoableSelectModSource(transaction, MacroControls::NONE);
   undoableSetModAmount(transaction, 0.0);
   super::loadDefault(transaction);
 }
@@ -256,12 +256,12 @@ void ModulateableParameter::undoableLoadPackedModulationInfo(UNDO::Transaction *
 
   if(negative && modAmount == 0)
   {
-    undoableSelectModSource(transaction, ModulationSource::NONE);
+    undoableSelectModSource(transaction, MacroControls::NONE);
     undoableSetModAmount(transaction, 0.0);
   }
   else
   {
-    auto iModSrc = static_cast<ModulationSource>(modSrc + 1);
+    auto iModSrc = static_cast<MacroControls>(modSrc + 1);
     undoableSelectModSource(transaction, iModSrc);
 
     auto fModAmount = (negative ? -1.0 : 1.0) * modAmount / getModulationAmountFineDenominator();
@@ -289,7 +289,7 @@ void ModulateableParameter::exportReaktorParameter(std::stringstream &target) co
   super::exportReaktorParameter(target);
   auto packedModulationInfo = getModulationSourceAndAmountPacked();
 
-  if(m_modSource == ModulationSource::NONE)
+  if(m_modSource == MacroControls::NONE)
     packedModulationInfo = 0x2000;
 
   target << packedModulationInfo << std::endl;
@@ -436,7 +436,7 @@ void ModulateableParameter::registerTests()
 
     ModulateableParameter peter(&group, 1, ScaleConverter::get<Linear100PercentScaleConverter>(), 0, 100, 1000);
     peter.m_modulationAmount = 0.014;
-    peter.m_modSource = ModulationSource::MC1;
+    peter.m_modSource = MacroControls::MC1;
     uint16_t packed = peter.getModulationSourceAndAmountPacked();
     packed &= 0x3FFF;
     g_assert(packed == 14);
@@ -455,7 +455,7 @@ bool ModulateableParameter::isAnyModChanged() const
 
 bool ModulateableParameter::isModAmountChanged() const
 {
-  if(getModulationSource() == ModulationSource::NONE)
+  if(getModulationSource() == MacroControls::NONE)
     return false;
 
   if(auto original = getOriginalParameter())
@@ -479,7 +479,7 @@ bool ModulateableParameter::isModSourceChanged() const
 
 bool ModulateableParameter::isMacroControlAssignedAndChanged() const
 {
-  if(getModulationSource() == ModulationSource::NONE)
+  if(getModulationSource() == MacroControls::NONE)
     return false;
 
   if(auto myCurrMC = getMacroControl())

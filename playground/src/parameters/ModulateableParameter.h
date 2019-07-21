@@ -19,12 +19,12 @@ class ModulateableParameter : public Parameter
   tDisplayValue getModulationAmount() const;
   void setModulationAmount(UNDO::Transaction *transaction, const tDisplayValue &amount);
 
-  ModulationSource getModulationSource() const;
-  void setModulationSource(UNDO::Transaction *transaction, ModulationSource src);
+  MacroControls getModulationSource() const;
+  void setModulationSource(UNDO::Transaction *transaction, MacroControls src);
 
   void undoableSetMCAmountToDefault();
 
-  void undoableSelectModSource(UNDO::Transaction *transaction, ModulationSource src);
+  void undoableSelectModSource(UNDO::Transaction *transaction, MacroControls src);
   void undoableSetModAmount(UNDO::Transaction *transaction, double amount);
 
   void undoableIncrementMCSelect(int inc);
@@ -77,5 +77,5 @@ class ModulateableParameter : public Parameter
   int getModAmountDenominator(const ButtonModifiers &modifiers) const;
 
   tDisplayValue m_modulationAmount;
-  ModulationSource m_modSource;
+  MacroControls m_modSource;
 };

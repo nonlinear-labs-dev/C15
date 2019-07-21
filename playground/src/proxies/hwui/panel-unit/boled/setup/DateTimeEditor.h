@@ -3,7 +3,7 @@
 #include <proxies/hwui/controls/ControlWithChildren.h>
 #include <proxies/hwui/panel-unit/boled/setup/SetupEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/SetupLabel.h>
-#include <tools/Expiration.h>
+#include <nltools/threading/Expiration.h>
 #include <array>
 
 class DateTimeEditor : public ControlWithChildren, public SetupEditor

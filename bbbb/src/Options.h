@@ -7,10 +7,9 @@ class Options
 {
  public:
   Options(int &argc, char **&argv);
-  virtual ~Options();
 
-  bool doTimeStamps() const;
+  Glib::ustring getPlaygroundHost() const;
 
  private:
-  bool m_doTimeStamps = false;
+  Glib::ustring m_playgroundHost = "localhost";
 };

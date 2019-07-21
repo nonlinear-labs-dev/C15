@@ -46,7 +46,7 @@ tControlPositionValue RecallParameter::getRecallModulationAmount() const
   return m_recallModAmount;
 }
 
-ModulationSource RecallParameter::getRecallModSource() const
+MacroControls RecallParameter::getRecallModSource() const
 {
   return m_recallModSource;
 }

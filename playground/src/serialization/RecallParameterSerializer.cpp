@@ -24,7 +24,7 @@ void RecallParameterSerializer::readTagContent(Reader &reader) const
   });
 
   reader.onTextElement("mod-source", [this](const ustring &text, const Attributes &attr) {
-    m_parameter->m_recallModSource = static_cast<ModulationSource>(std::stoi(text));
+    m_parameter->m_recallModSource = static_cast<MacroControls>(std::stoi(text));
   });
 }
 

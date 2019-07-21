@@ -1,13 +1,9 @@
 #include <io/FromLPCBridge.h>
 #include "files/LPCReceiver.h"
-#include "network/WebSocketSender.h"
+#include <nltools/messaging/Message.h>
 
 FromLPCBridge::FromLPCBridge()
-    : Bridge(new WebSocketSender(Domain::Lpc), new LPCReceiver())
-{
-}
-
-FromLPCBridge::~FromLPCBridge()
+    : Bridge(nullptr, new LPCReceiver())
 {
 }
 
@@ -22,6 +18,12 @@ void FromLPCBridge::sendRibbonPosition(bool m_upperRibon, double value)
   data[1] = 2;
   data[2] = ribbonId;
   data[3] = val;
-  auto msg = Glib::Bytes::create(data, 8);
-  m_sender->send(msg);
+  transmit(Glib::Bytes::create(data, 8));
+}
+
+void FromLPCBridge::transmit(Receiver::tMessage i)
+{
+  nltools::msg::LPCMessage msg;
+  msg.message = i;
+  nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
 }

@@ -22,7 +22,6 @@ namespace UNDO
 
   Scope::~Scope()
   {
-    DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
   }
 
   Transaction *Scope::getRootTransaction() const

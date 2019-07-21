@@ -11,6 +11,6 @@ class MacroControlsGroup : public ParameterGroup
 
   void init();
 
-  static uint16_t modSrcToParamID(ModulationSource src);
-  static ModulationSource paramIDToModSrc(uint16_t pid);
+  static uint16_t modSrcToParamID(MacroControls src);
+  static MacroControls paramIDToModSrc(uint16_t pid);
 };

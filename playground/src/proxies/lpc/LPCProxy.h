@@ -8,8 +8,7 @@
 #include <parameters/value/RawValue.h>
 #include <parameters/value/QuantizedValue.h>
 #include <memory>
-#include <tools/Throttler.h>
-#include <io/network/WebSocketSession.h>
+#include <nltools/threading/Throttler.h>
 
 class Application;
 class Parameter;
@@ -18,16 +17,24 @@ class PhysicalControlParameter;
 class Preset;
 class MessageParser;
 
+namespace nltools
+{
+  namespace msg
+  {
+    struct LPCMessage;
+  }
+}
+
 enum LPCSettingIDs
 {
-  PLAY_MODE_UPPER_RIBBON_BEHAVIOUR = 0,  // ==> BIT 0 set if (returnMode == RETURN)
-  PLAY_MODE_LOWER_RIBBON_BEHAVIOUR = 1,  // ... BIT 1 set if (touchBehaviour == RELATIVE)
-  NOTE_SHIFT = 2,  // ==> tTcdRange (-48, 48)
-  BASE_UNIT_UI_MODE = 3,  // ==> PLAY = 0, PARAMETER_EDIT = 1
+  PLAY_MODE_UPPER_RIBBON_BEHAVIOUR = 0,      // ==> BIT 0 set if (returnMode == RETURN)
+  PLAY_MODE_LOWER_RIBBON_BEHAVIOUR = 1,      // ... BIT 1 set if (touchBehaviour == RELATIVE)
+  NOTE_SHIFT = 2,                            // ==> tTcdRange (-48, 48)
+  BASE_UNIT_UI_MODE = 3,                     // ==> PLAY = 0, PARAMETER_EDIT = 1
   PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR = 4,  // ==> RELATIVE = 0, ABSOLUTE = 1
-  PEDAL_1_MODE = 5,  // ==> STAY = 0
-  PEDAL_2_MODE = 6,  // ... RETURN_TO_ZERO = 1
-  PEDAL_3_MODE = 7,  // ... RETURN_TO_CENTER = 2,
+  PEDAL_1_MODE = 5,                          // ==> STAY = 0
+  PEDAL_2_MODE = 6,                          // ... RETURN_TO_ZERO = 1
+  PEDAL_3_MODE = 7,                          // ... RETURN_TO_CENTER = 2,
   PEDAL_4_MODE = 8,
   RIBBON_REL_FACTOR = 9,  // ==> tTcdRange(256, 2560)
   // obsolete LOWER_RIBBON_REL_FACTOR = 10, // ==> tTcdRange(256, 2560)
@@ -74,7 +81,7 @@ class LPCProxy
   int getLPCSoftwareVersion() const;
 
  private:
-  void onWebSocketMessage(WebSocketSession::tMessage msg);
+  void onLPCMessage(const nltools::msg::LPCMessage &msg);
   void onMessageReceived(const MessageParser::NLMessage &msg);
 
   typedef std::shared_ptr<MessageComposer> tMessageComposerPtr;

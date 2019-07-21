@@ -7,6 +7,7 @@ class WatchDog;
 class HTTPServer;
 class PresetManager;
 class LPCProxy;
+class AudioEngineProxy;
 class HWUI;
 class Options;
 class HWTests;
@@ -14,7 +15,6 @@ class UndoScope;
 class Settings;
 class EmbeddedPC;
 class Clipboard;
-class WebSocketSession;
 
 class Application
 {
@@ -32,8 +32,9 @@ class Application
 
   PresetManager *getPresetManager() const;
   HTTPServer *getHTTPServer();
-  Options *getOptions();
+  const Options *getOptions() const;
   LPCProxy *getLPCProxy() const;
+  AudioEngineProxy *getAudioEngineProxy() const;
   HWTests *getHWTests();
   HWUI *getHWUI();
   const HWUI *getHWUI() const;
@@ -41,8 +42,6 @@ class Application
   Settings *getSettings();
   DeviceInformation *getDeviceInformation();
   Clipboard *getClipboard();
-
-  WebSocketSession *getWebSocketSession();
 
   void quit();
   bool isQuit() const;
@@ -52,19 +51,18 @@ class Application
 
  private:
   bool heartbeat();
-  static char *initStatic(Application *app, char *argv);
+  static std::unique_ptr<Options> initStatic(Application *app, std::unique_ptr<Options> options);
 
   static Application *theApp;
-  Glib::ustring m_selfPath;
+  std::unique_ptr<Options> m_options;
   RefPtr<MainLoop> m_theMainLoop;
 
-  std::unique_ptr<Options> m_options;
-  std::unique_ptr<WebSocketSession> m_websocketSession;
   std::unique_ptr<HTTPServer> m_http;
   std::unique_ptr<Settings> m_settings;
   std::unique_ptr<UndoScope> m_undoScope;
   std::unique_ptr<PresetManager> m_presetManager;
   std::unique_ptr<LPCProxy> m_lpcProxy;
+  std::unique_ptr<AudioEngineProxy> m_audioEngineProxy;
   std::unique_ptr<HWUI> m_hwui;
   std::unique_ptr<HWTests> m_hwtests;
 

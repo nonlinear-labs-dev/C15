@@ -6,12 +6,13 @@
 #include "Application.h"
 #include "device-settings/Settings.h"
 #include "device-settings/BaseUnitUIMode.h"
-#include "io/network/WebSocketSession.h"
+#include <nltools/messaging/Message.h>
 
 BaseUnit::BaseUnit()
 {
   Application::get().getSettings()->getSetting<BaseUnitUIMode>()->onChange(mem_fun(this, &BaseUnit::respectUsageMode));
-  Application::get().getWebSocketSession()->onConnectionEstablished(sigc::mem_fun(this, &BaseUnit::onBBBBConnected));
+  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::RibbonLed,
+                                        sigc::mem_fun(this, &BaseUnit::onBBBBConnected));
 }
 
 BaseUnit::~BaseUnit()

@@ -35,7 +35,7 @@ void LowerModulationBoundControl::onSelectionChanged(Parameter *, Parameter *new
 void LowerModulationBoundControl::onParameterChanged(const Parameter *p)
 {
   if(auto a = dynamic_cast<const ModulateableParameter *>(p))
-    m_dummyButton->setVisible(a->getModulationSource() == ModulationSource::NONE);
+    m_dummyButton->setVisible(a->getModulationSource() == MacroControls::NONE);
   else
     m_dummyButton->setVisible(true);
 

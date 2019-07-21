@@ -4,7 +4,7 @@
 #include "controls/Rect.h"
 #include <playground.h>
 #include <linux/fb.h>
-#include <tools/Uncopyable.h>
+#include <nltools/Uncopyable.h>
 
 class Font;
 class UDPSender;

@@ -6,9 +6,9 @@
 #include <functional>
 #include <memory>
 #include <list>
-#include <tools/Expiration.h>
+#include <nltools/threading/Expiration.h>
 #include <thread>
-#include <tools/ContextBoundMessageQueue.h>
+#include <nltools/threading/ContextBoundMessageQueue.h>
 #include <chrono>
 
 class WebSocketSession
@@ -88,8 +88,8 @@ class WebSocketSession
 
   tConnectionEstablishedSignal m_onConnectionEstablished;
 
-  std::unique_ptr<ContextBoundMessageQueue> m_backgroundContextQueue;
-  std::unique_ptr<ContextBoundMessageQueue> m_defaultContextQueue;
+  std::unique_ptr<nltools::threading::ContextBoundMessageQueue> m_backgroundContextQueue;
+  std::unique_ptr<nltools::threading::ContextBoundMessageQueue> m_defaultContextQueue;
   Glib::RefPtr<Glib::MainLoop> m_messageLoop;
   std::thread m_contextThread;
   bool m_isListenening = false;

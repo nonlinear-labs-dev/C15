@@ -6,7 +6,7 @@
 class Sender;
 class Receiver;
 
-class Bridge
+class Bridge : public sigc::trackable
 {
  public:
   Bridge(Sender *sender, Receiver *receiver);

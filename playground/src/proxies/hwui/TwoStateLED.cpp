@@ -6,6 +6,7 @@
 #include "proxies/hwui/HWUI.h"
 #include "proxies/hwui/debug-oled/DebugLeds.h"
 #include "proxies/hwui/debug-oled/DebugOLED.h"
+#include <nltools/messaging/Message.h>
 
 TwoStateLED::TwoStateLED(int id)
     : m_state(OFF)
@@ -62,10 +63,11 @@ void TwoStateLED::onBlinkUpdate(int blinkCount)
 
 void TwoStateLED::switchLED(bool onOrOff)
 {
-  uint8_t val[1];
-  *val = ((onOrOff ? 1 : 0) << 7) | (getID() & 0x7F);
-  auto msg = Glib::Bytes::create(val, 1);
-  Application::get().getWebSocketSession()->sendMessage(WebSocketSession::Domain::PanelLed, msg);
+  using namespace nltools::msg;
+  SetPanelLEDMessage msg;
+  msg.id = static_cast<uint8_t>(getID());
+  msg.on = onOrOff;
+  send(EndPoint::PanelLed, msg);
 }
 
 void TwoStateLED::syncBBBB()

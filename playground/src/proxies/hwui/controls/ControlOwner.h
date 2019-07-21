@@ -2,7 +2,7 @@
 
 #include "playground.h"
 #include "Rect.h"
-#include <tools/Uncopyable.h>
+#include <nltools/Uncopyable.h>
 #include <list>
 
 class Control;

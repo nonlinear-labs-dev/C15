@@ -52,3 +52,13 @@ void FrameBufferSender::send(tMessage msg)
   });
 #endif
 }
+
+void FrameBufferSender::send(const void* data, size_t numBytes)
+{
+#ifndef _DEVELOPMENT_PC
+  m_throttler.doTask([=]() {
+    memcpy(m_frontBuffer, data, numBytes);
+    msync(m_frontBuffer, numBytes, MS_ASYNC);
+  });
+#endif
+}

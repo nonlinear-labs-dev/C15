@@ -7,14 +7,21 @@
 #include <proxies/hwui/FineButton.h>
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
-#include <tools/Expiration.h>
+#include <nltools/threading/Expiration.h>
 #include <tools/Signal.h>
-#include <io/network/WebSocketSession.h>
 #include <array>
 #include <memory>
 
 class Application;
 class UsageMode;
+
+namespace nltools
+{
+  namespace msg
+  {
+    struct ButtonChangedMessage;
+  }
+}
 
 class HWUI
 {
@@ -53,11 +60,10 @@ class HWUI
   sigc::connection connectToBlinkTimer(slot<void, int> cb);
   void deInit();
 
-  const bool getOldLayoutsSetting() const;
-
  private:
-  void onButtonMessage(const WebSocketSession::tMessage& msg);
+  void onButtonMessage(const nltools::msg::ButtonChangedMessage &msg);
   void onButtonPressed(Buttons buttonID, bool state);
+
   void onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res);
 
   void addModifier(ButtonModifier i);
@@ -88,7 +94,6 @@ class HWUI
   std::array<bool, (size_t) Buttons::NUM_BUTTONS> m_buttonStates;
 
   int m_affengriffState = 0;
-  bool m_oldLayouts = false;
 
   FocusAndMode m_focusAndMode;
 

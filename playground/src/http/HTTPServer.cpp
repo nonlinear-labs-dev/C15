@@ -11,7 +11,7 @@
 #include "device-settings/DebugLevel.h"
 #include "SoupOutStream.h"
 #include <parameters/MacroControlParameter.h>
-#include <tools/Throttler.h>
+#include <nltools/threading/Throttler.h>
 
 HTTPServer::HTTPServer()
     : m_contentManager()

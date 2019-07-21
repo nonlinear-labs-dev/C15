@@ -1,24 +1,25 @@
 #include <io/files/FileIOReceiver.h>
 #include <io/FromButtonsBridge.h>
-#include <io/network/WebSocketSender.h>
+#include <nltools/messaging/Message.h>
 
 FromButtonsBridge::FromButtonsBridge()
-    : Bridge(new WebSocketSender(Domain::Buttons), new FileIOReceiver("/dev/espi_buttons", 1))
+    : Bridge(nullptr, new FileIOReceiver("/dev/espi_buttons", 1))
 {
 }
 
-FromButtonsBridge::~FromButtonsBridge()
+void FromButtonsBridge::sendKey(int8_t key, bool down)
 {
+  nltools::msg::ButtonChangedMessage msg;
+  msg.buttonId = key;
+  msg.pressed = down;
+  nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
 }
 
-void FromButtonsBridge::sendKey(int key, bool down)
+void FromButtonsBridge::transmit(Receiver::tMessage msg)
 {
-  int8_t data[1];
-  *data = static_cast<int8_t>(key);
+  gsize numBytes = 0;
+  auto buffer = (const char *) msg->get_data(numBytes);
 
-  if(down)
-    *data |= 1 << 7;
-
-  auto msg = Glib::Bytes::create(data, 1);
-  m_sender->send(msg);
+  if(numBytes > 0)
+    sendKey(buffer[0] & 0x7F, buffer[0] & 0x80);
 }

@@ -367,7 +367,7 @@ namespace DescriptiveLayouts
       if(auto modParam
          = dynamic_cast<ModulateableParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
       {
-        setValue(modParam->getModulationSource() != ModulationSource::NONE);
+        setValue(modParam->getModulationSource() != MacroControls::NONE);
         return;
       }
       setValue(false);

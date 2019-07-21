@@ -6,7 +6,6 @@
 #include <sys/mman.h>
 #include <string.h>
 #include <iostream>
-#include <io/network/WebSocketSession.h>
 #include <Application.h>
 #include <Options.h>
 #include <proxies/hwui/HWUI.h>
@@ -16,6 +15,8 @@
 #include <cmath>
 #include <complex>
 #include <complex.h>
+
+#include <nltools/messaging/Message.h>
 
 FrameBuffer::StackScopeGuard::StackScopeGuard(FrameBuffer *fb)
     : m_fb(fb)
@@ -78,7 +79,7 @@ FrameBuffer::FrameBuffer()
   openAndMap();
   clear();
 
-  Application::get().getWebSocketSession()->onConnectionEstablished(sigc::mem_fun(this, &FrameBuffer::swapBuffers));
+  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::Lpc, sigc::mem_fun(this, &FrameBuffer::swapBuffers));
 }
 
 void FrameBuffer::initStacks()
@@ -256,28 +257,10 @@ void FrameBuffer::drawVerticalLine(tCoordinate x, tCoordinate y, tCoordinate len
 
 void FrameBuffer::swapBuffers()
 {
-  if(Application::get().getOptions()->sendBBBBTurnaroundTimestamps())
-  {
-    auto ts = Application::get().getHWUI()->getPanelUnit().getEditPanel().getKnob().resetOldestPendingTimestamp();
-    auto bufferLen = 8 + m_backBuffer.size();
-    uint8_t buffer[bufferLen];
-    memcpy(buffer + 0, &ts, 8);
-    memcpy(buffer + 8, m_backBuffer.data(), m_backBuffer.size());
-    auto bytes = Glib::Bytes::create(buffer, bufferLen);
-    Application::get().getWebSocketSession()->sendMessage(WebSocketSession::Domain::TimeStampedOled, bytes);
-  }
-  else
-  {
-    auto bytes = Glib::Bytes::create(m_backBuffer.data(), m_backBuffer.size());
-    Application::get().getWebSocketSession()->sendMessage(WebSocketSession::Domain::Oled, bytes);
-  }
-#if _DEVELOPMENT_PC
-  for(int i = 0; i < m_backBuffer.size(); i++)
-  {
-    auto c = m_backBuffer.data()[i];
-    g_assert(isValidColor((Colors) c));
-  }
-#endif
+    using namespace nltools::msg;
+    SetOLEDMessage msg;
+    memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
+    send(EndPoint::Oled, msg);
 }
 
 bool FrameBuffer::isValidColor(Colors c) const

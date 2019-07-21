@@ -65,7 +65,7 @@ void PresetManager::init()
 
   if(file->query_exists())
   {
-    DEBUG_TRACE("Loading presetmanager at", path);
+    nltools::Log::notify("Loading presetmanager at", path);
     loadMetadataAndSendEditBufferToLpc(transaction, file);
     loadInitSound(transaction, file);
     loadBanks(transaction, file);
@@ -290,7 +290,7 @@ std::shared_ptr<ScopedGuard::Lock> PresetManager::getLoadingLock()
 
 void PresetManager::loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transaction, RefPtr<Gio::File> pmFolder)
 {
-  DEBUG_TRACE("loadMetadata", pmFolder->get_uri());
+  nltools::Log::notify("loadMetadata", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Edit Buffer");
   Serializer::read<PresetManagerMetadataSerializer>(transaction, pmFolder, ".metadata", this);
   m_editBuffer->sendToLPC();
@@ -298,7 +298,7 @@ void PresetManager::loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transa
 
 void PresetManager::loadInitSound(UNDO::Transaction *transaction, RefPtr<Gio::File> pmFolder)
 {
-  DEBUG_TRACE("loadInitSound", pmFolder->get_uri());
+  nltools::Log::notify("loadInitSound", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Init Sound");
 
   Serializer::read<PresetSerializer>(transaction, pmFolder, ".initSound", m_initSound.get(), true);
@@ -309,13 +309,13 @@ void PresetManager::loadInitSound(UNDO::Transaction *transaction, RefPtr<Gio::Fi
 
 void PresetManager::loadBanks(UNDO::Transaction *transaction, RefPtr<Gio::File> pmFolder)
 {
-  DEBUG_TRACE("loadBanks", pmFolder->get_uri());
+  nltools::Log::notify("loadBanks", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Banks");
 
   int numBanks = m_banks.size();
 
   m_banks.forEach([&, currentBank = 1](Bank *bank) mutable {
-    DEBUG_TRACE("loadBanks, bank:", bank->getUuid().raw());
+    nltools::Log::notify("loadBanks, bank:", bank->getUuid().raw());
     auto bankFolder = pmFolder->get_child(bank->getUuid().raw());
     bank->load(transaction, bankFolder, currentBank++, numBanks);
   });

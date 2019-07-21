@@ -1,7 +1,7 @@
 #pragma once
 
 #include "tools/StateMachine.h"
-#include "tools/Uncopyable.h"
+#include <nltools/Uncopyable.h>
 
 enum UndoButtonEvents
 {

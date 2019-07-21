@@ -180,7 +180,7 @@ void ButtonMenu::selectButton(size_t i)
 {
   if(i != m_selected)
   {
-    m_selected = i;
+    m_selected = sanitizeIndex(i);
     bruteForce();
   }
 }

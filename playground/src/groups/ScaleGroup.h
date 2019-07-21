@@ -1,7 +1,7 @@
 #pragma once
 
 #include <groups/ParameterGroup.h>
-#include <tools/Throttler.h>
+#include <nltools/threading/Throttler.h>
 
 class ParameterGroupSet;
 

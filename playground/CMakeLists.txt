@@ -2,12 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(playground)
 
 set(LIBS
-  glibmm-2.4
-  giomm-2.4
-  glib-2.0
-  gio-2.0
   gio-unix-2.0
-  libsoup-2.4
   uuid
   avahi-glib
   avahi-gobject
@@ -65,8 +60,13 @@ file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(playground ${SOURCE_FILES})
 
-TARGET_LINK_LIBRARIES(playground pthread)
-TARGET_LINK_LIBRARIES(playground stdc++fs)
+target_link_libraries(playground pthread)
+target_link_libraries(playground stdc++fs)
+target_link_libraries(playground nltools)
+
+include_directories(playground ${CMAKE_SOURCE_DIR}/nltools/include/)
+include_directories(playground ${CMAKE_SOURCE_DIR}/playground/src/)
+
 
 function(linkLib name)
   pkg_check_modules(${name} REQUIRED ${name})
@@ -146,13 +146,26 @@ install(FILES ${PARAMETER_DESCRIPTIONS}
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/parameter-descriptions
   )
 
+install(FILES ${PARAMETER_DESCRIPTIONS}
+  DESTINATION ${CMAKE_BINARY_DIR}/playground/resources/parameter-descriptions
+  )
+
 install(FILES ${VERSION_INFOS}
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/version-infos
+  )
+
+install(FILES ${VERSION_INFOS}
+  DESTINATION ${CMAKE_BINARY_DIR}/playground/resources/version-infos
   )
 
 install(DIRECTORY resources
   USE_SOURCE_PERMISSIONS
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
+  )
+
+install(DIRECTORY resources
+  USE_SOURCE_PERMISSIONS
+  DESTINATION ${CMAKE_BINARY_DIR}/playground
   )
 
 install(TARGETS playground

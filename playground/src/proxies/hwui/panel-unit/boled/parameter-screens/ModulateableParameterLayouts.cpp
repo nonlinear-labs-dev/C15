@@ -111,8 +111,8 @@ void ModulateableParameterSelectLayout2::onCurrentParameterChanged(const Paramet
 void ModulateableParameterSelectLayout2::fixModeIfNecessary(const Parameter *p)
 {
   auto isModulateable = dynamic_cast<const ModulateableParameter *>(p) != nullptr;
-  auto isModulated = isModulateable
-      && dynamic_cast<const ModulateableParameter *>(p)->getModulationSource() != ModulationSource::NONE;
+  auto isModulated
+      = isModulateable && dynamic_cast<const ModulateableParameter *>(p)->getModulationSource() != MacroControls::NONE;
 
   switch(m_mode)
   {
@@ -238,7 +238,7 @@ bool ModulateableParameterSelectLayout2::hasModulationSource() const
   if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
   {
     auto src = p->getModulationSource();
-    return src != ModulationSource::NONE;
+    return src != MacroControls::NONE;
   }
   return false;
 }
@@ -294,7 +294,7 @@ void ModulateableParameterSelectLayout2::setDefault()
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
         auto scope = p->getUndoScope().startTransaction("Set MC Select for '%0'", p->getLongName());
-        p->undoableSelectModSource(scope->getTransaction(), ModulationSource::NONE);
+        p->undoableSelectModSource(scope->getTransaction(), MacroControls::NONE);
       }
 
       return;

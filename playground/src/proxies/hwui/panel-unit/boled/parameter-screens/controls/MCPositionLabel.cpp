@@ -86,7 +86,7 @@ void MCPositionLabel::ensureDisconnectedModulationSourceIfApplicable(const Param
 {
   if(auto modP = dynamic_cast<const ModulateableParameter *>(parameter))
   {
-    if(modP->getModulationSource() == ModulationSource::NONE)
+    if(modP->getModulationSource() == MacroControls::NONE)
     {
       m_mcValueConnection.disconnect();
       setText("");

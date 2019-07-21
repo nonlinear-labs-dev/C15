@@ -9,6 +9,7 @@
 #include "http/UpdateDocumentMaster.h"
 #include "Application.h"
 #include "proxies/lpc/LPCProxy.h"
+#include "proxies/audio-engine/AudioEngineProxy.h"
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterInfoLayout.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/UnmodulatebaleParameterLayouts.h>
 #include <presets/EditBuffer.h>
@@ -210,6 +211,7 @@ void Parameter::undoableSetDefaultValue(UNDO::Transaction *transaction, tControl
 void Parameter::sendToLpc() const
 {
   Application::get().getLPCProxy()->sendParameter(this);
+  Application::get().getAudioEngineProxy()->sendParameter(getID(), getControlPositionValue());
 }
 
 tControlPositionValue Parameter::getNextStepValue(int incs, ButtonModifiers modifiers) const

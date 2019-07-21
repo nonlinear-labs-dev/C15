@@ -119,14 +119,14 @@ void PresetParameter::writeDiff(Writer &writer, int parameterID, const PresetPar
   });
 }
 
-ModulationSource PresetParameter::getModulationSource() const
+MacroControls PresetParameter::getModulationSource() const
 {
   auto it = m_fields.find(Fields::ModSource);
 
   if(it != m_fields.end() && !it->second.empty())
-    return static_cast<ModulationSource>(std::stoi(it->second));
+    return static_cast<MacroControls>(std::stoi(it->second));
 
-  return ModulationSource::NONE;
+  return MacroControls::NONE;
 }
 
 double PresetParameter::getModulationAmount() const

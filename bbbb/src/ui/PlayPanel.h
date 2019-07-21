@@ -6,13 +6,21 @@
 #include "Boled.h"
 #include "Button.h"
 
+namespace nltools
+{
+  namespace msg
+  {
+    struct SetOLEDMessage;
+  }
+}
+
 class PlayPanel : public Gtk::VBox
 {
  public:
   PlayPanel();
   virtual ~PlayPanel();
 
-  void setFrameBuffer(WebSocketServer::tMessage msg);
+  void setFrameBuffer(const nltools::msg::SetOLEDMessage &msg);
 
  private:
   bool onRotary(Gtk::ScrollType s, double v);

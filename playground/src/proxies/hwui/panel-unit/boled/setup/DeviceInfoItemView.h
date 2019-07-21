@@ -1,7 +1,7 @@
 #pragma once
 
 #include <proxies/hwui/panel-unit/boled/setup/SetupLabel.h>
-#include <tools/Expiration.h>
+#include <nltools/threading/Expiration.h>
 #include <chrono>
 
 class DeviceInformationItem;

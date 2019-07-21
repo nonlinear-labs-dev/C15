@@ -20,6 +20,7 @@
 #include "device-settings/VelocityCurve.h"
 #include <device-settings/ParameterEditModeRibbonBehaviour.h>
 #include <memory.h>
+#include <nltools/messaging/Message.h>
 
 LPCProxy::LPCProxy()
     : m_lastTouchedRibbon(HardwareSourcesGroup::getUpperRibbonParameterID())
@@ -28,9 +29,10 @@ LPCProxy::LPCProxy()
 {
   m_msgParser.reset(new MessageParser());
 
-  auto cb = sigc::mem_fun(this, &LPCProxy::onWebSocketMessage);
-  Application::get().getWebSocketSession()->onConnectionEstablished(sigc::mem_fun(this, &LPCProxy::onLPCConnected));
-  Application::get().getWebSocketSession()->onMessageReceived(WebSocketSession::Domain::Lpc, cb);
+  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::Lpc, sigc::mem_fun(this, &LPCProxy::onLPCConnected));
+
+  nltools::msg::receive<nltools::msg::LPCMessage>(nltools::msg::EndPoint::Playground,
+                                                  sigc::mem_fun(this, &LPCProxy::onLPCMessage));
 }
 
 LPCProxy::~LPCProxy()
@@ -38,10 +40,10 @@ LPCProxy::~LPCProxy()
   DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 }
 
-void LPCProxy::onWebSocketMessage(WebSocketSession::tMessage msg)
+void LPCProxy::onLPCMessage(const nltools::msg::LPCMessage &msg)
 {
   gsize numBytes = 0;
-  const uint8_t *buffer = (const uint8_t *) (msg->get_data(numBytes));
+  const uint8_t *buffer = (const uint8_t *) (msg.message->get_data(numBytes));
 
   if(numBytes > 0)
   {
@@ -243,7 +245,10 @@ void LPCProxy::queueToLPC(tMessageComposerPtr cmp)
 {
   auto flushed = cmp->flush();
   traceBytes(flushed);
-  Application::get().getWebSocketSession()->sendMessage(WebSocketSession::Domain::Lpc, flushed);
+
+  nltools::msg::LPCMessage msg;
+  msg.message = flushed;
+  nltools::msg::send(nltools::msg::EndPoint::Lpc, msg);
 }
 
 void LPCProxy::traceBytes(const RefPtr<Bytes> bytes) const

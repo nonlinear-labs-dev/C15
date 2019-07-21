@@ -17,6 +17,7 @@
 #include <parameters/MacroControlParameter.h>
 #include <groups/MacroControlsGroup.h>
 #include <http/UndoScope.h>
+#include <nltools/messaging/Message.h>
 
 PanelUnit::PanelUnit()
 {
@@ -54,7 +55,7 @@ PanelUnit::PanelUnit()
       if(modParam->getModulationSource() == mc)
       {
         auto scope = Application::get().getUndoScope()->startTransaction("Remove Modulation Source");
-        modParam->undoableSelectModSource(scope->getTransaction(), ModulationSource::NONE);
+        modParam->undoableSelectModSource(scope->getTransaction(), MacroControls::NONE);
       }
       else
       {
@@ -91,7 +92,8 @@ PanelUnit::PanelUnit()
 
   setUsageMode(new PanelUnitParameterEditMode());
 
-  Application::get().getWebSocketSession()->onConnectionEstablished(sigc::mem_fun(this, &PanelUnit::onBBBBConnected));
+  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::PanelLed,
+                                        sigc::mem_fun(this, &PanelUnit::onBBBBConnected));
 }
 
 PanelUnit::~PanelUnit()

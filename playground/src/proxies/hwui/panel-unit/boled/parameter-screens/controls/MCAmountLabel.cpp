@@ -33,7 +33,7 @@ void MCAmountLabel::update(const Parameter *parameter)
 {
   if(const auto *mp = dynamic_cast<const ModulateableParameter *>(parameter))
   {
-    if(mp->getModulationSource() != ModulationSource::NONE)
+    if(mp->getModulationSource() != MacroControls::NONE)
     {
       auto amount = mp->stringizeModulationAmount();
       if(isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))

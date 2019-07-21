@@ -13,14 +13,14 @@ class RecallParameter : public UpdateDocumentContributor
   void copyFrom(UNDO::Transaction* transaction, const Parameter* other);
 
   tControlPositionValue getRecallValue() const;
-  ModulationSource getRecallModSource() const;
+  MacroControls getRecallModSource() const;
   tControlPositionValue getRecallModulationAmount() const;
 
  private:
   int m_id;
   tControlPositionValue m_recallValue = 0;
   tControlPositionValue m_recallModAmount = 0;
-  ModulationSource m_recallModSource = ModulationSource::NONE;
+  MacroControls m_recallModSource = MacroControls::NONE;
 
   friend class RecallParameterSerializer;
 };

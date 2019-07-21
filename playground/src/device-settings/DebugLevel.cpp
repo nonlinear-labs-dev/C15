@@ -22,6 +22,31 @@ bool DebugLevel::set(DebugLevels m)
   {
     lastSetLevel = m;
     DebugLevel::gassy(__PRETTY_FUNCTION__, G_STRLOC, save());
+
+    switch(m)
+    {
+      case DebugLevels::DEBUG_LEVEL_DEBUG:
+        nltools::Log::setLevel(nltools::Log::Debug);
+        break;
+
+      case DebugLevels::DEBUG_LEVEL_SILENT:
+      case DebugLevels::DEBUG_LEVEL_ERROR:
+        nltools::Log::setLevel(nltools::Log::Error);
+        break;
+
+      case DebugLevels::DEBUG_LEVEL_WARNING:
+        nltools::Log::setLevel(nltools::Log::Warning);
+        break;
+
+      case DebugLevels::DEBUG_LEVEL_INFO:
+        nltools::Log::setLevel(nltools::Log::Info);
+        break;
+
+      case DebugLevels::DEBUG_LEVEL_GASSY:
+        nltools::Log::setLevel(nltools::Log::Debug);
+        break;
+    }
+
     return true;
   }
   return false;

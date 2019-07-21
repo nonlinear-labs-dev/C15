@@ -130,7 +130,7 @@ void ModulationCarousel::onModulationSourceChanged(const ModulateableParameter *
   if(modP)
   {
     forceHighlights();
-    auto visible = modP->getModulationSource() != ModulationSource::NONE;
+    auto visible = modP->getModulationSource() != MacroControls::NONE;
     m_upper->setVisible(visible);
     m_lower->setVisible(visible);
     m_middle->setVisible(visible);

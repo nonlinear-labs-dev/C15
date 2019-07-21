@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tools/Throttler.h>
+#include <nltools/threading/Throttler.h>
 #include <io/Sender.h>
 #include <stddef.h>
 #include <linux/fb.h>
@@ -16,6 +16,7 @@ class FrameBufferSender : public Sender
   virtual ~FrameBufferSender();
 
   void send(tMessage msg) override;
+  void send(const void *data, size_t numBytes);
 
  private:
   using tPixel = uint8_t;

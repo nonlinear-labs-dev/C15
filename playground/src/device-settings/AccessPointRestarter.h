@@ -1,8 +1,8 @@
-#include <tools/Throttler.h>
-
-#include <thread>
-
 #pragma once
+
+#include <nltools/threading/Throttler.h>
+#include <thread>
+#include <atomic>
 
 class AccessPointRestarter
 {

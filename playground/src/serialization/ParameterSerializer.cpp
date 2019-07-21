@@ -111,7 +111,7 @@ void ParameterSerializer::loadModulationAmount(Reader &reader, const Glib::ustri
     if(i == -1)
       i = 0;
 
-    ModulationSource s = (ModulationSource)((i));
+    MacroControls s = (MacroControls)((i));
     p->setModulationSource(reader.getTransaction(), s);
   }
 }

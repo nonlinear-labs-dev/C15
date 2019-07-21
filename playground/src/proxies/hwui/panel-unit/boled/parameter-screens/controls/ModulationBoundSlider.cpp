@@ -31,7 +31,7 @@ void ModulationBoundSlider::onParameterChanged(const Parameter *)
 
 bool ModulationBoundSlider::redraw(FrameBuffer &fb)
 {
-  if(m_param && m_param->getModulationSource() != ModulationSource::NONE)
+  if(m_param && m_param->getModulationSource() != MacroControls::NONE)
   {
     if(isHighlight())
       fb.setColor(FrameBuffer::C255);

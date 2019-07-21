@@ -8,6 +8,7 @@
 #include <Application.h>
 #include <device-settings/Settings.h>
 #include <proxies/lpc/LPCProxy.h>
+#include <proxies/audio-engine/AudioEngineProxy.h>
 #include <boost/algorithm/string.hpp>
 
 //NonMember helperFunctions pre:
@@ -19,6 +20,7 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
   addAction("sync-lpc", [=](std::shared_ptr<NetworkRequest> request) mutable {
     Application::get().getSettings()->sendToLPC();
     Application::get().getLPCProxy()->sendEditBuffer();
+    Application::get().getAudioEngineProxy()->sendEditBuffer();
   });
 
   addAction("select-param", [=](std::shared_ptr<NetworkRequest> request) mutable {
@@ -39,7 +41,7 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("set-mod-src", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto src = std::stoi(request->get("source"));
-    editBuffer->setModulationSource(static_cast<ModulationSource>(src));
+    editBuffer->setModulationSource(static_cast<MacroControls>(src));
   });
 
   addAction("reset", [=](std::shared_ptr<NetworkRequest> request) mutable {

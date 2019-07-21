@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <memory>
 #include <glib.h>
-#include <tools/Uncopyable.h>
+#include <nltools/Uncopyable.h>
 
 template <typename TItemPtr> class IntrusiveList;
 template <typename TSelfPtr> class IntrusiveListItem;

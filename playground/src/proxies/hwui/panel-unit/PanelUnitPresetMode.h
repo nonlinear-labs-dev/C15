@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PanelUnitParameterEditMode.h"
-#include "tools/Throttler.h"
+#include <nltools/threading/Throttler.h>
 #include <array>
 #include <list>
 #include <parameters/names/ParameterDB.h>

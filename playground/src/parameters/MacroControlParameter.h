@@ -3,7 +3,7 @@
 #include "Parameter.h"
 #include <proxies/hwui/HWUIEnums.h>
 #include <set>
-#include <tools/Throttler.h>
+#include <nltools/threading/Throttler.h>
 
 class ModulateableParameter;
 
