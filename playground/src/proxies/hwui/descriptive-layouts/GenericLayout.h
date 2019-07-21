@@ -23,5 +23,10 @@ namespace DescriptiveLayouts
     void createControls();
 
     LayoutClass m_prototype;
+    bool handleDefaults(Buttons buttons, bool down, ::ButtonModifiers modifiers);
+    void togglePresetMode();
+    void toggleSoundMode();
+    void toggleSetupMode();
+    void toggleStoreMode();
   };
 }
