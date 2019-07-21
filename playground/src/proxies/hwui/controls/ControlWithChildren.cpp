@@ -48,7 +48,7 @@ bool ControlWithChildren::redraw(FrameBuffer &fb)
     ControlOwner::setAllDirty();
 
     if(!isTransparent())
-      Control::drawBackground(fb);
+      drawBackground(fb);
   }
 
   auto clip = fb.clipRespectingOffset(getPosition());

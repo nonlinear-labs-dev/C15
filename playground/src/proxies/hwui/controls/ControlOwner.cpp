@@ -2,6 +2,9 @@
 #include "Control.h"
 #include "Button.h"
 
+#include <Application.h>
+#include <device-settings/LayoutMode.h>
+
 ControlOwner::ControlOwner() = default;
 
 ControlOwner::~ControlOwner() = default;
@@ -28,49 +31,71 @@ void ControlOwner::setHighlight(bool isHighlight)
 
 bool ControlOwner::redraw(FrameBuffer &fb)
 {
-  std::vector<tControlPtr> dirtyControls;
-  std::vector<tControlPtr> underlyingControls;
-
-  for(const auto &c : m_controls)
+  if(Application::get().getSettings()->getSetting<LayoutMode>()->get() == LayoutVersionMode::Old)
   {
-    if(c->isDirty())
+    bool didRedraw = false;
+
+    for(const auto& c : m_controls)
     {
-      forEach((tCallback)[&underlyingControls, &c, &fb](tControlPtr child) {
-        if(c.get() != child.get())
-        {
-          if(c->getPosition().intersects(child->getPosition()))
+      if(c->isDirty())
+      {
+        c->drawBackground(fb);
+
+        if(c->isVisible())
+          c->redraw(fb);
+
+        c->setClean();
+        didRedraw = true;
+      }
+    }
+    return didRedraw;
+  }
+  else
+  {
+    std::vector<tControlPtr> dirtyControls;
+    std::vector<tControlPtr> underlyingControls;
+
+    for(const auto &c : m_controls)
+    {
+      if(c->isDirty())
+      {
+        forEach((tCallback)[&underlyingControls, &c, &fb](tControlPtr child) {
+          if(c.get() != child.get())
           {
-            underlyingControls.emplace_back(child);
+            if(c->getPosition().intersects(child->getPosition()))
+            {
+              underlyingControls.emplace_back(child);
+            }
           }
-        }
-      });
+        });
 
-      dirtyControls.emplace_back(c);
+        dirtyControls.emplace_back(c);
+      }
     }
-  }
 
-  std::for_each(dirtyControls.begin(), dirtyControls.end(),
-                [&underlyingControls](auto &e) { underlyingControls.emplace_back(e); });
+    std::for_each(dirtyControls.begin(), dirtyControls.end(),
+                  [&underlyingControls](auto &e) { underlyingControls.emplace_back(e); });
 
-  for(const auto &c : underlyingControls)
-  {
-
-    if(c->isVisible())
+    for(const auto &c : underlyingControls)
     {
-      c->drawBackground(fb);
-      c->redraw(fb);
-    }
-    else
-    {
-      auto pos = c->getPosition();
-      fb.setColor(FrameBuffer::Colors::C43);
-      fb.fillRect(pos);
+
+      if(c->isVisible())
+      {
+        c->drawBackground(fb);
+        c->redraw(fb);
+      }
+      else
+      {
+        auto pos = c->getPosition();
+        fb.setColor(FrameBuffer::Colors::C43);
+        fb.fillRect(pos);
+      }
+
+      c->setClean();
     }
 
-    c->setClean();
+    return !dirtyControls.empty();
   }
-
-  return !dirtyControls.empty();
 }
 
 void ControlOwner::remove(const Control *ctrl)

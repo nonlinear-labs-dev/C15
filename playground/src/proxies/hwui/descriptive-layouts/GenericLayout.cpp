@@ -58,8 +58,10 @@ namespace DescriptiveLayouts
 
   bool GenericLayout::handleDefaults(Buttons buttons, bool down, ::ButtonModifiers modifiers)
   {
-    if(down) {
-      switch (buttons) {
+    if(down)
+    {
+      switch(buttons)
+      {
         case Buttons::BUTTON_PRESET:
           togglePresetMode();
           return true;
@@ -71,6 +73,12 @@ namespace DescriptiveLayouts
           return true;
         case Buttons::BUTTON_STORE:
           toggleStoreMode();
+          return true;
+        case Buttons::BUTTON_INFO:
+          toggleInfo();
+          return true;
+        case Buttons::BUTTON_EDIT:
+          toggleEdit();
           return true;
       }
     }
@@ -173,48 +181,59 @@ namespace DescriptiveLayouts
 
   void GenericLayout::togglePresetMode()
   {
-    auto* hwui = Application::get().getHWUI();
+    auto *hwui = Application::get().getHWUI();
     auto current = hwui->getFocusAndMode();
-    if(current.focus == UIFocus::Presets) {
-      current.focus = UIFocus::Parameters;
-      current.mode = UIMode::Select;
-      current.detail = UIDetail::Init;
-    } else {
-      current.focus = UIFocus::Presets;
-    }
-    hwui->setFocusAndMode(current);
+    if(current.focus == UIFocus::Presets)
+      hwui->setFocusAndMode({UIFocus::Parameters,UIMode::Select,UIDetail::Init});
+    else
+      hwui->setFocusAndMode({UIFocus::Presets, UIMode::Select, UIDetail::Init});
   }
 
   void GenericLayout::toggleSoundMode()
   {
-    auto* hwui = Application::get().getHWUI();
+    auto *hwui = Application::get().getHWUI();
     auto current = hwui->getFocusAndMode();
-    if(current.focus == UIFocus::Sound) {
-      current.focus = UIFocus::Parameters;
-      current.mode = UIMode::Select;
-      current.detail = UIDetail::Init;
-    } else {
-      current.focus = UIFocus::Sound;
-    }
-    hwui->setFocusAndMode(current);
+    if(current.focus == UIFocus::Sound)
+      hwui->setFocusAndMode({UIFocus::Parameters, UIMode::Select, UIDetail::Init});
+    else
+      hwui->setFocusAndMode({UIFocus::Sound, UIMode::Select, UIDetail::Init});
   }
 
   void GenericLayout::toggleSetupMode()
   {
-    auto* hwui = Application::get().getHWUI();
+    auto *hwui = Application::get().getHWUI();
     auto current = hwui->getFocusAndMode();
-    if(current.focus == UIFocus::Setup) {
-      current.focus = UIFocus::Parameters;
-      current.mode = UIMode::Select;
-      current.detail = UIDetail::Init;
-    } else {
-      current.focus = UIFocus::Setup;
-      current.mode = UIMode::Select;
-      current.detail = UIDetail::Init;
-    }
-    hwui->setFocusAndMode(current);
+    if(current.focus == UIFocus::Setup)
+      hwui->setFocusAndMode({UIFocus::Parameters, UIMode::Select, UIDetail::Init});
+    else
+      hwui->setFocusAndMode({UIFocus::Setup, UIMode::Select, UIDetail::Init});
   }
   void GenericLayout::toggleStoreMode()
   {
+    auto *hwui = Application::get().getHWUI();
+    auto current = hwui->getFocusAndMode();
+    if(current.focus == UIFocus::Presets && current.mode == UIMode::Store)
+      hwui->setFocusAndMode({UIFocus::Presets, UIMode::Select, UIDetail::Init});
+    else
+      hwui->setFocusAndMode({UIFocus::Presets, UIMode::Store, UIDetail::Init});
+  }
+  void GenericLayout::toggleInfo()
+  {
+    auto *hwui = Application::get().getHWUI();
+    auto current = hwui->getFocusAndMode();
+    if(current.mode == UIMode::Info)
+      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Select, UIDetail::Init });
+    else
+      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Info, UIDetail::Init });
+  }
+  void GenericLayout::toggleEdit()
+  {
+
+    auto *hwui = Application::get().getHWUI();
+    auto current = hwui->getFocusAndMode();
+    if(current.mode == UIMode::Edit)
+      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Select, UIDetail::Init });
+    else
+      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Edit, UIDetail::Init });
   }
 }

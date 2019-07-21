@@ -64,7 +64,6 @@ class Label : public Control
 
   virtual void setFontColor(FrameBuffer &fb) const;
   virtual void setSuffixFontColor(FrameBuffer &fb) const;
-
   virtual int getXOffset() const;
   virtual int getYOffset() const;
   virtual int getRightMargin() const;
