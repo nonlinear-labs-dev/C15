@@ -22,7 +22,7 @@ void DisplayEditor::doLayout()
 {
   Control::setPosition(Rect(0, 16, 256, 96));
   int y = 3;
-  for(auto key : m_order)
+  for(const auto& key : m_order)
   {
     auto label = m_entrys[key].first;
     auto valueLabel = m_entrys[key].second;
@@ -33,4 +33,16 @@ void DisplayEditor::doLayout()
     valueLabel->setPosition(valuepos);
     y += height;
   }
+}
+
+bool DisplayEditor::redraw(FrameBuffer& fb)
+{
+  return ControlWithChildren::redraw(fb);
+}
+
+void DisplayEditor::drawBackground(FrameBuffer& fb)
+{
+  fb.setColor(FrameBuffer::Colors::C43);
+  fb.fillRect(getPosition());
+  ControlWithChildren::drawBackground(fb);
 }

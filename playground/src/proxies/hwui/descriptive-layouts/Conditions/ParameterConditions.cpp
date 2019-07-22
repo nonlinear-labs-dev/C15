@@ -69,6 +69,7 @@ bool ParameterConditions::HasNoMcSelected::check() const
 void ParameterConditions::HasNoMcSelected::onParameterChanged(const Parameter *parameter)
 {
   get();
+  onConditionChanged();
 }
 
 bool ParameterConditions::HasMcSelected::check() const

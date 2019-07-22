@@ -53,7 +53,7 @@ namespace DescriptiveLayouts
       return m_lastValue;
     }
 
-    T m_lastValue {};
+    T m_lastValue{};
   };
 
   class GenericParameterDisplayValueEvent : public EventSource<DisplayString>
@@ -205,7 +205,7 @@ namespace DescriptiveLayouts
    public:
     explicit CurrentMacroControlPosition()
         : EventSource()
-        , m_notifier { this }
+        , m_notifier{ this }
     {
     }
 
@@ -271,11 +271,11 @@ namespace DescriptiveLayouts
       {
         auto changed = parameter->isChangedFromLoaded();
         auto displayStr = parameter->getLongName().append(changed ? "*" : "");
-        setValue(DisplayString { displayStr, changed ? 1 : 0 });
+        setValue(DisplayString{ displayStr, changed ? 1 : 0 });
       }
       else
       {
-        setValue(DisplayString { "", 0 });
+        setValue(DisplayString{ "", 0 });
       }
     }
 
@@ -303,7 +303,7 @@ namespace DescriptiveLayouts
    public:
     void onParameterChanged(const Parameter *p)
     {
-      auto str = p ? p->getDisplayString() : Glib::ustring {};
+      auto str = p ? p->getDisplayString() : Glib::ustring{};
 
       if(Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
       {
@@ -456,7 +456,7 @@ namespace DescriptiveLayouts
             return "";
         }
       }();
-      return DisplayString { typeString, 0 };
+      return DisplayString{ typeString, 0 };
     }
   };
 
@@ -466,7 +466,7 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto name = Application::get().getPresetManager()->getEditBuffer()->getName();
-      return DisplayString { name, 0 };
+      return DisplayString{ name, 0 };
     }
   };
 
@@ -476,7 +476,7 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto name = Application::get().getPresetManager()->getEditBuffer()->getCurrentVoiceGroupName();
-      return DisplayString { name, 0 };
+      return DisplayString{ name, 0 };
     }
   };
 
@@ -525,7 +525,7 @@ namespace DescriptiveLayouts
       setValue(value);
     }
 
-    ButtonParameterMapping m_mapping {};
+    ButtonParameterMapping m_mapping{};
     OnParameterSelectionChangedNotifier<IsOnlyParameterOnButton> m_notifier;
   };
 
@@ -543,7 +543,7 @@ namespace DescriptiveLayouts
    public:
     explicit StaticText(Glib::ustring string)
         : EventSource()
-        , m_text { std::move(string) }
+        , m_text{ std::move(string) }
     {
     }
 
@@ -551,8 +551,104 @@ namespace DescriptiveLayouts
     Glib::ustring m_text;
     std::any getLastValue() const override
     {
-      return DisplayString { m_text, 0 };
+      return DisplayString{ m_text, 0 };
     }
+  };
+
+  class MCPositionButtonText : public EventSource<DisplayString>
+  {
+   public:
+    MCPositionButtonText()
+        : m_modNot{ this }
+    {
+    }
+
+    void onModulationSourceChanged(const ModulateableParameter *modP)
+    {
+      if(modP)
+      {
+        auto changed = modP->isMacroControlAssignedAndChanged();
+        if(changed)
+        {
+          setValue({ "MC Pos*", 1 });
+        }
+        else if(modP->getModulationSource() != MacroControls::NONE)
+        {
+          setValue({ "MC Pos", 0 });
+        }
+      }
+      else
+      {
+        setValue({ "", 0 });
+      }
+    }
+
+   protected:
+    OnModulationChangedNotifier<MCPositionButtonText> m_modNot;
+  };
+
+  class MCSelectionButtonText : public EventSource<DisplayString>
+  {
+  public:
+    MCSelectionButtonText()
+        : m_modNot{ this }
+    {
+    }
+
+    void onModulationSourceChanged(const ModulateableParameter *modP)
+    {
+      if(modP)
+      {
+        auto changed = modP->isModSourceChanged();
+        if(changed)
+        {
+          setValue({ "MC Sel*", 1 });
+        }
+        else
+        {
+          setValue({ "MC Sel", 0 });
+        }
+      }
+      else
+      {
+        setValue({ "", 0 });
+      }
+    }
+
+  protected:
+    OnModulationChangedNotifier<MCSelectionButtonText> m_modNot;
+  };
+
+  class MCAmountButtonText : public EventSource<DisplayString>
+  {
+  public:
+    MCAmountButtonText()
+        : m_modNot{ this }
+    {
+    }
+
+    void onModulationSourceChanged(const ModulateableParameter *modP)
+    {
+      if(modP)
+      {
+        auto changed = modP->isModAmountChanged();
+        if(changed)
+        {
+          setValue({ "MC Amt*", 1 });
+        }
+        else if(modP->getModulationSource() != MacroControls::NONE)
+        {
+          setValue({ "MC Amt", 0 });
+        }
+      }
+      else
+      {
+        setValue({ "", 0 });
+      }
+    }
+
+  protected:
+    OnModulationChangedNotifier<MCAmountButtonText> m_modNot;
   };
 
   EventSourceBroker &EventSourceBroker::get()
@@ -582,6 +678,10 @@ namespace DescriptiveLayouts
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
     m_map[EventSources::BooleanTrue] = std::make_unique<BooleanTrue>();
     m_map[EventSources::BooleanFalse] = std::make_unique<BooleanFalse>();
+
+    m_map[EventSources::MCPositionButtonText] = std::make_unique<MCPositionButtonText>();
+    m_map[EventSources::MCAmountButtonText] = std::make_unique<MCAmountButtonText>();
+    m_map[EventSources::MCSelectButtonText] = std::make_unique<MCSelectionButtonText>();
 
     m_map[EventSources::IsOnlyParameterOnButton] = std::make_unique<IsOnlyParameterOnButton>();
     m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();

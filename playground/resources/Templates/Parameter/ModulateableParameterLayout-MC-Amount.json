@@ -1,10 +1,10 @@
 {
   "layouts": {
-    "Unmodulateable-Parameter-Select-Layout": {
+    "Modulateable-Parameter-MC-Select-Layout": {
       "Selector": {
         "UIFocus": "Parameters",
         "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIDetail": "ButtonC"
       },
       "Conditions": [
         "isParameterModulateable"
@@ -21,9 +21,14 @@
           "Events": "MCSelectButtonText => Text[Text]"
         },
         "ButtonC": {
-          "Class": "Button",
+          "Class": "HighlightButton",
           "Position": "131, 51",
           "Events": "MCAmountButtonText => Text[Text]"
+        },
+        "MCSelection-Label": {
+          "Class": "Label",
+          "Position": "67, 35",
+          "Events": "MacroControlSymbol => Text[Text]"
         },
         "GroupLabel": {
           "Class": "InvertedLabel",
@@ -40,13 +45,8 @@
           "Position": "77, 10",
           "Events": "ParameterNameWithStateSuffix => Label[Text]"
         },
-        "ParameterValue": {
-          "Class": "ParameterValueLabel",
-          "Position": "77, 35",
-          "Events": "ParameterDisplayString => Label[Text]"
-        },
-        "ParameterCarousel": {
-          "Class": "ParameterCarousel",
+        "ModulationCarousel": {
+          "Class": "ModulationCarousel",
           "Position": "195, 0"
         },
         "ModulationRange": {
@@ -54,27 +54,31 @@
           "Position": "77, 22",
           "Events": "MCModRange => UpperBar[Range], MCModRange => LowerBar[Range]"
         },
-        "AssignedMCLabel": {
-          "Class": "Label",
-          "Position": "19, 21",
-          "Events": "MacroControlSymbol => Text[Text]",
+        "MCPositionSlider": {
+          "Class": "MiniDotSlider",
+          "Position": "8, 25",
+          "Events": "MacroControlPosition => ValueDot[ControlPosition], MacroControlAsignment => ValueDot[Visibility]",
           "Visibility": "MacroControlAsignment"
         },
-        "Dots": {
-          "Class": "Dots",
-          "Position": "60, 17",
-          "Init": {
-            "Text[Text]": "..."
-          },
-          "Visbility": "MacroControlAsignment"
+        "MCPositionLabel": {
+          "Class": "Label",
+          "Position": "6, 30",
+          "Events": "MacroControlPositionText => Text[Text], MacroControlAsignment => Text[Visibility]",
+          "Visibility": "MacroControlAsignment"
+        },
+        "MCAmountLabel": {
+          "Class": "Label",
+          "Position": "131, 35",
+          "Events": "MacroControlAmount => Text[Text]",
+          "Visibility": "MacroControlAsignment"
         }
       },
       "EventSinks": {
-        "BUTTON_INC": "IncParam",
-        "BUTTON_DEC": "DecParam",
+        "BUTTON_INC": "IncMCAmt",
+        "BUTTON_DEC": "DecMCAmt",
         "BUTTON_A": "SwitchToButtonADetail",
         "BUTTON_B": "SwitchToButtonBDetail",
-        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_C": "SwitchToInitDetail",
         "BUTTON_D": "SwitchToButtonDDetail"
       }
     }

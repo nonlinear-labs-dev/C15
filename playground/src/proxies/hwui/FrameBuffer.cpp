@@ -114,7 +114,7 @@ inline void FrameBuffer::setOffsetPixel(tCoordinate x, tCoordinate y)
 
 inline void FrameBuffer::setRawPixel(tCoordinate x, tCoordinate y)
 {
-  if(m_currentColor != Transparent)
+  if(m_currentColor != Colors::Transparent)
   {
     const long index = getIndex(x, y);
     m_backBuffer[index] = m_currentColor;
@@ -195,14 +195,11 @@ void FrameBuffer::fillCircle(const Point &leftTop, int radius)
 
 inline void FrameBuffer::drawRawHorizontalLine(tCoordinate x, tCoordinate y, tCoordinate length)
 {
-  if(m_currentColor != Transparent)
-  {
-    auto fromIdx = getIndex(x, y);
-    auto data = m_backBuffer.data() + fromIdx;
+  auto fromIdx = getIndex(x, y);
+  auto data = m_backBuffer.data() + fromIdx;
 
-    for(long i = 0; i < length; i++)
-      data[i] = m_currentColor;
-  }
+  for(long i = 0; i < length; i++)
+    data[i] = m_currentColor;
 }
 
 void FrameBuffer::drawRect(tCoordinate x, tCoordinate y, tCoordinate width, tCoordinate height)
@@ -257,10 +254,10 @@ void FrameBuffer::drawVerticalLine(tCoordinate x, tCoordinate y, tCoordinate len
 
 void FrameBuffer::swapBuffers()
 {
-    using namespace nltools::msg;
-    SetOLEDMessage msg;
-    memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
-    send(EndPoint::Oled, msg);
+  using namespace nltools::msg;
+  SetOLEDMessage msg;
+  memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
+  send(EndPoint::Oled, msg);
 }
 
 bool FrameBuffer::isValidColor(Colors c) const

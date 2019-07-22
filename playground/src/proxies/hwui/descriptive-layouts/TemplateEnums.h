@@ -30,7 +30,7 @@ namespace DescriptiveLayouts
        IsBipolar, LockStatus, MacroControlSymbol, MacroControlAsignment, MacroControlAmount, MacroControlPosition,
        MacroControlPositionText, MCModRange, SoundHeaderText, EditBufferName, CurrentVoiceGroupName,
        ParameterControlPosition, ParameterNameWithStateSuffix, IsNotOnlyParameterOnButton, IsOnlyParameterOnButton,
-       BooleanTrue, BooleanFalse);
+       BooleanTrue, BooleanFalse, MCSelectButtonText, MCPositionButtonText, MCAmountButtonText);
 
   ENUM(PrimitiveClasses, uint8_t, Any, Bar, Border, Text, Circle);
 

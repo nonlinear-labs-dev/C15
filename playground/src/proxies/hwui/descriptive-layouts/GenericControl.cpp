@@ -33,13 +33,9 @@ namespace DescriptiveLayouts
   {
     if(m_controlVisible)
     {
-      setChildrenDirty();
       return ControlWithChildren::redraw(fb);
     }
-    else
-    {
-      return drawBackgroundTransparent(fb);
-    }
+    return false;
   }
 
   void GenericControl::addPrimitives()

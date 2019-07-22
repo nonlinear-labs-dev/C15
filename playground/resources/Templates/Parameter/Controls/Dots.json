@@ -1,0 +1,23 @@
+{
+  "controls": {
+    "Dots": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 58, 13"
+      }
+    }
+  },
+  "styles": {
+    "default-dot-style": {
+      "selector": {
+        "ControlClasses": "Dots",
+        "PrimitiveClasses": "Text"
+      },
+      "styles": {
+        "BackgroundColor": "Transparent",
+        "Color": "C128",
+        "TextAlign": "Left"
+      }
+    }
+  }
+}

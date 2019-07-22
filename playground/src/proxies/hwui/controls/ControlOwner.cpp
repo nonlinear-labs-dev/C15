@@ -31,24 +31,26 @@ void ControlOwner::setHighlight(bool isHighlight)
 
 bool ControlOwner::redraw(FrameBuffer &fb)
 {
-  if(Application::get().getSettings()->getSetting<LayoutMode>()->get() == LayoutVersionMode::Old)
+  bool didRedraw = false;
+
+  for(const auto& c : m_controls)
   {
-    bool didRedraw = false;
-
-    for(const auto& c : m_controls)
+    if(c->isDirty())
     {
-      if(c->isDirty())
-      {
-        c->drawBackground(fb);
+      c->drawBackground(fb);
 
-        if(c->isVisible())
-          c->redraw(fb);
+      if(c->isVisible())
+        c->redraw(fb);
 
-        c->setClean();
-        didRedraw = true;
-      }
+      c->setClean();
+      didRedraw = true;
     }
-    return didRedraw;
+  }
+  return didRedraw;
+
+  /*if(Application::get().getSettings()->getSetting<LayoutMode>()->get() == LayoutVersionMode::Old)
+  {
+
   }
   else
   {
@@ -95,7 +97,7 @@ bool ControlOwner::redraw(FrameBuffer &fb)
     }
 
     return !dirtyControls.empty();
-  }
+  }*/
 }
 
 void ControlOwner::remove(const Control *ctrl)

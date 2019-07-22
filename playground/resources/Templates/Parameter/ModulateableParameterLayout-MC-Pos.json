@@ -11,37 +11,19 @@
       ],
       "Controls": {
         "ButtonA": {
-          "Class": "Button",
-          "Position": "3, 51",
-          "Visibility": "!MacroControlAsignment"
-        },
-        "ButtonAHighlight": {
           "Class": "HighlightButton",
           "Position": "3, 51",
-          "Init": {
-            "Text[Text]": "MC Pos"
-          },
-          "Visibility": "MacroControlAsignment"
+          "Events": "MCPositionButtonText => Text[Text]"
         },
         "ButtonB": {
           "Class": "Button",
           "Position": "67, 51",
-          "Init": {
-            "Text[Text]": "MC Sel"
-          }
+          "Events": "MCSelectButtonText => Text[Text]"
         },
         "ButtonC": {
           "Class": "Button",
           "Position": "131, 51",
-          "Visibility": "!MacroControlAsignment"
-        },
-        "ButtonCHighlight": {
-          "Class": "Button",
-          "Position": "131, 51",
-          "Init": {
-            "Text[Text]": "MC Amt"
-          },
-          "Visibility": "MacroControlAsignment"
+          "Events": "MCAmountButtonText => Text[Text]"
         },
         "MCSelection-Label": {
           "Class": "Label",

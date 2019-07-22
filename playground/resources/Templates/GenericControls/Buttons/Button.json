@@ -58,6 +58,7 @@
       },
       "styles": {
         "Color": "C204",
+        "SuffixColor": "C204",
         "BackgroundColor": "C77",
         "FontSize": 8,
         "TextAlign": "Center"

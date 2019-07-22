@@ -12,23 +12,31 @@
       "Controls": {
         "ButtonA": {
           "Class": "Button",
-          "Position": "3, 51"
+          "Position": "3, 51",
+          "Events": "MCPositionButtonText => Text[Text]"
         },
         "ButtonB": {
           "Class": "Button",
           "Position": "67, 51",
-          "Init": {
-            "Text[Text]": "MC Sel"
-          }
+          "Events": "MCSelectButtonText => Text[Text]"
         },
         "ButtonC": {
           "Class": "Button",
-          "Position": "131, 51"
+          "Position": "131, 51",
+          "Events": "MCAmountButtonText => Text[Text]"
         },
         "MCSelection-Label": {
           "Class": "MCSelectionLabel",
           "Position": "40, 21",
           "Events": "MacroControlSymbol => Text[Text]"
+        },
+        "Dots": {
+          "Class": "Label",
+          "Position": "38, 17",
+          "Init": {
+            "Text[Text]": "....."
+          },
+          "Visbility": "MacroControlAsignment"
         },
         "ParameterValue": {
           "Class": "ParameterValueLabel",
@@ -63,7 +71,9 @@
       "EventSinks": {
         "BUTTON_INC": "IncModulationCarousel",
         "BUTTON_DEC": "DecModulationCarousel",
-        "BUTTON_B": "SwitchToInitDetail",
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
         "BUTTON_D": "IncButtonMenu"
       }
     }
