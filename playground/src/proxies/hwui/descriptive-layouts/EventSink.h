@@ -12,7 +12,7 @@ namespace DescriptiveLayouts
        SwitchToMCSelectDetail, SwitchToButtonADetail, SwitchToButtonBDetail, SwitchToButtonCDetail,
        SwitchToButtonDDetail, SwitchToMCModRangeDetail, SwitchToMCAmtDetail, IncMCSel, DecMCSel, IncMCAmt, DecMCAmt,
        IncMCPos, DecMCPos, IncButtonMenu, DecButtonMenu, FireButtonMenu, IncParamSelection, IncModulationCarousel,
-       DecModulationCarousel);
+       DecModulationCarousel, ToggleVoiceGroup);
 
   struct EventSinkMapping
   {

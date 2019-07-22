@@ -11,6 +11,9 @@
 #include <parameters/MacroControlParameter.h>
 #include <tools/OnParameterChangedNotifier.h>
 #include <proxies/hwui/panel-unit/ButtonParameterMapping.h>
+#include <presets/Bank.h>
+#include <presets/Preset.h>
+#include <tools/EditBufferNotifier.h>
 
 namespace DescriptiveLayouts
 {
@@ -651,6 +654,44 @@ namespace DescriptiveLayouts
     OnModulationChangedNotifier<MCAmountButtonText> m_modNot;
   };
 
+  class FullSoundName : public EventSource<DisplayString>
+  {
+  protected:
+    std::any getLastValue() const override
+    {
+      auto pm = Application::get().getPresetManager();
+      auto name = pm->getEditBuffer()->getName();
+
+      if(auto bank = pm->findBankWithPreset(pm->getEditBuffer()->getUUIDOfLastLoadedPreset())) {
+        auto bankNum = pm->getBankPosition(bank->getUuid());
+        if(auto preset = bank->getSelectedPreset()) {
+          auto num = bank->getPresetPosition(preset->getUuid());
+          auto changed = pm->getEditBuffer()->anyParameterChanged();
+          return DisplayString{std::to_string(bankNum) + "-" + std::to_string(num) + (changed ? "*" : "") + name, 0};
+        }
+      }
+      return DisplayString{ name, 0 };
+    }
+  };
+
+  class IsCurrentVGI : public EventSource<bool>
+  {
+  public:
+    IsCurrentVGI() : m_changed(this) {
+
+    }
+    void onEditBufferChanged(const EditBuffer* eb) {
+      setValue(std::any_cast<bool>(getLastValue()));
+    }
+  protected:
+    std::any getLastValue() const override {
+      return Application::get().getPresetManager()->getEditBuffer()->isVGISelected();
+    }
+    OnEditBufferChangedNotifier<IsCurrentVGI> m_changed;
+
+  };
+
+
   EventSourceBroker &EventSourceBroker::get()
   {
     static EventSourceBroker s;
@@ -678,6 +719,12 @@ namespace DescriptiveLayouts
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
     m_map[EventSources::BooleanTrue] = std::make_unique<BooleanTrue>();
     m_map[EventSources::BooleanFalse] = std::make_unique<BooleanFalse>();
+
+    m_map[EventSources::FullSoundName] = std::make_unique<FullSoundName>();
+
+    m_map[EventSources::isCurrentVGI] = std::make_unique<IsCurrentVGI>();
+    m_map[EventSources::isCurrentVGII] = std::make_unique<IsCurrentVGI>();
+
 
     m_map[EventSources::MCPositionButtonText] = std::make_unique<MCPositionButtonText>();
     m_map[EventSources::MCAmountButtonText] = std::make_unique<MCAmountButtonText>();

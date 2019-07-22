@@ -19,7 +19,9 @@ namespace DescriptiveLayouts
 
     void setProperty(PrimitiveProperty key, std::any value) override;
 
-   protected:
+    void applyStyle(const StyleMap &style) override;
+
+  protected:
     bool redraw(FrameBuffer &fb) override;
     void drawBackground(FrameBuffer &fb) override;
 

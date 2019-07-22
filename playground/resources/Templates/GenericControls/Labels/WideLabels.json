@@ -1,0 +1,42 @@
+{
+  "controls": {
+    "WideLabel": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 128, 13"
+      }
+    },
+    "WideHighlightLabel": {
+      "Text": {
+        "Class":"Text",
+        "Rect": "0, 0, 128, 13"
+      }
+    }
+  },
+  "styles": {
+    "Default-Label-NonHighlight": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "WideLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C128",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    },
+    "Default-Label-Highlight": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "WideHighlightLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C255",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    }
+  }
+}

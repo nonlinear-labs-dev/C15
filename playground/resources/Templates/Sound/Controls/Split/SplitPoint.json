@@ -1,0 +1,26 @@
+{
+  "controls": {
+    "SplitPoint": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 8, 25, 8"
+      },
+      "Line": {
+        "Class": "Bar",
+        "Rect": "12, 0, 1, 24"
+      }
+    }
+  },
+  "styles": {
+    "Foo": {
+      "selector": {
+        "ControlClasses": "SplitPoint",
+        "PrimitiveInstances": "Text"
+      },
+      "styles": {
+        "Color": "C255",
+        "BackgroundColor": "C43"
+      }
+    }
+  }
+}

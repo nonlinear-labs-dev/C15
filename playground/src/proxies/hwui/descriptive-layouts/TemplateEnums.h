@@ -11,7 +11,7 @@ namespace DescriptiveLayouts
 
   ENUM(PrimitiveProperty, uint8_t, None, Text, Range, Visibility, ControlPosition);
   ENUM(StyleKey, uint8_t, BackgroundColor, Color, TextAlign, FontSize, BorderStyle, FontDecoration, SuffixColor,
-       BorderColor);
+       BorderColor, HighlightBackgroundColor, HighlightColor);
   ENUM(ParameterType, uint8_t, Unipolar = 1 << 0, Bipolar = 1 << 1);
   ENUM(ButtonEvents, uint8_t, Down = true, Up = false);
   ENUM(ButtonModifiers, uint8_t, None = 0, Shift = 1 << 0);
@@ -30,7 +30,7 @@ namespace DescriptiveLayouts
        IsBipolar, LockStatus, MacroControlSymbol, MacroControlAsignment, MacroControlAmount, MacroControlPosition,
        MacroControlPositionText, MCModRange, SoundHeaderText, EditBufferName, CurrentVoiceGroupName,
        ParameterControlPosition, ParameterNameWithStateSuffix, IsNotOnlyParameterOnButton, IsOnlyParameterOnButton,
-       BooleanTrue, BooleanFalse, MCSelectButtonText, MCPositionButtonText, MCAmountButtonText);
+       BooleanTrue, BooleanFalse, MCSelectButtonText, MCPositionButtonText, MCAmountButtonText, FullSoundName, isCurrentVGI, isCurrentVGII);
 
   ENUM(PrimitiveClasses, uint8_t, Any, Bar, Border, Text, Circle);
 

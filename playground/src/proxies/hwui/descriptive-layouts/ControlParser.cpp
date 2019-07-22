@@ -22,7 +22,10 @@ namespace DescriptiveLayouts
       std::string compact = rect;
       std::vector<std::string> splits;
       boost::split(splits, compact, boost::is_any_of(","));
-      return Rect(std::stoi(splits[0]), std::stoi(splits[1]), std::stoi(splits[2]), std::stoi(splits[3]));
+      if(splits.size() == 4)
+        return Rect(std::stoi(splits[0]), std::stoi(splits[1]), std::stoi(splits[2]), std::stoi(splits[3]));
+      else
+        return Rect(0, 0, 0, 0);
     }
     else
     {

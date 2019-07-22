@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <parameters/ModulateableParameter.h>
 #include <libundo/undo/Scope.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
@@ -97,6 +99,13 @@ namespace DescriptiveLayouts
       }
     });
 
+    registerEvent(EventSinks::ToggleVoiceGroup, [eb]() {
+      if(eb->getType() != EditBuffer::Single) {
+        eb->m_vgISelected = !eb->m_vgISelected;
+        eb->onChange();
+      }
+    });
+
     /*
        * UIFocus
        */
@@ -184,7 +193,7 @@ namespace DescriptiveLayouts
 
   void EventSinkBroker::registerEvent(EventSinks sink, tAction action)
   {
-    m_map[sink] = action;
+    m_map[sink] = std::move(action);
   }
 
   void EventSinkBroker::fire(EventSinks s)

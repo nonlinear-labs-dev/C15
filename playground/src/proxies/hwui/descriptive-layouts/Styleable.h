@@ -14,12 +14,22 @@ namespace DescriptiveLayouts
     virtual ~Styleable();
 
     void style(LayoutClasses li, ControlClasses cc, ControlInstances ci);
-    void applyStyle(const StyleMap &style);
+
+    virtual void applyStyle(const StyleMap &style);
     int getStyleValue(StyleKey s) const;
     virtual const PrimitiveInstance &getPrimitive() const = 0;
 
+    void setHighlight(bool b) {
+      m_highlight = b;
+    }
+
+    bool isHighlight() const {
+      return m_highlight;
+    }
+
    protected:
     virtual void setDirty() = 0;
+    bool m_highlight = false ;
 
    private:
     StyleMap m_currentStyle;

@@ -69,4 +69,8 @@ namespace DescriptiveLayouts
   {
     return m_primitive;
   }
+
+  void Bar::applyStyle(const StyleMap &style) {
+    Styleable::applyStyle(style);
+  }
 }

@@ -1,0 +1,25 @@
+{
+  "controls": {
+    "SoundParameterLabel": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 64, 13"
+      }
+    }
+  },
+  "styles": {
+    "Default-Label-NonHighlight": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "SoundParameterLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C255",
+        "FontSize": 8,
+        "FontDecoration": "Bold",
+        "TextAlign": "Center"
+      }
+    }
+  }
+}

@@ -25,6 +25,12 @@ namespace DescriptiveLayouts
       bool inverted = false;
     } VisibilityEvent;
 
+    typedef struct HighlightEvent
+    {
+      EventSources m_source = EventSources::BooleanTrue;
+      bool inverted = false;
+    } HighlightEvent;
+
     struct StaticInitList
     {
 
@@ -55,7 +61,8 @@ namespace DescriptiveLayouts
     using EventConnections = std::list<EventConnection>;
 
     ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
-                    const EventConnections& eventConnections, StaticInitList staticInit, VisibilityEvent visibility);
+                        const EventConnections &eventConnections, StaticInitList staticInit, VisibilityEvent visibility,
+                        HighlightEvent highlight);
 
     Control* instantiate() const;
 
@@ -65,6 +72,7 @@ namespace DescriptiveLayouts
     EventConnections eventConnections;
     StaticInitList staticInitList;
     VisibilityEvent visibility;
+    HighlightEvent highlight;
 
     friend class GenericControl;
     friend class ConsistencyChecker;

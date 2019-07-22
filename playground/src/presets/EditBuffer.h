@@ -90,6 +90,11 @@ class EditBuffer : public ParameterGroupSet
   RecallParameterGroups &getRecallParameterSet();
   void initRecallValues(UNDO::Transaction *t);
 
+  //Mock
+  bool isVGISelected() const;
+  bool isVGIISelected() const;
+  bool m_vgISelected = true;
+
  private:
   Parameter *searchForAnyParameterWithLock() const;
 

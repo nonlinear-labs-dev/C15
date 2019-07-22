@@ -48,17 +48,14 @@ void PresetListContent::setup(Bank *bank, size_t focussedPresetPos)
       m_thirdPreset = addControl(new PresetListEntry(Rect(0, 32, 126, 16)));
     }
 
-    m_firstPreset->setPreset(getPresetAtPosition(bank, focussedPresetPos - 1), false);
-    m_secondPreset->setPreset(getPresetAtPosition(bank, focussedPresetPos), true);
-    m_thirdPreset->setPreset(getPresetAtPosition(bank, focussedPresetPos + 1), false);
+    m_firstPreset->setPreset(getPresetAtPosition(bank, static_cast<int>(focussedPresetPos - 1)), false);
+    m_secondPreset->setPreset(getPresetAtPosition(bank, static_cast<int>(focussedPresetPos)), true);
+    m_thirdPreset->setPreset(getPresetAtPosition(bank, static_cast<int>(focussedPresetPos + 1)), false);
   }
   else if((hasBank && !hasEmptyBankLabel) || (!hasBank && !hasNoBankLabel))
   {
     clear();
-    if(bank == nullptr)
-      m_emptyLabel = addControl(new Label("no bank", Rect(0, 16, 126, 16)));
-    else
-      m_emptyLabel = addControl(new EmptyBankLabel(Rect(0, 16, 126, 16)));
+    m_emptyLabel = addControl(new EmptyBankLabel(Rect(0, 16, 126, 16)));
 
     m_firstPreset = nullptr;
     m_secondPreset = nullptr;

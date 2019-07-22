@@ -1,0 +1,87 @@
+{
+  "controls": {
+    "SplitVoiceGroupII": {
+      "VoiceGroupIdentifier": {
+        "Class": "Text",
+        "Rect": "84, 1, 10, 27",
+        "Tag": "ident"
+      },
+      "Border": {
+        "Class": "Border",
+        "Rect": "0, 0, 95, 29"
+      },
+      "Background1": {
+        "Class": "Bar",
+        "Rect": "2,1,83,27",
+        "Tag": "Background"
+      },
+      "Background2": {
+        "Class": "Bar",
+        "Rect": "1,1,1,27",
+        "Tag": "Background"
+      },
+      "MiddleLine": {
+        "Class": "Bar",
+        "Rect": "0, 14, 85, 1"
+      },
+      "UpperText": {
+        "Class": "Text",
+        "Rect": "0, 0, 84, 15",
+        "Tag": "ParamText"
+      },
+      "LowerText": {
+        "Class": "Text",
+        "Rect": "0, 14, 84, 15",
+        "Tag": "ParamText"
+      }
+    }
+  },
+  "styles": {
+    "TextIdentifier": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "PrimitiveInstances": "VoiceGroupIdentifier",
+        "ControlClasses": "SplitVoiceGroupII"
+      },
+      "styles": {
+        "BackgroundColor": "C128",
+        "Color": "C43",
+        "FontSize": 8,
+        "FontDecoration": "Regular",
+        "TextAlign": "Center"
+      }
+    },
+    "Border": {
+      "selector": {
+        "PrimitiveClass": "Border",
+        "ControlClasses": "SplitVoiceGroupII"
+      },
+      "styles": {
+        "BorderStyle": "Rounded"
+      }
+    },
+    "Bar": {
+      "selector": {
+        "PrimitiveClass": "Bar",
+        "ControlClasses": "SplitVoiceGroupII",
+        "Tag": "Background"
+      },
+      "styles": {
+        "Color": "C77"
+      }
+    },
+    "ParamValue": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "SplitVoiceGroupII",
+        "Tag": "ParamText"
+      },
+      "styles": {
+        "Color": "C255",
+        "BackgroundColor": "Transparent",
+        "TextAlign": "Center",
+        "FontDecoration": "Regular"
+      }
+    }
+  }
+}

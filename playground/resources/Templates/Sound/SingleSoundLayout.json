@@ -1,0 +1,84 @@
+{
+  "layouts": {
+    "Single-Sound-Select-Layout": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Select",
+        "UIDetail": "Init"
+      },
+      "Conditions": [
+        "isSingleSound"
+      ],
+      "Controls": {
+        "Header": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Events": "SoundHeaderText => Text[Text]"
+        },
+        "Name": {
+          "Class": "WideHighlightLabel",
+          "Position": "64, 0",
+          "Init": {
+            "Text[Text]": "003-128* Gitarrentöne"
+          }
+        },
+        "Split-Label": {
+          "Class": "Label",
+          "Position": "3, 23",
+          "Init": {
+            "Text[Text]": "Split"
+          }
+        },
+        "Layer-Label": {
+          "Class": "Label",
+          "Position": "3, 35",
+          "Init": {
+            "Text[Text]": "Layer"
+          }
+        },
+        "ButtonA": {
+          "Class": "Button",
+          "Position": "BUTTON_A",
+          "Init": {
+            "Text[Text]": "Convert to"
+          }
+        },
+        "ButtonB": {
+          "Class": "Button",
+          "Position": "BUTTON_B",
+          "Init": {
+            "Text[Text]": "Set.."
+          }
+        },
+        "ButtonC": {
+          "Class": "Button",
+          "Position": "BUTTON_C",
+          "Init": {
+            "Text[Text]": "Unison.."
+          }
+        },
+        "ButtonD": {
+          "Class": "Button",
+          "Position": "BUTTON_D",
+          "Init": {
+            "Text[Text]": "Master.."
+          }
+        },
+        "UnisonLabel": {
+          "Class": "SoundParameterLabel",
+          "Position": "128, 25",
+          "Init": {
+            "Text[Text]": "+12.00 st"
+          }
+        },
+        "MasterLabel": {
+          "Class": "SoundParameterLabel",
+          "Position": "192, 25",
+          "Init": {
+            "Text[Text]": "-3.5 dB"
+          }
+        }
+      }
+    }
+  }
+}

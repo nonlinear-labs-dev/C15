@@ -28,7 +28,7 @@ EditBuffer::EditBuffer(PresetManager *parent)
     , m_deferedJobs(100, std::bind(&EditBuffer::doDeferedJobs, this))
     , m_isModified(false)
     , m_recallSet(this)
-    , m_type(Type::Single)
+    , m_type(Type::Split)
 {
   m_selectedParameter = nullptr;
   m_hashOnStore = getHash();
@@ -650,4 +650,12 @@ void EditBuffer::setMacroControlValueFromMCView(int id, double value, Glib::ustr
       mc->setLastMCViewUUID(uuid);
     }
   }
+}
+
+bool EditBuffer::isVGISelected() const {
+  return m_vgISelected;
+}
+
+bool EditBuffer::isVGIISelected() const {
+  return !isVGISelected();
 }

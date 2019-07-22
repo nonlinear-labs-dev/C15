@@ -136,6 +136,12 @@ namespace DescriptiveLayouts
       tryMerge(target, first, others...);
     }
 
+    void collectInplace(StyleMap& target, tFirst first, tStages... others) const
+    {
+      tryMerge(target, tFirst::Any, others...);
+      tryMerge(target, first, others...);
+    }
+
     void tryMerge(StyleMap &target, tFirst first, tStages... others) const
     {
       try

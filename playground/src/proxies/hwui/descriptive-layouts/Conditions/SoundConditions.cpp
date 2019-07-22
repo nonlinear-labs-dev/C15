@@ -16,10 +16,10 @@ bool DescriptiveLayouts::SoundConditions::IsSingleSound::check() const {
 
 bool DescriptiveLayouts::SoundConditions::IsLayerSound::check() const {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  return eb->getType() == EditBuffer::Type::Single;
+  return eb->getType() == EditBuffer::Type::Layer;
 }
 
 bool DescriptiveLayouts::SoundConditions::IsSplitSound::check() const {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  return eb->getType() == EditBuffer::Type::Single;
+  return eb->getType() == EditBuffer::Type::Split;
 }

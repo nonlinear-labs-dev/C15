@@ -73,6 +73,9 @@ namespace DescriptiveLayouts
 
   void GenericControl::style(LayoutClasses layout)
   {
+    if(m_lastUsedLayout != layout)
+      m_lastUsedLayout = layout;
+
     DebugLevel::info("Styling control", m_prototype.controlInstance, "of class", m_prototype.controlClass);
 
     for(auto &p : getControls())
@@ -96,6 +99,10 @@ namespace DescriptiveLayouts
     m_connections.push_back(EventSourceBroker::get().connect(
         m_prototype.visibility.m_source,
         sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype)));
+
+    m_connections.push_back(EventSourceBroker::get().connect(
+        m_prototype.highlight.m_source,
+        sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onHighlightChanged), m_prototype)));
   }
 
   void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
@@ -136,6 +143,28 @@ namespace DescriptiveLayouts
       {
         DebugLevel::warning("Could not connect:", toString(instance.visibility.m_source),
                             "to visibility of:", instance.controlInstance, "! event does not evaluate to boolean!");
+      }
+    }
+  }
+
+  void GenericControl::onHighlightChanged(std::any highlight, const ControlInstance &ci)
+  {
+    if(m_prototype.controlInstance == ci.controlInstance)
+    {
+      try
+      {
+        auto highlit = std::any_cast<bool>(highlight);
+
+        if(m_prototype.highlight.inverted)
+          highlit = !highlit;
+
+        m_controlHighlight = highlit;
+        setDirty();
+      }
+      catch(...)
+      {
+        DebugLevel::warning("Could not connect:", toString(ci.visibility.m_source),
+                            "to highlight of:", ci.controlInstance, "! event does not evaluate to boolean!");
       }
     }
   }

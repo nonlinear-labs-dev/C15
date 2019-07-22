@@ -10,6 +10,7 @@
 #include <proxies/hwui/descriptive-layouts/Primitives/Text.h>
 #include <boost/lexical_cast.hpp>
 #include <proxies/hwui/descriptive-layouts/Primitives/Bar.h>
+#include <nltools/StringTools.h>
 
 using json = nlohmann::json;
 
@@ -51,9 +52,24 @@ namespace DescriptiveLayouts
     if(pt.is_string())
     {
       std::string compact = pt;
-      std::vector<std::string> splits;
-      boost::split(splits, compact, boost::is_any_of(","));
-      return Point(std::stoi(splits[0]), std::stoi(splits[1]));
+      if(nltools::startsWith(compact, "BUTTON_"))
+      {
+        if(compact == "BUTTON_A") {
+          return Point(3, 51);
+        } else if(compact == "BUTTON_B") {
+          return Point(67, 51);
+        } else if(compact == "BUTTON_C") {
+          return Point(131, 51);
+        } else if(compact == "BUTTON_D") {
+          return Point(195, 51);
+        } else {
+          return Point(0, 0);
+        }
+      } else {
+        std::vector<std::string> splits;
+        boost::split(splits, compact, boost::is_any_of(","));
+        return Point(std::stoi(splits[0]), std::stoi(splits[1]));
+      }
     }
     else
     {
@@ -159,6 +175,25 @@ namespace DescriptiveLayouts
     return ret;
   }
 
+  ControlInstance::HighlightEvent parseHighlight(json j)
+  {
+    ControlInstance::HighlightEvent ret{};
+    auto it = j.find("Highlight");
+    if(it != j.end())
+    {
+      std::string text = *it;
+
+      if(text[0] == '!')
+      {
+        ret.inverted = true;
+        text = text.substr(1);
+      }
+
+      ret.m_source = toEventSources(text);
+    }
+    return ret;
+  }
+
   ControlInstance::VisibilityEvent parseVisibility(json j)
   {
     ControlInstance::VisibilityEvent ret{};
@@ -190,7 +225,8 @@ namespace DescriptiveLayouts
       auto staticInit = parseInit(control.value());
       auto eventConnections = parseEventConnections(control.value());
       auto visibility = parseVisibility(control.value());
-      l.emplace_back(controlInstances, controlClasses, point, eventConnections, staticInit, visibility);
+      auto highlight = parseHighlight(control.value());
+      l.emplace_back(controlInstances, controlClasses, point, eventConnections, staticInit, visibility, highlight);
     }
     return l;
   }
