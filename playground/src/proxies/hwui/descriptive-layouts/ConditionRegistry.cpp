@@ -5,6 +5,7 @@
 #include <parameters/ModulateableParameter.h>
 #include "ConditionRegistry.h"
 #include "Conditions/ParameterConditions.h"
+#include "Conditions/SoundConditions.h"
 
 ConditionRegistry::tCondition ConditionRegistry::getLambda(std::string key)
 {
@@ -24,6 +25,9 @@ ConditionRegistry::ConditionRegistry()
   m_theConditionMap["isParameterUnmodulateable"] = std::make_unique<ParameterConditions::IsParameterUnmodulateable>();
   m_theConditionMap["hasNoMcSelected"] = std::make_unique<ParameterConditions::HasNoMcSelected>();
   m_theConditionMap["hasMcSelected"] = std::make_unique<ParameterConditions::HasMcSelected>();
+  m_theConditionMap["isSingleSound"] = std::make_unique<SoundConditions::IsSingleSound>();
+  m_theConditionMap["isSplitSound"] = std::make_unique<SoundConditions::IsSplitSound>();
+  m_theConditionMap["isLayerSound"] = std::make_unique<SoundConditions::IsLayerSound>();
 }
 
 sigc::connection ConditionRegistry::onChange(std::function<void()> cb)

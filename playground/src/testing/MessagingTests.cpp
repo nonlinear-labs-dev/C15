@@ -43,7 +43,7 @@ struct MessagingTests
       nltools::msg::init(conf);
 
       int numRecMessages = 0;
-      int numSendMessages = 1000;
+      int numSendMessages = 100;
 
       ParameterChangedMessage msgToSend(12, 0.3);
       assert(waitForConnection(EndPoint::TestEndPoint));
