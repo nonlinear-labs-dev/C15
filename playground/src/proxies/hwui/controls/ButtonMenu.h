@@ -34,8 +34,8 @@ class ButtonMenu : public ControlWithChildren
 
     virtual Font::Justification getDefaultButtonJustification() const;
 
- private:
-  void bruteForce();
+  virtual void bruteForce();
+private:
   size_t getItemToShowAtPlace(size_t place) const;
 
   struct Item
@@ -48,4 +48,7 @@ class ButtonMenu : public ControlWithChildren
   size_t m_selected;
   size_t m_numButtonPlaces;
   int entryWidth;
+
+  friend class SoundMenu;
 };
+

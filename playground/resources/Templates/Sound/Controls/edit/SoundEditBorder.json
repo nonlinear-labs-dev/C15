@@ -3,7 +3,34 @@
     "SoundEditBorder": {
       "border": {
         "Class": "Border",
-        "Rect": "0, 0, 256, 96"
+        "Rect": "0, 0, 256, 64"
+      },
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 256, 11"
+      }
+    }
+  },
+  "styles": {
+    "Border-Style": {
+      "selector": {
+        "ControlClasses": "SoundEditBorder",
+        "PrimitiveInstances": "border"
+      },
+      "styles": {
+        "Color": "C255",
+        "HighlightColor": "C255"
+      }
+    },
+    "Header-Style": {
+      "selector": {
+        "ControlClasses": "SoundEditBorder",
+        "PrimitiveInstances": "Text"
+      },
+      "styles": {
+        "Color": "C43",
+        "HighlightColor": "C43",
+        "BackgroundColor": "C255"
       }
     }
   }

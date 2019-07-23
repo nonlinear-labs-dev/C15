@@ -454,20 +454,7 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-      auto type = editBuffer->getType();
-      auto typeString = [&type] {
-        switch(type)
-        {
-          case EditBuffer::Type::Single:
-            return "Single";
-          case EditBuffer::Type::Split:
-            return "Split";
-          case EditBuffer::Type::Layer:
-            return "Layer";
-          default:
-            return "";
-        }
-      }();
+      auto typeString = toString(editBuffer->getType());
       auto vg = std::string(editBuffer->m_vgISelected ? " I" : " II");
       return DisplayString{ typeString + vg, 0 };
     }
@@ -727,6 +714,25 @@ namespace DescriptiveLayouts
     OnEditBufferChangedNotifier<IsCurrentVGII> m_changed;
   };
 
+  class SoundEditHeading : public EventSource<DisplayString>
+  {
+  public:
+    SoundEditHeading()
+      : m_changed(this) {}
+      void onEditBufferChanged(const EditBuffer* eb) {
+      setValue(std::any_cast<DisplayString>(getLastValue()));
+    }
+  protected:
+    std::any getLastValue() const override
+    {
+      auto eb = Application::get().getPresetManager()->getEditBuffer();
+      auto type = toString(eb->getType());
+      auto vg = eb->isVGISelected() ? "[I]" : "[II]";
+      return DisplayString({type + " " + vg, 0});
+    }
+    OnEditBufferChangedNotifier<SoundEditHeading> m_changed;
+  };
+
   class SelectVGButtonText : public EventSource<DisplayString>
   {
    public:
@@ -783,6 +789,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::isCurrentVGI] = std::make_unique<IsCurrentVGI>();
     m_map[EventSources::isCurrentVGII] = std::make_unique<IsCurrentVGII>();
     m_map[EventSources::SelectVGButtonText] = std::make_unique<SelectVGButtonText>();
+    m_map[EventSources::SoundEditHeading] = std::make_unique<SoundEditHeading>();
 
     m_map[EventSources::MCPositionButtonText] = std::make_unique<MCPositionButtonText>();
     m_map[EventSources::MCAmountButtonText] = std::make_unique<MCAmountButtonText>();

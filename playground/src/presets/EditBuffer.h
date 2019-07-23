@@ -10,6 +10,8 @@ class Application;
 class Writer;
 class PresetManager;
 
+ENUM(Type, uint8_t, Single, Split, Layer);
+
 class EditBuffer : public ParameterGroupSet
 {
  private:
@@ -19,12 +21,6 @@ class EditBuffer : public ParameterGroupSet
   EditBuffer(PresetManager *parent);
   ~EditBuffer() override;
 
-  enum Type
-  {
-    Single,
-    Split,
-    Layer
-  };
 
   Type getType() const;
   void setType(Type t);

@@ -28,7 +28,7 @@ EditBuffer::EditBuffer(PresetManager *parent)
     , m_deferedJobs(100, std::bind(&EditBuffer::doDeferedJobs, this))
     , m_isModified(false)
     , m_recallSet(this)
-    , m_type(Type::Layer)
+    , m_type(Type::Single)
 {
   m_selectedParameter = nullptr;
   m_hashOnStore = getHash();
@@ -44,12 +44,12 @@ void EditBuffer::initRecallValues(UNDO::Transaction *transaction)
   m_recallSet.copyFromEditBuffer(transaction, this);
 }
 
-EditBuffer::Type EditBuffer::getType() const
+Type EditBuffer::getType() const
 {
   return m_type;
 }
 
-void EditBuffer::setType(EditBuffer::Type t)
+void EditBuffer::setType(Type t)
 {
   m_type = t;
 }

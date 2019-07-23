@@ -9,5 +9,5 @@ public:
     explicit ConvertSoundMenu(const Rect& rect);
 protected:
     void setup();
-    void convertSoundTo(EditBuffer::Type newType);
+    void convertSoundTo(Type newType);
 };

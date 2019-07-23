@@ -100,7 +100,7 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::ToggleVoiceGroup, [eb]() {
-      if(eb->getType() != EditBuffer::Single) {
+      if(eb->getType() != Type::Single) {
         eb->m_vgISelected = !eb->m_vgISelected;
         eb->onChange();
       }

@@ -11,15 +11,15 @@ void DescriptiveLayouts::SoundConditions::IsXSound::onEditBufferChanged(const Ed
 
 bool DescriptiveLayouts::SoundConditions::IsSingleSound::check() const {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  return eb->getType() == EditBuffer::Type::Single;
+  return eb->getType() == Type::Single;
 }
 
 bool DescriptiveLayouts::SoundConditions::IsLayerSound::check() const {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  return eb->getType() == EditBuffer::Type::Layer;
+  return eb->getType() == Type::Layer;
 }
 
 bool DescriptiveLayouts::SoundConditions::IsSplitSound::check() const {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  return eb->getType() == EditBuffer::Type::Split;
+  return eb->getType() == Type::Split;
 }

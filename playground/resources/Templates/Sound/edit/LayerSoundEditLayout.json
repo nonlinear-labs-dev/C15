@@ -1,0 +1,25 @@
+{
+  "layouts": {
+    "Layer-Sound-Edit-Layout": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Edit",
+        "UIDetail": "Any"
+      },
+      "Conditions": [
+        "isLayerSound"
+      ],
+      "Controls": {
+        "Border": {
+          "Class": "SoundEditBorder",
+          "Position": "0, 0",
+          "Events": "SoundEditHeading => Text[Text]"
+        },
+        "Content": {
+          "Class": "LayerSoundEditMenu",
+          "Position": "0, 11"
+        }
+      }
+    }
+  }
+}

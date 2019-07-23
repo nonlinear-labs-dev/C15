@@ -1,23 +1,28 @@
 {
   "layouts": {
-    "Single-Sound-Select-Layout": {
+    "Single-Sound-Edit-Layout": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Edit",
         "UIDetail": "Any"
       },
+      "Conditions": [
+        "isSingleSound"
+      ],
       "Controls": {
-        "Header": {
-          "Class": "InvertedLabel",
-          "Position": "0, 0",
-          "Events": "SoundHeaderText => Text[Text]"
-        },
         "Border": {
           "Class": "SoundEditBorder",
           "Position": "0, 0",
           "Events": "SoundEditHeading => Text[Text]"
+        },
+        "Content": {
+          "Class": "SingleSoundEditMenu",
+          "Position": "1, 11"
         }
-
+      },
+      "EventSinks": {
+        "BUTTON_INC": "IncButtonMenu",
+        "BUTTON_DEC": "DecButtonMenu"
       }
     }
   }

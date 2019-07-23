@@ -178,9 +178,10 @@ size_t ButtonMenu::getItemToShowAtPlace(size_t place) const
 
 void ButtonMenu::selectButton(size_t i)
 {
-  if(i != m_selected)
+  auto index = sanitizeIndex(i);
+  if(index != m_selected)
   {
-    m_selected = sanitizeIndex(i);
+    m_selected = index;
     bruteForce();
   }
 }
