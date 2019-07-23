@@ -1,0 +1,109 @@
+{
+  "controls": {
+    "LayerVoiceGroupI": {
+      "VoiceGroupIdentifier": {
+        "Class": "Text",
+        "Rect": "1, 1, 10, 13",
+        "Tag": "ident"
+      },
+      "Background": {
+        "Class": "Bar",
+        "Rect": "11, 1, 157, 13",
+        "Tag": "Background"
+      },
+      "Border-Fake": {
+        "Class": "Bar",
+        "Rect": "0, 2, 2, 13",
+        "Tag": "bar-l"
+      },
+      "Border-Fake2": {
+        "Class": "Bar",
+        "Rect": "168, 2, 2, 13",
+        "Tag": "bar-l"
+      },
+      "Cover-Right": {
+        "Class": "Bar",
+        "Rect": "169, 0, 1, 15",
+        "Tag": "Cover"
+      },
+      "Border": {
+        "Class": "Border",
+        "Rect": "0, 0, 170, 15"
+      },
+      "Unison": {
+        "Class": "Text",
+        "Rect": "10, 0, 80, 15",
+        "Tag": "ParamText"
+      },
+      "Master": {
+        "Class": "Text",
+        "Rect": "90, 0, 80, 15",
+        "Tag": "ParamText"
+      }
+    }
+  },
+  "styles": {
+    "TextIdentifier": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "PrimitiveInstances": "VoiceGroupIdentifier",
+        "ControlClasses": "LayerVoiceGroupI"
+      },
+      "styles": {
+        "HighlightBackgroundColor": "C255",
+        "BackgroundColor": "C128",
+        "HighlightColor": "C43",
+        "Color": "C43",
+        "FontSize": 8,
+        "FontDecoration": "Regular",
+        "TextAlign": "Center"
+      }
+    },
+    "Border": {
+      "selector": {
+        "PrimitiveClass": "Border",
+        "ControlClasses": "LayerVoiceGroupI"
+      },
+      "styles": {
+        "BorderStyle": "Rounded"
+      }
+    },
+    "Bar": {
+      "selector": {
+        "PrimitiveClass": "Bar",
+        "ControlClasses": "LayerVoiceGroupI",
+        "Tag": "Background"
+      },
+      "styles": {
+        "Color": "C77",
+        "HighlightColor": "C77"
+      }
+    },
+    "Cover": {
+      "selector": {
+        "PrimitiveClass": "Bar",
+        "ControlClasses": "LayerVoiceGroupI",
+        "Tag": "Cover"
+      },
+      "styles": {
+        "Color": "C43",
+        "HighlightColor": "C43"
+      }
+    },
+    "ParamValue": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "LayerVoiceGroupI",
+        "Tag": "ParamText"
+      },
+      "styles": {
+        "Color": "C255",
+        "BackgroundColor": "Transparent",
+        "HighlightBackgroundColor": "Transparent",
+        "HighlightColor": "C255",
+        "TextAlign": "Center",
+        "FontDecoration": "Regular"
+      }
+    }
+  }
+}

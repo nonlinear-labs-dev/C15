@@ -1,0 +1,10 @@
+{
+  "controls": {
+    "SoundEditBorder": {
+      "border": {
+        "Class": "Border",
+        "Rect": "0, 0, 256, 96"
+      }
+    }
+  }
+}

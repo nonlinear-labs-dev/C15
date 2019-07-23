@@ -1,0 +1,24 @@
+{
+  "layouts": {
+    "Single-Sound-Select-Layout": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Edit",
+        "UIDetail": "Any"
+      },
+      "Controls": {
+        "Header": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Events": "SoundHeaderText => Text[Text]"
+        },
+        "Border": {
+          "Class": "SoundEditBorder",
+          "Position": "0, 0",
+          "Events": "SoundEditHeading => Text[Text]"
+        }
+
+      }
+    }
+  }
+}
