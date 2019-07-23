@@ -442,10 +442,19 @@ namespace DescriptiveLayouts
 
   class SoundHeaderText : public EventSource<DisplayString>
   {
+  public:
+    SoundHeaderText() : m_not{this} {
+
+    }
+    void onEditBufferChanged(const EditBuffer* e) {
+      setValue(std::any_cast<DisplayString>(getLastValue()));
+    }
+
    protected:
     std::any getLastValue() const override
     {
-      auto type = Application::get().getPresetManager()->getEditBuffer()->getType();
+      auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
+      auto type = editBuffer->getType();
       auto typeString = [&type] {
         switch(type)
         {
@@ -459,8 +468,10 @@ namespace DescriptiveLayouts
             return "";
         }
       }();
-      return DisplayString{ typeString, 0 };
+      auto vg = std::string(editBuffer->m_vgISelected ? " I" : " II");
+      return DisplayString{ typeString + vg, 0 };
     }
+    OnEditBufferChangedNotifier<SoundHeaderText> m_not;
   };
 
   class EditBufferName : public EventSource<DisplayString>

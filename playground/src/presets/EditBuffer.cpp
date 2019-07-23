@@ -28,7 +28,7 @@ EditBuffer::EditBuffer(PresetManager *parent)
     , m_deferedJobs(100, std::bind(&EditBuffer::doDeferedJobs, this))
     , m_isModified(false)
     , m_recallSet(this)
-    , m_type(Type::Split)
+    , m_type(Type::Layer)
 {
   m_selectedParameter = nullptr;
   m_hashOnStore = getHash();

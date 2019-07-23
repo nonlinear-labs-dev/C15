@@ -28,7 +28,7 @@ namespace DescriptiveLayouts
     void toggleSoundMode();
     void toggleSetupMode();
     void toggleStoreMode();
-  void toggleInfo();
-void toggleEdit();
-};
+    void toggleInfo();
+    void toggleEdit();
+  };
 }
