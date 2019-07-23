@@ -39,7 +39,8 @@
         "Tag": "ButtonCover"
       },
       "styles": {
-        "Color": "C43"
+        "Color": "C43",
+        "HighlightColor": "C43"
       }
     },
     "DefaultButtonStyle-Border": {
@@ -48,7 +49,8 @@
         "PrimitiveClasses": "Border"
       },
       "styles": {
-        "Color": "C179"
+        "Color": "C179",
+        "HighlightColor": "C179"
       }
     },
     "DefaultButtonStyle-Text": {

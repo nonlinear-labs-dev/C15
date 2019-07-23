@@ -60,7 +60,9 @@ namespace DescriptiveLayouts
       case PrimitiveProperty::Visibility:
         setVisible(std::any_cast<bool>(value));
         break;
-
+      case PrimitiveProperty::Highlight:
+        Control::setHighlight(std::any_cast<bool>(value));
+        break;
       case PrimitiveProperty::ControlPosition:
         m_drawPosition = valueToPosition(std::any_cast<tControlPositionValue>(value));
         Control::setDirty();

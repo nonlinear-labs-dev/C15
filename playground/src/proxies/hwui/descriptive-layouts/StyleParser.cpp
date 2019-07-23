@@ -103,6 +103,8 @@ namespace DescriptiveLayouts
         case StyleKey::SuffixColor:
         case StyleKey::BorderColor:
         case StyleKey::BackgroundColor:
+        case StyleKey::HighlightColor:
+        case StyleKey::HighlightBackgroundColor:
         case StyleKey::Color:
           theStyles.map.emplace(styleKey, (int) StyleValues::toColor(style.value()));
           break;

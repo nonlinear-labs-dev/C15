@@ -12,8 +12,7 @@ namespace DescriptiveLayouts
   }
 
   Border::~Border()
-  {
-  }
+  = default;
 
   void Border::drawBackground(FrameBuffer &fb)
   {
@@ -23,6 +22,9 @@ namespace DescriptiveLayouts
   {
     auto style = (StyleValues::BorderStyle) getStyleValue(StyleKey::BorderStyle);
     auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
+
+    if(Control::isHighlight())
+      color = (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor);
 
     switch(style)
     {
@@ -58,6 +60,11 @@ namespace DescriptiveLayouts
   {
     switch(key)
     {
+      case PrimitiveProperty::Highlight:
+      {
+        Control::setHighlight(std::any_cast<bool>(value));
+        break;
+      }
       case PrimitiveProperty::Visibility:
       {
         auto boolean = std::any_cast<bool>(value);

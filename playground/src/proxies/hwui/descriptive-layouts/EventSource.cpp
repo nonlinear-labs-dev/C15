@@ -592,7 +592,7 @@ namespace DescriptiveLayouts
 
   class MCSelectionButtonText : public EventSource<DisplayString>
   {
-  public:
+   public:
     MCSelectionButtonText()
         : m_modNot{ this }
     {
@@ -618,13 +618,13 @@ namespace DescriptiveLayouts
       }
     }
 
-  protected:
+   protected:
     OnModulationChangedNotifier<MCSelectionButtonText> m_modNot;
   };
 
   class MCAmountButtonText : public EventSource<DisplayString>
   {
-  public:
+   public:
     MCAmountButtonText()
         : m_modNot{ this }
     {
@@ -650,24 +650,26 @@ namespace DescriptiveLayouts
       }
     }
 
-  protected:
+   protected:
     OnModulationChangedNotifier<MCAmountButtonText> m_modNot;
   };
 
   class FullSoundName : public EventSource<DisplayString>
   {
-  protected:
+   protected:
     std::any getLastValue() const override
     {
       auto pm = Application::get().getPresetManager();
       auto name = pm->getEditBuffer()->getName();
 
-      if(auto bank = pm->findBankWithPreset(pm->getEditBuffer()->getUUIDOfLastLoadedPreset())) {
+      if(auto bank = pm->findBankWithPreset(pm->getEditBuffer()->getUUIDOfLastLoadedPreset()))
+      {
         auto bankNum = pm->getBankPosition(bank->getUuid());
-        if(auto preset = bank->getSelectedPreset()) {
+        if(auto preset = bank->getSelectedPreset())
+        {
           auto num = bank->getPresetPosition(preset->getUuid());
           auto changed = pm->getEditBuffer()->anyParameterChanged();
-          return DisplayString{std::to_string(bankNum) + "-" + std::to_string(num) + (changed ? "*" : "") + name, 0};
+          return DisplayString{ std::to_string(bankNum) + "-" + std::to_string(num) + (changed ? "*" : "") + name, 0 };
         }
       }
       return DisplayString{ name, 0 };
@@ -676,21 +678,66 @@ namespace DescriptiveLayouts
 
   class IsCurrentVGI : public EventSource<bool>
   {
-  public:
-    IsCurrentVGI() : m_changed(this) {
-
+   public:
+    IsCurrentVGI()
+        : m_changed(this)
+    {
     }
-    void onEditBufferChanged(const EditBuffer* eb) {
+    void onEditBufferChanged(const EditBuffer *eb)
+    {
       setValue(std::any_cast<bool>(getLastValue()));
     }
-  protected:
-    std::any getLastValue() const override {
+
+   protected:
+    std::any getLastValue() const override
+    {
       return Application::get().getPresetManager()->getEditBuffer()->isVGISelected();
     }
     OnEditBufferChangedNotifier<IsCurrentVGI> m_changed;
-
   };
 
+  class IsCurrentVGII : public EventSource<bool>
+  {
+   public:
+    IsCurrentVGII()
+        : m_changed(this)
+    {
+    }
+    void onEditBufferChanged(const EditBuffer *eb)
+    {
+      setValue(std::any_cast<bool>(getLastValue()));
+    }
+
+   protected:
+    std::any getLastValue() const override
+    {
+      return Application::get().getPresetManager()->getEditBuffer()->isVGIISelected();
+    }
+    OnEditBufferChangedNotifier<IsCurrentVGII> m_changed;
+  };
+
+  class SelectVGButtonText : public EventSource<DisplayString>
+  {
+   public:
+    SelectVGButtonText()
+        : m_changed(this)
+    {
+    }
+    void onEditBufferChanged(const EditBuffer *eb)
+    {
+      setValue(std::any_cast<DisplayString>(getLastValue()));
+    }
+
+   protected:
+    std::any getLastValue() const override
+    {
+      return DisplayString(
+          { std::string("Select ")
+                + (Application::get().getPresetManager()->getEditBuffer()->isVGISelected() ? "II" : "I"),
+            0 });
+    }
+    OnEditBufferChangedNotifier<SelectVGButtonText> m_changed;
+  };
 
   EventSourceBroker &EventSourceBroker::get()
   {
@@ -723,8 +770,8 @@ namespace DescriptiveLayouts
     m_map[EventSources::FullSoundName] = std::make_unique<FullSoundName>();
 
     m_map[EventSources::isCurrentVGI] = std::make_unique<IsCurrentVGI>();
-    m_map[EventSources::isCurrentVGII] = std::make_unique<IsCurrentVGI>();
-
+    m_map[EventSources::isCurrentVGII] = std::make_unique<IsCurrentVGII>();
+    m_map[EventSources::SelectVGButtonText] = std::make_unique<SelectVGButtonText>();
 
     m_map[EventSources::MCPositionButtonText] = std::make_unique<MCPositionButtonText>();
     m_map[EventSources::MCAmountButtonText] = std::make_unique<MCAmountButtonText>();

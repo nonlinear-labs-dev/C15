@@ -23,12 +23,11 @@ namespace DescriptiveLayouts
     void addPrimitives();
     void onEventFired(std::any v, const ControlInstance::EventConnection& c);
     void onVisibilityChanged(std::any visibility, const ControlInstance& ci);
-    void onHighlightChanged(std::any highlight, const ControlInstance& ci);
 
     ControlInstance m_prototype;
     std::list<sigc::connection> m_connections;
-    LayoutClasses m_lastUsedLayout;
     bool m_controlVisible = true;
-    bool m_controlHighlight = false;
+  protected:
+    LayoutClasses m_lastUsedLayout;
   };
 }

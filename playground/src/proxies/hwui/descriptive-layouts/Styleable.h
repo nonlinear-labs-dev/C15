@@ -29,7 +29,7 @@ namespace DescriptiveLayouts
 
    protected:
     virtual void setDirty() = 0;
-    bool m_highlight = false ;
+    bool m_highlight = false;
 
    private:
     StyleMap m_currentStyle;

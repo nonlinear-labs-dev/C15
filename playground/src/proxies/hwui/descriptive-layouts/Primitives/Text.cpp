@@ -18,7 +18,13 @@ namespace DescriptiveLayouts
   {
     if(isVisible())
     {
-      auto bg = (FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor);
+
+      auto bg = static_cast<FrameBuffer::Colors>(getStyleValue(StyleKey::BackgroundColor));
+
+      if(Control::isHighlight())
+      {
+        bg = static_cast<FrameBuffer::Colors>(getStyleValue(StyleKey::HighlightBackgroundColor));
+      }
 
       if(bg != FrameBuffer::Colors::Transparent)
       {
@@ -30,7 +36,14 @@ namespace DescriptiveLayouts
 
   void Text::setFontColor(FrameBuffer &fb) const
   {
-    fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::Color));
+    if(Control::isHighlight())
+    {
+      fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::Color));
+    }
+    else
+    {
+      fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor));
+    }
   }
 
   void Text::setSuffixFontColor(FrameBuffer &fb) const
@@ -72,6 +85,11 @@ namespace DescriptiveLayouts
       {
         auto a = std::any_cast<DisplayString>(value);
         setText(StringAndSuffix(a.first, static_cast<size_t>(a.second)));
+        break;
+      }
+      case PrimitiveProperty::Highlight:
+      {
+        Control::setHighlight(std::any_cast<bool>(value));
         break;
       }
       case PrimitiveProperty::Visibility:

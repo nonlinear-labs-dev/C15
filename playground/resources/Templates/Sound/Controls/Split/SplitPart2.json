@@ -44,7 +44,9 @@
         "ControlClasses": "SplitVoiceGroupII"
       },
       "styles": {
+        "HighlightBackgroundColor": "C255",
         "BackgroundColor": "C128",
+        "HighlightColor": "C43",
         "Color": "C43",
         "FontSize": 8,
         "FontDecoration": "Regular",
@@ -67,7 +69,8 @@
         "Tag": "Background"
       },
       "styles": {
-        "Color": "C77"
+        "Color": "C77",
+        "HighlightColor": "C77"
       }
     },
     "ParamValue": {
@@ -79,6 +82,8 @@
       "styles": {
         "Color": "C255",
         "BackgroundColor": "Transparent",
+        "HighlightBackgroundColor": "Transparent",
+        "HighlightColor": "C255",
         "TextAlign": "Center",
         "FontDecoration": "Regular"
       }

@@ -12,15 +12,14 @@
 namespace DescriptiveLayouts
 {
   ControlInstance::ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
-                                     const EventConnections &eventConnections, StaticInitList staticInit, VisibilityEvent visibilitySource,
-                                     HighlightEvent highlightSource)
+                                   const EventConnections& eventConnections, StaticInitList staticInit,
+                                   VisibilityEvent visibilitySource)
       : controlInstance(std::move(controlInstance))
       , controlClass(std::move(control))
       , position(position)
       , eventConnections(eventConnections)
       , staticInitList(std::move(staticInit))
       , visibility(visibilitySource)
-      , highlight(highlightSource)
   {
   }
 

@@ -11,4 +11,8 @@ namespace nltools
     cb(soup_uri_get_scheme(u), soup_uri_get_host(u), soup_uri_get_path(u), soup_uri_get_port(u));
     soup_uri_free(u);
   }
+
+  bool startsWith(const std::string& string, const std::string& test) {
+    return string.rfind(test) == 0;
+  }
 }

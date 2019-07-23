@@ -39,7 +39,8 @@
         "Tag": "ButtonCover"
       },
       "styles": {
-        "Color": "C43"
+        "Color": "C43",
+        "HighlightColor": "C43"
       }
     },
     "DefaultButtonStyle-Border": {
@@ -48,7 +49,8 @@
         "PrimitiveClasses": "Border"
       },
       "styles": {
-        "Color": "C103"
+        "Color": "C103",
+        "HighlightColor": "C103"
       }
     },
     "DefaultButtonStyle-Text": {
@@ -61,7 +63,9 @@
         "SuffixColor": "C204",
         "BackgroundColor": "C77",
         "FontSize": 8,
-        "TextAlign": "Center"
+        "TextAlign": "Center",
+        "HighlightColor": "C255",
+        "HighlightBackgroundColor": "C128"
       }
     }
   }

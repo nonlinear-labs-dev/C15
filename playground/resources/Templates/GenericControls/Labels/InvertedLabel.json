@@ -16,6 +16,7 @@
       "styles": {
         "BackgroundColor": "C128",
         "Color": "C43",
+        "HighlightColor": "C43",
         "FontSize": 8,
         "TextAlign": "Center"
       }

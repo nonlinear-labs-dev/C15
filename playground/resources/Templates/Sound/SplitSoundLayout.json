@@ -25,9 +25,7 @@
         "ButtonA": {
           "Class": "Button",
           "Position": "BUTTON_A",
-          "Init": {
-            "Text[Text]": "Select II"
-          }
+          "Events": "SelectVGButtonText => Text[Text]"
         },
         "ButtonB": {
           "Class": "Button",
@@ -56,9 +54,10 @@
           "Init": {
             "VoiceGroupIdentifier[Text]": "I",
             "UpperText[Text]": "+12.00 st",
-            "LowerText[Text]": "-3.5 dB"
+            "LowerText[Text]": "-3.5 dB",
+            "Any[Highlight]": "true"
           },
-          "Highlight": "isCurrentVGI"
+          "Events": "isCurrentVGI => Any[Highlight]"
         },
         "Right": {
           "Class": "SplitVoiceGroupII",
@@ -66,9 +65,10 @@
           "Init": {
             "VoiceGroupIdentifier[Text]": "II",
             "UpperText[Text]": "+12.00 st",
-            "LowerText[Text]": "-3.5 dB"
+            "LowerText[Text]": "-3.5 dB",
+            "Any[Highlight]": "false"
           },
-          "Highlight": "isCurrentVGII"
+          "Events": "isCurrentVGII => Any[Highlight]"
         },
         "Split": {
           "Class": "SplitPoint",

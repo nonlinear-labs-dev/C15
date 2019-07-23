@@ -47,57 +47,6 @@ bool ControlOwner::redraw(FrameBuffer &fb)
     }
   }
   return didRedraw;
-
-  /*if(Application::get().getSettings()->getSetting<LayoutMode>()->get() == LayoutVersionMode::Old)
-  {
-
-  }
-  else
-  {
-    std::vector<tControlPtr> dirtyControls;
-    std::vector<tControlPtr> underlyingControls;
-
-    for(const auto &c : m_controls)
-    {
-      if(c->isDirty())
-      {
-        forEach((tCallback)[&underlyingControls, &c, &fb](tControlPtr child) {
-          if(c.get() != child.get())
-          {
-            if(c->getPosition().intersects(child->getPosition()))
-            {
-              underlyingControls.emplace_back(child);
-            }
-          }
-        });
-
-        dirtyControls.emplace_back(c);
-      }
-    }
-
-    std::for_each(dirtyControls.begin(), dirtyControls.end(),
-                  [&underlyingControls](auto &e) { underlyingControls.emplace_back(e); });
-
-    for(const auto &c : underlyingControls)
-    {
-
-      if(c->isVisible())
-      {
-        c->drawBackground(fb);
-        c->redraw(fb);
-      }
-      else
-      {
-        auto pos = c->getPosition();
-        fb.setColor(FrameBuffer::Colors::C43);
-        fb.fillRect(pos);
-      }
-
-      c->setClean();
-    }
-
-    return !dirtyControls.empty();
-  }*/
 }
 
 void ControlOwner::remove(const Control *ctrl)

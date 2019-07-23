@@ -53,7 +53,7 @@ namespace DescriptiveLayouts
 
       for(auto &init : m_prototype.staticInitList.m_inits)
       {
-        if(p.primitiveInstance == init.m_instance)
+        if(p.primitiveInstance == init.m_instance || init.m_instance == "Any")
         {
           if(auto propertyOwner = dynamic_cast<PropertyOwner *>(c))
           {
@@ -89,7 +89,6 @@ namespace DescriptiveLayouts
 
   void GenericControl::connect()
   {
-
     for(auto &c : m_prototype.eventConnections)
     {
       m_connections.push_back(EventSourceBroker::get().connect(
@@ -99,29 +98,31 @@ namespace DescriptiveLayouts
     m_connections.push_back(EventSourceBroker::get().connect(
         m_prototype.visibility.m_source,
         sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype)));
-
-    m_connections.push_back(EventSourceBroker::get().connect(
-        m_prototype.highlight.m_source,
-        sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onHighlightChanged), m_prototype)));
   }
 
   void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
   {
-
+    bool shouldRestyle = false;
     for(const auto &c : getControls())
     {
       if(auto a = std::dynamic_pointer_cast<Styleable>(c))
       {
         const auto &primitive = a->getPrimitive();
 
-        if(primitive.primitiveInstance == connection.targetInstance)
+        if(primitive.primitiveInstance == connection.targetInstance || connection.targetInstance == "Any")
         {
           if(auto p = std::dynamic_pointer_cast<PropertyOwner>(c))
           {
             p->setProperty(connection.targetProperty, v);
+            shouldRestyle = true;
           }
         }
       }
+    }
+    if(shouldRestyle)
+    {
+      setAllDirty();
+      style(m_lastUsedLayout);
     }
   }
 
@@ -143,28 +144,6 @@ namespace DescriptiveLayouts
       {
         DebugLevel::warning("Could not connect:", toString(instance.visibility.m_source),
                             "to visibility of:", instance.controlInstance, "! event does not evaluate to boolean!");
-      }
-    }
-  }
-
-  void GenericControl::onHighlightChanged(std::any highlight, const ControlInstance &ci)
-  {
-    if(m_prototype.controlInstance == ci.controlInstance)
-    {
-      try
-      {
-        auto highlit = std::any_cast<bool>(highlight);
-
-        if(m_prototype.highlight.inverted)
-          highlit = !highlit;
-
-        m_controlHighlight = highlit;
-        setDirty();
-      }
-      catch(...)
-      {
-        DebugLevel::warning("Could not connect:", toString(ci.visibility.m_source),
-                            "to highlight of:", ci.controlInstance, "! event does not evaluate to boolean!");
       }
     }
   }

@@ -19,6 +19,9 @@ namespace DescriptiveLayouts
   {
     auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
 
+    if(Control::isHighlight())
+      color = (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor);
+
     Rect r = getPosition();
 
     double controlWidth = r.getWidth();
@@ -29,8 +32,8 @@ namespace DescriptiveLayouts
 
     auto left = round(r.getLeft() + from * r.getWidth());
     auto right = round(r.getLeft() + to * r.getWidth());
-    r.setLeft(left);
-    r.setWidth(right - left);
+    r.setLeft(static_cast<int>(left));
+    r.setWidth(static_cast<int>(right - left));
     r.normalize();
 
     fb.setColor(color);
@@ -41,8 +44,12 @@ namespace DescriptiveLayouts
 
   void Bar::drawBackground(FrameBuffer &fb)
   {
-      fb.setColor((FrameBuffer::Colors)getStyleValue(StyleKey::BackgroundColor));
-      fb.fillRect(getPosition());
+    if(Control::isHighlight()) {
+      fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor));
+    } else {
+      fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::HighlightBackgroundColor));
+    }
+    fb.fillRect(getPosition());
   }
 
   void Bar::setDirty()
@@ -58,7 +65,9 @@ namespace DescriptiveLayouts
         if(std::exchange(m_range, std::any_cast<Range>(value)) != m_range)
           setDirty();
         break;
-
+      case PrimitiveProperty::Highlight:
+        Control::setHighlight(std::any_cast<bool>(value));
+        break;
       case PrimitiveProperty::Visibility:
         setVisible(std::any_cast<bool>(value));
         break;
@@ -70,7 +79,8 @@ namespace DescriptiveLayouts
     return m_primitive;
   }
 
-  void Bar::applyStyle(const StyleMap &style) {
+  void Bar::applyStyle(const StyleMap &style)
+  {
     Styleable::applyStyle(style);
   }
 }

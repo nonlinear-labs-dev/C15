@@ -6,6 +6,11 @@
         "Rect": "1, 1, 10, 27",
         "Tag": "ident"
       },
+      "Border-Fake": {
+        "Class": "Bar",
+        "Rect": "0, 2, 1, 25",
+        "Tag": "bar-l"
+      },
       "Border": {
         "Class": "Border",
         "Rect": "0, 0, 95, 29"
@@ -22,7 +27,7 @@
       },
       "MiddleLine": {
         "Class": "Bar",
-        "Rect": "10, 14, 85, 1",
+        "Rect": "10, 14, 84, 1",
         "Tag": "MiddleLine"
       },
       "UpperText": {
@@ -45,12 +50,13 @@
         "ControlClasses": "SplitVoiceGroupI"
       },
       "styles": {
+        "HighlightBackgroundColor": "C255",
         "BackgroundColor": "C128",
+        "HighlightColor": "C43",
         "Color": "C43",
         "FontSize": 8,
         "FontDecoration": "Regular",
-        "TextAlign": "Center",
-        "HighlightBackgroundColor": "C255"
+        "TextAlign": "Center"
       }
     },
     "Border": {
@@ -59,8 +65,7 @@
         "ControlClasses": "SplitVoiceGroupI"
       },
       "styles": {
-        "BorderStyle": "Rounded",
-        "Color": "C128"
+        "BorderStyle": "Rounded"
       }
     },
     "Bar": {
@@ -70,7 +75,8 @@
         "Tag": "Background"
       },
       "styles": {
-        "Color": "C77"
+        "Color": "C77",
+        "HighlightColor": "C77"
       }
     },
     "ParamValue": {
@@ -82,6 +88,8 @@
       "styles": {
         "Color": "C255",
         "BackgroundColor": "Transparent",
+        "HighlightBackgroundColor": "Transparent",
+        "HighlightColor": "C255",
         "TextAlign": "Center",
         "FontDecoration": "Regular"
       }
