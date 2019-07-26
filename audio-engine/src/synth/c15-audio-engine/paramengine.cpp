@@ -1363,12 +1363,22 @@ void paramengine::postProcessPoly_key(SignalStorage& signals, const uint32_t _vo
   signals.set<Signals::CMB_BYP>(_voiceId, unitPitch > dsp_comb_max_freqFactor ? 1.f : 0.f);
   /* - Comb Filter Decay Time (Base Pitch, Master Tune, Gate Env, Dec Time, Key Tracking, Gate Amount) */
   keyTracking = getParameterValue(Parameters::P_CMB_DKT);
+  unitSign = 0.001f * (getParameterValue(Parameters::P_CMB_D) < 0 ? -1.f : 1.f);
+#if test_comb_decay_gate_mode == 0
+  // apply decay time directly
   envMod = 1.f
-      - ((1.f - signals.get<Signals::ENV_G_SIG>()[_voiceId])
+      - ((1.f - signals.get(SignalLabel::ENV_G_SIG))
          * m_combDecayCurve.applyCurve(getParameterValue(Parameters::P_CMB_DG)));
   unitPitch = (-0.5f * notePitch * keyTracking) + (std::abs(getParameterValue(Parameters::P_CMB_D)) * envMod);
-  unitSign = getParameterValue(Parameters::P_CMB_D) < 0 ? -1.f : 1.f;
-  signals.set<Signals::CMB_DEC>(_voiceId, 0.001f * m_convert.eval_level(unitPitch) * unitSign);
+  signals.set(SignalLabel::CMB_DEC, m_convert.eval_level(unitPitch) * unitSign);
+#elif test_comb_decay_gate_mode == 1
+  // determine decay times min, max before crossfading them by gate signal (audio post processing)
+  envMod = 1.f - m_combDecayCurve.applyCurve(getParameterValue(Parameters::P_CMB_DG));
+  unitMod = std::abs(getParameterValue(Parameters::P_CMB_D));
+  unitPitch = (-0.5f * notePitch * keyTracking);
+  m_comb_decay_times[0] = m_convert.eval_level(unitPitch + (unitMod * envMod)) * unitSign;
+  m_comb_decay_times[1] = m_convert.eval_level(unitPitch + unitMod) * unitSign;
+#endif
   /* - Comb Filter Allpass Frequency (Base Pitch, Master Tune, Key Tracking, AP Tune, Env C) */
   keyTracking = getParameterValue(Parameters::P_CMB_APKT);
   unitPitch = getParameterValue(Parameters::P_CMB_APT);
