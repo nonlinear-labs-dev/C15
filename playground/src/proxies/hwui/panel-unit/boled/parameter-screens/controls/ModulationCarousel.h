@@ -36,7 +36,9 @@ class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
 
   void onModulationSourceChanged(const ModulateableParameter *modP);
 
-  void forceHighlights();
+  void forceHighlights(const ModulateableParameter* modP = nullptr);
+
+  void drawBackground(FrameBuffer &fb) override;
 
   OnModulationChangedNotifier<ModulationCarousel> m_modulationNotifier;
   Button *m_button;

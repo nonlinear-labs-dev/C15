@@ -13,8 +13,7 @@ DebugLevel::DebugLevel(Settings &settings)
 }
 
 DebugLevel::~DebugLevel()
-{
-}
+= default;
 
 bool DebugLevel::set(DebugLevels m)
 {

@@ -3,19 +3,19 @@
     "Dots": {
       "Text": {
         "Class": "Text",
-        "Rect": "0, 0, 58, 13"
+        "Rect": "0, 0, 12, 16",
+        "Default": "...."
       }
     }
   },
   "styles": {
-    "default-dot-style": {
+    "Dot_style": {
       "selector": {
         "ControlClasses": "Dots",
         "PrimitiveClasses": "Text"
       },
       "styles": {
-        "BackgroundColor": "Transparent",
-        "Color": "C128",
+        "Color": "C255",
         "TextAlign": "Left"
       }
     }

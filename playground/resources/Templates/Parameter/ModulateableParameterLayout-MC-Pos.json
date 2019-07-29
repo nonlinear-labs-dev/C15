@@ -1,6 +1,6 @@
 {
   "layouts": {
-    "Modulateable-Parameter-MC-Select-Layout": {
+    "Modulateable-Parameter-MC-Pos-Layout": {
       "Selector": {
         "UIFocus": "Parameters",
         "UIMode": "Select",

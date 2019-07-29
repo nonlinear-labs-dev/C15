@@ -1,6 +1,6 @@
 {
   "layouts": {
-    "Modulateable-Parameter-MC-Select-Layout": {
+    "Modulateable-Parameter-Mod-Limits-Layout": {
       "Selector": {
         "UIFocus": "Parameters",
         "UIMode": "Select",
@@ -31,14 +31,6 @@
           "Position": "40, 21",
           "Events": "MacroControlSymbol => Text[Text]"
         },
-        "Dots": {
-          "Class": "Label",
-          "Position": "38, 17",
-          "Init": {
-            "Text[Text]": "....."
-          },
-          "Visbility": "MacroControlAsignment"
-        },
         "ParameterValue": {
           "Class": "ParameterValueLabel",
           "Position": "77, 35",
@@ -67,6 +59,14 @@
         "ModulationCarousel": {
           "Class": "ModulationCarousel",
           "Position": "195, 0"
+        },
+        "Dots": {
+          "Class": "Dots",
+          "Position": "60, 17",
+          "Init": {
+            "Text[Text]": "..."
+          },
+          "Visbility": "MacroControlAsignment"
         }
       },
       "EventSinks": {

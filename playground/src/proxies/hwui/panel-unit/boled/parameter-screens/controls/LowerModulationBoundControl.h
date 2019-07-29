@@ -15,6 +15,5 @@ class LowerModulationBoundControl : public ModulationBoundControl
   void onSelectionChanged(Parameter *, Parameter *newParam);
   void onParameterChanged(const Parameter *p);
 
-  Control *m_dummyButton = nullptr;
   connection m_paramChanged;
 };

@@ -41,6 +41,20 @@ namespace DescriptiveLayouts
     auto it = std::find_if(m_layouts.begin(), m_layouts.end(),
                            [=](const LayoutClass& e) { return e.matches(fam) && e.meetsConditions(); });
 
+    std::vector<LayoutClass> matches;
+    std::copy_if(m_layouts.begin(), m_layouts.end(), std::back_inserter(matches),
+                 [=](const LayoutClass& e) { return e.matches(fam) && e.meetsConditions(); });
+
+    if(matches.size() > 1)
+    {
+      auto text = std::string("Found:\n");
+      for(auto& m : matches)
+      {
+        text += m.getName() + "\n";
+      }
+      DebugLevel::throwException("Can't resolve ambiguity: ", text);
+    }
+
     if(it == m_layouts.end())
     {
       DebugLevel::throwException("No matching layout found! current modes:", toString(fam.focus), toString(fam.mode),
@@ -54,6 +68,6 @@ namespace DescriptiveLayouts
 
   std::shared_ptr<DFBLayout> BoledLayoutFactory::instantiate(FocusAndMode fam)
   {
-      return std::shared_ptr<DFBLayout>(find(fam).instantiate());
+    return std::shared_ptr<DFBLayout>(find(fam).instantiate());
   }
 }

@@ -93,7 +93,7 @@ Label::StringAndSuffix ModulationBoundLabel::shortenStringIfNeccessary(std::shar
   if(font->getStringWidth(text.text) >= getWidth())
   {
     auto sText = StringTools::removeSpaces(text.text);
-    if(sText.find_last_of('F') != sText.npos)
+    if(sText.find_last_of('F') != Glib::ustring::npos)
       return { sText, 1 };
     return { sText };
   }

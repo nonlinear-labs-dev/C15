@@ -1,9 +1,10 @@
 {
   "layouts": {
-    "Unmodulateable-Parameter-Select-Layout": {
+    "Modulateable-Parameter-Select-Layout": {
       "Selector": {
         "UIFocus": "Parameters",
-        "UIMode": "Select"
+        "UIMode": "Select",
+        "UIDetail": "Init"
       },
       "Conditions": [
         "isParameterModulateable"
@@ -55,7 +56,7 @@
         },
         "AssignedMCLabel": {
           "Class": "Label",
-          "Position": "19, 21",
+          "Position": "20, 21",
           "Events": "MacroControlSymbol => Text[Text]",
           "Visibility": "MacroControlAsignment"
         },
@@ -63,8 +64,7 @@
           "Class": "Dots",
           "Position": "60, 17",
           "Init": {
-            "Text[Text]": "...",
-            "Text[Visibility]": "false"
+            "Text[Text]": "..."
           },
           "Visbility": "MacroControlAsignment"
         }

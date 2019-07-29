@@ -17,7 +17,6 @@ LowerModulationBoundControl::LowerModulationBoundControl(const Rect &r)
   auto height = r.getHeight() / 2;
 
   addControl(new LowerModulationBoundLabel(Rect(0, 0, r.getWidth(), height)));
-  m_dummyButton = addControl(new Button("", Rect(0, r.getHeight() - 1 - 11, 58, 11)));
   addControl(new LowerModulationBoundSlider(Rect(0, height, r.getWidth(), height)));
 
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
@@ -34,11 +33,6 @@ void LowerModulationBoundControl::onSelectionChanged(Parameter *, Parameter *new
 
 void LowerModulationBoundControl::onParameterChanged(const Parameter *p)
 {
-  if(auto a = dynamic_cast<const ModulateableParameter *>(p))
-    m_dummyButton->setVisible(a->getModulationSource() == MacroControls::NONE);
-  else
-    m_dummyButton->setVisible(true);
-
   setDirty();
 }
 

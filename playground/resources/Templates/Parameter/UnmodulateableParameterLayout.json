@@ -6,6 +6,9 @@
         "UIMode": "Select",
         "UIDetail": "Init"
       },
+      "Conditions": [
+        "isParameterUnmodulateable"
+      ],
       "Controls": {
         "ButtonA": {
           "Class": "Button",

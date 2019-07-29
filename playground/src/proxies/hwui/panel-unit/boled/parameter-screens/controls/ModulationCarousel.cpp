@@ -18,14 +18,11 @@ ModulationCarousel::ModulationCarousel(Mode mode, const Rect &pos)
 {
   s_lastMode = mode;
   m_upper = addControl(new UpperModulationBoundControl(Rect(0, 2, pos.getWidth(), 20)));
-  m_upper->setHighlight(mode == Mode::UpperBound);
   m_middle = addControl(new CurrentModulatedValueLabel(Rect(0, 22, pos.getWidth(), 20)));
-  m_middle->setHighlight(mode == Mode::ParameterValue);
   m_lower = addControl(new LowerModulationBoundControl(Rect(0, 42, pos.getWidth(), 20)));
-  m_lower->setHighlight(mode == Mode::LowerBound);
-
   m_button = addControl(new Button("", Buttons::BUTTON_D));
-  m_button->setHighlight(false);
+
+  forceHighlights();
 }
 
 ModulationCarousel::ModulationCarousel(const Rect &pos)
@@ -33,27 +30,39 @@ ModulationCarousel::ModulationCarousel(const Rect &pos)
 {
 }
 
-void ModulationCarousel::forceHighlights()
+void ModulationCarousel::forceHighlights(const ModulateableParameter *modP)
 {
-  if(Application::get().getHWUI()->getFocusAndMode().detail == UIDetail::ButtonD)
+  if(modP == nullptr)
+    modP = dynamic_cast<ModulateableParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+
+  if(modP)
   {
-    m_upper->setHighlight(s_lastMode == Mode::UpperBound);
-    m_middle->setHighlight(s_lastMode == Mode::ParameterValue);
-    m_lower->setHighlight(s_lastMode == Mode::LowerBound);
+    auto visible = modP->getModulationSource() != MacroControls::NONE;
+
+    m_upper->setVisible(visible);
+    m_lower->setVisible(visible);
+    m_middle->setVisible(visible);
+
+    m_button->setVisible(!visible);
+
+    if(m_upper->isVisible() && m_lower->isVisible() && m_middle->isVisible()) {
+      m_upper->setHighlight(s_lastMode == Mode::UpperBound);
+      m_middle->setHighlight(s_lastMode == Mode::ParameterValue);
+      m_lower->setHighlight(s_lastMode == Mode::LowerBound);
+    }
   }
   else
   {
-    m_upper->setHighlight(false);
-    m_middle->setHighlight(false);
-    m_lower->setHighlight(false);
+    m_upper->setVisible(false);
+    m_lower->setVisible(false);
+    m_middle->setVisible(false);
+    m_button->setVisible(true);
   }
 }
 
 void ModulationCarousel::setup(Parameter *p)
 {
-  forceHighlights();
-  if(auto modP = dynamic_cast<ModulateableParameter *>(p))
-    onModulationSourceChanged(modP);
+  forceHighlights(dynamic_cast<const ModulateableParameter *>(p));
 }
 
 void ModulationCarousel::turn()
@@ -127,15 +136,7 @@ bool ModulationCarousel::onButton(Buttons i, bool down, ButtonModifiers modifier
 
 void ModulationCarousel::onModulationSourceChanged(const ModulateableParameter *modP)
 {
-  if(modP)
-  {
-    forceHighlights();
-    auto visible = modP->getModulationSource() != MacroControls::NONE;
-    m_upper->setVisible(visible);
-    m_lower->setVisible(visible);
-    m_middle->setVisible(visible);
-    m_button->setVisible(!visible);
-  }
+  forceHighlights(modP);
 }
 
 bool ModulationCarousel::redraw(FrameBuffer &fb)
@@ -146,4 +147,9 @@ bool ModulationCarousel::redraw(FrameBuffer &fb)
     ret |= m_button->redraw(fb);
 
   return ret;
+}
+
+void ModulationCarousel::drawBackground(FrameBuffer &fb) {
+  setAllDirty();
+  ControlWithChildren::drawBackground(fb);
 }
