@@ -33,7 +33,7 @@
 #define test_tone_initial_state 0      // Test Tone initial State (0: disabled, 1: enabled)
 
 #define test_comb_decay_gate_mode                                                                                      \
-  1  // 0: apply in slow post processing (like prototype), 1: audio fade min, max by gate signal (recommended)
+  0  // 0: apply in slow post processing (like prototype), 1: audio fade min, max by gate signal (currently buggy!)
 
 #define test_svf_types 3        // 0: SVF first Proto NAN, 1: SVF noFIR, 2: SVF FIR, 3: SVF NI (recommended)
 #define test_svf_fm_limit 1.5f  // SVF fm clipping maximum (for svf_types 0, 1, 2)

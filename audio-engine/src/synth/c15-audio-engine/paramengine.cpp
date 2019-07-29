@@ -993,10 +993,10 @@ void paramengine::postProcessPoly_slow(SignalStorage& signals, const uint32_t _v
 #if test_comb_decay_gate_mode == 0
   // apply decay time directly
   envMod = 1.f
-      - ((1.f - signals.get(SignalLabel::ENV_G_SIG))
+      - ((1.f - signals.get<Signals::ENV_G_SIG>()[_voiceId])
          * m_combDecayCurve.applyCurve(getParameterValue(Parameters::P_CMB_DG)));
   unitPitch = (-0.5f * notePitch * keyTracking) + (std::abs(getParameterValue(Parameters::P_CMB_D)) * envMod);
-  signals.set(SignalLabel::CMB_DEC, m_convert.eval_level(unitPitch) * unitSign);
+  signals.set<Signals::CMB_DEC>(_voiceId, m_convert.eval_level(unitPitch) * unitSign);
 #elif test_comb_decay_gate_mode == 1
   // determine decay times min, max before crossfading them by gate signal (audio post processing)
   envMod = 1.f - m_combDecayCurve.applyCurve(getParameterValue(Parameters::P_CMB_DG));
@@ -1367,10 +1367,10 @@ void paramengine::postProcessPoly_key(SignalStorage& signals, const uint32_t _vo
 #if test_comb_decay_gate_mode == 0
   // apply decay time directly
   envMod = 1.f
-      - ((1.f - signals.get(SignalLabel::ENV_G_SIG))
+      - ((1.f - signals.get<Signals::ENV_G_SIG>()[_voiceId])
          * m_combDecayCurve.applyCurve(getParameterValue(Parameters::P_CMB_DG)));
   unitPitch = (-0.5f * notePitch * keyTracking) + (std::abs(getParameterValue(Parameters::P_CMB_D)) * envMod);
-  signals.set(SignalLabel::CMB_DEC, m_convert.eval_level(unitPitch) * unitSign);
+  signals.set<Signals::CMB_DEC>(_voiceId, m_convert.eval_level(unitPitch) * unitSign);
 #elif test_comb_decay_gate_mode == 1
   // determine decay times min, max before crossfading them by gate signal (audio post processing)
   envMod = 1.f - m_combDecayCurve.applyCurve(getParameterValue(Parameters::P_CMB_DG));
