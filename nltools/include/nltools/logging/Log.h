@@ -1,14 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <initializer_list>
 #include <mutex>
 
 namespace nltools
 {
-#pragma once
-
-#include <initializer_list>
-#include <iostream>
 
   class Log
   {

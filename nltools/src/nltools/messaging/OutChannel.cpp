@@ -1,10 +1,7 @@
 #include "OutChannel.h"
 
-namespace nltools
+namespace nltools::msg
 {
-  namespace msg
-  {
-    OutChannel::OutChannel() = default;
-    OutChannel::~OutChannel() = default;
-  }
+  OutChannel::OutChannel() = default;
+  OutChannel::~OutChannel() = default;
 }

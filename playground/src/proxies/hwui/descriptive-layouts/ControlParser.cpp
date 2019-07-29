@@ -55,7 +55,7 @@ namespace DescriptiveLayouts
     auto itProp = j.find(key);
     if(itProp != j.end())
     {
-      return *itProp;
+      return static_cast<T>(*itProp);
     }
     return T{};
   }

@@ -442,11 +442,13 @@ namespace DescriptiveLayouts
 
   class SoundHeaderText : public EventSource<DisplayString>
   {
-  public:
-    SoundHeaderText() : m_not{this} {
-
+   public:
+    SoundHeaderText()
+        : m_not{ this }
+    {
     }
-    void onEditBufferChanged(const EditBuffer* e) {
+    void onEditBufferChanged(const EditBuffer *e)
+    {
       setValue(std::any_cast<DisplayString>(getLastValue()));
     }
 
@@ -577,6 +579,10 @@ namespace DescriptiveLayouts
         {
           setValue({ "MC Pos", 0 });
         }
+        else
+        {
+          setValue({"",0});
+        }
       }
       else
       {
@@ -640,6 +646,10 @@ namespace DescriptiveLayouts
         else if(modP->getModulationSource() != MacroControls::NONE)
         {
           setValue({ "MC Amt", 0 });
+        }
+        else
+        {
+          setValue({"",0});
         }
       }
       else
@@ -716,19 +726,23 @@ namespace DescriptiveLayouts
 
   class SoundEditHeading : public EventSource<DisplayString>
   {
-  public:
+   public:
     SoundEditHeading()
-      : m_changed(this) {}
-      void onEditBufferChanged(const EditBuffer* eb) {
+        : m_changed(this)
+    {
+    }
+    void onEditBufferChanged(const EditBuffer *eb)
+    {
       setValue(std::any_cast<DisplayString>(getLastValue()));
     }
-  protected:
+
+   protected:
     std::any getLastValue() const override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
       auto type = toString(eb->getType());
       auto vg = eb->isVGISelected() ? "[I]" : "[II]";
-      return DisplayString({type + " " + vg, 0});
+      return DisplayString({ type + " " + vg, 0 });
     }
     OnEditBufferChangedNotifier<SoundEditHeading> m_changed;
   };

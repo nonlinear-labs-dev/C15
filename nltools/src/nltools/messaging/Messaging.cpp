@@ -7,9 +7,7 @@
 #include <map>
 #include <list>
 
-namespace nltools
-{
-  namespace msg
+namespace nltools::msg
   {
     namespace detail
     {
@@ -124,4 +122,3 @@ namespace nltools
       return ret;
     }
   }
-}
