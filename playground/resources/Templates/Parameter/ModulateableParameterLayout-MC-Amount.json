@@ -7,12 +7,13 @@
         "UIDetail": "ButtonC"
       },
       "Conditions": [
-        "isParameterModulateable"
+        "isParameterModulateable",
+        "hasMcSelected"
       ],
       "Controls": {
         "ButtonA": {
           "Class": "Button",
-          "Position": "3, 51",
+          "Position": "BUTTON_A",
           "Events": "MCPositionButtonText => Text[Text]"
         },
         "ButtonB": {

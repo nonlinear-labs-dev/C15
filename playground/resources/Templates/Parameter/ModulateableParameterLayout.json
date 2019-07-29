@@ -3,8 +3,7 @@
     "Unmodulateable-Parameter-Select-Layout": {
       "Selector": {
         "UIFocus": "Parameters",
-        "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIMode": "Select"
       },
       "Conditions": [
         "isParameterModulateable"
@@ -64,7 +63,8 @@
           "Class": "Dots",
           "Position": "60, 17",
           "Init": {
-            "Text[Text]": "..."
+            "Text[Text]": "...",
+            "Text[Visibility]": "false"
           },
           "Visbility": "MacroControlAsignment"
         }
