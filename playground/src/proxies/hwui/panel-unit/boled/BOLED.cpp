@@ -19,6 +19,8 @@
 #include <tools/ExceptionTools.h>
 #include <proxies/hwui/descriptive-layouts/ConditionRegistry.h>
 #include <device-settings/LayoutMode.h>
+#include <tools/ScopedFunction.h>
+#include <tools/SingeltonShortcuts.h>
 
 BOLED::BOLED()
     : OLEDProxy(Rect(0, 0, 256, 64))
@@ -48,8 +50,8 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
   {
     case LayoutVersionMode::Old:
     {
-        installOldLayouts(focusAndMode);
-        break;
+      installOldLayouts(focusAndMode);
+      break;
     }
     case LayoutVersionMode::New:
     {
@@ -59,12 +61,16 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
       }
       catch(...)
       {
-        if(focusAndMode.focus == UIFocus::Setup) {
-          if(failcounter >= 3) {
+        if(focusAndMode.focus == UIFocus::Setup)
+        {
+          if(failcounter >= 1)
+          {
             installOldLayouts(focusAndMode);
             failcounter = 0;
             return;
-          } else {
+          }
+          else
+          {
             failcounter++;
           }
         }
@@ -173,6 +179,12 @@ void BOLED::setupBankScreen(FocusAndMode focusAndMode)
 
 bool BOLED::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
+  ScopedFunction sf([=] {
+    if(SiSc::getLayoutSetting() == LayoutVersionMode::Old)
+      if(auto l = std::dynamic_pointer_cast<DFBLayout>(getLayout()))
+        l->setAllDirty();
+  });
+
   if(auto l = std::dynamic_pointer_cast<DFBLayout>(getLayout()))
     if(l->onButton(buttonID, state, modifiers))
       return true;

@@ -3,8 +3,7 @@
     "Dots": {
       "Text": {
         "Class": "Text",
-        "Rect": "0, 0, 12, 16",
-        "Default": "...."
+        "Rect": "0, 0, 12, 16"
       }
     }
   },

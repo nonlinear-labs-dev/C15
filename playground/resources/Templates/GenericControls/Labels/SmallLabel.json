@@ -1,0 +1,42 @@
+{
+  "controls": {
+    "SmallLabel": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 16, 13"
+      }
+    },
+    "SmallHighlightLabel": {
+      "Text": {
+        "Class":"Text",
+        "Rect": "0, 0, 16, 13"
+      }
+    }
+  },
+  "styles": {
+    "Default-Label-NonHighlight": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "SmallLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C128",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    },
+    "Default-Label-Highlight": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "SmallHighlightLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C43",
+        "Color": "C255",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ class DateTimeEditor : public ControlWithChildren, public SetupEditor
 {
  public:
   DateTimeEditor();
-  virtual ~DateTimeEditor();
+  ~DateTimeEditor() override;
 
   void setPosition(const Rect &) override;
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
@@ -21,17 +21,21 @@ class DateTimeEditor : public ControlWithChildren, public SetupEditor
 
   enum Selection
   {
-    Month = 0,
-    Day = 1,
-    Year = 2,
+    Year = 0,
+    Month = 1,
+    Day = 2,
     Hour = 3,
     Minute = 4,
     NumFields
   };
 
+  const Selection step(Selection s, int inc = 1) const;
+
   Selection m_selection = Selection::Hour;
-  std::array<Label *, Selection::NumFields> m_labels;
-  std::array<Label *, Selection::NumFields> m_controls;
+  std::array<Label *, Selection::NumFields> m_labels{};
+  std::array<Label *, Selection::NumFields> m_controls{};
   uint64_t m_diff = 0;
   std::time_t m_originalTime;
+
+  const Rect c_fullRightSidePosition{ 129, 16, 126, 48 };
 };

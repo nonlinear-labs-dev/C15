@@ -6,8 +6,10 @@
 #include "ConditionRegistry.h"
 #include "Conditions/ParameterConditions.h"
 #include "Conditions/SoundConditions.h"
+#include <device-settings/LayoutMode.h>
+#include <tools/SingeltonShortcuts.h>
 
-ConditionRegistry::tCondition ConditionRegistry::getLambda(std::string key)
+ConditionRegistry::tCondition ConditionRegistry::getLambda(const std::string& key)
 {
   return m_theConditionMap.at(key).get();
 }
@@ -30,12 +32,15 @@ ConditionRegistry::ConditionRegistry()
   m_theConditionMap["isLayerSound"] = std::make_unique<SoundConditions::IsLayerSound>();
 }
 
-sigc::connection ConditionRegistry::onChange(std::function<void()> cb)
+sigc::connection ConditionRegistry::onChange(const std::function<void()>& cb)
 {
   return m_signal.connect(cb);
 }
 
 void ConditionRegistry::onConditionChanged()
 {
-  m_signal.send();
+  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old)
+  {
+    m_signal.send();
+  }
 }
