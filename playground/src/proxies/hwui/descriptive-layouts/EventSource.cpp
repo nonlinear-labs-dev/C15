@@ -14,6 +14,7 @@
 #include <presets/Bank.h>
 #include <presets/Preset.h>
 #include <tools/EditBufferNotifier.h>
+#include <tools/SingeltonShortcuts.h>
 
 namespace DescriptiveLayouts
 {
@@ -558,10 +559,10 @@ namespace DescriptiveLayouts
     }
   };
 
-  class MCPositionButtonText : public EventSource<DisplayString>
+  class MCPositionChanged : public EventSource<bool>
   {
    public:
-    MCPositionButtonText()
+    MCPositionChanged()
         : m_modNot{ this }
     {
     }
@@ -571,33 +572,22 @@ namespace DescriptiveLayouts
       if(modP)
       {
         auto changed = modP->isMacroControlAssignedAndChanged();
-        if(changed)
-        {
-          setValue({ "MC Pos*", 1 });
-        }
-        else if(modP->getModulationSource() != MacroControls::NONE)
-        {
-          setValue({ "MC Pos", 0 });
-        }
-        else
-        {
-          setValue({"",0});
-        }
+        setValue(changed);
       }
       else
       {
-        setValue({ "", 0 });
+        setValue(false);
       }
     }
 
    protected:
-    OnModulationChangedNotifier<MCPositionButtonText> m_modNot;
+    OnModulationChangedNotifier<MCPositionChanged> m_modNot;
   };
 
-  class MCSelectionButtonText : public EventSource<DisplayString>
+  class MCSelectionChanged : public EventSource<bool>
   {
    public:
-    MCSelectionButtonText()
+    MCSelectionChanged()
         : m_modNot{ this }
     {
     }
@@ -607,29 +597,23 @@ namespace DescriptiveLayouts
       if(modP)
       {
         auto changed = modP->isModSourceChanged();
-        if(changed)
-        {
-          setValue({ "MC Sel*", 1 });
-        }
-        else
-        {
-          setValue({ "MC Sel", 0 });
-        }
+        setValue(changed);
       }
       else
       {
-        setValue({ "", 0 });
+        setValue(false);
       }
     }
 
    protected:
-    OnModulationChangedNotifier<MCSelectionButtonText> m_modNot;
+    OnModulationChangedNotifier<MCSelectionChanged> m_modNot;
   };
 
-  class MCAmountButtonText : public EventSource<DisplayString>
+
+  class MCAmountChanged : public EventSource<bool>
   {
    public:
-    MCAmountButtonText()
+    MCAmountChanged()
         : m_modNot{ this }
     {
     }
@@ -639,27 +623,38 @@ namespace DescriptiveLayouts
       if(modP)
       {
         auto changed = modP->isModAmountChanged();
-        if(changed)
-        {
-          setValue({ "MC Amt*", 1 });
-        }
-        else if(modP->getModulationSource() != MacroControls::NONE)
-        {
-          setValue({ "MC Amt", 0 });
-        }
-        else
-        {
-          setValue({"",0});
-        }
+        setValue(changed);
       }
       else
       {
-        setValue({ "", 0 });
+        setValue(false);
       }
     }
 
    protected:
-    OnModulationChangedNotifier<MCAmountButtonText> m_modNot;
+    OnModulationChangedNotifier<MCAmountChanged> m_modNot;
+  };
+
+  class ParameterValueChanged : public EventSource<bool>
+  {
+   public:
+    ParameterValueChanged()
+        : m_paramChanged{ this }
+    {
+    }
+
+    void onParameterChanged(const Parameter *p)
+    {
+      setValue(p->isValueChangedFromLoaded());
+    }
+
+   protected:
+    std::any getLastValue() const override
+    {
+      return std::any(SiSc::EB::getCurrentParameter()->isValueChangedFromLoaded());
+    }
+
+    OnParameterChangedNotifier<ParameterValueChanged> m_paramChanged;
   };
 
   class FullSoundName : public EventSource<DisplayString>
@@ -805,9 +800,11 @@ namespace DescriptiveLayouts
     m_map[EventSources::SelectVGButtonText] = std::make_unique<SelectVGButtonText>();
     m_map[EventSources::SoundEditHeading] = std::make_unique<SoundEditHeading>();
 
-    m_map[EventSources::MCPositionButtonText] = std::make_unique<MCPositionButtonText>();
-    m_map[EventSources::MCAmountButtonText] = std::make_unique<MCAmountButtonText>();
-    m_map[EventSources::MCSelectButtonText] = std::make_unique<MCSelectionButtonText>();
+    m_map[EventSources::MCSelectionChanged] = std::make_unique<MCSelectionChanged>();
+    m_map[EventSources::MCPositionChanged] = std::make_unique<MCPositionChanged>();
+    m_map[EventSources::MCAmountChanged] = std::make_unique<MCAmountChanged>();
+
+    m_map[EventSources::ParameterValueChanged] = std::make_unique<ParameterValueChanged>();
 
     m_map[EventSources::IsOnlyParameterOnButton] = std::make_unique<IsOnlyParameterOnButton>();
     m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();
