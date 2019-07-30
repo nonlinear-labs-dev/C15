@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <proxies/hwui/panel-unit/boled/file/FileDialogLayout.h>
 #include <proxies/hwui/panel-unit/boled/file/FileDialogInfoLayout.h>
 #include <device-settings/DebugLevel.h>
@@ -12,11 +14,11 @@
 #include <proxies/hwui/panel-unit/boled/BOLED.h>
 #include <proxies/hwui/controls/Button.h>
 
-FileDialogLayout::FileDialogLayout(tFilterFunction filter, tCallBackFunction cb, std::string header)
+FileDialogLayout::FileDialogLayout(tFilterFunction filter, tCallBackFunction cb, const std::string& header)
     : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
-    , commitFunction(cb)
+    , commitFunction(std::move(cb))
     , m_header(header)
-    , crawler("/mnt/usb-stick/", filter, [=]() {
+    , crawler("/mnt/usb-stick/", std::move(filter), [=]() {
       auto fl = crawler.copyData();
       fileCount = fl.size();
       fileList->setFileList(fl);
@@ -27,9 +29,8 @@ FileDialogLayout::FileDialogLayout(tFilterFunction filter, tCallBackFunction cb,
   fileCount = 0;
   addControl(new Button("Cancel", Buttons::BUTTON_A));
   addControl(new Button("Select", Buttons::BUTTON_D));
-  fileList = addControl(new FileListControl());
-  headerLabel = addControl(new InvertedLabel(header, Rect(0, 0, 256, 14)));
-  fileList->setPosition(Rect(0, 14, 256, 36));
+  fileList = addControl(new FileListControl(Rect(0, 14, 256, 36)));
+  addControl(new InvertedLabel(header, Rect(0, 0, 256, 14)));
   positionLabel = addControl(new InvertedLabel("", Rect(200, 0, 56, 14)));
   updateLabels();
   crawler.start();
@@ -110,13 +111,4 @@ void FileDialogLayout::updateLabels()
 std::experimental::filesystem::directory_entry FileDialogLayout::getSelectedFile()
 {
   return fileList->getSelection();
-}
-
-bool FileDialogLayout::redraw(FrameBuffer& fb)
-{
-  DFBLayout::redraw(fb);
-  fb.setColor(FrameBuffer::Colors::C128);
-  Rect r(0, 0, 200, 64);
-  fb.drawRect(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
-  return true;
 }

@@ -17,8 +17,8 @@ class FileDialogLayout : public DFBLayout
   typedef std::function<bool(std::experimental::filesystem::directory_entry)> tFilterFunction;
 
  public:
-  FileDialogLayout(tFilterFunction filter, tCallBackFunction cb, std::string header);
-  virtual ~FileDialogLayout();
+  FileDialogLayout(tFilterFunction filter, tCallBackFunction cb, const std::string& header);
+  ~FileDialogLayout() override;
 
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   bool onRotary(int inc, ButtonModifiers modifiers) override;
@@ -26,7 +26,6 @@ class FileDialogLayout : public DFBLayout
   std::experimental::filesystem::directory_entry getSelectedFile();
 
  private:
-  bool redraw(FrameBuffer& fb);
   void updateLabels();
   void overlayInfo();
 

@@ -19,7 +19,7 @@ class FileListControl : public ControlWithChildren
   std::string getFileNameAtIndex(int index);
 
  public:
-  FileListControl();
+  FileListControl(const Rect &pos);
   void setFileList(FileTools::FileList list);
   virtual ~FileListControl();
   void setSelection(int index);
