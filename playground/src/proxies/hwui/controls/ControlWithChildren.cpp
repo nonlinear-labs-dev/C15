@@ -1,3 +1,5 @@
+#include <proxies/hwui/HWUIEnums.h>
+#include <tools/SingeltonShortcuts.h>
 #include "ControlWithChildren.h"
 
 ControlWithChildren::ControlWithChildren(const Rect &pos)
@@ -64,8 +66,10 @@ bool ControlWithChildren::redraw(FrameBuffer &fb)
 
 void ControlWithChildren::drawBackground(FrameBuffer &fb)
 {
-  fb.setColor(FrameBuffer::C43);
-  fb.fillRect(getPosition());
+  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old) {
+    fb.setColor(FrameBuffer::C43);
+    fb.fillRect(getPosition());
+  }
 }
 
 bool ControlWithChildren::isTransparent() const

@@ -1,7 +1,6 @@
 #include "ControlOwner.h"
 #include "Control.h"
 #include "Button.h"
-
 #include <Application.h>
 #include <device-settings/LayoutMode.h>
 
@@ -33,7 +32,7 @@ bool ControlOwner::redraw(FrameBuffer &fb)
 {
   bool didRedraw = false;
 
-  for(const auto& c : m_controls)
+  for(const auto &c : m_controls)
   {
     if(c->isDirty())
     {

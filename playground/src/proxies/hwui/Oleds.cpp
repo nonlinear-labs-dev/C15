@@ -4,6 +4,7 @@
 #include <proxies/hwui/Font.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <tools/PerformanceTimer.h>
+#include <tools/SingeltonShortcuts.h>
 
 Oleds &Oleds::get()
 {
@@ -71,6 +72,8 @@ Oleds::tFont Oleds::getFont(const Glib::ustring &name, int height)
 
 bool Oleds::regularRedraw()
 {
-  syncRedraw();
+  if(SiSc::getLayoutSetting() == LayoutVersionMode::New) {
+    syncRedraw();
+  }
   return true;
 }
