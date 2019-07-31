@@ -22,7 +22,7 @@ namespace DescriptiveLayouts
    private:
     void addPrimitives();
     void onEventFired(std::any v, const ControlInstance::EventConnection& c);
-    void onVisibilityChanged(std::any visibility, const ControlInstance& ci);
+    void onVisibilityChanged(std::any visibility, const ControlInstance& ci, const ControlInstance::VisibilityItem& item);
 
     ControlInstance m_prototype;
     std::list<sigc::connection> m_connections;

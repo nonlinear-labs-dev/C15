@@ -13,18 +13,15 @@
       "Controls": {
         "ButtonA": {
           "Class": "Button",
-          "Position": "BUTTON_A",
-          "Events": "MCPositionButtonText => Text[Text]"
+          "Position": "BUTTON_A"
         },
         "ButtonB": {
           "Class": "Button",
-          "Position": "67, 51",
-          "Events": "MCSelectButtonText => Text[Text]"
+          "Position": "BUTTON_B"
         },
         "ButtonC": {
           "Class": "HighlightButton",
-          "Position": "131, 51",
-          "Events": "MCAmountButtonText => Text[Text]"
+          "Position": "BUTTON_C"
         },
         "MCSelection-Label": {
           "Class": "Label",

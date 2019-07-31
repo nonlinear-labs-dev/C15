@@ -19,10 +19,15 @@ namespace DescriptiveLayouts
       PrimitiveProperty targetProperty;
     };
 
-    typedef struct VisibilityEvent
+    typedef struct VisibilityItem
     {
       EventSources m_source = EventSources::BooleanTrue;
       bool inverted = false;
+    } VisibilityItem;
+
+    typedef struct VisibilityEvent
+    {
+      std::vector<VisibilityItem> m_items;
     } VisibilityEvent;
 
     struct StaticInitList
@@ -55,7 +60,7 @@ namespace DescriptiveLayouts
     using EventConnections = std::list<EventConnection>;
 
     ControlInstance(ControlInstances controlInstance, ControlClasses control, Point position,
-                        const EventConnections &eventConnections, StaticInitList staticInit, VisibilityEvent visibility);
+                    const EventConnections& eventConnections, StaticInitList staticInit, VisibilityEvent visibility);
 
     Control* instantiate() const;
 

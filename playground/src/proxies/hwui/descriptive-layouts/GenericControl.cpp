@@ -95,9 +95,11 @@ namespace DescriptiveLayouts
           c.src, sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onEventFired), c)));
     }
 
-    m_connections.push_back(EventSourceBroker::get().connect(
-        m_prototype.visibility.m_source,
-        sigc::bind<1>(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype)));
+    for(auto &c : m_prototype.visibility.m_items)
+    {
+      m_connections.push_back(EventSourceBroker::get().connect(
+          c.m_source, sigc::bind(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype, c)));
+    }
   }
 
   void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
@@ -126,7 +128,7 @@ namespace DescriptiveLayouts
     }
   }
 
-  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance &instance)
+  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance &instance, const ControlInstance::VisibilityItem& item)
   {
     if(m_prototype.controlInstance == instance.controlInstance)
     {
@@ -134,7 +136,7 @@ namespace DescriptiveLayouts
       {
         auto visible = std::any_cast<bool>(visibility);
 
-        if(m_prototype.visibility.inverted)
+        if(item.inverted)
           visible = !visible;
 
         m_controlVisible = visible;
@@ -142,7 +144,7 @@ namespace DescriptiveLayouts
       }
       catch(...)
       {
-        DebugLevel::warning("Could not connect:", toString(instance.visibility.m_source),
+        DebugLevel::warning("Could not connect:", toString(item.m_source),
                             "to visibility of:", instance.controlInstance, "! event does not evaluate to boolean!");
       }
     }
