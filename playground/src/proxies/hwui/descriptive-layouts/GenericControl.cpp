@@ -31,11 +31,9 @@ namespace DescriptiveLayouts
 
   bool GenericControl::redraw(FrameBuffer &fb)
   {
-    if(m_controlVisible)
-    {
+    //if(std::all_of(m_controlVisible.begin(), m_controlVisible.end(), [](auto p) { return p.second; }))
       return ControlWithChildren::redraw(fb);
-    }
-    return false;
+    //return false;
   }
 
   void GenericControl::addPrimitives()
@@ -99,6 +97,8 @@ namespace DescriptiveLayouts
     {
       m_connections.push_back(EventSourceBroker::get().connect(
           c.m_source, sigc::bind(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype, c)));
+
+      m_controlVisible[c.m_source] = std::any_cast<bool>(EventSourceBroker::get().evaluate(c.m_source));
     }
   }
 
@@ -128,7 +128,8 @@ namespace DescriptiveLayouts
     }
   }
 
-  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance &instance, const ControlInstance::VisibilityItem& item)
+  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance &instance,
+                                           const ControlInstance::VisibilityItem &item)
   {
     if(m_prototype.controlInstance == instance.controlInstance)
     {
@@ -139,8 +140,10 @@ namespace DescriptiveLayouts
         if(item.inverted)
           visible = !visible;
 
-        m_controlVisible = visible;
-        setDirty();
+        m_controlVisible[item.m_source] = visible;
+
+        auto collected = std::all_of(m_controlVisible.begin(), m_controlVisible.end(), [](auto b) { return b.second; });
+        setVisible(collected);
       }
       catch(...)
       {

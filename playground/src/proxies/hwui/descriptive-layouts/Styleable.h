@@ -27,6 +27,8 @@ namespace DescriptiveLayouts
       return m_highlight;
     }
 
+    static int getDefaultStyleValueForKey(StyleKey s);
+
    protected:
     virtual void setDirty() = 0;
     bool m_highlight = false;

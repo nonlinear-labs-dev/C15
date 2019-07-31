@@ -66,7 +66,8 @@ bool ControlWithChildren::redraw(FrameBuffer &fb)
 
 void ControlWithChildren::drawBackground(FrameBuffer &fb)
 {
-  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old) {
+  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old)
+  {
     fb.setColor(FrameBuffer::C43);
     fb.fillRect(getPosition());
   }

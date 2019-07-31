@@ -10,17 +10,83 @@
         "isParameterModulateable"
       ],
       "Controls": {
+        "ButtonAEmpty": {
+          "Class": "Button",
+          "Position": "3, 51",
+          "Visibility": [
+            "!MacroControlAsignment"
+          ]
+        },
         "ButtonA": {
           "Class": "Button",
-          "Position": "3, 51"
+          "Position": "3, 51",
+          "Init": {
+            "Text[Text]": "MC Pos"
+          },
+          "Visibility": [
+            "MacroControlAsignment",
+            "!MCPositionChanged"
+          ]
+        },
+        "ButtonAChanged": {
+          "Class": "Button",
+          "Position": "3, 51",
+          "Init": {
+            "Text[Text]": "MC Pos*"
+          },
+          "Visibility": [
+            "MacroControlAsignment",
+            "MCPositionChanged"
+          ]
         },
         "ButtonB": {
           "Class": "HighlightButton",
-          "Position": "67, 51"
+          "Position": "BUTTON_B",
+          "Init": {
+            "Text[Text]": "MC Sel"
+          },
+          "Visibility": [
+            "!MCSelectionChanged"
+          ]
+        },
+        "ButtonBChanged": {
+          "Class": "HighlightButton",
+          "Position": "BUTTON_B",
+          "Init": {
+            "Text[Text]": "MC Sel*"
+          },
+          "Visibility": [
+            "MCSelectionChanged"
+          ]
+        },
+        "ButtonCEmpty": {
+          "Class": "Button",
+          "Position": "BUTTON_C",
+          "Visibility": [
+            "!MacroControlAsignment"
+          ]
         },
         "ButtonC": {
           "Class": "Button",
-          "Position": "131, 51"
+          "Position": "BUTTON_C",
+          "Init": {
+            "Text[Text]": "MC Amt"
+          },
+          "Visibility": [
+            "MacroControlAsignment",
+            "!MCAmountChanged"
+          ]
+        },
+        "ButtonCChanged": {
+          "Class": "Button",
+          "Position": "BUTTON_C",
+          "Init": {
+            "Text[Text]": "MC Amt*"
+          },
+          "Visibility": [
+            "MacroControlAsignment",
+            "MCAmountChanged"
+          ]
         },
         "MCSelection-Label": {
           "Class": "Label",

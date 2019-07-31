@@ -189,21 +189,30 @@ namespace DescriptiveLayouts
 
   ControlInstance::VisibilityEvent parseVisibility(json j)
   {
-    return {};
-    /*
-    auto it = j.find("Visibility");
-    for(json::iterator condition = it->begin(); condition != it->end(); ++condition)
+    ControlInstance::VisibilityEvent ret{};
+
+    if(j.find("Visibility") != j.end())
     {
-      auto conditionStrings = StringTools::splitStringOnAnyDelimiter(std::string(condition.value()), ',');
-      for(const auto& conditionString : conditionStrings)
+      auto visibilityContent = j.at("Visibility");
+
+      for(json::iterator visibility = visibilityContent.begin(); visibility != visibilityContent.end(); ++visibility)
       {
-        auto item = ControlInstance::VisibilityItem{};
-        item.inverted = conditionString[0] == '!';
-        item.m_source = toEventSources(item.inverted ? conditionString.substr(1) : conditionString);
-        ret.m_items.emplace_back(item);
+        auto visibilityStrings = StringTools::splitStringOnAnyDelimiter(std::string(visibility.value()), ',');
+
+        for(auto& visibilityString : visibilityStrings)
+        {
+          ControlInstance::VisibilityItem item;
+          if(visibilityString[0] == '!')
+          {
+            item.inverted = true;
+            visibilityString = visibilityString.substr(1);
+          }
+          item.m_source = toEventSources(visibilityString);
+          ret.m_items.emplace_back(item);
+        }
       }
     }
-     */
+    return ret;
   }
 
   LayoutClass::ControlInstanceList toControlInstanceList(json j)

@@ -23,7 +23,7 @@ namespace DescriptiveLayouts
   template <typename T> class EventSource : public EventSourceBase
   {
    public:
-    void setValue(const T &v)
+    virtual void setValue(const T &v)
     {
       set_as(v);
     }
@@ -51,7 +51,7 @@ namespace DescriptiveLayouts
       }
     }
 
-   private:
+   protected:
     std::any getLastValue() const override
     {
       return m_lastValue;
@@ -352,30 +352,29 @@ namespace DescriptiveLayouts
   class CurrentMacroControlAsignment : public EventSource<bool>
   {
    public:
-    explicit CurrentMacroControlAsignment()
+    CurrentMacroControlAsignment()
+        : m_changedNotifier{ this }
     {
-      Application::get().getPresetManager()->getEditBuffer()->onChange(
-          sigc::mem_fun(this, &CurrentMacroControlAsignment::onChange));
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &CurrentMacroControlAsignment::onParameterSelectionChanged));
+      onParameterChanged(SiSc::EB::getCurrentParameter());
     }
 
-   private:
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
+    void onParameterChanged(const Parameter *p)
     {
-      onChange();
-    }
-
-    void onChange()
-    {
-      if(auto modParam
-         = dynamic_cast<ModulateableParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
       {
-        setValue(modParam->getModulationSource() != MacroControls::NONE);
-        return;
+        auto v = modP->getModulationSource() != MacroControls::NONE;
+        setValue(v);
       }
-      setValue(false);
     }
+
+    void setValue(const bool &v) override
+    {
+      m_lastValue = v;
+      m_outputSignal.send(m_lastValue);
+    }
+
+   protected:
+    OnParameterChangedNotifier<CurrentMacroControlAsignment> m_changedNotifier;
   };
 
   class CurrentMacroControlSymbol : public EventSource<DisplayString>
@@ -563,76 +562,75 @@ namespace DescriptiveLayouts
   {
    public:
     MCPositionChanged()
-        : m_modNot{ this }
+        : m_changedNotifier{ this }
     {
     }
 
-    void onModulationSourceChanged(const ModulateableParameter *modP)
+    void onParameterChanged(const Parameter *p)
     {
-      if(modP)
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
       {
-        auto changed = modP->isMacroControlAssignedAndChanged();
-        setValue(changed);
+        auto v = modP->isMacroControlAssignedAndChanged();
+        setValue(v);
       }
-      else
-      {
-        setValue(false);
-      }
+    }
+
+    void setValue(const bool &v) override
+    {
+      m_lastValue = v;
+      m_outputSignal.send(m_lastValue);
     }
 
    protected:
-    OnModulationChangedNotifier<MCPositionChanged> m_modNot;
+    OnParameterChangedNotifier<MCPositionChanged> m_changedNotifier;
   };
 
   class MCSelectionChanged : public EventSource<bool>
   {
    public:
     MCSelectionChanged()
-        : m_modNot{ this }
+        : m_changedNotifier{ this }
     {
     }
 
-    void onModulationSourceChanged(const ModulateableParameter *modP)
+    void onParameterChanged(const Parameter *p)
     {
-      if(modP)
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
       {
-        auto changed = modP->isModSourceChanged();
-        setValue(changed);
+        auto v = modP->isModSourceChanged();
+        setValue(v);
       }
-      else
-      {
-        setValue(false);
-      }
+    }
+
+    void setValue(const bool &v) override
+    {
+      m_lastValue = v;
+      m_outputSignal.send(m_lastValue);
     }
 
    protected:
-    OnModulationChangedNotifier<MCSelectionChanged> m_modNot;
+    OnParameterChangedNotifier<MCSelectionChanged> m_changedNotifier;
   };
-
 
   class MCAmountChanged : public EventSource<bool>
   {
    public:
     MCAmountChanged()
-        : m_modNot{ this }
+        : m_changedNotifier{ this }
     {
     }
 
-    void onModulationSourceChanged(const ModulateableParameter *modP)
+    void onParameterChanged(const Parameter *p)
     {
-      if(modP)
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
       {
-        auto changed = modP->isModAmountChanged();
-        setValue(changed);
-      }
-      else
-      {
-        setValue(false);
+        auto v = modP->isModAmountChanged();
+        setValue(v);
       }
     }
 
    protected:
-    OnModulationChangedNotifier<MCAmountChanged> m_modNot;
+    OnParameterChangedNotifier<MCAmountChanged> m_changedNotifier;
   };
 
   class ParameterValueChanged : public EventSource<bool>
@@ -641,11 +639,16 @@ namespace DescriptiveLayouts
     ParameterValueChanged()
         : m_paramChanged{ this }
     {
+      auto param = SiSc::EB::getCurrentParameter();
+      onParameterChanged(param);
     }
 
     void onParameterChanged(const Parameter *p)
     {
-      setValue(p->isValueChangedFromLoaded());
+      if(p)
+        setValue(p->isValueChangedFromLoaded());
+      else
+        setValue(false);
     }
 
    protected:
@@ -817,4 +820,9 @@ namespace DescriptiveLayouts
 
     return m_map.at(source)->connect(cb);
   }
+
+  std::any EventSourceBroker::evaluate(EventSources source) {
+    return m_map[source]->getLastValue();
+  }
+
 }

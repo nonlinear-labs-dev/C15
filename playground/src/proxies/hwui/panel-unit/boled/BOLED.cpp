@@ -34,7 +34,7 @@ void BOLED::init()
   reset(new SplashLayout());
 
   LayoutFolderMonitor::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
-  ConditionRegistry::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
+  //ConditionRegistry::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
 }
 
 void BOLED::bruteForce()

@@ -95,7 +95,7 @@ namespace DescriptiveLayouts
           auto findResult = std::find_if(controlClass.primitves.begin(), controlClass.primitves.end(),
                                          [&](const auto &i) { return i.primitiveInstance == targetInstance; });
 
-          if(findResult == controlClass.primitves.end())
+          if(findResult == controlClass.primitves.end() && targetInstance != "Any")
           {
             m_out << "Event map for layout " << layout.id << " references unknown primitive instance " << targetInstance
                   << std::endl;

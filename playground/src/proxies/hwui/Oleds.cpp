@@ -15,7 +15,6 @@ Oleds &Oleds::get()
 Oleds::Oleds()
     : m_throttler(std::chrono::milliseconds(20))
 {
-  Glib::MainContext::get_default()->signal_timeout().connect(mem_fun(this, &Oleds::regularRedraw), 50);
 }
 
 Oleds::~Oleds()

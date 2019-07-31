@@ -8,6 +8,8 @@
 
 namespace DescriptiveLayouts
 {
+  class EventSourceBroker;
+
   class EventSourceBase : public sigc::trackable
   {
    public:
@@ -22,6 +24,8 @@ namespace DescriptiveLayouts
    protected:
     virtual std::any getLastValue() const = 0;
     Signal<void, std::any> m_outputSignal;
+
+    friend class EventSourceBroker;
   };
 
   class EventSourceBroker
@@ -31,6 +35,7 @@ namespace DescriptiveLayouts
     using Callback = std::function<void(std::any)>;
 
     sigc::connection connect(EventSources source, Callback cb);
+    std::any evaluate(EventSources source);
 
    private:
     explicit EventSourceBroker();

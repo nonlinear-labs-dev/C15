@@ -24,9 +24,13 @@ namespace DescriptiveLayouts
     void onEventFired(std::any v, const ControlInstance::EventConnection& c);
     void onVisibilityChanged(std::any visibility, const ControlInstance& ci, const ControlInstance::VisibilityItem& item);
 
+  private:
+
     ControlInstance m_prototype;
     std::list<sigc::connection> m_connections;
-    bool m_controlVisible = true;
+
+    std::unordered_map<EventSources, bool> m_controlVisible;
+
   protected:
     LayoutClasses m_lastUsedLayout;
   };
