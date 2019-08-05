@@ -61,6 +61,9 @@
         "ButtonCEmpty": {
           "Class": "Button",
           "Position": "BUTTON_C",
+          "Init": {
+            "Text[Text]": ""
+          },
           "Visibility": [
             "!MacroControlAsignment"
           ]
@@ -72,7 +75,6 @@
             "Text[Text]": "MC Amt"
           },
           "Visibility": [
-            "MacroControlAsignment",
             "!MCAmountChanged"
           ]
         },

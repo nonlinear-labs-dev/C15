@@ -21,21 +21,6 @@ namespace DescriptiveLayouts
       c.disconnect();
   }
 
-  bool GenericControl::drawBackgroundTransparent(FrameBuffer &fb) const
-  {
-    auto color = FrameBuffer::Colors::Transparent;
-    fb.setColor(color);
-    getPosition().draw(fb);
-    return true;
-  }
-
-  bool GenericControl::redraw(FrameBuffer &fb)
-  {
-    //if(std::all_of(m_controlVisible.begin(), m_controlVisible.end(), [](auto p) { return p.second; }))
-      return ControlWithChildren::redraw(fb);
-    //return false;
-  }
-
   void GenericControl::addPrimitives()
   {
     auto rect = getPosition();
@@ -69,7 +54,7 @@ namespace DescriptiveLayouts
     setPosition(rect);
   }
 
-  void GenericControl::style(LayoutClasses layout)
+  void GenericControl::style(const LayoutClasses& layout)
   {
     if(m_lastUsedLayout != layout)
       m_lastUsedLayout = layout;
@@ -102,7 +87,7 @@ namespace DescriptiveLayouts
     }
   }
 
-  void GenericControl::onEventFired(std::any v, const ControlInstance::EventConnection &connection)
+  void GenericControl::onEventFired(const std::any& v, const ControlInstance::EventConnection &connection)
   {
     bool shouldRestyle = false;
     for(const auto &c : getControls())

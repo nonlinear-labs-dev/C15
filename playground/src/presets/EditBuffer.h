@@ -69,7 +69,7 @@ class EditBuffer : public ParameterGroupSet
   void resetOriginIf(const Preset *p);
 
   // CALLBACKS
-  sigc::connection onSelectionChanged(slot<void, Parameter *, Parameter *> s);
+  sigc::connection onSelectionChanged(const slot<void, Parameter *, Parameter *>& s);
   sigc::connection onModificationStateChanged(slot<void, bool> s);
   sigc::connection onChange(slot<void> s);
   sigc::connection onPresetLoaded(slot<void> s);

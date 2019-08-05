@@ -185,7 +185,7 @@ const PresetManager *EditBuffer::getParent() const
   return static_cast<const PresetManager *>(super::getParent());
 }
 
-sigc::connection EditBuffer::onSelectionChanged(slot<void, Parameter *, Parameter *> s)
+sigc::connection EditBuffer::onSelectionChanged(const slot<void, Parameter *, Parameter *>& s)
 {
   return m_signalSelectedParameter.connectAndInit(s, nullptr, getSelected());
 }

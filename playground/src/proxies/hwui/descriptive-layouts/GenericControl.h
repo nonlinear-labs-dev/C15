@@ -13,15 +13,12 @@ namespace DescriptiveLayouts
     GenericControl(const ControlInstance& prototype);
     virtual ~GenericControl();
 
-    void style(LayoutClasses layout);
+    void style(const LayoutClasses& layout);
     void connect();
 
-    bool drawBackgroundTransparent(FrameBuffer &fb) const;
-    bool redraw(FrameBuffer& fb) override;
-
-   private:
+  private:
     void addPrimitives();
-    void onEventFired(std::any v, const ControlInstance::EventConnection& c);
+    void onEventFired(const std::any& v, const ControlInstance::EventConnection& c);
     void onVisibilityChanged(std::any visibility, const ControlInstance& ci, const ControlInstance::VisibilityItem& item);
 
   private:
