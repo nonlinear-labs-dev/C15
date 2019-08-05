@@ -8,9 +8,7 @@
 #include <glib.h>
 #include <memory>
 
-class Application;
 class ServedStream;
-class AvahiService;
 class NetworkRequest;
 class HTTPRequest;
 class MacroControlParameter;
@@ -62,6 +60,4 @@ class HTTPServer
   typedef std::shared_ptr<ServedStream> tServedStream;
   typedef std::shared_ptr<HTTPRequest> tHTTPRequest;
   std::list<tServedStream> m_servedStreams;
-
-  std::shared_ptr<AvahiService> m_avahi;
 };
