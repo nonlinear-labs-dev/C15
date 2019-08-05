@@ -1,0 +1,17 @@
+#include <Application.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/controls/InvertedLabel.h>
+#include <proxies/hwui/controls/ControlWithChildren.h>
+#include <proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.h>
+
+UISoftwareVersionEditor::UISoftwareVersionEditor()
+{
+  addEntry("branch", "Branch:", "@BRANCH_NAME@");
+  addEntry("commits", "Commits:", "@COMMIT_COUNT@");
+  addEntry("head", "HEAD:", "@HEAD_REF@");
+  doLayout();
+}
+
+void UISoftwareVersionEditor::setPosition(const Rect &)
+{
+  doLayout();
+}

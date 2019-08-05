@@ -24,11 +24,10 @@ bool DebugLevel::set(DebugLevels m)
 
     switch(m)
     {
-      case DebugLevels::DEBUG_LEVEL_DEBUG:
-        nltools::Log::setLevel(nltools::Log::Debug);
+      case DebugLevels::DEBUG_LEVEL_SILENT:
+        nltools::Log::setLevel(nltools::Log::Silent);
         break;
 
-      case DebugLevels::DEBUG_LEVEL_SILENT:
       case DebugLevels::DEBUG_LEVEL_ERROR:
         nltools::Log::setLevel(nltools::Log::Error);
         break;
@@ -41,6 +40,7 @@ bool DebugLevel::set(DebugLevels m)
         nltools::Log::setLevel(nltools::Log::Info);
         break;
 
+      case DebugLevels::DEBUG_LEVEL_DEBUG:
       case DebugLevels::DEBUG_LEVEL_GASSY:
         nltools::Log::setLevel(nltools::Log::Debug);
         break;
@@ -58,12 +58,12 @@ DebugLevels DebugLevel::getLevel()
 
 const std::vector<Glib::ustring> &DebugLevel::enumToString() const
 {
-  static std::vector<Glib::ustring> s_modeNames = { "debug", "silent", "error", "warning", "info", "gassy" };
+  static std::vector<Glib::ustring> s_modeNames = { "silent", "error", "warning", "info", "debug", "gassy" };
   return s_modeNames;
 }
 
 const std::vector<Glib::ustring> &DebugLevel::enumToDisplayString() const
 {
-  static std::vector<Glib::ustring> s_modeNames = { "Debug", "Silent", "Error", "Warning", "Info", "Gassy" };
+  static std::vector<Glib::ustring> s_modeNames = { "Silent", "Error", "Warning", "Info", "Debug", "Gassy" };
   return s_modeNames;
 }

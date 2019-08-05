@@ -186,7 +186,7 @@ public class Belt extends OverlayLayout {
 		} else if (event.getNativeKeyCode() == KeyCodes.KEY_R) {
 			getPresetLayout().renameCurrentPreset();
 			return this;
-		} else if (event.getNativeKeyCode() == KeyCodes.KEY_S) {
+		} else if (event.getNativeKeyCode() == KeyCodes.KEY_S && !event.isControlKeyDown()) {
 			if (!isPresetView())
 				setPresetView(true);
 

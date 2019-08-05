@@ -214,9 +214,11 @@ public class ParameterInfoDialog extends GWTDialog implements SelectionListener 
 		if (isMC) {
 			infoField.getElement().addClassName("editable");
 			infoField.getElement().removeClassName("txt-area");
+			paramNameEditView.getElement().addClassName("selectable-text");
 		} else {
 			infoField.getElement().removeClassName("editable");
 			infoField.getElement().addClassName("txt-area");
+			paramNameEditView.getElement().removeClassName("selectable-text");
 		}
 
 		if (isMC) {
@@ -232,6 +234,7 @@ public class ParameterInfoDialog extends GWTDialog implements SelectionListener 
 				setDescription(info);
 				return;
 			}
+			
 		}
 
 		parameterNameView.setText(newSelection.getFullNameWithGroup());

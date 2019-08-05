@@ -23,8 +23,8 @@ class C15Synth : public Synth, public sigc::trackable
   void doMidi(const MidiEvent &event) override;
   void doAudio(SampleFrame *target, size_t numFrames) override;
 
+  void resetDSP() override;
   void printAndResetTcdInputLog();
-  void resetDSP();
   void toggleTestTone();
   void selectTestToneFrequency();
   void selectTestToneAmplitude();

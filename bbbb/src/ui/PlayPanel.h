@@ -27,13 +27,17 @@ class PlayPanel : public Gtk::VBox
 
   Button m_setup;
   Boled m_boled;
+
+  Button m_exportBoled;
+  Button m_exportSoled;
+
   Button m_preset;
   Button m_sound;
+  Button m_store;
   Button m_a;
   Button m_b;
   Button m_c;
   Button m_d;
-  Button m_store;
 
   Button m_info;
   Button m_fine;

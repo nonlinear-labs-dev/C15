@@ -6,11 +6,11 @@
 
 enum class DebugLevels
 {
-  DEBUG_LEVEL_DEBUG,
   DEBUG_LEVEL_SILENT,
   DEBUG_LEVEL_ERROR,
   DEBUG_LEVEL_WARNING,
   DEBUG_LEVEL_INFO,
+  DEBUG_LEVEL_DEBUG,
   DEBUG_LEVEL_GASSY
 };
 
@@ -61,17 +61,17 @@ class DebugLevel : public EnumSetting<DebugLevels>
 
   template <typename... tArgs> static void gassy(const tArgs&... args)
   {
-    nltools::Log::notify(args...);
-  }
-
-  template <typename... tArgs> static void info(const tArgs&... args)
-  {
-    nltools::Log::info(args...);
+    nltools::Log::debug(args...);
   }
 
   template <typename... tArgs> static void debug(const tArgs&... args)
   {
     nltools::Log::debug(args...);
+  }
+
+  template <typename... tArgs> static void info(const tArgs&... args)
+  {
+    nltools::Log::info(args...);
   }
 
   template <typename... tArgs> static void warning(const tArgs&... args)

@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "CanvasFont_UNICODE";
+  src: url('SourceSansProLW25-Regular.otf.woff') format('woff');
+  unicode-range: U+E100-E105;
+}
+
+@font-face {
+  font-family: "CanvasFont";
+  src: url('SourceSansProLW25-Regular.otf.woff') format('woff');
+}

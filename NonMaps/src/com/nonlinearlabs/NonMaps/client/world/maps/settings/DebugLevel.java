@@ -15,24 +15,24 @@ import com.nonlinearlabs.NonMaps.client.world.maps.NonPosition;
 public class DebugLevel extends Setting {
 
 	public enum Items {
-		DEBUG, SILENT, ERROR, WARNING, INFO, GASSY;
+		SILENT, ERROR, WARNING, INFO, DEBUG, GASSY;
 
 		public String toDisplayString() {
 			switch (ordinal()) {
 			case 0:
-				return "Debug";
-
-			case 1:
 				return "Silent";
 
-			case 2:
+			case 1:
 				return "Error";
 
-			case 3:
+			case 2:
 				return "Warning";
 
-			case 4:
+			case 3:
 				return "Info";
+
+			case 4:
+				return "Debug";
 
 			case 5:
 				return "Gassy";
@@ -77,6 +77,14 @@ public class DebugLevel extends Setting {
 				@Override
 				public Control click(Position eventPoint) {
 					setValue(Items.INFO);
+					return super.click(eventPoint);
+				}
+			});
+
+			addChild(new ContextMenuItem(this, Items.DEBUG.toDisplayString()) {
+				@Override
+				public Control click(Position eventPoint) {
+					setValue(Items.DEBUG);
 					return super.click(eventPoint);
 				}
 			});

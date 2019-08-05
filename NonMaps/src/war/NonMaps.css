@@ -1875,6 +1875,14 @@ button {
 	width: auto;
 }
 
+.selectable-text {
+	user-select: text;
+	-moz-user-select: text;
+	-khtml-user-select: text;
+	-webkit-user-select: text;
+	-o-user-select: text;
+}
+
 .search-dialog {
 	width: auto;
 }

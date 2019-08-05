@@ -30,13 +30,15 @@ enum Buttons
   BUTTON_MINUS = 120,
   BUTTON_PLUS = 121,
   BUTTON_FUNCTION = 122,
-  BUTTON_MODE = 123
+  BUTTON_MODE = 123,
 };
 
 PlayPanel::PlayPanel()
     : m_setup(BUTTON_SETUP, "Setup")
-    , m_sound(BUTTON_SOUND, "Sound")
+    , m_exportBoled("Export Boled", std::bind(&Boled::exportBoled, &m_boled))
+    , m_exportSoled("Export Soled", std::bind(&Boled::exportSoled, &m_boled))
     , m_preset(BUTTON_PRESET, "Preset")
+    , m_sound(BUTTON_SOUND, "Sound")
     , m_store(BUTTON_STORE, "Store")
     , m_a(BUTTON_A, "A")
     , m_b(BUTTON_B, "B")
@@ -57,6 +59,9 @@ PlayPanel::PlayPanel()
     , m_function(BUTTON_FUNCTION, "Func")
     , m_mode(BUTTON_MODE, "Mode")
 {
+  m_buttons.add(m_exportBoled);
+  m_buttons.add(m_exportSoled);
+
   m_buttons.add(m_setup);
   m_buttons.add(m_sound);
   m_buttons.add(m_preset);

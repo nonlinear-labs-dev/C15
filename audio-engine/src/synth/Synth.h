@@ -23,9 +23,12 @@ class Synth
   virtual double measurePerformance(std::chrono::seconds time);
   void resetPerformance();
 
+  void checkFiniteness(SampleFrame *target, size_t numFrames);
+
  protected:
   virtual void doMidi(const MidiEvent &event) = 0;
   virtual void doAudio(SampleFrame *target, size_t numFrames) = 0;
+  virtual void resetDSP();
 
  private:
   void process(SampleFrame *target, size_t numFrames);

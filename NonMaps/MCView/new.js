@@ -33,7 +33,9 @@ class Slot {
 
 class ServerProxy {
   constructor(onStartCB) {
-    this.webSocket = new WebSocket('ws://192.168.8.2:80/ws-mc/');
+    //this.webSocket = new WebSocket("ws://localhost:8080/ws-mc/"); //Local
+    //this.webSocket = new WebSocket("ws://192.168.0.2:8080/ws-mc/"); //Buildserver
+    this.webSocket = new WebSocket('ws://192.168.8.2:80/ws-mc/'); //Production
     this.uuid = new UUID();
     this.webSocket.onopen =  onStartCB;
     this.webSocket.onmessage = this.onMessage;
@@ -212,18 +214,18 @@ class RangeDivision {
       if(val !== null) {
         if(val === "true") {
           setCDXY(this);
-          document.getElementById("cd-x").checked = false;
-          document.getElementById("cd-xy").checked = true;
+          document.getElementById("cd-x-f").checked = false;
+          document.getElementById("cd-xy-f").checked = true;
         } else {
           setCDX(this);
-          document.getElementById("cd-xy").checked = false;
-          document.getElementById("cd-x").checked = true;
+          document.getElementById("cd-xy-f").checked = false;
+          document.getElementById("cd-x-f").checked = true;
         }
       }
     } catch(err) {
       setCDX(this);
-      document.getElementById("cd-x").checked = true;
-      document.getElementById("cd-xy").checked = false;
+      document.getElementById("cd-x-f").checked = true;
+      document.getElementById("cd-xy-f").checked = false;
       console.log(err);
     }
   }
@@ -279,6 +281,26 @@ class MCView {
         view.redraw(model);
       });
     });
+
+    this.imgageloaded = false;
+    this.fontsloaded = false;
+
+    this.img = new Image();
+    this.img.onload = () => {
+      this.imgageloaded = true;
+
+      if(this.fontsloaded)
+        view.redraw(model);
+    }
+
+    document.fonts.onloadingdone = (fontFaceSetEvent) => {
+      this.fontsloaded = true;
+
+      if(this.imgageloaded)
+        view.redraw(model);
+    };
+
+    this.img.src = "tri-open.svg";
 
     this.body = document.getElementById('body');
     this.addEventsToElement(this.canvas);
@@ -404,7 +426,6 @@ class MCView {
     });
 
     element.addEventListener('click', function(event) {
-      console.log(document.getElementById('settings-overlay').classList);
       if(document.getElementById('settings-overlay').classList.contains("collapsed")) {
         var canvas = view.canvas;
         var middle = canvas.height / 2;
@@ -413,22 +434,9 @@ class MCView {
         leftMargin = Math.max(leftMargin, fiveMM);
         var width = leftMargin * 0.6;
 
-        var area = function(x1, y1, x2, y2, x3, y3)
-        {
-           return Math.abs((x1*(y2-y3) + x2*(y3-y1)+
-                                        x3*(y1-y2))/2.0);
-        };
-
-        var a = area(0, middle - height, 0, middle + height, width, middle);
-        var a1 = area(event.pageX, event.pageY, 0, middle - height, 0, middle + height);
-        var a2 = area(event.pageX, event.pageY, 0, middle - height, width, middle);
-        var a3 = area(event.pageX, event.pageY, 0, middle + height, width, middle);
-
-        if(Math.abs((a1 + a2 + a3) - a) < 0.2) {
+        if(event.pageX <= leftMargin) {
           toggleSettings();
         }
-
-        console.log(event);
       }
     });
   }
@@ -442,10 +450,11 @@ class MCView {
     var canvasWidth = canvas.width;
     var leftMargin = canvasWidth * view.range.leftMargin;
     leftMargin = Math.max(leftMargin, fiveMM);
+    document.getElementById("settings-opener").style.width = leftMargin + "px";
     var width = canvasWidth - leftMargin;
     var heigth = canvas.height;
 
-    ctx.font = '20px nonlinearfont';
+    ctx.font = '20px CanvasFont';
     ctx.strokeStyle = "black";
     ctx.fillStyle = new ColorScheme().backgroundColor;
     ctx.fillRect(0, 0, canvasWidth, heigth);
@@ -477,37 +486,6 @@ class MCView {
       ctx.fill();
       this.drawHandle(division, xD, yD, wD, hD);
     }
-
-    this.drawSettingsOpener();
-  }
-
-  drawSettingsOpener() {
-    var area = function(x1, y1, x2, y2, x3, y3) {
-      return Math.abs((x1*(y2-y3) + x2*(y3-y1)+
-                                    x3*(y1-y2))/2.0);
-    };
-
-    var canvas = view.canvas;
-    var ctx = canvas.getContext("2d");
-    ctx.beginPath();
-    ctx.strokeStyle = new ColorScheme().labelColor;
-    ctx.fillStyle = new ColorScheme().labelColor;
-    ctx.lineWidth = "3";
-
-    var middle = canvas.height / 2;
-    var height = (canvas.height / 100) * 2.5;
-    var leftMargin = canvas.width * view.range.leftMargin;
-    leftMargin = Math.max(leftMargin, fiveMM);
-    var width = leftMargin * 0.6;
-
-    height = Math.max(Math.min(50, height), 25);
-
-    ctx.moveTo(0, middle - height);
-    ctx.lineTo(0, middle + height);
-    ctx.lineTo(width, middle);
-    ctx.lineTo(0, middle - height);
-    ctx.stroke();
-    ctx.fill();
   }
 
   drawHandle(division, xD, yD, wD, hD) {
@@ -537,12 +515,12 @@ class MCView {
     var xLabel = getUnicodeForMC(division.MCX);
     var xName = model.mcs[division.MCX - 243].givenName;
 
-    var size = canvas.width / 200 * 2;
+    var size = canvas.width / 100;
 
     ctx.strokeStyle = new ColorScheme().markerColor;
     ctx.fillStyle = new ColorScheme().labelColor;
-    ctx.font = "20px nonlinearfont";
-    var lineHeight=ctx.measureText("\uE001").width;
+    ctx.font = '20px CanvasFont_UNICODE';
+    var lineHeight=ctx.measureText("\uE101").width;
 
     var offset = lineHeight;
 
@@ -557,15 +535,15 @@ class MCView {
 
     //X
     ctx.fillText(xLabel, lowerRightFixPointX - getTextWidth(xLabel) / 2, lowerRightFixPointY);
-    ctx.font = "20px nonlinearfont2";
+    ctx.font = '20px CanvasFont';
     ctx.fillStyle = new ColorScheme().markerColor;
     ctx.fillText(Number(xVal).toFixed(1), lowerRightFixPointX - getTextWidth(Number(xVal).toFixed(1)) / 2, lowerRightFixPointY + lineHeight * 1.05);
     ctx.fillText(xName, lowerRightFixPointX - getTextWidth(xName) - getTextWidth(xLabel), lowerRightFixPointY);
     //Y
     ctx.fillStyle = new ColorScheme().labelColor;
-    ctx.font = "20px nonlinearfont";
+    ctx.font = '20px CanvasFont_UNICODE';
     ctx.fillText(yLabel, upperLeftFixPointX - getTextWidth(yLabel) / 2, upperLeftFixPointY);
-    ctx.font = "20px nonlinearfont2";
+    ctx.font = '20px CanvasFont';
     ctx.fillStyle = new ColorScheme().markerColor;
     ctx.fillText(Number(yVal).toFixed(1), upperLeftFixPointX - getTextWidth(Number(yVal).toFixed(1)) / 2, upperLeftFixPointY + lineHeight * 1.05);
     ctx.fillText(yName, upperLeftFixPointX + getTextWidth(yLabel), upperLeftFixPointY);
@@ -576,6 +554,8 @@ class MCView {
 
     yTarget = 100 - yTarget;
     yVal = 100 - yVal;
+
+    size = Math.max(size, 12);
 
     ctx.arc(x + w / 100 * xVal, y + h / 100 * yVal, size, 0, 2*Math.PI, true);
     ctx.stroke();
@@ -608,9 +588,9 @@ class MCView {
     ctx.beginPath();
     ctx.strokeStyle = new ColorScheme().markerColor;
     ctx.fillStyle = new ColorScheme().labelColor;
-    ctx.font = "20px nonlinearfont";
+    ctx.font = '20px CanvasFont_UNICODE';
 
-    var lineHeight=ctx.measureText("\uE001").width;
+    var lineHeight=ctx.measureText("\uE101").width;
     var offset = lineHeight;
     var lowerRightFixPointX = x + w - offset;
     var lowerRightFixPointY = y + h - offset * 1.3;
@@ -620,14 +600,14 @@ class MCView {
     };
 
     ctx.fillText(xLabel, lowerRightFixPointX - getTextWidth(xLabel) / 2, lowerRightFixPointY);
-    ctx.font = "20px nonlinearfont2";
+    ctx.font = '20px CanvasFont';
     ctx.fillStyle = new ColorScheme().markerColor;
     ctx.fillText(Number(xVal).toFixed(1), lowerRightFixPointX - getTextWidth(Number(xVal).toFixed(1)) / 2, lowerRightFixPointY + lineHeight * 1.05);
     ctx.fillText(xName, lowerRightFixPointX - getTextWidth(xName) - getTextWidth(xLabel), lowerRightFixPointY);
 
     if(xTarget !== undefined && xTarget !== xVal) {
       ctx.beginPath();
-      ctx.lineWidth = w / 200 * 1;
+      ctx.lineWidth = Math.max(w / 200, 8);
       ctx.fillStyle = "transparent";
       ctx.strokeStyle = new ColorScheme().grayIndicator;
       ctx.moveTo(xD + wD / 100 * xTarget, yD + 1);
@@ -638,9 +618,8 @@ class MCView {
 
     ctx.beginPath();
     ctx.fillStyle = "transparent";
-    ctx.lineWidth = "5";
     ctx.strokeStyle = new ColorScheme().blueIndicator;
-    ctx.lineWidth = w / 200 * 1;
+    ctx.lineWidth = Math.max(w / 200, 8);
     ctx.moveTo(x + w / 100 * xVal, y + 1);
     ctx.lineTo(x + w / 100 * xVal, y + h - 1);
     ctx.stroke();
@@ -656,17 +635,17 @@ class MCView {
 function getUnicodeForMC(mcId) {
 	switch(mcId) {
 		case 243:
-		return "\uE000";
+		return "\uE100";
 		case 244:
-		return "\uE001";
+		return "\uE101";
 		case 245:
-		return "\uE002";
+		return "\uE102";
 		case 246:
-		return "\uE003";
+		return "\uE103";
 		case 247:
-		return "\uE200";
+		return "\uE104";
 		case 248:
-		return "\uE201";
+		return "\uE105";
 	}
 }
 
@@ -867,19 +846,29 @@ function onLoad() {
     }
   }
 
-  var changeHandler = function() {
-    if( this.value === "x") {
+  var toggleXY = () => {
+    var xyBox = document.getElementById("cd-xy-f");
+    var xBox = document.getElementById("cd-x-f");
+
+    xBox.checked = xyBox.checked;
+    xyBox.checked = !xBox.checked;
+
+    if(xBox.checked) {
       setCDX(view.range);
-    } else if (this.value === "xy") {
+    } else {
       setCDXY(view.range);
     }
+
     view.redraw(model);
   };
 
-  var radios = document.querySelectorAll('input[type=radio][name="mc-sel"]');
-  radios.forEach(function(radio) {
-    radio.addEventListener('change', changeHandler);
-  });
+  document.getElementById("cd-xy").onclick = () => {
+    toggleXY()
+  };
+
+  document.getElementById("cd-x").onclick = () => {
+    toggleXY();
+  };
   //End Events for Settings
 
   serverProxy = new ServerProxy(function() {
@@ -907,6 +896,9 @@ function toggleSettings() {
   var e = document.getElementById("settings-overlay");
   e.classList.toggle("collapsed");
   e.classList.toggle("full");
+
+  var op = document.getElementById("settings-opener");
+  op.classList.toggle("collapsed");
 }
 
 function setInterpolation(val) {
@@ -922,3 +914,26 @@ function setInterpolation(val) {
 function stub() {
 
 }
+
+function doToggle() {
+  if (document.fullscreenElement) {
+		document.exitFullscreen();
+	} else {
+		document.documentElement.requestFullscreen();
+	}
+}
+
+document.addEventListener("fullscreenchange", () => {
+  if(document.fullscreenElement) {
+    document.getElementById("fs-select").checked = true;
+  } else {
+    document.getElementById("fs-select").checked = false;
+  }
+  setTimeout(() => {
+    view.redraw(model);
+  }, 3);
+});
+
+window.addEventListener('resize', () => {
+  view.redraw(model);
+});

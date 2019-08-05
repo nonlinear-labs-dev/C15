@@ -1,6 +1,25 @@
 cmake_minimum_required(VERSION 3.0)
 project(playground)
 
+execute_process(COMMAND "git" "rev-parse" "--abbrev-ref" "HEAD"
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    RESULT_VARIABLE git_result
+    OUTPUT_VARIABLE BRANCH_NAME)
+
+execute_process(COMMAND "git" "rev-list" "HEAD" "--count"
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    RESULT_VARIABLE git_result
+    OUTPUT_VARIABLE COMMIT_COUNT)
+
+execute_process(COMMAND "git" "rev-parse" "--short" "HEAD"
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    RESULT_VARIABLE git_result
+    OUTPUT_VARIABLE HEAD_REF)
+
+string(STRIP ${COMMIT_COUNT} COMMIT_COUNT)
+string(STRIP ${HEAD_REF} HEAD_REF)
+string(STRIP ${BRANCH_NAME} BRANCH_NAME)
+
 set(LIBS
   gio-unix-2.0
   uuid
@@ -51,12 +70,14 @@ include_directories(src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion")
 
-ADD_CUSTOM_TARGET(
-	invalidate_version_file ALL
-	COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_SOURCE_DIR}/src/device-info/SoftwareVersion.cpp
-)
+configure_file(src/device-info/SoftwareVersion.cpp.in src/device-info/SoftwareVersion.cpp)
+configure_file(src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp.in src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp)
 
-file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+file(GLOB_RECURSE SOURCE_FILES
+    src/*.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/src/device-info/SoftwareVersion.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp
+)
 
 add_executable(playground ${SOURCE_FILES})
 
@@ -77,104 +98,48 @@ foreach(lib ${LIBS})
   linkLib(${lib})
 endforeach(lib)
 
-set (git_cmd "git")
-set (git_arg "rev-parse")
-set (git_arg2 "--abbrev-ref")
-set (git_arg3 "HEAD")
-
-execute_process(COMMAND ${git_cmd} ${git_arg} ${git_arg2} ${git_arg3}
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        RESULT_VARIABLE git_result
-        OUTPUT_VARIABLE git_ver)
-
-set(BRANCH_NAME ${git_ver})
-
-set (git_cmd "git")
-set (git_arg "rev-list")
-set (git_arg2 "HEAD")
-set (git_arg3 "--count")
-
-execute_process(COMMAND ${git_cmd} ${git_arg} ${git_arg2} ${git_arg3}
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        RESULT_VARIABLE git_result
-        OUTPUT_VARIABLE git_ver)
-
-set(COMMIT_COUNT ${git_ver})
-
-set (git_cmd "git")
-set (git_arg "rev-parse")
-set (git_arg2 "--short")
-set (git_arg3 "HEAD")
-
-execute_process(COMMAND ${git_cmd} ${git_arg} ${git_arg2} ${git_arg3}
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        RESULT_VARIABLE git_result
-        OUTPUT_VARIABLE git_ver)
-
-set(HEAD_REF ${git_ver})
-
-string(STRIP ${COMMIT_COUNT} COMMIT_COUNT)
-string(STRIP ${HEAD_REF} HEAD_REF)
-string(STRIP ${BRANCH_NAME} BRANCH_NAME)
-
-set_property(
-  SOURCE src/device-info/SoftwareVersion.cpp
-  APPEND_STRING
-  PROPERTY COMPILE_FLAGS
-  "-DLAST_COMMIT_TIME=\"${PLAYGROUND_VERSION}\""
-)
-
-set_property(
-  SOURCE src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp
-  APPEND_STRING
-  PROPERTY COMPILE_FLAGS
-  "-DHEAD_REF=\"${HEAD_REF}\" -DCOMMIT_COUNT=\"${COMMIT_COUNT}\" -DBRANCH_NAME=\"${BRANCH_NAME}\" -DLAST_COMMIT_TIME=\"${PLAYGROUND_VERSION}\""
-)
-
-configure_file(${PROJECT_SOURCE_DIR}/systemd/playground.service.in
-	${PROJECT_BINARY_DIR}/systemd/playground.service @ONLY
-	)
+configure_file(${PROJECT_SOURCE_DIR}/systemd/playground.service.in ${PROJECT_BINARY_DIR}/systemd/playground.service @ONLY)
 
 file(GLOB PARAMETER_DESCRIPTIONS src/parameters/descriptions/*.txt)
 file(GLOB VERSION_INFOS resources/version-infos/*)
 
 install(FILES ${PROJECT_BINARY_DIR}/systemd/playground.service
-  DESTINATION ${SYSTEMD_CONFIGURATION_FILES_DIR} COMPONENT init
-  )
+    DESTINATION ${SYSTEMD_CONFIGURATION_FILES_DIR} COMPONENT init
+)
 
 install(FILES ${PARAMETER_DESCRIPTIONS}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/parameter-descriptions
-  )
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/parameter-descriptions
+)
 
 install(FILES ${PARAMETER_DESCRIPTIONS}
-  DESTINATION ${CMAKE_BINARY_DIR}/playground/resources/parameter-descriptions
-  )
+    DESTINATION ${CMAKE_BINARY_DIR}/playground/resources/parameter-descriptions
+)
 
 install(FILES ${VERSION_INFOS}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/version-infos
-  )
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/version-infos
+)
 
 install(FILES ${VERSION_INFOS}
-  DESTINATION ${CMAKE_BINARY_DIR}/playground/resources/version-infos
-  )
+    DESTINATION ${CMAKE_BINARY_DIR}/playground/resources/version-infos
+)
 
 install(DIRECTORY resources
-  USE_SOURCE_PERMISSIONS
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
-  )
+    USE_SOURCE_PERMISSIONS
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
+)
 
 install(DIRECTORY resources
-  USE_SOURCE_PERMISSIONS
-  DESTINATION ${CMAKE_BINARY_DIR}/playground
-  )
+    USE_SOURCE_PERMISSIONS
+    DESTINATION ${CMAKE_BINARY_DIR}/playground
+)
 
 install(TARGETS playground
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
-  )
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
+)
 
 ADD_CUSTOM_TARGET(
-	touch-cmakelists ALL
-	COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
+    touch-cmakelists ALL
+    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
 )
 
 

@@ -23,6 +23,9 @@ public abstract class MapsLayout extends MapsControl implements ILayout<MapsCont
 
 	@Override
 	public Control handleGesture(Gesture g) {
+		if (!isVisible())
+			return null;
+
 		Control ret = children.handleGesture(g);
 
 		if (ret != null)

@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <cmath>
 
 Synth::Synth()
 {
@@ -61,6 +62,10 @@ void Synth::resetPerformance()
   m_out->resetPerformance();
 }
 
+void Synth::resetDSP()
+{
+}
+
 void Synth::pushMidiEvent(const MidiEvent &event)
 {
   auto &c = m_midiRingBuffer.push(event);
@@ -73,6 +78,20 @@ void Synth::process(SampleFrame *target, size_t numFrames)
     processAudioWithoutTimestampedMidi(target, numFrames);
   else
     processAudioWithTimestampedMidi(target, numFrames);
+
+  checkFiniteness(target, numFrames);
+}
+
+void Synth::checkFiniteness(SampleFrame *target, size_t numFrames)
+{
+  if(numFrames)
+  {
+    if(!std::isfinite(target[0].left) || !std::isfinite(target[0].right))
+    {
+      nltools::Log::error("Infinite value detected in processed frames. Resetting.");
+      resetDSP();
+    }
+  }
 }
 
 void Synth::processAudioWithoutTimestampedMidi(SampleFrame *target, size_t numFrames)

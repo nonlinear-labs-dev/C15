@@ -2,29 +2,41 @@
   <head>
     	<title>C15 - MC View</title>
     	<meta name="viewport" content="width=device-width, user-scalable=no">
+      <link rel="stylesheet" href="fonts/source-sans-pro.css" type="text/css" />
       <link rel="stylesheet" href="style.css">
       <link rel="shortcut icon" href="favicon.ico">
+      <script type="text/javascript" src="polyfill.js"></script>
 		<script type="text/javascript"  src="new.js" ></script>
 	</head>
   <body id='body' onload="onLoad()">
-    <div class='overlay collapsed' id='settings-overlay' class='collapsed' onclick="event.stopPropagation(); toggleSettings();">
-      <div class="triangle-left" onclick='event.stopPropagation(); toggleSettings();'>
-      </div>
+    <div class="overlay triangle-open" id="settings-opener" onclick='event.stopPropagation(); toggleSettings();'>
+    </div>
+    <div class='overlay collapsed' id='settings-overlay' onclick="event.stopPropagation(); toggleSettings();">
       <div class="setting-item" onclick="event.stopPropagation(); stub();">
-        <h3 style="margin-bottom: 4%;">Smoothing</h3>
-        <input orient="vertical" class="step-range" type="range" min="0" max="100" step="1" value="50" id="interpolation-step" onchange="setInterpolation(this.value);" oninput="setInterpolation(this.value);">
-        <h3 id="interpolation-step-label">50</h3>
-        <hr class="the-seperator">
-        <form class="sel-input-form">
-          <label class="radio-label"><input class="radio-radio" type="radio" name="mc-sel" id="cd-x" value="x" checked>C and D on Sliders</label>
-          <br>
-          <label class="radio-label"><input class="radio-radio" type="radio" name="mc-sel" id="cd-xy" value="xy">C and D on X/Y</label>
-        </form>
-        <div>
-      </div>
-      </div>
+        <div class="set-area">
+          <div class="slide-container">
+            <h3>Smoothing</h3>
+            <input orient="vertical" class="step-range" type="range" min="0" max="100" step="1" value="50" id="interpolation-step" onchange="setInterpolation(this.value);" oninput="setInterpolation(this.value);">
+            <h4 id="interpolation-step-label">100</h4>
+          </div><!-- end slide-container -->
+            <div class="form-container cd-c">
+              <h3><b class="marker">&#xE102;</b>&#8287;and&#8287;<b class="marker">&#xE103;</b>&#8287;on:</h3>
+              <form class="sel-input-form">
+              <input class="radio-radio" type="radio" name="mc-sel" id="cd-x-f" value="x" checked="">
+              <label class="radio-label"><span id="cd-x"></span> Sliders</label>
+              <input class="radio-radio" type="radio" name="mc-sel" id="cd-xy-f" value="xy">
+              <label class="radio-label end-item"><span id="cd-xy"></span> X&#8202;/&#8202;Y Area</label>
+              </form>
+            </div>
+            <div class="form-container fs-c">
+              <h3>Other</h3>
+              <input class="radio-radio" type="radio" name="mc-sel" id="fs-select" value="xy">
+              <label class="radio-label end-item"><span id="fullscreen-setting" onclick="doToggle();"></span>Fullscreen</label>
+            </div>
+        </div><!-- end set-area -->
+        <div class="triangle-left" onclick="event.stopPropagation(); toggleSettings();"></div>
+      </div><!-- end setting-item -->
     </div>
     <canvas id="canvas"></canvas>
-    </div>
   </body>
 </html>

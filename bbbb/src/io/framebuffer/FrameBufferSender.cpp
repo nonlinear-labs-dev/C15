@@ -2,6 +2,7 @@
 #include <bbbb.h>
 #include <fcntl.h>
 #include <io/framebuffer/FrameBufferSender.h>
+#include <nltools/logging/Log.h>
 #include <Options.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -15,13 +16,13 @@ FrameBufferSender::FrameBufferSender()
 
   if(m_fd < 0)
   {
-    TRACE("Could not open framebuffer device file");
+    nltools::Log::warning("Could not open framebuffer device file");
     return;
   }
 
   if(ioctl(m_fd, FBIOGET_VSCREENINFO, &m_varInfo) == -1)
   {
-    TRACE("Could not get fb_var_screeninfo!");
+    nltools::Log::warning("Could not get fb_var_screeninfo!");
     return;
   }
 
@@ -31,7 +32,7 @@ FrameBufferSender::FrameBufferSender()
 
   if(m_frontBuffer == MAP_FAILED)
   {
-    TRACE("Could not memory map buffer");
+    nltools::Log::warning("Could not memory map buffer");
     return;
   }
 #endif

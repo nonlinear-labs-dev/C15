@@ -30,7 +30,7 @@ void MacroControl::onSelectionChanged(Parameter *parameter)
 
 void MacroControl::onTargetChanged(const Parameter *modulatedParameter)
 {
-  MacroControlParameter *srcParam;
+  MacroControlParameter *srcParam = nullptr;
 
   if(const ModulateableParameter *p = dynamic_cast<const ModulateableParameter *>(modulatedParameter))
   {

@@ -14,6 +14,13 @@ Button::Button(int buttonId, const std::string& title)
     set_label(title);
 }
 
+Button::Button(const std::string& title, std::function<void()> cb)
+    : m_cb(cb)
+{
+  set_size_request(1, 1);
+  set_label(title);
+}
+
 Button::~Button()
 {
 }
@@ -54,12 +61,22 @@ bool Button::on_draw(const ::Cairo::RefPtr<::Cairo::Context>& cr)
 
 void Button::on_pressed()
 {
-  auto b = Application::get().getBridges()->getBridge<FromButtonsBridge>();
-  b->sendKey(m_buttonId, true);
+  if(m_cb)
+  {
+    m_cb();
+  }
+  else
+  {
+    auto b = Application::get().getBridges()->getBridge<FromButtonsBridge>();
+    b->sendKey(m_buttonId, true);
+  }
 }
 
 void Button::on_released()
 {
-  auto b = Application::get().getBridges()->getBridge<FromButtonsBridge>();
-  b->sendKey(m_buttonId, false);
+  if(!m_cb)
+  {
+    auto b = Application::get().getBridges()->getBridge<FromButtonsBridge>();
+    b->sendKey(m_buttonId, false);
+  }
 }

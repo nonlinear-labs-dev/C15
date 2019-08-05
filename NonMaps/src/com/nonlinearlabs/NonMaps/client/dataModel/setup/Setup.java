@@ -27,7 +27,7 @@ public class Setup {
 	}
 
 	public enum DebugLevel {
-		debug, silent, error, warning, info, gassy
+		silent, error, warning, info, debug, gassy
 	}
 
 	public enum EditModeRibbonBehaviour {
@@ -65,7 +65,7 @@ public class Setup {
 	public enum StripeBrightness {
 		off, percent_10, percent_25, percent_50
 	}
-	
+
 	private <T extends Enum<T>> EnumDataModelEntity<T> createEnumDataModelEntity(Class<T> c, T def) {
 		return new EnumDataModelEntity<T>(c, def);
 	}
@@ -99,9 +99,11 @@ public class Setup {
 		public BooleanDataModelEntity autoLoad = new BooleanDataModelEntity();
 		public EnumDataModelEntity<BaseUnitUIMode> baseUnitUIMode = createEnumDataModelEntity(BaseUnitUIMode.class,
 				BaseUnitUIMode.parameter_edit);
-		public EnumDataModelEntity<BenderCurve> benderCurve = createEnumDataModelEntity(BenderCurve.class, BenderCurve.normal);
+		public EnumDataModelEntity<BenderCurve> benderCurve = createEnumDataModelEntity(BenderCurve.class,
+				BenderCurve.normal);
 		public IntegerDataModelEntity datetimeAdjustment = new IntegerDataModelEntity();
-		public EnumDataModelEntity<DebugLevel> debugLevel = createEnumDataModelEntity(DebugLevel.class, DebugLevel.warning);
+		public EnumDataModelEntity<DebugLevel> debugLevel = createEnumDataModelEntity(DebugLevel.class,
+				DebugLevel.warning);
 		public StringDataModelEntity deviceName = new StringDataModelEntity();
 		public ValueDataModelEntity editSmoothingTime = new ValueDataModelEntity();
 		public ValueDataModelEntity encoderAcceleration = new ValueDataModelEntity();
@@ -111,22 +113,27 @@ public class Setup {
 		public EnumDataModelEntity<EditModeRibbonBehaviour> editmodeRibbonBehavior = createEnumDataModelEntity(
 				EditModeRibbonBehaviour.class, EditModeRibbonBehaviour.absolute);
 		public StringDataModelEntity passPhrase = new StringDataModelEntity();
-		public EnumDataModelEntity<PedalType> pedal1Type = createEnumDataModelEntity(PedalType.class, PedalType.pot_tip_active);
-		public EnumDataModelEntity<PedalType> pedal2Type = createEnumDataModelEntity(PedalType.class, PedalType.pot_tip_active);
-		public EnumDataModelEntity<PedalType> pedal3Type = createEnumDataModelEntity(PedalType.class, PedalType.pot_tip_active);
-		public EnumDataModelEntity<PedalType> pedal4Type = createEnumDataModelEntity(PedalType.class, PedalType.pot_tip_active);
+		public EnumDataModelEntity<PedalType> pedal1Type = createEnumDataModelEntity(PedalType.class,
+				PedalType.pot_tip_active);
+		public EnumDataModelEntity<PedalType> pedal2Type = createEnumDataModelEntity(PedalType.class,
+				PedalType.pot_tip_active);
+		public EnumDataModelEntity<PedalType> pedal3Type = createEnumDataModelEntity(PedalType.class,
+				PedalType.pot_tip_active);
+		public EnumDataModelEntity<PedalType> pedal4Type = createEnumDataModelEntity(PedalType.class,
+				PedalType.pot_tip_active);
 		public BooleanDataModelEntity benderOnPressedKeys = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetDragEnabled = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetGlitchSuppression = new BooleanDataModelEntity();
-		public EnumDataModelEntity<PresetStoreMode> presetStoreModeSetting = createEnumDataModelEntity(PresetStoreMode.class,
-				PresetStoreMode.append);
+		public EnumDataModelEntity<PresetStoreMode> presetStoreModeSetting = createEnumDataModelEntity(
+				PresetStoreMode.class, PresetStoreMode.append);
 		public ValueDataModelEntity randomizeAmount = new ValueDataModelEntity();
 		public ValueDataModelEntity ribbonRelativeFactor = new ValueDataModelEntity();
 		public BooleanDataModelEntity sendPresetAsLPCFallback = new BooleanDataModelEntity();
 		public BooleanDataModelEntity signalFlowIndication = new BooleanDataModelEntity();
 		public StringDataModelEntity ssid = new StringDataModelEntity();
 		public ValueDataModelEntity transitionTime = new ValueDataModelEntity();
-		public EnumDataModelEntity<VelocityCurve> velocityCurve = createEnumDataModelEntity(VelocityCurve.class, VelocityCurve.normal);
+		public EnumDataModelEntity<VelocityCurve> velocityCurve = createEnumDataModelEntity(VelocityCurve.class,
+				VelocityCurve.normal);
 		public BooleanDataModelEntity benderRampBypass = new BooleanDataModelEntity();
 		public BooleanDataModelEntity highlightChangedParameters = new BooleanDataModelEntity();
 		public BooleanDataModelEntity forceHighlightChangedParameters = new BooleanDataModelEntity();
@@ -134,9 +141,10 @@ public class Setup {
 	};
 
 	public class LocalSettings {
-		public EnumDataModelEntity<SelectionAutoScroll> selectionAutoScroll = createEnumDataModelEntity(SelectionAutoScroll.class,
-				SelectionAutoScroll.parameter_and_preset);
-		public EnumDataModelEntity<EditParameter> editParameter = createEnumDataModelEntity(EditParameter.class, EditParameter.if_selected);
+		public EnumDataModelEntity<SelectionAutoScroll> selectionAutoScroll = createEnumDataModelEntity(
+				SelectionAutoScroll.class, SelectionAutoScroll.parameter_and_preset);
+		public EnumDataModelEntity<EditParameter> editParameter = createEnumDataModelEntity(EditParameter.class,
+				EditParameter.if_selected);
 		public BooleanDataModelEntity contextMenus = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetDragDrop = new BooleanDataModelEntity();
 		public EnumDataModelEntity<DisplayScaling> displayScaling = createEnumDataModelEntity(DisplayScaling.class,
