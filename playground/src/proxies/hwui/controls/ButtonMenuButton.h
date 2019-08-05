@@ -9,10 +9,9 @@ class ButtonMenuButton : public Label
 
  public:
   ButtonMenuButton(bool isFirst, bool isLast, const Glib::ustring &text, const Rect &pos);
-  virtual ~ButtonMenuButton();
+  ~ButtonMenuButton() override;
 
-  void drawBackground(FrameBuffer &fb);
-
+  void drawBackground(FrameBuffer &fb) override;
   void setJustification(Font::Justification justi);
 
  protected:

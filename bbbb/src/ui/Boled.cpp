@@ -21,8 +21,7 @@ Boled::Boled()
 }
 
 Boled::~Boled()
-{
-}
+= default;
 
 void Boled::setBuffer(const nltools::msg::SetOLEDMessage &msg)
 {

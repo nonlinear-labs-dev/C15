@@ -640,7 +640,7 @@ Parameter *EditBuffer::searchForAnyParameterWithLock() const
   return nullptr;
 }
 
-void EditBuffer::setMacroControlValueFromMCView(int id, double value, Glib::ustring uuid)
+void EditBuffer::setMacroControlValueFromMCView(int id, double value, const Glib::ustring& uuid)
 {
   if(auto mcs = getParameterGroupByID("MCs"))
   {

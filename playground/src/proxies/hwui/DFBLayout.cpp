@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "DFBLayout.h"
 
 #include "Application.h"
@@ -17,9 +19,7 @@ DFBLayout::DFBLayout(OLEDProxy &oled)
 {
 }
 
-DFBLayout::~DFBLayout()
-{
-}
+DFBLayout::~DFBLayout() = default;
 
 bool DFBLayout::redrawLayout()
 {
@@ -78,17 +78,12 @@ void DFBLayout::setDirty()
 
 void DFBLayout::installButtonRepeat(std::function<void()> cb)
 {
-  m_buttonRepeat.reset(new ButtonRepeat(cb));
+  m_buttonRepeat = std::make_unique<ButtonRepeat>(cb);
 }
 
 void DFBLayout::removeButtonRepeat()
 {
   m_buttonRepeat.reset();
-}
-
-bool DFBLayout::isResolutionFine() const
-{
-  return Application::get().getHWUI()->isResolutionFine();
 }
 
 OLEDProxy &DFBLayout::getOLEDProxy()

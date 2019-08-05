@@ -17,14 +17,6 @@ bool ControlWithChildren::isDirty() const
   return ControlOwner::isDirty();
 }
 
-void ControlWithChildren::setChildrenDirty()
-{
-  for(auto &c : getControls())
-  {
-    c->setDirty();
-  }
-}
-
 void ControlWithChildren::setDirty()
 {
   Control::setDirty();
@@ -66,11 +58,6 @@ bool ControlWithChildren::redraw(FrameBuffer &fb)
 
 void ControlWithChildren::drawBackground(FrameBuffer &fb)
 {
-  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old)
-  {
-    fb.setColor(FrameBuffer::C43);
-    fb.fillRect(getPosition());
-  }
 }
 
 bool ControlWithChildren::isTransparent() const

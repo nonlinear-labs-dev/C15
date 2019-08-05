@@ -32,7 +32,7 @@ class EditBuffer : public ParameterGroupSet
   Parameter *getSelected() const;
   bool isZombie() const;
 
-  void setMacroControlValueFromMCView(int id, double value, Glib::ustring uuid);
+  void setMacroControlValueFromMCView(int id, double value, const Glib::ustring& uuid);
   void undoableClear(UNDO::Transaction *transaction);
   void undoableSelectParameter(const Glib::ustring &id);
   void undoableSelectParameter(uint16_t id);

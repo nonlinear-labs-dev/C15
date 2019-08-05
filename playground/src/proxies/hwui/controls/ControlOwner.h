@@ -51,7 +51,7 @@ class ControlOwner : public Uncopyable
     return nullptr;
   }
 
-  void highlight(std::shared_ptr<Control> c);
+  void highlight(const std::shared_ptr<Control>& c);
   void noHighlight();
   void highlightButtonWithCaption(const Glib::ustring &caption);
 
@@ -74,10 +74,10 @@ class ControlOwner : public Uncopyable
   size_t getNumChildren() const;
 
   typedef std::function<bool(tControlPtr)> tIfCallback;
-  void forEach(tIfCallback cb) const;
+  void forEach(const tIfCallback& cb) const;
 
   typedef std::function<void(tControlPtr)> tCallback;
-  void forEach(tCallback cb) const;
+  void forEach(const tCallback& cb) const;
 
   tControlPtr first();
 

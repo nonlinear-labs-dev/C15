@@ -114,11 +114,8 @@ inline void FrameBuffer::setOffsetPixel(tCoordinate x, tCoordinate y)
 
 inline void FrameBuffer::setRawPixel(tCoordinate x, tCoordinate y)
 {
-  if(m_currentColor != Colors::Transparent)
-  {
-    const long index = getIndex(x, y);
-    m_backBuffer[index] = m_currentColor;
-  }
+  const long index = getIndex(x, y);
+  m_backBuffer[index] = m_currentColor;
 }
 
 inline long FrameBuffer::getIndex(tCoordinate x, tCoordinate y) const
@@ -144,7 +141,7 @@ void FrameBuffer::setColor(const Colors &c)
 void FrameBuffer::fiddleColor(tPixel p)
 {
   m_currentColor = (Colors)(p);
-  g_assert(m_currentColor);
+  g_assert(isValidColor(m_currentColor));
 }
 
 FrameBuffer::Colors FrameBuffer::getColor() const

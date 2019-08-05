@@ -22,8 +22,6 @@ class Control : public sigc::trackable, public Uncopyable
   virtual bool isDirty() const;
   void setClean();
 
-  bool overlapsWithAny(const std::list<Rect> &rects) const;
-
   virtual void setHighlight(bool isHighlight);
   bool isHighlight() const;
 

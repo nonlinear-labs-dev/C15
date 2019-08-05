@@ -11,23 +11,21 @@ class OLEDProxy;
 class DFBLayout : public Layout, public ControlOwner
 {
  public:
-  DFBLayout(OLEDProxy &oled);
-  virtual ~DFBLayout();
+  explicit DFBLayout(OLEDProxy &oled);
+  ~DFBLayout() override;
 
-  virtual bool redrawLayout() override;
+  bool redrawLayout() override;
 
   virtual bool onButton(Buttons i, bool down, ::ButtonModifiers modifiers);
   virtual bool onRotary(int inc, ButtonModifiers modifiers);
 
-  virtual void setDirty() override;
+  void setDirty() override;
 
   FrameBuffer &getFrameBuffer();
 
  protected:
   void installButtonRepeat(std::function<void()> cb);
   void removeButtonRepeat();
-
-  bool isResolutionFine() const;
 
   OLEDProxy &getOLEDProxy();
 

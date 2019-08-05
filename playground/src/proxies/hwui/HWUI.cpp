@@ -27,6 +27,7 @@
 #include <proxies/hwui/descriptive-layouts/LayoutFolderMonitor.h>
 #include <nltools/messaging/Message.h>
 #include <io/network/WebSocketSession.h>
+#include <tools/SingeltonShortcuts.h>
 
 HWUI::HWUI()
     : m_readersCancel(Gio::Cancellable::create())
@@ -536,7 +537,10 @@ void HWUI::undoableSetFocusAndMode(FocusAndMode focusAndMode)
 void HWUI::setUiModeDetail(UIDetail detail)
 {
   m_focusAndMode.detail = detail;
-  setupFocusAndMode();
+
+  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old) {
+    setupFocusAndMode();
+  }
 }
 
 void HWUI::freezeFocusAndMode()

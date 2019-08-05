@@ -17,7 +17,6 @@ class ControlWithChildren : public Control, public ControlOwner
 
   bool isDirty() const override;
   void setDirty() override;
-  void setChildrenDirty();
 
   void setHighlight(bool isHighlight) override;
   bool isHighlight() const override;

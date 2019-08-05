@@ -94,11 +94,3 @@ int Control::getWidth() const
   return m_rect.getWidth();
 }
 
-bool Control::overlapsWithAny(const std::list<Rect> &rects) const {
-    for(auto& r: rects) {
-        const auto intersection = r.getIntersection(getPosition());
-        if(std::abs(intersection.getWidth()) > 0 || std::abs(intersection.getHeight()) > 0)
-            return true;
-    }
-    return false;
-}

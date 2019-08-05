@@ -9,7 +9,7 @@ class Boled : public Gtk::DrawingArea
 {
  public:
   Boled();
-  virtual ~Boled();
+  ~Boled() override;
 
   void setBuffer(const nltools::msg::SetOLEDMessage& msg);
 

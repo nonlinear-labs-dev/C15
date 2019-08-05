@@ -35,5 +35,4 @@ class Oleds
   std::list<OLEDProxy *> m_proxies;
   std::map<tKey, tFont> m_fonts;
   Throttler m_throttler;
-  bool regularRedraw();
 };
