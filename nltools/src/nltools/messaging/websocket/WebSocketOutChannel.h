@@ -14,7 +14,7 @@ namespace nltools::msg::ws
   class WebSocketOutChannel : public OutChannel
   {
    public:
-    WebSocketOutChannel(const std::string &targetMachine, guint port, std::mutex &);
+    WebSocketOutChannel(const std::string &targetMachine, guint port);
     ~WebSocketOutChannel() override;
 
     void send(const SerializedMessage &msg) override;
@@ -44,6 +44,7 @@ namespace nltools::msg::ws
     std::unique_ptr<threading::ContextBoundMessageQueue> m_backgroundContextQueue;
     std::unique_ptr<threading::ContextBoundMessageQueue> m_mainThreadContextQueue;
     Glib::RefPtr<Glib::MainLoop> m_messageLoop;
+    std::atomic<bool> m_bgRunning = false;
     std::thread m_contextThread;
 
     std::atomic<bool> m_connectionEstablished = false;

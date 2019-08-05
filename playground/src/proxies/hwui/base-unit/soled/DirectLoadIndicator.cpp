@@ -52,7 +52,6 @@ void DirectLoadIndicator::drawArrow(FrameBuffer &fb) const
   pos.addMargin(9, 3, 2, 3);
 
   auto xCenter = pos.getCenter().getX();
-  auto yCenter = pos.getCenter().getY();
 
   fb.drawHorizontalLine(pos.getLeft() + 1, pos.getBottom(), xCenter - pos.getLeft() - 1);
   fb.drawVerticalLine(xCenter, pos.getTop(), pos.getHeight() - 1);

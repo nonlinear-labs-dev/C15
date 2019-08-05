@@ -14,17 +14,17 @@ namespace nltools
      public:
       using tMessage = std::function<void(void)>;
       explicit ContextBoundMessageQueue(Glib::RefPtr<Glib::MainContext> context);
-      void pushMessage(tMessage&& m);
+      ~ContextBoundMessageQueue();
 
-     protected:
-      Glib::RefPtr<Glib::MainContext> m_context;
-      int m_signal = 0;
+      void pushMessage(tMessage&& m);
 
      private:
       bool doQueuedStuff();
 
+      Glib::RefPtr<Glib::MainContext> m_context;
       std::list<tMessage> m_queue;
       std::recursive_mutex m_mutex;
+      GSource* m_source = nullptr;
     };
   }
 }

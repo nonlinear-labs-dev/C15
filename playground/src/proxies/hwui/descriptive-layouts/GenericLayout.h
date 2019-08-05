@@ -1,6 +1,7 @@
 #pragma once
 
 #include <proxies/hwui/DFBLayout.h>
+#include <nltools/threading/Throttler.h>
 #include "LayoutClass.h"
 
 namespace DescriptiveLayouts
@@ -12,12 +13,14 @@ namespace DescriptiveLayouts
     using super = DFBLayout;
 
    public:
-    GenericLayout(const LayoutClass &prototype);
+    GenericLayout(LayoutClass prototype);
+    ~GenericLayout();
 
     void init() override;
     bool onButton(Buttons i, bool down, ::ButtonModifiers modifiers) override;
     bool onRotary(int inc, ::ButtonModifiers modifiers) override;
 
+    bool regularRedraw();
    private:
     bool handleEventSink(EventSinks s);
     void createControls();
@@ -30,5 +33,8 @@ namespace DescriptiveLayouts
     void toggleStoreMode();
     void toggleInfo();
     void toggleEdit();
+
+    mutable Throttler m_throttler;
+    sigc::connection m_redrawHandle;
   };
 }

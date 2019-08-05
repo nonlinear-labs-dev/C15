@@ -22,7 +22,6 @@ HTTPRequest::HTTPRequest(SoupMessage *msg)
 
     if(buffer)
     {
-      bool post = g_strcmp0(msg->method, "POST") == 0;
       auto header = soup_message_headers_get_one(msg->request_headers, "Content-Type");
       bool containsBlob = header && (g_strcmp0(header, "application/binary") == 0);
 

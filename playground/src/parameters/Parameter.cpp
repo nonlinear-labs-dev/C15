@@ -517,7 +517,6 @@ void Parameter::undoableRecallFromPreset()
 {
   auto &scope = Application::get().getPresetManager()->getUndoScope();
   auto original = getOriginalParameter();
-  auto eb = static_cast<EditBuffer *>(getParentGroup()->getParent());
   auto transactionScope = scope.startTransaction("Recall %0 value", getLongName());
   auto transaction = transactionScope->getTransaction();
   if(original)

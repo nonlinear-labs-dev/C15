@@ -99,6 +99,6 @@ void EditBufferSnapshotMaker::sortParametersByModulationFlow(tParams &params)
     return dynamic_cast<ModulationRoutingParameter *>(r.parameter);
   });
 
-  auto firstNonMC = std::partition(firstNonRouter, params.end(),
-                                   [](const Record &r) { return dynamic_cast<MacroControlParameter *>(r.parameter); });
+  std::partition(firstNonRouter, params.end(),
+                 [](const Record &r) { return dynamic_cast<MacroControlParameter *>(r.parameter); });
 }

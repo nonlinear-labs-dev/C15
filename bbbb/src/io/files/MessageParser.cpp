@@ -61,10 +61,13 @@ gsize MessageParser::parseBody(gconstpointer buffer, gsize numBytes)
   gsize missingBytes = numBytesToReadAtAll - m_numBytesRead;
   gsize missingBytesAvail = std::min(missingBytes, numBytes);
 
-  gsize posInBody = m_numBytesRead - getNumInitialBytesNeeded();
-  uint8_t *rawMsgBody = reinterpret_cast<uint8_t *>(m_params.data());
-  memcpy(rawMsgBody + posInBody, buffer, missingBytesAvail);
-  m_numBytesRead += missingBytesAvail;
+  if(buffer)
+  {
+    gsize posInBody = m_numBytesRead - getNumInitialBytesNeeded();
+    uint8_t *rawMsgBody = reinterpret_cast<uint8_t *>(m_params.data());
+    memcpy(rawMsgBody + posInBody, buffer, missingBytesAvail);
+    m_numBytesRead += missingBytesAvail;
+  }
 
   auto stillMissing = missingBytes - missingBytesAvail;
   return stillMissing;

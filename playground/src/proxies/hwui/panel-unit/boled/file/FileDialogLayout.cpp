@@ -44,7 +44,6 @@ FileDialogLayout::~FileDialogLayout()
 bool FileDialogLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
   auto hwui = Application::get().getHWUI();
-  auto focusAndMode = Application::get().getHWUI()->getFocusAndMode();
 
   if(down)
   {

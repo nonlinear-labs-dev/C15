@@ -29,28 +29,26 @@ namespace nltools::msg
         signals[std::make_pair(type, endPoint)](s);
       }
 
-      static void createInChannels(const Configuration &conf, std::mutex &libSoupMutex)
+      static void createInChannels(const Configuration &conf)
       {
         for(const auto &c : conf.offerEndpoints)
         {
           auto cb = [peer = c.peer](const auto &s) { notifyClients(s, peer); };
 
-          parseURI(c.uri, [=, &libSoupMutex](auto scheme, auto, auto, auto port) {
+          parseURI(c.uri, [=](auto scheme, auto, auto, auto port) {
             assert(scheme == "ws");  // Currently, only web sockets are supported
-            std::unique_lock<std::mutex> lock(libSoupMutex);
-            inChannels[c.peer] = std::make_unique<ws::WebSocketInChannel>(cb, port, libSoupMutex);
+            inChannels[c.peer] = std::make_unique<ws::WebSocketInChannel>(cb, port);
           });
         }
       }
 
-      static void createOutChannels(const Configuration &conf, std::mutex &libSoupMutex)
+      static void createOutChannels(const Configuration &conf)
       {
         for(const auto &c : conf.useEndpoints)
         {
-          parseURI(c.uri, [=, &libSoupMutex](auto scheme, auto host, auto, auto port) {
+          parseURI(c.uri, [=](auto scheme, auto host, auto, auto port) {
             assert(scheme == "ws");  // Currently, only web sockets are supported
-            std::unique_lock<std::mutex> lock(libSoupMutex);
-            outChannels[c.peer] = std::make_unique<ws::WebSocketOutChannel>(host, port, libSoupMutex);
+            outChannels[c.peer] = std::make_unique<ws::WebSocketOutChannel>(host, port);
             outChannels[c.peer]->onConnectionEstablished([peer = c.peer] { connectionSignals[peer](); });
           });
         }
@@ -93,10 +91,9 @@ namespace nltools::msg
 
     void init(const Configuration &conf)
     {
-      static std::mutex libSoupMutex;
       deInit();
-      detail::createInChannels(conf, libSoupMutex);
-      detail::createOutChannels(conf, libSoupMutex);
+      detail::createInChannels(conf);
+      detail::createOutChannels(conf);
     }
 
     void deInit()
