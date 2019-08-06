@@ -210,3 +210,9 @@ const size_t ButtonMenu::getItemCount() const
 {
   return m_items.size();
 }
+
+void ButtonMenu::clear()
+{
+  clearActions();
+  ControlOwner::clear();
+}

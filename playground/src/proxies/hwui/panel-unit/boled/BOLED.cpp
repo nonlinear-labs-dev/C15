@@ -86,6 +86,7 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
       }
       catch(...)
       {
+        DebugLevel::error("No Dynamic Layout found! UIFocus:", toString(focusAndMode.focus), "UIMode:", toString(focusAndMode.mode), "UIDetail:", toString(focusAndMode.detail));
         installOldLayouts(focusAndMode);
       }
       break;

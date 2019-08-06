@@ -4,7 +4,7 @@
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Edit",
-        "UIDetail": "Any"
+        "UIDetail": "Init"
       },
       "Conditions": [
         "isSingleSound"
@@ -22,7 +22,8 @@
       },
       "EventSinks": {
         "BUTTON_INC": "IncButtonMenu",
-        "BUTTON_DEC": "DecButtonMenu"
+        "BUTTON_DEC": "DecButtonMenu",
+        "BUTTON_ENTER": "FireButtonMenu"
       }
     }
   }

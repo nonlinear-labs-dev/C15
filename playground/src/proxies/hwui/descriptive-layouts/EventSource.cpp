@@ -450,9 +450,10 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-      auto typeString = toString(editBuffer->getType());
-      auto vg = std::string(editBuffer->m_vgISelected ? " I" : " II");
-      return DisplayString{ typeString + vg, 0 };
+      auto type = editBuffer->getType();
+      if(type == Type::Single)
+          return DisplayString{toString(type), 0};
+      return DisplayString{ toString(type) + (editBuffer->m_vgISelected ? "  I" : "  II"), 0 };
     }
     OnEditBufferChangedNotifier<SoundHeaderText> m_not;
   };
@@ -720,9 +721,12 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
-      auto type = toString(eb->getType());
-      auto vg = eb->isVGISelected() ? "[I]" : "[II]";
-      return DisplayString({ type + " " + vg, 0 });
+      auto type = eb->getType();
+
+      if(type == Type::Single)
+         return DisplayString({toString(type), 0});
+
+      return DisplayString({ toString(type) + (eb->isVGISelected() ? " [I]" : " [II]"), 0 });
     }
     OnEditBufferChangedNotifier<SoundEditHeading> m_changed;
   };

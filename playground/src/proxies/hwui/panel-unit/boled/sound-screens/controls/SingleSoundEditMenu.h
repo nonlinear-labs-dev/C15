@@ -29,6 +29,7 @@ class SingleSoundEditMenu : public SoundMenu
 
  public:
   SingleSoundEditMenu(const Rect& rect);
+  virtual void init();
 
  protected:
   Font::Justification getDefaultButtonJustification() const override;

@@ -1,10 +1,10 @@
 {
   "layouts": {
-    "Layer-Sound-Select-Layout": {
+    "Layer-Sound-Select-Layout-B": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIDetail": "ButtonB"
       },
       "Conditions": [
         "isLayerSound"
@@ -18,9 +18,7 @@
         "Name": {
           "Class": "WideHighlightLabel",
           "Position": "64, 0",
-          "Init": {
-            "Text[Text]": "03-128* Gitarrentöne"
-          }
+          "Events": "EditBufferName => Text[Text]"
         },
         "ButtonA": {
           "Class": "Button",
@@ -28,7 +26,7 @@
           "Events": "SelectVGButtonText => Text[Text]"
         },
         "ButtonB": {
-          "Class": "Button",
+          "Class": "HighlightButton",
           "Position": "BUTTON_B",
           "Init": {
             "Text[Text]": "Set.."
@@ -70,7 +68,9 @@
         }
       },
       "EventSinks": {
-        "BUTTON_A": "ToggleVoiceGroup"
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
       }
     }
   }

@@ -1,0 +1,78 @@
+{
+  "layouts": {
+    "Layer-Sound-Select-Layout": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Select",
+        "UIDetail": "Init"
+      },
+      "Conditions": [
+        "isLayerSound"
+      ],
+      "Controls": {
+        "Header": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Events": "SoundHeaderText => Text[Text]"
+        },
+        "Name": {
+          "Class": "WideHighlightLabel",
+          "Position": "64, 0",
+          "Events": "EditBufferName => Text[Text]"
+        },
+        "ButtonA": {
+          "Class": "Button",
+          "Position": "BUTTON_A",
+          "Events": "SelectVGButtonText => Text[Text]"
+        },
+        "ButtonB": {
+          "Class": "Button",
+          "Position": "BUTTON_B",
+          "Init": {
+            "Text[Text]": "Set.."
+          }
+        },
+        "ButtonC": {
+          "Class": "Button",
+          "Position": "BUTTON_C",
+          "Init": {
+            "Text[Text]": "Unison.."
+          }
+        },
+        "ButtonD": {
+          "Class": "Button",
+          "Position": "BUTTON_D",
+          "Init": {
+            "Text[Text]": "Master.."
+          }
+        },
+        "Upper": {
+          "Class": "LayerVoiceGroupI",
+          "Position": "45, 16",
+          "Init": {
+            "VoiceGroupIdentifier[Text]": "I",
+            "Unison[Text]": "+12.00 st",
+            "Master[Text]": "-3.5 dB"
+          },
+          "Events": "isCurrentVGI => Any[Highlight]"
+        },
+        "Lower": {
+          "Class": "LayerVoiceGroupII",
+          "Position": "45, 32",
+          "Init": {
+            "VoiceGroupIdentifier[Text]": "II",
+            "Unison[Text]": "+12.00 st",
+            "Master[Text]": "-3.5 dB"
+          },
+          "Events": "isCurrentVGII => Any[Highlight]"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
+      }
+    }
+  }
+}

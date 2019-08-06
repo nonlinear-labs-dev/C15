@@ -15,4 +15,8 @@ namespace SiSc
       return dynamic_cast<T>(getCurrentParameter());
     }
   }
+
+  namespace HWUI {
+      void bruteForce();
+  }
 };
