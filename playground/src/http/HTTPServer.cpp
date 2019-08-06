@@ -13,6 +13,12 @@
 #include <parameters/MacroControlParameter.h>
 #include <nltools/threading/Throttler.h>
 
+#ifdef _DEVELOPMENT_PC
+static const guint port = 8080;
+#else
+static const guint port = 80;
+#endif
+
 HTTPServer::HTTPServer()
     : m_contentManager()
     , m_avahi(new AvahiService())
@@ -20,10 +26,7 @@ HTTPServer::HTTPServer()
   startServer();
 }
 
-HTTPServer::~HTTPServer()
-{
-  DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
-}
+HTTPServer::~HTTPServer() = default;
 
 UpdateDocumentMaster *HTTPServer::getUpdateDocumentMaster()
 {
@@ -32,11 +35,7 @@ UpdateDocumentMaster *HTTPServer::getUpdateDocumentMaster()
 
 void HTTPServer::startServer()
 {
-#ifdef _DEVELOPMENT_PC
-  m_server = soup_server_new(SOUP_SERVER_PORT, 8080, NULL);
-#else
-  m_server = soup_server_new(SOUP_SERVER_PORT, 80, NULL);
-#endif
+  m_server = soup_server_new(nullptr, nullptr);
 
   if(m_server)
     initializeServer();
@@ -46,24 +45,32 @@ void HTTPServer::startServer()
 
 void HTTPServer::initializeServer()
 {
-  DebugLevel::info("HTTPServer runs on port", soup_server_get_port(m_server));
-  soup_server_add_handler(m_server, nullptr, (SoupServerCallback)((serverCallback)), this, nullptr);
+  soup_server_add_handler(m_server, nullptr, reinterpret_cast<SoupServerCallback>(serverCallback), this, nullptr);
   soup_server_add_websocket_handler(m_server, "/ws", nullptr, nullptr,
-                                    (SoupServerWebsocketCallback) &HTTPServer::webSocket, this, nullptr);
-
+                                    reinterpret_cast<SoupServerWebsocketCallback>(&HTTPServer::webSocket), this,
+                                    nullptr);
   soup_server_add_websocket_handler(m_server, "/ws-mc", nullptr, nullptr,
-                                    (SoupServerWebsocketCallback) &HTTPServer::mcWebSocket, this, nullptr);
-  soup_server_run_async(m_server);
+                                    reinterpret_cast<SoupServerWebsocketCallback>(&HTTPServer::mcWebSocket), this,
+                                    nullptr);
+
+  GError *error = nullptr;
+  soup_server_listen_all(m_server, port, static_cast<SoupServerListenOptions>(0), &error);
+
+  if(error)
+  {
+    nltools::Log::error("Could not start http server:", error->message);
+    g_error_free(error);
+  }
 }
 
-void HTTPServer::webSocket(SoupServer *server, SoupWebsocketConnection *connection, const char *pathStr,
-                           SoupClientContext *client, HTTPServer *pThis)
+void HTTPServer::webSocket(SoupServer *, SoupWebsocketConnection *connection, const char *, SoupClientContext *,
+                           HTTPServer *pThis)
 {
   pThis->m_contentManager.connectWebSocket(connection);
 }
 
-void HTTPServer::mcWebSocket(SoupServer *server, SoupWebsocketConnection *connection, const char *pathStr,
-                             SoupClientContext *client, HTTPServer *pThis)
+void HTTPServer::mcWebSocket(SoupServer *, SoupWebsocketConnection *connection, const char *, SoupClientContext *,
+                             HTTPServer *pThis)
 {
   pThis->m_mcviewManager.connectWebSocket(connection);
 }
@@ -166,18 +173,18 @@ void HTTPServer::onMessageFinished(SoupMessage *msg)
     m_contentManager.onSectionMessageFinished(msg);
 }
 
-void HTTPServer::serverCallback(SoupServer *server, SoupMessage *msg, const char *path, GHashTable *query,
-                                SoupClientContext *context, HTTPServer *pThis)
+void HTTPServer::serverCallback(SoupServer *, SoupMessage *msg, const char *path, GHashTable *, SoupClientContext *,
+                                HTTPServer *pThis)
 {
   try
   {
-    g_signal_connect(msg, "finished", G_CALLBACK(&HTTPServer::messageFinishedCB), pThis);
+    g_signal_connect(msg, "finished", reinterpret_cast<GCallback>(&HTTPServer::messageFinishedCB), pThis);
     std::shared_ptr<NetworkRequest> request(new HTTPRequest(msg));
     pThis->handleRequest(request);
   }
   catch(MarkupError &err)
   {
-    DebugLevel::warning("handled MarkupError exception for accessing path", path, (int) err.code());
+    DebugLevel::warning("handled MarkupError exception for accessing path", path, err.code());
   }
   catch(...)
   {

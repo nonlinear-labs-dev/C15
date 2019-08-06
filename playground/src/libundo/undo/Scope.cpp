@@ -56,7 +56,6 @@ namespace UNDO
 
   void Scope::rebase(Transaction *newRoot)
   {
-#warning "Test me"
     if(auto parent = newRoot->getPredecessor())
     {
       m_root = parent->exhaust(newRoot);

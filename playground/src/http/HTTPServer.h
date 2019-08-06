@@ -34,12 +34,12 @@ class HTTPServer
 
  private:
   static void serverCallback(SoupServer *server, SoupMessage *msg, const char *path, GHashTable *query,
-                             SoupClientContext *context, HTTPServer *pThis);
-  static void webSocket(SoupServer *server, SoupWebsocketConnection *connection, const char *pathStr,
-                        SoupClientContext *client, HTTPServer *pThis);
+                             SoupClientContext *, HTTPServer *pThis);
+  static void webSocket(SoupServer *, SoupWebsocketConnection *connection, const char *, SoupClientContext *,
+                        HTTPServer *pThis);
 
-  static void mcWebSocket(SoupServer *server, SoupWebsocketConnection *connection, const char *pathStr,
-                          SoupClientContext *client, HTTPServer *pThis);
+  static void mcWebSocket(SoupServer *, SoupWebsocketConnection *connection, const char *, SoupClientContext *,
+                          HTTPServer *pThis);
 
   static void messageFinishedCB(SoupMessage *msg, HTTPServer *pThis);
 
