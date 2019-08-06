@@ -453,7 +453,7 @@ namespace DescriptiveLayouts
       auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
       auto type = editBuffer->getType();
       if(type == Type::Single)
-          return DisplayString{toString(type), 0};
+        return DisplayString{ toString(type), 0 };
       return DisplayString{ toString(type) + (editBuffer->m_vgISelected ? "  I" : "  II"), 0 };
     }
     OnEditBufferChangedNotifier<SoundHeaderText> m_not;
@@ -540,9 +540,11 @@ namespace DescriptiveLayouts
   class DirectLoadStatus : public EventSource<bool>
   {
    public:
-    DirectLoadStatus() {
-      Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange([&](const Setting* s){
-        if(auto ss = dynamic_cast<const AutoLoadSelectedPreset*>(s)) {
+    DirectLoadStatus()
+    {
+      Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange([&](const Setting *s) {
+        if(auto ss = dynamic_cast<const AutoLoadSelectedPreset *>(s))
+        {
           setValue(ss->get());
         }
       });
@@ -737,7 +739,7 @@ namespace DescriptiveLayouts
       auto type = eb->getType();
 
       if(type == Type::Single)
-         return DisplayString({toString(type), 0});
+        return DisplayString({ toString(type), 0 });
 
       return DisplayString({ toString(type) + (eb->isVGISelected() ? " [I]" : " [II]"), 0 });
     }
@@ -822,8 +824,8 @@ namespace DescriptiveLayouts
     return m_map.at(source)->connect(cb);
   }
 
-  std::any EventSourceBroker::evaluate(EventSources source) {
+  std::any EventSourceBroker::evaluate(EventSources source)
+  {
     return m_map[source]->getLastValue();
   }
-
 }

@@ -13,24 +13,25 @@ SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect)
   init();
 }
 
-void SingleSoundEditMenu::init() {
+void SingleSoundEditMenu::init()
+{
   auto pm = Application::get().getPresetManager();
 
   addButton("Store Init", [=]() {
-      auto scope = pm->getUndoScope().startTransaction("Store Init Sound");
-      pm->storeInitSound(scope->getTransaction());
-      selectButton(0);
+    auto scope = pm->getUndoScope().startTransaction("Store Init Sound");
+    pm->storeInitSound(scope->getTransaction());
+    selectButton(0);
   });
 
   addButton("Reset Init", [=]() {
-      auto scope = pm->getUndoScope().startTransaction("Reset Init Sound");
-      pm->resetInitSound(scope->getTransaction());
-      selectButton(0);
+    auto scope = pm->getUndoScope().startTransaction("Reset Init Sound");
+    pm->resetInitSound(scope->getTransaction());
+    selectButton(0);
   });
 
   addButton("Randomize", [=]() {
-      auto scope = pm->getUndoScope().startTransaction("Randomize Sound");
-      pm->getEditBuffer()->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_WEBUI);
+    auto scope = pm->getUndoScope().startTransaction("Randomize Sound");
+    pm->getEditBuffer()->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_WEBUI);
   });
 
   addButton("Mono Mode ..", [] {});

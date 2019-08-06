@@ -6,23 +6,25 @@
 
 #include "proxies/hwui/HWUI.h"
 
-LayerSoundEditMenu::LayerSoundEditMenu(const Rect& rect) : SingleSoundEditMenu(rect)
+LayerSoundEditMenu::LayerSoundEditMenu(const Rect& rect)
+    : SingleSoundEditMenu(rect)
 {
   init();
 }
 
-void LayerSoundEditMenu::init(){
+void LayerSoundEditMenu::init()
+{
   auto* pm = Application::get().getPresetManager();
 
   clear();
   addButton("Import Preset into VG", [=]() {
-      //FOO;
+    //FOO;
   });
 
   addButton("Convert to Single", [=]() {
-      pm->getEditBuffer()->setType(Type::Single);
-      Application::get().getHWUI()->setFocusAndMode(UIMode::Select);
-      SiSc::HWUI::bruteForce();
+    pm->getEditBuffer()->setType(Type::Single);
+    Application::get().getHWUI()->setFocusAndMode(UIMode::Select);
+    SiSc::HWUI::bruteForce();
   });
 
   selectButton(0);

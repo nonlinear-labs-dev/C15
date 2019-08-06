@@ -73,7 +73,6 @@ void HostAPDSetting::saveToFile()
   }
 }
 
-
 void HostAPDSetting::load(const Glib::ustring &text)
 {
 }

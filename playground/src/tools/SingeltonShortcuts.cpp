@@ -19,14 +19,16 @@ namespace SiSc
 
 namespace SiSc::EB
 {
-  const Parameter* getCurrentParameter() {
+  const Parameter* getCurrentParameter()
+  {
     return Application::get().getPresetManager()->getEditBuffer()->getSelected();
   }
 }
 
 namespace SiSc::HWUI
 {
-    void bruteForce() {
-        Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().bruteForce();
-    }
+  void bruteForce()
+  {
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().bruteForce();
+  }
 }

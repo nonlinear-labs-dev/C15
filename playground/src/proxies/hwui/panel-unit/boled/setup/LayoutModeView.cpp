@@ -11,8 +11,7 @@ LayoutModeView::LayoutModeView()
       mem_fun(this, &LayoutModeView::onSettingChanged));
 }
 
-LayoutModeView::~LayoutModeView()
-= default;
+LayoutModeView::~LayoutModeView() = default;
 
 void LayoutModeView::onSettingChanged(const Setting *s)
 {

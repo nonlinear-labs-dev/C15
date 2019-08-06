@@ -27,6 +27,7 @@ class ButtonMenu : public ControlWithChildren
 
  protected:
   void clear() override;
+
  public:
   void doAction();
   const size_t getItemCount() const;
@@ -35,10 +36,11 @@ class ButtonMenu : public ControlWithChildren
   void clearActions();
   void setItemTitle(size_t i, const Glib::ustring &caption);
 
-    virtual Font::Justification getDefaultButtonJustification() const;
+  virtual Font::Justification getDefaultButtonJustification() const;
 
   virtual void bruteForce();
-private:
+
+ private:
   size_t getItemToShowAtPlace(size_t place) const;
 
   struct Item
@@ -54,4 +56,3 @@ private:
 
   friend class SoundMenu;
 };
-

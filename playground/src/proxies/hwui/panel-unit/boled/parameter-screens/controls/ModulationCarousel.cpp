@@ -45,7 +45,8 @@ void ModulationCarousel::forceHighlights(const ModulateableParameter *modP)
 
     m_button->setVisible(!visible);
 
-    if(m_upper->isVisible() && m_lower->isVisible() && m_middle->isVisible()) {
+    if(m_upper->isVisible() && m_lower->isVisible() && m_middle->isVisible())
+    {
       m_upper->setHighlight(s_lastMode == Mode::UpperBound);
       m_middle->setHighlight(s_lastMode == Mode::ParameterValue);
       m_lower->setHighlight(s_lastMode == Mode::LowerBound);
@@ -149,7 +150,8 @@ bool ModulationCarousel::redraw(FrameBuffer &fb)
   return ret;
 }
 
-void ModulationCarousel::drawBackground(FrameBuffer &fb) {
+void ModulationCarousel::drawBackground(FrameBuffer &fb)
+{
   setAllDirty();
   ControlWithChildren::drawBackground(fb);
 }

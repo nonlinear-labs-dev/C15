@@ -15,7 +15,7 @@ namespace DescriptiveLayouts
    public:
     using Callback = std::function<void(std::any)>;
 
-    sigc::connection connect(const Callback &cb)
+    sigc::connection connect(const Callback& cb)
     {
       cb(getLastValue());
       return m_outputSignal.connect(cb);

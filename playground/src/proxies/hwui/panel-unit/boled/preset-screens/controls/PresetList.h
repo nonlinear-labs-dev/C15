@@ -9,7 +9,7 @@ class PresetList : public PresetListBase
   using super = PresetListBase;
 
  public:
-  PresetList(const Rect &pos, bool showBankArrows);
+  PresetList(const Rect& pos, bool showBankArrows);
   ~PresetList() override;
 
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
@@ -18,7 +18,7 @@ class PresetList : public PresetListBase
   std::pair<size_t, size_t> getSelectedPosition() const override;
 
  private:
-  void onBankSelectionChanged(const Uuid &selectedBank);
+  void onBankSelectionChanged(const Uuid& selectedBank);
   void onBankChanged();
   void onEditBufferChanged();
 
@@ -26,12 +26,14 @@ class PresetList : public PresetListBase
   Uuid m_uuidOfLastLoadedPreset;
 };
 
-class GenericPresetList : public PresetList {
+class GenericPresetList : public PresetList
+{
  public:
   explicit GenericPresetList(const Point& p);
 };
 
-class PresetListVGSelect : public GenericPresetList {
+class PresetListVGSelect : public GenericPresetList
+{
  public:
   explicit PresetListVGSelect(const Point& p);
 };

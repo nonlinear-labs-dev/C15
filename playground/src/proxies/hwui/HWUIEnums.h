@@ -6,9 +6,11 @@
 
 ENUM(UIFocus, uint8_t, Any, Sound, Parameters, Presets, Banks, Setup, Unchanged);
 ENUM(UIMode, uint8_t, Any, Select, Store, Edit, Info, Unchanged);
-ENUM(UIDetail, uint8_t, Any, Init, ButtonA, ButtonB, ButtonC, ButtonD, MCSelect, MCAmount, MCPosition, MCModRange, SoundSelectPresetForVoiceGroup);
+ENUM(UIDetail, uint8_t, Any, Init, ButtonA, ButtonB, ButtonC, ButtonD, MCSelect, MCAmount, MCPosition, MCModRange,
+     SoundSelectPresetForVoiceGroup);
 
-enum LayoutVersionMode {
+enum LayoutVersionMode
+{
   Old,
   Mixed,
   New

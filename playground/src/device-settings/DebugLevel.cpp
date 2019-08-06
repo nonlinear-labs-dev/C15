@@ -12,8 +12,7 @@ DebugLevel::DebugLevel(Settings &settings)
   DebugLevel::gassy(__PRETTY_FUNCTION__, G_STRLOC);
 }
 
-DebugLevel::~DebugLevel()
-= default;
+DebugLevel::~DebugLevel() = default;
 
 bool DebugLevel::set(DebugLevels m)
 {

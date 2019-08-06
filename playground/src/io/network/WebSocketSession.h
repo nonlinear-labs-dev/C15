@@ -51,7 +51,7 @@ class WebSocketSession
         : delay(delay)
         , domain(Domain::Buttons)
     {
-      uint16_t m = (uint16_t)b | (down ? 0x80 : 0x00);
+      uint16_t m = (uint16_t) b | (down ? 0x80 : 0x00);
       msg = Glib::Bytes::create(&m, 2);
     }
 

@@ -51,11 +51,11 @@ bool PresetInfoLayout::onButton(Buttons button, bool down, ButtonModifiers modif
   {
     switch(button)
     {
-        case Buttons::BUTTON_EDIT:
+      case Buttons::BUTTON_EDIT:
         l = new EditPresetInfoLayout();
         Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(l);
         return true;
-        case Buttons::BUTTON_PRESET:
+      case Buttons::BUTTON_PRESET:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
         return true;
     }

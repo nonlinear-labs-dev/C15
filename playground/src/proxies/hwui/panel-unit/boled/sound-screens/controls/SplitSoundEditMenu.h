@@ -2,8 +2,9 @@
 
 #include "SingleSoundEditMenu.h"
 
-class SplitSoundEditMenu : public SingleSoundEditMenu {
+class SplitSoundEditMenu : public SingleSoundEditMenu
+{
  public:
-    explicit SplitSoundEditMenu(const Rect& rect);
-    void init() override;
+  explicit SplitSoundEditMenu(const Rect& rect);
+  void init() override;
 };

@@ -22,7 +22,6 @@ class BOLED : public OLEDProxy, public sigc::trackable
 
   void bruteForce();
 
-
  private:
   void installOldLayouts(FocusAndMode foucsAndMode);
   void setupSoundScreen(FocusAndMode focusAndMode);

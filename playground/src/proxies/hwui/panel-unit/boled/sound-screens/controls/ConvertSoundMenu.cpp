@@ -13,8 +13,8 @@ ConvertSoundMenu::ConvertSoundMenu(const Rect &rect)
 
 void ConvertSoundMenu::convertSoundTo(Type newType)
 {
-    Application::get().getPresetManager()->getEditBuffer()->setType(newType);
-    SiSc::HWUI::bruteForce();
+  Application::get().getPresetManager()->getEditBuffer()->setType(newType);
+  SiSc::HWUI::bruteForce();
 }
 
 void ConvertSoundMenu::setup()

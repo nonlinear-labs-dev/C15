@@ -68,7 +68,7 @@ namespace DescriptiveLayouts
     }
     if(controlClass == "PresetList")
     {
-        return new PresetList({position.getX(), position.getY(), 128, 50}, true);
+      return new PresetList({ position.getX(), position.getY(), 128, 50 }, true);
     }
     return new GenericControl(*this);
   }

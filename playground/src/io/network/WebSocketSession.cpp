@@ -10,7 +10,8 @@ WebSocketSession::WebSocketSession()
     : m_soupSession(nullptr, g_object_unref)
     , m_message(nullptr, g_object_unref)
     , m_connection(nullptr, g_object_unref)
-    , m_defaultContextQueue(std::make_unique<nltools::threading::ContextBoundMessageQueue>(Glib::MainContext::get_default()))
+    , m_defaultContextQueue(
+          std::make_unique<nltools::threading::ContextBoundMessageQueue>(Glib::MainContext::get_default()))
     , m_contextThread(std::bind(&WebSocketSession::backgroundThread, this))
 {
 }

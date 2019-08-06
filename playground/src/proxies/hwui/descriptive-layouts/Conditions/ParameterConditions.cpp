@@ -3,7 +3,8 @@
 
 using namespace DescriptiveLayouts;
 
-namespace conditiondetail {
+namespace conditiondetail
+{
   const EditBuffer &getEditBuffer()
   {
     return *Application::get().getPresetManager()->getEditBuffer();
@@ -29,7 +30,6 @@ namespace conditiondetail {
     auto hwui = Application::get().getHWUI();
     hwui->getPanelUnit().getEditPanel().getBoled().bruteForce();
   }
-
 }
 
 bool ParameterConditions::IsParameterModulateable::check() const

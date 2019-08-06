@@ -9,17 +9,20 @@ void DescriptiveLayouts::SoundConditions::IsXSound::onEditBufferChanged(const Ed
   get();
 }
 
-bool DescriptiveLayouts::SoundConditions::IsSingleSound::check() const {
+bool DescriptiveLayouts::SoundConditions::IsSingleSound::check() const
+{
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   return eb->getType() == Type::Single;
 }
 
-bool DescriptiveLayouts::SoundConditions::IsLayerSound::check() const {
+bool DescriptiveLayouts::SoundConditions::IsLayerSound::check() const
+{
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   return eb->getType() == Type::Layer;
 }
 
-bool DescriptiveLayouts::SoundConditions::IsSplitSound::check() const {
+bool DescriptiveLayouts::SoundConditions::IsSplitSound::check() const
+{
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   return eb->getType() == Type::Split;
 }

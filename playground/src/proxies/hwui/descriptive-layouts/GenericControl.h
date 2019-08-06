@@ -19,15 +19,15 @@ namespace DescriptiveLayouts
    private:
     void addPrimitives();
     void onEventFired(const std::any& v, const ControlInstance::EventConnection& c);
-    void onVisibilityChanged(std::any visibility, const ControlInstance& ci, const ControlInstance::VisibilityItem& item);
+    void onVisibilityChanged(std::any visibility, const ControlInstance& ci,
+                             const ControlInstance::VisibilityItem& item);
 
-  private:
-
+   private:
     std::list<sigc::connection> m_connections;
 
     std::unordered_map<EventSources, bool> m_controlVisible;
 
-  protected:
+   protected:
     ControlInstance m_prototype;
     LayoutClasses m_lastUsedLayout;
   };

@@ -8,6 +8,7 @@ class ModulateableParameterLayout2 : public virtual ParameterLayout2
   typedef ParameterLayout2 super;
   ModulateableParameterLayout2();
   virtual bool switchToNormalMode();
+
  protected:
   void addModAmountSliders(ControlOwner *o);
 };

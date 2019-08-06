@@ -16,11 +16,12 @@ namespace DescriptiveLayouts
     virtual ~Circle();
 
     using Range = std::pair<tControlPositionValue, tControlPositionValue>;
-  protected:
-      void setDirty() override;
 
-  public:
-      void setProperty(PrimitiveProperty key, std::any value) override;
+   protected:
+    void setDirty() override;
+
+   public:
+    void setProperty(PrimitiveProperty key, std::any value) override;
 
    protected:
     bool redraw(FrameBuffer &fb) override;

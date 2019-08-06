@@ -87,10 +87,13 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
       }
       catch(std::runtime_error& err)
       {
-          DebugLevel::error(err.what());
-      } catch(...) {
+        DebugLevel::error(err.what());
       }
-      DebugLevel::error("No Dynamic Layout found! UIFocus:", toString(focusAndMode.focus), "UIMode:", toString(focusAndMode.mode), "UIDetail:", toString(focusAndMode.detail));
+      catch(...)
+      {
+      }
+      DebugLevel::error("No Dynamic Layout found! UIFocus:", toString(focusAndMode.focus),
+                        "UIMode:", toString(focusAndMode.mode), "UIDetail:", toString(focusAndMode.detail));
       installOldLayouts(focusAndMode);
       break;
   }

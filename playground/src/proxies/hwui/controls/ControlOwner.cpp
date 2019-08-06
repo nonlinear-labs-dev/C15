@@ -78,14 +78,14 @@ void ControlOwner::setAllDirty()
     c->setDirty();
 }
 
-void ControlOwner::forEach(const tIfCallback& cb) const
+void ControlOwner::forEach(const tIfCallback &cb) const
 {
   for(const auto &c : m_controls)
     if(!cb(c))
       return;
 }
 
-void ControlOwner::forEach(const tCallback& cb) const
+void ControlOwner::forEach(const tCallback &cb) const
 {
   for(const auto &c : m_controls)
     cb(c);
@@ -104,7 +104,7 @@ bool ControlOwner::isHighlight() const
   return false;
 }
 
-void ControlOwner::highlight(const std::shared_ptr<Control>& c)
+void ControlOwner::highlight(const std::shared_ptr<Control> &c)
 {
   c->setHighlight(true);
 }

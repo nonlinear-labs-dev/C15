@@ -112,7 +112,9 @@ namespace DescriptiveLayouts
        * UIFocus
        */
     registerEvent(EventSinks::SwitchToParameterFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Parameters); });
-    registerEvent(EventSinks::SwitchToSoundFocus, [hwui] { hwui->undoableSetFocusAndMode({UIFocus::Sound, UIMode::Select, UIDetail::Init}); });
+    registerEvent(EventSinks::SwitchToSoundFocus, [hwui] {
+      hwui->undoableSetFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
+    });
     registerEvent(EventSinks::SwitchToPresetFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Presets); });
     registerEvent(EventSinks::SwitchToBankFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Banks); });
     registerEvent(EventSinks::SwitchToSetupFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Setup); });
@@ -132,11 +134,13 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::SwitchToButtonCDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonC); });
     registerEvent(EventSinks::SwitchToButtonDDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonD); });
 
-    registerEvent(EventSinks::SelectPresetForVoiceGroup, [hwui] { hwui->setUiModeDetail(UIDetail::SoundSelectPresetForVoiceGroup); hwui->getPanelUnit().getEditPanel().getBoled().bruteForce(); });
-
-    registerEvent(EventSinks::ToggleDirectLoad, [] {
-        Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->toggle();
+    registerEvent(EventSinks::SelectPresetForVoiceGroup, [hwui] {
+      hwui->setUiModeDetail(UIDetail::SoundSelectPresetForVoiceGroup);
+      hwui->getPanelUnit().getEditPanel().getBoled().bruteForce();
     });
+
+    registerEvent(EventSinks::ToggleDirectLoad,
+                  [] { Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->toggle(); });
 
     registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))

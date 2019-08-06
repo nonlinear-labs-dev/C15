@@ -517,20 +517,20 @@ namespace NavTree
 
   struct LayoutModeSetting : EditableLeaf
   {
-      LayoutModeSetting(InnerNode *parent)
+    LayoutModeSetting(InnerNode *parent)
         : EditableLeaf(parent, "Layout Type")
-      {
-      }
+    {
+    }
 
-      Control* createView() override
-      {
-        return new LayoutModeView();
-      }
+    Control *createView() override
+    {
+      return new LayoutModeView();
+    }
 
-      Control* createEditor() override
-      {
-        return new LayoutModeEditor();
-      }
+    Control *createEditor() override
+    {
+      return new LayoutModeEditor();
+    }
   };
 
   struct EncoderAcceleration : EditableLeaf

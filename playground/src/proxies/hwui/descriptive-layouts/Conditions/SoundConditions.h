@@ -4,32 +4,35 @@
 #include <tools/EditBufferNotifier.h>
 #include "ConditionBase.h"
 
-namespace DescriptiveLayouts {
-  namespace SoundConditions {
+namespace DescriptiveLayouts
+{
+  namespace SoundConditions
+  {
     class IsXSound : public ConditionBase
     {
-    public:
+     public:
       IsXSound();
       void onEditBufferChanged(const EditBuffer*);
-    protected:
+
+     protected:
       OnEditBufferChangedNotifier<IsXSound> m_changed;
     };
 
     class IsSingleSound : public IsXSound
     {
-    public:
+     public:
       bool check() const override;
     };
 
     class IsLayerSound : public IsXSound
     {
-    public:
+     public:
       bool check() const override;
     };
 
     class IsSplitSound : public IsXSound
     {
-    public:
+     public:
       bool check() const override;
     };
   };

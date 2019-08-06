@@ -54,10 +54,9 @@ void EditBuffer::setType(Type t)
   m_type = t;
 }
 
-
 Glib::ustring EditBuffer::getCurrentVoiceGroupName() const
 {
-    return "I " + getName();
+  return "I " + getName();
 }
 
 Glib::ustring EditBuffer::getName() const
@@ -67,8 +66,6 @@ Glib::ustring EditBuffer::getName() const
 
   return m_name;
 }
-
-
 
 size_t EditBuffer::getHash() const
 {
@@ -185,7 +182,7 @@ const PresetManager *EditBuffer::getParent() const
   return static_cast<const PresetManager *>(super::getParent());
 }
 
-sigc::connection EditBuffer::onSelectionChanged(const slot<void, Parameter *, Parameter *>& s)
+sigc::connection EditBuffer::onSelectionChanged(const slot<void, Parameter *, Parameter *> &s)
 {
   return m_signalSelectedParameter.connectAndInit(s, nullptr, getSelected());
 }
@@ -640,7 +637,7 @@ Parameter *EditBuffer::searchForAnyParameterWithLock() const
   return nullptr;
 }
 
-void EditBuffer::setMacroControlValueFromMCView(int id, double value, const Glib::ustring& uuid)
+void EditBuffer::setMacroControlValueFromMCView(int id, double value, const Glib::ustring &uuid)
 {
   if(auto mcs = getParameterGroupByID("MCs"))
   {
@@ -652,10 +649,12 @@ void EditBuffer::setMacroControlValueFromMCView(int id, double value, const Glib
   }
 }
 
-bool EditBuffer::isVGISelected() const {
+bool EditBuffer::isVGISelected() const
+{
   return m_vgISelected;
 }
 
-bool EditBuffer::isVGIISelected() const {
+bool EditBuffer::isVGIISelected() const
+{
   return !isVGISelected();
 }

@@ -17,7 +17,7 @@ class Carousel : public ControlWithChildren
   virtual void antiTurn();
   virtual void setup(Parameter *selectedParameter) = 0;
 
-private:
+ private:
   Carousel(const Carousel &other);
   Carousel &operator=(const Carousel &);
 };
