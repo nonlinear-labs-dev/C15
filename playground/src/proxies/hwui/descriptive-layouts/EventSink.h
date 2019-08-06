@@ -13,7 +13,7 @@ namespace DescriptiveLayouts
        SwitchToButtonDDetail, SwitchToMCModRangeDetail, SwitchToMCAmtDetail, SelectPresetForVoiceGroup, IncMCSel,
        DecMCSel, IncMCAmt, DecMCAmt, IncMCPos, DecMCPos, IncButtonMenu, DecButtonMenu, FireButtonMenu,
        IncParamSelection, IncModulationCarousel, DecModulationCarousel, ToggleVoiceGroup, BackToButtonMenu,
-       CommitPresetForButtonMenu, ToggleDirectLoad);
+       CommitPresetForButtonMenu, ToggleDirectLoad, IncPresetSelectionPresetList, DecPresetSelectionPresetList, IncBankSelectionPresetList, DecBankSelectionPresetList, DoPresetListAction);
 
   struct EventSinkMapping
   {

@@ -66,9 +66,9 @@ namespace DescriptiveLayouts
     {
       return new ParameterCarousel(Rect(position.getX(), position.getY(), 58, 62));
     }
-    if(controlClass == "PresetList")
+    if(controlClass == "PresetListVGSelect")
     {
-      return new PresetList({ position.getX(), position.getY(), 128, 50 }, true);
+      return new PresetListVGSelect(position);
     }
     return new GenericControl(*this);
   }

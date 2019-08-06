@@ -658,3 +658,13 @@ bool EditBuffer::isVGIISelected() const
 {
   return !isVGISelected();
 }
+
+void EditBuffer::loadCurrentVG(Preset *pPreset){
+    if(pPreset == nullptr)
+        return;
+
+    auto string = "Loading " + pPreset->getName() + " into Voice Group: " + getCurrentVoiceGroupName(); //TODO StringTools::compose(x, y, zz);
+    DebugLevel::warning(string);
+    auto scope = getUndoScope().startTransaction(string);
+    undoableLoad(scope->getTransaction(), pPreset);
+}

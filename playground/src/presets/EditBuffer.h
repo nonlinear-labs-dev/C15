@@ -90,7 +90,7 @@ class EditBuffer : public ParameterGroupSet
   bool isVGIISelected() const;
   bool m_vgISelected = true;
 
- private:
+ void loadCurrentVG(Preset* pPreset);private:
   Parameter *searchForAnyParameterWithLock() const;
 
   UNDO::Scope &getUndoScope() override;

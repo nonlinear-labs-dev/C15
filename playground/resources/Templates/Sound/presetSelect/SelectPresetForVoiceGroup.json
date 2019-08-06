@@ -41,7 +41,12 @@
       },
       "EventSinks": {
         "BUTTON_A": "SwitchToSoundFocus",
-        "BUTTON_D": "ToggleDirectLoad"
+        "BUTTON_D": "ToggleDirectLoad",
+        "BUTTON_B": "DecBankSelectionPresetList",
+        "BUTTON_C": "IncBankSelectionPresetList",
+        "BUTTON_INC": "IncPresetSelectionPresetList",
+        "BUTTON_DEC": "DecPresetSelectionPresetList",
+        "BUTTON_ENTER": "DoPresetListAction"
       }
     }
   }

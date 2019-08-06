@@ -100,6 +100,23 @@ class PresetManager : public ContentSection
   void resolveCyclicAttachments(UNDO::Transaction *transaction);
   void ensureBankSelection(UNDO::Transaction *transaction);
 
+  class AutoLoadBlocker {
+  public:
+      explicit AutoLoadBlocker(const PresetManager& p) : m_pm{p} {
+          m_pm.autoloadsemaphore++;
+      }
+
+      ~AutoLoadBlocker() {
+          m_pm.autoloadsemaphore--;
+      }
+  protected:
+      PresetManager const& m_pm;
+  };
+
+  AutoLoadBlocker&& getAutoLoadBlocker() const {
+      return std::move(AutoLoadBlocker{*this});
+  }
+
   // algorithms
   Glib::ustring createPresetNameBasedOn(const Glib::ustring &basedOn) const;
   void searchPresets(Writer &writer, const Glib::ustring &q, const Glib::ustring &mode,
@@ -153,8 +170,11 @@ class PresetManager : public ContentSection
   tUpdateID m_lastSavedInitSoundUpdateID = 0;
   tUpdateID m_lastSavedMetaDataUpdateID = 0;
 
+  mutable int autoloadsemaphore = 0;
+
   std::list<SaveSubTask> m_saveTasks;
   bool m_saveRequestDuringSave = false;
 
   friend class PresetManagerSerializer;
+  friend class AutoLoadBlocker;
 };

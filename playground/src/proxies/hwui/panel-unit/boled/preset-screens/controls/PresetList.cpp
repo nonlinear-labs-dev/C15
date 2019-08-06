@@ -161,8 +161,60 @@ std::pair<size_t, size_t> PresetList::getSelectedPosition() const
   }
   return { -1, -1 };
 }
+Preset *PresetList::getPresetAtSelected()
+{
+  return Application::get().getPresetManager()->getSelectedBank()->getSelectedPreset();
+}
 
 GenericPresetList::GenericPresetList(const Point &p)
     : PresetList({ p.getX(), p.getY(), 128, 50 }, true)
 {
+}
+void GenericPresetList::movePresetSelection(int inc)
+{
+  auto scope = Application::get().getPresetManager()->getUndoScope().startTrashTransaction();
+  if(inc > 0) {
+    for(; inc > 0; inc--)
+      Application::get().getPresetManager()->getSelectedBank()->selectNextPreset(scope->getTransaction());
+  } else {
+    for(; inc < 0; inc++)
+      Application::get().getPresetManager()->getSelectedBank()->selectPreviousPreset(scope->getTransaction());
+  }
+}
+void GenericPresetList::moveBankSelection(int inc)
+{
+  auto scope = Application::get().getPresetManager()->getUndoScope().startTrashTransaction();
+  if(inc > 0) {
+    for(; inc > 0; inc--)
+      Application::get().getPresetManager()->selectNextBank(scope->getTransaction());
+  } else {
+    for(; inc < 0; inc++)
+      Application::get().getPresetManager()->selectPreviousBank(scope->getTransaction());
+  }
+}
+void GenericPresetList::incBankSelection()
+{
+  moveBankSelection(1);
+}
+void GenericPresetList::decBankSelection()
+{
+  moveBankSelection(-1);
+}
+void GenericPresetList::incPresetSelection()
+{
+  movePresetSelection(1);
+}
+
+void GenericPresetList::decPresetSelection()
+{
+  movePresetSelection(-1);
+}
+
+PresetListVGSelect::PresetListVGSelect(const Point &p)
+    : GenericPresetList(p), blocker(Application::get().getPresetManager()->getAutoLoadBlocker())
+{
+}
+void PresetListVGSelect::action()
+{
+  Application::get().getPresetManager()->getEditBuffer()->loadCurrentVG(getPresetAtSelected());
 }

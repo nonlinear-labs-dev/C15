@@ -5,6 +5,7 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
 #include <device-settings/AutoLoadSelectedPreset.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include "EventSink.h"
 #include "Application.h"
 #include "presets/PresetManager.h"
@@ -198,6 +199,61 @@ namespace DescriptiveLayouts
         if(auto carousel = genericLayout->findControlOfType<ModulationCarousel>())
         {
           carousel->onRotary(-1, hwui->getButtonModifiers());
+        }
+      }
+    });
+
+      registerEvent(EventSinks::IncPresetSelectionPresetList, [hwui]() {
+          auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+          if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
+          {
+            if(auto presetList = genericLayout->findControlOfType<GenericPresetList>())
+            {
+              presetList->incPresetSelection();
+            }
+          }
+      });
+
+      registerEvent(EventSinks::DecPresetSelectionPresetList, [hwui]() {
+          auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+          if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
+          {
+              if(auto presetList = genericLayout->findControlOfType<GenericPresetList>())
+              {
+                presetList->decPresetSelection();
+              }
+          }
+      });
+
+    registerEvent(EventSinks::DecBankSelectionPresetList, [hwui]() {
+        auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+        if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
+        {
+          if(auto presetList = genericLayout->findControlOfType<GenericPresetList>())
+          {
+            presetList->decBankSelection();
+          }
+        }
+    });
+
+    registerEvent(EventSinks::IncBankSelectionPresetList, [hwui]() {
+        auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+        if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
+        {
+          if(auto presetList = genericLayout->findControlOfType<GenericPresetList>())
+          {
+            presetList->incBankSelection();
+          }
+        }
+    });
+
+    registerEvent(EventSinks::DoPresetListAction, [hwui]() {
+      auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+      if(auto genericLayout = dynamic_cast<GenericLayout* >(layout))
+      {
+        if(auto presetList = genericLayout->findControlOfType<GenericPresetList>())
+        {
+          presetList->action();
         }
       }
     });
