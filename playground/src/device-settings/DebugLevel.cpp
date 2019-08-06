@@ -17,7 +17,7 @@ DebugLevel::~DebugLevel()
 
 bool DebugLevel::set(DebugLevels m)
 {
-  if(super::set(m))
+  if(super::forceset(m))
   {
     lastSetLevel = m;
     DebugLevel::gassy(__PRETTY_FUNCTION__, G_STRLOC, save());
