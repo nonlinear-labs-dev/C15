@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
 #include "GenericLayout.h"
 #include "GenericControl.h"
@@ -11,9 +13,9 @@
 
 namespace DescriptiveLayouts
 {
-  GenericLayout::GenericLayout(const LayoutClass &prototype)
+  GenericLayout::GenericLayout(LayoutClass prototype)
       : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
-      , m_prototype(prototype)
+      , m_prototype(std::move(prototype))
   {
   }
 
@@ -84,6 +86,14 @@ namespace DescriptiveLayouts
     }
     return false;
   }
+
+  bool GenericLayout::redrawLayout()
+  {
+    getOLEDProxy().clear();
+    setAllDirty();
+    return DFBLayout::redrawLayout();
+  }
+
 
   bool GenericLayout::handleEventSink(EventSinks s)
   {

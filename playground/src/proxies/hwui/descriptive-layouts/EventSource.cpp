@@ -367,12 +367,6 @@ namespace DescriptiveLayouts
       }
     }
 
-    void setValue(const bool &v) override
-    {
-      m_lastValue = v;
-      m_outputSignal.send(m_lastValue);
-    }
-
    protected:
     OnParameterChangedNotifier<CurrentMacroControlAsignment> m_changedNotifier;
   };
@@ -575,12 +569,6 @@ namespace DescriptiveLayouts
       }
     }
 
-    void setValue(const bool &v) override
-    {
-      m_lastValue = v;
-      m_outputSignal.send(m_lastValue);
-    }
-
    protected:
     OnParameterChangedNotifier<MCPositionChanged> m_changedNotifier;
   };
@@ -600,12 +588,6 @@ namespace DescriptiveLayouts
         auto v = modP->isModSourceChanged();
         setValue(v);
       }
-    }
-
-    void setValue(const bool &v) override
-    {
-      m_lastValue = v;
-      m_outputSignal.send(m_lastValue);
     }
 
    protected:

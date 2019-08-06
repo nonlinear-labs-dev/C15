@@ -108,7 +108,7 @@ namespace DescriptiveLayouts
     }
     if(shouldRestyle)
     {
-      setAllDirty();
+      setDirty();
       style(m_lastUsedLayout);
     }
   }
@@ -127,8 +127,10 @@ namespace DescriptiveLayouts
 
         m_controlVisible[item.m_source] = visible;
 
-        auto collected = std::all_of(m_controlVisible.begin(), m_controlVisible.end(), [](auto b) { return b.second; });
-        setVisible(collected);
+        setVisible(std::all_of(m_controlVisible.begin(), m_controlVisible.end(), [](auto e) {
+            return e.second;
+        }));
+
       }
       catch(...)
       {

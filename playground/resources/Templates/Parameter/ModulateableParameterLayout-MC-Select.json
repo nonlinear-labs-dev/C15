@@ -73,8 +73,7 @@
             "Text[Text]": "MC Amt"
           },
           "Visibility": [
-            "MacroControlAsignment",
-            "!MCAmountChanged"
+            "MacroControlAsignment"
           ]
         },
         "ButtonCChanged": {
@@ -84,8 +83,8 @@
             "Text[Text]": "MC Amt*"
           },
           "Visibility": [
-            "MacroControlAsignment",
-            "MCAmountChanged"
+            "MCAmountChanged",
+            "MacroControlAsignment"
           ]
         },
         "MCSelection-Label": {
@@ -120,13 +119,13 @@
         "MCPositionSlider": {
           "Class": "MiniDotSlider",
           "Position": "8, 25",
-          "Events": "MacroControlPosition => ValueDot[ControlPosition], MacroControlAsignment => ValueDot[Visibility]",
+          "Events": "MacroControlPosition => ValueDot[ControlPosition]",
           "Visibility": "MacroControlAsignment"
         },
         "MCPositionLabel": {
           "Class": "Label",
           "Position": "6, 30",
-          "Events": "MacroControlPositionText => Text[Text], MacroControlAsignment => Text[Visibility]",
+          "Events": "MacroControlPositionText => Text[Text]",
           "Visibility": "MacroControlAsignment"
         },
         "MCAmountLabel": {

@@ -74,8 +74,7 @@
             "Text[Text]": "MC Amt"
           },
           "Visibility": [
-            "MacroControlAsignment",
-            "!MCAmountChanged"
+            "MacroControlAsignment"
           ]
         },
         "ButtonCChanged": {
@@ -85,8 +84,8 @@
             "Text[Text]": "MC Amt*"
           },
           "Visibility": [
-            "MacroControlAsignment",
-            "MCAmountChanged"
+            "MCAmountChanged",
+            "MacroControlAsignment"
           ]
         },
         "MCSelection-Label": {
@@ -125,7 +124,7 @@
           "Visibility": "MacroControlAsignment"
         },
         "MCPositionLabel": {
-          "Class": "HighlightLabel",
+          "Class": "Label",
           "Position": "6, 30",
           "Events": "MacroControlPositionText => Text[Text]",
           "Visibility": "MacroControlAsignment"

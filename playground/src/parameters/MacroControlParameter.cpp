@@ -95,9 +95,8 @@ void MacroControlParameter::onValueChanged(Initiator initiator, tControlPosition
   if(initiator != Initiator::INDIRECT)
     updateBoundRibbon();
 
-  if(initiator == Initiator::INDIRECT)
-    for(ModulateableParameter *target : m_targets)
-      target->invalidate();
+  for(ModulateableParameter *target : m_targets)
+    target->invalidate();
 
   updateMCViewsFromMCChange(initiator);
 }
