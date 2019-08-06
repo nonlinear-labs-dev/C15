@@ -8,6 +8,10 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListContent.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListHeader.h>
 #include <memory>
+#include <proxies/hwui/controls/Label.h>
+#include <proxies/hwui/controls/LeftAlignedLabel.h>
+#include "presets/Preset.h"
+
 
 PresetList::PresetList(const Rect &pos, bool showBankArrows)
     : super(pos, showBankArrows)
@@ -169,45 +173,87 @@ Preset *PresetList::getPresetAtSelected()
 GenericPresetList::GenericPresetList(const Point &p)
     : PresetList({ p.getX(), p.getY(), 128, 50 }, true)
 {
+  sanitizePresetPtr();
 }
-void GenericPresetList::movePresetSelection(int inc)
-{
-  auto scope = Application::get().getPresetManager()->getUndoScope().startTrashTransaction();
-  if(inc > 0) {
-    for(; inc > 0; inc--)
-      Application::get().getPresetManager()->getSelectedBank()->selectNextPreset(scope->getTransaction());
-  } else {
-    for(; inc < 0; inc++)
-      Application::get().getPresetManager()->getSelectedBank()->selectPreviousPreset(scope->getTransaction());
-  }
-}
-void GenericPresetList::moveBankSelection(int inc)
-{
-  auto scope = Application::get().getPresetManager()->getUndoScope().startTrashTransaction();
-  if(inc > 0) {
-    for(; inc > 0; inc--)
-      Application::get().getPresetManager()->selectNextBank(scope->getTransaction());
-  } else {
-    for(; inc < 0; inc++)
-      Application::get().getPresetManager()->selectPreviousBank(scope->getTransaction());
-  }
-}
+
 void GenericPresetList::incBankSelection()
 {
-  moveBankSelection(1);
+  sanitizePresetPtr();
+  auto bank = (Bank*)m_selectedPreset->getParent();
+  auto pm = (PresetManager*)bank->getParent();
+  auto nextBank = pm->getBankAt(pm->getBankPosition(bank->getUuid()) + 1);
+  if(nextBank)
+    m_selectedPreset = nextBank->getPresetAt(0);
 }
 void GenericPresetList::decBankSelection()
 {
-  moveBankSelection(-1);
+  sanitizePresetPtr();
+  auto bank = (Bank*)m_selectedPreset->getParent();
+  auto pm = (PresetManager*)bank->getParent();
+  auto nextBank = pm->getBankAt(pm->getBankPosition(bank->getUuid()) - 1);
+  if(nextBank)
+    m_selectedPreset = nextBank->getPresetAt(0);
 }
 void GenericPresetList::incPresetSelection()
 {
-  movePresetSelection(1);
+  sanitizePresetPtr();
+  auto bank = (Bank*)m_selectedPreset->getParent();
+  m_selectedPreset = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) + 1);
 }
 
 void GenericPresetList::decPresetSelection()
 {
-  movePresetSelection(-1);
+  sanitizePresetPtr();
+  auto bank = (Bank*)m_selectedPreset->getParent();
+  m_selectedPreset = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) - 1);
+}
+bool GenericPresetList::redraw(FrameBuffer &fb)
+{
+  sanitizePresetPtr();
+  const Rect &r = getPosition();
+  fb.setColor(FrameBuffer::Colors::C103);
+  fb.drawRect(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
+
+  drawPresets(fb, m_selectedPreset);
+
+  return true;
+}
+
+void GenericPresetList::drawPresets(FrameBuffer &fb, Preset *middle)
+{
+  if(middle == nullptr)
+    return;
+
+  auto pos = getPosition();
+  auto third = pos.getHeight() / 3;
+  auto bank = dynamic_cast<Bank*>(middle->getParent());
+  auto currentPos = bank->getPresetPosition(middle);
+  auto prev = bank->getPresetAt(currentPos - 1);
+  auto next = bank->getPresetAt(currentPos + 1);
+
+  auto createAndDrawControl = [&](Preset* p, int index) {
+    if(p == nullptr)
+      return;
+
+    auto c = addControl(new LeftAlignedLabel({p->getName(), 0}, {getPosition().getLeft(), index * third, pos.getWidth(), third}));
+    c->setFontColor(FrameBuffer::C179);
+    auto rect = c->getPosition();
+    fb.setColor(FrameBuffer::C103);
+    fb.fillRect(rect.getMargined(0, 2));
+    c->redraw(fb);
+    remove(c);
+  };
+
+  createAndDrawControl(middle, 1);
+  createAndDrawControl(prev, 0);
+  createAndDrawControl(next, 2);
+
+
+}
+void GenericPresetList::sanitizePresetPtr()
+{
+  if(m_selectedPreset == nullptr)
+    m_selectedPreset = Application::get().getPresetManager()->getSelectedBank()->getSelectedPreset();
 }
 
 PresetListVGSelect::PresetListVGSelect(const Point &p)

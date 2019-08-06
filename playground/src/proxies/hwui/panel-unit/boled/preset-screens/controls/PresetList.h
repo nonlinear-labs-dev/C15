@@ -42,9 +42,16 @@ class GenericPresetList : public PresetList
 
   virtual void action() = 0;
 
+ public:
+  bool redraw(FrameBuffer& fb) override;
+
+
  protected:
-  void movePresetSelection(int inc);
-  void moveBankSelection(int inc);
+  void drawPresets(FrameBuffer& fb, Preset* middle);
+
+  virtual void sanitizePresetPtr();
+
+  Preset* m_selectedPreset = nullptr;
 };
 
 class PresetListVGSelect : public GenericPresetList
