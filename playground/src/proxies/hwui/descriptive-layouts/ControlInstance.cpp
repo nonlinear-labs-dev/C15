@@ -7,6 +7,7 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/LayerSoundEditMenu.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SplitSoundEditMenu.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include "ControlInstance.h"
 #include "GenericControl.h"
 #include "proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h"
@@ -64,6 +65,10 @@ namespace DescriptiveLayouts
     if(controlClass == "ParameterCarousel")
     {
       return new ParameterCarousel(Rect(position.getX(), position.getY(), 58, 62));
+    }
+    if(controlClass == "PresetList")
+    {
+        return new PresetList({position.getX(), position.getY(), 128, 50}, true);
     }
     return new GenericControl(*this);
   }

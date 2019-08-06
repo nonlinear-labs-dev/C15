@@ -4,6 +4,7 @@
 #include <libundo/undo/Scope.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
+#include <device-settings/AutoLoadSelectedPreset.h>
 #include "EventSink.h"
 #include "Application.h"
 #include "presets/PresetManager.h"
@@ -111,7 +112,7 @@ namespace DescriptiveLayouts
        * UIFocus
        */
     registerEvent(EventSinks::SwitchToParameterFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Parameters); });
-    registerEvent(EventSinks::SwitchToSoundFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Sound); });
+    registerEvent(EventSinks::SwitchToSoundFocus, [hwui] { hwui->undoableSetFocusAndMode({UIFocus::Sound, UIMode::Select, UIDetail::Init}); });
     registerEvent(EventSinks::SwitchToPresetFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Presets); });
     registerEvent(EventSinks::SwitchToBankFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Banks); });
     registerEvent(EventSinks::SwitchToSetupFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Setup); });
@@ -130,6 +131,12 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::SwitchToButtonBDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonB); });
     registerEvent(EventSinks::SwitchToButtonCDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonC); });
     registerEvent(EventSinks::SwitchToButtonDDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonD); });
+
+    registerEvent(EventSinks::SelectPresetForVoiceGroup, [hwui] { hwui->setUiModeDetail(UIDetail::SoundSelectPresetForVoiceGroup); hwui->getPanelUnit().getEditPanel().getBoled().bruteForce(); });
+
+    registerEvent(EventSinks::ToggleDirectLoad, [] {
+        Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->toggle();
+    });
 
     registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))

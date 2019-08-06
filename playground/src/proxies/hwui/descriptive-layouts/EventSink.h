@@ -10,9 +10,9 @@ namespace DescriptiveLayouts
   ENUM(EventSinks, uint8_t, IncParam, DecParam, SwitchToInitDetail, SwitchToEditMode, SwitchToSelectMode,
        SwitchToSetupFocus, SwitchToParameterFocus, SwitchToBankFocus, SwitchToPresetFocus, SwitchToSoundFocus,
        SwitchToMCSelectDetail, SwitchToButtonADetail, SwitchToButtonBDetail, SwitchToButtonCDetail,
-       SwitchToButtonDDetail, SwitchToMCModRangeDetail, SwitchToMCAmtDetail, IncMCSel, DecMCSel, IncMCAmt, DecMCAmt,
+       SwitchToButtonDDetail, SwitchToMCModRangeDetail, SwitchToMCAmtDetail, SelectPresetForVoiceGroup, IncMCSel, DecMCSel, IncMCAmt, DecMCAmt,
        IncMCPos, DecMCPos, IncButtonMenu, DecButtonMenu, FireButtonMenu, IncParamSelection, IncModulationCarousel,
-       DecModulationCarousel, ToggleVoiceGroup);
+       DecModulationCarousel, ToggleVoiceGroup, BackToButtonMenu, CommitPresetForButtonMenu, ToggleDirectLoad);
 
   struct EventSinkMapping
   {

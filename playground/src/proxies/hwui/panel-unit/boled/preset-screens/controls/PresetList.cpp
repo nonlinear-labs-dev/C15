@@ -161,3 +161,8 @@ std::pair<size_t, size_t> PresetList::getSelectedPosition() const
   }
   return { -1, -1 };
 }
+
+
+GenericPresetList::GenericPresetList(const Point &p) : PresetList({p.getX(), p.getY(), 128, 50}, true)
+{
+}

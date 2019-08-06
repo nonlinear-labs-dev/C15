@@ -3,6 +3,8 @@
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
 #include "tools/SingeltonShortcuts.h"
+#include "proxies/hwui/descriptive-layouts/EventSink.h"
+
 
 #include "proxies/hwui/HWUI.h"
 
@@ -17,7 +19,9 @@ void SplitSoundEditMenu::init(){
     clear();
 
     addButton("Import Preset into VG", [=]() {
-       //FOO;
+        Application::get().getHWUI()->setFocusAndMode(UIDetail::SoundSelectPresetForVoiceGroup);
+        SiSc::HWUI::bruteForce();
+        //do that with the result: DescriptiveLayouts::EventSinkBroker::get().fire(DescriptiveLayouts::EventSinks::SelectPresetForVoiceGroup);
     });
 
     addButton("Convert to Single", [=]() {

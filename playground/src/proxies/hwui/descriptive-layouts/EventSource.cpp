@@ -15,6 +15,7 @@
 #include <presets/Preset.h>
 #include <tools/EditBufferNotifier.h>
 #include <tools/SingeltonShortcuts.h>
+#include <device-settings/AutoLoadSelectedPreset.h>
 
 namespace DescriptiveLayouts
 {
@@ -536,6 +537,18 @@ namespace DescriptiveLayouts
     }
   };
 
+  class DirectLoadStatus : public EventSource<bool>
+  {
+   public:
+    DirectLoadStatus() {
+      Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange([&](const Setting* s){
+        if(auto ss = dynamic_cast<const AutoLoadSelectedPreset*>(s)) {
+          setValue(ss->get());
+        }
+      });
+    }
+  };
+
   class StaticText : public EventSource<DisplayString>
   {
    public:
@@ -797,6 +810,8 @@ namespace DescriptiveLayouts
 
     m_map[EventSources::IsOnlyParameterOnButton] = std::make_unique<IsOnlyParameterOnButton>();
     m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();
+
+    m_map[EventSources::DirectLoadStatus] = std::make_unique<DirectLoadStatus>();
   }
 
   sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)

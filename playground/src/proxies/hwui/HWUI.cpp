@@ -518,6 +518,11 @@ FocusAndMode HWUI::getFocusAndMode() const
   return m_focusAndMode;
 }
 
+void HWUI::setFocusAndMode(const UIDetail &detail)
+{
+  setFocusAndMode({m_focusAndMode.focus, m_focusAndMode.mode, detail});
+}
+
 void HWUI::setFocusAndMode(FocusAndMode focusAndMode)
 {
   if(m_focusAndModeFrozen)
