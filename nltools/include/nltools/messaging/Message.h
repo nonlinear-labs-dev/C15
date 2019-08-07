@@ -6,7 +6,7 @@
 
 namespace nltools
 {
-  namespce msg
+  namespace msg
   {
     template <MessageType msgType> struct Message
     {
