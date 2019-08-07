@@ -659,28 +659,6 @@ namespace DescriptiveLayouts
     OnParameterChangedNotifier<ParameterValueChanged> m_paramChanged;
   };
 
-  class FullSoundName : public EventSource<DisplayString>
-  {
-   protected:
-    std::any getLastValue() const override
-    {
-      auto pm = Application::get().getPresetManager();
-      auto name = pm->getEditBuffer()->getName();
-
-      if(auto bank = pm->findBankWithPreset(pm->getEditBuffer()->getUUIDOfLastLoadedPreset()))
-      {
-        auto bankNum = pm->getBankPosition(bank->getUuid());
-        if(auto preset = bank->getSelectedPreset())
-        {
-          auto num = bank->getPresetPosition(preset->getUuid());
-          auto changed = pm->getEditBuffer()->anyParameterChanged();
-          return DisplayString{ std::to_string(bankNum) + "-" + std::to_string(num) + (changed ? "*" : "") + name, 0 };
-        }
-      }
-      return DisplayString{ name, 0 };
-    }
-  };
-
   class IsCurrentVGI : public EventSource<bool>
   {
    public:
@@ -772,108 +750,165 @@ namespace DescriptiveLayouts
 
   class PresetListHasBankLeft : public EventSource<bool>
   {
-  public:
-    PresetListHasBankLeft() {
-      m_layoutConnection = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstantiated([this](Layout* l) {
-        m_presetListConnection.disconnect();
+   public:
+    PresetListHasBankLeft()
+    {
+      m_layoutConnection = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstantiated(
+          [this](Layout *l) {
+            m_presetListConnection.disconnect();
 
-        if(auto genericLayout = dynamic_cast<GenericLayout*>(l)) {
-          if(auto presetlist = genericLayout->findControlOfType<GenericPresetList>()) {
+            if(auto genericLayout = dynamic_cast<GenericLayout *>(l))
+            {
+              if(auto presetlist = genericLayout->findControlOfType<GenericPresetList>())
+              {
 
-            m_presetListConnection = presetlist->onChange([this](GenericPresetList* pl) {
-              if(auto selection = pl->getPresetAtSelected()) {
-                if(auto bank = dynamic_cast<Bank*>(selection->getParent())) {
-                  auto pm = Application::get().getPresetManager();
-                  auto next = pm->getBankAt(pm->getBankPosition(bank->getUuid()) - 1);
-                  setValue(next != nullptr);
-                }
+                m_presetListConnection = presetlist->onChange([this](GenericPresetList *pl) {
+                  if(auto selection = pl->getPresetAtSelected())
+                  {
+                    if(auto bank = dynamic_cast<Bank *>(selection->getParent()))
+                    {
+                      auto pm = Application::get().getPresetManager();
+                      auto next = pm->getBankAt(pm->getBankPosition(bank->getUuid()) - 1);
+                      setValue(next != nullptr);
+                    }
+                  }
+                });
               }
-            });
-
-          }
-        }
-      });
+            }
+          });
 
       setValue(false);
     }
 
-    ~PresetListHasBankLeft() {
+    ~PresetListHasBankLeft()
+    {
       m_layoutConnection.disconnect();
       m_presetListConnection.disconnect();
     }
 
-  protected:
+   protected:
     sigc::connection m_layoutConnection;
     sigc::connection m_presetListConnection;
   };
 
   class PresetListHasBankRight : public EventSource<bool>
   {
-  public:
-    PresetListHasBankRight() {
-      m_layoutConnection = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstantiated([this](Layout* l) {
-        m_presetListConnection.disconnect();
+   public:
+    PresetListHasBankRight()
+    {
+      m_layoutConnection = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstantiated(
+          [this](Layout *l) {
+            m_presetListConnection.disconnect();
 
-        if(auto genericLayout = dynamic_cast<GenericLayout*>(l)) {
-          if(auto presetlist = genericLayout->findControlOfType<GenericPresetList>()) {
+            if(auto genericLayout = dynamic_cast<GenericLayout *>(l))
+            {
+              if(auto presetlist = genericLayout->findControlOfType<GenericPresetList>())
+              {
 
-            m_presetListConnection = presetlist->onChange([this](GenericPresetList* pl) {
-              if(auto selection = pl->getPresetAtSelected()) {
-                if(auto bank = dynamic_cast<Bank*>(selection->getParent())) {
-                  auto pm = Application::get().getPresetManager();
-                  auto next = pm->getBankAt(pm->getBankPosition(bank->getUuid()) + 1);
-                  setValue(next != nullptr);
-                }
+                m_presetListConnection = presetlist->onChange([this](GenericPresetList *pl) {
+                  if(auto selection = pl->getPresetAtSelected())
+                  {
+                    if(auto bank = dynamic_cast<Bank *>(selection->getParent()))
+                    {
+                      auto pm = Application::get().getPresetManager();
+                      auto next = pm->getBankAt(pm->getBankPosition(bank->getUuid()) + 1);
+                      setValue(next != nullptr);
+                    }
+                  }
+                });
               }
-            });
-
-          }
-        }
-      });
+            }
+          });
 
       setValue(false);
     }
 
-    ~PresetListHasBankRight() {
+    ~PresetListHasBankRight()
+    {
       m_layoutConnection.disconnect();
       m_presetListConnection.disconnect();
     }
 
-  protected:
+   protected:
     sigc::connection m_layoutConnection;
     sigc::connection m_presetListConnection;
   };
 
   class PresetListBankName : public EventSource<DisplayString>
   {
-  public:
-    PresetListBankName() {
-      m_layoutConnection = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstantiated([this](Layout* l) {
-        m_presetListConnection.disconnect();
+   public:
+    PresetListBankName()
+    {
+      m_layoutConnection = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstantiated(
+          [this](Layout *l) {
+            m_presetListConnection.disconnect();
 
-        if(auto genericLayout = dynamic_cast<GenericLayout*>(l)) {
-          if(auto presetlist = genericLayout->findControlOfType<GenericPresetList>()) {
+            if(auto genericLayout = dynamic_cast<GenericLayout *>(l))
+            {
+              if(auto presetlist = genericLayout->findControlOfType<GenericPresetList>())
+              {
 
-            m_presetListConnection = presetlist->onChange([this](GenericPresetList* pl) {
-              if(auto selection = pl->getPresetAtSelected()) {
-                if(auto bank = dynamic_cast<Bank*>(selection->getParent())) {
-                  setValue({bank->getName(true), 0});
-                  return;
-                }
+                m_presetListConnection = presetlist->onChange([this](GenericPresetList *pl) {
+                  if(auto selection = pl->getPresetAtSelected())
+                  {
+                    if(auto bank = dynamic_cast<Bank *>(selection->getParent()))
+                    {
+                      setValue({ bank->getName(true), 0 });
+                      return;
+                    }
+                  }
+                });
               }
-            });
+            }
+          });
 
-          }
-        }
-      });
-
-      setValue({"No Bank", 0});
+      setValue({ "No Bank", 0 });
     }
-    ~PresetListBankName() {
+    ~PresetListBankName()
+    {
       m_layoutConnection.disconnect();
       m_presetListConnection.disconnect();
     }
-  protected:
+
+   protected:
+    sigc::connection m_layoutConnection;
+    sigc::connection m_presetListConnection;
+  };
+
+  class PresetListPresetName : public EventSource<DisplayString>
+  {
+   public:
+    PresetListPresetName()
+    {
+      m_layoutConnection = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstantiated(
+          [this](Layout *l) {
+            m_presetListConnection.disconnect();
+
+            if(auto genericLayout = dynamic_cast<GenericLayout *>(l))
+            {
+              if(auto presetlist = genericLayout->findControlOfType<GenericPresetList>())
+              {
+
+                m_presetListConnection = presetlist->onChange([this](GenericPresetList *pl) {
+                  if(auto selection = pl->getPresetAtSelected())
+                  {
+                    setValue({ selection->getName(), 0 });
+                    return;
+                  }
+                });
+              }
+            }
+          });
+
+      setValue({ "No Preset", 0 });
+    }
+    ~PresetListPresetName()
+    {
+      m_layoutConnection.disconnect();
+      m_presetListConnection.disconnect();
+    }
+
+   protected:
     sigc::connection m_layoutConnection;
     sigc::connection m_presetListConnection;
   };
@@ -906,8 +941,6 @@ namespace DescriptiveLayouts
     m_map[EventSources::BooleanTrue] = std::make_unique<BooleanTrue>();
     m_map[EventSources::BooleanFalse] = std::make_unique<BooleanFalse>();
 
-    m_map[EventSources::FullSoundName] = std::make_unique<FullSoundName>();
-
     m_map[EventSources::isCurrentVGI] = std::make_unique<IsCurrentVGI>();
     m_map[EventSources::isCurrentVGII] = std::make_unique<IsCurrentVGII>();
     m_map[EventSources::SelectVGButtonText] = std::make_unique<SelectVGButtonText>();
@@ -923,6 +956,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();
 
     m_map[EventSources::PresetListBankName] = std::make_unique<PresetListBankName>();
+    m_map[EventSources::PresetListPresetName] = std::make_unique<PresetListPresetName>();
 
     m_map[EventSources::PresetListHasLeftBank] = std::make_unique<PresetListHasBankLeft>();
     m_map[EventSources::PresetListHasRightBank] = std::make_unique<PresetListHasBankRight>();

@@ -31,8 +31,8 @@ namespace DescriptiveLayouts
        MacroControlPositionText, MCModRange, SoundHeaderText, EditBufferName, CurrentVoiceGroupName,
        ParameterControlPosition, ParameterNameWithStateSuffix, IsNotOnlyParameterOnButton, IsOnlyParameterOnButton,
        BooleanTrue, BooleanFalse, MCSelectionChanged, MCPositionChanged, MCAmountChanged, ParameterValueChanged,
-       FullSoundName, isCurrentVGI, isCurrentVGII, SelectVGButtonText, SoundEditHeading, DirectLoadStatus,
-       PresetListBankName, PresetListPresetName, PresetListHasLeftBank, PresetListHasRightBank);
+       isCurrentVGI, isCurrentVGII, SelectVGButtonText, SoundEditHeading, DirectLoadStatus, PresetListBankName,
+       PresetListPresetName, PresetListHasLeftBank, PresetListHasRightBank);
 
   ENUM(PrimitiveClasses, uint8_t, Any, Bar, Border, Text, Circle);
 

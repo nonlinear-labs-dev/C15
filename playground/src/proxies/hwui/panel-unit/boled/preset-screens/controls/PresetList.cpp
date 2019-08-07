@@ -249,11 +249,13 @@ bool GenericPresetList::redraw(FrameBuffer &fb)
   return true;
 }
 
-sigc::connection GenericPresetList::onChange(sigc::slot<void(GenericPresetList *)> pl) {
+sigc::connection GenericPresetList::onChange(sigc::slot<void(GenericPresetList *)> pl)
+{
   return m_signalChanged.connect(pl);
 }
 
-void GenericPresetList::signalChanged() {
+void GenericPresetList::signalChanged()
+{
   m_signalChanged.emit(this);
 }
 
@@ -275,23 +277,32 @@ void GenericPresetList::drawPresets(FrameBuffer &fb, Preset *middle)
 
     auto basePos = getPosition();
 
-    auto bank = dynamic_cast<Bank*>(p->getParent());
+    auto bank = dynamic_cast<Bank *>(p->getParent());
     auto presetNum = bank->getPresetPosition(p);
 
-    auto numPos = Rect{basePos.getLeft() + 10, basePos.getTop() + index * third, 20, third};
-    auto namePos = Rect{basePos.getLeft() + 32, basePos.getTop() + index*third, basePos.getWidth() - 32, third};
-    auto number = addControl(new LeftAlignedLabel({std::to_string(presetNum), 0}, numPos));
-    auto name = addControl(new LeftAlignedLabel({p->getName(), 0}, namePos));
+    auto numPos = Rect{ basePos.getLeft() + 10, basePos.getTop() + index * third, 20, third };
+    auto namePos = Rect{ basePos.getLeft() + 32, basePos.getTop() + index * third, basePos.getWidth() - 32, third };
+    auto number = addControl(new LeftAlignedLabel({ std::to_string(presetNum), 0 }, numPos));
+    auto name = addControl(new LeftAlignedLabel({ p->getName(), 0 }, namePos));
 
-    if(hightlight) {
+
+    if(hightlight)
+    {
+      auto rect = getPosition();
+      rect.setTop(rect.getTop() + index * third);
+      rect.setHeight(third);
+      rect.addMargin(2, 2, 2, 2);
+      fb.setColor(FrameBuffer::C103);
+      fb.fillRect(rect);
+
       fb.setColor(FrameBuffer::C204);
-      fb.drawRect({getPosition().getLeft(), basePos.getTop() + index*third, basePos.getWidth(), third});
+      fb.drawRect({ getPosition().getLeft(), basePos.getTop() + index * third, basePos.getWidth(), third });
     }
 
-    number->setFontColor(FrameBuffer::C179);
+    number->setFontColor(hightlight ? FrameBuffer::C255 : FrameBuffer::C179);
     number->redraw(fb);
 
-    name->setFontColor(FrameBuffer::C204);
+    name->setFontColor(hightlight ? FrameBuffer::C255 : FrameBuffer::C179);
     name->redraw(fb);
 
     remove(number);
@@ -314,6 +325,7 @@ PresetListVGSelect::PresetListVGSelect(const Point &p)
     : GenericPresetList(p)
 {
 }
+
 void PresetListVGSelect::action()
 {
   Application::get().getPresetManager()->getEditBuffer()->loadCurrentVG(getPresetAtSelected());
