@@ -3,19 +3,24 @@
 #include <nltools/messaging/Messaging.h>
 #include <functional>
 
-namespace nltools::msg
+namespace nltools
 {
-  class InChannel
+  namespace msg
   {
-   public:
-    using Callback = std::function<void(const SerializedMessage &)>;
-    InChannel(Callback cb);
-    virtual ~InChannel();
+    class InChannel
+    {
+     public:
+      using Callback = std::function<void(const SerializedMessage &)>;
 
-   protected:
-    void onMessageReceived(const SerializedMessage &) const;
+      InChannel(Callback cb);
 
-   private:
-    Callback m_cb;
-  };
+      virtual ~InChannel();
+
+     protected:
+      void onMessageReceived(const SerializedMessage &) const;
+
+     private:
+      Callback m_cb;
+    };
+  }
 }
