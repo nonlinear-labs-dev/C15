@@ -18,9 +18,7 @@
         "Name": {
           "Class": "WideHighlightLabel",
           "Position": "64, 0",
-          "Init": {
-            "Text[Text]": "03-128* Gitarrentöne"
-          }
+          "Events": "EditBufferName => Text[Text]"
         },
         "ButtonA": {
           "Class": "HighlightButton",

@@ -12,7 +12,6 @@
 #include <proxies/hwui/controls/LeftAlignedLabel.h>
 #include "presets/Preset.h"
 
-
 PresetList::PresetList(const Rect &pos, bool showBankArrows)
     : super(pos, showBankArrows)
 {
@@ -165,58 +164,97 @@ std::pair<size_t, size_t> PresetList::getSelectedPosition() const
   }
   return { -1, -1 };
 }
-Preset *PresetList::getPresetAtSelected()
-{
-  return Application::get().getPresetManager()->getSelectedBank()->getSelectedPreset();
-}
 
 GenericPresetList::GenericPresetList(const Point &p)
-    : PresetList({ p.getX(), p.getY(), 128, 50 }, true)
+    : ControlWithChildren({ p.getX(), p.getY(), 128, 50 })
 {
   sanitizePresetPtr();
+
+  m_restoreHappened = Application::get().getPresetManager()->onRestoreHappened([&]() { signalChanged(); });
+  m_numBanks = Application::get().getPresetManager()->onNumBanksChanged([&](size_t numB) { signalChanged(); });
+
+  signalChanged();
+}
+
+GenericPresetList::~GenericPresetList()
+{
+  m_restoreHappened.disconnect();
+  m_numBanks.disconnect();
 }
 
 void GenericPresetList::incBankSelection()
 {
-  sanitizePresetPtr();
-  auto bank = (Bank*)m_selectedPreset->getParent();
-  auto pm = (PresetManager*)bank->getParent();
+  if(!sanitizePresetPtr())
+    return;
+
+  auto bank = (Bank *) m_selectedPreset->getParent();
+  auto pm = (PresetManager *) bank->getParent();
   auto nextBank = pm->getBankAt(pm->getBankPosition(bank->getUuid()) + 1);
   if(nextBank)
     m_selectedPreset = nextBank->getPresetAt(0);
+
+  signalChanged();
 }
+
 void GenericPresetList::decBankSelection()
 {
-  sanitizePresetPtr();
-  auto bank = (Bank*)m_selectedPreset->getParent();
-  auto pm = (PresetManager*)bank->getParent();
+  if(!sanitizePresetPtr())
+    return;
+  auto bank = (Bank *) m_selectedPreset->getParent();
+  auto pm = (PresetManager *) bank->getParent();
   auto nextBank = pm->getBankAt(pm->getBankPosition(bank->getUuid()) - 1);
   if(nextBank)
     m_selectedPreset = nextBank->getPresetAt(0);
+
+  signalChanged();
 }
+
 void GenericPresetList::incPresetSelection()
 {
-  sanitizePresetPtr();
-  auto bank = (Bank*)m_selectedPreset->getParent();
-  m_selectedPreset = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) + 1);
+  if(!sanitizePresetPtr())
+    return;
+  auto bank = (Bank *) m_selectedPreset->getParent();
+  if(auto candidate = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) + 1))
+    m_selectedPreset = candidate;
+
+  signalChanged();
 }
 
 void GenericPresetList::decPresetSelection()
 {
-  sanitizePresetPtr();
-  auto bank = (Bank*)m_selectedPreset->getParent();
-  m_selectedPreset = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) - 1);
+  auto bank = (Bank *) m_selectedPreset->getParent();
+  if(auto candidate = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) - 1))
+    m_selectedPreset = candidate;
+
+  signalChanged();
 }
+
+Preset *GenericPresetList::getPresetAtSelected() const
+{
+  return m_selectedPreset;
+}
+
 bool GenericPresetList::redraw(FrameBuffer &fb)
 {
-  sanitizePresetPtr();
+
   const Rect &r = getPosition();
   fb.setColor(FrameBuffer::Colors::C103);
   fb.drawRect(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
 
+  if(!sanitizePresetPtr())
+    return true;
+
   drawPresets(fb, m_selectedPreset);
 
   return true;
+}
+
+sigc::connection GenericPresetList::onChange(sigc::slot<void(GenericPresetList *)> pl) {
+  return m_signalChanged.connect(pl);
+}
+
+void GenericPresetList::signalChanged() {
+  m_signalChanged.emit(this);
 }
 
 void GenericPresetList::drawPresets(FrameBuffer &fb, Preset *middle)
@@ -226,41 +264,58 @@ void GenericPresetList::drawPresets(FrameBuffer &fb, Preset *middle)
 
   auto pos = getPosition();
   auto third = pos.getHeight() / 3;
-  auto bank = dynamic_cast<Bank*>(middle->getParent());
-  auto currentPos = bank->getPresetPosition(middle);
-  auto prev = bank->getPresetAt(currentPos - 1);
-  auto next = bank->getPresetAt(currentPos + 1);
+  auto pBank = dynamic_cast<Bank *>(middle->getParent());
+  auto currentPos = pBank->getPresetPosition(middle);
+  auto prev = pBank->getPresetAt(currentPos - 1);
+  auto next = pBank->getPresetAt(currentPos + 1);
 
-  auto createAndDrawControl = [&](Preset* p, int index) {
+  auto createAndDrawControl = [&](Preset *p, int index, bool hightlight) {
     if(p == nullptr)
       return;
 
-    auto c = addControl(new LeftAlignedLabel({p->getName(), 0}, {getPosition().getLeft(), index * third, pos.getWidth(), third}));
-    c->setFontColor(FrameBuffer::C179);
-    auto rect = c->getPosition();
-    fb.setColor(FrameBuffer::C103);
-    fb.fillRect(rect.getMargined(0, 2));
-    c->redraw(fb);
-    remove(c);
+    auto basePos = getPosition();
+
+    auto bank = dynamic_cast<Bank*>(p->getParent());
+    auto presetNum = bank->getPresetPosition(p);
+
+    auto numPos = Rect{basePos.getLeft() + 10, basePos.getTop() + index * third, 20, third};
+    auto namePos = Rect{basePos.getLeft() + 32, basePos.getTop() + index*third, basePos.getWidth() - 32, third};
+    auto number = addControl(new LeftAlignedLabel({std::to_string(presetNum), 0}, numPos));
+    auto name = addControl(new LeftAlignedLabel({p->getName(), 0}, namePos));
+
+    if(hightlight) {
+      fb.setColor(FrameBuffer::C204);
+      fb.drawRect({getPosition().getLeft(), basePos.getTop() + index*third, basePos.getWidth(), third});
+    }
+
+    number->setFontColor(FrameBuffer::C179);
+    number->redraw(fb);
+
+    name->setFontColor(FrameBuffer::C204);
+    name->redraw(fb);
+
+    remove(number);
+    remove(name);
   };
 
-  createAndDrawControl(middle, 1);
-  createAndDrawControl(prev, 0);
-  createAndDrawControl(next, 2);
-
-
+  createAndDrawControl(middle, 1, true);
+  createAndDrawControl(prev, 0, false);
+  createAndDrawControl(next, 2, false);
 }
-void GenericPresetList::sanitizePresetPtr()
+bool GenericPresetList::sanitizePresetPtr()
 {
   if(m_selectedPreset == nullptr)
     m_selectedPreset = Application::get().getPresetManager()->getSelectedBank()->getSelectedPreset();
+
+  return m_selectedPreset != nullptr;
 }
 
 PresetListVGSelect::PresetListVGSelect(const Point &p)
-    : GenericPresetList(p), blocker(Application::get().getPresetManager()->getAutoLoadBlocker())
+    : GenericPresetList(p)
 {
 }
 void PresetListVGSelect::action()
 {
   Application::get().getPresetManager()->getEditBuffer()->loadCurrentVG(getPresetAtSelected());
+  Application::get().getHWUI()->setFocusAndMode(UIDetail::Init);
 }

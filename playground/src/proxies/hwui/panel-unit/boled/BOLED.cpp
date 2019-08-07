@@ -21,6 +21,8 @@
 #include <device-settings/LayoutMode.h>
 #include <tools/ScopedFunction.h>
 #include <tools/SingeltonShortcuts.h>
+#include "BOLED.h"
+
 
 BOLED::BOLED()
     : OLEDProxy(Rect(0, 0, 256, 64))
@@ -97,6 +99,16 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
       installOldLayouts(focusAndMode);
       break;
   }
+}
+
+void BOLED::reset(Layout *layout) {
+  OLEDProxy::reset(layout);
+  m_layoutInstantiated.emit(layout);
+}
+
+void BOLED::reset(OLEDProxy::tLayoutPtr layout) {
+  OLEDProxy::reset(layout);
+  m_layoutInstantiated.emit(layout.get());
 }
 
 void BOLED::installOldLayouts(FocusAndMode focusAndMode)
@@ -208,4 +220,8 @@ void BOLED::onRotary(signed char i)
 void BOLED::showUndoScreen()
 {
   reset(new UndoLayout());
+}
+
+sigc::connection BOLED::onLayoutInstantiated(sigc::slot<void(Layout *)> s) {
+  return m_layoutInstantiated.connect(s);
 }

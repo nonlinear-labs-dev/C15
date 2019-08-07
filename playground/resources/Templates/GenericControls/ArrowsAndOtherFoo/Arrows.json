@@ -1,0 +1,102 @@
+{
+  "controls": {
+    "ArrowLeft":
+    {
+      "Background": {
+        "Class":"Bar",
+        "Rect":"0, 0, 7, 9",
+        "Tag": "Background"
+      },
+      "s": {
+        "Tag": "arrow",
+        "Class":"Bar",
+        "Rect":"1, 4, 2, 1"
+      },
+      "sS": {
+        "Tag": "arrow",
+        "Class": "Bar",
+        "Rect": "2, 3, 1, 3"
+      },
+      "S": {
+        "Tag": "arrow",
+        "Class":"Bar",
+        "Rect":"3, 2, 1, 5"
+      },
+      "SM": {
+        "Tag": "arrow",
+        "Class":"Bar",
+        "Rect": "4, 1, 1, 7"
+      }
+    },
+    "ArrowRight":
+    {
+      "Background": {
+        "Class":"Bar",
+        "Rect":"0, 0, 7, 9",
+        "Tag": "Background"
+      },
+      "s": {
+        "Tag": "arrow",
+        "Class":"Bar",
+        "Rect":"5, 4, 1, 1"
+      },
+      "sS": {
+        "Tag": "arrow",
+        "Class": "Bar",
+        "Rect": "4, 3, 1, 3"
+      },
+      "S": {
+        "Tag": "arrow",
+        "Class":"Bar",
+        "Rect":"3, 2, 1, 5"
+      },
+      "SM": {
+        "Tag": "arrow",
+        "Class":"Bar",
+        "Rect": "2, 1, 1, 7"
+      }
+    }
+  },
+  "styles": {
+    "Default-Arrow-bg": {
+      "selector": {
+        "PrimitiveClass": "Bar",
+        "ControlClasses": "ArrowLeft",
+        "Tag": "Background"
+      },
+      "styles": {
+        "Color": "C77"
+      }
+    },
+    "Default-Arrow-bg-r": {
+      "selector": {
+        "PrimitiveClass": "Bar",
+        "ControlClasses": "ArrowRight",
+        "Tag": "Background"
+      },
+      "styles": {
+        "Color": "C77"
+      }
+    },
+    "Default-Arrow-front": {
+      "selector": {
+        "PrimitiveClass": "Bar",
+        "ControlClasses": "ArrowRight",
+        "Tag": "arrow"
+      },
+      "styles": {
+        "Color": "C255"
+      }
+    },
+    "Default-Arrow-front-l": {
+      "selector": {
+        "PrimitiveClass": "Bar",
+        "ControlClasses": "ArrowLeft",
+        "Tag": "arrow"
+      },
+      "styles": {
+        "Color": "C255"
+      }
+    }
+  }
+}

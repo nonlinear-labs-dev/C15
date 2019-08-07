@@ -5,6 +5,12 @@
         "Class": "Text",
         "Rect": "0, 0, 64, 13"
       }
+    },
+    "WideInvertedLabel": {
+      "Text": {
+        "Class": "Text",
+        "Rect": "0, 0, 128, 13"
+      }
     }
   },
   "styles": {
@@ -12,6 +18,19 @@
       "selector": {
         "PrimitiveClass": "Text",
         "ControlClasses": "InvertedLabel"
+      },
+      "styles": {
+        "BackgroundColor": "C128",
+        "Color": "C43",
+        "HighlightColor": "C43",
+        "FontSize": 8,
+        "TextAlign": "Center"
+      }
+    },
+    "WideInverted-Label": {
+      "selector": {
+        "PrimitiveClass": "Text",
+        "ControlClasses": "WideInvertedLabel"
       },
       "styles": {
         "BackgroundColor": "C128",

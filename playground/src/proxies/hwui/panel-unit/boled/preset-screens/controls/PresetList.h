@@ -4,6 +4,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListBase.h>
 #include <tools/Uuid.h>
 
+class Preset;
+
 class PresetList : public PresetListBase
 {
   using super = PresetListBase;
@@ -16,9 +18,8 @@ class PresetList : public PresetListBase
   void onRotary(int inc, ButtonModifiers modifiers) override;
 
   std::pair<size_t, size_t> getSelectedPosition() const override;
-  Preset* getPresetAtSelected();
 
- private:
+private:
   void onBankSelectionChanged(const Uuid& selectedBank);
   void onBankChanged();
   void onEditBufferChanged();
@@ -30,10 +31,11 @@ class PresetList : public PresetListBase
 // Make this the new class:
 //Replace Whole PresetListBase with generic traversal of Presets instead of strong coupling with selection
 
-class GenericPresetList : public PresetList
+class GenericPresetList : public ControlWithChildren
 {
  public:
   explicit GenericPresetList(const Point& p);
+  virtual ~GenericPresetList();
 
   void incBankSelection();
   void decBankSelection();
@@ -42,16 +44,23 @@ class GenericPresetList : public PresetList
 
   virtual void action() = 0;
 
- public:
+  Preset* getPresetAtSelected() const;
   bool redraw(FrameBuffer& fb) override;
 
+  sigc::connection onChange(sigc::slot<void(GenericPresetList*)> pl);
 
  protected:
-  void drawPresets(FrameBuffer& fb, Preset* middle);
+  void signalChanged();
 
-  virtual void sanitizePresetPtr();
+  void drawPresets(FrameBuffer& fb, Preset* middle);
+  virtual bool sanitizePresetPtr();
 
   Preset* m_selectedPreset = nullptr;
+  sigc::connection m_numBanks;
+  sigc::connection m_restoreHappened;
+
+  sigc::signal<void(GenericPresetList*)> m_signalChanged;
+
 };
 
 class PresetListVGSelect : public GenericPresetList
@@ -59,6 +68,4 @@ class PresetListVGSelect : public GenericPresetList
  public:
   explicit PresetListVGSelect(const Point& p);
   void action() override;
- protected:
-  PresetManager::AutoLoadBlocker blocker;
 };

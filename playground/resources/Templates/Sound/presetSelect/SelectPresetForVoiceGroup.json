@@ -36,7 +36,26 @@
         },
         "PresetList": {
           "Class": "PresetListVGSelect",
-          "Position": "64, 0"
+          "Position": "64, 12"
+        },
+        "BankLabel": {
+          "Class": "WideInvertedLabel",
+          "Position": "64, 0",
+          "Events": "PresetListBankName => Text[Text]"
+        },
+        "LeftButton": {
+          "Class": "ArrowLeft",
+          "Position": "65, 1",
+          "Visibility": [
+            "PresetListHasLeftBank"
+          ]
+        },
+        "RightButton": {
+          "Class": "ArrowRight",
+          "Position": "184, 1",
+          "Visibility": [
+            "PresetListHasRightBank"
+          ]
         }
       },
       "EventSinks": {
