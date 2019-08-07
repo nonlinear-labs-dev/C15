@@ -9,6 +9,5 @@ message("building C15 firmware version: ${PLAYGROUND_VERSION}")
 
 add_subdirectory(nltools)
 add_subdirectory(playground)
-add_subdirectory(audio-engine)
 add_subdirectory(bbbb)
 add_subdirectory(NonMaps)
