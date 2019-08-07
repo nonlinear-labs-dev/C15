@@ -47,7 +47,7 @@ class GenericPresetList : public ControlWithChildren
   Preset* getPresetAtSelected() const;
   bool redraw(FrameBuffer& fb) override;
 
-  sigc::connection onChange(sigc::slot<void(GenericPresetList*)> pl);
+  sigc::connection onChange(sigc::slot<void, GenericPresetList*> pl);
 
  protected:
   void signalChanged();
@@ -59,7 +59,7 @@ class GenericPresetList : public ControlWithChildren
   sigc::connection m_numBanks;
   sigc::connection m_restoreHappened;
 
-  sigc::signal<void(GenericPresetList*)> m_signalChanged;
+  sigc::signal<void, GenericPresetList*> m_signalChanged;
 
 };
 

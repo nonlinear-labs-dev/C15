@@ -22,7 +22,7 @@ class BOLED : public OLEDProxy, public sigc::trackable
 
   void bruteForce();
 
-  sigc::connection onLayoutInstantiated(sigc::slot<void(Layout*)> s);
+  sigc::connection onLayoutInstantiated(sigc::slot<void, Layout*> s);
 
   void reset(Layout *layout) override;
 
@@ -35,5 +35,5 @@ private:
   void setupPresetScreen(FocusAndMode focusAndMode);
   void setupBankScreen(FocusAndMode focusAndMode);
 
-  sigc::signal<void(Layout*)> m_layoutInstantiated;
+  sigc::signal<void, Layout*> m_layoutInstantiated;
 };
