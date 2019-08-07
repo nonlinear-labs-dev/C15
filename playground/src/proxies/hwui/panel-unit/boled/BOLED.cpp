@@ -222,6 +222,6 @@ void BOLED::showUndoScreen()
   reset(new UndoLayout());
 }
 
-sigc::connection BOLED::onLayoutInstantiated(sigc::slot<void, Layout *> s) {
+sigc::connection BOLED::onLayoutInstantiated(sigc::slot<void, Layout*> s) {
   return m_layoutInstantiated.connect(s);
 }
