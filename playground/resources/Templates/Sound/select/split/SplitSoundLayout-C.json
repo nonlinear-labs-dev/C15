@@ -1,10 +1,10 @@
 {
   "layouts": {
-    "Single-Sound-Select-Layout": {
+    "Single-Sound-Select-Layout-C": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIDetail": "ButtonC"
       },
       "Conditions": [
         "isSplitSound"
@@ -35,7 +35,7 @@
           }
         },
         "ButtonC": {
-          "Class": "Button",
+          "Class": "HighlightButton",
           "Position": "BUTTON_C",
           "Init": {
             "Text[Text]": "Unison.."
@@ -79,7 +79,10 @@
         }
       },
       "EventSinks": {
-        "BUTTON_A": "ToggleVoiceGroup"
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
       }
     }
   }

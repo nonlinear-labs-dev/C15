@@ -36,6 +36,7 @@ class HWUI
   void undoableSetFocusAndMode(UNDO::Transaction *transaction, FocusAndMode focusAndMode);
   void setUiModeDetail(UIDetail detail);
   void undoableSetFocusAndMode(FocusAndMode focusAndMode);
+  void setFocusAndMode(const UIDetail &detail);
   void setFocusAndMode(FocusAndMode focusAndMode);
   FocusAndMode getFocusAndMode() const;
 

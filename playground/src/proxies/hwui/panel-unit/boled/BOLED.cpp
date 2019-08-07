@@ -83,11 +83,18 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
       try
       {
         reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
+        return;
+      }
+      catch(std::runtime_error& err)
+      {
+        DebugLevel::error(err.what());
       }
       catch(...)
       {
-        installOldLayouts(focusAndMode);
       }
+      DebugLevel::error("No Dynamic Layout found! UIFocus:", toString(focusAndMode.focus),
+                        "UIMode:", toString(focusAndMode.mode), "UIDetail:", toString(focusAndMode.detail));
+      installOldLayouts(focusAndMode);
       break;
   }
 }

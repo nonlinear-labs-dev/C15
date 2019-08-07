@@ -5,6 +5,9 @@
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/ConvertSoundMenu.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenu.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/LayerSoundEditMenu.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SplitSoundEditMenu.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include "ControlInstance.h"
 #include "GenericControl.h"
 #include "proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h"
@@ -51,11 +54,22 @@ namespace DescriptiveLayouts
     {
       return new SingleSoundEditMenu(Rect(position.getX(), position.getY(), 254, 52));
     }
+    if(controlClass == "LayerSoundEditMenu")
+    {
+      return new LayerSoundEditMenu(Rect(position.getX(), position.getY(), 254, 52));
+    }
+    if(controlClass == "SplitSoundEditMenu")
+    {
+      return new SplitSoundEditMenu(Rect(position.getX(), position.getY(), 254, 52));
+    }
     if(controlClass == "ParameterCarousel")
     {
       return new ParameterCarousel(Rect(position.getX(), position.getY(), 58, 62));
     }
-
+    if(controlClass == "PresetListVGSelect")
+    {
+      return new PresetListVGSelect(position);
+    }
     return new GenericControl(*this);
   }
 }

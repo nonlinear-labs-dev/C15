@@ -46,10 +46,10 @@ void LayoutModeEditor::onSettingChanged(const Setting *s)
     setText(p->getDisplayString());
 }
 
-
 bool LayoutModeEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  switch (i) {
+  switch(i)
+  {
     case Buttons::BUTTON_DEC:
     case Buttons::ROTARY_MINUS:
       if(down)

@@ -54,7 +54,7 @@ namespace DescriptiveLayouts
     setPosition(rect);
   }
 
-  void GenericControl::style(const LayoutClasses& layout)
+  void GenericControl::style(const LayoutClasses &layout)
   {
     if(m_lastUsedLayout != layout)
       m_lastUsedLayout = layout;
@@ -87,7 +87,7 @@ namespace DescriptiveLayouts
     }
   }
 
-  void GenericControl::onEventFired(const std::any& v, const ControlInstance::EventConnection &connection)
+  void GenericControl::onEventFired(const std::any &v, const ControlInstance::EventConnection &connection)
   {
     bool shouldRestyle = false;
     for(const auto &c : getControls())
@@ -108,7 +108,7 @@ namespace DescriptiveLayouts
     }
     if(shouldRestyle)
     {
-      setAllDirty();
+      setDirty();
       style(m_lastUsedLayout);
     }
   }
@@ -127,8 +127,7 @@ namespace DescriptiveLayouts
 
         m_controlVisible[item.m_source] = visible;
 
-        auto collected = std::all_of(m_controlVisible.begin(), m_controlVisible.end(), [](auto b) { return b.second; });
-        setVisible(collected);
+        setVisible(std::all_of(m_controlVisible.begin(), m_controlVisible.end(), [](auto e) { return e.second; }));
       }
       catch(...)
       {

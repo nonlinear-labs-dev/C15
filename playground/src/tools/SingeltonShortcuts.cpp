@@ -6,6 +6,9 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 
+#include "proxies/hwui/HWUI.h"
+#include "proxies/hwui/panel-unit/boled/BOLED.h"
+
 namespace SiSc
 {
   LayoutVersionMode getLayoutSetting()
@@ -16,7 +19,16 @@ namespace SiSc
 
 namespace SiSc::EB
 {
-  const Parameter* getCurrentParameter() {
+  const Parameter* getCurrentParameter()
+  {
     return Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  }
+}
+
+namespace SiSc::HWUI
+{
+  void bruteForce()
+  {
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().bruteForce();
   }
 }

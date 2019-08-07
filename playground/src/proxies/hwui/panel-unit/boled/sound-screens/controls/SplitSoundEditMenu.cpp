@@ -1,5 +1,36 @@
-//
-// Created by justus on 23.07.19.
-//
-
 #include "SplitSoundEditMenu.h"
+#include "Application.h"
+#include "presets/PresetManager.h"
+#include "presets/EditBuffer.h"
+#include "tools/SingeltonShortcuts.h"
+#include "proxies/hwui/descriptive-layouts/EventSink.h"
+
+#include "proxies/hwui/HWUI.h"
+
+SplitSoundEditMenu::SplitSoundEditMenu(const Rect& r)
+    : SingleSoundEditMenu(r)
+{
+  init();
+}
+
+void SplitSoundEditMenu::init()
+{
+
+  auto* pm = Application::get().getPresetManager();
+
+  clear();
+
+  addButton("Import Preset into VG", [=]() {
+    Application::get().getHWUI()->setFocusAndMode(UIDetail::SoundSelectPresetForVoiceGroup);
+    SiSc::HWUI::bruteForce();
+    //do that with the result: DescriptiveLayouts::EventSinkBroker::get().fire(DescriptiveLayouts::EventSinks::SelectPresetForVoiceGroup);
+  });
+
+  addButton("Convert to Single", [=]() {
+    pm->getEditBuffer()->setType(Type::Single);
+    Application::get().getHWUI()->setFocusAndMode(UIMode::Select);
+    SiSc::HWUI::bruteForce();
+  });
+
+  selectButton(0);
+}

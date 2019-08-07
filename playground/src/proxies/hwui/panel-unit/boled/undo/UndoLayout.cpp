@@ -138,7 +138,7 @@ void UndoLayout::assignTransactions()
   {
     if(isTipParentOfCurrentUndo())
       m_editButton->setText("Make Root");
-    else  
+    else
       m_editButton->setText("Delete");
   }
   else

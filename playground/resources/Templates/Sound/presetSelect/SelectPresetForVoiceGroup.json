@@ -1,0 +1,53 @@
+{
+  "layouts": {
+    "PresetSelectionForVoiceGroupLayout": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Edit",
+        "UIDetail": "SoundSelectPresetForVoiceGroup"
+      },
+      "Controls": {
+        "ButtonA": {
+          "Class": "Button",
+          "Position": "BUTTON_A",
+          "Init": {
+            "Text[Text]": "Back"
+          }
+        },
+        "DirectLoadButton_Active": {
+          "Class": "HighlightButton",
+          "Position": "BUTTON_D",
+          "Init": {
+            "Text[Text]": "Direct Load"
+          },
+          "Visibility": [
+            "DirectLoadStatus"
+          ]
+        },
+        "DirectLoadButton_Inactive": {
+          "Class": "Button",
+          "Position": "BUTTON_D",
+          "Init": {
+            "Text[Text]": "Direct Load"
+          },
+          "Visibility": [
+            "!DirectLoadStatus"
+          ]
+        },
+        "PresetList": {
+          "Class": "PresetListVGSelect",
+          "Position": "64, 0"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_A": "SwitchToSoundFocus",
+        "BUTTON_D": "ToggleDirectLoad",
+        "BUTTON_B": "DecBankSelectionPresetList",
+        "BUTTON_C": "IncBankSelectionPresetList",
+        "BUTTON_INC": "IncPresetSelectionPresetList",
+        "BUTTON_DEC": "DecPresetSelectionPresetList",
+        "BUTTON_ENTER": "DoPresetListAction"
+      }
+    }
+  }
+}

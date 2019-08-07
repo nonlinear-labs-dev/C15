@@ -15,6 +15,7 @@
 #include <presets/Preset.h>
 #include <tools/EditBufferNotifier.h>
 #include <tools/SingeltonShortcuts.h>
+#include <device-settings/AutoLoadSelectedPreset.h>
 
 namespace DescriptiveLayouts
 {
@@ -367,12 +368,6 @@ namespace DescriptiveLayouts
       }
     }
 
-    void setValue(const bool &v) override
-    {
-      m_lastValue = v;
-      m_outputSignal.send(m_lastValue);
-    }
-
    protected:
     OnParameterChangedNotifier<CurrentMacroControlAsignment> m_changedNotifier;
   };
@@ -456,9 +451,10 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-      auto typeString = toString(editBuffer->getType());
-      auto vg = std::string(editBuffer->m_vgISelected ? " I" : " II");
-      return DisplayString{ typeString + vg, 0 };
+      auto type = editBuffer->getType();
+      if(type == Type::Single)
+        return DisplayString{ toString(type), 0 };
+      return DisplayString{ toString(type) + (editBuffer->m_vgISelected ? "  I" : "  II"), 0 };
     }
     OnEditBufferChangedNotifier<SoundHeaderText> m_not;
   };
@@ -541,6 +537,20 @@ namespace DescriptiveLayouts
     }
   };
 
+  class DirectLoadStatus : public EventSource<bool>
+  {
+   public:
+    DirectLoadStatus()
+    {
+      Application::get().getSettings()->getSetting<AutoLoadSelectedPreset>()->onChange([&](const Setting *s) {
+        if(auto ss = dynamic_cast<const AutoLoadSelectedPreset *>(s))
+        {
+          setValue(ss->get());
+        }
+      });
+    }
+  };
+
   class StaticText : public EventSource<DisplayString>
   {
    public:
@@ -575,12 +585,6 @@ namespace DescriptiveLayouts
       }
     }
 
-    void setValue(const bool &v) override
-    {
-      m_lastValue = v;
-      m_outputSignal.send(m_lastValue);
-    }
-
    protected:
     OnParameterChangedNotifier<MCPositionChanged> m_changedNotifier;
   };
@@ -600,12 +604,6 @@ namespace DescriptiveLayouts
         auto v = modP->isModSourceChanged();
         setValue(v);
       }
-    }
-
-    void setValue(const bool &v) override
-    {
-      m_lastValue = v;
-      m_outputSignal.send(m_lastValue);
     }
 
    protected:
@@ -738,9 +736,12 @@ namespace DescriptiveLayouts
     std::any getLastValue() const override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
-      auto type = toString(eb->getType());
-      auto vg = eb->isVGISelected() ? "[I]" : "[II]";
-      return DisplayString({ type + " " + vg, 0 });
+      auto type = eb->getType();
+
+      if(type == Type::Single)
+        return DisplayString({ toString(type), 0 });
+
+      return DisplayString({ toString(type) + (eb->isVGISelected() ? " [I]" : " [II]"), 0 });
     }
     OnEditBufferChangedNotifier<SoundEditHeading> m_changed;
   };
@@ -811,6 +812,8 @@ namespace DescriptiveLayouts
 
     m_map[EventSources::IsOnlyParameterOnButton] = std::make_unique<IsOnlyParameterOnButton>();
     m_map[EventSources::IsNotOnlyParameterOnButton] = std::make_unique<IsNotOnlyParameterOnButton>();
+
+    m_map[EventSources::DirectLoadStatus] = std::make_unique<DirectLoadStatus>();
   }
 
   sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)
@@ -821,8 +824,8 @@ namespace DescriptiveLayouts
     return m_map.at(source)->connect(cb);
   }
 
-  std::any EventSourceBroker::evaluate(EventSources source) {
+  std::any EventSourceBroker::evaluate(EventSources source)
+  {
     return m_map[source]->getLastValue();
   }
-
 }

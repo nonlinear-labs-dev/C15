@@ -44,9 +44,12 @@ namespace DescriptiveLayouts
 
   void Bar::drawBackground(FrameBuffer &fb)
   {
-    if(Control::isHighlight()) {
+    if(Control::isHighlight())
+    {
       fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor));
-    } else {
+    }
+    else
+    {
       fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::HighlightBackgroundColor));
     }
     fb.fillRect(getPosition());

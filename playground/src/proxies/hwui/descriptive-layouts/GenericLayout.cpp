@@ -1,6 +1,7 @@
 #include <utility>
 
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
+#include <proxies/hwui/panel-unit/ButtonReceiver.h>
 #include "GenericLayout.h"
 #include "GenericControl.h"
 #include "proxies/hwui/descriptive-layouts/Primitives/Bar.h"
@@ -49,6 +50,13 @@ namespace DescriptiveLayouts
 
   bool GenericLayout::onButton(Buttons i, bool down, ::ButtonModifiers modifiers)
   {
+    for(auto &c : getControls())
+    {
+      if(auto b = dynamic_cast<ButtonReceiver *>(c.get()))
+        if(b->onButton(i, down, modifiers))
+          return true;
+    }
+
     if(down)
     {
       for(const EventSinkMapping &m : m_prototype.sinkMappings)
@@ -93,6 +101,13 @@ namespace DescriptiveLayouts
       }
     }
     return false;
+  }
+
+  bool GenericLayout::redrawLayout()
+  {
+    getOLEDProxy().clear();
+    setAllDirty();
+    return DFBLayout::redrawLayout();
   }
 
   bool GenericLayout::handleEventSink(EventSinks s)

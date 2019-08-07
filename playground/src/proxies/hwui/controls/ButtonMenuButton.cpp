@@ -8,8 +8,7 @@ ButtonMenuButton::ButtonMenuButton(bool isFirst, bool isLast, const Glib::ustrin
 {
 }
 
-ButtonMenuButton::~ButtonMenuButton()
-= default;
+ButtonMenuButton::~ButtonMenuButton() = default;
 
 void ButtonMenuButton::drawBackground(FrameBuffer &fb)
 {
@@ -26,10 +25,12 @@ void ButtonMenuButton::drawBackground(FrameBuffer &fb)
   }
 }
 
-Font::Justification ButtonMenuButton::getJustification() const {
-    return m_justification;
+Font::Justification ButtonMenuButton::getJustification() const
+{
+  return m_justification;
 }
 
-void ButtonMenuButton::setJustification(Font::Justification justi) {
-    m_justification = justi;
+void ButtonMenuButton::setJustification(Font::Justification justi)
+{
+  m_justification = justi;
 }

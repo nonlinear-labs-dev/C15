@@ -1,14 +1,10 @@
-//
-// Created by justus on 23.07.19.
-//
+#pragma once
 
-#ifndef PROJECT_LAYERSOUNDEDITMENU_H
-#define PROJECT_LAYERSOUNDEDITMENU_H
+#include "SingleSoundEditMenu.h"
 
-
-class LayerSoundEditMenu {
-
+class LayerSoundEditMenu : public SingleSoundEditMenu
+{
+ public:
+  explicit LayerSoundEditMenu(const Rect& rect);
+  void init() override;
 };
-
-
-#endif //PROJECT_LAYERSOUNDEDITMENU_H

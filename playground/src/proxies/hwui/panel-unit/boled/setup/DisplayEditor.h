@@ -8,11 +8,11 @@ class DisplayEditor : public ControlWithChildren, public SetupEditor
  public:
   DisplayEditor();
 
-  bool redraw(FrameBuffer &fb) override;
+  bool redraw(FrameBuffer& fb) override;
 
-  void drawBackground(FrameBuffer &fb) override;
+  void drawBackground(FrameBuffer& fb) override;
 
-protected:
+ protected:
   void doLayout();
   std::pair<LeftAlignedLabel*, LeftAlignedLabel*> addEntry(const Glib::ustring& key, const Glib::ustring& name,
                                                            const Glib::ustring& value);

@@ -78,7 +78,7 @@ int ButtonMenu::sanitizeIndex(int index)
 
 size_t ButtonMenu::addButton(const Glib::ustring &caption, Action action)
 {
-  m_items.push_back({ caption, std::move(action)});
+  m_items.push_back({ caption, std::move(action) });
   bruteForce();
   return m_items.size();
 }
@@ -202,11 +202,16 @@ void ButtonMenu::setItemTitle(size_t i, const Glib::ustring &caption)
 
 Font::Justification ButtonMenu::getDefaultButtonJustification() const
 {
-    return Font::Justification::Center;
+  return Font::Justification::Center;
 }
-
 
 const size_t ButtonMenu::getItemCount() const
 {
   return m_items.size();
+}
+
+void ButtonMenu::clear()
+{
+  clearActions();
+  ControlOwner::clear();
 }

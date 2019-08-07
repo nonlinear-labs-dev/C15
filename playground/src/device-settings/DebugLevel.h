@@ -53,7 +53,7 @@ class DebugLevel : public EnumSetting<DebugLevels>
 
  public:
   DebugLevel(Settings& settings);
-  virtual ~DebugLevel();
+  ~DebugLevel() override;
 
   bool set(DebugLevels m) override;
 

@@ -82,10 +82,13 @@ template <class T> class OnModulationChangedNotifier : public sigc::trackable
       m_onParameterChangedSignal
           = n->onParameterChanged(sigc::mem_fun(this, &OnModulationChangedNotifier::onParameterChanged), true);
 
-      if(auto modP = dynamic_cast<const ModulateableParameter*>(n)) {
-          if(auto mc = modP->getMacroControl()) {
-              m_onModulationSourceChangedSignal = mc->onParameterChanged(sigc::mem_fun(this, &OnModulationChangedNotifier::onParameterChanged), true);
-          }
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(n))
+      {
+        if(auto mc = modP->getMacroControl())
+        {
+          m_onModulationSourceChangedSignal
+              = mc->onParameterChanged(sigc::mem_fun(this, &OnModulationChangedNotifier::onParameterChanged), true);
+        }
       }
     }
   }
@@ -98,12 +101,14 @@ template <class T> class OnModulationChangedNotifier : public sigc::trackable
       {
         m_parent->onModulationSourceChanged(modP);
       }
-    } else if(auto mc = dynamic_cast<const MacroControlParameter*>(param)) {
+    }
+    else if(auto mc = dynamic_cast<const MacroControlParameter *>(param))
+    {
       if(!mc->getTargets().empty())
       {
         if(m_parent)
         {
-          for(const auto& target: mc->getTargets())
+          for(const auto &target : mc->getTargets())
             m_parent->onModulationSourceChanged(target);
         }
       }

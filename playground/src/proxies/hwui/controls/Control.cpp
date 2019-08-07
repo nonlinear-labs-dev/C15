@@ -93,4 +93,3 @@ int Control::getWidth() const
 {
   return m_rect.getWidth();
 }
-

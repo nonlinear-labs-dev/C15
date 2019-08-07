@@ -5,9 +5,10 @@
 
 class ConvertSoundMenu : public ButtonMenu
 {
-public:
-    explicit ConvertSoundMenu(const Rect& rect);
-protected:
-    void setup();
-    void convertSoundTo(Type newType);
+ public:
+  explicit ConvertSoundMenu(const Rect& rect);
+
+ protected:
+  void setup();
+  void convertSoundTo(Type newType);
 };

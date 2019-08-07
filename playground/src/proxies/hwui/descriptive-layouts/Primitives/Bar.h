@@ -21,7 +21,7 @@ namespace DescriptiveLayouts
 
     void applyStyle(const StyleMap &style) override;
 
-  protected:
+   protected:
     bool redraw(FrameBuffer &fb) override;
     void drawBackground(FrameBuffer &fb) override;
 

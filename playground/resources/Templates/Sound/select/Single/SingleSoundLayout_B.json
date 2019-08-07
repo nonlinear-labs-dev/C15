@@ -1,10 +1,10 @@
 {
   "layouts": {
-    "Single-Sound-Select-Layout": {
+    "Single-Sound-Select-Layout-B": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIDetail": "ButtonB"
       },
       "Conditions": [
         "isSingleSound"
@@ -19,32 +19,19 @@
           "Class": "WideHighlightLabel",
           "Position": "64, 0",
           "Init": {
-            "Text[Text]": "003-128* Gitarrentöne"
-          }
-        },
-        "Split-Label": {
-          "Class": "Label",
-          "Position": "3, 23",
-          "Init": {
-            "Text[Text]": "Split"
-          }
-        },
-        "Layer-Label": {
-          "Class": "Label",
-          "Position": "3, 35",
-          "Init": {
-            "Text[Text]": "Layer"
-          }
+            "Text[Text]": "Gitarrentöne"
+          },
+          "Events": "EditBufferName => Text[Text]"
         },
         "ButtonA": {
           "Class": "Button",
           "Position": "BUTTON_A",
           "Init": {
-            "Text[Text]": "Convert to"
+            "Text[Text]": "Convert To"
           }
         },
         "ButtonB": {
-          "Class": "Button",
+          "Class": "HighlightButton",
           "Position": "BUTTON_B",
           "Init": {
             "Text[Text]": "Set.."
@@ -78,6 +65,11 @@
             "Text[Text]": "-3.5 dB"
           }
         }
+      },
+      "EventSinks": {
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
       }
     }
   }

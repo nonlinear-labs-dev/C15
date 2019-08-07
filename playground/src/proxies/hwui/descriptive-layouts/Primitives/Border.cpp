@@ -11,8 +11,7 @@ namespace DescriptiveLayouts
   {
   }
 
-  Border::~Border()
-  = default;
+  Border::~Border() = default;
 
   void Border::drawBackground(FrameBuffer &fb)
   {

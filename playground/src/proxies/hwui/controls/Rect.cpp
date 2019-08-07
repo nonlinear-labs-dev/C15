@@ -143,7 +143,7 @@ void Rect::drawRounded(FrameBuffer &fb) const
   fb.setPixel(getRight() - 1, getBottom() - 1);
 }
 
-void Rect::draw(FrameBuffer& fb) const
+void Rect::draw(FrameBuffer &fb) const
 {
   fb.drawRect(*this);
 }

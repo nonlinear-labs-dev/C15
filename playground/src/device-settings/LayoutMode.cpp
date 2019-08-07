@@ -1,7 +1,8 @@
 
 #include "LayoutMode.h"
 
-LayoutMode::LayoutMode(Settings* parent) : EnumSetting<LayoutVersionMode>(*parent, LayoutVersionMode::New)
+LayoutMode::LayoutMode(Settings* parent)
+    : EnumSetting<LayoutVersionMode>(*parent, LayoutVersionMode::New)
 {
 }
 
@@ -12,6 +13,6 @@ const std::vector<ustring>& LayoutMode::enumToString() const
 }
 const std::vector<ustring>& LayoutMode::enumToDisplayString() const
 {
-  static std::vector<Glib::ustring> s_displayStrings = {"Old","Mixed favor New","New"};
+  static std::vector<Glib::ustring> s_displayStrings = { "Old", "Mixed favor New", "New" };
   return s_displayStrings;
 }

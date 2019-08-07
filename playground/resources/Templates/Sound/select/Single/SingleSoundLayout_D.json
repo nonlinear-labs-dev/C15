@@ -1,0 +1,76 @@
+{
+  "layouts": {
+    "Single-Sound-Select-Layout-D": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Select",
+        "UIDetail": "ButtonD"
+      },
+      "Conditions": [
+        "isSingleSound"
+      ],
+      "Controls": {
+        "Header": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Events": "SoundHeaderText => Text[Text]"
+        },
+        "Name": {
+          "Class": "WideHighlightLabel",
+          "Position": "64, 0",
+          "Init": {
+            "Text[Text]": "Gitarrentöne"
+          },
+          "Events": "EditBufferName => Text[Text]"
+        },
+        "ButtonA": {
+          "Class": "Button",
+          "Position": "BUTTON_A",
+          "Init": {
+            "Text[Text]": "Convert To"
+          }
+        },
+        "ButtonB": {
+          "Class": "Button",
+          "Position": "BUTTON_B",
+          "Init": {
+            "Text[Text]": "Set.."
+          }
+        },
+        "ButtonC": {
+          "Class": "Button",
+          "Position": "BUTTON_C",
+          "Init": {
+            "Text[Text]": "Unison.."
+          }
+        },
+        "ButtonD": {
+          "Class": "HighlightButton",
+          "Position": "BUTTON_D",
+          "Init": {
+            "Text[Text]": "Master.."
+          }
+        },
+        "UnisonLabel": {
+          "Class": "SoundParameterLabel",
+          "Position": "128, 25",
+          "Init": {
+            "Text[Text]": "+12.00 st"
+          }
+        },
+        "MasterLabel": {
+          "Class": "SoundParameterLabel",
+          "Position": "192, 25",
+          "Init": {
+            "Text[Text]": "-3.5 dB"
+          }
+        }
+      },
+      "EventSinks": {
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail"
+      }
+    }
+  }
+}

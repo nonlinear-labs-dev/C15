@@ -19,6 +19,7 @@ namespace DescriptiveLayouts
     void init() override;
     bool onButton(Buttons i, bool down, ::ButtonModifiers modifiers) override;
     bool onRotary(int inc, ::ButtonModifiers modifiers) override;
+    bool redrawLayout() override;
 
     bool regularRedraw();
    private:

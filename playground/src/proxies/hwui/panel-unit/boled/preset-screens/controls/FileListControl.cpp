@@ -21,8 +21,7 @@ void FileListControl::setFileList(FileTools::FileList list)
   setSelection(selectedItem);
 }
 
-FileListControl::~FileListControl()
-= default;
+FileListControl::~FileListControl() = default;
 
 void FileListControl::setSelection(int index)
 {

@@ -1,0 +1,89 @@
+{
+  "layouts": {
+    "Single-Sound-Select-Layout-D": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Select",
+        "UIDetail": "ButtonD"
+      },
+      "Conditions": [
+        "isSplitSound"
+      ],
+      "Controls": {
+        "Header": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Events": "SoundHeaderText => Text[Text]"
+        },
+        "Name": {
+          "Class": "WideHighlightLabel",
+          "Position": "64, 0",
+          "Init": {
+            "Text[Text]": "03-128* Gitarrentöne"
+          }
+        },
+        "ButtonA": {
+          "Class": "Button",
+          "Position": "BUTTON_A",
+          "Events": "SelectVGButtonText => Text[Text]"
+        },
+        "ButtonB": {
+          "Class": "Button",
+          "Position": "BUTTON_B",
+          "Init": {
+            "Text[Text]": "Set.."
+          }
+        },
+        "ButtonC": {
+          "Class": "Button",
+          "Position": "BUTTON_C",
+          "Init": {
+            "Text[Text]": "Unison.."
+          }
+        },
+        "ButtonD": {
+          "Class": "HighlightButton",
+          "Position": "BUTTON_D",
+          "Init": {
+            "Text[Text]": "Master.."
+          }
+        },
+        "Left": {
+          "Class": "SplitVoiceGroupI",
+          "Position": "15, 16",
+          "Init": {
+            "VoiceGroupIdentifier[Text]": "I",
+            "UpperText[Text]": "+12.00 st",
+            "LowerText[Text]": "-3.5 dB",
+            "Any[Highlight]": "true"
+          },
+          "Events": "isCurrentVGI => Any[Highlight]"
+        },
+        "Right": {
+          "Class": "SplitVoiceGroupII",
+          "Position": "145, 16",
+          "Init": {
+            "VoiceGroupIdentifier[Text]": "II",
+            "UpperText[Text]": "+12.00 st",
+            "LowerText[Text]": "-3.5 dB",
+            "Any[Highlight]": "false"
+          },
+          "Events": "isCurrentVGII => Any[Highlight]"
+        },
+        "Split": {
+          "Class": "SplitPoint",
+          "Position": "116, 18",
+          "Init": {
+            "Text[Text]": "G#3"
+          }
+        }
+      },
+      "EventSinks": {
+        "BUTTON_A": "SwitchToButtonADetail",
+        "BUTTON_B": "SwitchToButtonBDetail",
+        "BUTTON_C": "SwitchToButtonCDetail",
+        "BUTTON_D": "SwitchToButtonDDetail"
+      }
+    }
+  }
+}

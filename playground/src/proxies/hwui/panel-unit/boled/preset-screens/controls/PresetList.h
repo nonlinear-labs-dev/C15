@@ -9,19 +9,56 @@ class PresetList : public PresetListBase
   using super = PresetListBase;
 
  public:
-  PresetList(const Rect &pos, bool showBankArrows);
+  PresetList(const Rect& pos, bool showBankArrows);
   ~PresetList() override;
 
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual void onRotary(int inc, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  void onRotary(int inc, ButtonModifiers modifiers) override;
 
   std::pair<size_t, size_t> getSelectedPosition() const override;
+  Preset* getPresetAtSelected();
 
  private:
-  void onBankSelectionChanged(const Uuid &selectedBank);
+  void onBankSelectionChanged(const Uuid& selectedBank);
   void onBankChanged();
   void onEditBufferChanged();
 
   sigc::connection m_bankChangedConnection;
   Uuid m_uuidOfLastLoadedPreset;
+};
+
+// Make this the new class:
+//Replace Whole PresetListBase with generic traversal of Presets instead of strong coupling with selection
+
+class GenericPresetList : public PresetList
+{
+ public:
+  explicit GenericPresetList(const Point& p);
+
+  void incBankSelection();
+  void decBankSelection();
+  void incPresetSelection();
+  void decPresetSelection();
+
+  virtual void action() = 0;
+
+ public:
+  bool redraw(FrameBuffer& fb) override;
+
+
+ protected:
+  void drawPresets(FrameBuffer& fb, Preset* middle);
+
+  virtual void sanitizePresetPtr();
+
+  Preset* m_selectedPreset = nullptr;
+};
+
+class PresetListVGSelect : public GenericPresetList
+{
+ public:
+  explicit PresetListVGSelect(const Point& p);
+  void action() override;
+ protected:
+  PresetManager::AutoLoadBlocker blocker;
 };

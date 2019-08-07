@@ -10,6 +10,11 @@
 SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect)
     : super(rect)
 {
+  init();
+}
+
+void SingleSoundEditMenu::init()
+{
   auto pm = Application::get().getPresetManager();
 
   addButton("Store Init", [=]() {

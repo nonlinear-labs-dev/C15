@@ -28,5 +28,4 @@ class HardwareUserInterfaceUnit
   HardwareUserInterfaceUnit& operator=(const HardwareUserInterfaceUnit&) = delete;
 
   std::shared_ptr<UsageMode> m_usageMode;
-
 };

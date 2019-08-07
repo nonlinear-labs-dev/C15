@@ -3,7 +3,8 @@
 #include "EnumSetting.h"
 #include <proxies/hwui/HWUIEnums.h>
 
-class LayoutMode : public EnumSetting<LayoutVersionMode> {
+class LayoutMode : public EnumSetting<LayoutVersionMode>
+{
  public:
   explicit LayoutMode(Settings*);
   const std::vector<ustring>& enumToString() const override;

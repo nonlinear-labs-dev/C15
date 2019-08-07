@@ -21,11 +21,16 @@ template <typename TEnum> class EnumSetting : public Setting
   {
     if(m_mode != m)
     {
-      m_mode = m;
-      notify();
-      return true;
+      return forceset(m);
     }
     return false;
+  }
+
+  bool forceset(tEnum m)
+  {
+    m_mode = m;
+    notify();
+    return true;
   }
 
   Settings *getSettings()

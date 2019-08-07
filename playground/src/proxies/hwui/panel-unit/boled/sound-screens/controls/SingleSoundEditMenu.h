@@ -8,7 +8,7 @@
 class SoundMenu : public ButtonMenu
 {
  public:
-  explicit SoundMenu(const Rect& r);
+  explicit SoundMenu(const Rect &r);
 
  protected:
   void bruteForce() override;
@@ -16,7 +16,7 @@ class SoundMenu : public ButtonMenu
 
 class SoundButton : public ButtonMenuButton
 {
-public:
+ public:
   SoundButton(bool isFirst, bool isLast, const Glib::ustring &text, const Rect &pos);
 
   void drawBackground(FrameBuffer &fb) override;
@@ -28,7 +28,8 @@ class SingleSoundEditMenu : public SoundMenu
   typedef SoundMenu super;
 
  public:
-  SingleSoundEditMenu(const Rect& rect);
+  SingleSoundEditMenu(const Rect &rect);
+  virtual void init();
 
  protected:
   Font::Justification getDefaultButtonJustification() const override;

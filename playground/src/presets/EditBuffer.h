@@ -21,7 +21,6 @@ class EditBuffer : public ParameterGroupSet
   EditBuffer(PresetManager *parent);
   ~EditBuffer() override;
 
-
   Type getType() const;
   void setType(Type t);
 
@@ -32,7 +31,7 @@ class EditBuffer : public ParameterGroupSet
   Parameter *getSelected() const;
   bool isZombie() const;
 
-  void setMacroControlValueFromMCView(int id, double value, const Glib::ustring& uuid);
+  void setMacroControlValueFromMCView(int id, double value, const Glib::ustring &uuid);
   void undoableClear(UNDO::Transaction *transaction);
   void undoableSelectParameter(const Glib::ustring &id);
   void undoableSelectParameter(uint16_t id);
@@ -69,7 +68,7 @@ class EditBuffer : public ParameterGroupSet
   void resetOriginIf(const Preset *p);
 
   // CALLBACKS
-  sigc::connection onSelectionChanged(const slot<void, Parameter *, Parameter *>& s);
+  sigc::connection onSelectionChanged(const slot<void, Parameter *, Parameter *> &s);
   sigc::connection onModificationStateChanged(slot<void, bool> s);
   sigc::connection onChange(slot<void> s);
   sigc::connection onPresetLoaded(slot<void> s);
@@ -91,7 +90,7 @@ class EditBuffer : public ParameterGroupSet
   bool isVGIISelected() const;
   bool m_vgISelected = true;
 
- private:
+ void loadCurrentVG(Preset* pPreset);private:
   Parameter *searchForAnyParameterWithLock() const;
 
   UNDO::Scope &getUndoScope() override;

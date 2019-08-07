@@ -237,7 +237,8 @@ void PresetManager::doAutoLoadSelectedPreset()
 
     if(!isStoringPreset)
     {
-      scheduleAutoLoadSelectedPreset();
+      if(autoloadsemaphore > 0)
+        scheduleAutoLoadSelectedPreset();
     }
   }
 }

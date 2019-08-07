@@ -7,12 +7,13 @@
 
 template <class T> class OnEditBufferChangedNotifier : public sigc::trackable
 {
-public:
+ public:
   explicit OnEditBufferChangedNotifier(T *parent)
   {
     m_parent = parent;
 
-    m_connection = Application::get().getPresetManager()->getEditBuffer()->onChange(sigc::mem_fun(this, &OnEditBufferChangedNotifier::onEditBufferChanged));
+    m_connection = Application::get().getPresetManager()->getEditBuffer()->onChange(
+        sigc::mem_fun(this, &OnEditBufferChangedNotifier::onEditBufferChanged));
   }
 
   ~OnEditBufferChangedNotifier()
@@ -26,7 +27,7 @@ public:
       m_parent->onEditBufferChanged(Application::get().getPresetManager()->getEditBuffer());
   }
 
-protected:
+ protected:
   T *m_parent;
   sigc::connection m_connection;
 };

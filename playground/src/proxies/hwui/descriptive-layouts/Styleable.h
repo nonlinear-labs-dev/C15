@@ -19,11 +19,13 @@ namespace DescriptiveLayouts
     int getStyleValue(StyleKey s) const;
     virtual const PrimitiveInstance &getPrimitive() const = 0;
 
-    void setHighlight(bool b) {
+    void setHighlight(bool b)
+    {
       m_highlight = b;
     }
 
-    bool isHighlight() const {
+    bool isHighlight() const
+    {
       return m_highlight;
     }
 

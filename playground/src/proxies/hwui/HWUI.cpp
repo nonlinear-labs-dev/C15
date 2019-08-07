@@ -33,7 +33,7 @@ HWUI::HWUI()
     : m_readersCancel(Gio::Cancellable::create())
     , m_focusAndMode(UIFocus::Parameters, UIMode::Select)
     , m_blinkCount(0)
-    , m_buttonStates{false}
+    , m_buttonStates{ false }
 {
 #ifdef _DEVELOPMENT_PC
   if(isatty(fileno(stdin)))
@@ -57,7 +57,6 @@ void HWUI::deInit()
 {
   Oleds::get().deInit();
 }
-
 
 void HWUI::onButtonMessage(const nltools::msg::ButtonChangedMessage &msg)
 {
@@ -518,6 +517,11 @@ FocusAndMode HWUI::getFocusAndMode() const
   return m_focusAndMode;
 }
 
+void HWUI::setFocusAndMode(const UIDetail &detail)
+{
+  setFocusAndMode({ m_focusAndMode.focus, m_focusAndMode.mode, detail });
+}
+
 void HWUI::setFocusAndMode(FocusAndMode focusAndMode)
 {
   if(m_focusAndModeFrozen)
@@ -538,7 +542,8 @@ void HWUI::setUiModeDetail(UIDetail detail)
 {
   m_focusAndMode.detail = detail;
 
-  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old) {
+  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old)
+  {
     setupFocusAndMode();
   }
 }

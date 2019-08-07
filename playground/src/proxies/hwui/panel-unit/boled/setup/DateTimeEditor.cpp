@@ -52,8 +52,7 @@ DateTimeEditor::DateTimeEditor()
   setTimeValues();
 }
 
-DateTimeEditor::~DateTimeEditor()
-= default;
+DateTimeEditor::~DateTimeEditor() = default;
 
 void DateTimeEditor::setPosition(const Rect &)
 {
