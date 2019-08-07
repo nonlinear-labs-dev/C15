@@ -249,7 +249,7 @@ bool GenericPresetList::redraw(FrameBuffer &fb)
   return true;
 }
 
-sigc::connection GenericPresetList::onChange(sigc::slot<void(GenericPresetList *)> pl)
+sigc::connection GenericPresetList::onChange(sigc::slot<void, GenericPresetList*> pl)
 {
   return m_signalChanged.connect(pl);
 }
