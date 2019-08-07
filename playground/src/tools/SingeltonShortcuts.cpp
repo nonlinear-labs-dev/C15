@@ -15,20 +15,20 @@ namespace SiSc
   {
     return Application::get().getSettings()->getSetting<LayoutMode>()->get();
   }
-}
 
-namespace SiSc::EB
-{
-  const Parameter* getCurrentParameter()
+  namespace EB
   {
-    return Application::get().getPresetManager()->getEditBuffer()->getSelected();
+    const Parameter *getCurrentParameter()
+    {
+      return Application::get().getPresetManager()->getEditBuffer()->getSelected();
+    }
   }
-}
 
-namespace SiSc::HWUI
-{
-  void bruteForce()
+  namespace HWUI
   {
-    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().bruteForce();
+    void bruteForce()
+    {
+      Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().bruteForce();
+    }
   }
 }
