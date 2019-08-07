@@ -40,6 +40,6 @@ namespace DescriptiveLayouts
     EventSinkBroker();
     void registerEvent(EventSinks sink, tAction action);
 
-    std::unordered_map<EventSinks, tAction> m_map;
+    std::map<EventSinks, tAction> m_map;
   };
 }
