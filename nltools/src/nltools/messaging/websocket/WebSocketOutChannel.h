@@ -57,10 +57,10 @@ namespace nltools
         std::unique_ptr<threading::ContextBoundMessageQueue> m_backgroundContextQueue;
         std::unique_ptr<threading::ContextBoundMessageQueue> m_mainThreadContextQueue;
         Glib::RefPtr<Glib::MainLoop> m_messageLoop;
-        std::atomic<bool> m_bgRunning = false;
+        std::atomic<bool> m_bgRunning{false};
         std::thread m_contextThread;
 
-        std::atomic<bool> m_connectionEstablished = false;
+        std::atomic<bool> m_connectionEstablished{false};
         std::mutex m_conditionMutex;
         std::condition_variable m_connectionEstablishedCondition;
         std::function<void()> m_onConnectionEstablished;

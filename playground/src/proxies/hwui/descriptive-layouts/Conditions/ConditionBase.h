@@ -7,7 +7,7 @@ class ConditionBase
  public:
   ConditionBase()
   {
-    m_cache = false;
+    m_cache.store(false);
   }
 
   bool get() const
