@@ -79,7 +79,7 @@
 #define dsp_poly_types 2         // two polyphony types (mono, poly) - (later, a dual type needs to be implemented)
 #define dsp_clock_types 4        // four different parameter types (sync, audio, fast, slow)
 #define dsp_spread_types 2       // two (mono) spread types (single: mono->mono, spread: mono->poly)
-#define dsp_number_of_voices 20  // maximum allowed number of voices
+#define dsp_number_of_voices 24  // maximum allowed number of voices
 
 const uint32_t dsp_clock_rates[2] = {
   // sub-audio clocks are defined in rates (Hz) now
@@ -122,7 +122,7 @@ const uint32_t dsp_clock_rates[2] = {
 /* Main Parameter Definition                        -> see Linux Engine 1.56 LPC Status */
 
 #define sig_number_of_params 195        // see Linux Engine 1.56 LPC Status / Overview, Parameter List
-#define sig_number_of_param_items 214   // number of required (single-voice) rendering items for all parameters
+#define sig_number_of_param_items 218   // number of required (single-voice) rendering items for all parameters
 #define sig_number_of_signal_items 138  // signals shared between the parameter and audio engine
 
 /* TCD List Handling */
@@ -138,7 +138,7 @@ const uint32_t dsp_clock_rates[2] = {
 #define sig_number_of_utilities 5  // four Utility Parameters: Velocity, Reference Tone, Test Tone Freq, Amp, State
 #define sig_number_of_envelopes 5  // five Envelope Units: A, B, C, Gate, Flanger
 #define sig_number_of_env_items                                                                                        \
-  81  // 4 POLY Envelopes (A..Gate) = 4 * 20 = 80 items, 1 MONO (Flanger Decay), total: 81 items
+  97  // 4 POLY Envelopes (A..Gate) = 4 * 20 = 80 items, 1 MONO (Flanger Decay), total: 81 items
 #define sig_number_of_env_segments                                                                                     \
   4  // four segments for ADBDSR-type Envelopes (A, B, C): Attack, Decay 1, Decay 2, Release
 #define sig_number_of_env_types 3  // three Envelope types: ADBDSR (A, B, C), Gate (Gate), Decay (Flanger)
