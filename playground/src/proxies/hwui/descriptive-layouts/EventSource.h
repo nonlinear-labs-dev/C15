@@ -39,6 +39,6 @@ namespace DescriptiveLayouts
 
    private:
     explicit EventSourceBroker();
-    std::unordered_map<EventSources, std::unique_ptr<EventSourceBase>> m_map;
+    std::map<EventSources, std::unique_ptr<EventSourceBase>> m_map;
   };
 }
