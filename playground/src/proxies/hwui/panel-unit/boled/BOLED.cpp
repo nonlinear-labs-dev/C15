@@ -19,7 +19,6 @@
 #include <tools/ExceptionTools.h>
 #include <proxies/hwui/descriptive-layouts/ConditionRegistry.h>
 #include <device-settings/LayoutMode.h>
-#include <tools/ScopedFunction.h>
 #include <tools/SingeltonShortcuts.h>
 #include "BOLED.h"
 
@@ -36,7 +35,6 @@ void BOLED::init()
   reset(new SplashLayout());
 
   LayoutFolderMonitor::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
-  //ConditionRegistry::get().onChange(sigc::mem_fun(this, &BOLED::bruteForce));
 }
 
 void BOLED::bruteForce()
@@ -198,12 +196,6 @@ void BOLED::setupBankScreen(FocusAndMode focusAndMode)
 
 bool BOLED::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
-  ScopedFunction sf([=] {
-    if(SiSc::getLayoutSetting() == LayoutVersionMode::Old)
-      if(auto l = std::dynamic_pointer_cast<DFBLayout>(getLayout()))
-        l->setAllDirty();
-  });
-
   if(auto l = std::dynamic_pointer_cast<DFBLayout>(getLayout()))
     if(l->onButton(buttonID, state, modifiers))
       return true;
