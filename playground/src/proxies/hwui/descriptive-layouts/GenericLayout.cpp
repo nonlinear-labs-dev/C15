@@ -17,14 +17,10 @@ namespace DescriptiveLayouts
   GenericLayout::GenericLayout(LayoutClass prototype)
       : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
       , m_prototype(std::move(prototype))
-      , m_throttler{ Expiration::Duration{ 20 } }
   {
-    m_redrawHandle = Glib::MainContext::get_default()->signal_timeout().connect(
-        sigc::mem_fun(this, &GenericLayout::regularRedraw), 20);
   }
 
   GenericLayout::~GenericLayout() {
-    m_redrawHandle.disconnect();
   }
 
 
@@ -207,11 +203,6 @@ namespace DescriptiveLayouts
 
   bool GenericLayout::regularRedraw()
   {
-    return true;
-
-    if(!m_throttler.isPending())
-      m_throttler.doTask([&] { redrawLayout(); });
-
     return true;
   }
 

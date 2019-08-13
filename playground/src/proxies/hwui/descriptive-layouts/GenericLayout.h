@@ -34,8 +34,5 @@ namespace DescriptiveLayouts
     void toggleStoreMode();
     void toggleInfo();
     void toggleEdit();
-
-    mutable Throttler m_throttler;
-    sigc::connection m_redrawHandle;
   };
 }
