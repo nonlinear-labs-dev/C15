@@ -3,6 +3,7 @@
 #include <memory>
 #include <proxies/hwui/descriptive-layouts/Conditions/ConditionBase.h>
 #include <tools/Signal.h>
+#include <map>
 
 class ConditionRegistry : public sigc::trackable
 {
@@ -17,7 +18,7 @@ class ConditionRegistry : public sigc::trackable
   void onConditionChanged();
 
   Signal<void> m_signal;
-  std::unordered_map<std::string, std::unique_ptr<ConditionBase>> m_theConditionMap;
+  std::map<std::string, std::unique_ptr<ConditionBase>> m_theConditionMap;
 
   friend class ConditionBase;
 };

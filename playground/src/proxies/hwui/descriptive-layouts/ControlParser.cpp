@@ -50,7 +50,7 @@ namespace DescriptiveLayouts
     }
   }
 
-  template <class T> constexpr T getFromJson(json j, std::string key)
+  template <class T> T getFromJson(json j, std::string key)
   {
     auto itProp = j.find(key);
     if(itProp != j.end())

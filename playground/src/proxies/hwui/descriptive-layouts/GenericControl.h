@@ -25,7 +25,7 @@ namespace DescriptiveLayouts
    private:
     std::list<sigc::connection> m_connections;
 
-    std::unordered_map<EventSources, bool> m_controlVisible;
+    std::map<EventSources, bool> m_controlVisible;
 
    protected:
     ControlInstance m_prototype;
