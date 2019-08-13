@@ -19,17 +19,32 @@ namespace DescriptiveLayouts
       {
       }
 
-      bool operator()(const UIFocus f)
+      bool operator()(const UIFocus f) const
       {
         return f == fam.focus || f == UIFocus::Any || fam.focus == UIFocus::Any;
       }
 
-      bool operator()(const UIMode m)
+      bool operator()(const UIMode m) const
       {
         return m == fam.mode || m == UIMode::Any || fam.mode == UIMode::Any;
       }
 
-      bool operator()(const UIDetail d)
+      bool operator()(const UIDetail d) const
+      {
+        return d == fam.detail || d == UIDetail::Any || fam.detail == UIDetail::Any;
+      }
+
+      bool operator()(UIFocus f)
+      {
+        return f == fam.focus || f == UIFocus::Any || fam.focus == UIFocus::Any;
+      }
+
+      bool operator()(UIMode m)
+      {
+        return m == fam.mode || m == UIMode::Any || fam.mode == UIMode::Any;
+      }
+
+      bool operator()(UIDetail d)
       {
         return d == fam.detail || d == UIDetail::Any || fam.detail == UIDetail::Any;
       }
@@ -63,8 +78,8 @@ namespace DescriptiveLayouts
 
     bool test(FocusAndMode fam) const
     {
-      const auto tester = Tester(fam);
-      const auto c = criteria;
+      auto tester = Tester(fam);
+      auto c = criteria;
       return nonstd::visit(tester, c);
     }
 
