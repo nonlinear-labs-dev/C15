@@ -195,9 +195,10 @@ namespace DescriptiveLayouts
     {
       auto visibilityContent = j.at("Visibility");
 
-      for(json::iterator visibility = visibilityContent.begin(); visibility != visibilityContent.end(); ++visibility)
+      for(auto & visibility : visibilityContent)
       {
-        auto visibilityStrings = StringTools::splitStringOnAnyDelimiter(std::string(visibility.value()), ',');
+        auto str = visibility.get<std::string>();
+        auto visibilityStrings = StringTools::splitStringOnAnyDelimiter(str, ',');
 
         for(auto& visibilityString : visibilityStrings)
         {
@@ -245,9 +246,10 @@ namespace DescriptiveLayouts
   tConditionList toConditions(json j)
   {
     tConditionList ret;
-    for(json::iterator condition = j.begin(); condition != j.end(); ++condition)
+    for(auto & condition : j)
     {
-      auto conditonStrings = StringTools::splitStringOnAnyDelimiter(std::string(condition.value()), ',');
+      auto str = condition.get<std::string>();
+      auto conditonStrings = StringTools::splitStringOnAnyDelimiter(str, ',');
       for(const auto& conditionString : conditonStrings)
       {
         ret.push_back(ConditionRegistry::get().getLambda(conditionString));
