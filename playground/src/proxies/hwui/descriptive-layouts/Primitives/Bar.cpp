@@ -60,19 +60,19 @@ namespace DescriptiveLayouts
     Control::setDirty();
   }
 
-  void Bar::setProperty(PrimitiveProperty key, std::any value)
+  void Bar::setProperty(PrimitiveProperty key, std::experimental::any value)
   {
     switch(key)
     {
       case PrimitiveProperty::Range:
-        if(std::exchange(m_range, std::any_cast<Range>(value)) != m_range)
+        if(std::exchange(m_range, std::experimental::any_cast<Range>(value)) != m_range)
           setDirty();
         break;
       case PrimitiveProperty::Highlight:
-        Control::setHighlight(std::any_cast<bool>(value));
+        Control::setHighlight(std::experimental::any_cast<bool>(value));
         break;
       case PrimitiveProperty::Visibility:
-        setVisible(std::any_cast<bool>(value));
+        setVisible(std::experimental::any_cast<bool>(value));
         break;
     }
   }

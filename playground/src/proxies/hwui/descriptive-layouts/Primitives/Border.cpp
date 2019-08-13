@@ -55,18 +55,18 @@ namespace DescriptiveLayouts
     return m_primitive;
   }
 
-  void Border::setProperty(PrimitiveProperty key, std::any value)
+  void Border::setProperty(PrimitiveProperty key, std::experimental::any value)
   {
     switch(key)
     {
       case PrimitiveProperty::Highlight:
       {
-        Control::setHighlight(std::any_cast<bool>(value));
+        Control::setHighlight(std::experimental::any_cast<bool>(value));
         break;
       }
       case PrimitiveProperty::Visibility:
       {
-        auto boolean = std::any_cast<bool>(value);
+        auto boolean = std::experimental::any_cast<bool>(value);
         setVisible(boolean);
       }
       break;

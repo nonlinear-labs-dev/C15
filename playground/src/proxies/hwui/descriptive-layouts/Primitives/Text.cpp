@@ -77,24 +77,24 @@ namespace DescriptiveLayouts
     return getStyleValue(StyleKey::FontSize);
   }
 
-  void Text::setProperty(PrimitiveProperty key, std::any value)
+  void Text::setProperty(PrimitiveProperty key, std::experimental::any value)
   {
     switch(key)
     {
       case PrimitiveProperty::Text:
       {
-        auto a = std::any_cast<DisplayString>(value);
+        auto a = std::experimental::any_cast<DisplayString>(value);
         setText(StringAndSuffix(a.first, static_cast<size_t>(a.second)));
         break;
       }
       case PrimitiveProperty::Highlight:
       {
-        Control::setHighlight(std::any_cast<bool>(value));
+        Control::setHighlight(std::experimental::any_cast<bool>(value));
         break;
       }
       case PrimitiveProperty::Visibility:
       {
-        bool vis = std::any_cast<bool>(value);
+        bool vis = std::experimental::any_cast<bool>(value);
         setVisible(vis);
         break;
       }

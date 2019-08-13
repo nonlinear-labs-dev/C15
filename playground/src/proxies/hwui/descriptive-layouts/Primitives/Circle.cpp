@@ -53,18 +53,18 @@ namespace DescriptiveLayouts
     fb.fillRect(getPosition());
   }
 
-  void Circle::setProperty(PrimitiveProperty key, std::any value)
+  void Circle::setProperty(PrimitiveProperty key, std::experimental::any value)
   {
     switch(key)
     {
       case PrimitiveProperty::Visibility:
-        setVisible(std::any_cast<bool>(value));
+        setVisible(std::experimental::any_cast<bool>(value));
         break;
       case PrimitiveProperty::Highlight:
-        Control::setHighlight(std::any_cast<bool>(value));
+        Control::setHighlight(std::experimental::any_cast<bool>(value));
         break;
       case PrimitiveProperty::ControlPosition:
-        m_drawPosition = valueToPosition(std::any_cast<tControlPositionValue>(value));
+        m_drawPosition = valueToPosition(std::experimental::any_cast<tControlPositionValue>(value));
         Control::setDirty();
         break;
       case PrimitiveProperty::None:

@@ -83,11 +83,11 @@ namespace DescriptiveLayouts
       m_connections.push_back(EventSourceBroker::get().connect(
           c.m_source, sigc::bind(sigc::mem_fun(this, &GenericControl::onVisibilityChanged), m_prototype, c)));
 
-      m_controlVisible[c.m_source] = std::any_cast<bool>(EventSourceBroker::get().evaluate(c.m_source));
+      m_controlVisible[c.m_source] = std::experimental::any_cast<bool>(EventSourceBroker::get().evaluate(c.m_source));
     }
   }
 
-  void GenericControl::onEventFired(const std::any &v, const ControlInstance::EventConnection &connection)
+  void GenericControl::onEventFired(const std::experimental::any &v, const ControlInstance::EventConnection &connection)
   {
     bool shouldRestyle = false;
     for(const auto &c : getControls())
@@ -113,14 +113,14 @@ namespace DescriptiveLayouts
     }
   }
 
-  void GenericControl::onVisibilityChanged(std::any visibility, const ControlInstance &instance,
+  void GenericControl::onVisibilityChanged(std::experimental::any visibility, const ControlInstance &instance,
                                            const ControlInstance::VisibilityItem &item)
   {
     if(m_prototype.controlInstance == instance.controlInstance)
     {
       try
       {
-        auto visible = std::any_cast<bool>(visibility);
+        auto visible = std::experimental::any_cast<bool>(visibility);
 
         if(item.inverted)
           visible = !visible;

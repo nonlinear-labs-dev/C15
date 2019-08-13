@@ -22,7 +22,7 @@ namespace DescriptiveLayouts
     ~Text() override;
 
     std::shared_ptr<Font> getFont() const override;
-    void setProperty(PrimitiveProperty key, std::any value) override;
+    void setProperty(PrimitiveProperty key, std::experimental::any value) override;
     void setDirty() override;
     const PrimitiveInstance &getPrimitive() const override;
 

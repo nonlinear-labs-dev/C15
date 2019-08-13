@@ -54,7 +54,7 @@ namespace DescriptiveLayouts
     }
 
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       return m_lastValue;
     }
@@ -445,11 +445,11 @@ namespace DescriptiveLayouts
     }
     void onEditBufferChanged(const EditBuffer *e)
     {
-      setValue(std::any_cast<DisplayString>(getLastValue()));
+      setValue(std::experimental::any_cast<DisplayString>(getLastValue()));
     }
 
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
       auto type = editBuffer->getType();
@@ -463,7 +463,7 @@ namespace DescriptiveLayouts
   class EditBufferName : public EventSource<DisplayString>
   {
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       auto name = Application::get().getPresetManager()->getEditBuffer()->getName();
       return DisplayString{ name, 0 };
@@ -473,7 +473,7 @@ namespace DescriptiveLayouts
   class CurrentVoiceGroupName : public EventSource<DisplayString>
   {
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       auto name = Application::get().getPresetManager()->getEditBuffer()->getCurrentVoiceGroupName();
       return DisplayString{ name, 0 };
@@ -483,18 +483,18 @@ namespace DescriptiveLayouts
   class BooleanTrue : public EventSource<bool>
   {
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
-      return std::any(true);
+      return std::experimental::any(true);
     }
   };
 
   class BooleanFalse : public EventSource<bool>
   {
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
-      return std::any(false);
+      return std::experimental::any(false);
     }
   };
 
@@ -563,7 +563,7 @@ namespace DescriptiveLayouts
 
    protected:
     Glib::ustring m_text;
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       return DisplayString{ m_text, 0 };
     }
@@ -651,9 +651,9 @@ namespace DescriptiveLayouts
     }
 
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
-      return std::any(SiSc::EB::getCurrentParameter()->isValueChangedFromLoaded());
+      return std::experimental::any(SiSc::EB::getCurrentParameter()->isValueChangedFromLoaded());
     }
 
     OnParameterChangedNotifier<ParameterValueChanged> m_paramChanged;
@@ -668,11 +668,11 @@ namespace DescriptiveLayouts
     }
     void onEditBufferChanged(const EditBuffer *eb)
     {
-      setValue(std::any_cast<bool>(getLastValue()));
+      setValue(std::experimental::any_cast<bool>(getLastValue()));
     }
 
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       return Application::get().getPresetManager()->getEditBuffer()->isVGISelected();
     }
@@ -688,11 +688,11 @@ namespace DescriptiveLayouts
     }
     void onEditBufferChanged(const EditBuffer *eb)
     {
-      setValue(std::any_cast<bool>(getLastValue()));
+      setValue(std::experimental::any_cast<bool>(getLastValue()));
     }
 
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       return Application::get().getPresetManager()->getEditBuffer()->isVGIISelected();
     }
@@ -708,11 +708,11 @@ namespace DescriptiveLayouts
     }
     void onEditBufferChanged(const EditBuffer *eb)
     {
-      setValue(std::any_cast<DisplayString>(getLastValue()));
+      setValue(std::experimental::any_cast<DisplayString>(getLastValue()));
     }
 
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       auto eb = Application::get().getPresetManager()->getEditBuffer();
       auto type = eb->getType();
@@ -734,11 +734,11 @@ namespace DescriptiveLayouts
     }
     void onEditBufferChanged(const EditBuffer *eb)
     {
-      setValue(std::any_cast<DisplayString>(getLastValue()));
+      setValue(std::experimental::any_cast<DisplayString>(getLastValue()));
     }
 
    protected:
-    std::any getLastValue() const override
+    std::experimental::any getLastValue() const override
     {
       return DisplayString(
           { std::string("Select ")
@@ -964,7 +964,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::DirectLoadStatus] = std::make_unique<DirectLoadStatus>();
   }
 
-  sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::any)> cb)
+  sigc::connection EventSourceBroker::connect(EventSources source, std::function<void(std::experimental::any)> cb)
   {
     if(source == EventSources::None)
       return {};
@@ -972,7 +972,7 @@ namespace DescriptiveLayouts
     return m_map.at(source)->connect(cb);
   }
 
-  std::any EventSourceBroker::evaluate(EventSources source)
+  std::experimental::any EventSourceBroker::evaluate(EventSources source)
   {
     return m_map[source]->getLastValue();
   }
