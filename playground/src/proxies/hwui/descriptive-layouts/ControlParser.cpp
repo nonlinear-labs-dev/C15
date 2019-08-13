@@ -55,7 +55,9 @@ namespace DescriptiveLayouts
     auto itProp = j.find(key);
     if(itProp != j.end())
     {
-        return static_cast<T>(itProp.value());
+      auto foo = itProp.value();
+      auto str = std::string(foo);
+      return static_cast<T>(str);
     }
     return T{};
   }
