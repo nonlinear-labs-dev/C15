@@ -63,7 +63,9 @@ namespace DescriptiveLayouts
 
     bool test(FocusAndMode fam) const
     {
-      return nonstd::visit(Tester(fam), criteria);
+      const auto tester = Tester(fam);
+      const auto c = criteria;
+      return nonstd::visit(tester, c);
     }
 
    private:
