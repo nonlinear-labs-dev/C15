@@ -55,7 +55,12 @@ namespace DescriptiveLayouts
     auto itProp = j.find(key);
     if(itProp != j.end())
     {
-      return static_cast<T>(*itProp);
+      if(std::is_arithmetic<T>()) {
+        return static_cast<T>(*itProp);
+      } else {
+        auto string = Glib::ustring(*itProp);
+        return static_cast<T>(string);
+      }
     }
     return T{};
   }
