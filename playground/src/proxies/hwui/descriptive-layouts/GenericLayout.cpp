@@ -207,6 +207,8 @@ namespace DescriptiveLayouts
 
   bool GenericLayout::regularRedraw()
   {
+    return true;
+
     if(!m_throttler.isPending())
       m_throttler.doTask([&] { redrawLayout(); });
 

@@ -13,6 +13,7 @@ namespace DescriptiveLayouts
     m_discreteRegistry.emplace_back("LayerSoundEditMenu");
     m_discreteRegistry.emplace_back("SplitSoundEditMenu");
     m_discreteRegistry.emplace_back("ParameterCarousel");
+    m_discreteRegistry.emplace_back("PresetListVGSelect");
   }
 
   void ControlRegistry::registerControl(ControlClass&& cp)

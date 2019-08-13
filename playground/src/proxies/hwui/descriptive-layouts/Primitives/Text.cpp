@@ -113,15 +113,29 @@ namespace DescriptiveLayouts
     return m_primitive;
   }
 
+
+  void Text::applyStyle(const StyleMap &style) {
+    m_cachedFont = nullptr;
+    Styleable::applyStyle(style);
+  }
+
   std::shared_ptr<Font> Text::getFont() const
   {
-    switch((StyleValues::Font) getStyleValue(StyleKey::FontDecoration))
+
+    if(!m_cachedFont)
     {
-      case StyleValues::Font::Bold:
-        return Oleds::get().getFont("Emphase_8_Bold", getFontHeight());
-      case StyleValues::Font::Regular:
-      default:
-        return Oleds::get().getFont("Emphase_8_Regular", getFontHeight());
+      switch((StyleValues::Font) getStyleValue(StyleKey::FontDecoration))
+      {
+        case StyleValues::Font::Bold:
+          m_cachedFont = Oleds::get().getFont("Emphase_8_Bold", getFontHeight());
+          break;
+        case StyleValues::Font::Regular:
+        default:
+          m_cachedFont = Oleds::get().getFont("Emphase_8_Regular", getFontHeight());
+          break;
+      }
     }
+
+    return m_cachedFont;
   }
 }

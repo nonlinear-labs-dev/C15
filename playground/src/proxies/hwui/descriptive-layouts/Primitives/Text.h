@@ -26,7 +26,9 @@ namespace DescriptiveLayouts
     void setDirty() override;
     const PrimitiveInstance &getPrimitive() const override;
 
-   protected:
+    void applyStyle(const StyleMap &style) override;
+
+  protected:
     void setFontColor(FrameBuffer &fb) const override;
     void setSuffixFontColor(FrameBuffer &fb) const override;
 
@@ -37,5 +39,6 @@ namespace DescriptiveLayouts
 
    private:
     PrimitiveInstance m_primitive;
+    mutable std::shared_ptr<Font> m_cachedFont;
   };
 }
