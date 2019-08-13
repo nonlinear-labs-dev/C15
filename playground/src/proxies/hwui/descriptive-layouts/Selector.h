@@ -18,17 +18,18 @@ namespace DescriptiveLayouts
           : fam(fam)
       {
       }
-      bool operator()(UIFocus f)
+
+      bool operator()(const UIFocus f)
       {
         return f == fam.focus || f == UIFocus::Any || fam.focus == UIFocus::Any;
       }
 
-      bool operator()(UIMode m)
+      bool operator()(const UIMode m)
       {
         return m == fam.mode || m == UIMode::Any || fam.mode == UIMode::Any;
       }
 
-      bool operator()(UIDetail d)
+      bool operator()(const UIDetail d)
       {
         return d == fam.detail || d == UIDetail::Any || fam.detail == UIDetail::Any;
       }
