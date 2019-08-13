@@ -121,22 +121,22 @@ namespace DescriptiveLayouts
           switch(eventTargetProperty)
           {
             case PrimitiveProperty::ControlPosition:
-              value = std::stod((std::string) it.value());
+              value = (*it).get<double>();
               break;
             case PrimitiveProperty::Range:
             {
-              auto values = StringTools::splitStringOnStringDelimiter(it.value(), ",");
+              auto values = StringTools::splitStringOnStringDelimiter((*it).get<std::string>(), ",");
               value = Bar::Range(std::stof(values[0]), std::stof(values[1]));
             }
             break;
             case PrimitiveProperty::Text:
-              value = Text::DisplayString((std::string) it.value(), 0);
+              value = Text::DisplayString((*it).get<std::string>(), 0);
               break;
             case PrimitiveProperty::Highlight:
             case PrimitiveProperty::Visibility:
             {
               bool val{};
-              auto str = (std::string) it.value();
+              auto str = (*it).get<std::string>();
               std::istringstream(str) >> std::boolalpha >> val;
               value = val;
             }
