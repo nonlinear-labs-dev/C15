@@ -22,8 +22,7 @@ namespace nltools
       RibbonLed,
       AudioEngine,
       Playground,
-
-      TestEndPoint,
+      TestEndPoint
     };
 
     uint getPortFor(EndPoint p);

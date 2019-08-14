@@ -43,7 +43,13 @@ namespace nltools
     {
       std::lock_guard<std::recursive_mutex> l(m_mutex);
 
-      if(m_queue.empty())
+      if(!m_queue.empty())
+      {
+        auto &m = m_queue.front();
+        m();
+        m_queue.pop_front();
+      }
+      else
       {
         g_source_destroy(m_source);
         g_source_unref(m_source);

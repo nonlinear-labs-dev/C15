@@ -21,12 +21,10 @@ namespace nltools
                 std::make_unique<threading::ContextBoundMessageQueue>(Glib::MainContext::get_default()))
           , m_contextThread(std::bind(&WebSocketOutChannel::backgroundThread, this))
       {
-        nltools::Log::warning("WebSocketOutChannel::WebSocketOutChannel");
       }
 
       WebSocketOutChannel::~WebSocketOutChannel()
       {
-        nltools::Log::warning("WebSocketOutChannel::~WebSocketOutChannel");
 
         while(!m_bgRunning)
         {
@@ -34,16 +32,11 @@ namespace nltools
           std::this_thread::sleep_for(10ms);
         }
 
-        for(auto i = 0; i < 3; i++)
-          nltools::Log::warning("WebSocketOutChannel BGThread finished!");
-
         if(m_messageLoop)
           m_messageLoop->quit();
 
         if(m_contextThread.joinable())
           m_contextThread.join();
-
-        nltools::Log::warning("DONE WebSocketOutChannel::~WebSocketOutChannel");
       }
 
       void WebSocketOutChannel::send(const SerializedMessage &msg)
@@ -96,15 +89,15 @@ namespace nltools
 
       void WebSocketOutChannel::backgroundThread()
       {
-        nltools::Log::warning("WebSocketOutChannel::backgroundThread");
-
         pthread_setname_np(pthread_self(), "WebSockOut");
 
         auto m = Glib::MainContext::create();
         g_main_context_push_thread_default(m->gobj());
+
         m_backgroundContextQueue = std::make_unique<threading::ContextBoundMessageQueue>(m);
         m_messageLoop = Glib::MainLoop::create(m);
         m_backgroundContextQueue->pushMessage(std::bind(&WebSocketOutChannel::connect, this));
+
         auto c = m->signal_timeout().connect_seconds(sigc::mem_fun(this, &WebSocketOutChannel::ping), 2);
         m_messageLoop->run();
         c.disconnect();
@@ -118,7 +111,6 @@ namespace nltools
 
       void WebSocketOutChannel::connect()
       {
-        nltools::Log::warning("WebSocketOutChannel::connect()");
         m_bgRunning = true;
         m_message.reset(soup_message_new("GET", m_uri.c_str()));
         auto cb = reinterpret_cast<GAsyncReadyCallback>(&WebSocketOutChannel::onWebSocketConnected);
@@ -128,7 +120,6 @@ namespace nltools
       void WebSocketOutChannel::onWebSocketConnected(SoupSession *session, GAsyncResult *res,
                                                      WebSocketOutChannel *pThis)
       {
-        nltools::Log::warning("WebSocketOutChannel::onWebSocketConnected()");
         GError *error = nullptr;
 
         if(SoupWebsocketConnection *connection = soup_session_websocket_connect_finish(session, res, &error))
@@ -148,7 +139,6 @@ namespace nltools
 
       void WebSocketOutChannel::signalConnectionEstablished()
       {
-        nltools::Log::warning("WebSocketOutChannel::signalConnectionEstablished");
         std::unique_lock<std::mutex> l(m_conditionMutex);
         m_connectionEstablished = true;
         m_connectionEstablishedCondition.notify_all();
@@ -159,14 +149,12 @@ namespace nltools
 
       void WebSocketOutChannel::reconnect()
       {
-        nltools::Log::warning("WebSocketOutChannel::reconnect");
         auto sigTimeOut = this->m_messageLoop->get_context()->signal_timeout();
         sigTimeOut.connect_seconds_once(std::bind(&WebSocketOutChannel::connect, this), 2);
       }
 
       void WebSocketOutChannel::connectWebSocket(SoupWebsocketConnection *connection)
       {
-        nltools::Log::warning("WebSocketOutChannel::connectWebSocket");
         auto stream = soup_websocket_connection_get_io_stream(connection);
         auto outStream = g_io_stream_get_output_stream(stream);
 
