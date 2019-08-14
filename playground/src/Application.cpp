@@ -36,8 +36,9 @@ void setupMessaging(const Options *options)
 
   Configuration conf;
   conf.offerEndpoints = { EndPoint::Playground };
-  conf.useEndpoints = { { EndPoint::Playground }, { EndPoint::AudioEngine, ae }, { EndPoint::Lpc, bbbb },
-                        { EndPoint::Oled, bbbb }, { EndPoint::PanelLed, bbbb },  { EndPoint::RibbonLed, bbbb } };
+  conf.useEndpoints = {
+    { EndPoint::Lpc, bbbb }, { EndPoint::Oled, bbbb }, { EndPoint::PanelLed, bbbb }, { EndPoint::RibbonLed, bbbb }
+  };
   nltools::msg::init(conf);
 }
 

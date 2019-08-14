@@ -15,13 +15,13 @@
 AudioEngineProxy::AudioEngineProxy()
 {
   using namespace nltools::msg;
-  onConnectionEstablished(EndPoint::AudioEngine, sigc::mem_fun(this, &AudioEngineProxy::sendEditBuffer));
+  //onConnectionEstablished(EndPoint::AudioEngine, sigc::mem_fun(this, &AudioEngineProxy::sendEditBuffer));
 }
 
 void AudioEngineProxy::sendParameter(uint16_t id, tControlPositionValue value)
 {
   using namespace nltools::msg;
-  send(EndPoint::AudioEngine, ParameterChangedMessage(id, value));
+  //send(EndPoint::AudioEngine, ParameterChangedMessage(id, value));
 }
 
 void AudioEngineProxy::toggleSuppressParameterChanges(UNDO::Transaction *transaction)
@@ -105,5 +105,5 @@ void AudioEngineProxy::sendEditBuffer()
     }
   }
 
-  nltools::msg::send(nltools::msg::EndPoint::AudioEngine, msg);
+ // nltools::msg::send(nltools::msg::EndPoint::AudioEngine, msg);
 }

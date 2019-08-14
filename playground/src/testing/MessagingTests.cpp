@@ -29,7 +29,6 @@ struct MessagingTests
     using namespace std::chrono_literals;
 
     g_test_add_func("/Messaging/init-deinit", [] {
-      return;
       using namespace nltools::msg;
 
       nltools::Log::setLevel(nltools::Log::Debug);
@@ -42,8 +41,6 @@ struct MessagingTests
     });
 
     g_test_add_func("/Messaging/send-receive", [] {
-      return;
-
       using namespace nltools::msg;
 
       Configuration conf{ { EndPoint::TestEndPoint }, { EndPoint::TestEndPoint } };
@@ -59,8 +56,6 @@ struct MessagingTests
     });
 
     g_test_add_func("/Messaging/no-packets-lost-if-bombed", [] {
-      return;
-
       using namespace nltools::msg;
 
       nltools::Log::setLevel(nltools::Log::Debug);
@@ -83,15 +78,13 @@ struct MessagingTests
     });
 
     g_test_add_func("/Messaging/notify-on-discovery", [] {
-      return;
-
       using namespace nltools::msg;
 
       bool received = false;
       Configuration conf{ { EndPoint::TestEndPoint }, { EndPoint::TestEndPoint } };
       nltools::msg::init(conf);
       auto c = onConnectionEstablished(EndPoint::TestEndPoint, [&] { received = true; });
-      doMainLoop(0s, 1s, [&] { return received; });
+      doMainLoop(0s, 5s, [&] { return received; });
       c.disconnect();
     });
   }

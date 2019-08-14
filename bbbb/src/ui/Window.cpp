@@ -17,6 +17,7 @@ Window::Window()
   set_size_request(framebufferDimX, framebufferDimY * 2);
 
   using namespace nltools::msg;
+
   receive<SetOLEDMessage>(EndPoint::Oled, sigc::mem_fun(this, &Window::onFrameBufferMessageReceived));
   receive<SetPanelLEDMessage>(EndPoint::PanelLed, sigc::mem_fun(this, &Window::onPanelLEDsMessageReceived));
 
