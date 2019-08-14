@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Types.h>
-#include <asoundlib.h>
 #include <array>
 #include <memory>
 

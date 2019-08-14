@@ -2,7 +2,6 @@
 
 #include "Types.h"
 #include "AudioOutput.h"
-#include <asoundlib.h>
 #include <functional>
 #include <thread>
 #include <memory>

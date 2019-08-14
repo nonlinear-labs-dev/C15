@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+project(C15)
+
 EXEC_PROGRAM("git"
   ${CMAKE_CURRENT_SOURCE_DIR}
   ARGS "log -1 --pretty=format:\"%ad\" --date=format:\"%Y-%m-%d %H:%M\""

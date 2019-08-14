@@ -34,14 +34,6 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/war
   DESTINATION ${CMAKE_BINARY_DIR}/playground/NonMaps
   )
 
-install(DIRECTORY ${NONMAPS_ROOT}/war
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
-  )
-
-install(DIRECTORY ${NONMAPS_ROOT}/war
-  DESTINATION ${CMAKE_BINARY_DIR}/playground/NonMaps
-  )
-
 install(DIRECTORY ${NONMAPS_ROOT}/src/war
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
   )
