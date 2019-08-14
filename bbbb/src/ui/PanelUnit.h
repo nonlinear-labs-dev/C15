@@ -9,12 +9,12 @@ class PanelUnit : public Gtk::HBox
 {
  public:
   PanelUnit();
-  virtual ~PanelUnit();
+  ~PanelUnit() override = default;
 
   void setLed(int idx, bool state);
 
  private:
-  ButtonPanel* m_panels[4];
+  std::vector<std::unique_ptr<ButtonPanel>> m_panels;
 };
 
 #endif

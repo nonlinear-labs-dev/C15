@@ -11,5 +11,7 @@ ToOledsBridge::ToOledsBridge()
 
 void ToOledsBridge::onMessageReceived(const nltools::msg::SetOLEDMessage &msg)
 {
-  static_cast<FrameBufferSender *>(m_sender.get())->send(msg.pixels, sizeof(msg.pixels));
+  if(auto fbs = static_cast<FrameBufferSender *>(m_sender.get())) {
+    fbs->send(msg.pixels, sizeof(msg.pixels));
+  }
 }

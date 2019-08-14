@@ -13,15 +13,13 @@ namespace DescriptiveLayouts
     using super = DFBLayout;
 
    public:
-    GenericLayout(LayoutClass prototype);
-    ~GenericLayout();
+    explicit GenericLayout(LayoutClass prototype);
+    ~GenericLayout() override = default;
 
     void init() override;
     bool onButton(Buttons i, bool down, ::ButtonModifiers modifiers) override;
     bool onRotary(int inc, ::ButtonModifiers modifiers) override;
     bool redrawLayout() override;
-
-    bool regularRedraw();
    private:
     bool handleEventSink(EventSinks s);
     void createControls();

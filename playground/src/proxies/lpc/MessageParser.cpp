@@ -12,8 +12,7 @@ MessageParser::NLMessage::NLMessage()
 }
 
 MessageParser::NLMessage::~NLMessage()
-{
-}
+= default;
 
 void MessageParser::NLMessage::trace(const char *fromLocation)
 {
@@ -34,8 +33,7 @@ MessageParser::MessageParser()
 }
 
 MessageParser::~MessageParser()
-{
-}
+= default;
 
 bool MessageParser::hasReadHeader() const
 {
@@ -55,7 +53,7 @@ size_t MessageParser::parse(const uint8_t *buffer, size_t numBytes)
   size_t headerBytesMissing = getNumHeaderBytesMissing();
   size_t missingBytesAvail = std::min(headerBytesMissing, numBytes);
 
-  uint8_t *rawMsg = reinterpret_cast<uint8_t *>(&m_msg);
+  auto *rawMsg = reinterpret_cast<uint8_t *>(&m_msg);
   memcpy(rawMsg + m_numBytesRead, buffer, missingBytesAvail);
 
   buffer += missingBytesAvail;
@@ -82,15 +80,12 @@ size_t MessageParser::parseBody(const uint8_t *buffer, size_t numBytes)
   {
     size_t bytesToReadNow = std::min(numBytes, numBytesToReadAtAll - m_numBytesRead);
     size_t posInBody = m_numBytesRead - getNumInitialBytesNeeded();
-    uint8_t *rawMsgBody = reinterpret_cast<uint8_t *>(m_msg.params.data());
+    auto *rawMsgBody = reinterpret_cast<uint8_t *>(m_msg.params.data());
     memcpy(rawMsgBody + posInBody, buffer, bytesToReadNow);
     m_numBytesRead += bytesToReadNow;
   }
 
   size_t stillToDo = numBytesToReadAtAll - m_numBytesRead;
-
-  if(stillToDo == 0)
-    m_msg.trace(G_STRLOC);
 
   return stillToDo;
 }
@@ -102,14 +97,14 @@ size_t MessageParser::getNumInitialBytesNeeded()
 
 const MessageParser::NLMessage &MessageParser::getMessage() const
 {
-  return std::move(m_msg);
+  return m_msg;
 }
 
 void MessageParser::registerTests()
 {
   g_test_add_func("/MessageParser/stream", []() {
     uint16_t data[] = { PRESET_DIRECT, 2, 99, 77 };
-    uint8_t *byteData = reinterpret_cast<uint8_t *>(data);
+    auto *byteData = reinterpret_cast<uint8_t *>(data);
 
     size_t msgLen = sizeof(data);
 

@@ -252,7 +252,7 @@ void FrameBuffer::drawVerticalLine(tCoordinate x, tCoordinate y, tCoordinate len
 void FrameBuffer::swapBuffers()
 {
   using namespace nltools::msg;
-  SetOLEDMessage msg;
+  SetOLEDMessage msg{};
   memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
   send(EndPoint::Oled, msg);
 }

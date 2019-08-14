@@ -20,10 +20,6 @@ namespace DescriptiveLayouts
   {
   }
 
-  GenericLayout::~GenericLayout() {
-  }
-
-
   void GenericLayout::init()
   {
     super::init();
@@ -198,11 +194,6 @@ namespace DescriptiveLayouts
       onButton(Buttons::ROTARY_MINUS, true, modifiers);
       inc++;
     }
-    return true;
-  }
-
-  bool GenericLayout::regularRedraw()
-  {
     return true;
   }
 
