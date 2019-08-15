@@ -14,14 +14,6 @@ class SoundMenu : public ButtonMenu
   void bruteForce() override;
 };
 
-class SoundButton : public ButtonMenuButton
-{
- public:
-  SoundButton(bool isFirst, bool isLast, const Glib::ustring &text, const Rect &pos);
-
-  void drawBackground(FrameBuffer &fb) override;
-};
-
 class SingleSoundEditMenu : public SoundMenu
 {
  private:

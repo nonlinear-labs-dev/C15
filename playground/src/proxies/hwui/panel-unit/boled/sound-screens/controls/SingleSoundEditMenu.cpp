@@ -97,23 +97,3 @@ void SoundMenu::bruteForce()
   if(selectedButton)
     addControl(selectedButton)->setHighlight(true);
 }
-
-SoundButton::SoundButton(bool isFirst, bool isLast, const Glib::ustring &text, const Rect &pos)
-    : ButtonMenuButton(isFirst, isLast, text, pos)
-{
-}
-
-void SoundButton::drawBackground(FrameBuffer &fb)
-{
-  const Rect &r = getPosition();
-
-  if(isHighlight())
-  {
-    fb.setColor(FrameBuffer::Colors::C128);
-    fb.fillRect(r.getX() - 10, r.getTop() + 1, r.getWidth() + 5, r.getHeight() - 3);
-  }
-  else
-  {
-    Label::drawBackground(fb);
-  }
-}

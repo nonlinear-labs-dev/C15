@@ -28,6 +28,17 @@ class ControlOwner : public Uncopyable
 
   const tControls &getControls() const;
 
+  template<class T>
+  std::list<std::shared_ptr<T>> getControls() const {
+    std::list<std::shared_ptr<T>> ret{};
+    for(auto& c: m_controls) {
+      if(auto casted = std::dynamic_pointer_cast<T>(c)) {
+        ret.emplace_back(casted);
+      }
+    }
+    return ret;
+  }
+
   template <typename T> void highlight()
   {
     for(auto c : getControls())

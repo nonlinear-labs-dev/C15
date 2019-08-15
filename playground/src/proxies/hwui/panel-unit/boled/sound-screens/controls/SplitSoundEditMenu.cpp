@@ -22,8 +22,6 @@ void SplitSoundEditMenu::init()
 
   addButton("Import Preset into VG", [=]() {
     Application::get().getHWUI()->setFocusAndMode(UIDetail::SoundSelectPresetForVoiceGroup);
-    SiSc::HWUI::bruteForce();
-    //do that with the result: DescriptiveLayouts::EventSinkBroker::get().fire(DescriptiveLayouts::EventSinks::SelectPresetForVoiceGroup);
   });
 
   addButton("Convert to Single", [=]() {

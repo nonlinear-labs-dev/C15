@@ -17,7 +17,7 @@
         "BackgroundColor": "C43",
         "Color": "C255",
         "FontSize": 8,
-        "FontDecoration": "Bold",
+        "FontDecoration": "Regular",
         "TextAlign": "Center"
       }
     }

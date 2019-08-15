@@ -267,6 +267,10 @@ namespace DescriptiveLayouts
 
   void EventSinkBroker::fire(EventSinks s)
   {
-    m_map.at(s)();
+    try {
+      m_map.at(s)();
+    } catch(...) {
+      nltools::Log::error("EventSink not found in current Layout!", toString(s));
+    }
   }
 }

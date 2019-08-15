@@ -9,6 +9,7 @@
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SplitSoundEditMenu.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Preset/LoadVoiceGroupPresetList.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Sound/GenericEditMenu.h>
 #include "ControlInstance.h"
 #include "GenericControl.h"
 #include "proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h"
@@ -61,7 +62,7 @@ namespace DescriptiveLayouts
     }
     if(controlClass == "SplitSoundEditMenu")
     {
-      return new SplitSoundEditMenu(Rect(position.getX(), position.getY(), 254, 52));
+      return new GenericEditMenu();
     }
     if(controlClass == "ParameterCarousel")
     {

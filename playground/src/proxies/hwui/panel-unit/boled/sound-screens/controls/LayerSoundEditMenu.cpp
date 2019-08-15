@@ -17,8 +17,9 @@ void LayerSoundEditMenu::init()
   auto* pm = Application::get().getPresetManager();
 
   clear();
+
   addButton("Import Preset into VG", [=]() {
-    //FOO;
+    Application::get().getHWUI()->setFocusAndMode(UIDetail::SoundSelectPresetForVoiceGroup);
   });
 
   addButton("Convert to Single", [=]() {

@@ -40,13 +40,33 @@ namespace DescriptiveLayouts
     }
   }
 
+  template <class CB> bool traverse(Control *c, CB cb)
+  {
+    if(auto cc = dynamic_cast<ControlOwner *>(c))
+    {
+      for(auto &control : cc->getControls())
+      {
+        if(traverse(control.get(), cb))
+          return true;
+      }
+    }
+
+    if(auto receiver = dynamic_cast<ButtonReceiver *>(c))
+    {
+      return cb(receiver);
+    }
+    else
+    {
+      return false;
+    }
+  }
+
   bool GenericLayout::onButton(Buttons i, bool down, ::ButtonModifiers modifiers)
   {
     for(auto &c : getControls())
     {
-      if(auto b = dynamic_cast<ButtonReceiver *>(c.get()))
-        if(b->onButton(i, down, modifiers))
-          return true;
+      if(traverse(c.get(), [=](ButtonReceiver *r) -> bool { return r->onButton(i, down, modifiers); }))
+        return true;
     }
 
     if(down)
