@@ -2,7 +2,7 @@
 #include "LayoutMode.h"
 
 LayoutMode::LayoutMode(Settings* parent)
-    : EnumSetting<LayoutVersionMode>(*parent, LayoutVersionMode::New)
+    : EnumSetting<LayoutVersionMode>(*parent, LayoutVersionMode::Mixed)
 {
 }
 
