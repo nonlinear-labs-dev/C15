@@ -4,6 +4,7 @@
 #include "TestDriver.h"
 #include <glib.h>
 #include <nltools/threading/Expiration.h>
+#include <assert.h>
 
 struct MessagingTests
 {
@@ -33,7 +34,7 @@ struct MessagingTests
 
       nltools::Log::setLevel(nltools::Log::Debug);
 
-      for(int i = 0; i < 50; i++)
+      for(int i = 0; i < 100; i++)
       {
         Configuration conf{ { EndPoint::TestEndPoint }, { EndPoint::TestEndPoint } };
         nltools::msg::init(conf);
@@ -52,6 +53,38 @@ struct MessagingTests
       auto c = receive<ParameterChangedMessage>(EndPoint::TestEndPoint, [&](const auto &msg) { numMessages++; });
       send(EndPoint::TestEndPoint, msgToSend);
       doMainLoop(0s, 2s, [&] { return numMessages == 0; });
+      c.disconnect();
+    });
+
+    g_test_add_func("/Messaging/send-receive-in-order", [] {
+      using namespace nltools::msg;
+
+      Configuration conf{ { EndPoint::TestEndPoint }, { EndPoint::TestEndPoint } };
+      nltools::msg::init(conf);
+
+      int numSend = 0;
+      int numReceived = 0;
+
+      assert(waitForConnection(EndPoint::TestEndPoint));
+
+      int lastReceivedID = -1;
+
+      auto c = receive<ParameterChangedMessage>(EndPoint::TestEndPoint, [&](const auto &msg) {
+        assert(msg.parameterId > lastReceivedID);
+        lastReceivedID = msg.parameterId;
+        numReceived++;
+        nltools::Log::warning(lastReceivedID);
+      });
+
+      for(int i = 0; i < 100; i++) {
+        ParameterChangedMessage msgToSend(0, 0.187);
+        msgToSend.parameterId = i;
+        send(EndPoint::TestEndPoint, msgToSend);
+        numSend++;
+      }
+
+      doMainLoop(0s, 2s, [&] { return numSend == numReceived; });
+
       c.disconnect();
     });
 
