@@ -35,7 +35,7 @@
           ]
         },
         "PresetList": {
-          "Class": "PresetListVGSelect",
+          "Class": "LoadVoiceGroupPresetList",
           "Position": "64, 12"
         },
         "BankLabel": {
