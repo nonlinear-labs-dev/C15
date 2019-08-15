@@ -259,7 +259,7 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
         if(m_focusAndMode.mode == UIMode::Store)
           hwui->undoableSetFocusAndMode(UIMode::Select);
         else
-          hwui->undoableSetFocusAndMode(UIMode::Store);
+          hwui->undoableSetFocusAndMode({ UIFocus::Parameters, UIMode::Store, UIDetail::Init });
         break;
 
       case Buttons::BUTTON_EDIT:

@@ -6,6 +6,7 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
 #include <device-settings/AutoLoadSelectedPreset.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Preset/GenericPresetList.h>
 #include "EventSink.h"
 #include "Application.h"
 #include "presets/PresetManager.h"
