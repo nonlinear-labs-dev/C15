@@ -69,12 +69,7 @@ namespace nltools
 
       bool WebSocketOutChannel::waitForConnection(std::chrono::milliseconds timeOut)
       {
-        std::unique_lock<std::mutex> l(m_conditionMutex);
-
-        if(!m_connectionEstablished)
-          m_connectionEstablishedCondition.wait_for(l, timeOut);
-
-        return m_connectionEstablished;
+        return m_connectionEstablishedWaiter.waitFor(timeOut);
       }
 
       void WebSocketOutChannel::onConnectionEstablished(std::function<void()> cb)
@@ -84,7 +79,7 @@ namespace nltools
 
       bool WebSocketOutChannel::isConnected() const
       {
-        return m_connectionEstablished;
+        return m_connectionEstablishedWaiter.isNotified();
       }
 
       void WebSocketOutChannel::backgroundThread()
@@ -139,9 +134,7 @@ namespace nltools
 
       void WebSocketOutChannel::signalConnectionEstablished()
       {
-        std::unique_lock<std::mutex> l(m_conditionMutex);
-        m_connectionEstablished = true;
-        m_connectionEstablishedCondition.notify_all();
+        m_connectionEstablishedWaiter.notify();
 
         if(m_onConnectionEstablished)
           m_mainThreadContextQueue->pushMessage([this] { this->m_onConnectionEstablished(); });

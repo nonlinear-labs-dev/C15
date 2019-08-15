@@ -5,8 +5,8 @@
 namespace FileTools
 {
   RecursiveDirectoryMonitor::RecursiveDirectoryMonitor(const tFile& rootFolder, tCallBack callback)
-      : m_rootFolder(rootFolder)
-      , m_callBack(std::move(callback))
+      : m_callBack(std::move(callback))
+      , m_rootFolder(rootFolder)
       , m_monitors(0)
   {
     rebuildDirectoryList();
