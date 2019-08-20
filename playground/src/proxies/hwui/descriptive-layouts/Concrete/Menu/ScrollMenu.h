@@ -3,6 +3,7 @@
 #include <proxies/hwui/controls/ControlOwner.h>
 #include <proxies/hwui/panel-unit/ButtonReceiver.h>
 #include "BasicItem.h"
+#include "ScrollMenuOverlay.h"
 
 class ScrollMenu : public ControlWithChildren, public ButtonReceiver
 {
@@ -25,7 +26,15 @@ public:
   void scroll(int direction);
 
  protected:
+  ScrollMenuOverlay* m_overlay = nullptr;
+
   std::vector<BasicItem*> m_items;
   int m_selectedItem{0};
   const int m_numPlaces;
+
+  bool handleScrolling(const Buttons &i, bool down);
+
+  bool onButtonOverlay(const Buttons &i, bool down, const ButtonModifiers &mod);
+
+  bool onSelectedItemButtonHandler(const Buttons &i, bool down, const ButtonModifiers &mod);
 };

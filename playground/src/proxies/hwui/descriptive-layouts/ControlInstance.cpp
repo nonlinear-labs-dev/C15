@@ -9,7 +9,6 @@
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SplitSoundEditMenu.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Preset/LoadVoiceGroupPresetList.h>
-#include <proxies/hwui/descriptive-layouts/Concrete/Sound/GenericEditMenu.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Sound/SplitSoundEditMenu.h>
 #include "ControlInstance.h"
 #include "GenericControl.h"

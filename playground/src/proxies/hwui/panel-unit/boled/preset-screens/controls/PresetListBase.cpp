@@ -10,6 +10,7 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListHeader.h>
 #include <functional>
 #include <memory>
+#include <utility>
 
 PresetListBase::PresetListBase(const Rect &pos, bool showBankArrows)
     : super(pos)
@@ -42,5 +43,5 @@ bool PresetListBase::redraw(FrameBuffer &fb)
 
 bool PresetListBase::animateSelectedPreset(std::function<void()> cb)
 {
-  return m_content->animateSelectedPreset(cb);
+  return m_content->animateSelectedPreset(std::move(cb));
 }

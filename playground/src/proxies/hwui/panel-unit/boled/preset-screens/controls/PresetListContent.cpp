@@ -2,6 +2,8 @@
 #include "PresetListEntry.h"
 #include "Application.h"
 #include <presets/Bank.h>
+
+#include <utility>
 #include "presets/PresetManager.h"
 #include "EmptyBankLabel.h"
 
@@ -16,7 +18,7 @@ bool PresetListContent::animateSelectedPreset(std::function<void()> cb)
 {
   if(m_secondPreset)
   {
-    m_secondPreset->animate(cb);
+    m_secondPreset->animate(std::move(cb));
     return true;
   }
   return false;

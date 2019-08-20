@@ -1,7 +1,6 @@
 #pragma once
 #include "BasicItem.h"
-
-class GenericMenuEditor;
+#include "ScrollMenuOverlay.h"
 
 class EditorItem : public BasicItem {
 public:
@@ -11,5 +10,5 @@ public:
   explicit EditorItem(tCaption cap) : BasicItem(cap) {
   }
 
-  virtual GenericMenuEditor* createEditor() = 0;
+  virtual ScrollMenuOverlay* createEditor() = 0;
 };
