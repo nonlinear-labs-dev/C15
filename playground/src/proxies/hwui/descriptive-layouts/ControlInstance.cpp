@@ -62,7 +62,7 @@ namespace DescriptiveLayouts
     }
     if(controlClass == "SplitSoundEditMenu")
     {
-      return new SplitSoundEditMenu();
+      return new SplitSoundEditMenu(Rect(position.getX(), position.getY(), 254, 52));
     }
     if(controlClass == "ParameterCarousel")
     {

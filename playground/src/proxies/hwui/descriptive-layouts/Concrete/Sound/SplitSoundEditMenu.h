@@ -4,7 +4,7 @@
 
 class SplitSoundEditMenu : public ScrollMenu {
 public:
-  SplitSoundEditMenu();
+  SplitSoundEditMenu(const Rect& r);
   void init() override;
 
 };
