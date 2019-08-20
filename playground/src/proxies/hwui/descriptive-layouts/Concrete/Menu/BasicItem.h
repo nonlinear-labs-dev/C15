@@ -24,10 +24,9 @@ class BasicItem : public ControlWithChildren
 
  public:
   template <class T>
-  BasicItem(T caption, int orderNumber = 0)
+  explicit BasicItem(T caption)
       : ControlWithChildren({ 0, 0, 254, 13 })
       , m_caption{ caption }
-      , m_orderNumber{ orderNumber }
   {
     auto leftHalf = getPosition();
     leftHalf.setLeft(getPosition().getLeft() + 1);
@@ -41,12 +40,9 @@ class BasicItem : public ControlWithChildren
   virtual bool canEnter();
   virtual void doAction() = 0;
 
-  int getOrderNumber() const;
-
- protected:
+protected:
   bool drawHighlightBorder(FrameBuffer& fb);
 
-  int m_orderNumber;
   Glib::ustring m_caption;
   LeftAlignedLabel* m_captionLabel;
 };

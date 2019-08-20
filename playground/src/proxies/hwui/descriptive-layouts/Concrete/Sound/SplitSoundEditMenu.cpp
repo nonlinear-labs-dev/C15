@@ -60,104 +60,134 @@ class GenericItem : public BasicItem
   std::function<void(void)> m_cb;
 };
 
-class lal : public LeftAlignedLabel {
-public:
-  template<class cap>
-  lal(cap c, const Rect& r) : LeftAlignedLabel{c, r} {
+class cal : public LeftAlignedLabel
+{
+ public:
+  template <class cap>
+  cal(cap c, const Rect& r)
+      : LeftAlignedLabel{ c, r }
+  {
+  }
+
+  Font::Justification getJustification() const override {
+    return Font::Justification::Center;
   }
 
 protected:
-  void setBackgroundColor(FrameBuffer &fb) const override {
+  void setBackgroundColor(FrameBuffer& fb) const override
+  {
     fb.setColor(FrameBuffer::C103);
   }
 };
 
-class RandomizeOverlay : public ScrollMenuOverlay
+class ChangeValueAndCommitOverlay : public ScrollMenuOverlay
 {
  public:
-  explicit RandomizeOverlay(const Rect& r)
+  template <class tCaption>
+  explicit ChangeValueAndCommitOverlay(const tCaption& caption, const Rect& r)
       : ScrollMenuOverlay(r)
   {
+    constexpr const auto cArrowWidth = 10;
+    constexpr const auto cDoubleArrowWidth = cArrowWidth * 2;
 
 
+    auto full = r;
+    full.setLeft(full.getLeft() + cArrowWidth);
+    full.setWidth(r.getWidth() - cDoubleArrowWidth);
+    auto left = r;
+    left.setLeft(full.getLeft() - cArrowWidth);
+    left.setWidth(cArrowWidth);
+    auto right = left;
+    right.setLeft(full.getRight());
 
-    auto label2 = addControl(new lal("Randomize", { 0, 0, 128, 13 }));
-    valueLabel = addControl(new Label({ "0.0", 0 }, { 150, 0, 64, 13 }));
-    left = addControl(new ArrowLeft({ 128, -1, 10, 13 }));
-    right = addControl(new ArrowRight({ 214, -1, 10, 13 }));
-    auto setting = Application::get().getSettings()->getSetting<RandomizeAmount>();
-
-    m_connection = setting->onChange([=](const Setting* s) {
-      if(auto rand = dynamic_cast<const RandomizeAmount*>(s))
-        valueLabel->setText({ rand->getDisplayString(), 0 });
-    });
-  }
-
-  ~RandomizeOverlay() override
-  {
-    m_connection.disconnect();
-    m_actionConnection.disconnect();
+    m_valueLabel = addControl(new Label(caption, full));
+    m_leftArrow = addControl(new ArrowLeft(left));
+    m_rightArrow = addControl(new ArrowRight(right));
   }
 
   bool onButton(Buttons i, bool down, ButtonModifiers mod) override
   {
-    auto setting = Application::get().getSettings()->getSetting<RandomizeAmount>();
-
     if(down)
     {
       if(i == Buttons::BUTTON_C)
       {
-        setting->incDec(-1, {});
-        left->setHighlight(true);
+        dec();
         return true;
       }
-      else if(i == Buttons::BUTTON_D)
+      if(i == Buttons::BUTTON_D)
       {
-        setting->incDec(1, {});
-        right->setHighlight(true);
+        inc();
         return true;
       }
-      else if(i == Buttons::BUTTON_ENTER)
+      if(i == Buttons::BUTTON_ENTER)
       {
-        doRandomize();
+        commit();
         return true;
       }
     }
-    else
-    {
-      if(i == Buttons::BUTTON_C)
-        left->setHighlight(false);
-      if(i == Buttons::BUTTON_D) {
-        right->setHighlight(false);
-      }
-    }
-
     return false;
   }
 
+  virtual void inc() = 0;
+  virtual void dec() = 0;
+  virtual void commit() = 0;
+
  protected:
-  void doRandomize() const
+  Label* m_valueLabel;
+  SymbolLabel* m_leftArrow;
+  SymbolLabel* m_rightArrow;
+};
+
+class RandomizeOverlay : public ChangeValueAndCommitOverlay
+{
+ public:
+  explicit RandomizeOverlay(const Rect& r)
+      : ChangeValueAndCommitOverlay("HALLO HALLO", r)
   {
-    auto eb = Application::get().getPresetManager()->getEditBuffer();
-    auto scope = eb->getParent()->getUndoScope().startTransaction("Randomize Editbuffer");
-    eb->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_HWUI);
-
-    valueLabel->setHighlight(true);
-
-    m_actionConnection = Application::get().getMainContext()->signal_timeout().connect(
-        [&] {
-          valueLabel->setHighlight(false);
-          return false;
-        },
-        250);
+    m_settingConnection = getSetting()->onChange([=](const Setting* s) {
+      if(auto rand = dynamic_cast<const RandomizeAmount*>(s))
+        m_valueLabel->setText(rand->getDisplayString());
+    });
   }
 
-  Label* valueLabel;
-  SymbolLabel* left;
-  SymbolLabel* right;
+  bool redraw(FrameBuffer &fb) override {
+    auto ret = ChangeValueAndCommitOverlay::redraw(fb);
+    ret |= m_valueLabel->redraw(fb);
+    ret |= m_leftArrow->redraw(fb);
+    ret |= m_rightArrow->redraw(fb);
+    return ret;
+  }
 
-  sigc::connection m_connection;
-  mutable sigc::connection m_actionConnection;
+public:
+  ~RandomizeOverlay() override
+  {
+    m_settingConnection.disconnect();
+  }
+
+  static RandomizeAmount* getSetting()
+  {
+    return Application::get().getSettings()->getSetting<RandomizeAmount>().get();
+  }
+
+  void inc() override
+  {
+    getSetting()->incDec(1, {});
+  }
+
+  void dec() override
+  {
+    getSetting()->incDec(-1, {});
+  }
+
+  void commit() override
+  {
+    auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction("Randomize");
+    Application::get().getPresetManager()->getEditBuffer()->undoableRandomize(scope->getTransaction(),
+                                                                              Initiator::EXPLICIT_HWUI);
+  }
+
+ protected:
+  sigc::connection m_settingConnection;
 };
 
 class RandomizeEditor : public EditorItem
@@ -166,20 +196,44 @@ class RandomizeEditor : public EditorItem
   RandomizeEditor()
       : EditorItem("Randomize")
   {
+    auto rightHalf = getPosition();
+    rightHalf.setWidth(rightHalf.getWidth() / 2);
+    rightHalf.setLeft(rightHalf.getWidth());
+    auto label = addControl(new Label("Value", rightHalf));
+
+    m_settingConnection
+        = Application::get().getSettings()->getSetting<RandomizeAmount>()->onChange([=](const Setting* s) {
+            if(auto rand = dynamic_cast<const RandomizeAmount*>(s))
+              label->setText(rand->getDisplayString());
+          });
+  }
+
+  ~RandomizeEditor() override
+  {
+    m_settingConnection.disconnect();
   }
 
   ScrollMenuOverlay* createEditor() override
   {
-    return new RandomizeOverlay(getPosition());
+    auto half = getPosition();
+    half.setWidth(half.getWidth() / 2);
+    half.setLeft(half.getWidth());
+
+    auto fullRight = Rect{ 128, 11, 127, 52 };
+
+    return new RandomizeOverlay(half);
   }
 
   void doAction() override
   {
   }
+
+ protected:
+  sigc::connection m_settingConnection;
 };
 
-SplitSoundEditMenu::SplitSoundEditMenu()
-    : ScrollMenu()
+SplitSoundEditMenu::SplitSoundEditMenu(const Rect& r)
+    : ScrollMenu(r)
 {
   init();
 }

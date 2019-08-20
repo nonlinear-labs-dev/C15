@@ -73,7 +73,6 @@ struct MessagingTests
         assert(msg.parameterId > lastReceivedID);
         lastReceivedID = msg.parameterId;
         numReceived++;
-        nltools::Log::warning(lastReceivedID);
       });
 
       for(int i = 0; i < 100; i++) {

@@ -1,9 +1,8 @@
 #include "ScrollMenu.h"
 #include "EditorItem.h"
 
-ScrollMenu::ScrollMenu()
-    : ControlWithChildren({ 1, 11, 254, 52 })
-    , m_numPlaces{ 4 }
+ScrollMenu::ScrollMenu(const Rect& r)
+    : ControlWithChildren(r)
 {
 }
 
@@ -61,7 +60,7 @@ bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const 
           if(auto editor = enter->createEditor())
           {
             m_overlay = addControl(editor);
-            setDirty();
+            doLayout();
             return true;
           }
         }
@@ -75,14 +74,15 @@ bool ScrollMenu::onButtonOverlay(const Buttons &i, bool down, const ButtonModifi
 {
   if(m_overlay)
   {
-    if(m_overlay->onButton(i, down, mod))
-    {
-      return true;
-    }
-    else if(down && (i == Buttons::BUTTON_A || i == Buttons::BUTTON_B))
+    if(down && (i == Buttons::BUTTON_A || i == Buttons::BUTTON_B))
     {
       remove(m_overlay);
       m_overlay = nullptr;
+      doLayout();
+      return true;
+    }
+    else if(m_overlay->onButton(i, down, mod))
+    {
       return true;
     }
   }
@@ -109,6 +109,11 @@ bool ScrollMenu::handleScrolling(const Buttons &i, bool down)
 
 void ScrollMenu::doLayout()
 {
+  if(m_overlay) {
+    m_overlay->setVisible(true);
+    return;
+  }
+
   std::array<BasicItem *, 4> items{};
 
   //collect items

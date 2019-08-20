@@ -5,5 +5,4 @@ bool ScrollMenuOverlay::onButton(Buttons i, bool down, ButtonModifiers mod) {
 }
 
 ScrollMenuOverlay::ScrollMenuOverlay(const Rect &r) : ControlWithChildren(r) {
-
 }

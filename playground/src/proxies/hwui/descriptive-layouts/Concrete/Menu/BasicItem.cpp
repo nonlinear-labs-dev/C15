@@ -10,10 +10,6 @@ bool BasicItem::redraw(FrameBuffer &fb) {
   return ret;
 }
 
-int BasicItem::getOrderNumber() const {
-  return m_orderNumber;
-}
-
 bool BasicItem::drawHighlightBorder(FrameBuffer& fb) {
   if(!isHighlight())
     return false;
