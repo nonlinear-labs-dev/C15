@@ -17,13 +17,15 @@ public:
   template <class T, class... tArgs> void addItem(tArgs... args)
   {
     m_items.emplace_back(addControl(new T(args...)));
+    doLayout();
   }
+
+  void doLayout();
 
   void scroll(int direction);
 
  protected:
-  ControlWithChildren* m_overlay;
-
-  BasicItem* m_selectedControl = nullptr;
   std::vector<BasicItem*> m_items;
+  int m_selectedItem{0};
+  const int m_numPlaces;
 };

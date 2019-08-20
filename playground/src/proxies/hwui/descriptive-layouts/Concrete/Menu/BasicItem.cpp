@@ -4,10 +4,21 @@ bool BasicItem::canEnter() {
   return false;
 }
 
-void BasicItem::redraw(FrameBuffer &fb, int offset) {
-  ControlWithChildren::redraw(fb);
+bool BasicItem::redraw(FrameBuffer &fb) {
+  auto ret = ControlWithChildren::redraw(fb);
+  ret |= drawHighlightBorder(fb);
+  return ret;
 }
 
 int BasicItem::getOrderNumber() const {
   return m_orderNumber;
+}
+
+bool BasicItem::drawHighlightBorder(FrameBuffer& fb) {
+  if(!isHighlight())
+    return false;
+
+  fb.setColor(FrameBuffer::C103);
+  fb.drawRect(getPosition());
+  return true;
 }

@@ -7,6 +7,7 @@
 
 #include "proxies/hwui/HWUI.h"
 
+/*
 SplitSoundEditMenu::SplitSoundEditMenu(const Rect& r)
     : SingleSoundEditMenu(r)
 {
@@ -32,3 +33,4 @@ void SplitSoundEditMenu::init()
 
   selectButton(0);
 }
+ */

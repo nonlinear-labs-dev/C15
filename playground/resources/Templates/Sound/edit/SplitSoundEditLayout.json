@@ -22,8 +22,7 @@
       },
       "EventSinks": {
         "BUTTON_INC": "IncButtonMenu",
-        "BUTTON_DEC": "DecButtonMenu",
-        "BUTTON_ENTER": "FireButtonMenu"
+        "BUTTON_DEC": "DecButtonMenu"
       }
     }
   }
