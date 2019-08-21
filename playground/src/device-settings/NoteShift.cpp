@@ -14,8 +14,7 @@ NoteShift::NoteShift(Settings &parent)
 }
 
 NoteShift::~NoteShift()
-{
-}
+= default;
 
 void NoteShift::load(const Glib::ustring &text)
 {
@@ -76,4 +75,8 @@ void NoteShift::incOctave()
 void NoteShift::decOctave()
 {
   set(get() - 12);
+}
+
+ustring NoteShift::getDisplayString() const {
+  return std::to_string(get());
 }

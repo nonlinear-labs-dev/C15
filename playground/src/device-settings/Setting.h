@@ -24,7 +24,9 @@ class Setting : public UpdateDocumentContributor
   virtual void sendToLPC() const;
   virtual bool persistent() const;
 
- protected:
+  virtual Glib::ustring getDisplayString() const = 0;
+
+protected:
   void notify();
 
  private:

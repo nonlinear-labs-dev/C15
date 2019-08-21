@@ -13,14 +13,17 @@ SSID::SSID(Settings &parent)
     std::string ssid = "NL-C15-" + s->save();
     auto l = ssid.length();
 
-    for(auto it = ssid.begin(); it != ssid.end(); it++)
-      if(dict.find(*it) == std::string::npos)
-        *it = '_';
+    for(char & it : ssid)
+      if(dict.find(it) == std::string::npos)
+        it = '_';
 
     set(ssid);
   });
 }
 
 SSID::~SSID()
-{
+= default;
+
+ustring SSID::getDisplayString() const {
+  return get();
 }

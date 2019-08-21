@@ -59,3 +59,7 @@ void DeviceName::sanitize()
     set(txt);
   }
 }
+
+ustring DeviceName::getDisplayString() const {
+  return m_name;
+}

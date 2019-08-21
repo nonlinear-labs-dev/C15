@@ -7,8 +7,7 @@ Passphrase::Passphrase(Settings &parent)
 }
 
 Passphrase::~Passphrase()
-{
-}
+= default;
 
 void Passphrase::dice()
 {
@@ -20,4 +19,8 @@ void Passphrase::dice()
     r += dict[g_random_int_range(0, dict.length())];
 
   set(r);
+}
+
+ustring Passphrase::getDisplayString() const {
+  return get();
 }

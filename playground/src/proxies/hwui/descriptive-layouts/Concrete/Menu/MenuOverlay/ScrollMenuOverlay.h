@@ -6,5 +6,4 @@
 class ScrollMenuOverlay : public ControlWithChildren, public ButtonReceiver {
 public:
   explicit ScrollMenuOverlay(const Rect& r);
-  bool onButton(Buttons i, bool down, ButtonModifiers mod) override;
 };

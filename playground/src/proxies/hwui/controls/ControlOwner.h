@@ -68,6 +68,9 @@ class ControlOwner : public Uncopyable
 
   template <typename T> T *addControl(T *ctrl)
   {
+    if(ctrl == nullptr)
+      return nullptr;
+
     m_controls.push_back(tControlPtr(ctrl));
 
     if(this->isHighlight())

@@ -11,6 +11,8 @@ class DateTimeAdjustment : public Setting
   DateTimeAdjustment(Settings& parent);
   virtual ~DateTimeAdjustment();
 
+  ustring getDisplayString() const override;
+
   void load(const Glib::ustring& text) override;
   Glib::ustring save() const override;
 

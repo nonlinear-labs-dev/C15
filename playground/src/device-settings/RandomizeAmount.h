@@ -19,7 +19,7 @@ class RandomizeAmount : public Setting
   tControlPositionValue get() const;
   void setDefault();
   void incDec(int incs, ButtonModifiers mod);
-  ustring getDisplayString() const;
+  Glib::ustring getDisplayString() const override;
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 

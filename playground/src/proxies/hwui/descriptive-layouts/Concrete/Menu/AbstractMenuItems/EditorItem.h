@@ -1,6 +1,6 @@
 #pragma once
 #include "BasicItem.h"
-#include "ScrollMenuOverlay.h"
+#include "proxies/hwui/descriptive-layouts/Concrete/Menu/MenuOverlay/ScrollMenuOverlay.h"
 
 class EditorItem : public BasicItem {
 public:
@@ -10,5 +10,5 @@ public:
   explicit EditorItem(tCaption cap) : BasicItem(cap) {
   }
 
-  virtual ScrollMenuOverlay* createEditor() = 0;
+  virtual ScrollMenuOverlay* createOverlay() = 0;
 };

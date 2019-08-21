@@ -13,6 +13,8 @@ class DeviceName : public Setting
   DeviceName(Settings &parent);
   virtual ~DeviceName();
 
+  ustring getDisplayString() const override;
+
   void sanitize();
 
   void load(const Glib::ustring &text) override;

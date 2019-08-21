@@ -1,5 +1,5 @@
 #include "ScrollMenu.h"
-#include "EditorItem.h"
+#include "proxies/hwui/descriptive-layouts/Concrete/Menu/AbstractMenuItems/EditorItem.h"
 
 ScrollMenu::ScrollMenu(const Rect& r)
     : ControlWithChildren(r)
@@ -57,7 +57,7 @@ bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const 
       {
         if(auto enter = dynamic_cast<EditorItem *>(selectedItem))
         {
-          if(auto editor = enter->createEditor())
+          if(auto editor = enter->createOverlay())
           {
             m_overlay = addControl(editor);
             doLayout();
@@ -115,8 +115,6 @@ void ScrollMenu::doLayout()
   }
 
   std::array<BasicItem *, 4> items{};
-
-  //collect items
 
   int outIndex = 0;
   for(int i = m_selectedItem - 1; i < m_selectedItem + 3; i++)
