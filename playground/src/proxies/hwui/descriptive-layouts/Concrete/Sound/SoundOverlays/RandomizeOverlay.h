@@ -13,4 +13,6 @@ public:
   void onCommit(bool down) override;
   void onLeft(bool down) override;
   void onRight(bool down) override;
+protected:
+  Control* m_label;
 };

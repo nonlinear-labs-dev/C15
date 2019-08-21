@@ -145,7 +145,7 @@ void ScrollMenu::doLayout()
 
   //reorder items
   auto maxY = 0;
-  const auto left = getPosition().getLeft();
+  const auto left = 0;
   for(auto &c : items)
   {
     if(c != nullptr)
@@ -160,4 +160,8 @@ void ScrollMenu::doLayout()
       maxY += 13;
     }
   }
+
+
 }
+
+

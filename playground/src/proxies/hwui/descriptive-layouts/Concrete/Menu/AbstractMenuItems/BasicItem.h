@@ -11,6 +11,12 @@ class BasicItem : public ControlWithChildren
     CaptionLabel(const Glib::ustring& caption, const Rect& rect)
         : LeftAlignedLabel(caption, rect)
     {
+
+    }
+
+  protected:
+    int getXOffset() const override {
+      return 2;
     }
 
   protected:
@@ -29,8 +35,8 @@ class BasicItem : public ControlWithChildren
       , m_caption{ caption }
   {
     auto leftHalf = getPosition();
-    leftHalf.setLeft(getPosition().getLeft() + 1);
-    leftHalf.setWidth(leftHalf.getWidth() / 2 - 2);
+    leftHalf.setLeft(leftHalf.getLeft() + 1);
+    leftHalf.setWidth((leftHalf.getWidth() / 2) - 1);
 
     m_captionLabel = addControl(new CaptionLabel(m_caption, leftHalf));
   }

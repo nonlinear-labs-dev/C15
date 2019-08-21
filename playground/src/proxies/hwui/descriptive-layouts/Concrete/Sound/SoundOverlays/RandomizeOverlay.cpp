@@ -9,7 +9,7 @@ RandomizeOverlay::RandomizeOverlay(const Rect& r)
     : ArrowIncrementDecrementOverlay(r)
 {
   auto labelWidth = r.getWidth() - 20;
-  addControl(new SettingLabel<RandomizeAmount>({11, -1, labelWidth, 13}));
+  m_label = addControl(new SettingLabel<RandomizeAmount>({11, -1, labelWidth, 13}));
 }
 
 RandomizeOverlay::~RandomizeOverlay()
@@ -44,4 +44,6 @@ void RandomizeOverlay::onCommit(bool down)
     Application::get().getPresetManager()->getEditBuffer()->undoableRandomize(scope->getTransaction(),
                                                                               Initiator::EXPLICIT_HWUI);
   }
+
+  m_label->setHighlight(down);
 }

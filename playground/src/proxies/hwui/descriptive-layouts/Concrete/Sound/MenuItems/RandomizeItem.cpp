@@ -20,10 +20,9 @@ ScrollMenuOverlay* RandomizeEditor::createOverlay()
 {
   auto half = getPosition();
   half.setHeight(half.getHeight() - 2);
-  half.setTop(getPosition().getTop() + 1);
-  half.setWidth(half.getWidth() / 2);
-  half.setLeft(half.getWidth());
-
+  half.setTop(half.getTop() + 1);
+  half.setWidth((half.getWidth() / 2) - 2);
+  half.setLeft(getPosition().getWidth() / 2);
   return new RandomizeOverlay(half);
 }
 
