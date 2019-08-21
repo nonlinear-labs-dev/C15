@@ -581,6 +581,7 @@ FocusAndMode HWUI::restrictFocusAndMode(FocusAndMode in) const
       in.mode = UIMode::Select;
     }
 
+  #warning store without bank being ignored: BUG or Feature?
   if(isDesiredPresetManager)
     if(in.mode == UIMode::Store && Application::get().getPresetManager()->getNumBanks() == 0)
       return { in.focus, UIMode::Select };
