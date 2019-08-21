@@ -9,5 +9,4 @@ public:
   RandomizeEditor();
   ~RandomizeEditor() override;
   ScrollMenuOverlay* createOverlay() override;
-  void doAction() override;
 };

@@ -10,5 +10,9 @@ public:
   explicit EditorItem(tCaption cap) : BasicItem(cap) {
   }
 
+  Rect getStandartOverlayRect();
+
   virtual ScrollMenuOverlay* createOverlay() = 0;
+
+  void doAction() override;
 };
