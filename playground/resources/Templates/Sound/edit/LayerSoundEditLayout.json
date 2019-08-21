@@ -17,7 +17,7 @@
         },
         "Content": {
           "Class": "LayerSoundEditMenu",
-          "Position": "0, 11"
+          "Position": "1, 11"
         }
       },
       "EventSinks": {

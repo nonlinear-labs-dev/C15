@@ -24,6 +24,8 @@ GenericPresetList::~GenericPresetList()
 
 void GenericPresetList::incBankSelection()
 {
+  auto old = m_selectedPreset;
+
   if(!sanitizePresetPtr())
     return;
 
@@ -33,11 +35,14 @@ void GenericPresetList::incBankSelection()
   if(nextBank)
     m_selectedPreset = nextBank->getPresetAt(0);
 
-  signalChanged();
+  if(old != m_selectedPreset)
+    signalChanged();
 }
 
 void GenericPresetList::decBankSelection()
 {
+  auto old = m_selectedPreset;
+
   if(!sanitizePresetPtr())
     return;
   auto bank = (Bank *) m_selectedPreset->getParent();
@@ -46,27 +51,33 @@ void GenericPresetList::decBankSelection()
   if(nextBank)
     m_selectedPreset = nextBank->getPresetAt(0);
 
-  signalChanged();
+  if(old != m_selectedPreset)
+    signalChanged();
 }
 
 void GenericPresetList::incPresetSelection()
 {
+  auto old = m_selectedPreset;
+
   if(!sanitizePresetPtr())
     return;
   auto bank = (Bank *) m_selectedPreset->getParent();
   if(auto candidate = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) + 1))
     m_selectedPreset = candidate;
 
-  signalChanged();
+  if(m_selectedPreset != old)
+    signalChanged();
 }
 
 void GenericPresetList::decPresetSelection()
 {
+  auto old = m_selectedPreset;
   auto bank = (Bank *) m_selectedPreset->getParent();
   if(auto candidate = bank->getPresetAt(bank->getPresetPosition(m_selectedPreset) - 1))
     m_selectedPreset = candidate;
 
-  signalChanged();
+  if(old != m_selectedPreset)
+    signalChanged();
 }
 
 Preset *GenericPresetList::getPresetAtSelected() const

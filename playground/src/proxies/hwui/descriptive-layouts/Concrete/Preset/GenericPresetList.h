@@ -5,7 +5,7 @@ class Preset;
 
 class GenericPresetList : public ControlWithChildren
 {
-public:
+ public:
   explicit GenericPresetList(const Point& p);
   ~GenericPresetList() override;
 
@@ -21,7 +21,7 @@ public:
 
   sigc::connection onChange(const sigc::slot<void, GenericPresetList*>& pl);
 
-protected:
+ protected:
   void signalChanged();
 
   void drawPresets(FrameBuffer& fb, Preset* middle);

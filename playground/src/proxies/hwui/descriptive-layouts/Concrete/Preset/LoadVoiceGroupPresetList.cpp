@@ -11,6 +11,8 @@ LoadVoiceGroupPresetList::LoadVoiceGroupPresetList(const Point &p)
 
 void LoadVoiceGroupPresetList::action()
 {
-  Application::get().getPresetManager()->getEditBuffer()->loadCurrentVG(getPresetAtSelected());
-  Application::get().getHWUI()->setFocusAndMode(UIDetail::Init);
+  if(auto preset = getPresetAtSelected()) {
+    Application::get().getPresetManager()->getEditBuffer()->loadCurrentVG(preset);
+    Application::get().getHWUI()->setFocusAndMode(UIDetail::Init);
+  }
 }
