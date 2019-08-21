@@ -7,7 +7,7 @@
 
 class ArrowIncrementDecrementOverlay : public ScrollMenuOverlay {
 public:
-  ArrowIncrementDecrementOverlay(const Rect& r);
+  explicit ArrowIncrementDecrementOverlay(const Rect& r);
 
   bool onButton(Buttons i, bool down, ButtonModifiers mod) override;
 

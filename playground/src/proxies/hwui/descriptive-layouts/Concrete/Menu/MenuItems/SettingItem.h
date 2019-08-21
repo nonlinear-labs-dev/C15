@@ -1,7 +1,7 @@
 #pragma once
 
-#include <proxies/hwui/descriptive-layouts/Concrete/Menu/AbstractMenuItems/EditorItem.h>
-#include <proxies/hwui/descriptive-layouts/Concrete/Sound/SoundOverlays/ChangeSettingOverlay.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/EditorItem.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuOverlay/ChangeSettingOverlay.h>
 
 template <class tSetting> class SettingItem : public EditorItem
 {

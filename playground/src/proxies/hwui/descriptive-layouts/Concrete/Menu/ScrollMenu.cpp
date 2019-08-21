@@ -1,7 +1,7 @@
 #include "ScrollMenu.h"
-#include "proxies/hwui/descriptive-layouts/Concrete/Menu/AbstractMenuItems/EditorItem.h"
+#include "proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/EditorItem.h"
 
-ScrollMenu::ScrollMenu(const Rect& r)
+ScrollMenu::ScrollMenu(const Rect &r)
     : ControlWithChildren(r)
 {
 }
@@ -45,12 +45,6 @@ bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const 
 
   if(auto selectedItem = m_items.at(m_selectedItem))
   {
-    if(auto rec = dynamic_cast<ButtonReceiver *>(selectedItem)) {
-      if(rec->onButton(i, down, mod)) {
-        return true;
-      }
-    }
-
     if(down && (i == Buttons::BUTTON_C || i == Buttons::BUTTON_D || i == Buttons::BUTTON_ENTER))
     {
       if(selectedItem->canEnter())
@@ -64,6 +58,11 @@ bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const 
             return true;
           }
         }
+      }
+      else
+      {
+        selectedItem->doAction();
+        return true;
       }
     }
   }
@@ -109,7 +108,8 @@ bool ScrollMenu::handleScrolling(const Buttons &i, bool down)
 
 void ScrollMenu::doLayout()
 {
-  if(m_overlay) {
+  if(m_overlay)
+  {
     m_overlay->setVisible(true);
     return;
   }
@@ -160,8 +160,4 @@ void ScrollMenu::doLayout()
       maxY += 13;
     }
   }
-
-
 }
-
-

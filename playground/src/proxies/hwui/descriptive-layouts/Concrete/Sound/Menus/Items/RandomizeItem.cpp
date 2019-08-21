@@ -3,7 +3,7 @@
 #include <device-settings/RandomizeAmount.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Menu/SettingLabel.h>
 
-RandomizeEditor::RandomizeEditor()
+RandomizeItem::RandomizeItem()
     : EditorItem("Randomize")
 {
   auto rightHalf = getPosition();
@@ -13,10 +13,10 @@ RandomizeEditor::RandomizeEditor()
   addControl(new SettingLabel<RandomizeAmount>(rightHalf));
 }
 
-RandomizeEditor::~RandomizeEditor()
+RandomizeItem::~RandomizeItem()
 = default;
 
-ScrollMenuOverlay* RandomizeEditor::createOverlay()
+ScrollMenuOverlay* RandomizeItem::createOverlay()
 {
   return new RandomizeOverlay(getStandartOverlayRect());
 }
