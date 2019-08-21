@@ -1,9 +1,11 @@
 #pragma once
+
+#include <Application.h>
 #include "BasicItem.h"
 
 class GenericItem : public BasicItem
 {
-public:
+ public:
   template <class T, class tCB>
   GenericItem(const T& caption, tCB cb)
       : BasicItem(caption)
@@ -13,6 +15,6 @@ public:
 
   void doAction() override;
 
-protected:
+ protected:
   std::function<void(void)> m_cb;
 };

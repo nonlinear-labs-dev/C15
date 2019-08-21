@@ -9,7 +9,7 @@ namespace DescriptiveLayouts
     m_discreteRegistry.emplace_back("MacroControlEditButtonMenu");
     m_discreteRegistry.emplace_back("ModulationCarousel");
     m_discreteRegistry.emplace_back("ConvertSoundMenu");
-    m_discreteRegistry.emplace_back("SingleSoundEditMenu");
+    m_discreteRegistry.emplace_back("SingleSoundEditMenuLegacy");
     m_discreteRegistry.emplace_back("LayerSoundEditMenu");
     m_discreteRegistry.emplace_back("SplitSoundEditMenu");
     m_discreteRegistry.emplace_back("ParameterCarousel");

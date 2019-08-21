@@ -4,3 +4,4 @@ void GenericItem::doAction()
 {
   m_cb();
 }
+

@@ -2,18 +2,18 @@
 #include <libundo/undo/Transaction.h>
 #include <libundo/undo/TransactionCreationScope.h>
 #include <presets/PresetManager.h>
-#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenu.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenuLegacy.h>
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/controls/ButtonMenuButton.h>
-#include "SingleSoundEditMenu.h"
+#include "SingleSoundEditMenuLegacy.h"
 
-SingleSoundEditMenu::SingleSoundEditMenu(const Rect &rect)
+SingleSoundEditMenuLegacy::SingleSoundEditMenuLegacy(const Rect &rect)
     : super(rect)
 {
   init();
 }
 
-void SingleSoundEditMenu::init()
+void SingleSoundEditMenuLegacy::init()
 {
   auto pm = Application::get().getPresetManager();
 
@@ -40,7 +40,7 @@ void SingleSoundEditMenu::init()
   selectButton(0);
 }
 
-Font::Justification SingleSoundEditMenu::getDefaultButtonJustification() const
+Font::Justification SingleSoundEditMenuLegacy::getDefaultButtonJustification() const
 {
   return Font::Justification::Left;
 }

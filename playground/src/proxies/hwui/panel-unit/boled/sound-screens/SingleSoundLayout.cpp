@@ -15,7 +15,7 @@
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/Caption.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/RandomizeAmountLabel.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/RandomizeAmountSlider.h>
-#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenu.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundEditMenuLegacy.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/SingleSoundMenu.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/TransitionTimeLabel.h>
 #include <proxies/hwui/panel-unit/boled/sound-screens/controls/TransitionTimeSlider.h>
@@ -52,7 +52,7 @@ SingleSoundLayout::SingleSoundLayout(FocusAndMode focusAndMode)
   m_edit->setVisible(false);
   m_paramLocked = addControl(new AnyParameterLockedIndicator(Rect(244, 2, 10, 11)));
 
-  m_initMenu = addControl(new SingleSoundEditMenu(Rect(195, 1, 58, 63)));
+  m_initMenu = addControl(new SingleSoundEditMenuLegacy(Rect(195, 1, 58, 63)));
   m_initMenu->setVisible(false);
 }
 
@@ -146,7 +146,7 @@ void SingleSoundLayout::toggleEditMenu(bool inEdit)
 
   if(inEdit)
   {
-    m_initMenu = addControl(new SingleSoundEditMenu(Rect(195, 0, 58, 64)));
+    m_initMenu = addControl(new SingleSoundEditMenuLegacy(Rect(195, 0, 58, 64)));
     m_initMenu->setVisible(true);
   }
   else

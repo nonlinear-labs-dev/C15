@@ -1,10 +1,3 @@
-/*
- * ExportBackupView.cpp
- *
- *  Created on: 2 Aug 2017
- *      Author: justus
- */
-
 #include <proxies/hwui/panel-unit/boled/setup/ExportBackupView.h>
 
 ExportBackupView::ExportBackupView()

@@ -2,8 +2,9 @@
 
 #include <proxies/hwui/descriptive-layouts/Concrete/Menu/ScrollMenu.h>
 
-class SplitSoundEditMenu : public ScrollMenu {
+class LayerSoundEditMenu : public ScrollMenu {
 public:
-  explicit SplitSoundEditMenu(const Rect& r);
+  explicit LayerSoundEditMenu(const Rect& r);
   void init() override;
 };
+

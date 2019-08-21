@@ -14,13 +14,13 @@ class SoundMenu : public ButtonMenu
   void bruteForce() override;
 };
 
-class SingleSoundEditMenu : public SoundMenu
+class SingleSoundEditMenuLegacy : public SoundMenu
 {
  private:
   typedef SoundMenu super;
 
  public:
-  SingleSoundEditMenu(const Rect &rect);
+  SingleSoundEditMenuLegacy(const Rect &rect);
   virtual void init();
 
  protected:

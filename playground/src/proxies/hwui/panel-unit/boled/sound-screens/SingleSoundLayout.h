@@ -4,7 +4,7 @@
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/AnyParameterLockedIndicator.h>
 
-class SingleSoundEditMenu;
+class SingleSoundEditMenuLegacy;
 class SingleSoundMenu;
 
 class SingleSoundLayout : public DFBLayout
@@ -52,7 +52,7 @@ class SingleSoundLayout : public DFBLayout
   Button *m_transitionTimeButton = nullptr;
   AnyParameterLockedIndicator *m_paramLocked = nullptr;
 
-  SingleSoundEditMenu *m_initMenu = nullptr;
+  SingleSoundEditMenuLegacy *m_initMenu = nullptr;
 
   Control *m_edit = nullptr;
 

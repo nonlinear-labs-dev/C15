@@ -12,6 +12,8 @@
 #include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/GenericItem.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/SettingItem.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Sound/Menus/Items/RandomizeItem.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Sound/Menus/Items/ConvertToSingleItem.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Sound/Menus/Items/InitSound.h>
 
 SplitSoundEditMenu::SplitSoundEditMenu(const Rect& r)
     : ScrollMenu(r)
@@ -26,17 +28,10 @@ void SplitSoundEditMenu::init()
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().bruteForce();
   });
 
-  addItem<GenericItem>("Convert to Single", [] {
-    Application::get().getPresetManager()->getEditBuffer()->setType(Type::Single);
-  });
-
-  addItem<GenericItem>("Initialize Sound", [] {
-    auto pm = Application::get().getPresetManager();
-    auto scope = pm->getUndoScope().startTransaction("Init Sound");
-    Application::get().getPresetManager()->getEditBuffer()->undoableInitSound(scope->getTransaction());
-  });
-
+  addItem<ConvertToSingleItem>();
+  addItem<InitSound>();
   addItem<RandomizeItem>();
+
   addItem<SettingItem<TransitionTime>>("Transition Time");
   addItem<SettingItem<EditSmoothingTime>>("Smoothing Time");
 }
