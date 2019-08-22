@@ -15,7 +15,7 @@
           "Class": "HighlightButton",
           "Position": "3, 51",
           "Visibility": [
-            "!MacroControlAsignment"
+            "!MacroControlAssignment"
           ]
         },
         "ButtonA": {
@@ -25,7 +25,7 @@
             "Text[Text]": "MC Pos"
           },
           "Visibility": [
-            "MacroControlAsignment",
+            "MacroControlAssignment",
             "!MCPositionChanged"
           ]
         },
@@ -36,7 +36,7 @@
             "Text[Text]": "MC Pos*"
           },
           "Visibility": [
-            "MacroControlAsignment",
+            "MacroControlAssignment",
             "MCPositionChanged"
           ]
         },
@@ -64,7 +64,7 @@
           "Class": "Button",
           "Position": "BUTTON_C",
           "Visibility": [
-            "!MacroControlAsignment"
+            "!MacroControlAssignment"
           ]
         },
         "ButtonC": {
@@ -74,7 +74,7 @@
             "Text[Text]": "MC Amt"
           },
           "Visibility": [
-            "MacroControlAsignment"
+            "MacroControlAssignment"
           ]
         },
         "ButtonCChanged": {
@@ -85,7 +85,7 @@
           },
           "Visibility": [
             "MCAmountChanged",
-            "MacroControlAsignment"
+            "MacroControlAssignment"
           ]
         },
         "MCSelection-Label": {
@@ -121,19 +121,19 @@
           "Class": "MiniDotSlider",
           "Position": "8, 25",
           "Events": "MacroControlPosition => ValueDot[ControlPosition]",
-          "Visibility": "MacroControlAsignment"
+          "Visibility": "MacroControlAssignment"
         },
         "MCPositionLabel": {
           "Class": "Label",
           "Position": "6, 30",
           "Events": "MacroControlPositionText => Text[Text]",
-          "Visibility": "MacroControlAsignment"
+          "Visibility": "MacroControlAssignment"
         },
         "MCAmountLabel": {
           "Class": "Label",
           "Position": "131, 35",
           "Events": "MacroControlAmount => Text[Text]",
-          "Visibility": "MacroControlAsignment"
+          "Visibility": "MacroControlAssignment"
         }
       },
       "EventSinks": {

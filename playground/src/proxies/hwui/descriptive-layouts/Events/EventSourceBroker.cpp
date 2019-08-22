@@ -16,9 +16,9 @@
 #include <tools/EditBufferNotifier.h>
 #include <tools/SingeltonShortcuts.h>
 #include <device-settings/AutoLoadSelectedPreset.h>
-#include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Preset/GenericPresetList.h>
-#include <EventSources/EventSourceBase.h>
+#include "proxies/hwui/descriptive-layouts/Events/EventSources/base/EventSource.h"
+#include "EventSources/MacroControlEvents.h"
 
 namespace DescriptiveLayouts
 {
@@ -288,90 +288,6 @@ namespace DescriptiveLayouts
     OnParameterSelectionChangedNotifier<CurrentParameterGroupLockStatus> m_notifier;
   };
 
-  class CurrentMacroControlAsignment : public EventSource<bool>
-  {
-   public:
-    CurrentMacroControlAsignment()
-        : m_changedNotifier{ this }
-    {
-      onParameterChanged(SiSc::EB::getCurrentParameter());
-    }
-
-    void onParameterChanged(const Parameter *p)
-    {
-      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
-      {
-        auto v = modP->getModulationSource() != MacroControls::NONE;
-        setValue(v);
-      }
-    }
-
-   protected:
-    OnParameterChangedNotifier<CurrentMacroControlAsignment> m_changedNotifier;
-  };
-
-  class CurrentMacroControlSymbol : public EventSource<DisplayString>
-  {
-   public:
-    explicit CurrentMacroControlSymbol()
-    {
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &CurrentMacroControlSymbol::onParameterSelectionChanged));
-    }
-
-   private:
-    sigc::connection m_paramValueConnection;
-
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      if(newParam)
-      {
-        m_paramValueConnection.disconnect();
-        m_paramValueConnection
-            = newParam->onParameterChanged(sigc::mem_fun(this, &CurrentMacroControlSymbol::onParamValueChanged));
-      }
-    }
-
-    void onParamValueChanged(const Parameter *param)
-    {
-      if(const auto *modP = dynamic_cast<const ModulateableParameter *>(param))
-      {
-        if(auto mc = modP->getMacroControl())
-        {
-          setValue(DisplayString(mc->getShortName(), 0));
-          return;
-        }
-      }
-      setValue(DisplayString("[-]", 0));
-    }
-  };
-
-  class CurrentMacroControlAmount : public GenericParameterDisplayValueEvent
-  {
-    void onChange() override
-    {
-      auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(const auto *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
-      {
-        setValue(DisplayString(modP->stringizeModulationAmount(), 0));
-      }
-    }
-  };
-
-  class CurrentMacroControlPositionText : public GenericParameterDisplayValueEvent
-  {
-    void onChange() override
-    {
-      auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(const auto *modP = dynamic_cast<const ModulateableParameter *>(eb->getSelected()))
-      {
-        if(auto mc = modP->getMacroControl())
-        {
-          setValue(DisplayString(mc->getDisplayString(), 0));
-        }
-      }
-    }
-  };
 
   class SoundHeaderText : public EventSource<DisplayString>
   {
@@ -811,7 +727,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::ParameterDisplayString] = std::make_unique<ParameterDisplayStringEventSource>();
     m_map[EventSources::LockStatus] = std::make_unique<CurrentParameterGroupLockStatus>();
     m_map[EventSources::MacroControlSymbol] = std::make_unique<CurrentMacroControlSymbol>();
-    m_map[EventSources::MacroControlAsignment] = std::make_unique<CurrentMacroControlAsignment>();
+    m_map[EventSources::MacroControlAssignment] = std::make_unique<CurrentMacroControlAssignment>();
     m_map[EventSources::MacroControlAmount] = std::make_unique<CurrentMacroControlAmount>();
     m_map[EventSources::MacroControlPosition] = std::make_unique<CurrentMacroControlPosition>();
     m_map[EventSources::MacroControlPositionText] = std::make_unique<CurrentMacroControlPositionText>();

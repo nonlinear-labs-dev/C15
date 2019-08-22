@@ -1,5 +1,5 @@
 #pragma once
-#include "EventSource.h"
+#include "proxies/hwui/descriptive-layouts/Events/EventSources/base/EventSource.h"
 
 namespace DescriptiveLayouts
 {
