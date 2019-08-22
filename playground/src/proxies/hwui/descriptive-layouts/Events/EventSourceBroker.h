@@ -4,29 +4,11 @@
 #include <experimental/any>
 #include <parameters/ValueRange.h>
 #include <map>
-#include "TemplateEnums.h"
+#include "proxies/hwui/descriptive-layouts/TemplateEnums.h"
 
 namespace DescriptiveLayouts
 {
-  class EventSourceBroker;
-
-  class EventSourceBase : public sigc::trackable
-  {
-   public:
-    using Callback = std::function<void(std::experimental::any)>;
-
-    sigc::connection connect(const Callback& cb)
-    {
-      cb(getLastValue());
-      return m_outputSignal.connect(cb);
-    }
-
-   protected:
-    virtual std::experimental::any getLastValue() const = 0;
-    Signal<void, std::experimental::any> m_outputSignal;
-
-    friend class EventSourceBroker;
-  };
+  class EventSourceBase;
 
   class EventSourceBroker
   {

@@ -2,7 +2,7 @@
 #include "GenericLayout.h"
 #include <tools/EnumTools.h>
 #include "Styleable.h"
-#include "EventSource.h"
+#include "proxies/hwui/descriptive-layouts/EventSources/EventSource.h"
 #include "PropertyOwner.h"
 #include "ControlRegistry.h"
 

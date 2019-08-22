@@ -1,7 +1,7 @@
 #include <utility>
 
-#include "EventSource.h"
-#include "LayoutFactory.h"
+#include "EventSourceBroker.h"
+#include "proxies/hwui/descriptive-layouts/LayoutFactory.h"
 #include <Application.h>
 #include <proxies/hwui/HWUI.h>
 #include <presets/PresetManager.h>
@@ -18,75 +18,11 @@
 #include <device-settings/AutoLoadSelectedPreset.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetList.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Preset/GenericPresetList.h>
+#include <EventSources/EventSourceBase.h>
 
 namespace DescriptiveLayouts
 {
   using DisplayString = std::pair<Glib::ustring, int>;
-
-  template <typename T> class EventSource : public EventSourceBase
-  {
-   public:
-    virtual void setValue(const T &v)
-    {
-      set_as(v);
-    }
-
-   private:
-    template <class TT> void set_as(const TT &v)
-    {
-      if(v != m_lastValue)
-      {
-        m_lastValue = v;
-        m_outputSignal.send(m_lastValue);
-      }
-    }
-
-    void set_as(const DisplayString &v)
-    {
-      auto hasher = std::hash<std::string>();
-      const auto hashNew = hasher(v.first);
-      const auto hashOld = hasher(m_lastValue.first);
-
-      if(v.first != m_lastValue.first || hashOld != hashNew)
-      {
-        m_lastValue = v;
-        m_outputSignal.send(m_lastValue);
-      }
-    }
-
-   protected:
-    std::experimental::any getLastValue() const override
-    {
-      return m_lastValue;
-    }
-
-    T m_lastValue{};
-  };
-
-  class GenericParameterDisplayValueEvent : public EventSource<DisplayString>
-  {
-   public:
-    explicit GenericParameterDisplayValueEvent()
-    {
-      Application::get().getPresetManager()->getEditBuffer()->onChange(
-          sigc::mem_fun(this, &GenericParameterDisplayValueEvent::onChange));
-
-      Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-          sigc::mem_fun(this, &GenericParameterDisplayValueEvent::onParameterSelectionChanged));
-    }
-
-    virtual void onParameterChanged(const Parameter *p)
-    {
-      onChange();
-    }
-
-    virtual void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      onChange();
-    }
-
-    virtual void onChange() = 0;
-  };
 
   class GenericRangeEventSource : public EventSource<std::pair<tControlPositionValue, tControlPositionValue>>
   {
