@@ -250,7 +250,7 @@ Bank *Bank::getMasterLeft() const
 Bank *Bank::getSlaveRight() const
 {
   if(auto pm = dynamic_cast<const PresetManager *>(getParent()))
-    for(auto bank : pm->getBanks())
+    for(const auto bank : pm->getBanks())
       if(auto masterLeft = bank->getMasterLeft())
         if(masterLeft == this)
           return bank;
@@ -261,7 +261,7 @@ Bank *Bank::getSlaveRight() const
 Bank *Bank::getSlaveBottom() const
 {
   if(auto pm = dynamic_cast<const PresetManager *>(getParent()))
-    for(auto bank : pm->getBanks())
+    for(const auto bank : pm->getBanks())
       if(auto masterLeft = bank->getMasterTop())
         if(masterLeft == this)
           return bank;

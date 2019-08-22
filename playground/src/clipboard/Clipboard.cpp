@@ -141,11 +141,9 @@ void Clipboard::copyPresets(const Glib::ustring &csv)
   m_currentContentWasCut = false;
   m_content.reset(new MultiplePresetSelection(getParent()));
 
-  auto uuids = StringTools::splitStringOnAnyDelimiter(csv, ',');
-
   auto mulPresetSelection = static_cast<MultiplePresetSelection *>(m_content.get());
 
-  for(auto uuid : uuids)
+  for(const auto& uuid : StringTools::splitStringOnAnyDelimiter(csv, ','))
   {
     if(auto preset = pm->findPreset(uuid))
     {

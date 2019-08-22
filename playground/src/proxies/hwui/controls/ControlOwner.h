@@ -41,21 +41,21 @@ class ControlOwner : public Uncopyable
 
   template <typename T> void highlight()
   {
-    for(auto c : getControls())
+    for(auto& c : getControls())
       if(std::dynamic_pointer_cast<T>(c))
         highlight(c);
   }
 
   template <typename T> void lowlight()
   {
-    for(auto c : getControls())
+    for(auto& c : getControls())
       if(auto cc = std::dynamic_pointer_cast<T>(c))
         cc->setHighlight(false);
   }
 
   template <typename T> std::shared_ptr<T> findControlOfType()
   {
-    for(auto c : getControls())
+    for(auto& c : getControls())
       if(auto p = std::dynamic_pointer_cast<T>(c))
         return p;
 

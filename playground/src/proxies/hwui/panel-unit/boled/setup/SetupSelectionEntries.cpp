@@ -16,9 +16,8 @@ SetupSelectionEntries::SetupSelectionEntries(const Rect &pos)
 
 SetupSelectionEntries::~SetupSelectionEntries()
 {
-  for(auto e : m_entries)
-    if(e)
-      delete e;
+  for(auto& e : m_entries)
+    delete e;
 }
 
 void SetupSelectionEntries::addEntry(Control *s)

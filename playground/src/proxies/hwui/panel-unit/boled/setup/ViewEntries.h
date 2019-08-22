@@ -6,7 +6,7 @@ class ViewEntries : public ControlWithChildren
 {
  public:
   ViewEntries(const Rect &pos);
-  virtual ~ViewEntries();
+  ~ViewEntries();
 
   void addEntry(Control *child, bool focussed);
   void finish();

@@ -27,7 +27,7 @@ void MenuEditor::setPosition(const Rect &)
   int w = 2 * menuEditorPosition.getWidth() / 3;
   int x = (menuEditorPosition.getWidth() - w) / 2;
 
-  for(auto c : getControls())
+  for(auto& c : getControls())
   {
     c->setPosition(Rect(x, y, w, h));
     y += h;
@@ -45,7 +45,7 @@ void MenuEditor::updateOnSettingChanged()
   int selectedIndex = getSelectedIndex();
   int assignIndex = selectedIndex - 1;
 
-  for(auto c : getControls())
+  for(auto& c : getControls())
   {
     if(auto e = std::dynamic_pointer_cast<MenuEditorEntry>(c))
     {

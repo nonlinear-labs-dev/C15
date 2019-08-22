@@ -75,7 +75,7 @@ std::vector<SearchQuery::Fields> SearchQuery::getFields() const
   return m_searchFields;
 }
 
-bool SearchQuery::iterate(std::function<bool(const ustring &, const std::vector<Fields> &)> cb) const
+bool SearchQuery::iterate(const std::function<bool(const ustring &, const std::vector<Fields> &)>& cb) const
 {
   bool match = false;
 
@@ -98,7 +98,7 @@ bool SearchQuery::iterate(std::function<bool(const ustring &, const std::vector<
   return match;
 }
 
-void assertStrings(const Glib::ustring &query, tStrings expected)
+void assertStrings(const Glib::ustring &query, const tStrings& expected)
 {
   auto s = splitQuotes(query);
 
@@ -106,12 +106,12 @@ void assertStrings(const Glib::ustring &query, tStrings expected)
   {
     std::cout << "got: ";
 
-    for(auto r : s)
+    for(const auto& r : s)
       std::cout << r << std::endl;
 
     std::cout << "expected: ";
 
-    for(auto r : expected)
+    for(const auto& r : expected)
       std::cout << r << std::endl;
 
     g_warn_if_reached();

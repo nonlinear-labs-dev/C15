@@ -114,7 +114,7 @@ void PresetInfoContent::fixLayout()
 {
   int y = 0;
 
-  for(auto infoKey : { "name", "comment", "lastchange", "devicename", "uiversion" })
+  for(const auto& infoKey : { "name", "comment", "lastchange", "devicename", "uiversion" })
   {
     y = infoFields[infoKey]->format(y);
   }

@@ -8,13 +8,12 @@
 class ButtonPanel : public Gtk::HBox
 {
  public:
-  ButtonPanel(int firstButtonId);
-  virtual ~ButtonPanel();
+  explicit ButtonPanel(int firstButtonId);
 
   void setLed(int idx, bool state);
 
  private:
-  ButtonColumn* m_columns[6];
+  std::array<std::unique_ptr<ButtonColumn>, 6> m_columns;
 };
 
 #endif

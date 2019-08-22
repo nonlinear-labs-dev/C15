@@ -230,7 +230,7 @@ bool Preset::matchesQuery(const SearchQuery &query) const
     std::array<ustring, 3> entries = { getName().lowercase(), getAttribute("Comment", "").lowercase(),
                                        getAttribute("DeviceName", "").lowercase() };
 
-    for(auto f : fields)
+    for(const auto f : fields)
     {
       if(entries[static_cast<size_t>(f)].find(part) != ustring::npos)
       {

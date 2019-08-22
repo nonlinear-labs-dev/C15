@@ -34,7 +34,7 @@ uint32_t Font::getStringWidth(const Glib::ustring &text) const
 {
   uint32_t x = 0;
 
-  for(auto c : text)
+  for(const auto c : text)
     if(check(FT_Load_Char(m_face, c, FT_LOAD_NO_BITMAP), __LINE__, c))
       x += m_face->glyph->advance.x;
 
@@ -46,7 +46,7 @@ uint32_t Font::draw(const Glib::ustring &text, tCoordinate x, tCoordinate y)
   auto oldX = x;
   x <<= 6;
 
-  for(auto c : text)
+  for(const auto c : text)
     if(check(FT_Load_Char(m_face, c, FT_LOAD_RENDER), __LINE__, c))
       x += drawLetter(m_face->glyph, x, y);
 
@@ -64,8 +64,8 @@ Font::tCoordinate Font::drawLetter(FT_GlyphSlot slot, tCoordinate x, tCoordinate
 {
   x >>= 6;
 
-  for(int srcX = 0; srcX < slot->bitmap.width; srcX++)
-    for(int srcY = 0; srcY < slot->bitmap.rows; srcY++)
+  for(auto srcX = 0; srcX < slot->bitmap.width; srcX++)
+    for(auto srcY = 0; srcY < slot->bitmap.rows; srcY++)
       if(isPixelSet(slot, srcX, srcY))
         FrameBuffer::get().setPixel(srcX + x + slot->bitmap_left, (m_height - slot->bitmap_top) + srcY + y - m_height);
 

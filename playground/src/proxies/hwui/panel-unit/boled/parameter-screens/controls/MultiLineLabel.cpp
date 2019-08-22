@@ -78,7 +78,7 @@ void MultiLineLabel::updateLines()
   int lineHeight = font->getHeight() + 3;
   int y = 0;
 
-  for(auto line : s.getLines())
+  for(const auto& line : s.getLines())
   {
     addControl(new DETAIL::ChildLabel(line, m_color, font, Rect(0, y, r.getWidth(), lineHeight)));
     y += lineHeight;

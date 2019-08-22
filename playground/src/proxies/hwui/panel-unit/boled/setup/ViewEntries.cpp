@@ -10,9 +10,8 @@ ViewEntries::ViewEntries(const Rect &pos)
 
 ViewEntries::~ViewEntries()
 {
-  for(auto p : m_entries)
-    if(p.first)
-      delete p.first;
+  for(auto& p : m_entries)
+    delete p.first;
 }
 
 void ViewEntries::addEntry(Control *child, bool focussed)

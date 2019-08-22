@@ -142,7 +142,7 @@ void ClusterEnforcement::ruleDelete(UNDO::Transaction* transaction, ClusterEnfor
 
 bool ClusterEnforcement::applyRule(UNDO::Transaction* transaction)
 {
-  for(auto clusterMaster : m_clusters)
+  for(const auto& clusterMaster : m_clusters)
   {
     if(applyRule(transaction, clusterMaster))
     {
@@ -233,8 +233,9 @@ bool inCluster(const ClusterEnforcement::tTreeNodePtr& node)
 std::vector<ClusterEnforcement::tTreeNodePtr>
     prepareNodeVector(const std::map<Uuid, ClusterEnforcement::tTreeNodePtr>& nodeMap)
 {
-  std::vector<ClusterEnforcement::tTreeNodePtr> ret;
-  for(auto x : nodeMap)
+  std::vector<ClusterEnforcement::tTreeNodePtr> ret{};
+  ret.reserve(nodeMap.size());
+  for(const auto& x : nodeMap)
     ret.push_back(x.second);
   return ret;
 }

@@ -101,7 +101,7 @@ void PresetManager::handleHTTPRequest(std::shared_ptr<NetworkRequest> request, c
 {
   ContentSection::handleHTTPRequest(request, path);
 
-  for(auto actionManager : m_actionManagers)
+  for(auto& actionManager : m_actionManagers)
     if(actionManager->matches(path))
       if(actionManager->handleRequest(path, request))
         return;

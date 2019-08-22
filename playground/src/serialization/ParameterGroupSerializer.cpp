@@ -15,8 +15,7 @@ ParameterGroupSerializer::ParameterGroupSerializer(ParameterGroup *paramGroup)
 }
 
 ParameterGroupSerializer::~ParameterGroupSerializer()
-{
-}
+= default;
 
 Glib::ustring ParameterGroupSerializer::getTagName()
 {

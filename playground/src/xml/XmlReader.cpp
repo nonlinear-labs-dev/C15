@@ -26,7 +26,7 @@ void XmlReader::on_start_element(ParseContext& context, const Glib::ustring& ele
 
   Attributes cp;
 
-  for(auto it : attributes)
+  for(const auto& it : attributes)
     cp.set(it.first, it.second);
 
   if(!onStartElement(hash(element_name), cp))

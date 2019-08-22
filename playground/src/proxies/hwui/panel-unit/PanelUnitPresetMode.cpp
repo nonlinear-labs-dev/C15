@@ -56,7 +56,7 @@ void PanelUnitPresetMode::bruteForceUpdateLeds()
   });
 }
 
-void PanelUnitPresetMode::letChangedButtonsBlink(Buttons buttonId, const std::list<int> parameters,
+void PanelUnitPresetMode::letChangedButtonsBlink(Buttons buttonId, const std::list<int>& parameters,
                                                  std::array<TwoStateLED::LedState, numLeds>& states)
 {
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
@@ -64,19 +64,19 @@ void PanelUnitPresetMode::letChangedButtonsBlink(Buttons buttonId, const std::li
   auto ebParameters = editBuffer->getParametersSortedById();
 
   bool anyChanged = false;
-  for(auto paramID : currentParams)
+  for(const auto paramID : currentParams)
   {
     anyChanged |= ebParameters[paramID]->isChangedFromLoaded();
   }
   states[(int) buttonId] = anyChanged ? TwoStateLED::BLINK : TwoStateLED::OFF;
 }
 
-void PanelUnitPresetMode::setStateForButton(Buttons buttonId, const std::list<int> parameters,
+void PanelUnitPresetMode::setStateForButton(Buttons buttonId, const std::list<int>& parameters,
                                             std::array<TwoStateLED::LedState, numLeds>& states)
 {
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
 
-  for(auto i : parameters)
+  for(const auto i : parameters)
   {
     auto signalFlowIndicator = ParameterDB::get().getSignalPathIndication(i);
     auto parameter = editBuffer->findParameterByID(static_cast<size_t>(i));

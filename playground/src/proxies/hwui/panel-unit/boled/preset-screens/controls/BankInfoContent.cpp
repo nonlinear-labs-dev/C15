@@ -124,7 +124,7 @@ void BankInfoContent::fixLayout()
 {
   int y = 0;
 
-  for(auto infoKey :
+  for(const auto& infoKey :
       { "name", "comment", "size", "state", "dateofchange", "importdate", "importfile", "exportdate", "exportfile" })
   {
     y = infoFields[infoKey]->format(y);

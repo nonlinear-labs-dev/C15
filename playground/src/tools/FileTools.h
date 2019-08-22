@@ -1,5 +1,6 @@
 #pragma once
 
+#include <utility>
 #include <vector>
 #include <experimental/filesystem>
 #include "SpawnCommandLine.h"
@@ -12,18 +13,18 @@ namespace FileTools
 
   typedef std::vector<fs::directory_entry> FileList;
 
-  static void rename(Glib::ustring oldFile, Glib::ustring newFile)
+  static void rename(const Glib::ustring& oldFile, const Glib::ustring& newFile)
   {
     SpawnCommandLine cmd(Glib::ustring::format("mv ", oldFile, " ", newFile));
   }
 
-  static Glib::ustring findSuitableFileName(Glib::ustring desiredName, Glib::ustring directoryPath, int depth)
+  static Glib::ustring findSuitableFileName(const Glib::ustring& desiredName, const Glib::ustring& directoryPath, int depth)
   {
     auto fileName = desiredName;
     if(depth != 0)
       fileName.append(std::to_string(depth));
 
-    for(auto& p : fs::directory_iterator(directoryPath.c_str()))
+    for(const auto& p : fs::directory_iterator(directoryPath.c_str()))
     {
       if(p.path().filename().stem().string() == fileName)
       {
@@ -34,25 +35,13 @@ namespace FileTools
     return fileName;
   }
 
-  static FileList getListOfFiles(Glib::ustring dir, std::function<bool(fs::directory_entry)> filter)
-  {
-    FileList list;
-
-    return list;
-  }
-
-  static FileList getListOfFilesThatMatchFilter(Glib::ustring path, std::function<bool(fs::directory_entry)> filter)
-  {
-    return getListOfFiles(path, filter);
-  }
-
-  static bool doesFileExists(Glib::ustring absolutePath)
+  static bool doesFileExists(const Glib::ustring& absolutePath)
   {
     const auto filePath = fs::path(absolutePath.c_str());
     return fs::exists(filePath);
   }
 
-  static bool writeToFile(Glib::ustring path, const char* content)
+  static bool writeToFile(const Glib::ustring& path, const char* content)
   {
     if(fs::exists(fs::path(path.c_str())))
     {
@@ -64,7 +53,7 @@ namespace FileTools
     return false;
   }
 
-  static Glib::ustring readFromFile(Glib::ustring path)
+  static Glib::ustring readFromFile(const Glib::ustring& path)
   {
     if(fs::exists(fs::path(path.c_str())))
     {
@@ -83,11 +72,6 @@ namespace FileTools
     Glib::ustring ret(stringPtr);
     g_free(stringPtr);
     return ret;
-  }
-
-  static Glib::ustring getFileName(const Glib::RefPtr<Gio::File>& file)
-  {
-    return file->query_info()->get_name();
   }
 
   static Glib::ustring getFullPath(const Glib::RefPtr<Gio::File>& file)

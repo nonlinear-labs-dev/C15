@@ -60,7 +60,7 @@ class ParameterGroup : public UpdateDocumentContributor, public IntrusiveListIte
   virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 
   // CALLBACKS
-  sigc::connection onGroupChanged(slot<void> slot);
+  sigc::connection onGroupChanged(const slot<void>& slot);
 
   void check();
 

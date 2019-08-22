@@ -2,10 +2,11 @@
 #include <proxies/hwui/controls/LeftAlignedLabel.h>
 #include <regex>
 #include <chrono>
+#include <utility>
 #include <tools/FileTools.h>
 
 FileInfoContent::FileInfoContent(std::experimental::filesystem::directory_entry file)
-    : m_file(file)
+    : m_file(std::move(file))
 {
   initializeFileInfosFromFile();
 }
@@ -54,7 +55,7 @@ void FileInfoContent::fixLayout()
 {
   int y = 0;
 
-  for(auto key : { "filename", "path", "date", "size" })
+  for(const auto& key : { "filename", "path", "date", "size" })
   {
     y = infoFields[key]->format(y);
   }

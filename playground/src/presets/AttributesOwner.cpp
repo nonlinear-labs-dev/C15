@@ -93,7 +93,7 @@ void AttributesOwner::writeDiff(Writer &writer, const AttributesOwner *other) co
   for(auto &a : other->m_attributes)
     keys.insert(a.first);
 
-  for(auto key : keys)
+  for(const auto& key : keys)
   {
     auto va = getAttribute(key, "");
     auto vb = other->getAttribute(key, "");

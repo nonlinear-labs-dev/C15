@@ -30,7 +30,7 @@ class Settings : public ContentSection
 
   template <typename T> std::shared_ptr<T> getSetting()
   {
-    for(auto s : m_settings)
+    for(auto& s : m_settings)
       if(std::shared_ptr<T> r = std::dynamic_pointer_cast<T>(s.second))
         return r;
 

@@ -71,7 +71,7 @@ size_t EditBuffer::getHash() const
 {
   size_t hash = AttributesOwner::getHash();
 
-  for(auto g : getParameterGroups())
+  for(const auto g : getParameterGroups())
     hash_combine(hash, g->getHash());
 
   return hash;

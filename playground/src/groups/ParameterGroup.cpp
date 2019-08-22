@@ -29,7 +29,7 @@ size_t ParameterGroup::getHash() const
 {
   size_t hash = 0;
 
-  for(auto p : m_parameters)
+  for(const auto p : m_parameters)
     hash_combine(hash, p->getHash());
 
   return hash;
@@ -49,7 +49,7 @@ size_t ParameterGroup::countParameters() const
 {
   size_t i = 0;
 
-  for(auto a : m_parameters)
+  for(const auto _unused : m_parameters)
     i++;
 
   return i;
@@ -63,7 +63,7 @@ ParameterGroup::tParameterPtr ParameterGroup::getParameterByID(gint32 id) const
       return a;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 ParameterGroup::tParameterPtr ParameterGroup::findParameterByID(gint32 id) const
@@ -138,7 +138,7 @@ ParameterGroup::tParameterPtr ParameterGroup::appendParameter(Parameter *p)
   return p;
 }
 
-sigc::connection ParameterGroup::onGroupChanged(slot<void> slot)
+sigc::connection ParameterGroup::onGroupChanged(const slot<void>& slot)
 {
   return m_signalGroupChanged.connectAndInit(slot);
 }
@@ -177,7 +177,7 @@ void ParameterGroup::writeDocument(Writer &writer, tUpdateID knownRevision) cons
   writer.writeTag("parameter-group", Attribute("id", getID()), Attribute("short-name", getShortName()),
                   Attribute("long-name", m_webUIName), Attribute("changed", changed), [&]() {
                     if(changed)
-                      for(const tParameterPtr p : m_parameters)
+                      for(const auto p : m_parameters)
                         p->writeDocument(writer, knownRevision);
                   });
 }

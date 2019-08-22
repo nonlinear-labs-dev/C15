@@ -21,7 +21,7 @@ class SearchQuery
   SearchQuery(const Glib::ustring &query, Mode mode, std::vector<Fields> &&searchFields);
   SearchQuery(const Glib::ustring &query, const Glib::ustring &mode, std::vector<Fields> &&searchFields);
 
-  bool iterate(std::function<bool(const Glib::ustring &, const std::vector<Fields> &fields)> cb) const;
+  bool iterate(const std::function<bool(const Glib::ustring &, const std::vector<Fields> &fields)>& cb) const;
   std::vector<Fields> getFields() const;
   static void registerTests();
 

@@ -260,7 +260,7 @@ namespace DescriptiveLayouts
     return l;
   }
 
-  tConditionList toConditions(json j)
+  tConditionList toConditions(const json& j)
   {
     tConditionList ret;
     for(auto& condition : j)

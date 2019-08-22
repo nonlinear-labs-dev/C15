@@ -570,7 +570,7 @@ BankActions::BankActions(PresetManager &presetManager)
       std::vector<std::string> strs;
       boost::split(strs, csv, boost::is_any_of(","));
 
-      for(auto uuid : strs)
+      for(const auto& uuid : strs)
       {
         if(auto src = presetManager.findPreset(uuid))
         {
@@ -785,7 +785,7 @@ void BankActions::dropPresets(UNDO::Transaction *transaction, const Glib::ustrin
     auto anchorPos = static_cast<int>(bank->getPresetPosition(anchorUUID));
     auto pos = std::max(anchorPos + offset, 0);
 
-    for(auto presetUUID : strs)
+    for(const auto& presetUUID : strs)
     {
       if(auto src = m_presetManager.findPreset(presetUUID))
       {
