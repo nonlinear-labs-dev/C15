@@ -137,8 +137,8 @@
         }
       },
       "EventSinks": {
-        "BUTTON_INC": "IncMCPos",
-        "BUTTON_DEC": "DecMCPos",
+        "BUTTON_INC+": "IncMCPos",
+        "BUTTON_DEC+": "DecMCPos",
         "BUTTON_A": "SwitchToInitDetail",
         "BUTTON_B": "SwitchToButtonBDetail",
         "BUTTON_C": "SwitchToButtonCDetail",

@@ -63,6 +63,9 @@ namespace DescriptiveLayouts
 
   bool GenericLayout::onButton(Buttons i, bool down, ::ButtonModifiers modifiers)
   {
+    if(!down)
+      removeButtonRepeat();
+
     for(auto &c : getControls())
     {
       if(traverse(c.get(), [=](ButtonReceiver *r) -> bool { return r->onButton(i, down, modifiers); }))
@@ -77,7 +80,10 @@ namespace DescriptiveLayouts
         {
           if(!handleEventSink(m.sink))
           {
-            EventSinkBroker::get().fire(m.sink);
+            if(m.repeat)
+              installButtonRepeat([=]() { EventSinkBroker::get().fire(m.sink); });
+            else
+              EventSinkBroker::get().fire(m.sink);
           }
           return true;
         }

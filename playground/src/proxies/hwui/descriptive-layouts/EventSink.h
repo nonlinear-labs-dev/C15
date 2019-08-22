@@ -20,12 +20,13 @@ namespace DescriptiveLayouts
   {
    public:
     EventSinkMapping(Buttons button, EventSinks sink, ButtonEvents event = ButtonEvents::Down,
-                     ButtonModifiers modifiers = ButtonModifiers::None);
+                     ButtonModifiers modifiers = ButtonModifiers::None, bool rep = false);
 
     Buttons button;
     ButtonEvents event;
     ButtonModifiers modifiers;
     EventSinks sink;
+    bool repeat;
   };
 
   class EventSinkBroker

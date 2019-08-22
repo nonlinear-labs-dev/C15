@@ -48,8 +48,8 @@
         }
       },
       "EventSinks": {
-        "BUTTON_INC": "IncParam",
-        "BUTTON_DEC": "DecParam",
+        "BUTTON_INC+": "IncParam",
+        "BUTTON_DEC+": "DecParam",
         "BUTTON_D": "IncParamSelection"
       }
     }

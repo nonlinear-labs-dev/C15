@@ -133,8 +133,8 @@
         }
       },
       "EventSinks": {
-        "BUTTON_INC": "IncParam",
-        "BUTTON_DEC": "DecParam",
+        "BUTTON_INC+": "IncParam",
+        "BUTTON_DEC+": "DecParam",
         "BUTTON_A": "SwitchToButtonADetail",
         "BUTTON_B": "SwitchToButtonBDetail",
         "BUTTON_C": "SwitchToButtonCDetail",

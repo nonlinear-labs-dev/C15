@@ -195,7 +195,7 @@ namespace DescriptiveLayouts
     {
       auto visibilityContent = j.at("Visibility");
 
-      for(auto & visibility : visibilityContent)
+      for(auto& visibility : visibilityContent)
       {
         auto str = visibility.get<std::string>();
         auto visibilityStrings = StringTools::splitStringOnAnyDelimiter(str, ',');
@@ -238,7 +238,24 @@ namespace DescriptiveLayouts
     LayoutClass::EventSinkList l{};
     for(json::iterator eventSink = j.begin(); eventSink != j.end(); ++eventSink)
     {
-      l.push_back(EventSinkMapping(toButtons(eventSink.key()), toEventSinks(eventSink.value())));
+      try
+      {
+        l.push_back(EventSinkMapping(toButtons(eventSink.key()), toEventSinks(eventSink.value())));
+      }
+      catch(const std::runtime_error& err)
+      {
+        auto buttonString = std::to_string(eventSink.key());
+        if(buttonString.find("+"))
+        {
+          auto buttonOnly = buttonString.substr(0, buttonString.size() - 1);
+          l.push_back(EventSinkMapping(toButtons(buttonOnly), toEventSinks(eventSink.value()), ButtonEvents::Down,
+                                       ButtonModifiers::None, true));
+        }
+        else
+        {
+          nltools::Log::warning("Could not parse EventConnection: ", *eventSink);
+        }
+      }
     }
     return l;
   }
@@ -246,7 +263,7 @@ namespace DescriptiveLayouts
   tConditionList toConditions(json j)
   {
     tConditionList ret;
-    for(auto & condition : j)
+    for(auto& condition : j)
     {
       auto str = condition.get<std::string>();
       auto conditonStrings = StringTools::splitStringOnAnyDelimiter(str, ',');

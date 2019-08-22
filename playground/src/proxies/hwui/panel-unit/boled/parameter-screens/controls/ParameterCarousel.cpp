@@ -120,7 +120,7 @@ void ParameterCarousel::turn()
 {
   bool found = false;
   bool handled = false;
-  tIfCallback cb = ([&](tControlPtr ctrl) -> bool {
+  tIfCallback cb = ([&](const tControlPtr& ctrl) -> bool {
     if(auto p = std::dynamic_pointer_cast<MiniParameter>(ctrl))
     {
       if(found)

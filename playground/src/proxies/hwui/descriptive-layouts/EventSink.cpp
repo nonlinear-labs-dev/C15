@@ -19,11 +19,12 @@
 
 namespace DescriptiveLayouts
 {
-  EventSinkMapping::EventSinkMapping(Buttons button, EventSinks sink, ButtonEvents event, ButtonModifiers modifiers)
+  EventSinkMapping::EventSinkMapping(Buttons button, EventSinks sink, ButtonEvents event, ButtonModifiers modifiers, bool rep)
       : button(button)
       , sink(sink)
       , event(event)
       , modifiers(modifiers)
+      , repeat(rep)
   {
   }
 
