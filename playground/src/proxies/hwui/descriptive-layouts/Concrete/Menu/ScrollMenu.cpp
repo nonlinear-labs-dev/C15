@@ -29,11 +29,10 @@ void ScrollMenu::scroll(int direction)
 
 bool ScrollMenu::onButton(Buttons i, bool down, ButtonModifiers mod)
 {
-
-  if(onButtonOverlay(i, down, mod))
-    return true;
-  else if(m_overlay != nullptr)
-    return false;
+  if(m_overlay)
+  {
+    return onButtonOverlay(i, down, mod);
+  }
 
   return handleScrolling(i, down) || onSelectedItemButtonHandler(i, down, mod);
 }
