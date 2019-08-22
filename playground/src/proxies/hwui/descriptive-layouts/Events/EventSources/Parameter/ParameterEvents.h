@@ -97,4 +97,13 @@ namespace DescriptiveLayouts
    private:
     sigc::connection m_modifierConnection;
   };
+
+  class ParameterValueChanged : public ParameterEvent<bool>
+  {
+   public:
+    void onSelectedParameterChanged(const Parameter *p) override
+    {
+      setValue(p && p->isValueChangedFromLoaded());
+    }
+  };
 }

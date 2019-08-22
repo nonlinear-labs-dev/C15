@@ -1,5 +1,4 @@
 #include <proxies/hwui/HWUIEnums.h>
-#include <tools/SingeltonShortcuts.h>
 #include "ControlWithChildren.h"
 
 ControlWithChildren::ControlWithChildren(const Rect &pos)

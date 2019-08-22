@@ -23,4 +23,40 @@ namespace DescriptiveLayouts
       }
     }
   };
+
+  class EditBufferName : public EditBufferEvent<DisplayString>
+  {
+   public:
+    void onChange(const EditBuffer *eb) override
+    {
+      setValue({ eb->getName(), 0 });
+    }
+  };
+
+  class CurrentVoiceGroupName : public EditBufferEvent<DisplayString>
+  {
+   public:
+    void onChange(const EditBuffer *eb) override
+    {
+      setValue({ eb->getCurrentVoiceGroupName(), 0 });
+    }
+  };
+
+  class IsCurrentVGI : public EditBufferEvent<bool>
+  {
+   public:
+    void onChange(const EditBuffer *eb) override
+    {
+      setValue(eb->isVGISelected());
+    }
+  };
+
+  class IsCurrentVGII : public EditBufferEvent<bool>
+  {
+   public:
+    void onChange(const EditBuffer *eb) override
+    {
+      setValue(eb->isVGIISelected());
+    }
+  };
 }

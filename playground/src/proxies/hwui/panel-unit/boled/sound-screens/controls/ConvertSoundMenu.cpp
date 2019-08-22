@@ -1,6 +1,6 @@
 #include <Application.h>
+#include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/controls/Button.h>
-#include <tools/SingeltonShortcuts.h>
 #include "ConvertSoundMenu.h"
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
@@ -14,7 +14,7 @@ ConvertSoundMenu::ConvertSoundMenu(const Rect &rect)
 void ConvertSoundMenu::convertSoundTo(Type newType)
 {
   Application::get().getPresetManager()->getEditBuffer()->setType(newType);
-  SiSc::HWUI::bruteForce();
+  Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().bruteForce();
 }
 
 void ConvertSoundMenu::setup()

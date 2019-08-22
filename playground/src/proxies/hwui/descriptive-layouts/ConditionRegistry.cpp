@@ -7,7 +7,6 @@
 #include "Conditions/ParameterConditions.h"
 #include "Conditions/SoundConditions.h"
 #include <device-settings/LayoutMode.h>
-#include <tools/SingeltonShortcuts.h>
 
 ConditionRegistry::tCondition ConditionRegistry::getLambda(const std::string& key)
 {
@@ -39,7 +38,7 @@ sigc::connection ConditionRegistry::onChange(const std::function<void()>& cb)
 
 void ConditionRegistry::onConditionChanged()
 {
-  if(SiSc::getLayoutSetting() != LayoutVersionMode::Old)
+  if(Application::get().getSettings()->getSetting<LayoutMode>()->get() != LayoutVersionMode::Old)
   {
     m_signal.send();
   }

@@ -4,6 +4,7 @@
 namespace DescriptiveLayouts
 {
   using DisplayString = std::pair<Glib::ustring, int>;
+  using Range = std::pair<tControlPositionValue , tControlPositionValue>;
 
   template <typename T> class EventSource : public EventSourceBase
   {

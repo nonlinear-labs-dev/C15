@@ -4,7 +4,6 @@
 #include <proxies/hwui/Font.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <tools/PerformanceTimer.h>
-#include <tools/SingeltonShortcuts.h>
 
 Oleds &Oleds::get()
 {

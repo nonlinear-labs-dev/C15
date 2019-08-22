@@ -19,7 +19,6 @@
 #include <tools/ExceptionTools.h>
 #include <proxies/hwui/descriptive-layouts/ConditionRegistry.h>
 #include <device-settings/LayoutMode.h>
-#include <tools/SingeltonShortcuts.h>
 #include "BOLED.h"
 
 

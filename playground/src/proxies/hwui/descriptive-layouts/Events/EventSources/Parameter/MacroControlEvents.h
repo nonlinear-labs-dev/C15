@@ -92,4 +92,40 @@ namespace DescriptiveLayouts
       }
     }
   };
+
+  class MCPositionChanged : public ParameterEvent<bool>
+  {
+   public:
+    void onSelectedParameterChanged(const Parameter *p) override
+    {
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
+      {
+        setValue(modP->isMacroControlAssignedAndChanged());
+      }
+    }
+  };
+
+  class MCSelectionChanged : public ParameterEvent<bool>
+  {
+  public:
+    void onSelectedParameterChanged(const Parameter *p) override
+    {
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
+      {
+        setValue(modP->isModSourceChanged());
+      }
+    }
+  };
+
+  class MCAmountChanged : public ParameterEvent<bool>
+  {
+  public:
+    void onSelectedParameterChanged(const Parameter *p) override
+    {
+      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
+      {
+        setValue(modP->isModAmountChanged());
+      }
+    }
+  };
 }
