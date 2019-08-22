@@ -133,11 +133,11 @@ class Bank : public AttributesOwner
   size_t getPreviousPresetPosition() const;
 
   Uuid m_uuid;
+  Uuid m_attachedToBankWithUuid;
   std::string m_name;
   std::string m_serializationDate;
   std::string m_x;
   std::string m_y;
-  Uuid m_attachedToBankWithUuid;
   std::string m_attachDirection;
   std::map<std::string, std::string> m_attributes;
 
