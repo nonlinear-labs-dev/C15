@@ -13,7 +13,7 @@
         "Header": {
           "Class": "InvertedLabel",
           "Position": "0, 0",
-          "Events": "SoundHeaderText => Text[Text]"
+          "Events": "EditBufferTypeText => Text[Text]"
         },
         "Name": {
           "Class": "WideHighlightLabel",

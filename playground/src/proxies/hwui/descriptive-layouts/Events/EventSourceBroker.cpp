@@ -17,8 +17,12 @@
 #include <tools/SingeltonShortcuts.h>
 #include <device-settings/AutoLoadSelectedPreset.h>
 #include <proxies/hwui/descriptive-layouts/Concrete/Preset/GenericPresetList.h>
-#include "proxies/hwui/descriptive-layouts/Events/EventSources/base/EventSource.h"
-#include "EventSources/MacroControlEvents.h"
+
+#include "EventSources/base/EventSource.h"
+#include "EventSources/Parameter/MacroControlEvents.h"
+#include "EventSources/Parameter/ParameterEvents.h"
+#include "EventSources/Parameter/GroupEvents.h"
+#include "EventSources/EditBuffer/EditBufferEvents.h"
 
 namespace DescriptiveLayouts
 {
@@ -52,40 +56,6 @@ namespace DescriptiveLayouts
     OnParameterChangedNotifier<GenericValueEventSource> m_notifier;
   };
 
-  class ParameterGroupNameEventSource : public EventSource<DisplayString>
-  {
-   public:
-    explicit ParameterGroupNameEventSource()
-        : m_notifier(this)
-    {
-    }
-
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      setValue({ newParam ? newParam->getParentGroup()->getShortName() : "", 0 });
-    }
-
-   private:
-    OnParameterSelectionChangedNotifier<ParameterGroupNameEventSource> m_notifier;
-  };
-
-  class ParamIsBipolarEventSource : public EventSource<bool>
-  {
-   public:
-    explicit ParamIsBipolarEventSource()
-        : m_notifier(this)
-    {
-    }
-
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      setValue(newParam ? newParam->isBiPolar() : false);
-    }
-
-   private:
-    OnParameterSelectionChangedNotifier<ParamIsBipolarEventSource> m_notifier;
-  };
-
   class SliderRangeEventSource : public GenericRangeEventSource
   {
    public:
@@ -109,209 +79,20 @@ namespace DescriptiveLayouts
     }
   };
 
-  class MCModRangeEventSource : public GenericRangeEventSource
-  {
-   public:
-    explicit MCModRangeEventSource()
-        : GenericRangeEventSource()
-    {
-    }
-
-   private:
-    void setRangeOrdered(float from, float to)
-    {
-      from = std::min(from, 1.0f);
-      from = std::max(from, 0.0f);
-
-      to = std::min(to, 1.0f);
-      to = std::max(to, 0.0f);
-
-      setValue(std::make_pair(from, to));
-    }
-
-   public:
-    void onParameterChanged(const Parameter *p) override
-    {
-      if(auto modP = dynamic_cast<const ModulateableParameter *>(p))
-      {
-        auto lower = std::min(modP->getModulationRange(true).first, modP->getModulationRange(true).second);
-        lower = std::max(0., lower);
-        auto upper = std::max(modP->getModulationRange(true).first, modP->getModulationRange(true).second);
-        upper = std::min(1., upper);
-        setValue(std::make_pair(lower, upper));
-      }
-    }
-  };
-
-  class CurrentMacroControlPosition : public EventSource<tControlPositionValue>
-  {
-   public:
-    explicit CurrentMacroControlPosition()
-        : EventSource()
-        , m_notifier{ this }
-    {
-    }
-
-    void onModulationSourceChanged(const ModulateableParameter *modP)
-    {
-      if(modP)
-      {
-        if(auto mc = modP->getMacroControl())
-        {
-          setValue(mc->getControlPositionValue());
-        }
-      }
-    }
-
-   protected:
-    OnModulationChangedNotifier<CurrentMacroControlPosition> m_notifier;
-  };
-
-  class CurrentParameterControlPosition : public GenericValueEventSource
-  {
-   public:
-    explicit CurrentParameterControlPosition()
-        : GenericValueEventSource()
-    {
-    }
-
-   private:
-    void onParameterChanged(const Parameter *p) override
-    {
-      if(p)
-      {
-        setValue(p->getControlPositionValue());
-      }
-    }
-  };
-
-  class ParameterNameEventSource : public EventSource<DisplayString>
-  {
-   public:
-    explicit ParameterNameEventSource()
-    {
-    }
-
-   private:
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      if(newParam)
-        setValue({ newParam->getLongName(), 0 });
-    }
-  };
-
-  class ParameterNameWithStateSuffixEventSource : public EventSource<DisplayString>
-  {
-   public:
-    explicit ParameterNameWithStateSuffixEventSource()
-        : m_notifier(this)
-    {
-    }
-
-    void onParameterChanged(const Parameter *parameter)
-    {
-      if(parameter)
-      {
-        auto changed = parameter->isChangedFromLoaded();
-        auto displayStr = parameter->getLongName().append(changed ? "*" : "");
-        setValue(DisplayString{ displayStr, changed ? 1 : 0 });
-      }
-      else
-      {
-        setValue(DisplayString{ "", 0 });
-      }
-    }
-
-   protected:
-    OnParameterChangedNotifier<ParameterNameWithStateSuffixEventSource> m_notifier;
-  };
-
-  class ParameterDisplayStringEventSource : public EventSource<DisplayString>
-  {
-   public:
-    explicit ParameterDisplayStringEventSource()
-        : m_notifier(this)
-    {
-
-      Application::get().getHWUI()->onModifiersChanged(
-          sigc::mem_fun(this, &ParameterDisplayStringEventSource::onModifierChanged));
-    }
-
-   private:
-    void onModifierChanged(::ButtonModifiers mods)
-    {
-      onParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
-    }
-
-   public:
-    void onParameterChanged(const Parameter *p)
-    {
-      auto str = p ? p->getDisplayString() : Glib::ustring{};
-
-      if(Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
-      {
-        setValue({ str + " F", 2 });
-      }
-      else
-      {
-        setValue({ str, 0 });
-      }
-    }
-
-   private:
-    OnParameterChangedNotifier<ParameterDisplayStringEventSource> m_notifier;
-    sigc::connection m_connection;
-  };
-
-  class CurrentParameterGroupLockStatus : public EventSource<bool>
-  {
-   public:
-    explicit CurrentParameterGroupLockStatus()
-        : m_notifier(this)
-    {
-      Application::get().getPresetManager()->getEditBuffer()->onLocksChanged(
-          sigc::mem_fun(this, &CurrentParameterGroupLockStatus::onLockChanged));
-    }
-
-    void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
-    {
-      onLockChanged();
-    }
-
-   private:
-    void onLockChanged()
-    {
-      auto param = Application::get().getPresetManager()->getEditBuffer()->getSelected();
-      setValue(param ? param->isLocked() : false);
-    }
-
-    OnParameterSelectionChangedNotifier<CurrentParameterGroupLockStatus> m_notifier;
-  };
 
 
-  class SoundHeaderText : public EventSource<DisplayString>
-  {
-   public:
-    SoundHeaderText()
-        : m_not{ this }
-    {
-    }
-    void onEditBufferChanged(const EditBuffer *e)
-    {
-      setValue(std::experimental::any_cast<DisplayString>(getLastValue()));
-    }
 
-   protected:
-    std::experimental::any getLastValue() const override
-    {
-      auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-      auto type = editBuffer->getType();
-      if(type == Type::Single)
-        return DisplayString{ toString(type), 0 };
-      return DisplayString{ toString(type) + (editBuffer->m_vgISelected ? "  I" : "  II"), 0 };
-    }
-    OnEditBufferChangedNotifier<SoundHeaderText> m_not;
-  };
+
+
+
+
+
+
+
+
+
+
+
 
   class EditBufferName : public EventSource<DisplayString>
   {
@@ -721,7 +502,7 @@ namespace DescriptiveLayouts
   {
     m_map[EventSources::ParameterGroupName] = std::make_unique<ParameterGroupNameEventSource>();
     m_map[EventSources::SliderRange] = std::make_unique<SliderRangeEventSource>();
-    m_map[EventSources::IsBipolar] = std::make_unique<ParamIsBipolarEventSource>();
+    m_map[EventSources::IsBipolar] = std::make_unique<ParameterIsBipolarEventSource>();
     m_map[EventSources::ParameterName] = std::make_unique<ParameterNameEventSource>();
     m_map[EventSources::ParameterNameWithStateSuffix] = std::make_unique<ParameterNameWithStateSuffixEventSource>();
     m_map[EventSources::ParameterDisplayString] = std::make_unique<ParameterDisplayStringEventSource>();
@@ -731,8 +512,8 @@ namespace DescriptiveLayouts
     m_map[EventSources::MacroControlAmount] = std::make_unique<CurrentMacroControlAmount>();
     m_map[EventSources::MacroControlPosition] = std::make_unique<CurrentMacroControlPosition>();
     m_map[EventSources::MacroControlPositionText] = std::make_unique<CurrentMacroControlPositionText>();
-    m_map[EventSources::MCModRange] = std::make_unique<MCModRangeEventSource>();
-    m_map[EventSources::SoundHeaderText] = std::make_unique<SoundHeaderText>();
+    m_map[EventSources::MCModRange] = std::make_unique<CurrentModParamModRangeEventSource>();
+    m_map[EventSources::EditBufferTypeText] = std::make_unique<EditBufferTypeStringEvent>();
     m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
     m_map[EventSources::CurrentVoiceGroupName] = std::make_unique<CurrentVoiceGroupName>();
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
