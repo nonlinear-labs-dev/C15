@@ -37,24 +37,9 @@ bool ParameterConditions::IsParameterModulateable::check() const
   return conditiondetail::getModulateableParameter() != nullptr;
 }
 
-ParameterConditions::IsParameterModulateable::IsParameterModulateable()
-    : m_selChanged{ this }
-{
-}
-
-void ParameterConditions::IsParameterModulateable::onParameterSelectionChanged(const Parameter *o, Parameter *n)
-{
-  get();
-}
-
 bool ParameterConditions::IsParameterUnmodulateable::check() const
 {
   return !IsParameterModulateable::check();
-}
-
-ParameterConditions::HasNoMcSelected::HasNoMcSelected()
-    : m_paramSig{ this }
-{
 }
 
 bool ParameterConditions::HasNoMcSelected::check() const
@@ -66,13 +51,28 @@ bool ParameterConditions::HasNoMcSelected::check() const
   return true;
 }
 
-void ParameterConditions::HasNoMcSelected::onParameterChanged(const Parameter *parameter)
-{
-  get();
-  onConditionChanged();
-}
-
 bool ParameterConditions::HasMcSelected::check() const
 {
   return !HasNoMcSelected::check();
+}
+
+ParameterConditions::ParameterCondition::ParameterCondition() {
+  m_paramChangedConnection = Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(sigc::mem_fun(this, &ParameterCondition::onParameterSelectionChanged));
+}
+
+ParameterConditions::ParameterCondition::~ParameterCondition() {
+  m_paramChangedConnection.disconnect();
+  m_paramConnection.disconnect();
+}
+
+void ParameterConditions::ParameterCondition::onParameterSelectionChanged(const Parameter* oldParam, Parameter* newParam) {
+  m_paramConnection.disconnect();
+
+  if(newParam) {
+    m_paramConnection = newParam->onParameterChanged(sigc::mem_fun(this, &ParameterCondition::onParameterChanged));
+  }
+}
+
+void ParameterConditions::ParameterCondition::onParameterChanged(const Parameter *param) {
+  get();
 }

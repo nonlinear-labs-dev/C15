@@ -8,29 +8,29 @@ namespace DescriptiveLayouts
 {
   namespace SoundConditions
   {
-    class IsXSound : public ConditionBase
+    class EditBufferCondition : public ConditionBase
     {
-     public:
-      IsXSound();
-      void onEditBufferChanged(const EditBuffer*);
-
-     protected:
-      OnEditBufferChangedNotifier<IsXSound> m_changed;
+    public:
+      EditBufferCondition();
+      virtual ~EditBufferCondition();
+    protected:
+      virtual void onEditBufferChanged();
+      sigc::connection m_editbufferChangedConnection;
     };
 
-    class IsSingleSound : public IsXSound
-    {
-     public:
-      bool check() const override;
-    };
-
-    class IsLayerSound : public IsXSound
+    class IsSingleSound : public EditBufferCondition
     {
      public:
       bool check() const override;
     };
 
-    class IsSplitSound : public IsXSound
+    class IsLayerSound : public EditBufferCondition
+    {
+     public:
+      bool check() const override;
+    };
+
+    class IsSplitSound : public EditBufferCondition
     {
      public:
       bool check() const override;

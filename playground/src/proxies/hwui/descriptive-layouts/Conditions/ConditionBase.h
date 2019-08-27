@@ -5,11 +5,6 @@
 class ConditionBase
 {
  public:
-  ConditionBase()
-  {
-    m_cache.store(false);
-  }
-
   bool get() const
   {
     auto res = check();
@@ -24,5 +19,5 @@ class ConditionBase
  protected:
   void onConditionChanged() const;
   virtual bool check() const = 0;
-  mutable std::atomic_bool m_cache;
+  mutable std::atomic_bool m_cache{false};
 };

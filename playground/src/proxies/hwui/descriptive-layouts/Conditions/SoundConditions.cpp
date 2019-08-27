@@ -1,12 +1,15 @@
 #include "SoundConditions.h"
 
-DescriptiveLayouts::SoundConditions::IsXSound::IsXSound()
-    : m_changed{ this }
-{
+DescriptiveLayouts::SoundConditions::EditBufferCondition::EditBufferCondition() {
+  m_editbufferChangedConnection = Application::get().getPresetManager()->getEditBuffer()->onChange(sigc::mem_fun(this, &EditBufferCondition::onEditBufferChanged));
 }
-void DescriptiveLayouts::SoundConditions::IsXSound::onEditBufferChanged(const EditBuffer *)
-{
+
+void DescriptiveLayouts::SoundConditions::EditBufferCondition::onEditBufferChanged() {
   get();
+}
+
+DescriptiveLayouts::SoundConditions::EditBufferCondition::~EditBufferCondition() {
+  m_editbufferChangedConnection.disconnect();
 }
 
 bool DescriptiveLayouts::SoundConditions::IsSingleSound::check() const

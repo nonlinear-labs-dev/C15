@@ -12,15 +12,25 @@ namespace DescriptiveLayouts
 {
   namespace ParameterConditions
   {
-    class IsParameterModulateable : public ConditionBase
+
+    class ParameterCondition : public ConditionBase
     {
      public:
-      IsParameterModulateable();
-      bool check() const override;
-      void onParameterSelectionChanged(const Parameter *o, Parameter *n);
+      ParameterCondition();
+      virtual ~ParameterCondition();
 
      protected:
-      OnParameterSelectionChangedNotifier<IsParameterModulateable> m_selChanged;
+      void onParameterSelectionChanged(const Parameter* oldParam, Parameter* newParam);
+      virtual void onParameterChanged(const Parameter* param);
+
+      sigc::connection m_paramChangedConnection;
+      sigc::connection m_paramConnection;
+    };
+
+    class IsParameterModulateable : public ParameterCondition
+    {
+     public:
+      bool check() const override;
     };
 
     class IsParameterUnmodulateable : public IsParameterModulateable
@@ -29,15 +39,10 @@ namespace DescriptiveLayouts
       bool check() const override;
     };
 
-    class HasNoMcSelected : public ConditionBase
+    class HasNoMcSelected : public ParameterCondition
     {
      public:
-      HasNoMcSelected();
       bool check() const override;
-      void onParameterChanged(const Parameter *parameter);
-
-     protected:
-      OnParameterChangedNotifier<HasNoMcSelected> m_paramSig;
     };
 
     class HasMcSelected : public HasNoMcSelected
