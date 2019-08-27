@@ -3,7 +3,7 @@
 #include <proxies/hwui/descriptive-layouts/Concrete/Sound/Menus/Items/RandomizeItem.h>
 #include "SingleSoundEditMenu.h"
 
-SingleSoundEditMenu::SingleSoundEditMenu(const Rect& r) : ScrollMenu(r)
+SingleSoundEditMenu::SingleSoundEditMenu(const Rect& r) : SoundEditMenu(r)
 {
   init();
 }

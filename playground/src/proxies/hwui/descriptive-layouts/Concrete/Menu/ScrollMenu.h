@@ -15,6 +15,7 @@ class ScrollMenu : public ControlWithChildren, public ButtonReceiver
   void scroll(int direction);
 
   virtual void init() = 0;
+  virtual void onActionPerformed();
 
   template <class T, class... tArgs> void addItem(tArgs... args)
   {
