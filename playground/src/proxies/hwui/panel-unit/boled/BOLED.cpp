@@ -46,7 +46,8 @@ static int failcounter = 0;
 
 void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
 {
-  switch(Application::get().getSettings()->getSetting<LayoutMode>()->get())
+  auto layoutModeSetting = Application::get().getSettings()->getSetting<LayoutMode>()->get();
+  switch(layoutModeSetting)
   {
     case LayoutVersionMode::Old:
     {
@@ -97,8 +98,10 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
       catch(...)
       {
       }
+
       DebugLevel::error("No Dynamic Layout found! UIFocus:", toString(focusAndMode.focus),
                         "UIMode:", toString(focusAndMode.mode), "UIDetail:", toString(focusAndMode.detail));
+
       installOldLayouts(focusAndMode);
       break;
   }
@@ -180,14 +183,18 @@ void BOLED::setupParameterScreen(FocusAndMode focusAndMode)
   {
     auto layout = selParam->createLayout(focusAndMode);
 
-    if(getLayout() && typeid(*layout) == typeid(*getLayout().get()))
-    {
-      getLayout()->copyFrom(layout);
-      delete layout;
-    }
-    else
-    {
-      reset(layout);
+    if(auto currentLayout = getLayout().get()) {
+      auto dynamicLayout = dynamic_cast<DescriptiveLayouts::GenericLayout*>(currentLayout) != nullptr;
+
+      if(dynamicLayout && currentLayout && typeid(*layout) == typeid(*currentLayout))
+      {
+        currentLayout->copyFrom(layout);
+        delete layout;
+      }
+      else if(!dynamicLayout)
+      {
+        reset(layout);
+      }
     }
   }
 }

@@ -386,21 +386,20 @@ bool PanelUnitParameterEditMode::setParameterSelection(gint32 audioID, bool stat
 
 bool PanelUnitParameterEditMode::isShowingParameterScreen() const
 {
-  if(Application::get().getSettings()->getSetting<LayoutMode>()->get() == LayoutVersionMode::Old)
+  auto settingValue = Application::get().getSettings()->getSetting<LayoutMode>()->get();
+  auto currentLayout = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getLayout().get();
+
+  if(settingValue == LayoutVersionMode::Old)
   {
-    auto layout = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getLayout();
-
-    if(std::dynamic_pointer_cast<ParameterLayout2>(layout))
+    if(dynamic_cast<ParameterLayout2 *>(currentLayout))
       return true;
 
-    if(std::dynamic_pointer_cast<ParameterInfoLayout>(layout))
+    if(dynamic_cast<ParameterInfoLayout *>(currentLayout))
       return true;
-
   }
-  else
+  else if(settingValue == LayoutVersionMode::New || settingValue == LayoutVersionMode::Mixed)
   {
-    if(auto genericLayout = dynamic_cast<DescriptiveLayouts::GenericLayout *>(
-           Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getLayout().get()))
+    if(auto genericLayout = dynamic_cast<DescriptiveLayouts::GenericLayout *>(currentLayout))
     {
       auto &prototype = genericLayout->getPrototype();
       if(prototype.getDesiredFocusAndMode().focus == UIFocus::Parameters)
@@ -408,8 +407,15 @@ bool PanelUnitParameterEditMode::isShowingParameterScreen() const
         return prototype.getDesiredFocusAndMode().mode == UIMode::Select;
       }
     }
-  }
+    else
+    {
+      if(dynamic_cast<ParameterLayout2 *>(currentLayout))
+        return true;
 
+      if(dynamic_cast<ParameterInfoLayout *>(currentLayout))
+        return true;
+    }
+  }
   return false;
 }
 
