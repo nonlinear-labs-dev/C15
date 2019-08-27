@@ -147,3 +147,13 @@ void ParameterCarousel::turn()
       Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(
           to_string(p->getParameter()->getID()));
 }
+
+bool ParameterCarousel::containsSelectedParameter() const {
+  for(auto& p: getControls()) {
+    if(auto mp = dynamic_cast<MiniParameter*>(p.get())) {
+      if(mp->getParameter() == Application::get().getPresetManager()->getEditBuffer()->getSelected())
+        return true;
+    }
+  }
+  return false;
+}

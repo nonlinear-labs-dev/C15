@@ -172,17 +172,6 @@ namespace DescriptiveLayouts
       }
     });
 
-    registerEvent(EventSinks::IncParamSelection, [hwui, eb]() {
-      auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
-      if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))
-      {
-        if(auto carousel = genericLayout->findControlOfType<ParameterCarousel>())
-        {
-          carousel->turn();
-        }
-      }
-    });
-
     registerEvent(EventSinks::IncModulationCarousel, [hwui]() {
       auto layout = hwui->getPanelUnit().getEditPanel().getBoled().getLayout().get();
       if(auto genericLayout = dynamic_cast<GenericLayout *>(layout))

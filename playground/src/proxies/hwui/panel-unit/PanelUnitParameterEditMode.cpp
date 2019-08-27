@@ -36,6 +36,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/PresetManagerLayout.h>
 #include <parameters/names/ParameterDB.h>
 #include "PanelUnitParameterEditMode.h"
+#include <device-settings/LayoutMode.h>
+#include <proxies/hwui/descriptive-layouts/GenericLayout.h>
 
 class ParameterInfoLayout;
 class ParameterLayout2;
@@ -384,13 +386,29 @@ bool PanelUnitParameterEditMode::setParameterSelection(gint32 audioID, bool stat
 
 bool PanelUnitParameterEditMode::isShowingParameterScreen() const
 {
-  auto layout = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getLayout();
+  if(Application::get().getSettings()->getSetting<LayoutMode>()->get() == LayoutVersionMode::Old)
+  {
+    auto layout = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getLayout();
 
-  if(std::dynamic_pointer_cast<ParameterLayout2>(layout))
-    return true;
+    if(std::dynamic_pointer_cast<ParameterLayout2>(layout))
+      return true;
 
-  if(std::dynamic_pointer_cast<ParameterInfoLayout>(layout))
-    return true;
+    if(std::dynamic_pointer_cast<ParameterInfoLayout>(layout))
+      return true;
+
+  }
+  else
+  {
+    if(auto genericLayout = dynamic_cast<DescriptiveLayouts::GenericLayout *>(
+           Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getLayout().get()))
+    {
+      auto &prototype = genericLayout->getPrototype();
+      if(prototype.getDesiredFocusAndMode().focus == UIFocus::Parameters)
+      {
+        return prototype.getDesiredFocusAndMode().mode == UIMode::Select;
+      }
+    }
+  }
 
   return false;
 }

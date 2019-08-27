@@ -3,8 +3,7 @@
     "Unmodulateable-Parameter-Select-Layout": {
       "Selector": {
         "UIFocus": "Parameters",
-        "UIMode": "Select",
-        "UIDetail": "Init"
+        "UIMode": "Select"
       },
       "Conditions": [
         "isParameterUnmodulateable"
@@ -50,7 +49,7 @@
       "EventSinks": {
         "BUTTON_INC+": "IncParam",
         "BUTTON_DEC+": "DecParam",
-        "BUTTON_D": "IncParamSelection"
+        "BUTTON_D": "IncButtonMenu"
       }
     }
   }

@@ -7,6 +7,10 @@ class Application;
 class Parameter;
 class Setting;
 
+namespace DescriptiveLayouts {
+  class GenericLayout;
+}
+
 class BOLED : public OLEDProxy, public sigc::trackable
 {
  public:
@@ -18,11 +22,12 @@ class BOLED : public OLEDProxy, public sigc::trackable
   bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
   void onRotary(signed char i);
   void setupFocusAndMode(FocusAndMode focusAndMode);
+  bool isSameParameterScreen(const DescriptiveLayouts::GenericLayout *layout, const FocusAndMode& focusAndMode) const;
   void showUndoScreen();
 
   void bruteForce();
 
-  sigc::connection onLayoutInstantiated(sigc::slot<void, Layout*> s);
+  sigc::connection onLayoutInstantiated(const sigc::slot<void, Layout*>& s);
 
   void reset(Layout *layout) override;
 

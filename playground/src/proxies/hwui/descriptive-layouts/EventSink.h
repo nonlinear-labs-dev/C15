@@ -12,7 +12,7 @@ namespace DescriptiveLayouts
        SwitchToMCSelectDetail, SwitchToButtonADetail, SwitchToButtonBDetail, SwitchToButtonCDetail,
        SwitchToButtonDDetail, SwitchToMCModRangeDetail, SwitchToMCAmtDetail, SelectPresetForVoiceGroup, IncMCSel,
        DecMCSel, IncMCAmt, DecMCAmt, IncMCPos, DecMCPos, IncButtonMenu, DecButtonMenu, FireButtonMenu,
-       IncParamSelection, IncModulationCarousel, DecModulationCarousel, ToggleVoiceGroup,
+       IncModulationCarousel, DecModulationCarousel, ToggleVoiceGroup,
        CommitPresetForButtonMenu, ToggleDirectLoad, IncPresetSelectionPresetList, DecPresetSelectionPresetList,
        IncBankSelectionPresetList, DecBankSelectionPresetList, DoPresetListAction);
 

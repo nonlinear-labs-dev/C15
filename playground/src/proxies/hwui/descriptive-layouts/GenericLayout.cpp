@@ -2,6 +2,7 @@
 
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationCarousel.h>
 #include <proxies/hwui/panel-unit/ButtonReceiver.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
 #include "GenericLayout.h"
 #include "GenericControl.h"
 #include "proxies/hwui/descriptive-layouts/Primitives/Bar.h"
@@ -128,6 +129,11 @@ namespace DescriptiveLayouts
     return DFBLayout::redrawLayout();
   }
 
+  const LayoutClass &GenericLayout::getPrototype() const
+  {
+    return m_prototype;
+  }
+
   bool GenericLayout::handleEventSink(EventSinks s)
   {
     switch(s)
@@ -157,6 +163,15 @@ namespace DescriptiveLayouts
           }
           return true;
         }
+        if(auto par = findControlOfType<ParameterCarousel>())
+        {
+          if(Application::get().getHWUI()->getButtonModifiers()[ButtonModifier::SHIFT])
+            par->antiTurn();
+          else
+            par->turn();
+
+          return true;
+        }
 
       case EventSinks::DecButtonMenu:
         if(auto m = findControlOfType<ButtonMenu>())
@@ -181,6 +196,15 @@ namespace DescriptiveLayouts
           {
             car->antiTurn();
           }
+          return true;
+        }
+        if(auto par = findControlOfType<ParameterCarousel>())
+        {
+          if(Application::get().getHWUI()->getButtonModifiers()[ButtonModifier::SHIFT])
+            par->turn();
+          else
+            par->antiTurn();
+
           return true;
         }
 

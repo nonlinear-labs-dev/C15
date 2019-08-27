@@ -1,6 +1,8 @@
 #pragma once
 
 #include <ostream>
+#include "LayoutClass.h"
+
 
 namespace DescriptiveLayouts
 {

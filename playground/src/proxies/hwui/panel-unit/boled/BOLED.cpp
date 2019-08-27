@@ -20,7 +20,8 @@
 #include <proxies/hwui/descriptive-layouts/ConditionRegistry.h>
 #include <device-settings/LayoutMode.h>
 #include "BOLED.h"
-
+#include <proxies/hwui/descriptive-layouts/GenericLayout.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterCarousel.h>
 
 BOLED::BOLED()
     : OLEDProxy(Rect(0, 0, 256, 64))
@@ -81,7 +82,12 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
     case LayoutVersionMode::Mixed:
       try
       {
-        reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
+        auto newLayout = DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode);
+        if(!isSameParameterScreen(dynamic_cast<const DescriptiveLayouts::GenericLayout*>(newLayout.get()),
+                                  focusAndMode))
+        {
+          reset(newLayout);
+        }
         return;
       }
       catch(std::runtime_error& err)
@@ -98,12 +104,37 @@ void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
   }
 }
 
-void BOLED::reset(Layout *layout) {
+bool BOLED::isSameParameterScreen(const DescriptiveLayouts::GenericLayout* layout,
+                                  const FocusAndMode& focusAndMode) const
+{
+  auto fam = layout->getPrototype().getDesiredFocusAndMode();
+
+  auto oldLayout = dynamic_cast<const DescriptiveLayouts::GenericLayout*>(getLayout().get());
+
+  if(fam.focus == UIFocus::Parameters)
+  {
+    if(fam.mode == focusAndMode.mode && oldLayout)
+    {
+      for(auto& controls : oldLayout->getControls())
+      {
+        if(auto paramCarousel = dynamic_cast<const ParameterCarousel*>(controls.get()))
+        {
+          return paramCarousel->containsSelectedParameter();
+        }
+      }
+    }
+  }
+  return false;
+}
+
+void BOLED::reset(Layout* layout)
+{
   OLEDProxy::reset(layout);
   m_layoutInstantiated.emit(layout);
 }
 
-void BOLED::reset(OLEDProxy::tLayoutPtr layout) {
+void BOLED::reset(OLEDProxy::tLayoutPtr layout)
+{
   OLEDProxy::reset(layout);
   m_layoutInstantiated.emit(layout.get());
 }
@@ -213,6 +244,7 @@ void BOLED::showUndoScreen()
   reset(new UndoLayout());
 }
 
-sigc::connection BOLED::onLayoutInstantiated(sigc::slot<void, Layout*> s) {
+sigc::connection BOLED::onLayoutInstantiated(const sigc::slot<void, Layout*>& s)
+{
   return m_layoutInstantiated.connect(s);
 }

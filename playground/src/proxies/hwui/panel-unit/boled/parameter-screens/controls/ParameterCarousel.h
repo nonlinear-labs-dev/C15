@@ -19,7 +19,11 @@ class ParameterCarousel : public Carousel
   virtual void turn() override;
   virtual void antiTurn() override;
 
- protected:
+  bool containsSelectedParameter() const;
+
+  void requestTurn();
+
+protected:
   virtual void setup(Parameter *selectedParameter) override;
 
  private:

@@ -36,6 +36,39 @@ namespace DescriptiveLayouts
     return std::all_of(selectors.begin(), selectors.end(), [=](const Selector& s) { return s.test(fam); });
   }
 
+  FocusAndMode LayoutClass::getDesiredFocusAndMode() const
+  {
+    FocusAndMode fam;
+    for(auto& c : selectors)
+    {
+      try
+      {
+        fam.focus = c.getFocus();
+        continue;
+      }
+      catch(...)
+      {
+      }
+      try
+      {
+        fam.mode = c.getMode();
+        continue;
+      }
+      catch(...)
+      {
+      }
+      try
+      {
+        fam.detail = c.getDetail();
+        continue;
+      }
+      catch(...)
+      {
+      }
+    }
+    return fam;
+  }
+
   bool LayoutClass::meetsConditions() const
   {
     return conditions.empty()

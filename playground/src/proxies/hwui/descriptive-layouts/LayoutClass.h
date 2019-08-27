@@ -48,6 +48,8 @@ namespace DescriptiveLayouts
     const unsigned long getWeight() const;
     const std::string getName() const;
 
+    FocusAndMode getDesiredFocusAndMode() const;
+
     DFBLayout *instantiate() const;
 
    private:

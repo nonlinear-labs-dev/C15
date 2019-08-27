@@ -83,6 +83,18 @@ namespace DescriptiveLayouts
       return nonstd::visit(tester, c);
     }
 
+    UIFocus getFocus() const {
+      return nonstd::get<UIFocus >(criteria);
+    }
+
+    UIMode getMode() const {
+      return nonstd::get<UIMode >(criteria);
+    }
+
+    UIDetail getDetail() const {
+      return nonstd::get<UIDetail >(criteria);
+    }
+
    private:
     Criteria criteria;
 

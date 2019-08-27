@@ -142,7 +142,7 @@
         "BUTTON_A": "SwitchToInitDetail",
         "BUTTON_B": "SwitchToButtonBDetail",
         "BUTTON_C": "SwitchToButtonCDetail",
-        "BUTTON_D": "SwitchToButtonDDetail"
+        "BUTTON_D": "IncButtonMenu"
       }
     }
   }
