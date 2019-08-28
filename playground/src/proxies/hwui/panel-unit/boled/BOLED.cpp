@@ -44,65 +44,83 @@ void BOLED::bruteForce()
 
 static int failcounter = 0;
 
-void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
+void BOLED::setupFocusAndModeMixed(FocusAndMode focusAndMode)
 {
-  auto layoutModeSetting = Application::get().getSettings()->getSetting<LayoutMode>()->get();
-  switch(layoutModeSetting)
+  try
   {
-    case LayoutVersionMode::Old:
+    reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
+  }
+  catch(...)
+  {
+    if(focusAndMode.focus == UIFocus::Setup)
     {
-      installOldLayouts(focusAndMode);
-      break;
+      if(failcounter >= 1)
+      {
+        installOldLayouts(focusAndMode);
+        failcounter = 0;
+        return;
+      }
+      else
+      {
+        failcounter++;
+      }
     }
-    case LayoutVersionMode::New:
+    auto description = ExceptionTools::handle_eptr(std::current_exception());
+    Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
+  }
+}
+
+void BOLED::setupFocusAndModeDescriptiveLayouts(FocusAndMode focusAndMode)
+{
+  try
+  {
+    if(auto newLayout = DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode))
     {
-      try
+      if(focusAndMode.focus == UIFocus::Parameters)
       {
-        reset(DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode));
-      }
-      catch(...)
-      {
-        if(focusAndMode.focus == UIFocus::Setup)
-        {
-          if(failcounter >= 1)
-          {
-            installOldLayouts(focusAndMode);
-            failcounter = 0;
-            return;
-          }
-          else
-          {
-            failcounter++;
-          }
-        }
-        auto description = ExceptionTools::handle_eptr(std::current_exception());
-        Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
-      }
-      break;
-    }
-    case LayoutVersionMode::Mixed:
-      try
-      {
-        auto newLayout = DescriptiveLayouts::BoledLayoutFactory::get().instantiate(focusAndMode);
         if(!isSameParameterScreen(dynamic_cast<const DescriptiveLayouts::GenericLayout*>(newLayout.get()),
                                   focusAndMode))
         {
           reset(newLayout);
         }
-        return;
       }
-      catch(std::runtime_error& err)
+      else
       {
-        DebugLevel::error(err.what());
+        reset(newLayout);
       }
-      catch(...)
-      {
-      }
+    }
+    else
+    {
+      DebugLevel::throwException("No DescriptiveLayout for:", focusAndMode.toString(), "found!");
+    }
+    return;
+  }
+  catch(std::runtime_error& err)
+  {
+    DebugLevel::error(err.what());
+  }
+  catch(...)
+  {
+  }
 
-      DebugLevel::error("No Dynamic Layout found! UIFocus:", toString(focusAndMode.focus),
-                        "UIMode:", toString(focusAndMode.mode), "UIDetail:", toString(focusAndMode.detail));
+  DebugLevel::error("No Dynamic Layout found! UIFocus:", toString(focusAndMode.focus),
+                    "UIMode:", toString(focusAndMode.mode), "UIDetail:", toString(focusAndMode.detail));
 
+  installOldLayouts(focusAndMode);
+}
+
+void BOLED::setupFocusAndMode(FocusAndMode focusAndMode)
+{
+  switch(Application::get().getSettings()->getSetting<LayoutMode>()->get())
+  {
+    case Old:
       installOldLayouts(focusAndMode);
+      break;
+    case Mixed:
+      setupFocusAndModeMixed(focusAndMode);
+      break;
+    case New:
+      setupFocusAndModeDescriptiveLayouts(focusAndMode);
       break;
   }
 }
@@ -112,13 +130,13 @@ bool BOLED::isSameParameterScreen(const DescriptiveLayouts::GenericLayout* layou
 {
   auto fam = layout->getPrototype().getDesiredFocusAndMode();
 
-  auto oldLayout = dynamic_cast<const DescriptiveLayouts::GenericLayout*>(getLayout().get());
+  auto currentInstalledGenericLayout = dynamic_cast<const DescriptiveLayouts::GenericLayout*>(getLayout().get());
 
   if(fam.focus == UIFocus::Parameters)
   {
-    if(fam.mode == focusAndMode.mode && oldLayout)
+    if(fam.mode == focusAndMode.mode && currentInstalledGenericLayout)
     {
-      for(auto& controls : oldLayout->getControls())
+      for(auto& controls : currentInstalledGenericLayout->getControls())
       {
         if(auto paramCarousel = dynamic_cast<const ParameterCarousel*>(controls.get()))
         {
@@ -127,6 +145,7 @@ bool BOLED::isSameParameterScreen(const DescriptiveLayouts::GenericLayout* layou
       }
     }
   }
+
   return false;
 }
 
@@ -183,15 +202,16 @@ void BOLED::setupParameterScreen(FocusAndMode focusAndMode)
   {
     auto layout = selParam->createLayout(focusAndMode);
 
-    if(auto currentLayout = getLayout().get()) {
-      auto dynamicLayout = dynamic_cast<DescriptiveLayouts::GenericLayout*>(currentLayout) != nullptr;
+    if(auto currentLayout = getLayout().get())
+    {
+      auto descriptiveLayout = dynamic_cast<DescriptiveLayouts::GenericLayout*>(currentLayout) != nullptr;
 
-      if(dynamicLayout && currentLayout && typeid(*layout) == typeid(*currentLayout))
+      if(descriptiveLayout && currentLayout && typeid(*layout) == typeid(*currentLayout))
       {
         currentLayout->copyFrom(layout);
         delete layout;
       }
-      else if(!dynamicLayout)
+      else if(!descriptiveLayout)
       {
         reset(layout);
       }

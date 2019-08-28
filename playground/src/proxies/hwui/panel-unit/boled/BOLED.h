@@ -40,5 +40,8 @@ private:
   void setupPresetScreen(FocusAndMode focusAndMode);
   void setupBankScreen(FocusAndMode focusAndMode);
 
+  void setupFocusAndModeMixed(FocusAndMode focusAndMode);
+  void setupFocusAndModeDescriptiveLayouts(FocusAndMode focusAndMode);
+
   sigc::signal<void, Layout*> m_layoutInstantiated;
 };

@@ -92,4 +92,9 @@ struct FocusAndMode
   UIFocus focus;
   UIMode mode;
   UIDetail detail;
+
+  std::string toString() {
+    return "UIFocus: " + ::toString(focus) + " UIMode: " + ::toString(mode) + " UIDetail: " + ::toString(detail);
+    return std::__cxx11::string();
+  }
 };
