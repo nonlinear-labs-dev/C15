@@ -15,6 +15,7 @@
 #include "GenericControl.h"
 
 #include "proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterEditButtonMenu.h"
+#include "ControlRegistry.h"
 
 namespace DescriptiveLayouts
 {
@@ -37,6 +38,15 @@ namespace DescriptiveLayouts
 
   Control* ControlInstance::instantiate() const
   {
+    if(ControlRegistry::get().exists(controlClass))
+    {
+      auto control = ControlRegistry::get().instantiateConcrete(controlClass, position);
+      return control ? control : new GenericControl(*this);
+    }
+    else
+    {
+      return new GenericControl(*this);
+    }
 
     if(controlClass == "MacroControlEditButtonMenu")
     {

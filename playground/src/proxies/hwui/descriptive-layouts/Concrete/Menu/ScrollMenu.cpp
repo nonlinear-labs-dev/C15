@@ -8,22 +8,9 @@ ScrollMenu::ScrollMenu(const Rect &r)
 
 void ScrollMenu::scroll(int direction)
 {
-  int s = m_items.size();
+  int s = m_items.size() - 1;
   int newIndex = m_selectedItem + direction;
-
-  if(newIndex >= s)
-  {
-    m_selectedItem = static_cast<int>(newIndex - s);
-  }
-  else if(newIndex < 0)
-  {
-    m_selectedItem = static_cast<int>(s + newIndex);
-  }
-  else
-  {
-    m_selectedItem = std::min<int>(std::max<int>(m_selectedItem + direction, 0), m_items.size() - 1);
-  }
-
+  m_selectedItem = std::min(s, std::max(newIndex, 0));
   doLayout();
 }
 
