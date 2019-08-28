@@ -15,8 +15,8 @@ namespace DescriptiveLayouts
     static ControlRegistry& get();
 
     void registerControl(ControlClass&& cp);
-    const ControlClass& find(ControlClasses id) const;
-    const bool exists(ControlClasses id) const;
+    const ControlClass& find(const ControlClasses& id) const;
+    const bool exists(const ControlClasses& id) const;
     void clear();
 
    private:

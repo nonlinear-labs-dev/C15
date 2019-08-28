@@ -3,16 +3,16 @@
 #include "TemplateEnums.h"
 #include "PrimitiveInstance.h"
 #include <list>
+#include <utility>
 
 namespace DescriptiveLayouts
 {
-
   class ControlClass
   {
    public:
     ControlClass(ControlClasses controlClass, std::list<PrimitiveInstance> primitives)
-        : controlClass(controlClass)
-        , primitves(primitives)
+        : controlClass(std::move(controlClass))
+        , primitves(std::move(primitives))
     {
     }
 

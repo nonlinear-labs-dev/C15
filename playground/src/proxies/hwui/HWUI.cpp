@@ -18,7 +18,6 @@
 #include <proxies/hwui/panel-unit/boled/BOLED.h>
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/RotaryEncoder.h>
-#include <proxies/hwui/TestLayout.h>
 #include <proxies/lpc/LPCProxy.h>
 #include <tools/Signal.h>
 #include <xml/FileOutStream.h>
@@ -556,15 +555,6 @@ void HWUI::freezeFocusAndMode()
 void HWUI::thawFocusAndMode()
 {
   m_focusAndModeFrozen = false;
-}
-
-void HWUI::testDisplays()
-{
-  auto &b = getPanelUnit().getEditPanel().getBoled();
-  b.setOverlay(new TestLayout(b));
-
-  auto &s = getBaseUnit().getPlayPanel().getSOLED();
-  s.setOverlay(new TestLayout(s));
 }
 
 FocusAndMode HWUI::restrictFocusAndMode(FocusAndMode in) const

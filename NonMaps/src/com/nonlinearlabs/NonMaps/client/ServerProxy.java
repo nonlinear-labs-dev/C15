@@ -889,12 +889,6 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void incDisplayTest() {
-		StaticURI.Path path = new StaticURI.Path("settings", "inc-test-display");
-		StaticURI uri = new StaticURI(path);
-		queueJob(uri, false);
-	}
-
 	public void unlockAllGroups() {
 		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "unlock-all-groups");
 		StaticURI uri = new StaticURI(path);

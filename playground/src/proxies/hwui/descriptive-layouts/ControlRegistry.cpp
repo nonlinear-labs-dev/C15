@@ -32,12 +32,12 @@ namespace DescriptiveLayouts
     return cr;
   }
 
-  const ControlClass& ControlRegistry::find(ControlClasses id) const
+  const ControlClass& ControlRegistry::find(const ControlClasses& id) const
   {
     return m_controlRegistry.at(id);
   }
 
-  const bool ControlRegistry::exists(ControlClasses id) const
+  const bool ControlRegistry::exists(const ControlClasses& id) const
   {
     auto genericIt = m_controlRegistry.find(id);
     auto discreteIt = std::find(m_discreteRegistry.begin(), m_discreteRegistry.end(), id);

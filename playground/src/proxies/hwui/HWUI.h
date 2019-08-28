@@ -28,7 +28,7 @@ class HWUI
  public:
   HWUI();
   virtual ~HWUI();
-  
+
   void init();
 
   void indicateBlockingMainThread();
@@ -48,8 +48,6 @@ class HWUI
 
   BaseUnit &getBaseUnit();
   const BaseUnit &getBaseUnit() const;
-
-  void testDisplays();
 
   ButtonModifiers getButtonModifiers() const;
   bool isResolutionFine() const;
