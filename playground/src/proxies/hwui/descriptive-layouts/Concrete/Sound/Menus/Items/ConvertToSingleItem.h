@@ -1,8 +1,8 @@
 #pragma once
 
-#include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/AnimatedGenericItem.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/GenericItem.h>
 
-class ConvertToSingleItem : public AnimatedGenericItem {
+class ConvertToSingleItem : public GenericItem {
 public:
   ConvertToSingleItem();
 };

@@ -1,7 +1,7 @@
 #pragma once
-#include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/AnimatedGenericItem.h>
+#include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/GenericItem.h>
 
-class InitSound : public AnimatedGenericItem {
+class InitSound : public GenericItem {
 public:
   InitSound();
 };

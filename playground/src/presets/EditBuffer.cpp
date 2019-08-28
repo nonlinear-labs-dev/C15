@@ -51,10 +51,7 @@ Type EditBuffer::getType() const
 
 void EditBuffer::setType(Type t)
 {
-  if(m_type != t) {
-    m_type = t;
-    onChange();
-  }
+  m_type = t;
 }
 
 Glib::ustring EditBuffer::getCurrentVoiceGroupName() const

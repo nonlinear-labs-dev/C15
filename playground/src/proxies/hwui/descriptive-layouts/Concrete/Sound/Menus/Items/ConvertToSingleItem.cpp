@@ -4,7 +4,7 @@
 #include <presets/EditBuffer.h>
 #include "ConvertToSingleItem.h"
 
-ConvertToSingleItem::ConvertToSingleItem() : AnimatedGenericItem("Convert to Single", [] {
+ConvertToSingleItem::ConvertToSingleItem() : GenericItem("Convert to Single", [] {
   Application::get().getPresetManager()->getEditBuffer()->setType(Type::Single);
 }) {
 }

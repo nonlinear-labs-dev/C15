@@ -29,6 +29,10 @@ class HWUI
   HWUI();
   virtual ~HWUI();
 
+  void recompile() {
+    init();
+  }
+
   void init();
 
   void indicateBlockingMainThread();
