@@ -89,7 +89,6 @@ namespace DescriptiveLayouts
 
   void GenericControl::onEventFired(const std::experimental::any &v, const ControlInstance::EventConnection &connection)
   {
-    bool shouldRestyle = false;
     for(const auto &c : getControls())
     {
       if(auto a = std::dynamic_pointer_cast<Styleable>(c))
@@ -101,15 +100,9 @@ namespace DescriptiveLayouts
           if(auto p = std::dynamic_pointer_cast<PropertyOwner>(c))
           {
             p->setProperty(connection.targetProperty, v);
-            shouldRestyle = true;
           }
         }
       }
-    }
-    if(shouldRestyle)
-    {
-      setDirty();
-      style(m_lastUsedLayout);
     }
   }
 

@@ -40,7 +40,8 @@ namespace DescriptiveLayouts
   {
     redrawBorder(fb);
 
-    auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
+    auto color = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor)
+                                        : (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
     fb.setColor(color);
     fb.fillCircle(getPosition().getPosition() + m_drawPosition, getHeight() / 2);
     return true;
@@ -48,7 +49,8 @@ namespace DescriptiveLayouts
 
   void Circle::drawBackground(FrameBuffer &fb)
   {
-    auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor);
+    auto color = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor)
+                                        : (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightBackgroundColor);
     fb.setColor(color);
     fb.fillRect(getPosition());
   }

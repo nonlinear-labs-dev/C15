@@ -20,10 +20,7 @@ namespace DescriptiveLayouts
   bool Border::redraw(FrameBuffer &fb)
   {
     auto style = (StyleValues::BorderStyle) getStyleValue(StyleKey::BorderStyle);
-    auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
-
-    if(Control::isHighlight())
-      color = (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor);
+    auto color = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor) : (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
 
     switch(style)
     {

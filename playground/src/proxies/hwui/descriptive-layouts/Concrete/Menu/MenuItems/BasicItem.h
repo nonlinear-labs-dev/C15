@@ -2,6 +2,8 @@
 #include <proxies/hwui/controls/ControlWithChildren.h>
 #include <proxies/hwui/controls/LeftAlignedLabel.h>
 
+class AnimationControl;
+
 class BasicItem : public ControlWithChildren
 {
  protected:
@@ -47,8 +49,14 @@ class BasicItem : public ControlWithChildren
   virtual void doAction() = 0;
 
 protected:
+  void addAnimation(AnimationControl* animationControl);
+  void resetAnimation();
+
+  bool drawAnimation(FrameBuffer& fb);
   bool drawHighlightBorder(FrameBuffer& fb);
 
   Glib::ustring m_caption;
-  LeftAlignedLabel* m_captionLabel;
+  LeftAlignedLabel* m_captionLabel = nullptr;
+
+  AnimationControl* m_animationControl = nullptr;
 };

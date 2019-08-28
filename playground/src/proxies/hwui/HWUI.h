@@ -53,7 +53,6 @@ class HWUI
   bool isResolutionFine() const;
   void unsetFineMode();
   bool isModifierSet(ButtonModifier m) const;
-  bool getButtonState(uint16_t buttonId) const;
 
   sigc::connection onModifiersChanged(slot<void, ButtonModifiers> cb);
   sigc::connection connectToBlinkTimer(slot<void, int> cb);

@@ -12,20 +12,14 @@ namespace DescriptiveLayouts
   }
 
   Bar::~Bar()
-  {
-  }
+  = default;
 
   bool Bar::redraw(FrameBuffer &fb)
   {
-    auto color = (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
-
-    if(Control::isHighlight())
-      color = (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor);
+    auto color = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor)
+                                        : (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
 
     Rect r = getPosition();
-
-    double controlWidth = r.getWidth();
-    double controlLeft = r.getLeft();
 
     auto from = std::min(m_range.first, m_range.second);
     auto to = std::max(m_range.first, m_range.second);

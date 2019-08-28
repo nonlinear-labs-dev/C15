@@ -18,13 +18,8 @@ namespace DescriptiveLayouts
   {
     if(isVisible())
     {
-
-      auto bg = static_cast<FrameBuffer::Colors>(getStyleValue(StyleKey::BackgroundColor));
-
-      if(Control::isHighlight())
-      {
-        bg = static_cast<FrameBuffer::Colors>(getStyleValue(StyleKey::HighlightBackgroundColor));
-      }
+      auto bg = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightBackgroundColor)
+                                       : (FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor);
 
       if(bg != FrameBuffer::Colors::Transparent)
       {
@@ -36,14 +31,9 @@ namespace DescriptiveLayouts
 
   void Text::setFontColor(FrameBuffer &fb) const
   {
-    if(Control::isHighlight())
-    {
-      fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::Color));
-    }
-    else
-    {
-      fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor));
-    }
+    auto color = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor)
+                                        : (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
+    fb.setColor(color);
   }
 
   void Text::setSuffixFontColor(FrameBuffer &fb) const
@@ -113,8 +103,8 @@ namespace DescriptiveLayouts
     return m_primitive;
   }
 
-
-  void Text::applyStyle(const StyleMap &style) {
+  void Text::applyStyle(const StyleMap &style)
+  {
     m_cachedFont = nullptr;
     Styleable::applyStyle(style);
   }
