@@ -339,6 +339,11 @@ void Bank::setName(UNDO::Transaction *transaction, const std::string &name)
 
 void Bank::setUuid(UNDO::Transaction *transaction, const Uuid &uuid)
 {
+#if _DEVELOPMENT_PC
+  if(auto existing = Application::get().getPresetManager()->findBank(uuid))
+    assert(existing == this);
+#endif
+
   transaction->addUndoSwap(this, m_uuid, uuid);
   updateLastModifiedTimestamp(transaction);
 }

@@ -26,7 +26,15 @@ void PresetBankOrderSerializer::writeTagContent(Writer &writer) const
 void PresetBankOrderSerializer::readTagContent(Reader &reader) const
 {
   reader.onTextElement("uuid", [&](const Glib::ustring &text, auto) mutable {
-    auto bank = m_pm->addBank(reader.getTransaction());
-    bank->setUuid(reader.getTransaction(), Uuid(text));
+    Uuid uuid(text);
+    if(m_pm->findBank(uuid))
+    {
+      DebugLevel::error("Preset bank with uuid", uuid.raw(), "already exists in preset manager!");
+    }
+    else
+    {
+      auto bank = m_pm->addBank(reader.getTransaction());
+      bank->setUuid(reader.getTransaction(), uuid);
+    }
   });
 }
