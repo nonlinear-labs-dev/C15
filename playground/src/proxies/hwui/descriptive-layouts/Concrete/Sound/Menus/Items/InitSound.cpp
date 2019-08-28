@@ -4,7 +4,7 @@
 #include <presets/EditBuffer.h>
 
 InitSound::InitSound()
-    : GenericItem("Init Sound", [] {
+    : AnimatedGenericItem("Init Sound", [] {
       auto pm = Application::get().getPresetManager();
       auto scope = pm->getUndoScope().startTransaction("Init Sound");
       pm->getEditBuffer()->undoableInitSound(scope->getTransaction());

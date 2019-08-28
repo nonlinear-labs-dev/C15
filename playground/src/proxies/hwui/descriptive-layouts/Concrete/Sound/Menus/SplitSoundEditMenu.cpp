@@ -16,7 +16,7 @@
 #include <proxies/hwui/descriptive-layouts/Concrete/Sound/Menus/Items/InitSound.h>
 
 SplitSoundEditMenu::SplitSoundEditMenu(const Rect& r)
-    : ScrollMenu(r)
+    : SoundEditMenu(r)
 {
   init();
 }

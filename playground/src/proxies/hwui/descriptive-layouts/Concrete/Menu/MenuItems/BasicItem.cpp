@@ -1,16 +1,19 @@
 #include "BasicItem.h"
 
-bool BasicItem::canEnter() {
+bool BasicItem::canEnter()
+{
   return false;
 }
 
-bool BasicItem::redraw(FrameBuffer &fb) {
+bool BasicItem::redraw(FrameBuffer& fb)
+{
   auto ret = ControlWithChildren::redraw(fb);
   ret |= drawHighlightBorder(fb);
   return ret;
 }
 
-bool BasicItem::drawHighlightBorder(FrameBuffer& fb) {
+bool BasicItem::drawHighlightBorder(FrameBuffer& fb)
+{
   if(!isHighlight())
     return false;
 

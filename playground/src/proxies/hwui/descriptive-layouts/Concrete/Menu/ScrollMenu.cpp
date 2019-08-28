@@ -1,3 +1,4 @@
+#include <proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/AnimatedGenericItem.h>
 #include "ScrollMenu.h"
 #include "proxies/hwui/descriptive-layouts/Concrete/Menu/MenuItems/EditorItem.h"
 
@@ -48,6 +49,13 @@ bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const 
       else
       {
         selectedItem->doAction();
+        if(auto animItem = dynamic_cast<AnimatedGenericItem*>(selectedItem)) {
+          animItem->onAnimationCompleted([this] {
+            onActionPerformed();
+          });
+        } else {
+          onActionPerformed();
+        }
         return true;
       }
     }
@@ -90,6 +98,9 @@ bool ScrollMenu::handleScrolling(const Buttons &i, bool down)
     }
   }
   return false;
+}
+
+void ScrollMenu::onActionPerformed() {
 }
 
 void ScrollMenu::doLayout()
