@@ -62,12 +62,12 @@ namespace nltools
       Setting,
       Notification,
       Assertion,
-      Request,
+      Request, //9
 
       // messages to be used from v1.7 on
-      SetRibbonLED,
-      SetPanelLED,
-      SetOLED,
+      SetRibbonLED, //10
+      SetPanelLED, //11
+      SetOLED, //12
       RotaryChanged,
       ButtonChanged,
       LPC,

@@ -26,10 +26,14 @@ namespace nltools {
         auto type = static_cast<MessageType>(data[0]);
 
         std::cerr << "notify about message: " << toStringMessageType(type) << std::endl;
-        
-        std::cerr << "peek into data: " << (uint16_t)data[0] << (uint16_t)data[1] << std::endl;
 
-        signals[std::make_pair(type, endPoint)](s);
+        std::cerr << "peek into data. data[0]: " << (uint16_t)data[0] << " data[1]" << (uint16_t)data[1] << std::endl;
+
+        try {
+          signals.at(std::make_pair(type, endPoint))(s);
+        } catch(...) {
+          std::cerr << "no signal found for: " << toStringMessageType(type) << " " << toStringEndPoint(endPoint) << std::endl;
+        }
       }
 
       static void createInChannels(const Configuration &conf) {
