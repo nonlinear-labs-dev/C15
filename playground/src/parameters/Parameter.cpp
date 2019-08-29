@@ -211,7 +211,7 @@ void Parameter::undoableSetDefaultValue(UNDO::Transaction *transaction, tControl
 void Parameter::sendToLpc() const
 {
   Application::get().getLPCProxy()->sendParameter(this);
-  Application::get().getAudioEngineProxy()->sendParameter(getID(), getControlPositionValue());
+  //Application::get().getAudioEngineProxy()->sendParameter(getID(), getControlPositionValue());
 }
 
 tControlPositionValue Parameter::getNextStepValue(int incs, ButtonModifiers modifiers) const

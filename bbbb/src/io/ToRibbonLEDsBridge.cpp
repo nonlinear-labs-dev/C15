@@ -16,5 +16,8 @@ void ToRibbonLEDsBridge::onMessageReceived(const nltools::msg::SetRibbonLEDMessa
   uint8_t data[2];
   data[0] = msg.id;
   data[1] = msg.brightness;
+
+  std::cerr << "got ToRibbonLEDsBridge id: " << (int)msg.id << " brightness: " << msg.brightness << std::endl;
+
   static_cast<FileIOSender *>(m_sender.get())->write(reinterpret_cast<const char *>(data), 2);
 }

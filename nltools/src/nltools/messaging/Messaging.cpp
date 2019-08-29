@@ -53,7 +53,8 @@ namespace nltools {
         return signals[std::make_pair(type, endPoint)].connect(cb);
       }
 
-      void send(nltools::msg::EndPoint receiver, SerializedMessage msg) {
+      void send(nltools::msg::EndPoint receiver, const SerializedMessage& msg) {
+        std::cerr << "Sending Message to:" << toStringEndPoint(receiver) << std::endl;
         outChannels.at(receiver)->send(msg);
       }
 

@@ -15,5 +15,6 @@ void ToLPCBridge::onMessage(const nltools::msg::LPCMessage &msg)
 {
   gsize numBytes = 0;
   auto data = reinterpret_cast<const char *>(msg.message->get_data(numBytes));
+  std::cerr << "received ToLPCBridge Message!" << std::endl;
   static_cast<FileIOSender *>(m_sender.get())->write(data, numBytes);
 }

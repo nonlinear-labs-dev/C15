@@ -1,3 +1,5 @@
+#include <iostream>
+#include <utility>
 #include "InChannel.h"
 
 namespace nltools
@@ -5,7 +7,7 @@ namespace nltools
   namespace msg
   {
     InChannel::InChannel(Callback cb)
-        : m_cb(cb)
+        : m_cb(std::move(cb))
     {
     }
 

@@ -387,9 +387,9 @@ void EditBuffer::undoableLoad(Preset *preset)
 void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset)
 {
   auto lpc = Application::get().getLPCProxy();
-  auto ae = Application::get().getAudioEngineProxy();
+  //auto ae = Application::get().getAudioEngineProxy();
   lpc->toggleSuppressParameterChanges(transaction);
-  ae->toggleSuppressParameterChanges(transaction);
+  //ae->toggleSuppressParameterChanges(transaction);
 
   copyFrom(transaction, preset);
   undoableSetLoadedPresetInfo(transaction, preset);
@@ -402,7 +402,7 @@ void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset)
   }
 
   lpc->toggleSuppressParameterChanges(transaction);
-  ae->toggleSuppressParameterChanges(transaction);
+  //ae->toggleSuppressParameterChanges(transaction);
   resetModifiedIndicator(transaction, getHash());
 }
 
@@ -532,7 +532,7 @@ void EditBuffer::undoableImportReaktorPreset(UNDO::Transaction *transaction, con
   }
 
   Application::get().getLPCProxy()->sendEditBuffer();
-  Application::get().getAudioEngineProxy()->sendEditBuffer();
+  //Application::get().getAudioEngineProxy()->sendEditBuffer();
 }
 
 bool EditBuffer::readReaktorPresetHeader(std::istringstream &input) const
@@ -606,7 +606,7 @@ Glib::ustring EditBuffer::exportReaktorPreset()
 void EditBuffer::sendToLPC()
 {
   Application::get().getLPCProxy()->sendEditBuffer();
-  Application::get().getAudioEngineProxy()->sendEditBuffer();
+  //Application::get().getAudioEngineProxy()->sendEditBuffer();
 }
 
 void EditBuffer::undoableUnlockAllGroups(UNDO::Transaction *transaction)

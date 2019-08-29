@@ -20,7 +20,7 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
   addAction("sync-lpc", [=](std::shared_ptr<NetworkRequest> request) mutable {
     Application::get().getSettings()->sendToLPC();
     Application::get().getLPCProxy()->sendEditBuffer();
-    Application::get().getAudioEngineProxy()->sendEditBuffer();
+    //Application::get().getAudioEngineProxy()->sendEditBuffer();
   });
 
   addAction("select-param", [=](std::shared_ptr<NetworkRequest> request) mutable {

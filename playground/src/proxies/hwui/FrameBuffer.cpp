@@ -254,6 +254,9 @@ void FrameBuffer::swapBuffers()
   using namespace nltools::msg;
   SetOLEDMessage msg{};
   memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
+
+  std::cerr << "SetOLEDMessage size: " << m_backBuffer.size() << std::endl;
+
   send(EndPoint::Oled, msg);
 }
 

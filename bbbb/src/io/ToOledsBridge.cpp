@@ -12,6 +12,7 @@ ToOledsBridge::ToOledsBridge()
 void ToOledsBridge::onMessageReceived(const nltools::msg::SetOLEDMessage &msg)
 {
   if(auto fbs = static_cast<FrameBufferSender *>(m_sender.get())) {
+    std::cerr << "received OLED Message!" << std::endl;
     fbs->send(msg.pixels, sizeof(msg.pixels));
   }
 }

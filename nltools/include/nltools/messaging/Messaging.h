@@ -5,6 +5,7 @@
 #include <sigc++/sigc++.h>
 #include <assert.h>
 #include <cstring>
+#include <nltools/logging/Log.h>
 
 namespace nltools
 {
@@ -24,6 +25,27 @@ namespace nltools
       Playground,
       TestEndPoint
     };
+
+    inline std::string toStringEndPoint(const EndPoint& e) {
+      switch(e) {
+        case EndPoint::None:
+          return "EndPoint::None";
+        case EndPoint::Lpc:
+          return "EndPoint::Lpc";
+        case EndPoint::Oled:
+          return "EndPoint::Oled";
+        case EndPoint::PanelLed:
+          return "EndPoint::PanelLed";
+        case EndPoint::RibbonLed:
+          return "EndPoint::RibbonLed";
+        case EndPoint::AudioEngine:
+          return "EndPoint::AudioEngine";
+        case EndPoint::Playground:
+          return "EndPoint::Playground";
+        case EndPoint::TestEndPoint:
+          return "EndPoint::TestEndPoint";
+      }
+    }
 
     uint getPortFor(EndPoint p);
 
@@ -51,6 +73,46 @@ namespace nltools
       Ping
     };
 
+    inline std::string toStringMessageType(const MessageType &type)
+    {
+      switch(type) {
+        case MessageType::Preset:
+          return "MessageType::Preset";
+        case MessageType::Morph_A:
+          return "MessageType::Morph_A";
+        case MessageType::Morph_B:
+          return "MessageType::Morph_B";
+        case MessageType::Parameter:
+          return "MessageType::Parameter";
+        case MessageType::EditControl:
+          return "MessageType::EditControl";
+        case MessageType::MorphPosition:
+          return "MessageType::MorphPosition";
+        case MessageType::Setting:
+          return "MessageType::Setting";
+        case MessageType::Notification:
+          return "MessageType::Notification";
+        case MessageType::Assertion:
+          return "MessageType::Assertion";
+        case MessageType::Request:
+          return "MessageType::Request";
+        case MessageType::SetRibbonLED:
+          return "MessageType::SetRibbonLED";
+        case MessageType::SetPanelLED:
+          return "MessageType::SetPanelLED";
+        case MessageType::SetOLED:
+          return "MessageType::SetOLED";
+        case MessageType::RotaryChanged:
+          return "MessageType::RotaryChanged";
+        case MessageType::ButtonChanged:
+          return "MessageType::ButtonChanged";
+        case MessageType::LPC:
+          return "MessageType::LPC";
+        case MessageType::Ping:
+          return "MessageType::Ping";
+      }
+    }
+
     namespace detail
     {
       // default (de)serialization for messages, may be specialized for more compilcated types:
@@ -69,13 +131,16 @@ namespace nltools
       }
 
       // send raw bytes to receiver
-      void send(EndPoint receiver, SerializedMessage msg);
+      void send(EndPoint receiver, const SerializedMessage& msg);
 
       template <typename Msg>
       sigc::connection receive(MessageType type, EndPoint receivingEndPoint, std::function<void(const Msg &)> cb)
       {
-        return receiveSerialized(type, receivingEndPoint,
-                                 [=](const SerializedMessage &s) { cb(detail::deserialize<Msg>(s)); });
+        return receiveSerialized(type, receivingEndPoint, [=](const SerializedMessage &s) {
+          std::cerr << "Received Message of Type:" << toStringMessageType(type) << std::endl;
+          auto msg = detail::deserialize<Msg>(s);
+          cb(msg);
+        });
       }
 
       sigc::connection receiveSerialized(MessageType type, EndPoint receivingEndPoint,
