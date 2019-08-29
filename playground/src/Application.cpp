@@ -143,8 +143,16 @@ void Application::run()
 void Application::quit()
 {
   DebugLevel::warning(__PRETTY_FUNCTION__);
-  m_isQuit = true;
-  m_theMainLoop->quit();
+  if(!m_isQuit)
+  {
+    m_isQuit = true;
+    m_theMainLoop->quit();
+  }
+  else
+  {
+    DebugLevel::warning("Application already quit!");
+    std::terminate();
+  }
   DebugLevel::warning(__PRETTY_FUNCTION__);
 }
 

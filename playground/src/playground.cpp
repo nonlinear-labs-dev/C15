@@ -103,12 +103,6 @@ int main(int numArgs, char** argv)
 
   {
     Application app(numArgs, argv);
-    
-    for(auto i = 0; i < 10; i++) {
-      std::cerr << "New version!" << std::endl;
-      std::cout << "New version!" << std::endl;
-    }
-
     Application::get().run();
     DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
   }
