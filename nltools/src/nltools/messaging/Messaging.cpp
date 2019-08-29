@@ -2,6 +2,7 @@
 #include <nltools/messaging/websocket/WebSocketOutChannel.h>
 #include <nltools/messaging/websocket/WebSocketInChannel.h>
 #include <nltools/logging/Log.h>
+#include <nltools/ExceptionTools.h>
 #include <nltools/StringTools.h>
 #include <memory>
 #include <map>
@@ -33,6 +34,7 @@ namespace nltools {
           signals.at(std::make_pair(type, endPoint))(s);
         } catch(...) {
           std::cerr << "no signal found for: " << toStringMessageType(type) << " " << toStringEndPoint(endPoint) << std::endl;
+          std::cerr << nltools::ExceptionTools::handle_eptr(std::current_exception()) << std::endl;
         }
       }
 
