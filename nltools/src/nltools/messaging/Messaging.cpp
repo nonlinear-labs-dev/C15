@@ -33,6 +33,13 @@ namespace nltools {
         try {
           signals.at(std::make_pair(type, endPoint))(s);
         } catch(...) {
+
+
+          std::cerr << "signals: " << std::endl;
+          for(auto& c: signals) {
+            std::cerr << toStringMessageType(c.first.first) << " " << toStringEndPoint(c.first.second) << std::endl;
+          }
+
           std::cerr << "no signal found for: " << toStringMessageType(type) << " " << toStringEndPoint(endPoint) << std::endl;
           std::cerr << nltools::ExceptionTools::handle_eptr(std::current_exception()) << std::endl;
         }

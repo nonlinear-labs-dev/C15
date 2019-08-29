@@ -183,7 +183,7 @@ namespace nltools
 
     template <typename Msg> sigc::connection receive(EndPoint receivingEndPoint, std::function<void(const Msg &)> cb)
     {
-      std::cerr << "REGISTER Receiver: " << toStringEndPoint(receivingEndPoint) << " with type: " << toStringMessageType(Msg::theType) << std::endl;
+      std::cerr << "REGISTER Receiver: " << toStringEndPoint(receivingEndPoint) << " with type: " << (int)(Msg::theType) << std::endl;
       return detail::receive<Msg>(Msg::theType, receivingEndPoint, [=](const auto &s) { cb(s); });
     }
 
