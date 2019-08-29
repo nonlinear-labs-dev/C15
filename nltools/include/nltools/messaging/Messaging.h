@@ -45,6 +45,7 @@ namespace nltools
         case EndPoint::TestEndPoint:
           return "EndPoint::TestEndPoint";
       }
+      return "";
     }
 
     uint getPortFor(EndPoint p);
@@ -111,6 +112,7 @@ namespace nltools
         case MessageType::Ping:
           return "MessageType::Ping";
       }
+      return "";
     }
 
     namespace detail
@@ -120,6 +122,8 @@ namespace nltools
       {
         Msg ret;
         assert(s->get_size() == sizeof(Msg));
+
+        std::cerr << "deserializing message of type:  " << (int)Msg::theType << " with size " << sizeof(ret) << std::endl;
         gsize numBytes = 0;
         memcpy(&ret, s->get_data(numBytes), sizeof(Msg));
         return ret;
@@ -127,6 +131,7 @@ namespace nltools
 
       template <typename Msg> SerializedMessage serialize(const Msg &msg)
       {
+        std::cerr << "serializing message of type:  " << (int)Msg::theType << std::endl;
         return Glib::Bytes::create(&msg, sizeof(Msg));
       }
 

@@ -68,6 +68,7 @@ namespace nltools
       void WebSocketInChannel::receiveMessage(SoupWebsocketConnection *, gint, GBytes *message,
                                               WebSocketInChannel *pThis)
       {
+        std::cerr << "got raw bytes" << std::endl;
         auto bytes = Glib::wrap(g_bytes_ref(message));
         pThis->m_mainContextQueue->pushMessage([=] {
           pThis->onMessageReceived(bytes);
