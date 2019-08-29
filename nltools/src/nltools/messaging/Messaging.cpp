@@ -30,16 +30,15 @@ namespace nltools {
 
         std::cerr << "peek into data. data[0]: " << (uint16_t)data[0] << " data[1]" << (uint16_t)data[1] << std::endl;
 
+
+        std::cerr << "signals: " << std::endl;
+        for(auto& c: signals) {
+          std::cerr << toStringMessageType(c.first.first) << " " << toStringEndPoint(c.first.second) << std::endl;
+        }
+
         try {
           signals.at(std::make_pair(type, endPoint))(s);
         } catch(...) {
-
-
-          std::cerr << "signals: " << std::endl;
-          for(auto& c: signals) {
-            std::cerr << toStringMessageType(c.first.first) << " " << toStringEndPoint(c.first.second) << std::endl;
-          }
-
           std::cerr << "no signal found for: " << toStringMessageType(type) << " " << toStringEndPoint(endPoint) << std::endl;
           std::cerr << nltools::ExceptionTools::handle_eptr(std::current_exception()) << std::endl;
         }
@@ -68,7 +67,12 @@ namespace nltools {
 
       static sigc::connection connectReceiver(MessageType type, EndPoint endPoint,
                                               std::function<void(const SerializedMessage &)> cb) {
-        return signals[std::make_pair(type, endPoint)].connect(cb);
+        auto ret = signals[std::make_pair(type, endPoint)].connect(cb);
+        std::cerr << "ConnectReceiver! signals: " << std::endl;
+        for(auto& c: signals) {
+          std::cerr << toStringMessageType(c.first.first) << " " << toStringEndPoint(c.first.second) << std::endl;
+        }
+        return ret;
       }
 
       void send(nltools::msg::EndPoint receiver, const SerializedMessage& msg) {
