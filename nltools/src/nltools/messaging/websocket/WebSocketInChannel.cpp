@@ -3,6 +3,8 @@
 #include <netinet/tcp.h>
 #include <glib.h>
 
+#include <utility>
+
 namespace nltools
 {
   namespace msg
@@ -10,7 +12,7 @@ namespace nltools
     namespace ws
     {
       WebSocketInChannel::WebSocketInChannel(Callback cb, guint port)
-          : InChannel(cb)
+          : InChannel(std::move(cb))
           , m_port(port)
           , m_server(soup_server_new(nullptr, nullptr), g_object_unref)
           , m_mainContextQueue(std::make_unique<threading::ContextBoundMessageQueue>(Glib::MainContext::get_default()))

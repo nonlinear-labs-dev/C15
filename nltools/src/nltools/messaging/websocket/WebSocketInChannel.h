@@ -33,6 +33,7 @@ namespace nltools
         Glib::RefPtr<Glib::MainLoop> m_messageLoop;
         std::unique_ptr<threading::ContextBoundMessageQueue> m_mainContextQueue;
         std::list<tWebSocketPtr> m_connections;
+
         BackgroundThreadWaiter m_conditionEstablishedThreadWaiter;
         std::thread m_contextThread;
       };
