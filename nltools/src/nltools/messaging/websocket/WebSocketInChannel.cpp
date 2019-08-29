@@ -71,6 +71,7 @@ namespace nltools
         std::cerr << "got raw bytes" << std::endl;
         auto bytes = Glib::wrap(g_bytes_ref(message));
         pThis->m_mainContextQueue->pushMessage([=] {
+          std::cerr << "calling on Message Received with bytes!" << std::endl;
           pThis->onMessageReceived(bytes);
         });
       }

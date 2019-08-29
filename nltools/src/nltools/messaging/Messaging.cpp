@@ -24,6 +24,11 @@ namespace nltools {
         gsize numBytes = 0;
         auto data = reinterpret_cast<const uint16_t *>(s->get_data(numBytes));
         auto type = static_cast<MessageType>(data[0]);
+
+        std::cerr << "notify about message: " << toStringMessageType(type) << std::endl;
+        
+        std::cerr << "peek into data: " << (uint16_t)data[0] << (uint16_t)data[1] << std::endl;
+
         signals[std::make_pair(type, endPoint)](s);
       }
 
