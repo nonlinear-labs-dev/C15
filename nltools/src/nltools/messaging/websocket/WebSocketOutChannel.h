@@ -48,8 +48,6 @@ namespace nltools
         tMessagePtr m_message;
         tWebSocketPtr m_connection;
 
-        std::atomic<bool> m_bgRunning{ false };
-
         std::unique_ptr<threading::ContextBoundMessageQueue> m_backgroundContextQueue;
         std::unique_ptr<threading::ContextBoundMessageQueue> m_mainThreadContextQueue;
         Glib::RefPtr<Glib::MainLoop> m_messageLoop;
