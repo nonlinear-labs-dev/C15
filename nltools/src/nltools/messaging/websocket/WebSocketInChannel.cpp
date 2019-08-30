@@ -3,6 +3,8 @@
 #include <netinet/tcp.h>
 #include <glib.h>
 
+#include <utility>
+
 namespace nltools
 {
   namespace msg
@@ -10,7 +12,7 @@ namespace nltools
     namespace ws
     {
       WebSocketInChannel::WebSocketInChannel(Callback cb, guint port)
-          : InChannel(cb)
+          : InChannel(std::move(cb))
           , m_port(port)
           , m_server(soup_server_new(nullptr, nullptr), g_object_unref)
           , m_mainContextQueue(std::make_unique<threading::ContextBoundMessageQueue>(Glib::MainContext::get_default()))
@@ -48,7 +50,7 @@ namespace nltools
         }
 
         m_messageLoop = Glib::MainLoop::create(m);
-        nltools::Log::info("WebSocketInChannel opened!");
+
         m_conditionEstablishedThreadWaiter.notify();
 
         m_messageLoop->run();
@@ -68,10 +70,8 @@ namespace nltools
       void WebSocketInChannel::receiveMessage(SoupWebsocketConnection *, gint, GBytes *message,
                                               WebSocketInChannel *pThis)
       {
-        std::cerr << "got raw bytes" << std::endl;
         auto bytes = Glib::wrap(g_bytes_ref(message));
         pThis->m_mainContextQueue->pushMessage([=] {
-          std::cerr << "calling on Message Received with bytes!" << std::endl;
           pThis->onMessageReceived(bytes);
         });
       }

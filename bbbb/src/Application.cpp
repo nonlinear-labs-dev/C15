@@ -15,30 +15,23 @@ Application *Application::theApp = nullptr;
 
 char *Application::initStatic(Application *app, char *argv)
 {
+  using namespace nltools::msg;
   theApp = app;
+  Configuration conf;
+  conf.offerEndpoints = { EndPoint::Lpc, EndPoint::Oled, EndPoint::PanelLed, EndPoint::RibbonLed };
+  conf.useEndpoints = { { EndPoint::Playground, app->getOptions()->getPlaygroundHost() } };
+  nltools::msg::init(conf);
   return argv;
 }
 
 Application::Application(int numArgs, char **argv)
-    : m_selfPath(initStatic(this, argv[0]))
-    , m_options(std::make_unique<Options>(numArgs, argv))
+    : m_options(std::make_unique<Options>(numArgs, argv))
+    , m_selfPath(initStatic(this, argv[0]))
     , m_bridges(std::make_unique<Bridges>())
 {
-  setupMessaging();
 }
 
-Application::~Application()
-{
-}
-
-void Application::setupMessaging()
-{
-  using namespace nltools::msg;
-  Configuration conf;
-  conf.offerEndpoints = { EndPoint::Lpc, EndPoint::Oled, EndPoint::PanelLed, EndPoint::RibbonLed };
-  conf.useEndpoints = { { EndPoint::Playground, m_options->getPlaygroundHost() } };
-  nltools::msg::init(conf);
-}
+Application::~Application() = default;
 
 Application &Application::get()
 {

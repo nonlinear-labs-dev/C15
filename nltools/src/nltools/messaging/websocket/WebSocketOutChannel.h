@@ -54,6 +54,7 @@ namespace nltools
         std::unique_ptr<threading::ContextBoundMessageQueue> m_mainThreadContextQueue;
         Glib::RefPtr<Glib::MainLoop> m_messageLoop;
 
+        std::atomic_bool m_bgRunning = {false};
         BackgroundThreadWaiter m_connectionEstablishedWaiter;
         std::function<void()> m_onConnectionEstablished;
         std::thread m_contextThread;

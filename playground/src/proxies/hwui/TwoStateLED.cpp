@@ -68,7 +68,6 @@ void TwoStateLED::switchLED(bool onOrOff)
   msg.id = static_cast<uint8_t>(getID());
   msg.on = onOrOff;
 
-  std::cerr << "SetPanelLEDMessage id: " << (int)msg.id << " on: " << msg.on << std::endl;
 
   send(EndPoint::PanelLed, msg);
 }
