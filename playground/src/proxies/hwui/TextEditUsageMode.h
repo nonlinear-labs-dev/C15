@@ -20,6 +20,7 @@ class TextEditUsageMode : public UsageMode
 
   virtual bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
 
+  ustring getKeyLabel(Buttons buttonID) const;
   connection onTextChanged(const slot<void, const ustring &>& cb);
   ustring getKeyLabel(int buttonID) const;
 
