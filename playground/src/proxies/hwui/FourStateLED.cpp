@@ -26,9 +26,6 @@ void FourStateLED::syncBBBB()
   SetRibbonLEDMessage msg;
   msg.id = static_cast<uint8_t>(getID());
   msg.brightness = static_cast<uint8_t>(m_state & 0x03);
-
-  std::cerr << "SetRibbonLEDMessage: " << msg.id << "brightness: " << msg.brightness << std::endl;
-
   send(EndPoint::RibbonLed, msg);
 }
 

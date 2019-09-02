@@ -26,21 +26,11 @@ namespace nltools {
         auto data = reinterpret_cast<const uint16_t *>(s->get_data(numBytes));
         auto type = static_cast<MessageType>(data[0]);
 
-        std::cerr << "notify about message: " << toStringMessageType(type) << std::endl;
-
-        std::cerr << "peek into data. data[0]: " << (uint16_t)data[0] << " data[1]" << (uint16_t)data[1] << std::endl;
-
-
-        std::cerr << "signals: " << std::endl;
-        for(auto& c: signals) {
-          std::cerr << toStringMessageType(c.first.first) << " " << toStringEndPoint(c.first.second) << std::endl;
-        }
-
         try {
           signals.at(std::make_pair(type, endPoint))(s);
         } catch(...) {
-          std::cerr << "no signal found for: " << toStringMessageType(type) << " " << toStringEndPoint(endPoint) << std::endl;
-          std::cerr << nltools::ExceptionTools::handle_eptr(std::current_exception()) << std::endl;
+          if(type != MessageType::Ping)
+            nltools::Log::error("Could not find", toStringMessageType(type), "handler in", toStringEndPoint(endPoint));
         }
       }
 
@@ -68,15 +58,10 @@ namespace nltools {
       static sigc::connection connectReceiver(MessageType type, EndPoint endPoint,
                                               std::function<void(const SerializedMessage &)> cb) {
         auto ret = signals[std::make_pair(type, endPoint)].connect(cb);
-        std::cerr << "ConnectReceiver! signals: " << std::endl;
-        for(auto& c: signals) {
-          std::cerr << toStringMessageType(c.first.first) << " " << toStringEndPoint(c.first.second) << std::endl;
-        }
         return ret;
       }
 
       void send(nltools::msg::EndPoint receiver, const SerializedMessage& msg) {
-        std::cerr << "Sending Message to:" << toStringEndPoint(receiver) << std::endl;
         outChannels.at(receiver)->send(msg);
       }
 

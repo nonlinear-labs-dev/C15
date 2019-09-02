@@ -42,8 +42,6 @@ void BOLED::bruteForce()
   setupFocusAndMode(Application::get().getHWUI()->getFocusAndMode());
 }
 
-static int failcounter = 0;
-
 void BOLED::setupFocusAndModeMixed(FocusAndMode focusAndMode)
 {
   try
@@ -52,19 +50,13 @@ void BOLED::setupFocusAndModeMixed(FocusAndMode focusAndMode)
   }
   catch(...)
   {
-    if(focusAndMode.focus == UIFocus::Setup)
-    {
-      if(failcounter >= 1)
-      {
-        installOldLayouts(focusAndMode);
-        failcounter = 0;
-        return;
-      }
-      else
-      {
-        failcounter++;
-      }
+    try {
+      installOldLayouts(focusAndMode);
+      return;
+    } catch(...) {
+      std::rethrow_exception(std::current_exception());
     }
+
     auto description = ExceptionTools::handle_eptr(std::current_exception());
     Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().reset(new DebugLayout(description));
   }

@@ -122,8 +122,6 @@ namespace nltools
       {
         Msg ret;
         assert(s->get_size() == sizeof(Msg));
-
-        std::cerr << "deserializing message of type:  " << (int)Msg::theType << " with size " << sizeof(ret) << std::endl;
         gsize numBytes = 0;
         memcpy(&ret, s->get_data(numBytes), sizeof(Msg));
         return ret;
@@ -131,7 +129,6 @@ namespace nltools
 
       template <typename Msg> SerializedMessage serialize(const Msg &msg)
       {
-        std::cerr << "serializing message of type:  " << (int)Msg::theType << std::endl;
         return Glib::Bytes::create(&msg, sizeof(Msg));
       }
 
@@ -142,7 +139,6 @@ namespace nltools
       sigc::connection receive(MessageType type, EndPoint receivingEndPoint, std::function<void(const Msg &)> cb)
       {
         return receiveSerialized(type, receivingEndPoint, [=](const SerializedMessage &s) {
-          std::cerr << "Received Message of Type:" << toStringMessageType(type) << std::endl;
           auto msg = detail::deserialize<Msg>(s);
           cb(msg);
         });
@@ -183,7 +179,6 @@ namespace nltools
 
     template <typename Msg> sigc::connection receive(EndPoint receivingEndPoint, std::function<void(const Msg &)> cb)
     {
-      std::cerr << "REGISTER Receiver: " << toStringEndPoint(receivingEndPoint) << " with type: " << (int)(Msg::theType) << std::endl;
       return detail::receive<Msg>(Msg::theType, receivingEndPoint, [=](const auto &s) { cb(s); });
     }
 

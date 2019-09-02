@@ -22,8 +22,5 @@ void FromEncoderBridge::sendRotary(int8_t inc)
 {
   nltools::msg::RotaryChangedMessage msg;
   msg.increment = inc;
-
-  std::cerr << "RotaryChangedMessage: " << msg.increment << std::endl;
-
   nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
 }

@@ -12,9 +12,6 @@ void FromButtonsBridge::sendKey(int8_t key, bool down)
   nltools::msg::ButtonChangedMessage msg;
   msg.buttonId = key;
   msg.pressed = down;
-
-  std::cerr << "ButtonChangedMessage: " << msg.buttonId << " down: " << msg.pressed << std::endl;
-
   nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
 }
 

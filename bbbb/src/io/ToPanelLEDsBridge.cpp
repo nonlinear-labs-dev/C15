@@ -13,6 +13,5 @@ ToPanelLEDsBridge::ToPanelLEDsBridge()
 void ToPanelLEDsBridge::onMessageReceived(const nltools::msg::SetPanelLEDMessage &msg)
 {
   uint8_t val = (static_cast<uint8_t>((msg.on ? 1 : 0) << 7)) | (msg.id & 0x7F);
-  std::cerr << "got ToPanelLEDsBridge: " << (int)msg.id << " on: " << msg.on << std::endl;
   static_cast<FileIOSender *>(m_sender.get())->write(reinterpret_cast<const char *>(&val), 1);
 }

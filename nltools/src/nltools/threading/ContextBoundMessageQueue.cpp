@@ -46,7 +46,6 @@ namespace nltools
       if(!m_queue.empty())
       {
         auto &m = m_queue.front();
-        std::cerr << "doing queued Stuff!" << std::endl;
         m();
         m_queue.pop_front();
       }

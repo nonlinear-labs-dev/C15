@@ -25,6 +25,5 @@ void FromLPCBridge::transmit(Receiver::tMessage i)
 {
   nltools::msg::LPCMessage msg;
   msg.message = i;
-  std::cerr << "LPCMessage transmit? " << std::endl;
   nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
 }

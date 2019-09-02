@@ -15,7 +15,6 @@ namespace nltools
 
     void InChannel::onMessageReceived(const SerializedMessage &msg) const
     {
-      std::cerr << "InChannel::onMessageReceived" << std::endl;
       m_cb(msg);
     }
   }
