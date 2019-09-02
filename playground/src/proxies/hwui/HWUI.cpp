@@ -184,6 +184,10 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       {
         Application::get().getPresetManager()->stressLoad(1000);
       }
+      else if(line == "stress-layouts")
+      {
+        Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().runPerformanceTest();
+      }
       else if(line == "undo-performance-compare")
       {
         Application::get().stopWatchDog();

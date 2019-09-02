@@ -24,6 +24,7 @@
 #include <proxies/hwui/debug-oled/DebugLayout.h>
 #include <tools/ExceptionTools.h>
 #include <nltools/messaging/Messaging.h>
+#include <device-settings/LayoutMode.h>
 
 Application *Application::theApp = nullptr;
 
