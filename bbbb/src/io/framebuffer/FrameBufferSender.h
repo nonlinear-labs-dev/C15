@@ -25,5 +25,6 @@ class FrameBufferSender : public Sender
   int m_fd = -1;
   size_t m_buffersize = 0;
   tPixel *m_frontBuffer = nullptr;
+  tPixel m_backBuffer[256][96];
   struct fb_var_screeninfo m_varInfo;
 };
