@@ -99,4 +99,6 @@ class HWUI
   Expiration m_switchOffBlockingMainThreadIndicator;
 
   bool m_focusAndModeFrozen = false;
+  
+  friend class BOLED;
 };

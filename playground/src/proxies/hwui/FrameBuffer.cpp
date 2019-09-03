@@ -255,6 +255,10 @@ void FrameBuffer::swapBuffers()
   SetOLEDMessage msg{};
   memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
   send(EndPoint::Oled, msg);
+
+  if(Application::get().entryProfilingArea()) {
+    std::cerr << "Swapping FrameBuffer at:\t" << std::chrono::high_resolution_clock::now().time_since_epoch().count() << std::endl;
+  }
 }
 
 bool FrameBuffer::isValidColor(Colors c) const

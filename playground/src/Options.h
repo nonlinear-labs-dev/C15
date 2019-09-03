@@ -31,4 +31,5 @@ class Options
   Glib::ustring m_bbbb = "localhost";
   Glib::ustring m_audioEngineHost = "localhost";
   Glib::ustring m_selfPath;
+  Glib::ustring m_hwTestFolder = "/home/hhoegelo/hw_tests-binaries";
 };

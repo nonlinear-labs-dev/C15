@@ -133,7 +133,5 @@ const ustring & Options::getLayoutFolder() const
 
 const ustring & Options::getHardwareTestsFolder() const
 {
-  const char *folder = "/home/hhoegelo/hw_tests-binaries";
-  //const char *folder = "/nonlinear/hw_tests-binaries";
-  return folder;
+  return m_hwTestFolder;
 }
