@@ -49,10 +49,14 @@ void BaseUnitPresetsAndBanksMode::modeButtonLongPress()
   Application::get().getSettings()->getSetting<BaseUnitUIMode>()->set(BaseUnitUIModes::Play);
 }
 
-void BaseUnitPresetsAndBanksMode::onLongPress()
+void BaseUnitPresetsAndBanksMode::onFuncButtonDown()
 {
 }
 
-void BaseUnitPresetsAndBanksMode::onFuncButtonDown()
-{
+void BaseUnitPresetsAndBanksMode::installButtonRepeat(const std::function<void()>& cb) {
+  m_buttonRepeat = std::make_unique<ButtonRepeat>(cb);
+}
+
+void BaseUnitPresetsAndBanksMode::removeButtonRepeat() {
+  m_buttonRepeat.reset();
 }

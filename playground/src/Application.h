@@ -18,6 +18,7 @@ class Clipboard;
 
 class Application
 {
+  mutable bool profFlag;
  public:
   Application(int numArgs, char **argv);
   virtual ~Application();
@@ -26,6 +27,20 @@ class Application
   Glib::ustring getResourcePath() const;
 
   static Application &get();
+
+  bool entryProfilingArea() const {
+    if(profFlag)
+    {
+      profFlag = false;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void setProfilingFlag(bool f) {
+    profFlag = f;
+  }
 
   void run();
   RefPtr<MainContext> getMainContext();

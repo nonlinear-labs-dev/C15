@@ -421,11 +421,6 @@ bool PanelUnitParameterEditMode::isShowingParameterScreen() const
 
 void PanelUnitParameterEditMode::bruteForceUpdateLeds()
 {
-  if(std::dynamic_pointer_cast<PresetManagerLayout>(getCurrentBoledLayout()) != nullptr)
-  {
-    std::cerr << "Current Boled Layout == PresetManagerLayout!" << std::endl;
-  }
-
   m_connectionToMacroControl.disconnect();
 
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();

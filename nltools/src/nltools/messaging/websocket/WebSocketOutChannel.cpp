@@ -106,7 +106,7 @@ namespace nltools
 
       void WebSocketOutChannel::connect()
       {
-        m_bgRunning = true;
+        m_bgRunning.store(true);
         m_message.reset(soup_message_new("GET", m_uri.c_str()));
         auto cb = reinterpret_cast<GAsyncReadyCallback>(&WebSocketOutChannel::onWebSocketConnected);
         soup_session_websocket_connect_async(m_soupSession.get(), m_message.get(), nullptr, nullptr, nullptr, cb, this);

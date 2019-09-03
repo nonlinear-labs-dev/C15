@@ -12,6 +12,8 @@
 #include "proxies/hwui/OLEDProxy.h"
 
 #include <proxies/hwui/buttons.h>
+
+#include <memory>
 #include "ButtonRepeat.h"
 
 DFBLayout::DFBLayout(OLEDProxy &oled)

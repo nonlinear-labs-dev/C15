@@ -248,6 +248,7 @@ void LPCProxy::queueToLPC(tMessageComposerPtr cmp)
 
   nltools::msg::LPCMessage msg;
   msg.message = flushed;
+
   nltools::msg::send(nltools::msg::EndPoint::Lpc, msg);
 }
 

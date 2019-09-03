@@ -50,6 +50,7 @@ namespace nltools
         }
 
         m_messageLoop = Glib::MainLoop::create(m);
+
         m_conditionEstablishedThreadWaiter.notify();
 
         m_messageLoop->run();
@@ -60,7 +61,9 @@ namespace nltools
       {
         g_signal_connect(c, "message", G_CALLBACK(&WebSocketInChannel::receiveMessage), pThis);
         g_object_ref(c);
-        g_object_set(c, "keepalive-interval", 5, nullptr);
+        #ifdef SOUP_VERSION_2_58
+          g_object_set(c, "keepalive-interval", 5, nullptr);
+        #endif
         pThis->m_connections.push_back(tWebSocketPtr(c, g_object_unref));
       }
 
@@ -68,7 +71,9 @@ namespace nltools
                                               WebSocketInChannel *pThis)
       {
         auto bytes = Glib::wrap(g_bytes_ref(message));
-        pThis->m_mainContextQueue->pushMessage([=] { pThis->onMessageReceived(bytes); });
+        pThis->m_mainContextQueue->pushMessage([=] {
+          pThis->onMessageReceived(bytes);
+        });
       }
     }
   }

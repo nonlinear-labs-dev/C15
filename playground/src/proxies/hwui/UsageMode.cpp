@@ -29,7 +29,14 @@ void UsageMode::setupButtonConnection(Buttons buttonID, tAction action)
   if(buttonID < Buttons::NUM_BUTTONS)
   {
     g_assert(!m_actions[buttonID]);
-    m_actions[buttonID] = action;
+    m_actions[buttonID] = [action](auto b, auto m, auto d) -> bool {
+      auto ret = action(b,m,d);
+      if(d) {
+        std::cerr << "Button " << toString(b) << " down at:\t" << std::chrono::high_resolution_clock::now().time_since_epoch().count() << std::endl;
+        Application::get().setProfilingFlag(true);
+      }
+      return ret;
+    };
   }
 }
 

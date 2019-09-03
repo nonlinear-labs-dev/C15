@@ -21,6 +21,9 @@ class BOLED : public OLEDProxy, public sigc::trackable
 
   bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
   void onRotary(signed char i);
+
+  void runPerformanceTest();
+
   void setupFocusAndMode(FocusAndMode focusAndMode);
   bool isSameParameterScreen(const DescriptiveLayouts::GenericLayout *layout, const FocusAndMode& focusAndMode) const;
   void showUndoScreen();

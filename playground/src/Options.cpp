@@ -96,44 +96,42 @@ bool Options::setLayoutFolder(const Glib::ustring &optionName, const Glib::ustri
   return true;
 }
 
-Glib::ustring Options::getPresetManagerPath() const
+const ustring & Options::getPresetManagerPath() const
 {
   return m_pmPath;
 }
 
-Glib::ustring Options::getBBBB() const
+const ustring & Options::getBBBB() const
 {
   return m_bbbb;
 }
 
-ustring Options::getAudioEngineHost() const
+const ustring & Options::getAudioEngineHost() const
 {
   return m_audioEngineHost;
 }
 
-Glib::ustring Options::getSelfPath() const
+const ustring & Options::getSelfPath() const
 {
   return m_selfPath;
 }
 
-Glib::ustring Options::getSettingsFile() const
+const ustring & Options::getSettingsFile() const
 {
   return m_settingsFile;
 }
 
-Glib::ustring Options::getKioskModeFile() const
+const ustring & Options::getKioskModeFile() const
 {
   return m_kioskModeFile;
 }
 
-Glib::ustring Options::getLayoutFolder() const
+const ustring & Options::getLayoutFolder() const
 {
   return m_layoutFolder;
 }
 
-Glib::ustring Options::getHardwareTestsFolder() const
+const ustring & Options::getHardwareTestsFolder() const
 {
-  const char *folder = "/home/hhoegelo/hw_tests-binaries";
-  //const char *folder = "/nonlinear/hw_tests-binaries";
-  return folder;
+  return m_hwTestFolder;
 }

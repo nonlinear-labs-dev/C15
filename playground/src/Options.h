@@ -8,14 +8,14 @@ class Options
  public:
   Options(int &argc, char **&argv);
 
-  Glib::ustring getPresetManagerPath() const;
-  Glib::ustring getSettingsFile() const;
-  Glib::ustring getKioskModeFile() const;
-  Glib::ustring getHardwareTestsFolder() const;
-  Glib::ustring getBBBB() const;
-  Glib::ustring getLayoutFolder() const;
-  Glib::ustring getAudioEngineHost() const;
-  Glib::ustring getSelfPath() const;
+  const ustring & getPresetManagerPath() const;
+  const ustring & getSettingsFile() const;
+  const ustring & getKioskModeFile() const;
+  const ustring & getHardwareTestsFolder() const;
+  const ustring & getBBBB() const;
+  const ustring & getLayoutFolder() const;
+  const ustring & getAudioEngineHost() const;
+  const ustring & getSelfPath() const;
 
  private:
   void setDefaults();
@@ -31,4 +31,5 @@ class Options
   Glib::ustring m_bbbb = "localhost";
   Glib::ustring m_audioEngineHost = "localhost";
   Glib::ustring m_selfPath;
+  Glib::ustring m_hwTestFolder = "/home/hhoegelo/hw_tests-binaries";
 };

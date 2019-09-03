@@ -90,8 +90,8 @@ void FrameBuffer::initStacks()
 
 void FrameBuffer::openAndMap()
 {
-  auto bytesPerPixel = 1;
-  auto buffersize = 256 * 96 * 1;
+  constexpr const auto bytesPerPixel = 1;
+  constexpr const auto buffersize = 256 * 96 * bytesPerPixel;
   m_backBuffer.resize(buffersize);
 }
 
@@ -253,8 +253,16 @@ void FrameBuffer::swapBuffers()
 {
   using namespace nltools::msg;
   SetOLEDMessage msg{};
+
+
+
   memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
+
   send(EndPoint::Oled, msg);
+
+  if(Application::get().entryProfilingArea()) {
+    std::cerr << "Swapping FrameBuffer at:\t" << std::chrono::high_resolution_clock::now().time_since_epoch().count() << std::endl;
+  }
 }
 
 bool FrameBuffer::isValidColor(Colors c) const
