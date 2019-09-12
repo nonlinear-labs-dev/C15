@@ -106,21 +106,24 @@ void Bank::load(UNDO::Transaction *transaction, RefPtr<Gio::File> bankFolder, in
 
 void Bank::deleteOldPresetFiles(RefPtr<Gio::File> bankFolder)
 {
-  RefPtr<Gio::FileEnumerator> enumerator = bankFolder->enumerate_children();
-
-  while(auto file = enumerator->next_file())
+  if(bankFolder->query_exists())
   {
-    if(file->get_file_type() == Gio::FILE_TYPE_REGULAR)
-    {
-      auto fileName = file->get_name();
-      auto withoutExtension = fileName.substr(0, fileName.find("."));
+    RefPtr<Gio::FileEnumerator> enumerator = bankFolder->enumerate_children();
 
-      if(FileSystem::isNameAUUID(withoutExtension))
+    while(auto file = enumerator->next_file())
+    {
+      if(file->get_file_type() == Gio::FILE_TYPE_REGULAR)
       {
-        if(!findPreset(withoutExtension))
+        auto fileName = file->get_name();
+        auto withoutExtension = fileName.substr(0, fileName.find("."));
+
+        if(FileSystem::isNameAUUID(withoutExtension))
         {
-          if(auto presetFile = bankFolder->get_child(fileName))
-            presetFile->remove();
+          if(!findPreset(withoutExtension))
+          {
+            if(auto presetFile = bankFolder->get_child(fileName))
+              presetFile->remove();
+          }
         }
       }
     }
