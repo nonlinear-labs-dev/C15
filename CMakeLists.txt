@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+project(C15)
+
 EXEC_PROGRAM("git"
   ${CMAKE_CURRENT_SOURCE_DIR}
   ARGS "log -1 --pretty=format:\"%ad\" --date=format:\"%Y-%m-%d %H:%M\""
@@ -7,7 +9,21 @@ EXEC_PROGRAM("git"
 
 message("building C15 firmware version: ${PLAYGROUND_VERSION}")
 
-add_subdirectory(playground)
-add_subdirectory(audio-engine)
-add_subdirectory(bbbb)
-add_subdirectory(NonMaps)
+OPTION(BUILD_AUDIOENGINE "Enable building of the audio-engine sub project" ON)
+OPTION(BUILD_BBBB "Enable building of the BeagleBoneBlack-Bridge sub project" ON)
+OPTION(BUILD_PLAYGROUND "Enable building of the Playground and NonMaps sub projects" ON)
+
+add_subdirectory(nltools)
+
+IF(BUILD_AUDIOENGINE)
+    add_subdirectory(audio-engine)
+ENDIF(BUILD_AUDIOENGINE)
+
+IF(BUILD_PLAYGROUND)
+    add_subdirectory(playground)
+    add_subdirectory(NonMaps)
+ENDIF(BUILD_PLAYGROUND)
+
+IF(BUILD_BBBB)
+    add_subdirectory(bbbb)
+ENDIF(BUILD_BBBB)
