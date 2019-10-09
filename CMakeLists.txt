@@ -13,7 +13,7 @@ OPTION(BUILD_AUDIOENGINE "Enable building of the audio-engine sub project" ON)
 OPTION(BUILD_BBBB "Enable building of the BeagleBoneBlack-Bridge sub project" ON)
 OPTION(BUILD_PLAYGROUND "Enable building of the Playground and NonMaps sub projects" ON)
 
-add_subdirectory(nltools)
+# add_subdirectory(nltools)
 
 IF(BUILD_AUDIOENGINE)
     add_subdirectory(audio-engine)
