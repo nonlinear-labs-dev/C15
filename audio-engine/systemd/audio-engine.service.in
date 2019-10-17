@@ -1,6 +1,8 @@
 [Unit]
 Description=Nonlinear-Labs C15 Audio Engine
 After=syslog.target systemd-modules-load.service sound.target
+StartLimitIntervalSec=0
+StartLimitInterval=0
 
 [Service]
 WorkingDirectory=@CMAKE_INSTALL_PREFIX@/nonlinear/audio-engine
