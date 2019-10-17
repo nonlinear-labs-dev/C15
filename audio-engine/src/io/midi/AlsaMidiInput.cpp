@@ -56,7 +56,18 @@ void AlsaMidiInput::doBackgroundWork()
 
   while(true)
   {
-    poll(pollFileDescriptors, numPollFDs + 1, -1);
+    switch(poll(pollFileDescriptors, numPollFDs + 1, -1))
+    {
+      case POLLPRI:
+      case POLLRDHUP:
+      case POLLERR:
+      case POLLHUP:
+      case POLLNVAL:
+        throw std::runtime_error("Polling the midi input file descriptor failed. Terminating.");
+
+      default:
+        break;
+    }
 
     if(!m_run)
       break;
@@ -64,21 +75,32 @@ void AlsaMidiInput::doBackgroundWork()
     MidiEvent e;
     int rawIdx = 0;
 
-    while(m_run && snd_rawmidi_read(m_handle, &byte, 1) == 1)
+    while(m_run)
     {
-      if(rawIdx < 3)
-        e.raw[rawIdx++] = byte;
+      auto readResult = snd_rawmidi_read(m_handle, &byte, 1);
 
-      snd_seq_event_t event;
-
-      if(snd_midi_event_encode_byte(parser, byte, &event) == 1)
+      if(readResult == 1)
       {
-        if(event.type != SND_SEQ_EVENT_NONE)
-        {
-          getCallback()(e);
-        }
+        if(rawIdx < 3)
+          e.raw[rawIdx++] = byte;
 
-        rawIdx = 0;
+        snd_seq_event_t event;
+
+        if(snd_midi_event_encode_byte(parser, byte, &event) == 1)
+        {
+          if(event.type != SND_SEQ_EVENT_NONE)
+          {
+            getCallback()(e);
+            break;
+          }
+
+          rawIdx = 0;
+        }
+      }
+      else if(readResult == -19)
+      {
+        std::cerr << "Read result is: " << readResult << " => " << snd_strerror(readResult) << std::endl;
+        throw std::runtime_error("Could not read from midi input file descriptor");
       }
     }
   }
