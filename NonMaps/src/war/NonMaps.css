@@ -1,12 +1,12 @@
 
 @font-face {
   font-family: 'nonlinearfont';
-  src: url('./SourceSansProLW25-Regular.otf');
+  src: url('./SSP-LW25-Regular.otf');
 }
 
 @font-face {
   font-family: 'regularfont';
-  src: url('./SourceSansProLW25-Regular.otf');
+  src: url('./SSP-LW25-Regular.otf');
 }
 
 html,body {

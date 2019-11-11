@@ -12,7 +12,7 @@
 	overflow-x: hidden;
 	margin: 0;
 	padding: 0;
-	font-family: 'Source Sans Pro LW25';
+	font-family: 'SSP-LW25';
 	font-weight: 300;
 	font-style: normal;
 	font-stretch: normal;
@@ -29,16 +29,16 @@
 }
 
 .sb {
-	font-family: 'Source Sans Pro LW25';
+	font-family: 'SSP-LW25';
 	font-weight: 400;
 }
 
 .lw0 {
-	font-family: 'Source Sans Pro';
+	font-family: 'SSP-LW00';
 }
 
 .lw0-sb {
-	font-family: 'Source Sans Pro';
+	font-family: 'SSP-LW00';
 	font-weight: 400;
 }
 
@@ -177,7 +177,7 @@ caption {
 }
 
 [placeholder] {
-	font-family: 'Source Sans Pro LW25';
+	font-family: 'SSP-LW25';
 }
 
 /*****************************/
@@ -230,7 +230,7 @@ caption {
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
 	box-sizing: content-box;
-	font-family: "Source Sans Pro LW25";
+	font-family: "SSP-LW25";
 }
 
 .bankcontainer-bb {
@@ -240,7 +240,7 @@ caption {
 	display: inline-block;
 	box-shadow: 0px 0px 0px 2px #000;
 	box-sizing: content-box;
-	font-family: "Source Sans Pro LW25";
+	font-family: "SSP-LW25";
 	font-size: 93%;
 }
 
@@ -328,7 +328,7 @@ caption {
 }
 
 .tab button {
-	font-family: "Source Sans Pro LW25";
+	font-family: "SSP-LW25";
 	background-color: #131827;
 	margin: 0px 2px 0px 0px;
 	float: left;
@@ -346,7 +346,7 @@ caption {
 }
 
 .bb-tab button {
-	font-family: "Source Sans Pro LW25";
+	font-family: "SSP-LW25";
 	background-color: #131827;
 	margin: 0px 2px 0px 0px;
 	float: right;
@@ -589,7 +589,7 @@ caption {
 label {
 	margin-right: 1em;
 	color: #eee;
-	font-family: 'Source Sans Pro';
+	font-family: 'SSP-LW00';
 	font-weight: 500;
 }
 
@@ -598,7 +598,7 @@ label p {
 }
 
 input {
-	font-family: 'Source Sans Pro';
+	font-family: 'SSP-LW00';
 	text-decoration: none;
 	outline: none;
 }
@@ -697,7 +697,7 @@ textarea {
 	border: 0px solid #000;
 	border-radius: 5px;
 	width: auto;
-	font-family: 'Source Sans Pro';
+	font-family: 'SSP-LW00';
 	font-size: 95%;
 	font-weight: 300;
 	padding: 0.4em 0.6em;
@@ -760,7 +760,7 @@ textarea+button.reset:active {
 	padding: 0.3em 0.8em;
 	margin: 0.1em 0em;
 	min-width: 5.6em;
-	font-family: 'Source Sans Pro LW25';
+	font-family: 'SSP-LW25';
 	font-size: 95%;
 	font-weight: 400;
 	border: 1px solid #525975;
@@ -792,7 +792,7 @@ select {
 	appearance: none;
 	color: #eee;
 	background-color: #222;
-	font-family: 'Source Sans Pro LW25';
+	font-family: 'SSP-LW25';
 	font-size: 90%;
 	font-weight: 400;
 	width: 100%;
@@ -1313,7 +1313,7 @@ input[type="range"]::-moz-range-track {
 	{
 	content: "\E160";
 	color: #777;
-	font-family: 'Source Sans Pro LW25';
+	font-family: 'SSP-LW25';
 }
 
 .w33 {

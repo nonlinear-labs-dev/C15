@@ -287,7 +287,7 @@ public class Header extends Label {
 
 	@Override
 	protected String getFontName() {
-		return "'Source Sans Pro LW25'";
+		return "'SSP-LW25'";
 	}
 
 	@Override

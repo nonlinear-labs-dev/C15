@@ -47,7 +47,7 @@ class LineWrappingLabel extends OverlayControl {
 		ctx.setTextAlign(TextAlign.LEFT);
 		ctx.setFillStyle(getColorFont().toString());
 		ctx.setStrokeStyle(getColorFont().toString());
-		ctx.setFont(fontHeightInPixels + "px 'Source Sans Pro LW25'");
+		ctx.setFont(fontHeightInPixels + "px 'SSP-LW25'");
 
 		int lineNumber = 1;
 
@@ -66,7 +66,7 @@ class LineWrappingLabel extends OverlayControl {
 		lines.clear();
 		Canvas canvas = Canvas.createIfSupported();
 		Context2d context = canvas.getContext2d();
-		context.setFont(getFontHeight() + "px 'Source Sans Pro LW25'");
+		context.setFont(getFontHeight() + "px 'SSP-LW25'");
 		String words[] = text.split("\\s+");
 
 		double pixLeftInCurrentLine = getAvailableLineWidth();
