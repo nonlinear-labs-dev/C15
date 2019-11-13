@@ -24,6 +24,8 @@ Options::Options(int &argc, char **&argv)
   add(mainGroup, m_rate, "sample-rate", 'r', "Samplerate of audio engine");
   add(mainGroup, m_polyphony, "polyphony", 'p', "Polyphony of the c15 audio engine");
   add(mainGroup, m_midiInputDeviceName, "midi-in", 'm', "Name of the alsa midi input device");
+  add(mainGroup, m_heartBeatDeviceName, "heartbeat", 'h',
+      "Name of the alsa midi output device used to send heartbeats");
   add(mainGroup, m_audioOutputDeviceName, "audio-out", 'a', "Name of the alsa audio output device");
   add(mainGroup, m_fatalXRuns, "fatal-xruns", 'f', "Terminate program in case of alsa underrun or overrun");
   add(mainGroup, m_measurePerformance, "measure-performance", 'e', "Calculate performance of audio engine");
@@ -57,6 +59,11 @@ std::string Options::getMidiInputDeviceName() const
 std::chrono::nanoseconds Options::getAdditionalMidiDelay() const
 {
   return m_additionalMidiDelay;
+}
+
+std::string Options::getHeartBeatDeviceName() const
+{
+  return m_heartBeatDeviceName;
 }
 
 std::string Options::getAudioOutputDeviceName() const

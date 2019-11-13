@@ -30,10 +30,6 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/war
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
   )
 
-install(DIRECTORY ${NONMAPS_ROOT}/war
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
-  )
-
 install(DIRECTORY ${NONMAPS_ROOT}/src/war
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
   )
@@ -54,13 +50,10 @@ install(FILES ${MAPS_IMAGES}
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps/war/images
   )
   
-  install(DIRECTORY MCView
-  	DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
-  	)
-
-install(DIRECTORY war
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
+install(DIRECTORY MCView
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps
   )
+
 
 install(FILES ${OBJDIR}/nonmaps-version.txt
   DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/NonMaps/war

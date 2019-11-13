@@ -3,6 +3,7 @@
 #include "synth/C15Synth.h"
 #include "ui/CommandlinePerformanceWatch.h"
 #include "io/Log.h"
+#include "io/MidiHeartBeat.h"
 
 #include <glibmm.h>
 #include <iostream>
@@ -58,6 +59,7 @@ int main(int args, char *argv[])
   C15_CLI commandLineInterface(synth.get());
   CommandlinePerformanceWatch watch(synth->getAudioOut());
   synth->start();
+  MidiHeartBeat heartbeat(theOptions->getHeartBeatDeviceName());
   runMainLoop();
   synth->stop();
 
