@@ -16,5 +16,8 @@ class LPCReceiver : public FileIOReceiver
   void onDataReceived(Glib::RefPtr<Glib::Bytes> bytes) override;
 
  private:
+  Glib::RefPtr<Glib::Bytes> interceptHeartbeat(Glib::RefPtr<Glib::Bytes> msg);
+
   std::unique_ptr<MessageParser> m_parser;
+  uint64_t m_heartbeat = 0;
 };

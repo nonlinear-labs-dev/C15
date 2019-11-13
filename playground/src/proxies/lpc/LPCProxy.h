@@ -20,18 +20,18 @@ class MessageParser;
 
 enum LPCSettingIDs
 {
-  PLAY_MODE_UPPER_RIBBON_BEHAVIOUR = 0,  // ==> BIT 0 set if (returnMode == RETURN)
-  PLAY_MODE_LOWER_RIBBON_BEHAVIOUR = 1,  // ... BIT 1 set if (touchBehaviour == RELATIVE)
-  NOTE_SHIFT = 2,  // ==> tTcdRange (-48, 48)
-  BASE_UNIT_UI_MODE = 3,  // ==> PLAY = 0, PARAMETER_EDIT = 1
+  PLAY_MODE_UPPER_RIBBON_BEHAVIOUR = 0,      // ==> BIT 0 set if (returnMode == RETURN)
+  PLAY_MODE_LOWER_RIBBON_BEHAVIOUR = 1,      // ... BIT 1 set if (touchBehaviour == RELATIVE)
+  NOTE_SHIFT = 2,                            // ==> tTcdRange (-48, 48)
+  BASE_UNIT_UI_MODE = 3,                     // ==> PLAY = 0, PARAMETER_EDIT = 1
   PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR = 4,  // ==> RELATIVE = 0, ABSOLUTE = 1
-  PEDAL_1_MODE = 5,  // ==> STAY = 0
-  PEDAL_2_MODE = 6,  // ... RETURN_TO_ZERO = 1
-  PEDAL_3_MODE = 7,  // ... RETURN_TO_CENTER = 2,
+  PEDAL_1_MODE = 5,                          // ==> STAY = 0
+  PEDAL_2_MODE = 6,                          // ... RETURN_TO_ZERO = 1
+  PEDAL_3_MODE = 7,                          // ... RETURN_TO_CENTER = 2,
   PEDAL_4_MODE = 8,
   RIBBON_REL_FACTOR = 9,  // ==> tTcdRange(256, 2560)
   // obsolete LOWER_RIBBON_REL_FACTOR = 10, // ==> tTcdRange(256, 2560)
-  VELOCITY_CURVE = 11,  // ==> VERY_SOFT = 0, SOFT = 1, NORMAL = 2, HARD = 3, VERY_HARD = 4
+  VELOCITY_CURVE = 11,   // ==> VERY_SOFT = 0, SOFT = 1, NORMAL = 2, HARD = 3, VERY_HARD = 4
   TRANSITION_TIME = 12,  // ==> tTcdRange(0, 16000)
 
   PEDAL_1_TYPE = 26,  // ==> PotTipActive = 0
@@ -40,7 +40,7 @@ enum LPCSettingIDs
   PEDAL_4_TYPE = 29,  // ... SwitchOpening = 3
 
   AFTERTOUCH_CURVE = 30,  // SOFT = 0, NORMAL = 1, HARD = 2
-  BENDER_CURVE = 31,  // ZERO = 0, NARROW = 1, WIDE = 2
+  BENDER_CURVE = 31,      // ZERO = 0, NARROW = 1, WIDE = 2
 
   PITCHBEND_ON_PRESSED_KEYS = 32,  // OFF = 0, ON = 1
 
@@ -83,6 +83,7 @@ class LPCProxy
   void traceBytes(const RefPtr<Bytes> bytes) const;
 
   void notifyRibbonTouch(int ribbonsParameterID);
+  void onHeartbeatReceived(const MessageParser::NLMessage &msg);
   void onParamMessageReceived(const MessageParser::NLMessage &msg);
   void onEditControlMessageReceived(const MessageParser::NLMessage &msg);
   void onRelativeEditControlMessageReceived(Parameter *p, gint16 value);
@@ -109,4 +110,6 @@ class LPCProxy
 
   Throttler m_throttledAbsoluteParameterChange;
   gint32 m_throttledAbsoluteParameterValue = 0;
+
+  guint64 m_lastReceivedHeartbeat = 0;
 };
