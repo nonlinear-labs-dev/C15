@@ -6,6 +6,8 @@
 #include <nltools/logging/Log.h>
 #include <nltools/StringTools.h>
 #include <nltools/messaging/Messaging.h>
+#include "io/Log.h"
+#include "io/MidiHeartBeat.h"
 
 #include <glibmm.h>
 #include <iostream>
@@ -69,6 +71,7 @@ int main(int args, char *argv[])
   C15_CLI commandLineInterface(synth.get());
   CommandlinePerformanceWatch watch(synth->getAudioOut());
   synth->start();
+  MidiHeartBeat heartbeat(theOptions->getHeartBeatDeviceName());
   runMainLoop();
   synth->stop();
 
