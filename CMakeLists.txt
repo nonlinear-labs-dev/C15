@@ -15,6 +15,8 @@ OPTION(BUILD_PLAYGROUND "Enable building of the Playground and NonMaps sub proje
 
 # add_subdirectory(nltools)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+
 IF(BUILD_AUDIOENGINE)
     add_subdirectory(audio-engine)
 ENDIF(BUILD_AUDIOENGINE)
