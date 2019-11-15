@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glibmm.h>
+#include "synth/c15-audio-engine/pe_defines_config.h"
 
 class Options
 {
@@ -26,7 +27,7 @@ class Options
  private:
   bool m_fatalXRuns = false;
   int m_rate = 48000;
-  int m_polyphony = 20;
+  int m_polyphony = dsp_number_of_voices;
   bool m_measurePerformance = false;
 
   Glib::ustring m_midiInputDeviceName;
