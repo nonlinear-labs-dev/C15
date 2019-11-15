@@ -23,6 +23,10 @@ void dsp_host::init(uint32_t _samplerate, uint32_t _polyphony)
   /* initialize components */
   m_params.init(_samplerate, _polyphony);
   m_decoder.init();
+  // new: env glitch suppression by fade point
+  m_params.m_new_envelopes.m_env_a.m_fadeValue = &m_fadeValue;
+  m_params.m_new_envelopes.m_env_b.m_fadeValue = &m_fadeValue;
+  m_params.m_new_envelopes.m_env_c.m_fadeValue = &m_fadeValue;
   /* init messages to terminal */
 
   Log::info("DSP_HOST::MILESTONE:\t\t", static_cast<float>(test_milestone) * 0.01f);
@@ -201,6 +205,8 @@ void dsp_host::tickMain()
   m_outputmixer.m_out_R = 0.f;
 
   /* this is the MAIN POLYPHONIC LOOP - rendering (and post processing) parameters, envelopes and the AUDIO_ENGINE */
+  // get fade value
+  m_fadeValue = m_raised_cos_table[m_table_indx];
   for(uint32_t v = 0; v < m_voices; v++)
   {
     /* render poly audio parameters */
@@ -1735,7 +1741,7 @@ void dsp_host::makePolySound(SignalStorage &signals)
 
 void dsp_host::makeMonoSound(SignalStorage &signals)
 {
-  float mst_gain = signals.get<Signals::MST_VOL>() * m_raised_cos_table[m_table_indx];
+  float mst_gain = signals.get<Signals::MST_VOL>() * m_fadeValue;
 
   //****************************** Mono Modules ****************************//
   m_outputmixer.filter_level(signals);

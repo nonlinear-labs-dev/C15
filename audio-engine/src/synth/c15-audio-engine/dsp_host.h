@@ -64,6 +64,8 @@ class dsp_host
   /* local data structures */
   decoder m_decoder;     // TCD command evaluation
   paramengine m_params;  // parameter and envelope rendering
+  //
+  float m_fadeValue;
   /* proper init (samplerate & polyphony) */
   void init(uint32_t _samplerate, uint32_t _polyphony);  // proper initialization
   void loadInitialPreset();  // load initial preset for valid values in signal array (before rendering begins)
