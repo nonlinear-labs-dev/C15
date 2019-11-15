@@ -183,7 +183,7 @@ void env_object_adbdsr_split::tick(const uint32_t _voiceId)
 
         /* update the transition progress for the next clock tick */
 
-        body->m_y *= 1.f - (1.0f - *m_fadeValue + (*m_fadeValue * m_segment[segment].m_dx[_voiceId]));  // (y *= 1 - dx)
+        body->m_y *= *m_fadeValue * (1.0f - m_segment[segment].m_dx[_voiceId]);  // (y *= 1 - dx)
         // now including glitch suppression
       }
       else
@@ -458,7 +458,7 @@ void env_object_adbdsr_retrig::tick(const uint32_t _voiceId)
         /* */
         body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
         /* */
-        body->m_y *= 1.f - (1.0f - *m_fadeValue + (*m_fadeValue * m_segment[segment].m_dx[_voiceId]));
+        body->m_y *= *m_fadeValue * (1.0f - m_segment[segment].m_dx[_voiceId]);
       }
       else
       {
