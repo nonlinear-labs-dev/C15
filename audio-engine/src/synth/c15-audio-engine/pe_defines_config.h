@@ -24,9 +24,9 @@
       // - 156 (simplified TCD key sequence by new KeyVoice command, automatic internal unison loop)
 
 // +3dB clipping candidates (can be disabled for test and comparison purposes)
-#define test_env_ab_3db_clip 0          //
-#define test_env_c_3db_clip 0           //
-#define test_fbm_kt_3db_clip 0          //
+#define test_env_ab_3db_clip 0  //
+#define test_env_c_3db_clip 0   //
+#define test_fbm_kt_3db_clip 0  //
 
 #define test_tone_initial_freq 500.0f  // Test Tone initial Frequency
 #define test_tone_initial_gain -6.0f   // Test Tone initial Gain (in decibel)
@@ -74,7 +74,7 @@
 
 #endif
 
-/* Main Configuration                               (prepared for maximal 20 Voices) */
+/* Main Configuration                               (prepared for maximal 24 Voices) */
 
 #define dsp_poly_types 2         // two polyphony types (mono, poly) - (later, a dual type needs to be implemented)
 #define dsp_clock_types 4        // four different parameter types (sync, audio, fast, slow)
