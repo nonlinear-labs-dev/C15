@@ -70,6 +70,8 @@ ParameterImportConversions::ParameterImportConversions(bool registerDefaults)
     });
 
     registerConverter(240, 4, [=](tControlPositionValue v) { return 0.25 + v * 0.75; });
+
+    registerConverter(249, 5, [=](tControlPositionValue v) { return v * 0.5; });
   }
 }
 
