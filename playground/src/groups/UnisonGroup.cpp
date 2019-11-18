@@ -3,12 +3,13 @@
 #include "parameters/Parameter.h"
 #include "parameters/ModulateableParameter.h"
 
-#include "parameters/scale-converters/Linear12CountScaleConverter.h"
 #include "parameters/scale-converters/Linear360DegreeScaleConverter.h"
 #include "parameters/scale-converters/Linear100PercentScaleConverter.h"
 #include "parameters/scale-converters/Fine12STScaleConverter.h"
 #include "parameters/scale-converters/FineBipolar12STScaleConverter.h"
+#include "parameters/scale-converters/LinearCountScaleConverter.h"
 #include <parameters/ModulateableParameterWithUnusualModUnit.h>
+#include <parameters/scale-converters/dimension/VoicesDimension.h>
 
 UnisonGroup::UnisonGroup(ParameterGroupSet *parent)
     : ParameterGroup(parent, "Unison", "Unison", "Unison", "Unison")
@@ -21,7 +22,8 @@ UnisonGroup::~UnisonGroup()
 
 void UnisonGroup::init()
 {
-  appendParameter(new Parameter(this, 249, ScaleConverter::get<Linear12CountScaleConverter>(), 0, 11, 11));
+
+  appendParameter(new Parameter(this, 249, ScaleConverter::get<LinearCountScaleConverter<24, VoicesDimension>>(), 0, 23, 23));
 
   appendParameter(new ModulateableParameterWithUnusualModUnit(this, 250, ScaleConverter::get<Fine12STScaleConverter>(),
                                                               ScaleConverter::get<FineBipolar12STScaleConverter>(), 0,
