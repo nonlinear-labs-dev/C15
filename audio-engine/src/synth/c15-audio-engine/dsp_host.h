@@ -155,6 +155,7 @@ class dsp_host
 
   void initAudioEngine();
   void makePolySound(SignalStorage &signals);
+  void makePolyFB(SignalStorage &signals);
   void makeMonoSound(SignalStorage &signals);
 
   // inline?
