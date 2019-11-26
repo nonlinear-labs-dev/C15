@@ -28,6 +28,14 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
     auto msg = interceptHeartbeat(m_parser->getMessage());
 
+    uint8_t b, *p;
+    gsize len;
+    p = (uint8_t *)(msg->get_data(len));
+    for (int i=0; i<len; p++)
+    {
+        printf("%.2x ", *p);
+    }
+
     super::onDataReceived(msg);
     m_parser = std::make_unique<MessageParser>();
     setBlockSize(MessageParser::getNumInitialBytesNeeded());
