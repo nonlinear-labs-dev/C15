@@ -3,6 +3,7 @@
 #include "Options.h"
 #include "MessageParser.h"
 #include <string.h>
+#include <iomanip>
 
 LPCReceiver::LPCReceiver()
     : super("/dev/lpc_bb_driver", MessageParser::getNumInitialBytesNeeded())
@@ -29,12 +30,16 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
     auto msg = interceptHeartbeat(m_parser->getMessage());
 
-    uint8_t b, *p;
-    gsize len;
-    p = (uint8_t *)(msg->get_data(len));
-    for (int i=0; i<len; p++)
     {
-        printf("%.2x ", *p);
+      gsize msgSize = 0;
+      auto msgData = reinterpret_cast<const uint8_t*>(msg->get_data(msgSize));
+
+      for(int i = 0; i < msgSize; msgData++)
+      {
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << *msgData << " ";
+      }
+
+      std::cout << '\n';
     }
 
     super::onDataReceived(msg);
