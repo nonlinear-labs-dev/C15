@@ -4,6 +4,7 @@
 #include "MessageParser.h"
 #include <string.h>
 #include <iomanip>
+#include <iterator>
 
 LPCReceiver::LPCReceiver()
     : super("/dev/lpc_bb_driver", MessageParser::getNumInitialBytesNeeded())
@@ -34,9 +35,10 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
       gsize msgSize = 0;
       auto msgData = reinterpret_cast<const uint8_t*>(msg->get_data(msgSize));
 
-      for(int i = 0; i < msgSize; msgData++)
+      for(int i = 0; i < msgSize; i++)
       {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << *msgData << " ";
+        std::next(msgData);
       }
 
       std::cout << '\n';
