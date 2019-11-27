@@ -33,7 +33,7 @@ void logHeartbeat(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
 
   if(msgLength == Heartbeat::messageSize && msgType == Heartbeat::messageType)
   {
-    auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + Heartbeat::payloadSize);
+    auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + Heartbeat::headerSize);
     auto lpcHeartBeat = *lpcHeartBeatPtr;
     std::cout << desc << std::hex << lpcHeartBeat << '\n';
   }
@@ -54,9 +54,9 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
     auto message = m_parser->getMessage();
 
-    logHeartbeat("received heartbeat", message);
+    logHeartbeat("received heartbeat:\t", message);
     message = interceptHeartbeat(message);
-    logHeartbeat("intercepted heartbeat", message);
+    logHeartbeat("intercepted heartbeat:\t", message);
 
     super::onDataReceived(message);
     m_parser = std::make_unique<MessageParser>();
