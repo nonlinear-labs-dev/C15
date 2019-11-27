@@ -32,7 +32,7 @@ namespace Log
 
     for(gsize i = 0; i < msgLength; i++)
     {
-      printf("%.2x", rawBytes[i]);
+      printf("%.2x ", rawBytes[i]);
     }
     std::cout << '\n';
   }
