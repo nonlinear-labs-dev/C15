@@ -33,13 +33,8 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
     {
       gsize msgSize = 0;
       auto msgData = reinterpret_cast<const uint8_t*>(msg->get_data(msgSize));
-
-      for(int i = 0; i < msgSize; msgData++)
-      {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << *msgData << " ";
-      }
-
-      std::cout << '\n';
+      auto heartBeatPtr = reinterpret_cast<const uint64_t*>(msgData + 4);
+      std::cout << std::hex << std::setw(2) << std::setfill('0') << *heartBeatPtr << " \n";
     }
 
     super::onDataReceived(msg);
