@@ -4,6 +4,7 @@
 #include "MessageParser.h"
 #include <string.h>
 #include <iomanip>
+#include <iterator>
 
 LPCReceiver::LPCReceiver()
     : super("/dev/lpc_bb_driver", MessageParser::getNumInitialBytesNeeded())
@@ -11,9 +12,7 @@ LPCReceiver::LPCReceiver()
 {
 }
 
-LPCReceiver::~LPCReceiver()
-{
-}
+LPCReceiver::~LPCReceiver() = default;
 
 void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 {
