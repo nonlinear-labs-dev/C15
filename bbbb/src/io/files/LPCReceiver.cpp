@@ -22,23 +22,40 @@ namespace Heartbeat
   constexpr auto messageSize = headerSize + payloadSize;
 }
 
-void logHeartbeat(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
+namespace Log
 {
-  gsize msgLength = 0;
-  auto rawMsg = bytes->get_data(msgLength);
-  auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
-  auto rawWords = reinterpret_cast<const uint16_t *>(rawBytes);
 
-  const auto msgType = rawWords[0];
-
-  if(msgLength == Heartbeat::messageSize && msgType == Heartbeat::messageType)
+  void logMessage(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
   {
-    auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + Heartbeat::headerSize);
-    auto lpcHeartBeat = *lpcHeartBeatPtr;
-    std::cout << desc << std::hex << lpcHeartBeat << '\n';
+    gsize msgLength = 0;
+    auto rawMsg = bytes->get_data(msgLength);
+    auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
+
+    for(auto i = 0; i < msgLength; i++)
+    {
+      std::cout << std::hex << std::setw(2) << *rawBytes << ' ';
+      std::next(rawBytes);
+    }
+    std::cout << '\n';
+  }
+
+  void logHeartbeat(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
+  {
+    gsize msgLength = 0;
+    auto rawMsg = bytes->get_data(msgLength);
+    auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
+    auto rawWords = reinterpret_cast<const uint16_t *>(rawBytes);
+
+    const auto msgType = rawWords[0];
+
+    if(msgLength == Heartbeat::messageSize && msgType == Heartbeat::messageType)
+    {
+      auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + Heartbeat::headerSize);
+      auto lpcHeartBeat = *lpcHeartBeatPtr;
+      std::cout << desc << std::hex << lpcHeartBeat << '\n';
+    }
   }
 }
-
 void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 {
   gsize numBytes = 0;
@@ -54,7 +71,11 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
     auto message = m_parser->getMessage();
 
-    logHeartbeat("heartbeat:\t", message);
+    if(Application::get().getOptions()->logLPCRaw())
+      Log::logMessage("lpc message:\t", message);
+    else if(Application::get().getOptions()->logHeartBeat())
+      Log::logHeartbeat("lpc heartbeat:\t", message);
+
     message = interceptHeartbeat(message);
 
     super::onDataReceived(message);

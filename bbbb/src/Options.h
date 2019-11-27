@@ -10,7 +10,11 @@ class Options
   virtual ~Options();
 
   bool doTimeStamps() const;
+  bool logLPCRaw() const;
+  bool logHeartBeat() const;
 
  private:
   bool m_doTimeStamps = false;
+  bool m_logLpcRaw = false;
+  bool m_logHeartBeat = false;
 };
