@@ -32,8 +32,7 @@ namespace Log
 
     for(gsize i = 0; i < msgLength; i++)
     {
-      std::cout << std::hex << std::setw(2) << *rawBytes << ' ';
-      std::next(rawBytes);
+      printf("%.2x", rawBytes[i]);
     }
     std::cout << '\n';
   }
