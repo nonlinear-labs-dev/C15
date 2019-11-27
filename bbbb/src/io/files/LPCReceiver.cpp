@@ -14,13 +14,16 @@ LPCReceiver::LPCReceiver()
 
 LPCReceiver::~LPCReceiver() = default;
 
-void logHeartbeat(const Glib::RefPtr<Glib::Bytes> &bytes)
+namespace Heartbeat
 {
-  constexpr auto heartbeatMessageType = 0x0B00;
+  constexpr auto messageType = 0x0B00;
   constexpr auto headerSize = 4;
   constexpr auto payloadSize = 8;
-  constexpr auto heartbeatMessageSize = headerSize + payloadSize;
+  constexpr auto messageSize = headerSize + payloadSize;
+}
 
+void logHeartbeat(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
+{
   gsize msgLength = 0;
   auto rawMsg = bytes->get_data(msgLength);
   auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
@@ -28,11 +31,11 @@ void logHeartbeat(const Glib::RefPtr<Glib::Bytes> &bytes)
 
   const auto msgType = rawWords[0];
 
-  if(msgLength == heartbeatMessageSize && msgType == heartbeatMessageType)
+  if(msgLength == Heartbeat::messageSize && msgType == Heartbeat::messageType)
   {
-    auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + payloadSize);
+    auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + Heartbeat::payloadSize);
     auto lpcHeartBeat = *lpcHeartBeatPtr;
-    std::cout << "LPC Heartbeat: " << std::hex << lpcHeartBeat << " type: " << msgType << '\n';
+    std::cout << desc << std::hex << lpcHeartBeat << '\n';
   }
 }
 
@@ -51,9 +54,9 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
     auto message = m_parser->getMessage();
 
-    logHeartbeat(message);
+    logHeartbeat("received heartbeat", message);
     message = interceptHeartbeat(message);
-    logHeartbeat(message);
+    logHeartbeat("intercepted heartbeat", message);
 
     super::onDataReceived(message);
     m_parser = std::make_unique<MessageParser>();
@@ -63,27 +66,22 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
 Glib::RefPtr<Glib::Bytes> LPCReceiver::interceptHeartbeat(Glib::RefPtr<Glib::Bytes> msg)
 {
-  constexpr auto heartbeatMessageType = 0x0B00;
-  constexpr auto heartbeatMessageHeaderSize = 4;
-  constexpr auto heartbeatMessagePayloadSize = 8;
-  constexpr auto heartbeatMessageSize = heartbeatMessageHeaderSize + heartbeatMessagePayloadSize;
-
   gsize msgLength = 0;
   auto rawMsg = msg->get_data(msgLength);
   auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
   auto rawWords = reinterpret_cast<const uint16_t *>(rawBytes);
 
-  if(msgLength == heartbeatMessageSize && rawWords[0] == heartbeatMessageType)
+  if(msgLength == Heartbeat::messageSize && rawWords[0] == Heartbeat::messageType)
   {
-    auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + heartbeatMessageHeaderSize);
+    auto lpcHeartBeatPtr = reinterpret_cast<const uint64_t *>(rawBytes + Heartbeat::headerSize);
     auto lpcHeartBeat = *lpcHeartBeatPtr;
     auto chainHeartBeat = lpcHeartBeat + m_heartbeat;
 
-    uint8_t scratch[heartbeatMessageSize];
-    memcpy(scratch, rawBytes, heartbeatMessageSize);
-    memcpy(scratch + heartbeatMessageHeaderSize, &chainHeartBeat, heartbeatMessagePayloadSize);
+    uint8_t scratch[Heartbeat::messageSize];
+    memcpy(scratch, rawBytes, Heartbeat::messageSize);
+    memcpy(scratch + Heartbeat::headerSize, &chainHeartBeat, Heartbeat::payloadSize);
 
-    return Glib::Bytes::create(scratch, heartbeatMessageSize);
+    return Glib::Bytes::create(scratch, Heartbeat::messageSize);
   }
 
   return msg;
