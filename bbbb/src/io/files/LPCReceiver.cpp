@@ -33,8 +33,8 @@ namespace Log
 
     for(auto i = 0; i < msgLength; i++)
     {
-      std::cout << std::hex << std::setw(2) << *rawBytes << ' ';
-      std::next(rawBytes);
+      auto currentPtr = rawBytes + i;
+      std::cout << std::hex << std::setw(2) << *currentPtr << ' ';
     }
     std::cout << '\n';
   }
