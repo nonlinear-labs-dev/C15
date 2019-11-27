@@ -25,16 +25,32 @@ namespace Heartbeat
 namespace Log
 {
 
+  void logMessage2(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
+  {
+    gsize msgLength = 0;
+    auto rawMsg = bytes->get_data(msgLength);
+    auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
+    auto rawWords = reinterpret_cast<const uint16_t *>(rawBytes);
+
+    for(auto i = 0; i < msgLength; i++)
+    {
+      std::cout << std::hex << std::setw(2) << *rawWords << ' ';
+      std::next(rawWords);
+    }
+    std::cout << '\n';
+  }
+
   void logMessage(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
   {
     gsize msgLength = 0;
     auto rawMsg = bytes->get_data(msgLength);
     auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
+    auto rawWords = reinterpret_cast<const uint16_t *>(rawBytes);
 
     for(auto i = 0; i < msgLength; i++)
     {
-      auto currentPtr = rawBytes + i;
-      std::cout << std::hex << std::setw(2) << *currentPtr << ' ';
+      std::cout << std::hex << std::setw(2) << *rawWords << ' ';
+      std::next(rawWords);
     }
     std::cout << '\n';
   }
@@ -72,7 +88,10 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
     auto message = m_parser->getMessage();
 
     if(Application::get().getOptions()->logLPCRaw())
+    {
       Log::logMessage("lpc message:\t", message);
+      Log::logMessage2("lp message v2:\t", message);
+    }
     else if(Application::get().getOptions()->logHeartBeat())
       Log::logHeartbeat("lpc heartbeat:\t", message);
 
