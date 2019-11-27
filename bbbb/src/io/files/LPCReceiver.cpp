@@ -54,9 +54,8 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
     auto message = m_parser->getMessage();
 
-    logHeartbeat("received heartbeat:\t", message);
+    logHeartbeat("heartbeat:\t", message);
     message = interceptHeartbeat(message);
-    logHeartbeat("intercepted heartbeat:\t", message);
 
     super::onDataReceived(message);
     m_parser = std::make_unique<MessageParser>();
