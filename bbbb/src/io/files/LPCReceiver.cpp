@@ -56,6 +56,9 @@ namespace Log
 }
 void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 {
+  const static bool logLPCRaw = Application::get().getOptions()->logLPCRaw();
+  const static bool logHeartbeat = Application::get().getOptions()->logHeartBeat();
+
   gsize numBytes = 0;
   auto data = reinterpret_cast<const uint8_t *>(bytes->get_data(numBytes));
 
@@ -69,9 +72,9 @@ void LPCReceiver::onDataReceived(Glib::RefPtr<Glib::Bytes> bytes)
 
     auto message = m_parser->getMessage();
 
-    if(Application::get().getOptions()->logLPCRaw())
+    if(logLPCRaw)
       Log::logMessage(message);
-    if(Application::get().getOptions()->logHeartBeat())
+    if(logHeartbeat)
       Log::logHeartbeat("lpc heartbeat:\t", message);
 
     message = interceptHeartbeat(message);
