@@ -28,12 +28,14 @@ namespace Log
   {
     gsize msgLength = 0;
     auto rawMsg = bytes->get_data(msgLength);
-    auto rawBytes = reinterpret_cast<const uint8_t *>(rawMsg);
+    auto rawWords = reinterpret_cast<const uint16_t *>(rawMsg);
 
-    for(gsize i = 0; i < msgLength; i++)
+    for(gsize i = 0; i < msgLength/2; i++)
     {
-      printf("%.2x ", rawBytes[i]);
+      printf("%.4x ", rawWords[i]);
     }
+    if (msgLength >= 6)
+    printf("  (%d)", (int16_t)rawWords[(msgLength/2)-1]);
     std::cout << '\n';
   }
 
