@@ -24,16 +24,18 @@
 #define BB_MSG_TYPE_PARAMETER     0x0400  // not used, direction: output; arguments(uint16): 2, 1x parameter ID , 1x data
 #define BB_MSG_TYPE_EDIT_CONTROL  0x0500  // not used
 #define BB_MSG_TYPE_MORPH_POS     0x0600  // not used
-#define BB_MSG_TYPE_SETTING       0x0700  // direction: input;  argument (uint16): 2, 1x SETTING_ID*, 1x data
+#define BB_MSG_TYPE_SETTING       0x0700  // direction: input;  argument (uint16): 2, 1x SETTING_ID_*, 1x data
 #define BB_MSG_TYPE_NOTIFICATION  0x0800  // direction: output; arguments(uint16): 2, 1x type, 1x value
 #define BB_MSG_TYPE_ASSERTION     0x0900  // direction: output; arguments(uint16): n (string)
 #define BB_MSG_TYPE_REQUEST       0x0A00  // direction: input;  argument (uint16): 1, 1x REQUEST_ID_*
-#define BB_MSG_TYPE_HEARTBEAT     0x0B00  // direction: output; arguments(uint16): 4, 4x uint16 (==uint64)
-#define BB_MSG_TYPE_MUTESTATUS    0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
+// TODO implement the following new types in BBBB/Playground also:
+#define BB_MSG_TYPE_HEARTBEAT  0x0B00  // direction: output; arguments(uint16): 4, 4x uint16 (==uint64)
+#define BB_MSG_TYPE_MUTESTATUS 0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
+#define BB_MSG_TYPE_RIBBON_CAL 0x0D00  // direction: input; arguments(uint16): N, Nx data
 
 //----- Setting Ids:
 
-#define SETTING_ID_PLAY_MODE_UPPER_RIBBON_BEHAVIOUR 0  // ==> BIT 0 set if (returnMode == RETURN)
+#define SETTING_ID_PLAY_MODE_UPPER_RIBBON_BEHAVIOUR 0  // ==> BIT 0 set if (returnMode == RETURN), ...
 #define SETTING_ID_PLAY_MODE_LOWER_RIBBON_BEHAVIOUR 1  // ... BIT 1 set if (touchBehaviour == RELATIVE)
 
 #define SETTING_ID_NOTE_SHIFT 2  // ==> tTcdRange (-48, 48)

@@ -139,6 +139,24 @@ static LIB_interpol_data_T RIBBON_DEFAULT_CALIBRATION_DATA = {
   RIBBON_DEFAULT_CALIBRATION_TABLE_Y
 };
 
+// user calibration tables
+static int32_t ribbon_1_calibration_table_x[33];
+static int32_t ribbon_1_calibration_table_y[33];
+static int32_t ribbon_2_calibration_table_x[33];
+static int32_t ribbon_2_calibration_table_y[33];
+
+static LIB_interpol_data_T ribbon_1_calibration_data = {
+  sizeof(ribbon_1_calibration_table_x) / sizeof(ribbon_1_calibration_table_x[0]),
+  ribbon_1_calibration_table_x,
+  ribbon_1_calibration_table_y
+};
+
+static LIB_interpol_data_T ribbon_2_calibration_data = {
+  sizeof(ribbon_2_calibration_table_x) / sizeof(ribbon_2_calibration_table_x[0]),
+  ribbon_2_calibration_table_x,
+  ribbon_2_calibration_table_y
+};
+
 // type for working variables
 typedef struct
 {
@@ -151,7 +169,7 @@ typedef struct
   uint32_t             incBase;        ///< base value for relative increment
   int32_t              output;         ///< processed output value (0...16000)
   int32_t              threshold;      ///< touch threshold
-  LIB_interpol_data_T *calibration;    ///< pointer to calibration data to be used
+  LIB_interpol_data_T* calibration;    ///< pointer to calibration data to be used
   uint8_t              ipcId;          ///< ID to fetch raw data from M0 kernel
   uint32_t             paramId;        ///< ID for TCD param set
   uint32_t             hwSourceId;     ///< ID for BB message
@@ -191,7 +209,6 @@ static uint32_t suspend;
 * @brief	ADC_WORK_Generate_BenderTable -
 * @param	0: soft, 1: normal, 2: hard
 ******************************************************************************/
-
 void ADC_WORK_Generate_BenderTable(uint32_t curve)
 {
   float_t range = 8000.0;  // separate processing of absolute values for positive and negative range
@@ -230,7 +247,6 @@ void ADC_WORK_Generate_BenderTable(uint32_t curve)
 * @brief	ADC_WORK_Generate_AftertouchTable -
 * @param	0: soft, 1: normal, 2: hard
 ******************************************************************************/
-
 void ADC_WORK_Generate_AftertouchTable(uint32_t curve)
 {
   float_t range = 16000.0;  // full TCD range
@@ -268,7 +284,6 @@ void ADC_WORK_Generate_AftertouchTable(uint32_t curve)
 /*****************************************************************************
 * @brief	ADC_WORK_Init -
 ******************************************************************************/
-
 void ADC_WORK_Init(void)
 {
   uint32_t i;
@@ -526,7 +541,6 @@ static void CheckPedal(uint32_t pedalId)
 * @param	value: ribbon position (0 ... 16000)
 * @param	inc: position increment (theoretically -16000 ... 16000)
 ******************************************************************************/
-
 static void SendEditMessageToBB(uint32_t paramId, uint32_t value, int32_t inc)
 {
   if (ribbon[RIB1].editBehavior)  // 1: the ribbon sends the absolute value
@@ -662,7 +676,6 @@ static int32_t LinearizeRibbon(int32_t val)
 * @brief	ADC_WORK_SetRibbon1Behaviour
 * @param	0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
 ******************************************************************************/
-
 void ADC_WORK_SetRibbon1Behaviour(uint32_t behaviour)
 {
   ribbon[RIB1].behavior = behaviour;
@@ -689,7 +702,6 @@ uint32_t ADC_WORK_GetRibbon1Behaviour(void)
 * @brief	ADC_WORK_SetRibbonRelFactor -
 * @param
 ******************************************************************************/
-
 void ADC_WORK_SetRibbonRelFactor(uint32_t factor)
 {
   ribbon[RIB1].relFactor = factor;
@@ -700,7 +712,6 @@ void ADC_WORK_SetRibbonRelFactor(uint32_t factor)
 * @brief	ADC_WORK_SetRibbon2Behaviour -
 * @param	0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
 ******************************************************************************/
-
 void ADC_WORK_SetRibbon2Behaviour(uint32_t behaviour)
 {
   ribbon[RIB2].behavior = behaviour;
@@ -727,7 +738,6 @@ uint32_t ADC_WORK_GetRibbon2Behaviour(void)
 * @brief	ADC_WORK_SetRibbon1EditMode -
 * @param	0: Play, 1: (Parameter) Edit
 ******************************************************************************/
-
 void ADC_WORK_SetRibbon1EditMode(uint32_t mode)
 {
   ribbon[RIB1].isEditControl = mode;
@@ -737,7 +747,6 @@ void ADC_WORK_SetRibbon1EditMode(uint32_t mode)
 * @brief	ADC_WORK_SetRibbon1EditBehaviour -
 * @param	0: Relative + Non-Return, 1: Absolute + Non-Return
 ******************************************************************************/
-
 void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour)
 {
   ribbon[RIB1].editBehavior = behaviour;
@@ -747,7 +756,6 @@ void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour)
 * @brief	ADC_WORK_SetPedal1Behaviour -
 * @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
 ******************************************************************************/
-
 void ADC_WORK_SetPedal1Behaviour(uint32_t behaviour)
 {
   pedal1Behaviour = behaviour;
@@ -775,7 +783,6 @@ uint32_t ADC_WORK_GetPedal1Behaviour(void)
 * @brief	ADC_WORK_SetPedal2Behaviour -
 * @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
 ******************************************************************************/
-
 void ADC_WORK_SetPedal2Behaviour(uint32_t behaviour)
 {
   pedal2Behaviour = behaviour;
@@ -803,7 +810,6 @@ uint32_t ADC_WORK_GetPedal2Behaviour(void)
 * @brief	ADC_WORK_SetPedal3Behaviour -
 * @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
 ******************************************************************************/
-
 void ADC_WORK_SetPedal3Behaviour(uint32_t behaviour)
 {
   pedal3Behaviour = behaviour;
@@ -831,7 +837,6 @@ uint32_t ADC_WORK_GetPedal3Behaviour(void)
 * @brief	ADC_WORK_SetPedal4Behaviour -
 * @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
 ******************************************************************************/
-
 void ADC_WORK_SetPedal4Behaviour(uint32_t behaviour)
 {
   pedal4Behaviour = behaviour;
@@ -853,6 +858,54 @@ void ADC_WORK_SetPedal4Behaviour(uint32_t behaviour)
 uint32_t ADC_WORK_GetPedal4Behaviour(void)
 {
   return pedal4Behaviour;
+}
+
+/*****************************************************************************
+* @brief	ADC_WORK_SetRibbonCalibration -
+* @param	length: # of words in data array
+* @param	data: array containing calibration data sets for the ribbons
+******************************************************************************/
+// TODO Test this !
+void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data)
+{
+  if (length != 33 * 4)  // data must contain X and Y sets (33 points) for each ribbon
+    return;
+
+  int i;
+
+  for (i = 0; i < 33; i++)
+    ribbon_1_calibration_table_x[i] = (int32_t) *data++;
+  for (i = 0; i < 33; i++)
+    ribbon_1_calibration_table_y[i] = (int32_t) *data++;
+  for (i = 0; i < 33; i++)
+    ribbon_2_calibration_table_x[i] = (int32_t) *data++;
+  for (i = 0; i < 33; i++)
+    ribbon_2_calibration_table_y[i] = (int32_t) *data++;
+
+  // Integrity checks
+  for (i = 0; i < 33; i++)
+  {
+    if (ribbon_1_calibration_table_x[i] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
+        || ribbon_1_calibration_table_x[i] > 4095
+        || ribbon_2_calibration_table_x[i] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
+        || ribbon_2_calibration_table_x[i] > 4095
+        || ribbon_1_calibration_table_y[i] < 0
+        || ribbon_1_calibration_table_y[i] > 16000
+        || ribbon_2_calibration_table_y[i] < 0
+        || ribbon_2_calibration_table_y[i] > 16000)
+      return;  // x- (y-values) are not in valid range for raw values (output values)
+  }
+  for (i = 1; i < 33; i++)
+  {
+    if (ribbon_1_calibration_table_x[i] <= ribbon_1_calibration_table_x[i - 1]
+        || ribbon_2_calibration_table_x[i] <= ribbon_2_calibration_table_x[i - 1])
+      return;  // x-values are not monotonically rising
+  }
+
+  ribbon[RIB1].calibration = &ribbon_1_calibration_data;
+  ribbon[RIB1].threshold   = 7 * ribbon[RIB1].calibration->x_values[0] / 10;  // set threshold to 70% of lowest raw value
+  ribbon[RIB2].calibration = &ribbon_2_calibration_data;
+  ribbon[RIB2].threshold   = 7 * ribbon[RIB2].calibration->x_values[0] / 10;  // set threshold to 70% of lowest raw value
 }
 
 // TODO test this !

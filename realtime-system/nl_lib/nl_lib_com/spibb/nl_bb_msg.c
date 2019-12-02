@@ -286,6 +286,10 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
   {
     PARAM_ApplyPreset(length, data);
   }
+  else if (type == BB_MSG_TYPE_RIBBON_CAL)
+  {
+    ADC_WORK_SetRibbonCalibration(length, data);
+  }
   else if (type == BB_MSG_TYPE_SETTING)
   {
     switch (data[0])
