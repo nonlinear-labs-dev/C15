@@ -1,0 +1,24 @@
+Compiliert nur mit LPCXpresso Version 8.2.2_650 !!
+
+Sind 4 Projects: die beiden Libraries für den M0 und den M4 Kern (dort passiert die Magie), und je ein main project für M0 und M4.
+
+Kompletten Source-Baum mit config-files (.project und .cproject) in ein Directory kopieren, dem "Workspace".
+
+LPCXpresso starten.
+Im Project-Explorer->Rechtsclick oder über File->Import den Project-Importer starten.
+Dort unter General->ExistingProject_into_Workspace alle 4 Projekte laden.
+
+Dann im Quickstart Panel, oder über Project->BuildAll, oder über Ctrl-B alles kompilieren.
+
+
+Vom M4 Brennfile (*.axf) ein *.bin file machen, für das in-service-Brennen via BBB:
+blob.bin vom M4.axf machen mit, im M4_project sitzend:
+Project-->Binaries-->*.axf-->ContextMenu-->BinaryUtilities-->CreateBinary
+liegt dann nebem dem *.axf
+
+
+Code:
+LPC SW_VERSION Id-String findet sich in   \nl_lib\nl_lib_com\spibb\nl_bb_msg.h
+
+
+

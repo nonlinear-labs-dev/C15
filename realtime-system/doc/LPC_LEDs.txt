@@ -1,0 +1,28 @@
+LPC FW Ver. 102++ LED meanings.		2019-11-04 KSTR
+
+LA (green)	: GPIO2[10] "lpc_dbg_led_m0_hb"		M0 Core Heartbeat (fast)
+LB (green)	: GPIO2[11] "lpc_dbg_led_m4_hb"   	M4 Core Heartbeat (slow)
+LC (green)	: GPIO2[12] "lpc_dbg_led_audio_ok"	On when there are continuously incoming midi events (or overriden)
+LD (yellow)	: GPIO2[13] "lpc_dbg_led_task_ovfl"   	On when "Task Overflow" (calls to some tasks are still pending when next scheduling is due)
+LE (red)	: GPIO2[14] "lpc_dbg_led_error"		On when traffic to ePC or BBB is stalled
+
+
+Notes:
+"Audio OK" is the output of a retriggerable monoflop with a 120ms timeout.
+It is retriggered by incoming midi over USB events.
+Output state can be forced/overriden by helper functions.
+Depending on the monflop state the duty cycle of a 10Hz-square-wave is changed.
+The square-wave is brought out to a pin which is connected to the Supervisor (for detection).
+
+
+"Task Overflow" is always indicated when a preset is changed!
+The offending task seems to be NL_GPDMA_Poll() which is due every 125uS and gets overrun during a
+preset change. Overruns higher than 2 pending calls did not occur in a short test I made,
+so this problem seems to be minor, if any.
+It might affect (micro-)timing because the task scheduler tries to catch up any calls it could not
+make at the proper time points later until all pending calls are made.
+
+
+"Error" is indicated when :
+- LPC to BBB transmit FIFO buffer overflows (C15_m4.c, line 108), short indication time
+- LPC to ePC USB transmit of midi buffer overruns (nl_tcd_msg.c, line 98), long indication time
