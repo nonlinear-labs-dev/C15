@@ -915,7 +915,7 @@ static void ProcessRibbons(void)
   int32_t valueToSend;
 
   BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW, Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
-		  Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
+                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
 
   for (int i = 0; i <= 1; i++)
   {

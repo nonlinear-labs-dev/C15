@@ -33,8 +33,7 @@
 #define BB_MSG_TYPE_MUTESTATUS 0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
 #define BB_MSG_TYPE_RIBBON_CAL 0x0D00  // direction: input; arguments(uint16): N, Nx data
 // for inhouse calibration only:
-#define BB_MSG_TYPE_RIBBON_RAW  0xFF01  // direction: output; arguments(uint16): 2, ribbon raw values
-
+#define BB_MSG_TYPE_RIBBON_RAW 0xFF01  // direction: output; arguments(uint16): 2, ribbon raw values
 
 //----- Setting Ids:
 
