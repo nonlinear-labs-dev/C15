@@ -26,6 +26,7 @@ namespace Log
 {
   void logMessage(const Glib::RefPtr<Glib::Bytes> &bytes)
   {
+    static uint32_t cntr=0;
     gsize msgLength = 0;
     auto rawMsg = bytes->get_data(msgLength);
     auto rawWords = reinterpret_cast<const uint16_t *>(rawMsg);
@@ -33,7 +34,7 @@ namespace Log
     switch (rawWords[0])
     {
     case 0xFF01 :  // raw ribbon values
-      printf("Ribbon Raw Data : %5d  %5d \n\033[1A", rawWords[2], rawWords[3]);
+      printf("Ribbon Raw Data (%.8x): %5d  %5d \n\033[1A", cntr++, rawWords[2], rawWords[3]);
       break;
     }
 
