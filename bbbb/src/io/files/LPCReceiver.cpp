@@ -33,7 +33,7 @@ namespace Log
     switch (rawWords[0])
     {
     case 0xFF01 :  // raw ribbon values
-      printf("Ribbon Raw Data : %5d  %5d \n\033[1A", rawWords[1], rawWords[2]);
+      printf("Ribbon Raw Data : %5d  %5d \n\033[1A", rawWords[2], rawWords[3]);
       break;
     }
 
