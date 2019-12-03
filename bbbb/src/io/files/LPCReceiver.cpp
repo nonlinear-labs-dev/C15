@@ -30,6 +30,14 @@ namespace Log
     auto rawMsg = bytes->get_data(msgLength);
     auto rawWords = reinterpret_cast<const uint16_t *>(rawMsg);
 
+    switch (rawWords[0])
+    {
+    case 0xFF01 :  // raw ribbon values
+      printf("Ribbon Raw Data : %5d  %5d \n\033[1A", rawWords[1], rawWords[2]);
+      break;
+    }
+
+/*
     for(gsize i = 0; i < msgLength/2; i++)
     {
       printf("%.4x ", rawWords[i]);
@@ -37,6 +45,7 @@ namespace Log
     if (msgLength >= 6)
       printf("  (%d)", (int16_t)rawWords[(msgLength/2)-1]);
     std::cout << '\n';
+*/
   }
 
   void logHeartbeat(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
