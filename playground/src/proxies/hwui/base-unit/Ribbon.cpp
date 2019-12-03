@@ -64,7 +64,7 @@ void Ribbon::debugTrace()
 void Ribbon::resetLEDs()
 {
   for(int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
-    setLEDState(i, 0);
+    setLEDState(i, 3);
 
   //debugTrace();
 }
