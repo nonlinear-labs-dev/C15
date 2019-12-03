@@ -205,8 +205,15 @@ static int32_t  ribbon2Output;
 
 static uint32_t suspend;
 
+static int32_t SetThreshold(int32_t val)
+{  // set threshold to 60%
+  val *= 6;
+  val /= 10;
+  return val;
+}
+
 /*****************************************************************************
-* @brief	ADC_WORK_Generate_BenderTable -
+* @brief	ADC_WORK_Generate_BenderTable
 * @param	0: soft, 1: normal, 2: hard
 ******************************************************************************/
 void ADC_WORK_Generate_BenderTable(uint32_t curve)
@@ -357,8 +364,8 @@ void ADC_WORK_Init(void)
     ribbon[i].editBehavior  = 0;
     ribbon[i].incBase       = 0;
     ribbon[i].output        = 0;
-    ribbon[i].calibration   = &RIBBON_DEFAULT_CALIBRATION_DATA;             // use default calibration
-    ribbon[i].threshold     = 7 * ribbon[i].calibration->x_values[0] / 10;  // set threshold to 70% of lowest raw value
+    ribbon[i].calibration   = &RIBBON_DEFAULT_CALIBRATION_DATA;  // use default calibration
+    ribbon[i].threshold     = SetThreshold(ribbon[i].calibration->x_values[0]);
     ribbon[i].ipcId         = (i == 0 ? EMPHASE_IPC_RIBBON_1_ADC : EMPHASE_IPC_RIBBON_2_ADC);
     ribbon[i].paramId       = (i == 0 ? PARAM_ID_RIBBON_1 : PARAM_ID_RIBBON_2);
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
@@ -903,19 +910,28 @@ void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data)
   }
 
   ribbon[RIB1].calibration = &ribbon_1_calibration_data;
-  ribbon[RIB1].threshold   = 7 * ribbon[RIB1].calibration->x_values[0] / 10;  // set threshold to 70% of lowest raw value
   ribbon[RIB2].calibration = &ribbon_2_calibration_data;
-  ribbon[RIB2].threshold   = 7 * ribbon[RIB2].calibration->x_values[0] / 10;  // set threshold to 70% of lowest raw value
+  ribbon[RIB1].threshold   = SetThreshold(ribbon[RIB1].calibration->x_values[0]);
+  ribbon[RIB2].threshold   = SetThreshold(ribbon[RIB2].calibration->x_values[0]);
 }
 
-// TODO test this !
+// TODO test this ! ==> Looks good so far
 static void ProcessRibbons(void)
 {
   int32_t value;
   int32_t valueToSend;
 
-  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW, Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
-                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
+  static uint8_t cntr = 0;
+  if (cntr)
+    cntr--;
+  else
+  {
+    cntr = 8 - 1;  // update only every 8 * 12.5ms = 100ms to avoid heavy traffic from this only supplemental data
+    BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW,
+                            Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
+                            Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
+    BB_MSG_SendTheBuffer();
+  }
 
   for (int i = 0; i <= 1; i++)
   {
