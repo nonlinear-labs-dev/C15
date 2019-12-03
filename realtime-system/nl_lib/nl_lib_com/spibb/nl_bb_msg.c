@@ -82,7 +82,7 @@ void SignalBufferOverrun(void)
   // Is throwing away the complete buffer really a good solution?
   sendBufferLen = 0;
   DBG_Led_Error_On();
-  COOS_Task_Add(DBG_Led_Error_Off, 1000 * 8, 0);
+  COOS_Task_Add(DBG_Led_Error_Off, 100 * 8, 0);
 }
 
 /**********************************************************************

@@ -129,8 +129,8 @@ static int32_t RIBBON_DEFAULT_CALIBRATION_TABLE_X[] = {
 };
 
 static int32_t RIBBON_DEFAULT_CALIBRATION_TABLE_Y[] = {
-  0, 712, 1205, 1698, 2191, 2684, 3177, 3669, 4162, 4655, 5148, 5641, 6134, 6627, 7120, 7613, 8106, 8598,
-  9091, 9584, 10077, 10570, 11063, 11556, 12049, 12542, 13035, 13527, 14020, 14513, 15006, 15499, 15992
+  0, 712, 1198, 1684, 2170, 2655, 3141, 3627, 4113, 4599, 5085, 5571, 6057, 6542, 7028, 7514, 8000,
+  8500, 8993, 9494, 9994, 10495, 10995, 11496, 11996, 12497, 12997, 13498, 13998, 14499, 14999, 15500, 16000
 };
 
 static LIB_interpol_data_T RIBBON_DEFAULT_CALIBRATION_DATA = {
@@ -914,6 +914,9 @@ static void ProcessRibbons(void)
   int32_t value;
   int32_t valueToSend;
 
+  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW, Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
+                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
+
   for (int i = 0; i <= 1; i++)
   {
     uint32_t send        = 0;
@@ -921,7 +924,6 @@ static void ProcessRibbons(void)
     int32_t  inc         = 0;
 
     value = Emphase_IPC_PlayBuffer_Read(ribbon[i].ipcId);
-    BB_MSG_WriteMessage1Arg_DBG(0xF1FF + i, value);
 
     if (value > ribbon[i].last + 1)  // rising values (min. +2)
     {
@@ -965,9 +967,6 @@ static void ProcessRibbons(void)
 
     if (send)
     {
-      // BB_MSG_WriteMessage1Arg_DBG(0xF1FF+i, valueToSend);
-      BB_MSG_WriteMessage1Arg_DBG(0xF1FF + i, value);
-
       if (touchBegins)  // in the incremental mode the jump to the touch position has to be ignored
       {
         inc         = 0;
@@ -1509,7 +1508,6 @@ void ADC_WORK_Process(void)
   int32_t  inc         = 0;
 
   value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_1_ADC);
-  BB_MSG_WriteMessage1Arg_DBG(0xF1FF, value);
 
   if (value > lastRibbon1 + 1)  // rising values (min. +2)
   {
@@ -1557,8 +1555,6 @@ void ADC_WORK_Process(void)
 
   if (send)
   {
-    // BB_MSG_WriteMessage1Arg_DBG(0xF1FF, valueToSend);
-    BB_MSG_WriteMessage1Arg_DBG(0xF1FF, value);
     valueToSend = LinearizeRibbon(valueToSend);
 
     if (touchBegins)  // in the incremental mode the jump to the touch position has to be ignored
@@ -1623,7 +1619,6 @@ void ADC_WORK_Process(void)
   //==================== Ribbon 2
 
   value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_2_ADC);
-  BB_MSG_WriteMessage1Arg_DBG(0xF2FF, value);
 
   if (value > lastRibbon2 + 1)  // rising values (min. +2)
   {
