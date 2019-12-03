@@ -35,7 +35,7 @@ namespace Log
       printf("%.4x ", rawWords[i]);
     }
     if (msgLength >= 6)
-    printf("  (%d)", (int16_t)rawWords[(msgLength/2)-1]);
+      printf("  (%d)", (int16_t)rawWords[(msgLength/2)-1]);
     std::cout << '\n';
   }
 
