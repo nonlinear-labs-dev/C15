@@ -3,6 +3,7 @@
  *
  *  Created on: 13.03.2015
  *      Author: ssc
+ *  Last change on : 2019-12-04 KSTR
  */
 
 #include "math.h"
@@ -614,8 +615,10 @@ void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
   uint32_t i;
   uint32_t send = 0;
 
-  //  bbSendValue[HW_SOURCE_ID_RIBBON_1] = 391 | 0x80000;
-  //  bbSendValue[HW_SOURCE_ID_RIBBON_2] = 392 | 0x80000;
+  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW,
+                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
+                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
+  send = 1;
 
   for (i = 0; i < NUM_HW_SOURCES; i++)
   {
@@ -631,7 +634,7 @@ void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
 
   if (send == 1)
   {
-    BB_MSG_SendTheBuffer();  /// später mit somethingToSend = 1; !!!
+    BB_MSG_SendTheBuffer();
   }
 }
 
@@ -920,18 +923,6 @@ static void ProcessRibbons(void)
 {
   int32_t value;
   int32_t valueToSend;
-
-  static uint8_t cntr = 0;
-  if (cntr)
-    cntr--;
-  else
-  {
-    cntr = 8 - 1;  // update only every 8 * 12.5ms = 100ms to avoid heavy traffic from this only supplemental data
-    BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW,
-                            Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
-                            Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
-    BB_MSG_SendTheBuffer();
-  }
 
   for (int i = 0; i <= 1; i++)
   {
