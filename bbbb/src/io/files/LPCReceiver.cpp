@@ -37,7 +37,7 @@ namespace Log
       printf("Ribbon Raw Data (%.8x): %5d  %5d \n\033[1A", cntr++, rawWords[2], rawWords[3]);
       break;
     case 0xFF02 :  // raw ribbon values, standard output (suitable for piping/redirection)
-      printf("Ribbon Raw Data (%.8x): %5d  %5d \n\033[1A", cntr++, rawWords[2], rawWords[3]);
+      printf("Ribbon Raw Data (%.8x): %5d  %5d\n", cntr++, rawWords[2], rawWords[3]);
       break;
     }
 
