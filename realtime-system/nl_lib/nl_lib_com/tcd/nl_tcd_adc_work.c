@@ -124,37 +124,46 @@ static uint32_t atTable[33] = {};  // contains the chosen aftertouch curve
 //========= ribbons ========
 
 // default calibration tables
-static int32_t RIBBON_DEFAULT_CALIBRATION_TABLE_X[] = {
-  154, 257, 388, 516, 645, 765, 866, 947, 1044, 1149, 1260, 1376, 1484, 1598, 1710, 1818, 1931, 2034,
-  2149, 2251, 2365, 2480, 2595, 2713, 2826, 2956, 3089, 3243, 3384, 3544, 3712, 3872, 4048
+static int32_t RIBBON_1_DEFAULT_CALIBRATION_TABLE_X[34] = {
+  142, 165, 263, 390, 518, 649, 765, 866, 950, 1047, 1152, 1263, 1376, 1484, 1596, 1710, 1820, 1930,
+  2034, 2149, 2251, 2365, 2480, 2595, 2713, 2826, 2954, 3093, 3236, 3390, 3544, 3711, 3872, 4035
+};
+static int32_t RIBBON_2_DEFAULT_CALIBRATION_TABLE_X[34] = {
+  142, 165, 252, 375, 506, 632, 744, 844, 926, 1016, 1123, 1230, 1342, 1448, 1560, 1680, 1790, 1900,
+  2008, 2121, 2234, 2344, 2464, 2578, 2697, 2816, 2944, 3080, 3225, 3376, 3536, 3700, 3860, 4035
 };
 
-static int32_t RIBBON_DEFAULT_CALIBRATION_TABLE_Y[] = {
+static int32_t RIBBON_DEFAULT_CALIBRATION_TABLE_Y[33] = {
   0, 712, 1198, 1684, 2170, 2655, 3141, 3627, 4113, 4599, 5085, 5571, 6057, 6542, 7028, 7514, 8000,
   8500, 8993, 9494, 9994, 10495, 10995, 11496, 11996, 12497, 12997, 13498, 13998, 14499, 14999, 15500, 16000
 };
 
-static LIB_interpol_data_T RIBBON_DEFAULT_CALIBRATION_DATA = {
-  sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_X) / sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_X[0]),
-  RIBBON_DEFAULT_CALIBRATION_TABLE_X,
+static LIB_interpol_data_T RIBBON_1_DEFAULT_CALIBRATION_DATA = {
+  sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y) / sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y[0]),
+  &RIBBON_1_DEFAULT_CALIBRATION_TABLE_X[1],
+  RIBBON_DEFAULT_CALIBRATION_TABLE_Y
+};
+static LIB_interpol_data_T RIBBON_2_DEFAULT_CALIBRATION_DATA = {
+  sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y) / sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y[0]),
+  &RIBBON_2_DEFAULT_CALIBRATION_TABLE_X[1],
   RIBBON_DEFAULT_CALIBRATION_TABLE_Y
 };
 
 // user calibration tables
-static int32_t ribbon_1_calibration_table_x[33];
+static int32_t ribbon_1_calibration_table_x[34];
 static int32_t ribbon_1_calibration_table_y[33];
-static int32_t ribbon_2_calibration_table_x[33];
+static int32_t ribbon_2_calibration_table_x[34];
 static int32_t ribbon_2_calibration_table_y[33];
 
 static LIB_interpol_data_T ribbon_1_calibration_data = {
-  sizeof(ribbon_1_calibration_table_x) / sizeof(ribbon_1_calibration_table_x[0]),
-  ribbon_1_calibration_table_x,
+  sizeof(ribbon_1_calibration_table_y) / sizeof(ribbon_1_calibration_table_y[0]),
+  &ribbon_1_calibration_table_x[1],
   ribbon_1_calibration_table_y
 };
 
 static LIB_interpol_data_T ribbon_2_calibration_data = {
-  sizeof(ribbon_2_calibration_table_x) / sizeof(ribbon_2_calibration_table_x[0]),
-  ribbon_2_calibration_table_x,
+  sizeof(ribbon_2_calibration_table_y) / sizeof(ribbon_2_calibration_table_y[0]),
+  &ribbon_2_calibration_table_x[1],
   ribbon_2_calibration_table_y
 };
 
@@ -207,8 +216,8 @@ static int32_t  ribbon2Output;
 static uint32_t suspend;
 
 static int32_t SetThreshold(int32_t val)
-{  // set threshold to 60%
-  val *= 6;
+{  // set threshold to 80%
+  val *= 8;
   val /= 10;
   return val;
 }
@@ -365,7 +374,7 @@ void ADC_WORK_Init(void)
     ribbon[i].editBehavior  = 0;
     ribbon[i].incBase       = 0;
     ribbon[i].output        = 0;
-    ribbon[i].calibration   = &RIBBON_DEFAULT_CALIBRATION_DATA;  // use default calibration
+    ribbon[i].calibration   = (i == 0 ? &RIBBON_1_DEFAULT_CALIBRATION_DATA : &RIBBON_2_DEFAULT_CALIBRATION_DATA);  // use default calibration
     ribbon[i].threshold     = SetThreshold(ribbon[i].calibration->x_values[0]);
     ribbon[i].ipcId         = (i == 0 ? EMPHASE_IPC_RIBBON_1_ADC : EMPHASE_IPC_RIBBON_2_ADC);
     ribbon[i].paramId       = (i == 0 ? PARAM_ID_RIBBON_1 : PARAM_ID_RIBBON_2);
@@ -878,32 +887,35 @@ uint32_t ADC_WORK_GetPedal4Behaviour(void)
 // TODO Test this !
 void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data)
 {
-  if (length != 33 * 4)  // data must contain X and Y sets (33 points) for each ribbon
+  if (length != (34 + 33 + 34 + 33))  // data must contain X (34 point) and Y (33 points) sets,  for each ribbon
     return;
 
   int i;
-
-  for (i = 0; i < 33; i++)
+  for (i = 0; i < 34; i++)
     ribbon_1_calibration_table_x[i] = (int32_t) *data++;
   for (i = 0; i < 33; i++)
     ribbon_1_calibration_table_y[i] = (int32_t) *data++;
-  for (i = 0; i < 33; i++)
+  for (i = 0; i < 34; i++)
     ribbon_2_calibration_table_x[i] = (int32_t) *data++;
   for (i = 0; i < 33; i++)
     ribbon_2_calibration_table_y[i] = (int32_t) *data++;
 
   // Integrity checks
-  for (i = 0; i < 33; i++)
+  for (i = 0; i < 34; i++)
   {
     if (ribbon_1_calibration_table_x[i] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
         || ribbon_1_calibration_table_x[i] > 4095
         || ribbon_2_calibration_table_x[i] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
-        || ribbon_2_calibration_table_x[i] > 4095
-        || ribbon_1_calibration_table_y[i] < 0
+        || ribbon_2_calibration_table_x[i] > 4095)
+      return;  // x-values are not in valid range for raw values
+  }
+  for (i = 0; i < 33; i++)
+  {
+    if (ribbon_1_calibration_table_y[i] < 0
         || ribbon_1_calibration_table_y[i] > 16000
         || ribbon_2_calibration_table_y[i] < 0
         || ribbon_2_calibration_table_y[i] > 16000)
-      return;  // x- (y-values) are not in valid range for raw values (output values)
+      return;  // y-values are not in valid range for output values
   }
   for (i = 1; i < 33; i++)
   {
