@@ -21,19 +21,28 @@ int main(int argc, char* argv[])
   FILE* infile;
   if((infile = fopen(argv[1], "r")) == nullptr)
   {
-    printf("ERROR: Cannot open input file \"%s\"\n", argv[1]);
+    printf("FATAL: Cannot open input file \"%s\"\n", argv[1]);
     return 3;  // --> exit
   }
 
-  ctr::CalToRef cal(ctr::CalToRef::Verbose);
+  ctr::CalToRef cal(ctr::CalToRef::VerboseMessages);
 
-  cal.addInValuesStart();
+  cal.startAddIn();
   while(fscanf(infile, "%hu %hu", &ref, &dut) != EOF)
   {
-    if(cal.addInValues(ref, dut) >= 3)
+    if(cal.addInSamplePair(ref, dut) >= 3)
+    {
+      printf("FATAL: value(s) out of legal range. Program terminated\n");
       return 3;  // severe error, eg values out of bounds --> exit
+    }
   }
-  cal.addInValuesEnd();
+  cal.endAddIn();
+
+  if(cal.getValidSamples() == 0)
+  {
+    printf("Not enough valid samples, program terminated without effect\n");
+    return 2;
+  }
 
   cal.doAveraging();
 
