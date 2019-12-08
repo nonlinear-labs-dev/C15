@@ -22,9 +22,9 @@ namespace ctr
     // return 0:success, 1:dropped values, 2:discarded values, 3:fatal error
     int addInSamplePair(uint16_t binNumber, uint16_t values);
 
-    void endAddIn(void);  // returns number of valid sample pairs
+    void endAddIn(void);
 
-    unsigned getValidSamples(void);
+    unsigned getValidSamples(void);  // returns number of valid sample pairs
 
     // return : did something
     bool doAveraging(void);
