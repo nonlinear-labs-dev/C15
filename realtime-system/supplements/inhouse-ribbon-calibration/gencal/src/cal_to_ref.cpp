@@ -4,52 +4,90 @@
 
 namespace ctr
 {
-  static uint32_t accu[4096];
-  static uint16_t cnt[4096];
-#define MAX_DELTA (100)  // maximum allowed difference for ref and dut values for a point
-#define THRESHOLD (100)  // minimum allowed value (worst-case ribbon threshold)
-#define MAX_VAL (4096)   // maximum allowed valued (ADC max)
+  CalToRef::CalToRef(Options option)
+      : m_totalSamples(0)
+      , m_droppedSamples(0)
+      , m_discardedSamples(0)
 
-  int addInValues(uint16_t refVal, uint16_t dutVal)
   {
-    if(refVal > MAX_VAL || dutVal > MAX_VAL)
+    verbose = (option == Verbose);
+    for(auto i = 0; i < m_RANGE; i++)
     {
-      puts("ERROR: Value(s) out of range 0...MAX_VAL!");
+      m_accu[i] = 0;
+      m_cnt[i] = 0;
+    }
+  }
+
+  CalToRef::~CalToRef()
+  {
+  }
+
+  void CalToRef::addInValuesStart(void)
+  {
+    if(verbose)
+      puts("Reading ref and dut raw values...");
+  }
+
+  void CalToRef::addInValuesEnd(void)
+  {
+    if(verbose)
+      printf("Reading done, %u sample pairs total, %u dropped, %u discarded\n", m_totalSamples, m_droppedSamples,
+             m_discardedSamples);
+  }
+
+  int CalToRef::addInValues(uint16_t refVal, uint16_t dutVal)
+  {
+    if(verbose)
+      printf("%5hu %5hu : ", refVal, dutVal);
+
+    if((refVal > (m_RANGE - 1)) || (dutVal > (m_RANGE - 1)))
+    {
+      printf("ERROR: Value(s) out of range 0...%d!\n", m_RANGE);
       return 3;  // fatal: values out of range for array index
     }
 
-    if(refVal < THRESHOLD || dutVal < THRESHOLD)
+    ++m_totalSamples;
+
+    if((refVal < m_THRESHOLD) || (dutVal < m_THRESHOLD))
     {
-      puts("NOTE: Input discarded, value(s) lower than worst-case ribbon threshold.");
+      ++m_droppedSamples;
+      if(verbose)
+        printf("dropped, value(s) lower than worst-case ribbon threshold.\n");
       return 1;
     }
 
-    if(abs((int(refVal) - int(dutVal))) > MAX_DELTA)
+    if(abs((int(refVal) - int(dutVal))) > m_MAX_DELTA)
     {
-      puts("WARNING: Input discarded, difference is too large.");
+      ++m_discardedSamples;
+      if(verbose)
+        printf("discarded, difference is too large.\n");
       return 2;
     }
 
-    if(cnt[refVal] >= UINT16_MAX)
+    if(m_cnt[refVal] >= UINT16_MAX)
     {  // do not add in value if counter would overflow
-      puts("WARNING: Input discarded, accumulator overflow.");
+      ++m_discardedSamples;
+      if(verbose)
+        printf("discarded, accumulator overflow.\n");
       return 2;
     }
 
-    accu[refVal] += dutVal;  // accumulate in value (averaging is done later)
-    ++cnt[refVal];           // increase denominator for averaging
+    printf("Ok\n");
+
+    m_accu[refVal] += dutVal;  // accumulate in value (averaging is done later)
+    ++m_cnt[refVal];           // increase denominator for averaging
 
     return 0;
   }
 
-  bool doAveraging(void)
+  bool CalToRef::doAveraging(void)
   {
     bool didSomething = false;
-    for(int i = 0; i < MAX_VAL; i++)
+    for(auto i = 0; i < m_RANGE; i++)
     {
-      if(cnt[i])  // populated bin ?
+      if(m_cnt[i])  // populated bin ?
       {
-        accu[i] /= cnt[i];
+        m_accu[i] /= m_cnt[i];
         didSomething = true;
       }
     }

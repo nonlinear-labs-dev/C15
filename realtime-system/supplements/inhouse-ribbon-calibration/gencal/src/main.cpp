@@ -12,10 +12,6 @@ int main(int argc, char* argv[])
   uint16_t ref;
   uint16_t dut;
 
-  int ret = 0;
-  int warnings = 0;
-  int notes = 0;
-
   if(argc != 2)
   {
     Usage(argv[0]);
@@ -29,26 +25,17 @@ int main(int argc, char* argv[])
     return 3;  // --> exit
   }
 
-  puts("Reading ref and dut raw values...");
+  ctr::CalToRef cal(ctr::CalToRef::Verbose);
+
+  cal.addInValuesStart();
   while(fscanf(infile, "%hu %hu", &ref, &dut) != EOF)
   {
-    printf("%5hu %5hu\n", ref, dut);
-    ret = ctr::addInValues(ref, dut);
-    switch(ret)
-    {
-      case 3:
-        return 3;  // severe error, eg values out of bounds --> exit
-      case 2:
-        ++warnings;
-        break;
-      case 1:
-        ++notes;
-        break;
-    }
+    if(cal.addInValues(ref, dut) >= 3)
+      return 3;  // severe error, eg values out of bounds --> exit
   }
-  printf("Reading done, with %d warning(s) and %d note(s)\n", warnings, notes);
+  cal.addInValuesEnd();
 
-  ctr::doAveraging();
+  cal.doAveraging();
 
   return 0;
 }
