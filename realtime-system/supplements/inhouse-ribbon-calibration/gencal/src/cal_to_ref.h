@@ -1,5 +1,4 @@
 #pragma once
-#define CAL_TO_REF_H
 
 #include <stdint.h>
 
