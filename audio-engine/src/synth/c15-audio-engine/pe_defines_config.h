@@ -12,6 +12,9 @@
 
 #include <stdint.h>
 
+// switch signal processing modes: 0 - FX have z-delay (Linux Engine up to now), 1 - FX have no z-delay (like R5 Prototype)
+#define REWORK_POLY_DSP 1
+
 /* Param Interface Testing */
 #define PARAM_ITERATOR 1  // 0: render param bodies by clockIds; 1: render param bodies by direct iteration (default)
 
