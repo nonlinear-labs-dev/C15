@@ -44,7 +44,13 @@ int main(int argc, char* argv[])
     return 2;
   }
 
-  cal.doAveraging();
+  if(!cal.ProcessData())
+  {
+    printf("processing failed, program terminated without effect\n");
+    return 2;
+  }
+
+  cal.OutputData(nullptr);
 
   return 0;
 }

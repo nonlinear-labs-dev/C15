@@ -17,6 +17,7 @@ QMAKE_CXXFLAGS += -Wall -Wextra
 
 SOURCES += \
     src/cal_to_ref.cpp \
+    src/interpol.cpp \
     src/main.cpp
 
 # Default rules for deployment.
@@ -25,4 +26,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-  src/cal_to_ref.h
+  src/cal_to_ref.h \
+  src/interpol.h
