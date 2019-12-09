@@ -127,6 +127,9 @@ static uint32_t atTable[33] = {};  // contains the chosen aftertouch curve
 static int32_t RIBBON_1_DEFAULT_CALIBRATION_TABLE_X[34] = {
   142, 165, 263, 390, 518, 649, 765, 866, 950, 1047, 1152, 1263, 1376, 1484, 1596, 1710, 1820, 1930,
   2034, 2149, 2251, 2365, 2480, 2595, 2713, 2826, 2954, 3093, 3236, 3390, 3544, 3711, 3872, 4035
+  // MASTER_REF:
+  // 127, 144, 260, 394, 520, 638, 753, 869, 986, 1105, 1227, 1350, 1470, 1588, 1705, 1824, 1944, 2058,
+  // 2170, 2283, 2400, 2513, 2630, 2745, 2863, 2987, 3107, 3232, 3365, 3499, 3630, 3780, 3920, 4040
 };
 static int32_t RIBBON_2_DEFAULT_CALIBRATION_TABLE_X[34] = {
   142, 165, 252, 375, 506, 632, 744, 844, 926, 1016, 1123, 1230, 1342, 1448, 1560, 1680, 1790, 1900,
@@ -624,11 +627,6 @@ void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
   uint32_t i;
   uint32_t send = 0;
 
-  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW,
-                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
-                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
-  send = 1;
-
   for (i = 0; i < NUM_HW_SOURCES; i++)
   {
     if (bbSendValue[i] > 0)
@@ -935,6 +933,10 @@ static void ProcessRibbons(void)
 {
   int32_t value;
   int32_t valueToSend;
+
+  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW,
+                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
+                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
 
   for (int i = 0; i <= 1; i++)
   {
