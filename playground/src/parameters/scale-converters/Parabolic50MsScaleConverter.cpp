@@ -2,6 +2,6 @@
 #include "dimension/TimeDimension.h"
 
 Parabolic50MsScaleConverter::Parabolic50MsScaleConverter()
-    : ParabolicScaleConverter(tTcdRange(0, 12500), tDisplayRange(0, 50), TimeDimension<3>::get())
+    : ParabolicScaleConverter(tTcdRange(0, 12500), tDisplayRange(0, 50), TimeDimension::get())
 {
 }

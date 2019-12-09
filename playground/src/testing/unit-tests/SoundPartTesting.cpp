@@ -28,13 +28,6 @@ TEST_CASE("HWUI Voice Group Selection")
       eb->undoableLoad(scope->getTransaction(), presets.getSplitPreset());
     }
 
-    REQUIRE(TestHelper::MainLoop::hasPending());
-
-    while(TestHelper::MainLoop::iterateLoopOnce())
-      ;
-
-    REQUIRE_FALSE(TestHelper::MainLoop::hasPending());
-
     REQUIRE(hwui->getCurrentVoiceGroup() == VoiceGroup::I);
   }
 }

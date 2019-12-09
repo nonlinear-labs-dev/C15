@@ -17,4 +17,50 @@ namespace nltools
   {
     return g_str_has_prefix(string.c_str(), test.c_str());
   }
+
+  std::vector<std::string> splitStringOnAnyDelimiter(const std::string &s, char delimiter)
+  {
+    std::vector<std::string> strings;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while(std::getline(tokenStream, token, delimiter))
+    {
+      strings.emplace_back(token);
+    }
+    return strings;
+  }
+
+  namespace Truncate
+  {
+    std::string trimEnd(const std::string &in)
+    {
+      std::string ret{};
+      for(auto it = in.rbegin(); it != in.rend(); it++)
+      {
+        if(*it != '0')
+          ret += *it;
+      }
+
+      return ret;
+    }
+
+    std::string numberWithoutZeros(const std::string &in)
+    {
+      auto parts = nltools::splitStringOnAnyDelimiter(in, '.');
+      if(parts.size() == 2)
+      {
+        auto secondHalf = trimEnd(parts[1]);
+        if(secondHalf.empty())
+        {
+          return parts[0];
+        }
+        else
+        {
+          return parts[0] + "." + secondHalf;
+        }
+      }
+
+      return in;
+    }
+  }
 }

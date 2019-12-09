@@ -2,9 +2,10 @@
 
 #include "Dimension.h"
 
-template <int tPrecision = 3> class TimeDimension : public Dimension
+template<size_t tPrecision>
+class VariableTimeDimension : public Dimension
 {
- public:
+public:
   Glib::ustring getStingizerJS() const override
   {
     return "formatDimensionDigits(cpValue, 'ms', withUnit, " + std::to_string(tPrecision) + ")";
@@ -15,9 +16,13 @@ template <int tPrecision = 3> class TimeDimension : public Dimension
     return formatDimensionDigits(displayValue, "ms", tPrecision);
   }
 
-  static const TimeDimension &get()
+  static const VariableTimeDimension<tPrecision> &get()
   {
-    static TimeDimension<tPrecision> p;
+    static VariableTimeDimension<tPrecision> p;
     return p;
   }
+};
+
+class TimeDimension : public VariableTimeDimension<3>
+{
 };

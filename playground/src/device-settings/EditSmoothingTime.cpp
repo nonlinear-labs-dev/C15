@@ -8,16 +8,15 @@
 #include <xml/Writer.h>
 #include <nltools/messaging/Message.h>
 #include <proxies/audio-engine/AudioEngineProxy.h>
+#include <nltools/StringTools.h>
 
 EditSmoothingTime::EditSmoothingTime(Settings &parent)
     : super(parent)
-    , m_time(nullptr, ScaleConverter::get<EditSmoothingTimeMSScaleConverter>(), 0, 100, 1000)
+    , m_time(nullptr, ScaleConverter::get<EditSmoothingTimeMSScaleConverter>(), 0, 200, 2000)
 {
 }
 
-EditSmoothingTime::~EditSmoothingTime()
-{
-}
+EditSmoothingTime::~EditSmoothingTime() = default;
 
 void EditSmoothingTime::load(const Glib::ustring &text)
 {
@@ -54,7 +53,7 @@ void EditSmoothingTime::sendToLPC() const
 {
   Application::get().getLPCProxy()->sendSetting(EDIT_SMOOTHING_TIME, m_time.getTcdValue());
 
-  nltools::msg::Setting::EditSmoothingTimeMessage msg { static_cast<float>(m_time.getRawValue()) };
+  nltools::msg::Setting::EditSmoothingTimeMessage msg{ static_cast<float>(m_time.getRawValue()) };
   Application::get().getAudioEngineProxy()->sendSettingMessage<nltools::msg::Setting::EditSmoothingTimeMessage>(msg);
 }
 
@@ -83,7 +82,8 @@ void EditSmoothingTime::incDec(int incs, ButtonModifiers modifiers)
 
 Glib::ustring EditSmoothingTime::getDisplayString() const
 {
-  return m_time.getDisplayString();
+  auto parts = nltools::splitStringOnAnyDelimiter(m_time.getDisplayString(), ' ');
+  return nltools::Truncate::numberWithoutZeros(parts[0]) + ' ' + parts[1];
 }
 
 void EditSmoothingTime::writeDocument(Writer &writer, tUpdateID knownRevision) const

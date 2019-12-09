@@ -2,7 +2,7 @@
 #include "dimension/TimeDimension.h"
 
 EnvelopeReleaseTimeMSScaleConverter::EnvelopeReleaseTimeMSScaleConverter()
-    : ScaleConverter(TimeDimension<3>::get())
+    : ScaleConverter(TimeDimension::get())
 {
 }
 
