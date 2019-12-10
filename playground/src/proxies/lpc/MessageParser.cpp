@@ -100,7 +100,7 @@ size_t MessageParser::getNumInitialBytesNeeded()
   return sizeof(NLMessage::type) + sizeof(NLMessage::length);
 }
 
-const MessageParser::NLMessage &MessageParser::getMessage() const
+MessageParser::NLMessage MessageParser::getMessage() const
 {
   return m_msg;
 }
