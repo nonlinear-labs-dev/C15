@@ -40,7 +40,7 @@ class MessageParser
     void trace(const char *fromLocation);
   };
 
-  const NLMessage &getMessage() const;
+  NLMessage getMessage() const;
   size_t parse(const uint8_t *buffer, size_t numBytes);
   static size_t getNumInitialBytesNeeded();
   static void registerTests();

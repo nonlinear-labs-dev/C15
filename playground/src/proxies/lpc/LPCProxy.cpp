@@ -38,16 +38,16 @@ LPCProxy::~LPCProxy()
   DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 }
 
-void LPCProxy::onWebSocketMessage(WebSocketSession::tMessage msg)
+void LPCProxy::onWebSocketMessage(const WebSocketSession::tMessage &msg)
 {
   gsize numBytes = 0;
-  const uint8_t *buffer = (const uint8_t *) (msg->get_data(numBytes));
+  const auto *buffer = (const uint8_t *) (msg->get_data(numBytes));
 
   if(numBytes > 0)
   {
     if(m_msgParser->parse(buffer, numBytes) == 0)
     {
-      onMessageReceived(std::move(m_msgParser->getMessage()));
+      onMessageReceived(m_msgParser->getMessage());
       m_msgParser.reset(new MessageParser());
     }
   }
@@ -103,13 +103,16 @@ void LPCProxy::onHeartbeatReceived(const MessageParser::NLMessage &msg)
 {
   uint64_t heartbeat = *(reinterpret_cast<const uint64_t *>(msg.params.data()));
 
+  DebugLevel::info("LPC Heartbeat", heartbeat);
+
   if(heartbeat < m_lastReceivedHeartbeat)
   {
     DebugLevel::warning("LPCProxy had to re-send the edit buffer, as the heartbeat stumbled from",
                         m_lastReceivedHeartbeat, "to", heartbeat);
     sendEditBuffer();
-    m_lastReceivedHeartbeat = heartbeat;
   }
+
+  m_lastReceivedHeartbeat = heartbeat;
 }
 
 void LPCProxy::onAssertionMessageReceived(const MessageParser::NLMessage &msg)
