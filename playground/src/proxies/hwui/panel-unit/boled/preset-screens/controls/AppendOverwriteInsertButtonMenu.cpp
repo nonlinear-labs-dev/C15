@@ -39,6 +39,8 @@ AppendOverwriteInsertButtonMenu::~AppendOverwriteInsertButtonMenu()
 
 void AppendOverwriteInsertButtonMenu::selectButton(size_t i)
 {
+  i = std::min(i, getItemCount() - 1);
+
   super::selectButton(i);
   Application::get().getSettings()->getSetting<PresetStoreModeSetting>()->set(indexToEnum(i));
 }
