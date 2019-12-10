@@ -147,7 +147,7 @@ namespace ctr
         m_mappedY[m_mappedCount] = m_data[i].value;
         ++m_mappedCount;
         if(m_verbose)
-          printf("%4d, %4d\n", i, m_data[i].value);
+          printf("%4d, %7.2f\n", i, double(m_data[i].value));
       }
     }
 
@@ -173,7 +173,7 @@ namespace ctr
       m_mappedAvgdY[i - m_AVG_CENTER] /= m_AVG_SIZE;
 
       if(m_verbose)
-        printf("%4d, %4d\n", m_mappedAvgdX[i - m_AVG_CENTER], m_mappedAvgdY[i - m_AVG_CENTER]);
+        printf("%7.2f, %7.2f\n", double(m_mappedAvgdX[i - m_AVG_CENTER]), double(m_mappedAvgdY[i - m_AVG_CENTER]));
     }
 
     // check for continuity/monotonicity of x and y values
@@ -185,7 +185,8 @@ namespace ctr
       if(m_mappedAvgdX[i] <= m_mappedAvgdX[i - 1])
       {
         if(m_verbose)
-          printf("X data (%d, %d) is not monotonically rising!\n", m_mappedAvgdX[i], m_mappedAvgdX[i - 1]);
+          printf("X data (%7.2f, %7.2f) is not monotonically rising!\n", double(m_mappedAvgdX[i]),
+                 double(m_mappedAvgdX[i - 1]));
         return false;
       }
     }
@@ -194,8 +195,8 @@ namespace ctr
       if(m_mappedAvgdY[i] + m_MONOTONICITY_DELTA < m_mappedAvgdY[i - 1])
       {
         if(m_verbose)
-          printf("Y data (%d, %d) is not close enough to monotonically rising!\n", m_mappedAvgdY[i - 1],
-                 m_mappedAvgdY[i]);
+          printf("Y data (%7.2f, %7.2f) is not close enough to monotonically rising!\n", double(m_mappedAvgdY[i - 1]),
+                 double(m_mappedAvgdY[i]));
         return false;
       }
     }
@@ -217,7 +218,7 @@ namespace ctr
 
     fprintf(fp, "[calibration_y]\n");
     for(auto i = 0; i < 33; i++)
-      fprintf(fp, "%d\n", m_RIBBON_REFERENCE_CALIBRATION_TABLE_Y[i]);
+      fprintf(fp, "%d\n", int(round(m_RIBBON_REFERENCE_CALIBRATION_TABLE_Y[i])));
 
     fprintf(fp, "[calibration_x]\n");
     for(auto i = 0; i < 34; i++)
@@ -225,7 +226,8 @@ namespace ctr
       //int x = m_RIBBON_REFERENCE_CALIBRATION_TABLE_X[i];
       //int y = Interpol::InterpolateValue(&m_interpolData, x);
       //printf("%d %d\n", x, y);
-      fprintf(fp, "%d\n", Interpol::InterpolateValue(&m_interpolData, m_RIBBON_REFERENCE_CALIBRATION_TABLE_X[i]));
+      fprintf(fp, "%d\n",
+              int(round(Interpol::InterpolateValue(&m_interpolData, m_RIBBON_REFERENCE_CALIBRATION_TABLE_X[i]))));
     }
     return true;
   }

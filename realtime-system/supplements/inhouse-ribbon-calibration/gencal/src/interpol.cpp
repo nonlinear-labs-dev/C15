@@ -13,7 +13,7 @@ namespace Interpol
 {
 
   // Returns the interpolated y-value. Saturates to y0 or y1 if x outside interval [x0, x1]
-  static inline int32_t InterpolateSegment(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x)
+  static inline float InterpolateSegment(float x0, float y0, float x1, float y1, float x)
   {
     if(x <= x0)
       return y0;
@@ -28,7 +28,7 @@ namespace Interpol
   *   @param  x value for which to calculate
   *   @return interpolated y value
   ******************************************************************************/
-  int32_t InterpolateValue(InterpolData *table, int32_t x)
+  float InterpolateValue(InterpolData *table, float x)
   {
     // Sanity checks
     if(!table)  // no table supplied ?
