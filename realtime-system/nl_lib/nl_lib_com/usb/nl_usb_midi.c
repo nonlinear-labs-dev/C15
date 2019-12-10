@@ -49,7 +49,11 @@ static uint32_t midiBuffPosition[2];
 
 static MidiRcvCallback USB_MIDI_RcvCallback = 0;
 
+#ifndef __NO_USB_MIDI__
 static uint8_t midiDropMessages = 0;
+#else
+static uint8_t midiDropMessages = 1;
+#endif
 
 /******************************************************************************/
 /** @brief		Endpoint 1 Callback
@@ -215,7 +219,9 @@ uint32_t USB_MIDI_BytesToSend(void)
 *******************************************************************************/
 void USB_MIDI_DropMessages(uint8_t drop)
 {
+#ifndef __NO_USB_MIDI__
   midiDropMessages = drop;
+#endif
 }
 
 // EOF
