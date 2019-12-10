@@ -43,10 +43,13 @@ namespace ctr
     unsigned m_droppedSamples;
     unsigned m_discardedSamples;
 
-    static constexpr auto m_MAX_DELTA = 100;  // maximum allowed difference for ref and dut values for a point
+    static constexpr auto m_MAX_DELTA = 300;  // maximum allowed difference for ref and dut values for a point
     static constexpr auto m_THRESHOLD = 100;  // minimum allowed value (worst-case ribbon threshold)
     static constexpr auto m_RANGE = 4096;     // (ADC) value range
-    static constexpr auto m_MAX_DIST = 64;    // ???? max allowed distance between adjacent points
+    static constexpr auto m_MAX_DIST = 30;    // max allowed distance between adjacent points
+    static constexpr auto m_AVG_SIZE = 9;     // must be odd and >= 3 !!
+    static constexpr auto m_AVG_CENTER = (m_AVG_SIZE - 1) / 2;
+    static constexpr auto m_MONOTONICITY_DELTA = 5;
 
     struct RawData
     {

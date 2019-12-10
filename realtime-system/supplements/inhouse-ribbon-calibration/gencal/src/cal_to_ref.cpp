@@ -152,28 +152,35 @@ namespace ctr
     }
 
     // smooth x and y mapped data
-    if(m_mappedCount < 5)
+    if(m_mappedCount < m_AVG_SIZE)
     {
       if(m_verbose)
-        printf("Not enough (< 5) valid pairs for mapping/averaging!\n");
+        printf("Not enough (< %d) valid pairs for mapping/averaging!\n", m_AVG_SIZE);
       return false;
     }
     if(m_verbose)
       puts("Smoothing map...");
-    for(int32_t i = 2; i < m_mappedCount - 2; i++)
-    {  // sliding average over 5 values
-      m_mappedAvgdX[i - 2]
-          = (m_mappedX[i - 2] + m_mappedX[i - 1] + m_mappedX[i] + m_mappedX[i + 1] + m_mappedX[i + 2]) / 5;
-      m_mappedAvgdY[i - 2]
-          = (m_mappedY[i - 2] + m_mappedY[i - 1] + m_mappedY[i] + m_mappedY[i + 1] + m_mappedY[i + 2]) / 5;
+    for(int32_t i = m_AVG_CENTER; i < m_mappedCount - m_AVG_CENTER; i++)
+    {  // sliding average over N values
+      m_mappedAvgdX[i - m_AVG_CENTER] = 0;
+      for(auto k = -m_AVG_CENTER; k <= +m_AVG_CENTER; k++)
+        m_mappedAvgdX[i - m_AVG_CENTER] += m_mappedX[i + k];
+      m_mappedAvgdX[i - m_AVG_CENTER] /= m_AVG_SIZE;
+
+      m_mappedAvgdY[i - m_AVG_CENTER] = 0;
+      for(auto k = -m_AVG_CENTER; k <= +m_AVG_CENTER; k++)
+        m_mappedAvgdY[i - m_AVG_CENTER] += m_mappedY[i + k];
+      m_mappedAvgdY[i - m_AVG_CENTER] /= m_AVG_SIZE;
+
       if(m_verbose)
-        printf("%4d, %4d\n", m_mappedAvgdX[i - 2], m_mappedAvgdY[i - 2]);
+        printf("%4d, %4d\n", m_mappedAvgdX[i - m_AVG_CENTER], m_mappedAvgdY[i - m_AVG_CENTER]);
     }
 
     // check for continuity/monotonicity of x and y values
+    m_mappedCount -= m_AVG_SIZE - 1;
     if(m_verbose)
       printf("Checking continuity...");
-    for(int32_t i = 1; i < m_mappedCount - 4; i++)
+    for(int32_t i = 1; i < m_mappedCount; i++)
     {
       if(m_mappedAvgdX[i] <= m_mappedAvgdX[i - 1])
       {
@@ -182,13 +189,13 @@ namespace ctr
         return false;
       }
     }
-    for(int32_t i = 1; i < m_mappedCount - 4; i++)
+    for(int32_t i = 1; i < m_mappedCount; i++)
     {
-      if(m_mappedAvgdY[i] + 5 < m_mappedAvgdY[i - 1])
+      if(m_mappedAvgdY[i] + m_MONOTONICITY_DELTA < m_mappedAvgdY[i - 1])
       {
         if(m_verbose)
-          printf("Y data (%d, %d) is not close enough to monotonically rising!\n", m_mappedAvgdY[i],
-                 m_mappedAvgdY[i - 1]);
+          printf("Y data (%d, %d) is not close enough to monotonically rising!\n", m_mappedAvgdY[i - 1],
+                 m_mappedAvgdY[i]);
         return false;
       }
     }
@@ -196,7 +203,7 @@ namespace ctr
       printf("Ok\n");
 
     // set up interpolation table
-    m_interpolData.points = m_mappedCount - 4;
+    m_interpolData.points = m_mappedCount;
     m_interpolData.x_values = m_mappedAvgdX;
     m_interpolData.y_values = m_mappedAvgdY;
 
