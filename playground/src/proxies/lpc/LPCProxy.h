@@ -73,7 +73,7 @@ class LPCProxy
   int getLPCSoftwareVersion() const;
 
  private:
-  void onWebSocketMessage(WebSocketSession::tMessage msg);
+  void onWebSocketMessage(const WebSocketSession::tMessage& msg);
   void onMessageReceived(const MessageParser::NLMessage &msg);
 
   typedef std::shared_ptr<MessageComposer> tMessageComposerPtr;
