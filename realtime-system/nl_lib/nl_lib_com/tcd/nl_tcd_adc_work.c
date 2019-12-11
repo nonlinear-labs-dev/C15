@@ -22,17 +22,6 @@
 #define GROUND_THRESHOLD     20
 #define CHANGE_FOR_DETECTION 500
 
-#if 0
-#define RIBBON_THRESHOLD (100)
-#define RIBBON_MIN       (160)
-#define RIBBON_MAX       (4040)
-#define RIBBON_SPAN      (RIBBON_MAX - RIBBON_MIN)
-
-#define RIBBON_CORR_4000  50   // 0 ... 128 refers to 0 ... 3.125 %, upscaled by 1024
-#define RIBBON_CORR_8000  120  // 0 ... 128 refers to 0 ... 3.125 %, upscaled by 1024
-#define RIBBON_CORR_12000 110  // 0 ... 128 refers to 0 ... 3.125 %, upscaled by 1024
-#endif
-
 #define DELTA 40  // hysteresis for pedals
 
 #define BENDER_DEADRANGE    20    // +/-1 % of +/-2047
@@ -194,29 +183,8 @@ static Ribbon_Data_T ribbon[2];  // two ribbons
 #define RIB1 0
 #define RIB2 1
 
-#if 0
-static int32_t lastRibbon1;
-static int32_t ribbon1Touch;
-static int32_t ribbon1Factor;  // 1024 * 16000 / MaxValue
-
-static int32_t lastRibbon2;
-static int32_t ribbon2Touch;
-static int32_t ribbon2Factor;  // 1024 * 16000 / MaxValue
-
-static uint32_t ribbon1Behaviour;
-static uint32_t ribbon2Behaviour;
-static int32_t  ribbonRelFactor;
-
-static uint32_t ribbon1IsEditControl;
-static uint32_t ribbon1EditBehaviour;
-
-static uint32_t ribbon1IncBase;
-static uint32_t ribbon2IncBase;
-static int32_t  ribbon1Output;
-static int32_t  ribbon2Output;
-#endif
-
 static uint32_t suspend;
+static int      send_raw_sensor_messages;  // sends raw sensor values every 12.5ms when set (!= 0)
 
 static int32_t SetThreshold(int32_t val)
 {  // set threshold to 80%
@@ -384,28 +352,6 @@ void ADC_WORK_Init(void)
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
 
-#if 0
-  lastRibbon1   = 0;
-  ribbon1Touch  = 0;
-  ribbon1Factor = (1024 * 16000) / RIBBON_SPAN;  // 3880;  /// muss (auto-)calibrierbar werden !!!
-
-  lastRibbon2   = 0;
-  ribbon2Touch  = 0;
-  ribbon2Factor = (1024 * 16000) / RIBBON_SPAN;  // 3880;  /// muss (auto-)calibrierbar werden !!!
-
-  ribbon1Behaviour = 0;    // abs, Non-Return
-  ribbon2Behaviour = 0;    // abs, Non-Return
-  ribbonRelFactor  = 256;  // factor 1.0
-
-  ribbon1IsEditControl = 0;
-  ribbon1EditBehaviour = 0;
-
-  ribbon1IncBase = 0;
-  ribbon2IncBase = 0;
-  ribbon1Output  = 0;
-  ribbon2Output  = 0;
-#endif
-
   suspend = 0;
 
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_DEFAULT_OFF);
@@ -458,102 +404,6 @@ void ADC_WORK_Check_Pedal_Cancel(uint32_t pedalId)
   checkPedal[pedalId]    = 0;
 }
 
-/******************************************************************************/
-/** @param[in]	pedalId: 0..3
-
-	Pedal types:
-	SWITCH_OPENING		pull-up on tip		non-inverted	tip active
-	SWITCH_CLOSING 		pull-up on tip		inverted		tip active
-	POTI_TIP_ACTIVE	 	pull-up on ring		non-inverted	tip active
-	POTI_RING_ACTIVE	 	pull-up on tip		non-inverted	ring active
-*******************************************************************************/
-#if 0
-static void CheckPedal(uint32_t pedalId)
-{
-	uint32_t valueTip;
-	uint32_t valueRing;
-
-	switch (pedalId)
-	{
-	case 0:
-		valueTip = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_TIP);
-		valueRing = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_RING);
-		break;
-
-	case 1:
-		valueTip = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_TIP);
-		valueRing = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_RING);
-		break;
-
-	case 2:
-		valueTip = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_TIP);
-		valueRing = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_RING);
-		break;
-
-	case 3:
-		valueTip = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_TIP);
-		valueRing = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_RING);
-		break;
-
-	default:
-		return;
-	}
-
-	if (firstTime[pedalId])
-	{
-		initialValueTip[pedalId] = valueTip;
-		initialValueRing[pedalId] = valueRing;
-
-		firstTime[pedalId] = 0;
-	}
-	else if (finished[pedalId] == 0)		// test is running, waiting for changes by pressing the pedal
-	{
-		if (initialValueRing[pedalId] < GROUND_THRESHOLD)	// a switch or variable resistor between Tip and Ground (or a poti with an active Ring close to Ground)
-		{
-			if (valueTip < initialValueTip[pedalId] - CHANGE_FOR_DETECTION)			// increasing current between Tip and Ground
-			{
-				tipPullup[pedalId] = 1;		// SWITCH_CLOSING
-				inverted[pedalId] = 1;
-				tipActive[pedalId] = 1;
-				finished[pedalId] = 1;
-			}
-			else if (valueTip > initialValueTip[pedalId] + CHANGE_FOR_DETECTION)	// decreasing current between Tip and Ground
-			{
-				tipPullup[pedalId] = 1;		// SWITCH_OPENING
-				inverted[pedalId] = 0;
-				tipActive[pedalId] = 1;
-				finished[pedalId] = 1;
-			}
-		}
-
-		if ( (valueRing <= valueTip)
-			&& ( (valueRing > initialValueRing[pedalId] + CHANGE_FOR_DETECTION)
-			  || (valueRing < initialValueRing[pedalId] - CHANGE_FOR_DETECTION) ) )
-		{
-			tipPullup[pedalId] = 1;		// POTI_RING_ACTIVE
-			inverted[pedalId] = 0;
-			tipActive[pedalId] = 0;
-			finished[pedalId] = 1;
-		}
-		else if ( (valueTip <= valueRing)
-				 && ( (valueTip > initialValueTip[pedalId] + CHANGE_FOR_DETECTION)
-				   || (valueTip < initialValueTip[pedalId] - CHANGE_FOR_DETECTION) ) )
-		{
-			tipPullup[pedalId] = 0;		// POTI_TIP_ACTIVE
-			inverted[pedalId] = 0;
-			tipActive[pedalId] = 1;
-			finished[pedalId] = 1;
-		}
-	}
-	else 	// finished[pedalId] == 1
-	{
-		pedalDetected[pedalId] = 0;		// reset for a fresh pedal calibration
-		checkPedal[pedalId] = 0;
-		finished[pedalId] = 0;
-	}
-}
-#endif
-
 /*****************************************************************************
 * @brief	SendEditMessageToBB - when using a ribbon as an edit control,
 * 			the messages are sent by calls to this function
@@ -602,21 +452,6 @@ static void SendEditMessageToBB(uint32_t paramId, uint32_t value, int32_t inc)
 /// "return"-Behaviour braucht eigene Funktion, die mit einem Timer-Task aufgerufen wird
 /// mit Abfrage, ob das Ribbon losgelassen wurde. Sprungartiges Zurücksetzen.
 
-/*****************************************************************************
-* @brief	SendParamMessageToBB - sending the values of the 8 physical
-* 			controls (a.k.a. "Hardware Sources")
-* @param	paramId: parameter Ids (254 ... 289), see: nl_tcd_param_work.h
-* @param	value: control position (0 ... 16000)
-******************************************************************************/
-#if 0
-static void SendParamMessageToBB(uint32_t paramId, uint32_t value)
-{
-	BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_PARAMETER, paramId, value);			//  sendet neue Position als Parameter-Message
-
-	BB_MSG_SendTheBuffer();			/// später mit somethingToSend = 1; !!!
-}
-#endif
-
 void WriteHWValueForBB(uint32_t hwSourceId, uint32_t value)
 {
   bbSendValue[hwSourceId] = value | 0x80000;  // the bit is set to check for values to send, will be masked out
@@ -644,50 +479,6 @@ void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
     BB_MSG_SendTheBuffer();
   }
 }
-
-#if 0
-/*****************************************************************************
-* @brief	LinearizeRibbon -
-******************************************************************************/
-
-static int32_t LinearizeRibbon(int32_t val)
-{
-  // val -= 310; ???? wat'n dat ????
-
-  if (val < 0)
-    val = 0;
-
-  if (val < 8000)
-  {
-    if (val < 4000)
-    {
-      val += (val * RIBBON_CORR_4000) >> 10;
-    }
-    else
-    {
-      val += ((val - 4000) * RIBBON_CORR_8000 + (8000 - val) * RIBBON_CORR_4000) >> 10;
-    }
-  }
-  else
-  {
-    if (val < 12000)
-    {
-      val += ((val - 8000) * RIBBON_CORR_12000 + (12000 - val) * RIBBON_CORR_8000) >> 10;
-    }
-    else
-    {
-      val += ((16000 - val) * RIBBON_CORR_12000) >> 10;
-
-      if (val > 16000)
-      {
-        val = 16000;
-      }
-    }
-  }
-
-  return val;
-}
-#endif
 
 /*****************************************************************************
 * @brief	ADC_WORK_SetRibbon1Behaviour
@@ -1036,6 +827,11 @@ static void ProcessRibbons(void)
   }  // for all ribbons
 }
 
+void ADC_WORK_SetRawSensorMessages(uint32_t flag)
+{
+  send_raw_sensor_messages = (flag != 0);
+}
+
 /*****************************************************************************
 * @brief	ADC_WORK_Process -
 ******************************************************************************/
@@ -1055,6 +851,30 @@ void ADC_WORK_Process(void)
   if (suspend)
   {
     return;
+  }
+
+  if (send_raw_sensor_messages)
+  {
+    uint16_t data[13];
+
+    data[0] = (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_DETECT) << 0)
+        || (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_DETECT) << 1)
+        || (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_DETECT) << 2)
+        || (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_DETECT) << 3);
+    data[1]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_TIP);
+    data[2]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_RING);
+    data[3]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_TIP);
+    data[4]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_RING);
+    data[5]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_TIP);
+    data[6]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_RING);
+    data[7]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_TIP);
+    data[8]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_RING);
+    data[9]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PITCHBENDER_ADC);
+    data[10] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_AFTERTOUCH_ADC);
+    data[11] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_1_ADC);
+    data[12] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_2_ADC);
+    BB_MSG_WriteMessage(BB_MSG_TYPE_SENSORS_RAW, 13, data);
+    BB_MSG_SendTheBuffer();
   }
 
   int32_t value;
@@ -1525,211 +1345,4 @@ void ADC_WORK_Process(void)
   }
 
   ProcessRibbons();
-//==================== Ribbon 1
-#if 0
-  uint32_t send        = 0;
-  uint32_t touchBegins = 0;
-  int32_t  inc         = 0;
-
-  value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_1_ADC);
-
-  if (value > lastRibbon1 + 1)  // rising values (min. +2)
-  {
-    if (value > RIBBON_THRESHOLD)  // above the touch threshold
-    {
-      if (ribbon1Touch == 0)
-      {
-        ribbon1Touch = 1;
-        touchBegins  = 1;
-      }
-
-      valueToSend = ((value - (RIBBON_MIN + 1)) * ribbon1Factor) / 1024;  // ribbon1Factor is upscaled by 1024
-      send        = 1;
-    }
-
-    lastRibbon1 = value;
-  }
-  else if (value + 1 < lastRibbon1)  // falling values (min. -2)
-  {
-    if (value > RIBBON_THRESHOLD)  // above the touch threshold; ribbon1Touch is already on, because the last value was higher
-    {
-      valueToSend = ((lastRibbon1 - (RIBBON_MIN + 1)) * ribbon1Factor) / 1024;  // ribbon1Factor is upscaled by 1024
-                                                                                // outputs the previous value (one sample delay) to avoid sending samples of the falling edge of a touch release
-      send = 1;
-    }
-    else  // below the touch threshold
-    {
-      ribbon1Touch = 0;
-
-      if (ribbon1IsEditControl == 0)  // working as a play control
-      {
-        if ((ribbon1Behaviour == 1) || (ribbon1Behaviour == 3))  // "return" behaviour
-        {
-          PARAM_Set(PARAM_ID_RIBBON_1, 8000);
-          WriteHWValueForBB(HW_SOURCE_ID_RIBBON_1, 8000);
-          TEST_Output(6, 8000);
-
-          ribbon1Output = 8000;
-        }
-      }
-    }
-
-    lastRibbon1 = value;
-  }
-
-  if (send)
-  {
-    valueToSend = LinearizeRibbon(valueToSend);
-
-    if (touchBegins)  // in the incremental mode the jump to the touch position has to be ignored
-    {
-      inc         = 0;
-      touchBegins = 0;
-    }
-    else
-    {
-      inc = valueToSend - ribbon1IncBase;
-    }
-
-    ribbon1IncBase = valueToSend;
-
-    if (ribbon1IsEditControl)
-    {
-      inc = (inc * ribbonRelFactor) / 256;
-
-      SendEditMessageToBB(PARAM_ID_RIBBON_1, valueToSend, inc);
-    }
-    else
-    {
-      if (ribbon1Behaviour < 2)  // absolute
-      {
-        ribbon1Output = valueToSend;
-
-        PARAM_Set(PARAM_ID_RIBBON_1, ribbon1Output);
-        WriteHWValueForBB(HW_SOURCE_ID_RIBBON_1, ribbon1Output);  /// 16000 - ribbon1Output /// war invertierter Modus für Update-Test
-        TEST_Output(6, valueToSend);
-      }
-      else  // relative
-      {
-        if (inc != 0)
-        {
-          inc = (inc * ribbonRelFactor) / 256;
-
-          ribbon1Output += inc;
-
-          if (ribbon1Output < 0)
-          {
-            ribbon1Output = 0;
-          }
-          else if (ribbon1Output > 16000)
-          {
-            ribbon1Output = 16000;
-          }
-
-          PARAM_Set(PARAM_ID_RIBBON_1, ribbon1Output);
-          WriteHWValueForBB(HW_SOURCE_ID_RIBBON_1, ribbon1Output);
-          TEST_Output(6, valueToSend);
-        }
-      }
-    }
-
-    send = 0;
-  }
-
-  /// schneller Abfall unter die Threshold wird als Touch-off interpretiert
-  /// bei Abwärtsbewegungen ein, zwei Samples abwarten, d.h. leichte Latenz
-  /// Hold-Verhalten zur Überbrückung kurzer Aussetzer durch geringen Druck des Fingers ???
-
-  //==================== Ribbon 2
-
-  value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_2_ADC);
-
-  if (value > lastRibbon2 + 1)  // rising values (min. +2)
-  {
-    if (value > RIBBON_THRESHOLD)  // above the touch threshold
-    {
-      if (ribbon2Touch == 0)
-      {
-        ribbon2Touch = 1;
-        touchBegins  = 1;
-      }
-
-      valueToSend = ((value - (RIBBON_MIN + 1)) * ribbon2Factor) / 1024;  // ribbon2Factor is upscaled by 1024
-      send        = 1;
-    }
-
-    lastRibbon2 = value;
-  }
-  else if (value + 1 < lastRibbon2)  // falling values (min. -2)
-  {
-    if (value > RIBBON_THRESHOLD)  // above the touch threshold; ribbon2Touch is already on, because the last value was higher
-    {
-      valueToSend = ((lastRibbon2 - (RIBBON_MIN + 1)) * ribbon2Factor) / 1024;  // ribbon2Factor is upscaled by 1024
-                                                                                // outputs the previous value (one sample delay) to avoid sending samples of the falling edge of a touch release
-      send = 1;
-    }
-    else  // below the touch threshold
-    {
-      ribbon2Touch = 0;
-
-      if ((ribbon2Behaviour == 1) || (ribbon2Behaviour == 3))  // "return" behaviour
-      {
-        PARAM_Set(PARAM_ID_RIBBON_2, 8000);
-        WriteHWValueForBB(HW_SOURCE_ID_RIBBON_2, 8000);
-        TEST_Output(7, 8000);
-
-        ribbon2Output = 8000;
-      }
-    }
-
-    lastRibbon2 = value;
-  }
-
-  if (send)
-  {
-    valueToSend = LinearizeRibbon(valueToSend);
-
-    if (touchBegins)  // in the incremental mode the jump to the touch position has to be ignored
-    {
-      inc = 0;
-    }
-    else
-    {
-      inc = valueToSend - ribbon2IncBase;
-    }
-
-    ribbon2IncBase = valueToSend;
-
-    if (ribbon2Behaviour < 2)  // absolute
-    {
-      ribbon2Output = valueToSend;
-
-      PARAM_Set(PARAM_ID_RIBBON_2, ribbon2Output);
-      WriteHWValueForBB(HW_SOURCE_ID_RIBBON_2, ribbon2Output);
-      TEST_Output(7, valueToSend);
-    }
-    else  // relative
-    {
-      if (inc != 0)
-      {
-        inc = (inc * ribbonRelFactor) / 256;
-
-        ribbon2Output += inc;
-
-        if (ribbon2Output < 0)
-        {
-          ribbon2Output = 0;
-        }
-        else if (ribbon2Output > 16000)
-        {
-          ribbon2Output = 16000;
-        }
-
-        PARAM_Set(PARAM_ID_RIBBON_2, ribbon2Output);
-        WriteHWValueForBB(HW_SOURCE_ID_RIBBON_2, ribbon2Output);
-        TEST_Output(7, valueToSend);
-      }
-    }
-  }
-#endif
 }

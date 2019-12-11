@@ -35,6 +35,7 @@ void ADC_WORK_SetRibbon1Behaviour(uint32_t behaviour);
 void ADC_WORK_SetRibbon2Behaviour(uint32_t behaviour);
 void ADC_WORK_SetRibbonRelFactor(uint32_t factor);
 void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data);
+void ADC_WORK_SetRawSensorMessages(uint32_t flag);
 
 uint32_t ADC_WORK_GetPedal1Behaviour(void);
 uint32_t ADC_WORK_GetPedal2Behaviour(void);

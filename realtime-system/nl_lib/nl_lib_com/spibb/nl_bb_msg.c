@@ -294,61 +294,64 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
   {
     switch (data[0])
     {
-      case 0:                                   // Play mode ribbon 1 behaviour
-        ADC_WORK_SetRibbon1Behaviour(data[1]);  // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
+      case SETTING_ID_PLAY_MODE_UPPER_RIBBON_BEHAVIOUR:  // Play mode ribbon 1 behaviour
+        ADC_WORK_SetRibbon1Behaviour(data[1]);           // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
         break;
-      case 1:                                   // Play mode ribbon 2 behaviour
-        ADC_WORK_SetRibbon2Behaviour(data[1]);  // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
+      case SETTING_ID_PLAY_MODE_LOWER_RIBBON_BEHAVIOUR:  // Play mode ribbon 2 behaviour
+        ADC_WORK_SetRibbon2Behaviour(data[1]);           // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
         break;
-      case 2:                         // Note Shift
+      case SETTING_ID_NOTE_SHIFT:     // Note Shift
         PARAM_SetNoteShift(data[1]);  // (+/-)0...48 (uint16 with sign bit)
         break;
-      case 3:                                  // "Unit Mode" - Ribbon 1 can be switched between Edit and Play mode.
+      case SETTING_ID_BASE_UNIT_UI_MODE:       // "Unit Mode" - Ribbon 1 can be switched between Edit and Play mode.
         ADC_WORK_SetRibbon1EditMode(data[1]);  // 0: Play, 1: Parameter Edit
         break;
-      case 4:                                       // Parameter edit mode ribbon behaviour
+      case SETTING_ID_EDIT_MODE_RIBBON_BEHAVIOUR:   // Parameter edit mode ribbon behaviour
         ADC_WORK_SetRibbon1EditBehaviour(data[1]);  // 0: Rel, 1: Abs
         break;
-      case 5:                                  // Behaviour of Pedal 1
+      case SETTING_ID_PEDAL_1_MODE:            // Behaviour of Pedal 1
         ADC_WORK_SetPedal1Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
         break;
-      case 6:                                  // Behaviour of Pedal 2
+      case SETTING_ID_PEDAL_2_MODE:            // Behaviour of Pedal 2
         ADC_WORK_SetPedal2Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
         break;
-      case 7:                                  // Behaviour of Pedal 3
+      case SETTING_ID_PEDAL_3_MODE:            // Behaviour of Pedal 3
         ADC_WORK_SetPedal3Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
         break;
-      case 8:                                  // Behaviour of Pedal 4
+      case SETTING_ID_PEDAL_4_MODE:            // Behaviour of Pedal 4
         ADC_WORK_SetPedal4Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
         break;
-      case 9:                                  // Factor for the increments when a ribbon is in Relative mode
-        ADC_WORK_SetRibbonRelFactor(data[1]);  // factor = data[1] / 256
+      case SETTING_ID_UPPER_RIBBON_REL_FACTOR:  // Factor for the increments when a ribbon is in Relative mode
+        ADC_WORK_SetRibbonRelFactor(data[1]);   // factor = data[1] / 256
         break;
-      case 11:                            // Velocity Curve
+      case SETTING_ID_VELOCITY_CURVE:     // Velocity Curve
         POLY_Generate_VelTable(data[1]);  // Parameter: 0 = very soft ... 4 = very hard
         break;
-      case 12:  // Transition Time
+      case SETTING_ID_TRANSITION_TIME:  // Transition Time
         PARAM_SetTransitionTime(data[1]);
         break;
-      case 30:                                       // Aftertouch Curve
+      case SETTING_ID_AFTERTOUCH_CURVE:              // Aftertouch Curve
         ADC_WORK_Generate_AftertouchTable(data[1]);  // 0: soft, 1: normal, 2: hard
         break;
-      case 31:                                   // Bender Curve
+      case SETTING_ID_BENDER_CURVE:              // Bender Curve
         ADC_WORK_Generate_BenderTable(data[1]);  // 0: soft, 1: normal, 2: hard
         break;
-      case 32:  // Pitchbend on Pressed Keys
+      case SETTING_ID_PITCHBEND_ON_PRESSED_KEYS:  // Pitchbend on Pressed Keys
         break;
-      case 33:  // Edit Smoothing Time
+      case SETTING_ID_EDIT_SMOOTHING_TIME:  // Edit Smoothing Time
         PARAM_SetEditSmoothingTime(data[1]);
         break;
-      case 34:                                // Glitch Suppression
-        PARAM_SetGlitchSuppression(data[1]);  // 0: off, 1: on
+      case SETTING_ID_PRESET_GLITCH_SUPPRESSION:  // Glitch Suppression
+        PARAM_SetGlitchSuppression(data[1]);      // 0: off, 1: on
         break;
-      case 35:                         // enable/disable Software Mute Override and value
-        SUP_SetMuteOverride(data[1]);  // see sup/nl_sup.h for bit patterns
+      case SETTING_ID_SOFTWARE_MUTE_OVERRIDE:
+        SUP_SetMuteOverride(data[1]);  // enable/disable Software Mute Override and value
+        break;                         // see sup/nl_sup.h for bit patterns
+      case SETTING_ID_SEND_RAW_SENSOR_DATA:
+        ADC_WORK_SetRawSensorMessages(data[1]);
         break;
       default:
-        /// Error
+        // do nothing
         break;
     }
   }

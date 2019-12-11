@@ -29,9 +29,10 @@
 #define BB_MSG_TYPE_ASSERTION     0x0900  // direction: output; arguments(uint16): n (string)
 #define BB_MSG_TYPE_REQUEST       0x0A00  // direction: input;  argument (uint16): 1, 1x REQUEST_ID_*
 // TODO implement the following new types in BBBB/Playground also:
-#define BB_MSG_TYPE_HEARTBEAT  0x0B00  // direction: output; arguments(uint16): 4, 4x uint16 (==uint64)
-#define BB_MSG_TYPE_MUTESTATUS 0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
-#define BB_MSG_TYPE_RIBBON_CAL 0x0D00  // direction: input; arguments(uint16): N, Nx data
+#define BB_MSG_TYPE_HEARTBEAT   0x0B00  // direction: output; arguments(uint16): 4, 4x uint16 (==uint64)
+#define BB_MSG_TYPE_MUTESTATUS  0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
+#define BB_MSG_TYPE_RIBBON_CAL  0x0D00  // direction: input; arguments(uint16): N, Nx data
+#define BB_MSG_TYPE_SENSORS_RAW 0x0E00  // direction: output; arguments(uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
 // for inhouse calibration only:
 #define BB_MSG_TYPE_RIBBON_RAW 0xFF01  // direction: output; arguments(uint16): 2, ribbon raw values
 
@@ -69,6 +70,7 @@
 #define SETTING_ID_EDIT_SMOOTHING_TIME       33  // ==> tTcdRange(0, 16000)
 #define SETTING_ID_PRESET_GLITCH_SUPPRESSION 34  // OFF = 0, ON = 1
 #define SETTING_ID_SOFTWARE_MUTE_OVERRIDE    35  // Software Mute Override
+#define SETTING_ID_SEND_RAW_SENSOR_DATA      36  // direction: input; arguments(uint16): 1, flag (!= 0)
 
 //----- Request Ids:
 
