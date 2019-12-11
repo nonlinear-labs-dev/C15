@@ -3,6 +3,9 @@
 #include "Options.h"
 #include "MessageParser.h"
 #include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <bitset>
 #include <iomanip>
 #include <iterator>
 
@@ -26,24 +29,40 @@ namespace Log
 {
   void logMessage(const Glib::RefPtr<Glib::Bytes> &bytes)
   {
-    static uint32_t cntr=0;
+    static uint32_t cntr = 0;
     gsize msgLength = 0;
     auto rawMsg = bytes->get_data(msgLength);
     auto rawWords = reinterpret_cast<const uint16_t *>(rawMsg);
 
-    switch (rawWords[0])
+    switch(rawWords[0])
     {
-    case 0xFF01 :  // raw ribbon values, single line live screen output version
-      printf("Ribbon Raw Data (%.8x): %5d  %5d \n\033[1A", cntr++, rawWords[2], rawWords[3]);
-      fflush(stdout);
-      break;
-    case 0xFF02 :  // raw ribbon values, standard output (suitable for piping/redirection)
-      printf("Ribbon Raw Data (%.8x): %5d  %5d\n", cntr++, rawWords[2], rawWords[3]);
-      fflush(stdout);
-      break;
+      case 0xFF01:  // raw ribbon values, single line live screen output version
+        printf("Ribbon Raw Data (%.8x): %5d  %5d \n\033[1A", cntr++, rawWords[2], rawWords[3]);
+        fflush(stdout);
+        break;
+      case 0xFF02:  // raw ribbon values, standard output (suitable for piping/redirection)
+        printf("Ribbon Raw Data (%.8x): %5d  %5d\n", cntr++, rawWords[2], rawWords[3]);
+        fflush(stdout);
+        break;
+      case 0x0E00:  // all raw sensor values
+      {
+        if(rawWords[1] != 13)
+          return;
+        // Pedal detect bits :
+        std::bitset<4> binbits(rawWords[2] & 0x000F);
+        std::cout << binbits;
+        // Pedal ADC values :
+        printf(" %4d %4d %4d %4d %4d %4d %4d %4d ", rawWords[3], rawWords[4], rawWords[5], rawWords[6], rawWords[7],
+               rawWords[8], rawWords[9], rawWords[10]);
+        // pitchpender, aftertouch, ribbon 1, ribbon 2 :
+        printf("%4d %4d %4d %4d", rawWords[11], rawWords[12], rawWords[13], rawWords[14]);
+        printf("\n\033[1A\n");
+        fflush(stdout);
+        break;
+      }
     }
 
-/*
+    /*
     for(gsize i = 0; i < msgLength/2; i++)
     {
       printf("%.4x ", rawWords[i]);
