@@ -184,7 +184,7 @@ static Ribbon_Data_T ribbon[2];  // two ribbons
 #define RIB2 1
 
 static uint32_t suspend;
-static int      send_raw_sensor_messages;  // sends raw sensor values every 12.5ms when set (!= 0)
+static int      send_raw_sensor_messages=1;  // sends raw sensor values every 12.5ms when set (!= 0)
 
 static int32_t SetThreshold(int32_t val)
 {  // set threshold to 80%
