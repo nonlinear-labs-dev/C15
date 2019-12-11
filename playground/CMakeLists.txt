@@ -3,35 +3,35 @@ project(playground)
 project(playground-tests)
 
 execute_process(COMMAND "git" "rev-parse" "--abbrev-ref" "HEAD"
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    RESULT_VARIABLE git_result
-    OUTPUT_VARIABLE BRANCH_NAME)
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  RESULT_VARIABLE git_result
+  OUTPUT_VARIABLE BRANCH_NAME)
 
 execute_process(COMMAND "git" "rev-list" "HEAD" "--count"
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    RESULT_VARIABLE git_result
-    OUTPUT_VARIABLE COMMIT_COUNT)
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  RESULT_VARIABLE git_result
+  OUTPUT_VARIABLE COMMIT_COUNT)
 
 execute_process(COMMAND "git" "rev-parse" "--short" "HEAD"
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    RESULT_VARIABLE git_result
-    OUTPUT_VARIABLE HEAD_REF)
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  RESULT_VARIABLE git_result
+  OUTPUT_VARIABLE HEAD_REF)
 
 string(STRIP ${COMMIT_COUNT} COMMIT_COUNT)
 string(STRIP ${HEAD_REF} HEAD_REF)
 string(STRIP ${BRANCH_NAME} BRANCH_NAME)
 
 set(LIBS
-    glibmm-2.4
-    gio-unix-2.0
-    giomm-2.4
-    uuid
-    libsoup-2.4
-    freetype2
-    avahi-glib
-    avahi-gobject
-    avahi-core
-    avahi-client
+  glibmm-2.4
+  gio-unix-2.0
+  giomm-2.4
+  uuid
+  libsoup-2.4
+  freetype2
+  avahi-glib
+  avahi-gobject
+  avahi-core
+  avahi-client
 )
 
 OPTION(DEV_PC "Enable some tests and tools not suitable for embedded device" OFF)
@@ -81,14 +81,14 @@ configure_file(src/device-info/SoftwareVersion.cpp.in src/device-info/SoftwareVe
 configure_file(src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp.in src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp)
 
 SET(GENERATED_SOURCES
-    ${PROJECT_BINARY_DIR}/src/device-info/SoftwareVersion.cpp
-    ${PROJECT_BINARY_DIR}/src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp)
+  ${PROJECT_BINARY_DIR}/src/device-info/SoftwareVersion.cpp
+  ${PROJECT_BINARY_DIR}/src/proxies/hwui/panel-unit/boled/setup/UISoftwareVersionEditor.cpp)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 file(GLOB_RECURSE DSL_SOURCE_FILES src/proxies/hwui/descriptive-layouts/dsl/*.cpp)
 
 IF(NOT DSL_LAYOUTS)
-list(REMOVE_ITEM SOURCE_FILES EXCLUDE REGEX ${DSL_SOURCE_FILES})
+  list(REMOVE_ITEM SOURCE_FILES EXCLUDE REGEX ${DSL_SOURCE_FILES})
 ENDIF()
 
 list(REMOVE_ITEM SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/playground.cpp)
@@ -117,11 +117,11 @@ foreach(lib ${LIBS})
 endforeach(lib)
 
 set(PLAYGROUND_SOURCES
-        "src/playground.cpp"
-        )
+  "src/playground.cpp"
+  )
 
 set(PLAYGROUND_TEST_SOURCES
-        ${UNIT_TEST_FILES})
+  ${UNIT_TEST_FILES})
 
 add_executable(playground ${PLAYGROUND_SOURCES})
 add_executable(playground-test ${PLAYGROUND_TEST_SOURCES})
@@ -135,34 +135,38 @@ configure_file(${PROJECT_SOURCE_DIR}/systemd/playground.service.in ${PROJECT_BIN
 file(GLOB PARAMETER_DESCRIPTIONS src/parameters/descriptions/*.txt)
 file(GLOB VERSION_INFOS resources/version-infos/*)
 
+add_custom_command(TARGET playground POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/../nltools/libnltools.so ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/libnltools.so
+)
+
 install(FILES ${PROJECT_BINARY_DIR}/systemd/playground.service
-    DESTINATION ${SYSTEMD_CONFIGURATION_FILES_DIR} COMPONENT init
+  DESTINATION ${SYSTEMD_CONFIGURATION_FILES_DIR} COMPONENT init
 )
 
 install(FILES ${PARAMETER_DESCRIPTIONS}
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/parameter-descriptions
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/parameter-descriptions
 )
 
 install(FILES ${VERSION_INFOS}
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/version-infos
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/resources/version-infos
 )
 
 install(DIRECTORY resources
-    USE_SOURCE_PERMISSIONS
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
+  USE_SOURCE_PERMISSIONS
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
 )
 
 install(TARGETS playground
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
 )
 
 install(TARGETS playground-test
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/nonlinear/playground
 )
 
 ADD_CUSTOM_TARGET(
-    touch-cmakelists ALL
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
+  touch-cmakelists ALL
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE}
 )
 
 
