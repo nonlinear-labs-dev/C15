@@ -56,7 +56,7 @@ namespace Log
                rawWords[8], rawWords[9], rawWords[10]);
         // pitchpender, aftertouch, ribbon 1, ribbon 2 :
         printf("%4d %4d %4d %4d", rawWords[11], rawWords[12], rawWords[13], rawWords[14]);
-        printf("\n\033[1A\n");
+        printf("\n\033[1A");
         fflush(stdout);
         break;
       }
