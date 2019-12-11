@@ -183,8 +183,10 @@ static Ribbon_Data_T ribbon[2];  // two ribbons
 #define RIB1 0
 #define RIB2 1
 
+
+// global control
 static uint32_t suspend;
-static int      send_raw_sensor_messages=1;  // sends raw sensor values every 12.5ms when set (!= 0)
+static int      send_raw_sensor_messages = 0;  // sends raw sensor values every 12.5ms when set (!= 0)
 
 static int32_t SetThreshold(int32_t val)
 {  // set threshold to 80%
@@ -354,12 +356,13 @@ void ADC_WORK_Init(void)
 
   suspend = 0;
 
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_DEFAULT_OFF);
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_DEFAULT_OFF);
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_DEFAULT_OFF);
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_DEFAULT_OFF);
+  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
+  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
+  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
+  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
 }
 
+#if 0
 /******************************************************************************/
 /** @param[in]	pedalId: 0..3
 *******************************************************************************/
@@ -394,6 +397,7 @@ void ADC_WORK_Check_Pedal_Start(uint32_t pedalId)
   finished[pedalId]   = 0;
   checkPedal[pedalId] = 1;
 }
+#endif
 
 /******************************************************************************/
 /** @param[in]	pedalId: 0..3
@@ -858,9 +862,9 @@ void ADC_WORK_Process(void)
     uint16_t data[13];
 
     data[0] = (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_DETECT) << 0)
-        || (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_DETECT) << 1)
-        || (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_DETECT) << 2)
-        || (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_DETECT) << 3);
+        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_DETECT) << 1)
+        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_DETECT) << 2)
+        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_DETECT) << 3);
     data[1]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_TIP);
     data[2]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_RING);
     data[3]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_TIP);
@@ -890,6 +894,7 @@ void ADC_WORK_Process(void)
     }
     else if (pedalDetected[0] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
     {
+#ifndef __NEW_PEDALS__
       if (tipPullup[0] == 1)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_TIP_TO_5V);
@@ -898,7 +903,7 @@ void ADC_WORK_Process(void)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_5V);
       }
-
+#endif
       pedal1Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
       pedal1Max = 2200;
 
@@ -963,6 +968,7 @@ void ADC_WORK_Process(void)
     }
     else if (pedalDetected[1] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
     {
+#ifndef __NEW_PEDALS__
       if (tipPullup[0] == 1)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_TIP_TO_5V);
@@ -971,6 +977,7 @@ void ADC_WORK_Process(void)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_RING_TO_5V);
       }
+#endif
 
       pedal2Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
       pedal2Max = 2200;
@@ -1037,6 +1044,7 @@ void ADC_WORK_Process(void)
     }
     else if (pedalDetected[2] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
     {
+#ifndef __NEW_PEDALS__
       if (tipPullup[0] == 1)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_TIP_TO_5V);
@@ -1045,6 +1053,7 @@ void ADC_WORK_Process(void)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_RING_TO_5V);
       }
+#endif
 
       pedal3Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
       pedal3Max = 2200;
@@ -1110,6 +1119,7 @@ void ADC_WORK_Process(void)
     }
     else if (pedalDetected[3] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
     {
+#ifndef __NEW_PEDALS__
       if (tipPullup[0] == 1)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_TIP_TO_5V);
@@ -1118,6 +1128,7 @@ void ADC_WORK_Process(void)
       {
         Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_RING_TO_5V);
       }
+#endif
 
       pedal4Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
       pedal4Max = 2200;
