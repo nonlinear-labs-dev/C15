@@ -27,6 +27,9 @@ namespace Heartbeat
 
 namespace Log
 {
+
+  static constexpr uint16_t BB_MSG_TYPE_SENSORS_RAW = 0x0E00;
+
   void logMessage(const Glib::RefPtr<Glib::Bytes> &bytes)
   {
     static uint32_t cntr = 0;
@@ -44,10 +47,11 @@ namespace Log
         printf("Ribbon Raw Data (%.8x): %5d  %5d\n", cntr++, rawWords[2], rawWords[3]);
         fflush(stdout);
         break;
-      case 0x0E00:  // all raw sensor values
+      case BB_MSG_TYPE_SENSORS_RAW:  // all raw sensor values
       {
         if(rawWords[1] != 13)
           return;
+        printf("BB_MSG_TYPE_SENSORS_RAW: ");
         // Pedal detect bits :
         std::bitset<4> binbits(rawWords[2] & 0x000F);
         std::cout << binbits;
