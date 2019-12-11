@@ -139,6 +139,10 @@ add_custom_command(TARGET playground POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/../nltools/libnltools.so ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/libnltools.so
 )
 
+add_custom_command(TARGET playground POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/../nltools/libparameterDB.so ${CMAKE_INSTALL_PREFIX}/nonlinear/playground/libparameterDB.so
+)
+
 install(FILES ${PROJECT_BINARY_DIR}/systemd/playground.service
   DESTINATION ${SYSTEMD_CONFIGURATION_FILES_DIR} COMPONENT init
 )
