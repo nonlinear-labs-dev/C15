@@ -108,8 +108,8 @@ void LPCProxy::onHeartbeatReceived(const MessageParser::NLMessage &msg)
     DebugLevel::warning("LPCProxy had to re-send the edit buffer, as the heartbeat stumbled from",
                         m_lastReceivedHeartbeat, "to", heartbeat);
     sendEditBuffer();
-    m_lastReceivedHeartbeat = heartbeat;
   }
+  m_lastReceivedHeartbeat = heartbeat;
 }
 
 void LPCProxy::onAssertionMessageReceived(const MessageParser::NLMessage &msg)
