@@ -3,14 +3,14 @@
 #include "cal_to_ref.h"
 #include "interpol.h"
 
-namespace ctr
+namespace Calibrator
 {
-  static inline int difference(int a, int b)
+  static inline int difference(int const a, int const b)
   {
     return abs(a - b);
   }
 
-  CalToRef::CalToRef(Options option)
+  CalToRef::CalToRef(Options const option)
       : m_totalSamples(0)
       , m_validSamples(0)
       , m_droppedSamples(0)
@@ -33,26 +33,26 @@ namespace ctr
   {
   }
 
-  void CalToRef::startAddIn(void)
+  void CalToRef::startAddIn(void) const
   {
     if(m_verbose)
       puts("Reading ref and dut raw values...");
   }
 
-  void CalToRef::endAddIn(void)
+  void CalToRef::endAddIn(void) const
   {
     if(m_verbose)
       printf("Reading done, %u sample pairs total: %u valid, %u dropped, %u discarded\n", m_totalSamples,
              m_validSamples, m_droppedSamples, m_discardedSamples);
   }
 
-  unsigned CalToRef::getValidSamples(void)
+  unsigned CalToRef::getValidSamples(void) const
   {
     return m_validSamples;
   }
 
   // -------------------------------------
-  int CalToRef::addInSamplePair(uint16_t binNumber, uint16_t value)
+  int CalToRef::addInSamplePair(uint16_t const binNumber, uint16_t const value)
   {
     if(m_verbose)
       printf("%5hu %5hu : ", binNumber, value);
@@ -211,7 +211,7 @@ namespace ctr
     return true;
   }
 
-  bool CalToRef::OutputData(FILE *fp)
+  bool CalToRef::OutputData(FILE *fp) const
   {
     if(fp == nullptr)
       fp = stdout;

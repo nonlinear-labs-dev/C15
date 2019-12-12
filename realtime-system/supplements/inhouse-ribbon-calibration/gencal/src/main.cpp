@@ -2,12 +2,12 @@
 #include <stdint.h>
 #include "cal_to_ref.h"
 
-void Usage(const char* exe)
+void Usage(char const* const exe)
 {
   printf("Usage: %s input-file\n", exe);
 }
 
-int main(int argc, char* argv[])
+int main(int const argc, char const* const argv[])
 {
   uint16_t ref;
   uint16_t dut;
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     return 3;  // --> exit
   }
 
-  ctr::CalToRef cal(ctr::CalToRef::VerboseMessages);
+  Calibrator::CalToRef cal(Calibrator::CalToRef::VerboseMessages);
 
   cal.startAddIn();
   while(fscanf(infile, "%hu %hu", &ref, &dut) != EOF)

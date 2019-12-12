@@ -15,13 +15,13 @@ namespace Interpol
   // Data structure containing the lookup and interpolation info
   typedef struct
   {
-    int points;       ///< number of points in the table, for both arrays !
-    float *x_values;  ///< x-values (input) must be sorted / monotonic !!
-    float *y_values;  ///< y-values (output) can be arbitrary
+    int points;             ///< number of points in the table, for both arrays !
+    float const *x_values;  ///< x-values (input) must be sorted / monotonic !!
+    float const *y_values;  ///< y-values (output) can be arbitrary
   } InterpolData;
 
   // Table lookup with interpolation
-  float InterpolateValue(InterpolData *table, float x);
+  float InterpolateValue(InterpolData const *const table, float const x);
 }  // namespace
 
 //EOF

@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "interpol.h"
 
-namespace ctr
+namespace Calibrator
 {
 
   class CalToRef
@@ -15,18 +15,18 @@ namespace ctr
       Quiet,
       VerboseMessages
     };
-    CalToRef(Options option);
+    CalToRef(const Options option);
     ~CalToRef();
 
-    void startAddIn(void);
+    void startAddIn(void) const;
 
     // add in the revVal->dutVal mapping, if possible
     // return 0:success, 1:dropped values, 2:discarded values, 3:fatal error
-    int addInSamplePair(uint16_t binNumber, uint16_t values);
+    int addInSamplePair(uint16_t const binNumber, uint16_t const values);
 
-    void endAddIn(void);
+    void endAddIn(void) const;
 
-    unsigned getValidSamples(void);  // returns number of valid sample pairs
+    unsigned getValidSamples(void) const;  // returns number of valid sample pairs
 
     // return : true=success
     bool ProcessData(void);
@@ -34,7 +34,7 @@ namespace ctr
     // output resulting calibration file
     // param: fp: opened(!) output file, and it won't close it as well!
     // if fp==NULL, stdout is used
-    bool OutputData(FILE *fp);
+    bool OutputData(FILE *fp) const;
 
    private:
     bool m_verbose;

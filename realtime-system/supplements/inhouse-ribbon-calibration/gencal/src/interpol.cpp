@@ -13,7 +13,7 @@ namespace Interpol
 {
 
   // Returns the interpolated y-value. Saturates to y0 or y1 if x outside interval [x0, x1]
-  static inline float InterpolateSegment(float x0, float y0, float x1, float y1, float x)
+  static inline float InterpolateSegment(float const x0, float const y0, float const x1, float const y1, float const x)
   {
     if(x <= x0)
       return y0;
@@ -28,7 +28,7 @@ namespace Interpol
   *   @param  x value for which to calculate
   *   @return interpolated y value
   ******************************************************************************/
-  float InterpolateValue(InterpolData *table, float x)
+  float InterpolateValue(InterpolData const* const table, float const x)
   {
     // Sanity checks
     if(!table)  // no table supplied ?
