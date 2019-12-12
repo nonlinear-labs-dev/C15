@@ -39,42 +39,24 @@ namespace Log
 
     switch(rawWords[0])
     {
-      case 0xFF01:  // raw ribbon values, single line live screen output version
-        printf("Ribbon Raw Data (%.8x): %5d  %5d \n\033[1A", cntr++, rawWords[2], rawWords[3]);
-        fflush(stdout);
-        break;
-      case 0xFF02:  // raw ribbon values, standard output (suitable for piping/redirection)
-        printf("Ribbon Raw Data (%.8x): %5d  %5d\n", cntr++, rawWords[2], rawWords[3]);
-        fflush(stdout);
-        break;
       case BB_MSG_TYPE_SENSORS_RAW:  // all raw sensor values
       {
         if(rawWords[1] != 13)
           return;
         printf("BB_MSG_TYPE_SENSORS_RAW: ");
-        // Pedal detect bits :
+        // Pedal detect bits (Pedal_4...Pedal_1) :
         std::bitset<4> binbits(rawWords[2] & 0x000F);
         std::cout << binbits;
-        // Pedal ADC values :
+        // Pedal ADC values (TIP1 and RING1 ... TIP4 and RING4, four pairs) :
         printf(" %4d %4d %4d %4d %4d %4d %4d %4d ", rawWords[3], rawWords[4], rawWords[5], rawWords[6], rawWords[7],
                rawWords[8], rawWords[9], rawWords[10]);
-        // pitchpender, aftertouch, ribbon 1, ribbon 2 :
+        // Pitchbender, Aftertouch, Ribbon 1, Ribbon 2 :
         printf("%4d %4d %4d %4d", rawWords[11], rawWords[12], rawWords[13], rawWords[14]);
-        printf("\n\033[1A");
-        fflush(stdout);
+        printf("\n\033[1A");  // send "cursor up one line"
+        fflush(stdout);       // flush output, so that piping updates nicely when used via SSH
         break;
       }
     }
-
-    /*
-    for(gsize i = 0; i < msgLength/2; i++)
-    {
-      printf("%.4x ", rawWords[i]);
-    }
-    if (msgLength >= 6)
-      printf("  (%d)", (int16_t)rawWords[(msgLength/2)-1]);
-    std::cout << '\n';
-*/
   }
 
   void logHeartbeat(const char *desc, const Glib::RefPtr<Glib::Bytes> &bytes)
