@@ -111,5 +111,5 @@ class LPCProxy
   Throttler m_throttledAbsoluteParameterChange;
   gint32 m_throttledAbsoluteParameterValue = 0;
 
-  guint64 m_lastReceivedHeartbeat = 0;
+  guint64 m_lastReceivedHeartbeat = std::numeric_limits<guint64>::max();
 };
