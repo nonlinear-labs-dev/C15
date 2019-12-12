@@ -117,7 +117,7 @@ void dsp_host::tickMain()
     }
 #else
     auto end = m_params.m_parameters.end(ClockTypes::Slow, PolyTypes::Mono);
-    for(param_body* it = m_params.m_parameters.begin(ClockTypes::Slow, PolyTypes::Mono); it != end; it++)
+    for(param_body *it = m_params.m_parameters.begin(ClockTypes::Slow, PolyTypes::Mono); it != end; it++)
     {
       it->tick();
     }
@@ -134,7 +134,7 @@ void dsp_host::tickMain()
       }
 #else
       end = m_params.m_parameters.end(ClockTypes::Slow, PolyTypes::Poly, v);
-      for(param_body* it = m_params.m_parameters.begin(ClockTypes::Slow, PolyTypes::Poly, v); it != end; it += m_voices)
+      for(param_body *it = m_params.m_parameters.begin(ClockTypes::Slow, PolyTypes::Poly, v); it != end; it += m_voices)
       {
         it->tick();
       }
@@ -158,7 +158,7 @@ void dsp_host::tickMain()
     }
 #else
     auto end = m_params.m_parameters.end(ClockTypes::Fast, PolyTypes::Mono);
-    for(param_body* it = m_params.m_parameters.begin(ClockTypes::Fast, PolyTypes::Mono); it != end; it++)
+    for(param_body *it = m_params.m_parameters.begin(ClockTypes::Fast, PolyTypes::Mono); it != end; it++)
     {
       it->tick();
     }
@@ -175,7 +175,7 @@ void dsp_host::tickMain()
       }
 #else
       end = m_params.m_parameters.end(ClockTypes::Fast, PolyTypes::Poly, v);
-      for(param_body* it = m_params.m_parameters.begin(ClockTypes::Fast, PolyTypes::Poly, v); it != end; it += m_voices)
+      for(param_body *it = m_params.m_parameters.begin(ClockTypes::Fast, PolyTypes::Poly, v); it != end; it += m_voices)
       {
         it->tick();
       }
@@ -194,7 +194,7 @@ void dsp_host::tickMain()
   }
 #else
   auto end = m_params.m_parameters.end(ClockTypes::Audio, PolyTypes::Mono);
-  for(param_body* it = m_params.m_parameters.begin(ClockTypes::Audio, PolyTypes::Mono); it != end; it++)
+  for(param_body *it = m_params.m_parameters.begin(ClockTypes::Audio, PolyTypes::Mono); it != end; it++)
   {
     it->tick();
   }
@@ -218,7 +218,7 @@ void dsp_host::tickMain()
     }
 #else
     end = m_params.m_parameters.end(ClockTypes::Audio, PolyTypes::Poly, v);
-    for(param_body* it = m_params.m_parameters.begin(ClockTypes::Audio, PolyTypes::Poly, v); it != end; it += m_voices)
+    for(param_body *it = m_params.m_parameters.begin(ClockTypes::Audio, PolyTypes::Poly, v); it != end; it += m_voices)
     {
       it->tick();
     }
@@ -227,10 +227,21 @@ void dsp_host::tickMain()
     m_params.postProcessPoly_audio(m_parameters, v);
   }
 
+#if REWORK_POLY_DSP == 0
+  // Linux Engine implementation up to now, resulting in one-sample-delay for FX signals (dry, wet)
   /* AUDIO_ENGINE: poly dsp phase */
   makePolySound(m_parameters);
   /* AUDIO_ENGINE: mono dsp phase */
   makeMonoSound(m_parameters);
+#else
+  // Prototype-related implementation, avoiding one-sample-delay for FX signals (dry, wet)
+  /* AUDIO_ENGINE: poly dsp phase */
+  makePolySound(m_parameters);
+  /* AUDIO_ENGINE: mono dsp phase */
+  makeMonoSound(m_parameters);
+  /* AUDIO_ENGINE: poly fb phase */
+  makePolyFB(m_parameters);
+#endif
 
   /* Examine Updates (Log) */
 #if log_examine
@@ -1729,10 +1740,22 @@ void dsp_host::makePolySound(SignalStorage &signals)
   m_soundgenerator.generate(m_feedbackmixer.m_out, signals);
   m_combfilter.apply(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, signals);
   m_svfilter.apply(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, m_combfilter.m_out, signals);
+#if REWORK_POLY_DSP == 0
   m_feedbackmixer.apply(m_combfilter.m_out, m_svfilter.m_out, m_reverb.m_out_FX, signals);
   m_soundgenerator.m_feedback_phase = m_feedbackmixer.m_out;
+#endif
   m_outputmixer.combine(m_soundgenerator.m_out_A, m_soundgenerator.m_out_B, m_combfilter.m_out, m_svfilter.m_out,
                         signals);
+}
+
+/******************************************************************************/
+/**
+*******************************************************************************/
+
+void dsp_host::makePolyFB(SignalStorage &signals)
+{
+  m_feedbackmixer.apply(m_combfilter.m_out, m_svfilter.m_out, m_reverb.m_out_FX, signals);
+  m_soundgenerator.m_feedback_phase = m_feedbackmixer.m_out;
 }
 
 /******************************************************************************/
