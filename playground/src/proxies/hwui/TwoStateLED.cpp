@@ -11,12 +11,10 @@ TwoStateLED::TwoStateLED(int id)
     : m_state(OFF)
 {
   setID(id);
-  setState(ON);
 }
 
 TwoStateLED::~TwoStateLED()
 {
-  setState(ON);
 }
 
 void TwoStateLED::init()
