@@ -183,7 +183,6 @@ static Ribbon_Data_T ribbon[2];  // two ribbons
 #define RIB1 0
 #define RIB2 1
 
-
 // global control
 static uint32_t suspend;
 static int      send_raw_sensor_messages = 0;  // sends raw sensor values every 12.5ms when set (!= 0)
@@ -360,52 +359,6 @@ void ADC_WORK_Init(void)
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
-}
-
-#if 0
-/******************************************************************************/
-/** @param[in]	pedalId: 0..3
-*******************************************************************************/
-void ADC_WORK_Check_Pedal_Start(uint32_t pedalId)
-{
-  switch (pedalId)
-  {
-    case 0:
-    {
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_CHECK_PINCONFIG);
-      break;
-    }
-    case 1:
-    {
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_CHECK_PINCONFIG);
-      break;
-    }
-    case 2:
-    {
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_CHECK_PINCONFIG);
-      break;
-    }
-    case 3:
-    {
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_CHECK_PINCONFIG);
-      break;
-    }
-    default:
-      break;
-  }
-  firstTime[pedalId]  = 1;
-  finished[pedalId]   = 0;
-  checkPedal[pedalId] = 1;
-}
-#endif
-
-/******************************************************************************/
-/** @param[in]	pedalId: 0..3
-*******************************************************************************/
-void ADC_WORK_Check_Pedal_Cancel(uint32_t pedalId)
-{
-  pedalDetected[pedalId] = 0;
-  checkPedal[pedalId]    = 0;
 }
 
 /*****************************************************************************
@@ -723,18 +676,14 @@ void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data)
   ribbon[RIB2].threshold   = SetThreshold(ribbon[RIB2].calibration->x_values[0]);
 }
 
+/*****************************************************************************
+* @brief  Process Ribbons, array'd style, new Linearization/Calibration
+******************************************************************************/
 // TODO test this ! ==> Looks good so far
 static void ProcessRibbons(void)
 {
   int32_t value;
   int32_t valueToSend;
-
-#ifdef __RIBBON_CAL_SPECIAL__
-  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_RIBBON_RAW,
-                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB1].ipcId),
-                          Emphase_IPC_PlayBuffer_Read(ribbon[RIB2].ipcId));
-  BB_MSG_SendTheBuffer();
-#endif
 
   for (int i = 0; i <= 1; i++)
   {
@@ -1355,5 +1304,6 @@ void ADC_WORK_Process(void)
     lastAftertouch = value;
   }
 
+  //==================== Ribbons
   ProcessRibbons();
 }
