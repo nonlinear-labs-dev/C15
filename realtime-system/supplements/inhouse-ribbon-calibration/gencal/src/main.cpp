@@ -2,9 +2,11 @@
 #include <stdint.h>
 #include "cal_to_ref.h"
 
-void Usage(char const* const exe)
+void Usage(void)
 {
-  printf("Usage: %s input-file\n", exe);
+  printf("Usage: gencal <raw-sensor-data-file> <calibration-output-file>\n");
+  printf("    <raw-sensor-data-file>    : input, text-file with calibration fixture readout value pairs\n");
+  printf("    <calibration-output-file> : output, text-file with human-readable calibration data\n");
 }
 
 int main(int const argc, char const* const argv[])
@@ -12,9 +14,9 @@ int main(int const argc, char const* const argv[])
   uint16_t ref;
   uint16_t dut;
 
-  if(argc != 2)
+  if(argc != 3)
   {
-    Usage(argv[0]);
+    Usage();
     return 3;
   }
 
@@ -22,6 +24,12 @@ int main(int const argc, char const* const argv[])
   if((infile = fopen(argv[1], "r")) == nullptr)
   {
     printf("FATAL: Cannot open input file \"%s\"\n", argv[1]);
+    return 3;  // --> exit
+  }
+  FILE* outfile;
+  if((outfile = fopen(argv[2], "w")) == nullptr)
+  {
+    printf("FATAL: Cannot open output file \"%s\"\n", argv[1]);
     return 3;  // --> exit
   }
 
@@ -50,7 +58,7 @@ int main(int const argc, char const* const argv[])
     return 2;
   }
 
-  cal.OutputData(nullptr);
+  cal.OutputData(outfile);
 
   return 0;
 }

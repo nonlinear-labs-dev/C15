@@ -34,7 +34,7 @@ namespace Calibrator
     // output resulting calibration file
     // param: fp: opened(!) output file, and it won't close it as well!
     // if fp==NULL, stdout is used
-    bool OutputData(FILE *fp) const;
+    bool OutputData(FILE *outfile) const;
 
    private:
     bool m_verbose;
@@ -51,21 +51,17 @@ namespace Calibrator
     static constexpr int m_AVG_CENTER = (m_AVG_SIZE - 1) / 2;
     static constexpr auto m_MONOTONICITY_DELTA = 5;
 
-    struct RawData
-    {
-      float value;
-      int32_t count;
-    };
-
-    RawData m_data[m_RANGE];
+    int m_counts[m_RANGE];
+    float m_values[m_RANGE];
     uint32_t m_lastBinNumber;
     uint16_t m_lastValue;
 
     float m_mappedX[m_RANGE];
     float m_mappedY[m_RANGE];
-    int m_mappedCount;
-    float m_mappedAvgdX[m_RANGE];
-    float m_mappedAvgdY[m_RANGE];
+    int m_mappedCount[m_RANGE];
+    int m_mappedTotal;
+    float m_mappedPeaksX[m_RANGE];
+    float m_mappedPeaksY[m_RANGE];
 
     float m_RIBBON_REFERENCE_CALIBRATION_TABLE_Y[33]
         = { 0,     712,   1198,  1684,  2170,  2655,  3141,  3627,  4113,  4599,  5085,
@@ -73,8 +69,8 @@ namespace Calibrator
             10995, 11496, 11996, 12497, 12997, 13498, 13998, 14499, 14999, 15500, 16000 };
 
     float m_RIBBON_REFERENCE_CALIBRATION_TABLE_X[34]
-        = { 142,  165,  263,  390,  518,  649,  765,  866,  950,  1047, 1152, 1263, 1376, 1484, 1596, 1710, 1820,
-            1930, 2034, 2149, 2251, 2365, 2480, 2595, 2713, 2826, 2954, 3093, 3236, 3390, 3544, 3711, 3872, 4035 };
+        = { 127,  144,  260,  394,  520,  638,  753,  869,  986,  1105, 1227, 1350, 1470, 1588, 1705, 1824, 1944,
+            2058, 2170, 2283, 2400, 2513, 2630, 2745, 2863, 2987, 3107, 3232, 3365, 3499, 3630, 3780, 3920, 4040 };
     float m_ribbon_dut_calibration_data_y[34];
 
     Interpol::InterpolData m_interpolData;
