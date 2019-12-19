@@ -150,18 +150,17 @@ void paramengine::init(uint32_t _sampleRate, uint32_t _voices)
   {
     // prepare for unison voice
     u_voice = static_cast<int32_t>(i) + 1;
-    // unison detune
+    // unison detune and phase
     u_index = -(static_cast<int32_t>(i) >> 1);
     for(uint32_t p = 0; p <= i; p++)
     {
-      m_unison_detune[i][p] = static_cast<float>(u_index);
+      m_unison_detune[i][p] = m_unison_phase[i][p] = static_cast<float>(u_index);
       u_index += 1;
     }
-    // unison phase and pan
+    // unison pan
     u_index = -static_cast<int32_t>(i);
     for(uint32_t p = 0; p <= i; p++)
     {
-      m_unison_phase[i][p] = static_cast<float>(u_index) / static_cast<float>(2 * u_voice);
       m_unison_pan[i][p] = static_cast<float>(u_index) / static_cast<float>(i < 1 ? 1 : i);
       u_index += 2;
     }
@@ -252,7 +251,8 @@ float paramengine::scale(const uint32_t _scaleId, const float _scaleArg, float _
       break;
     case 8:
       /* exponential, osc-pitch scaling (argument is offset) */
-      result = m_convert.eval_osc_pitch(_value + _scaleArg);  // includes hyperbolic floor, oscillators only (now redundant)
+      result = m_convert.eval_osc_pitch(_value
+                                        + _scaleArg);  // includes hyperbolic floor, oscillators only (now redundant)
       break;
     case 9:
       /* exponential, lin-pitch scaling (argument is offset) */
@@ -928,8 +928,8 @@ void paramengine::postProcessPoly_slow(SignalStorage& signals, const uint32_t _v
   newEnvUpdateTimes(_voiceId);
   /* Pitch Updates */
 #if test_milestone == 150
-  const float notePitch = getParameterValue(Parameters::P_KEY_NP, _voiceId)
-      + getParameterValue(Parameters::P_MA_T) + m_note_shift[_voiceId];
+  const float notePitch = getParameterValue(Parameters::P_KEY_NP, _voiceId) + getParameterValue(Parameters::P_MA_T)
+      + m_note_shift[_voiceId];
 #elif test_milestone == 155
   const uint32_t uVoice = static_cast<uint32_t>(getParameterValue(Parameters::P_UN_V));
   const uint32_t uIndex = static_cast<uint32_t>(getParameterValue(Parameters::P_KEY_IDX, _voiceId));
@@ -1048,13 +1048,15 @@ void paramengine::postProcessPoly_slow(SignalStorage& signals, const uint32_t _v
   /* - Resonance */
   keyTracking = getParameterValue(Parameters::P_SVF_RKT) * m_svfResFactor;
   envMod = signals.get<Signals::ENV_C_CLIP>()[_voiceId] * getParameterValue(Parameters::P_SVF_REC);
-  unitPitch = m_svfResonanceCurve.applyCurve(std::clamp(getParameterValue(Parameters::P_SVF_RES) + envMod + (notePitch * keyTracking), 0.0f, 1.0f));
+  unitPitch = m_svfResonanceCurve.applyCurve(
+      std::clamp(getParameterValue(Parameters::P_SVF_RES) + envMod + (notePitch * keyTracking), 0.0f, 1.0f));
 #if test_svf_types != 3
   // not sure here, but it's working
-  signals.set<Signals::SVF_RES>(_voiceId, unitPitch); // transmit res directly
+  signals.set<Signals::SVF_RES>(_voiceId, unitPitch);  // transmit res directly
 #elif test_svf_types == 3
-  signals.set<Signals::SVF_RES_DAMP>(_voiceId, 2.0f - (2.0f * unitPitch)); // transmit damp factor derived from res
-  signals.set<Signals::SVF_RES_FMAX>(_voiceId, 0.7352f + (0.2930f * unitPitch * (1.3075f + unitPitch))); // transmit maximum freq derived from res
+  signals.set<Signals::SVF_RES_DAMP>(_voiceId, 2.0f - (2.0f * unitPitch));  // transmit damp factor derived from res
+  signals.set<Signals::SVF_RES_FMAX>(
+      _voiceId, 0.7352f + (0.2930f * unitPitch * (1.3075f + unitPitch)));  // transmit maximum freq derived from res
 #endif
   /* - Feedback Mixer */
   /*   - determine Highpass Filter Frequency */
@@ -1086,8 +1088,8 @@ void paramengine::postProcessPoly_fast(SignalStorage& signals, const uint32_t _v
   /* temporary variables */
   float tmp_lvl, tmp_pan, tmp_abs;
 #if test_milestone == 150
-  const float notePitch = getParameterValue(Parameters::P_KEY_NP, _voiceId)
-      + getParameterValue(Parameters::P_MA_T) + m_note_shift[_voiceId];
+  const float notePitch = getParameterValue(Parameters::P_KEY_NP, _voiceId) + getParameterValue(Parameters::P_MA_T)
+      + m_note_shift[_voiceId];
 #elif test_milestone == 155
   const uint32_t uVoice = static_cast<uint32_t>(getParameterValue(Parameters::P_UN_V));
   const uint32_t uIndex = static_cast<uint32_t>(getParameterValue(Parameters::P_KEY_IDX, _voiceId));
@@ -1301,8 +1303,8 @@ void paramengine::postProcessPoly_key(SignalStorage& signals, const uint32_t _vo
 {
   /* Pitch Updates */
 #if test_milestone == 150
-  const float notePitch = getParameterValue(Parameters::P_KEY_NP, _voiceId)
-      + getParameterValue(Parameters::P_MA_T) + m_note_shift[_voiceId];
+  const float notePitch = getParameterValue(Parameters::P_KEY_NP, _voiceId) + getParameterValue(Parameters::P_MA_T)
+      + m_note_shift[_voiceId];
 #elif test_milestone == 155
   const uint32_t uVoice = static_cast<uint32_t>(getParameterValue(Parameters::P_UN_V));
   const uint32_t uIndex = static_cast<uint32_t>(getParameterValue(Parameters::P_KEY_IDX, _voiceId));
@@ -1422,13 +1424,15 @@ void paramengine::postProcessPoly_key(SignalStorage& signals, const uint32_t _vo
   /* - Resonance */
   keyTracking = getParameterValue(Parameters::P_SVF_RKT) * m_svfResFactor;
   envMod = signals.get<Signals::ENV_C_CLIP>()[_voiceId] * getParameterValue(Parameters::P_SVF_REC);
-  unitPitch = m_svfResonanceCurve.applyCurve(std::clamp(getParameterValue(Parameters::P_SVF_RES) + envMod + (notePitch * keyTracking), 0.0f, 1.0f));
+  unitPitch = m_svfResonanceCurve.applyCurve(
+      std::clamp(getParameterValue(Parameters::P_SVF_RES) + envMod + (notePitch * keyTracking), 0.0f, 1.0f));
 #if test_svf_types != 3
   // not sure here, but it's working
-  signals.set<Signals::SVF_RES>(_voiceId, unitPitch); // transmit res directly
+  signals.set<Signals::SVF_RES>(_voiceId, unitPitch);  // transmit res directly
 #elif test_svf_types == 3
-  signals.set<Signals::SVF_RES_DAMP>(_voiceId, 2.0f - (2.0f * unitPitch)); // transmit damp factor derived from res
-  signals.set<Signals::SVF_RES_FMAX>(_voiceId, 0.7352f + (0.2930f * unitPitch * (1.3075f + unitPitch))); // transmit maximum freq derived from res
+  signals.set<Signals::SVF_RES_DAMP>(_voiceId, 2.0f - (2.0f * unitPitch));  // transmit damp factor derived from res
+  signals.set<Signals::SVF_RES_FMAX>(
+      _voiceId, 0.7352f + (0.2930f * unitPitch * (1.3075f + unitPitch)));  // transmit maximum freq derived from res
 #endif
   /* Output Mixer */
   float tmp_lvl, tmp_pan;
