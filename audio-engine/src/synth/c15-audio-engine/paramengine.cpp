@@ -150,14 +150,14 @@ void paramengine::init(uint32_t _sampleRate, uint32_t _voices)
   {
     // prepare for unison voice
     u_voice = static_cast<int32_t>(i) + 1;
-    // unison detune
+    // unison detune and phase
     u_index = -(static_cast<int32_t>(i) >> 1);
     for(uint32_t p = 0; p <= i; p++)
     {
       m_unison_detune[i][p] = m_unison_phase[i][p] = static_cast<float>(u_index);
       u_index += 1;
     }
-    // unison phase and pan
+    // unison pan
     u_index = -static_cast<int32_t>(i);
     for(uint32_t p = 0; p <= i; p++)
     {
