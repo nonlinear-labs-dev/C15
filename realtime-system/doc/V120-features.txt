@@ -1,0 +1,104 @@
+LPC firmware Version 120 (for Milestone 1.5) features:
+
+
+
+0) Proccesing changes : Ask SSC ;-)
+
+
+
+1) Debug LEDs
+Order and meaning of LEDs has been changed:
+LED A (lower)	green	: CPU Core M0 (fast core) Heartbeat (fast blinking)
+LED B		green	: CPU Core M4 (slow core) Heartbeat (slow blinking)
+LED C		green	: Audio Unmute (request to Supervisor)
+LED D		orange	: Task Overflow (calls to some tasks are still pending when next scheduling is due)
+LED E (upper)	red	: Communication Error
+
+"Audio Unmute" is lit as long as Unmute Requests are send to the Supervisor.
+
+"Task Overflow" currently is always indicated when a preset is changed!
+The offending task seems to be NL_GPDMA_Poll() which is due every 125uS and gets overrun during a
+preset change. Overruns higher than 2 pending calls did not occur in a short test I made,
+so this problem seems to be minor, if any.
+It might affect (micro-)timing because the task scheduler tries to catch up any calls it could not
+make at the proper time points later until all pending calls are made.
+
+"Communication Error" is indicated when :
+	- the buffer to hold message data for BBB -- SPI connection -- overruns (BBB not ready), short flash. 
+	  Note: buffer is thrown away to avoid stalling.
+	- the buffer to hold TCD data for ePC -- USB connection -- overruns, long flash.
+	  Note: USB hardware disconnect/reconnect currently stalls the LPC with only hardware reset fixing it!
+
+
+
+2) Ribbon Calibration/Linearization features
+A new method to individually calibrate the ribbons has been implemented which also clears the "left side zero error" bug.
+Each shipped unit now has hard-coded ribbon calibration tables flashed in memory, as the "default calibration tables"
+Additionally, from the BBB, custom tables overriding the defaults can be uploaded to the LPC at runtime (new
+BB message "BB_MSG_TYPE_RIBBON_CAL")
+See functions "ADC_WORK_SetRibbonCalibration()" and "BB_MSG_ReceiveCallback()" for details.
+
+
+
+3) Heartbeat functionality
+Heartbeat signal from the Audio Engine is received, combined with (added to) the local heartbeat counter and then transmitted to the BBB,
+with the new BB message "BB_MSG_TYPE_HEARTBEAT".
+The Audio Engine sends its 42bit (unsigned) heartbeat signal every 100ms and it is comprised of a MIDI sequence of three 'Aftertouch' commands,
+which must be strictly in order (no gaps with other data in between) :
+	- 0xA0 0b0lllllll 0b0hhhhhh	: bits 0..6 (l)   and bits 7..13 (h)  of heartbeat counter
+	- 0xA1 0b0lllllll 0b0hhhhhh	: bits 14..20 (l) and bits 21..27 (h) of heartbeat counter
+	- 0xA2 0b0lllllll 0b0hhhhhh	: bits 28..34 (l) and bits 35..41 (h) of heartbeat counter
+The local heartbeat is 64bit unsigned.
+When no incoming heartbeat is received, no outgoing heartbeat will be transmitted.
+
+
+
+4) Audio Mute Control and Status
+The LPC now sends Mute or UnMute requests to the Supervisor continuously (via a variable duty-cycle square-wave)
+which then controls the actual relays. UnMute is signalled when
+	- Incoming MIDI traffic over USB was detected at a faster rate than ~ 100ms, meaning that the Audio Engine is up
+	- or UnMute detection is overridden by Software Command to LPC
+	- or Unmute is unconditionally forced by Hardware-Jumper (shorting GPIO3[1] to GND on Config Jumper Array, left of the LPC).
+
+Further, the supervisor sends its current state of the muting relays back to the LPC as well  (via a variable duty-cycle square-wave).
+
+The BBB can request the current status of the Mute Control via new BB message command "REQUEST_ID_UNMUTE_STATUS" which returns the data
+via new BB message "NOTIFICATION_ID_UNMUTE_STATUS".
+Also, the BBB can enable/disable the above software override of the muting with
+new BB message "BB_MSG_TYPE_SETTING, SETTING_ID_SOFTWARE_MUTE_OVERRIDE".
+
+// bit masks for these functions :
+// (for SUP_SetMuteOverride() only *_SOFTWARE_* masks are used/allowed)
+#define SUP_UNMUTE_STATUS_IS_VALID           (0b1000000000000000)  // status has actually been set
+#define SUP_UNMUTE_STATUS_JUMPER_OVERRIDE    (0b0000000010000000)  // hardware jumper overriding everything ...
+#define SUP_UNMUTE_STATUS_JUMPER_VALUE       (0b0000000001000000)  // ... with this value (1:unmuted)
+#define SUP_UNMUTE_STATUS_SOFTWARE_OVERRIDE  (0b0000000000100000)  // software command overriding midi-derived status ...
+#define SUP_UNMUTE_STATUS_SOFTWARE_VALUE     (0b0000000000010000)  // ... with this value (1:unmuted)
+#define SUP_UNMUTE_STATUS_MIDI_DERIVED       (0b0000000000001000)  // midi-derived status ...
+#define SUP_UNMUTE_STATUS_MIDI_DERIVED_VALUE (0b0000000000000100)  // ... with this value (1:unmuted)
+#define SUP_UNMUTE_STATUS_HARDWARE_IS_VALID  (0b0000000000000010)  // hardware status is valid (signal from SUP uC was detected) ...
+#define SUP_UNMUTE_STATUS_HARDWARE_VALUE     (0b0000000000000001)  // ... with this value (1:unmuted)
+
+
+
+5) Raw Sensor Values
+The raw sensor ADC values now can be transmitted to the BBB, as an array of 13 uint16 values, with the
+new BB message "BB_MSG_TYPE_SENSORS_RAW", useful for debugging and ribbon+bender calibration :
+- Pedal Detect Bits for Pedal 4...1 (bits 3..0)
+- Tip 1
+- Ring 1
+- Tip 2
+- Ring 2
+- Tip 3
+- Ring 3
+- Tip 4
+- Ring 4
+- Pitchbender
+- Aftertouch
+- Ribbon 1
+- Ribbon 2
+The data is send to the BBB every 12.5ms regardless of any other activity.
+Be default, the function is disabled to avoid unneccessary traffic.
+It can be enabled/disabled by new BB message "BB_MSG_TYPE_SETTING, SETTING_ID_SEND_RAW_SENSOR_DATA"
+
+
