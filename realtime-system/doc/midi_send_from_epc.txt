@@ -1,7 +1,0 @@
-amidi -l
-damit die hw-id von Emphase bestimmen, zB 0, dann
-
-amidi -p hw:0 -S "<hex data>", zb "90 3C 01" (== NoteOn Key Velocity)
-
-Heartbeat schicken für UmMute, alle 100ms (ab 200ms ist der HeartBeat zu langsam) :
-while true; do amidi -p hw:0 -S "A0 3C 01"; sleep 0.1; done
