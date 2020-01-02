@@ -15,4 +15,3 @@
 # "/" is NOT optional when followed by a *
 !doc/
 !src/
-!test-input
