@@ -627,7 +627,6 @@ uint32_t ADC_WORK_GetPedal4Behaviour(void)
 * @param	length: # of words in data array
 * @param	data: array containing calibration data sets for the ribbons
 ******************************************************************************/
-// TODO Test this !
 void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data)
 {
   if (length != (34 + 33 + 34 + 33))  // data must contain X (34 point) and Y (33 points) sets,  for each ribbon
@@ -676,7 +675,6 @@ void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data)
 /*****************************************************************************
 * @brief  Process Ribbons, array'd style, new Linearization/Calibration
 ******************************************************************************/
-// TODO test this ! ==> Looks good so far
 static void ProcessRibbons(void)
 {
   int32_t value;
