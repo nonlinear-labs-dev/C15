@@ -14,6 +14,19 @@
 #define RETURN_TO_ZERO   1
 #define RETURN_TO_CENTER 2
 
+#define NUM_HW_SOURCES 9
+
+#define HW_SOURCE_ID_PEDAL_1    0
+#define HW_SOURCE_ID_PEDAL_2    1
+#define HW_SOURCE_ID_PEDAL_3    2
+#define HW_SOURCE_ID_PEDAL_4    3
+#define HW_SOURCE_ID_PITCHBEND  4
+#define HW_SOURCE_ID_AFTERTOUCH 5
+#define HW_SOURCE_ID_RIBBON_1   6
+#define HW_SOURCE_ID_RIBBON_2   7
+#define HW_SOURCE_ID_LAST_KEY   8
+
+
 //------- public functions
 
 void ADC_WORK_Init(void);
@@ -22,6 +35,7 @@ void ADC_WORK_Process(void);
 void ADC_WORK_Suspend(void);
 void ADC_WORK_Resume(void);
 
+void ADC_WORK_WriteHWValueForBB(uint32_t hwSourceId, uint32_t value);
 void ADC_WORK_SendBBMessages(void);
 
 void ADC_WORK_SetPedal1Behaviour(uint32_t behaviour);

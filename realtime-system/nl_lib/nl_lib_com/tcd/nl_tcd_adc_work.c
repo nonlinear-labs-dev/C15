@@ -3,17 +3,17 @@
  *
  *  Created on: 13.03.2015
  *      Author: ssc
- *  Last change on : 2019-12-04 KSTR
+ *  Last change on : 2020-01-03 KSTR
  */
 
 #include "math.h"
 
 #include "nl_tcd_adc_work.h"
+#include "nl_tcd_msg.h"
 #include "espi/dev/nl_espi_dev_pedals.h"
 #include "ipc/emphase_ipc.h"
 
 #include "ipc/emphase_ipc.h"
-#include "nl_tcd_param_work.h"
 #include "spibb/nl_bb_msg.h"
 
 #include "nl_tcd_test.h"
@@ -33,27 +33,7 @@
 #define AT_DEADRANGE 30    // 0.73 % of 0 ... 4095
 #define AT_FACTOR    5080  // 5080 / 4096 for saturation = 100 % at 81 % of the input range
 
-#define NUM_HW_SOURCES 8
-
-#define HW_SOURCE_ID_PEDAL_1    0
-#define HW_SOURCE_ID_PEDAL_2    1
-#define HW_SOURCE_ID_PEDAL_3    2
-#define HW_SOURCE_ID_PEDAL_4    3
-#define HW_SOURCE_ID_PITCHBEND  4
-#define HW_SOURCE_ID_AFTERTOUCH 5
-#define HW_SOURCE_ID_RIBBON_1   6
-#define HW_SOURCE_ID_RIBBON_2   7
-
 static uint32_t bbSendValue[NUM_HW_SOURCES] = {};
-
-static uint32_t hwParamId[NUM_HW_SOURCES] = { PARAM_ID_PEDAL_1,
-                                              PARAM_ID_PEDAL_2,
-                                              PARAM_ID_PEDAL_3,
-                                              PARAM_ID_PEDAL_4,
-                                              PARAM_ID_PITCHBEND,
-                                              PARAM_ID_AFTERTOUCH,
-                                              PARAM_ID_RIBBON_1,
-                                              PARAM_ID_RIBBON_2 };
 
 static uint32_t pedalDetected[4];
 static uint32_t tipPullup[4];
@@ -170,8 +150,7 @@ typedef struct
   int32_t              threshold;      ///< touch threshold
   LIB_interpol_data_T* calibration;    ///< pointer to calibration data to be used
   uint8_t              ipcId;          ///< ID to fetch raw data from M0 kernel
-  uint32_t             paramId;        ///< ID for TCD param set
-  uint32_t             hwSourceId;     ///< ID for BB message
+  uint32_t             hwSourceId;     ///< ID for BB and TCD message
 
 } Ribbon_Data_T;
 
@@ -346,7 +325,6 @@ void ADC_WORK_Init(void)
     ribbon[i].calibration   = (i == 0 ? &RIBBON_1_DEFAULT_CALIBRATION_DATA : &RIBBON_2_DEFAULT_CALIBRATION_DATA);  // use default calibration
     ribbon[i].threshold     = SetThreshold(ribbon[i].calibration->x_values[0]);
     ribbon[i].ipcId         = (i == 0 ? EMPHASE_IPC_RIBBON_1_ADC : EMPHASE_IPC_RIBBON_2_ADC);
-    ribbon[i].paramId       = (i == 0 ? PARAM_ID_RIBBON_1 : PARAM_ID_RIBBON_2);
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
 
@@ -406,7 +384,7 @@ static void SendEditMessageToBB(uint32_t paramId, uint32_t value, int32_t inc)
 /// "return"-Behaviour braucht eigene Funktion, die mit einem Timer-Task aufgerufen wird
 /// mit Abfrage, ob das Ribbon losgelassen wurde. Sprungartiges Zurücksetzen.
 
-void WriteHWValueForBB(uint32_t hwSourceId, uint32_t value)
+void ADC_WORK_WriteHWValueForBB(uint32_t hwSourceId, uint32_t value)
 {
   bbSendValue[hwSourceId] = value | 0x80000;  // the bit is set to check for values to send, will be masked out
 }
@@ -420,7 +398,7 @@ void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
   {
     if (bbSendValue[i] > 0)
     {
-      if (BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_PARAMETER, hwParamId[i], (bbSendValue[i] & 0xFFFF)) > -1)
+      if (BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_PARAMETER, i, (bbSendValue[i] & 0xFFFF)) > -1)
       {
         bbSendValue[i] = 0;
         send           = 1;
@@ -446,8 +424,7 @@ void ADC_WORK_SetRibbon1Behaviour(uint32_t behaviour)
     if ((ribbon[RIB1].behavior == 1) || (ribbon[RIB1].behavior == 3))  // "return" behaviour
     {
       ribbon[RIB1].output = 8000;
-      // PARAM_Set(PARAM_ID_RIBBON_1, 8000);
-      WriteHWValueForBB(HW_SOURCE_ID_RIBBON_1, 8000);
+      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_RIBBON_1, 8000);
     }
   }
 }
@@ -482,8 +459,7 @@ void ADC_WORK_SetRibbon2Behaviour(uint32_t behaviour)
     if ((ribbon[RIB2].behavior == 1) || (ribbon[RIB2].behavior == 3))  // "return" behaviour
     {
       ribbon[RIB2].output = 8000;
-      // PARAM_Set(PARAM_ID_RIBBON_2, 8000);
-      WriteHWValueForBB(HW_SOURCE_ID_RIBBON_2, 8000);
+      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_RIBBON_2, 8000);
     }
   }
 }
@@ -524,14 +500,12 @@ void ADC_WORK_SetPedal1Behaviour(uint32_t behaviour)
 
   if (pedal1Behaviour == RETURN_TO_ZERO)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_1, 0);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, 0);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, 0);
     TEST_Output(0, 0);
   }
   else if (pedal1Behaviour == RETURN_TO_CENTER)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_1, 8000);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, 8000);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, 8000);
     TEST_Output(0, 8000);
   }
 }
@@ -551,14 +525,12 @@ void ADC_WORK_SetPedal2Behaviour(uint32_t behaviour)
 
   if (pedal2Behaviour == RETURN_TO_ZERO)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_2, 0);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, 0);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, 0);
     TEST_Output(1, 0);
   }
   else if (pedal2Behaviour == RETURN_TO_CENTER)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_2, 8000);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, 8000);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, 8000);
     TEST_Output(1, 8000);
   }
 }
@@ -578,14 +550,12 @@ void ADC_WORK_SetPedal3Behaviour(uint32_t behaviour)
 
   if (pedal3Behaviour == RETURN_TO_ZERO)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_3, 0);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, 0);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, 0);
     TEST_Output(2, 0);
   }
   else if (pedal3Behaviour == RETURN_TO_CENTER)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_3, 8000);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, 8000);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, 8000);
     TEST_Output(2, 8000);
   }
 }
@@ -605,14 +575,12 @@ void ADC_WORK_SetPedal4Behaviour(uint32_t behaviour)
 
   if (pedal4Behaviour == RETURN_TO_ZERO)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_4, 0);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, 0);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, 0);
     TEST_Output(3, 0);
   }
   else if (pedal4Behaviour == RETURN_TO_CENTER)
   {
-    // PARAM_Set(PARAM_ID_PEDAL_4, 8000);
-    WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, 8000);
+    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, 8000);
     TEST_Output(3, 8000);
   }
 }
@@ -718,8 +686,8 @@ static void ProcessRibbons(void)
         {
           if ((ribbon[i].behavior == 1) || (ribbon[i].behavior == 3))  // "return" behaviour
           {
-            PARAM_Set(ribbon[i].paramId, 8000);
-            WriteHWValueForBB(ribbon[i].hwSourceId, 8000);
+            MSG_HWSourceUpdate(ribbon[i].hwSourceId, 8000);
+            ADC_WORK_WriteHWValueForBB(ribbon[i].hwSourceId, 8000);
 
             ribbon[i].output = 8000;
           }
@@ -743,7 +711,7 @@ static void ProcessRibbons(void)
       if (ribbon[i].isEditControl)
       {
         inc = (inc * ribbon[i].relFactor) / 256;
-        SendEditMessageToBB(ribbon[i].paramId, valueToSend, inc);
+        SendEditMessageToBB(ribbon[i].hwSourceId, valueToSend, inc);
       }
       else
       {
@@ -751,8 +719,8 @@ static void ProcessRibbons(void)
         {
           ribbon[i].output = valueToSend;
 
-          PARAM_Set(ribbon[i].paramId, ribbon[i].output);
-          WriteHWValueForBB(ribbon[i].hwSourceId, ribbon[i].output);
+          MSG_HWSourceUpdate(ribbon[i].hwSourceId, ribbon[i].output);
+          ADC_WORK_WriteHWValueForBB(ribbon[i].hwSourceId, ribbon[i].output);
         }
         else  // relative
         {
@@ -766,8 +734,8 @@ static void ProcessRibbons(void)
             if (ribbon[i].output > 16000)
               ribbon[i].output = 16000;
 
-            PARAM_Set(ribbon[i].paramId, ribbon[i].output);
-            WriteHWValueForBB(ribbon[i].hwSourceId, ribbon[i].output);
+            MSG_HWSourceUpdate(ribbon[i].hwSourceId, ribbon[i].output);
+            ADC_WORK_WriteHWValueForBB(ribbon[i].hwSourceId, ribbon[i].output);
           }
         }
       }
@@ -884,8 +852,8 @@ void ADC_WORK_Process(void)
       {
         valueToSend = ((value - pedal1Min) * pedal1Factor) >> 10;
 
-        PARAM_Set(PARAM_ID_PEDAL_1, valueToSend);
-        WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, valueToSend);
+        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_1, valueToSend);
+        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, valueToSend);
         TEST_Output(0, valueToSend);
 
         lastPedal1 = pedal1;
@@ -959,8 +927,8 @@ void ADC_WORK_Process(void)
       {
         valueToSend = ((value - pedal2Min) * pedal2Factor) >> 10;
 
-        PARAM_Set(PARAM_ID_PEDAL_2, valueToSend);
-        WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, valueToSend);
+        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_2, valueToSend);
+        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, valueToSend);
         TEST_Output(1, valueToSend);
 
         lastPedal2 = pedal2;
@@ -1035,8 +1003,8 @@ void ADC_WORK_Process(void)
       {
         valueToSend = ((value - pedal3Min) * pedal3Factor) >> 10;
 
-        PARAM_Set(PARAM_ID_PEDAL_3, valueToSend);
-        WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, valueToSend);
+        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_3, valueToSend);
+        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, valueToSend);
         TEST_Output(2, valueToSend);
 
         lastPedal3 = pedal3;
@@ -1110,8 +1078,8 @@ void ADC_WORK_Process(void)
       {
         valueToSend = ((value - pedal4Min) * pedal4Factor) >> 10;
 
-        PARAM_Set(PARAM_ID_PEDAL_4, valueToSend);
-        WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, valueToSend);
+        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_4, valueToSend);
+        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, valueToSend);
         TEST_Output(3, valueToSend);
 
         lastPedal4 = pedal4;
@@ -1215,8 +1183,8 @@ void ADC_WORK_Process(void)
 
       valueToSend = 8000 + valueToSend;  // 8001 ... 16000
 
-      PARAM_Set(PARAM_ID_PITCHBEND, valueToSend);
-      WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
       TEST_Output(4, valueToSend);
     }
     else if (value < -BENDER_DEADRANGE)  // is in the negative work range
@@ -1240,16 +1208,16 @@ void ADC_WORK_Process(void)
 
       valueToSend = 8000 - valueToSend;  // 7999 ... 0
 
-      PARAM_Set(PARAM_ID_PITCHBEND, valueToSend);
-      WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
       TEST_Output(4, valueToSend);
     }
     else  // is in the dead range
     {
       if ((lastPitchbend > BENDER_DEADRANGE) || (lastPitchbend < -BENDER_DEADRANGE))  // was outside of the dead range before
       {
-        PARAM_Set(PARAM_ID_PITCHBEND, 8000);
-        WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, 8000);
+        MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, 8000);
+        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, 8000);
         TEST_Output(4, 8000);
       }
     }
@@ -1282,16 +1250,16 @@ void ADC_WORK_Process(void)
         valueToSend    = (atTable[index] * (128 - fract) + atTable[index + 1] * fract) >> 7;  // (0...16000) * 128 / 128
       }
 
-      PARAM_Set(PARAM_ID_AFTERTOUCH, valueToSend);
-      WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
+      MSG_HWSourceUpdate(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
+      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
       TEST_Output(5, valueToSend);
     }
     else  // inside of the dead range
     {
       if (lastAftertouch > AT_DEADRANGE)  // was outside of the dead range before   /// define
       {
-        PARAM_Set(PARAM_ID_AFTERTOUCH, 0);
-        WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, 0);
+        MSG_HWSourceUpdate(HW_SOURCE_ID_AFTERTOUCH, 0);
+        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, 0);
         TEST_Output(5, 0);
       }
     }
