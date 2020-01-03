@@ -3,12 +3,14 @@
 
 namespace OptionDetail
 {
-  inline Glib::OptionEntry createOption(const char* l, char s, const char* desc)
+  template <typename T>
+  inline Glib::OptionEntry createOption(Glib::OptionGroup& ctx, const char* l, char s, const char* desc, T& dest)
   {
     Glib::OptionEntry entry;
     entry.set_long_name(l);
     entry.set_short_name(s);
     entry.set_description(desc);
+    ctx.add_entry(entry, dest);
     return entry;
   }
 }
@@ -18,25 +20,16 @@ Options::Options(int& argc, char**& argv)
   Glib::OptionGroup mainGroup("common", "common options");
   Glib::OptionContext ctx;
 
-  auto timeStamps
-      = OptionDetail::createOption("timestamps", 't', "measure turn around time encoder -> playground -> oled");
-  auto heartBeatLog = OptionDetail::createOption("log-heart-beat", 'h', "log lpc heart beat to console");
-  auto rawLpcLog = OptionDetail::createOption("log-lpc-raw", 'l', "log raw lpc messages to console");
-
-  auto pgHost = OptionDetail::createOption("playground-host", 'p', "where to find the playground");
-  auto aeHost = OptionDetail::createOption("audioengine-host", 'a', "where to find the audio engine");
-
-  Glib::OptionEntry pg;
-  pg.set_long_name("playground-host");
-  pg.set_short_name('p');
-  pg.set_description("Where to find the playground");
-  mainGroup.add_entry(pg, m_playgroundHost);
-
-  Glib::OptionEntry ae;
-  pg.set_long_name("audioengine-host");
-  pg.set_short_name('p');
-  pg.set_description("Where to find the audioengine");
-  mainGroup.add_entry(ae, m_audioengineHost);
+  auto timeStamps = OptionDetail::createOption(
+      mainGroup, "timestamps", 't', "measure turn around time encoder -> playground -> oled", m_doTimeStamps);
+  auto heartBeatLog
+      = OptionDetail::createOption(mainGroup, "log-heart-beat", 'h', "log lpc heart beat to console", m_logHeartBeat);
+  auto rawLpcLog
+      = OptionDetail::createOption(mainGroup, "log-lpc-raw", 'l', "log raw lpc messages to console", m_logLpcRaw);
+  auto pgHost
+      = OptionDetail::createOption(mainGroup, "playground-host", 'p', "where to find the playground", m_playgroundHost);
+  auto aeHost = OptionDetail::createOption(mainGroup, "audioengine-host", 'a', "where to find the audio engine",
+                                           m_audioengineHost);
 
   ctx.set_main_group(mainGroup);
   ctx.set_help_enabled(true);
