@@ -1,0 +1,8 @@
+ssh root@192.168.8.2 "cat > /dev/lpc_bb_driver" < /home/kstr/Development/C15/realtime-system/supplements/test-msgs-to-BBBB/raw-sensors-on.bbmsg
+
+>> bei laufender bridge, ohne playground <<
+Bridge starten immer mit:
+kill -n 15 `pidof bbbb`; bbbb <ggf.option, zb -l>
+und vorher immer:
+systemctl stop playground; systemctl stop bbbb
+... weil der BBBB friert komplett ein wenn die bridge doppelt gestartet wird!!

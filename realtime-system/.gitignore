@@ -1,0 +1,20 @@
+# Blacklist files/folders in same directory as the .gitignore file
+/*
+
+
+# Whitelist some files
+!.*
+!readme*
+!*.bat
+
+# Blacklist files/folders in same directory as the .gitignore file
+.metadata/
+
+# Whitelist our folders we want to sync
+# trailing "/" is optional for folders, may match file though.
+# "/" is NOT optional when followed by a *
+!doc/
+!M0_project/
+!M4_project/
+!nl_lib/
+!supplements/
