@@ -3,6 +3,7 @@
  *  last mod: 2016-04-27 DTZ
  *  Created on: 21.01.2015
  *      Author: ssc
+ *  changed 2020-01-03 KSTR
  */
 
 //#define BB_MSG_DBG  // if defined, discards normal BB_MSG_WriteMessage*() messages and enables the *_DBG() variants instead
@@ -10,7 +11,6 @@
 #include "nl_bb_msg.h"
 #include "nl_spi_bb.h"
 
-#include "tcd/nl_tcd_param_work.h"
 #include "tcd/nl_tcd_adc_work.h"
 #include "tcd/nl_tcd_poly.h"
 #include "sup/nl_sup.h"
@@ -271,22 +271,7 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
   // data[1]  - first value
   // data[2]  - second value
 
-  if (type == BB_MSG_TYPE_PARAMETER)
-  {
-    if (length == 3)
-    {
-      PARAM_Set2(data[0], data[1], data[2]);
-    }
-    else
-    {
-      PARAM_Set(data[0], data[1]);
-    }
-  }
-  else if (type == BB_MSG_TYPE_PRESET_DIRECT)
-  {
-    PARAM_ApplyPreset(length, data);
-  }
-  else if (type == BB_MSG_TYPE_RIBBON_CAL)
+  if (type == BB_MSG_TYPE_RIBBON_CAL)
   {
     ADC_WORK_SetRibbonCalibration(length, data);
   }
@@ -299,9 +284,6 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;
       case SETTING_ID_PLAY_MODE_LOWER_RIBBON_BEHAVIOUR:  // Play mode ribbon 2 behaviour
         ADC_WORK_SetRibbon2Behaviour(data[1]);           // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
-        break;
-      case SETTING_ID_NOTE_SHIFT:     // Note Shift
-        PARAM_SetNoteShift(data[1]);  // (+/-)0...48 (uint16 with sign bit)
         break;
       case SETTING_ID_BASE_UNIT_UI_MODE:       // "Unit Mode" - Ribbon 1 can be switched between Edit and Play mode.
         ADC_WORK_SetRibbon1EditMode(data[1]);  // 0: Play, 1: Parameter Edit
@@ -327,22 +309,11 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case SETTING_ID_VELOCITY_CURVE:     // Velocity Curve
         POLY_Generate_VelTable(data[1]);  // Parameter: 0 = very soft ... 4 = very hard
         break;
-      case SETTING_ID_TRANSITION_TIME:  // Transition Time
-        PARAM_SetTransitionTime(data[1]);
-        break;
       case SETTING_ID_AFTERTOUCH_CURVE:              // Aftertouch Curve
         ADC_WORK_Generate_AftertouchTable(data[1]);  // 0: soft, 1: normal, 2: hard
         break;
       case SETTING_ID_BENDER_CURVE:              // Bender Curve
         ADC_WORK_Generate_BenderTable(data[1]);  // 0: soft, 1: normal, 2: hard
-        break;
-      case SETTING_ID_PITCHBEND_ON_PRESSED_KEYS:  // Pitchbend on Pressed Keys
-        break;
-      case SETTING_ID_EDIT_SMOOTHING_TIME:  // Edit Smoothing Time
-        PARAM_SetEditSmoothingTime(data[1]);
-        break;
-      case SETTING_ID_PRESET_GLITCH_SUPPRESSION:  // Glitch Suppression
-        PARAM_SetGlitchSuppression(data[1]);      // 0: off, 1: on
         break;
       case SETTING_ID_SOFTWARE_MUTE_OVERRIDE:
         SUP_SetMuteOverride(data[1]);  // enable/disable Software Mute Override and value

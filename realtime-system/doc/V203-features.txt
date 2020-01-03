@@ -1,8 +1,12 @@
-LPC firmware Version 120 (for Milestone 1.5) features:
+LPC firmware Version 203 (for Milestone 1.7) features:
 
 
 
-0) Proccesing changes : Ask SSC ;-)
+0) Proccesing changes : 
+The last pressed key on the keybed is now sent to the BBB with update BB message "BB_MSG_TYPE_PARAMETER, 8"
+(8 is the index for this new "HW_SOURCE" #9)
+
+For other updates on TCD processing etc, ask SSC ;-)
 
 
 

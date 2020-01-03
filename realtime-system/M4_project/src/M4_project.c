@@ -1,6 +1,7 @@
 /******************************************************************************/
 /** @file	Emphase_M4_Main.c
     @date	2016-03-09 SSC
+		@changes 2020-01-03 KSTR
 *******************************************************************************/
 
 #include <stdint.h>
@@ -23,11 +24,8 @@
 #include "spibb/nl_spi_bb.h"
 #include "spibb/nl_bb_msg.h"
 
-#include "tcd/nl_tcd_valloc.h"
 #include "tcd/nl_tcd_adc_work.h"
 #include "tcd/nl_tcd_poly.h"
-#include "tcd/nl_tcd_expon.h"
-#include "tcd/nl_tcd_param_work.h"
 #include "tcd/nl_tcd_msg.h"
 #include "sup/nl_sup.h"
 #include "heartbeat/nl_heartbeat.h"
@@ -142,11 +140,8 @@ void Init(void)
   /* lpc bbb communication */
   SPI_BB_Init(BB_MSG_ReceiveCallback);
 
-  /* TCD */
-  EXPON_Init();
-  VALLOC_Init(NUM_VOICES);
+  /* velocity table */
   POLY_Init();
-  PARAM_WORK_Init();
 
   /* scheduler */
   COOS_Init();
@@ -154,7 +149,7 @@ void Init(void)
   COOS_Task_Add(NL_GPDMA_Poll, 10, 1);  // every 125 us, for all the DMA transfers (SPI devices)
   COOS_Task_Add(USB_MIDI_Poll, 15, 1);  // every 125 us, same time grid as in USB 2.0
 
-  COOS_Task_Add(VALLOC_Process, 20, 1);  // every 125 us, reading and applying keybed events
+	COOS_Task_Add(POLY_Process, 20, 1);  // every 125 us, reading and applying keybed events
 
   COOS_Task_Add(SPI_BB_Polling, 30, 1);  // every 125 us, checking the buffer with messages from the BBB and driving the LPC-BB "heartbeat"
 
