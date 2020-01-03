@@ -14,7 +14,7 @@
 
 //===========================
 
-#define SW_VERSION 203  // fix for max. Velocity und max. HWSource
+#define SW_VERSION 204  // fix for max. Velocity und max. HWSource, added keybed press sent to BBBB
 
 //===========================
 
