@@ -133,18 +133,13 @@ void ae_reverb::set(SignalStorage &signals)
 #if test_reverbSmoother == 1
 
   tmpVar = signals.get<Signals::REV_SIZE>();
-  //    tmp_target = signals.get(SignalLabel::REV_CHO) * (tmpVar * -200.f + 311.f);
-  //    if (m_depth_target - tmp_target != 0.f)
-  //    {
-  //        m_depth_target = tmp_target;
-  //        m_depth_base = m_depth;
-  //        m_depth_diff = m_depth_target - m_depth_base;
-  //        m_depth_ramp = 0.f;
-  //    }
   tmp_target = signals.get<Signals::REV_CHO>() * (tmpVar * -200.f + 311.f);
   if(m_depth_target - tmp_target != 0.f)
   {
-    m_depth_inc = (m_depth_target - m_depth) * m_smooth_inc;
+    m_depth_target = tmp_target;
+    m_depth_base = m_depth;
+    m_depth_diff = m_depth_target - m_depth_base;
+    m_depth_ramp = 0.f;
   }
 
   tmp_target = tmpVar * (0.5f - std::abs(tmpVar) * -0.5f);
@@ -252,23 +247,14 @@ void ae_reverb::apply(float _rawSample_L, float _rawSample_R, SignalStorage &sig
   if(!m_slow_tick)
   {
 #if test_reverbSmoother == 1
-
-    //        if(m_depth_ramp > 1.f)                                  // Depth Smth.
-    //        {
-    //            m_depth = m_depth_target;
-    //        }
-    //        else
-    //        {
-    //            m_depth = m_depth_base + (m_depth_diff * m_depth_ramp);
-    //            m_depth_ramp += m_smooth_inc;
-    //        }
-    if(m_depth_target - m_depth != 0.f)
+    if(m_depth_ramp > 1.f)
     {
-      m_depth += m_depth_inc;
+      m_depth = m_depth_target;
     }
     else
     {
-      m_depth = m_depth_target;
+      m_depth = m_depth_base + (m_depth_diff * m_depth_ramp);
+      m_depth_ramp += m_smooth_inc;
     }
 
     if(m_size_ramp > 1.f)  // Size Smth.
