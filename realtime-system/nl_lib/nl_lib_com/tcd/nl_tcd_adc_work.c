@@ -331,6 +331,8 @@ void ADC_WORK_Init(void)
   suspend = 0;
 
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
+//  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_PULLUP);
+
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
   Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
@@ -865,7 +867,9 @@ void ADC_WORK_Process(void)
   {
     if (pedalDetected[0] == 1)
     {
+#ifndef __NEW_PEDALS__
       Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_DEFAULT_OFF);
+#endif
       pedalDetected[0] = 0;
     }
   }
@@ -940,8 +944,9 @@ void ADC_WORK_Process(void)
   {
     if (pedalDetected[1] == 1)
     {
+#ifndef __NEW_PEDALS__
       Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_DEFAULT_OFF);
-
+#endif
       pedalDetected[1] = 0;
     }
   }
@@ -1016,7 +1021,9 @@ void ADC_WORK_Process(void)
   {
     if (pedalDetected[2] == 1)
     {
+#ifndef __NEW_PEDALS__
       Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_DEFAULT_OFF);
+#endif
       pedalDetected[2] = 0;
     }
   }
@@ -1091,7 +1098,9 @@ void ADC_WORK_Process(void)
   {
     if (pedalDetected[3] == 1)
     {
+#ifndef __NEW_PEDALS__
       Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_DEFAULT_OFF);
+#endif
       pedalDetected[3] = 0;
     }
   }
