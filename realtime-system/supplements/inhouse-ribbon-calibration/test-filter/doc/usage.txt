@@ -1,2 +1,0 @@
-
-ssh root@192.168.8.2 "kill -n 15 \`pidof bbbb\`"; ssh root@192.168.8.2 "/nonlinear/playground/bbbb -l" | /home/kstr/Development/C15/realtime-system/supplements/inhouse-ribbon-calibration/ribbon-filter/ribbon-filter
