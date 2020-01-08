@@ -39,6 +39,8 @@ int main(void)
     if(ret != 6)  // scanf failed, just in case ?
       continue;
 
+#if 0
+    // calculate floating precentage
     x = double(tip1) / double(ring1) * 100.0;
 
     if(x < min)
@@ -66,6 +68,7 @@ int main(void)
         z = (y - min1) / (max1 - min1) * 100;
       }
     }
+#endif
 
     printf("%s \n", buf);
     // printf("T:%4hu   R:%4hu   T/R:%5.1lf%%   OUT:%5.1lf%%   max:%5.1lf   min:%5.1lf  \n", wiper1, top1, x, z, max, min);
