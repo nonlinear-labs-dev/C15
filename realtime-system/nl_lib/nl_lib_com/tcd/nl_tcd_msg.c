@@ -35,7 +35,6 @@ static uint8_t midiUSBConfigured = 0;
 /** @brief		A scheduler task function for regular checks of the USB
  * 				connection to the ePC.
 *******************************************************************************/
-
 void MSG_CheckUSB(void)  // every 200 ms
 {
   if (USB_MIDI_IsConfigured())
@@ -63,7 +62,6 @@ void MSG_CheckUSB(void)  // every 200 ms
 /******************************************************************************/
 /**	@brief  SendMidiBuffer - sends the USB bulk
 *******************************************************************************/
-
 void MSG_SendMidiBuffer(void)
 {
   if (buf)  // Anything to send
@@ -92,7 +90,6 @@ void MSG_SendMidiBuffer(void)
 *	Sends the index of the selected key before sending the On/Off velocity
 *   @param  key: 36...96 (C3 = 60)
 ******************************************************************************/
-
 void MSG_KeyPosition(uint32_t key)
 {
   if ((key < 36) || (key > 96))
@@ -114,9 +111,8 @@ void MSG_KeyPosition(uint32_t key)
 /*****************************************************************************
 *	@brief  MSG_KeyDown
 *	Sends the Down (On) velocity and starts a note
-*   @param  vel: velocity value 0...4095  /// better 0...16383
+*   @param  vel: velocity value 0...16383
 ******************************************************************************/
-
 void MSG_KeyDown(uint32_t vel)
 {
   buff[writeBuffer][buf++] = 0x0E;        // MIDI status 0xE
@@ -133,9 +129,8 @@ void MSG_KeyDown(uint32_t vel)
 /*****************************************************************************
 *	@brief  MSG_KeyUp
 *	Sends the Up (Off) velocity and stops a note
-*   @param  vel: velocity value 0...4095  /// better 0...16383
+*   @param  vel: velocity value 0...16383
 ******************************************************************************/
-
 void MSG_KeyUp(uint32_t vel)
 {
   buff[writeBuffer][buf++] = 0x0E;        // MIDI status 0xE
@@ -155,7 +150,6 @@ void MSG_KeyUp(uint32_t vel)
 *   @param  source: 0...7  identifies the hardware source
 *   @param  position: 0...16000
 ******************************************************************************/
-
 void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
 {
   if ((source > 7) || (position > 16000))

@@ -3,14 +3,12 @@
  *
  *  Created on: 27.01.2015
  *      Author: ssc
+ *	Last Changed : 2020-01-10 KSTR (implement 14bit velocities)
  */
 
 #include "math.h"
-
 #include "nl_tcd_poly.h"
 #include "nl_tcd_adc_work.h"
-
-
 #include "nl_tcd_msg.h"
 #include "ipc/emphase_ipc.h"
 
@@ -28,12 +26,9 @@ static uint32_t velTable[65] = {};  // converts time difference (timeInUs) to ve
 			table index: 0 ... 64 (shortest ... longest key-switch time)
 			table values: 4095 ... 0
 *******************************************************************************/
-
 void POLY_Generate_VelTable(uint32_t curve)
 {
-  float_t vel_max = 4095.0;  // the hyperbola goes from vel_max (at 0) to 0 (at i_max)
-                             /// besser bis 16383.0 (14 Bit)
-
+  float_t vel_max = 16383.0;  // the hyperbola goes from vel_max (at 0) to 0 (at i_max)
   float_t b = 0.5;
 
   switch (curve)  // b defines the curve shape
@@ -69,7 +64,6 @@ void POLY_Generate_VelTable(uint32_t curve)
 }
 
 //================= Initialisation:
-
 void POLY_Init(void)
 {
   POLY_Generate_VelTable(VEL_CURVE_NORMAL);
@@ -78,7 +72,6 @@ void POLY_Init(void)
 /******************************************************************************
 	@brief		POLY_Process: reading new key events from the ring buffer,
 *******************************************************************************/
-
 void POLY_Process(void)
 {
   uint32_t i;
@@ -109,9 +102,8 @@ void POLY_Process(void)
 
       uint32_t fract = time & 0x1FFF;                                                           // lower 13 bits used for interpolation
       uint32_t index = time >> 13;                                                              // upper 6 bits (0...63) used as index in the table
-      vel            = (velTable[index] * (8192 - fract) + velTable[index + 1] * fract) >> 13;  // (0...4095) * 8192 / 8192
-    }                                                                                           /// (0...16393)
-
+      vel            = (velTable[index] * (8192 - fract) + velTable[index + 1] * fract) >> 13;  // (0...16393) * 8192 / 8192
+    }
     if (keyEvent[i].direction == KEY_DIR_UP)  //--- releasing a key
     {
       MSG_KeyUp(vel);
