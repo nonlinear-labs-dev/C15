@@ -14,8 +14,12 @@
 
 //===========================
 
-#define SW_VERSION 205  // fix for max. Velocity und max. HWSource, added keybed press sent to BBBB \
-                        // Velocity-Auflösung 14 Bit statt 12 Bit
+
+// ==== V 205 ====
+// fix for max. Velocity und max. HWSource, added keybed press sent to BBBB
+// Velocity-Auflösung 14 Bit statt 12 Bit
+#define SW_VERSION 205
+
 
 //===========================
 
