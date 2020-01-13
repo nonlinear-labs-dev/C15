@@ -45,12 +45,12 @@
         "Class": "Border",
         "Rect": "0, 0, 170, 15"
       },
-      "Unison": {
+      "Master": {
         "Class": "Text",
         "Rect": "10, 0, 80, 15",
         "Tag": "ParamText"
       },
-      "Master": {
+      "Unison": {
         "Class": "Text",
         "Rect": "90, 0, 80, 15",
         "Tag": "ParamText"

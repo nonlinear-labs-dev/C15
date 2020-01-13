@@ -7,9 +7,11 @@
 #include "parameters/scale-converters/Linear50DbScaleConverter.h"
 #include "parameters/scale-converters/LinearBipolar50DbScaleConverter.h"
 #include "parameters/scale-converters/ParabolicGainDbScaleConverter.h"
+#include "parameters/scale-converters/LinearBipolar70DbScaleConverter.h"
 #include <parameters/scale-converters/LinearBipolar200PercentScaleConverter.h>
 #include <parameters/scale-converters/LinearBipolar1DbstScaleConverter.h>
 #include <parameters/ModulateableParameterWithUnusualModUnit.h>
+#include <parameters/scale-converters/Linear70DbScaleConverter.h>
 
 FBMixerGroup::FBMixerGroup(ParameterDualGroupSet *parent, VoiceGroup vg)
     : ParameterGroup(parent, { "FB", vg }, "FB Mixer", "Feedback Mixer", "Feedback Mixer")
@@ -38,8 +40,8 @@ void FBMixerGroup::init()
                                             ScaleConverter::get<Linear100PercentScaleConverter>(), 0.5, 100, 1000));
 
   appendParameter(new ModulateableParameterWithUnusualModUnit(
-      this, { 164, getVoiceGroup() }, ScaleConverter::get<Linear50DbScaleConverter>(),
-      ScaleConverter::get<LinearBipolar50DbScaleConverter>(), 0.0, 100, 500));
+      this, { 164, getVoiceGroup() }, ScaleConverter::get<Linear70DbScaleConverter>(),
+      ScaleConverter::get<LinearBipolar70DbScaleConverter>(), (2.0 / 7.0), 140, 700));
 
   appendParameter(new Parameter(this, { 166, getVoiceGroup() }, ScaleConverter::get<Linear100PercentScaleConverter>(),
                                 0.5, 100, 1000));

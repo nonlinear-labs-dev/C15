@@ -247,7 +247,7 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
 
       case Buttons::BUTTON_B:
       case Buttons::BUTTON_C:
-        installButtonRepeat([=]() { m_presets->onButton(i, down, modifiers); });
+        m_presets->onButton(i, down, modifiers);
 
         return true;
 
@@ -306,6 +306,19 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
     }
   }
 
+  if(i == Buttons::BUTTON_INC || i == Buttons::BUTTON_DEC)
+  {
+    if(down)
+    {
+      int direction = (i == Buttons::BUTTON_INC) ? 1 : -1;
+      onRotary(direction, modifiers);
+      return true;
+    }
+  }
+
+  return false;
+
+#warning "Adlerauge Hotfix NAMM"
   return super::onButton(i, down, modifiers);
 }
 
@@ -328,6 +341,16 @@ void PresetManagerLayout::updateAutoLoadButton(const Setting *setting)
 bool PresetManagerLayout::animateSelectedPreset(std::function<void()> cb)
 {
   return m_presets->animateSelectedPreset(std::move(cb));
+}
+
+void PresetManagerLayout::animateSelectedPresetIfInLoadPartMode(std::function<void()> cb)
+{
+  auto setting = Application::get().getSettings()->getSetting<LoadModeSetting>();
+
+  if(setting->get() == LoadMode::LoadToPart)
+    m_presets->animateSelectedPreset(std::move(cb));
+  else
+    cb();
 }
 
 std::pair<size_t, size_t> PresetManagerLayout::getSelectedPosition() const
@@ -370,14 +393,18 @@ void PresetManagerLayout::loadSelectedPresetAccordingToLoadType()
       switch(selPreset->getType())
       {
         case SoundType::Single:
-          animateSelectedPreset([=]() { eb->undoableLoadSelectedPreset(currentVoiceGroup); });
+          eb->undoableLoadSelectedPreset(currentVoiceGroup);
+          animateSelectedPresetIfInLoadPartMode([]() {});
           break;
         case SoundType::Layer:
         case SoundType::Split:
           if(loadSetting->get() == LoadMode::LoadToPart)
             openPartChooser();
           else
-            animateSelectedPreset([=]() { eb->undoableLoadSelectedPreset(currentVoiceGroup); });
+          {
+            eb->undoableLoadSelectedPreset(currentVoiceGroup);
+            animateSelectedPresetIfInLoadPartMode([]() {});
+          }
           break;
       }
     }

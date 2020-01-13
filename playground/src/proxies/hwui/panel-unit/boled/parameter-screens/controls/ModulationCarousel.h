@@ -26,4 +26,9 @@ class ModulationCarousel : public Carousel, public RotaryEncoder::Receiver
   void setup(Parameter *selectedParameter) override;
   void turn() override;
   void antiTurn() override;
+
+  Mode getMode() const;
+
+ private:
+  const Mode m_mode;
 };

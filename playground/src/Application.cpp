@@ -35,9 +35,16 @@ void setupMessaging(const Options *options)
   auto ae = options->getAudioEngineHost();
 
   Configuration conf;
+#ifdef _DEVELOPMENT_PC
+  conf.offerEndpoints = { { EndPoint::Playground }, { EndPoint::TestEndPoint } };
+#else
   conf.offerEndpoints = { EndPoint::Playground };
+#endif
   conf.useEndpoints = { { EndPoint::Lpc, bbbb },
                         { EndPoint::Oled, bbbb },
+#ifdef _DEVELOPMENT_PC
+                        { EndPoint::TestEndPoint},
+#endif
                         { EndPoint::PanelLed, bbbb },
                         { EndPoint::RibbonLed, bbbb },
                         { EndPoint::AudioEngine, ae } };

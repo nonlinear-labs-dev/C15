@@ -21,6 +21,11 @@ class Animator
     m_signal = Application::get().getMainContext()->signal_idle().connect(sigc::mem_fun(this, &Animator::doAnimation));
   }
 
+  virtual ~Animator()
+  {
+    m_signal.disconnect();
+  }
+
   float getAnimationPosition() const  // 0 ... 1
   {
     auto now = std::chrono::steady_clock::now();
@@ -70,6 +75,7 @@ class AnimatedGenericItem : public GenericItem
 
   ~AnimatedGenericItem() override
   {
+    m_animator.reset();
   }
 
   void startAnimation()

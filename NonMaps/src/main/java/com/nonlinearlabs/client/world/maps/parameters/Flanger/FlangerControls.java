@@ -14,5 +14,6 @@ class FlangerControls extends ParameterGroupControls {
 		addChild(new FlangerCol5(this));
 		addChild(new FlangerCol6(this));
 		addChild(new FlangerCol7(this));
+		addChild(new FlangerCol8(this));
 	}
 }

@@ -31,7 +31,7 @@
 
 HWUI::HWUI()
     : m_readersCancel(Gio::Cancellable::create())
-    , m_buttonStates{ false }
+    , m_buttonStates { false }
     , m_focusAndMode(UIFocus::Parameters, UIMode::Select)
     , m_blinkCount(0)
 {
@@ -634,6 +634,19 @@ FocusAndMode HWUI::fixFocusAndModeWithAnys(FocusAndMode in)
   return in;
 }
 
+FocusAndMode HWUI::removeInvalidsFromSound(FocusAndMode in)
+{
+  if(in.focus == UIFocus::Sound)
+  {
+    if(in.mode == UIMode::Store || in.mode == UIMode::Info)
+    {
+      in.mode = UIMode::Select;
+    }
+  }
+
+  return in;
+}
+
 FocusAndMode HWUI::removeEditOnFocusChange(FocusAndMode in) const
 {
   const bool isDesiredParameter = (in.focus == UIFocus::Parameters);
@@ -670,6 +683,7 @@ FocusAndMode HWUI::restrictFocusAndMode(FocusAndMode in) const
 {
   in = fixFocusAndModeWithAnys(in);
   in = removeEditOnFocusChange(in);
+  in = removeInvalidsFromSound(in);
 
   const bool isDesiredPresetManager = (in.focus == UIFocus::Banks) || (in.focus == UIFocus::Presets);
 

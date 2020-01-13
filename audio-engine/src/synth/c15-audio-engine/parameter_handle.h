@@ -3,7 +3,7 @@
 /******************************************************************************/
 /** @file       parameter_handle.h
     @date
-    @version    1.7-0
+    @version    1.7-3
     @author     M. Seeber
     @brief      new main parameter handle
     @todo
@@ -33,35 +33,6 @@ namespace Engine
         m_index = m_index % m_div_slow;
         m_slow = m_index == 0;
         m_index++;
-      }
-    };
-
-    struct Time_Handle
-    {
-      float m_convert[4] = {}, m_dx_audio = 0.0f, m_dx_fast = 0.0f, m_dx_slow = 0.0f, m_millisecond = 0.0f,
-            m_sample_inc = 0.0f;
-      inline void init(const uint32_t _samplerate)
-      {
-        float rate = static_cast<float>(_samplerate);
-        m_millisecond = 1e-3f * rate;
-        m_sample_inc = 1.0f / rate;
-        m_convert[1] = 1.0f;
-        m_convert[2] = rate / static_cast<float>(C15::Config::clock_rates[0][1]);
-        m_convert[3] = rate / static_cast<float>(C15::Config::clock_rates[0][2]);
-      }
-      inline float clip(const float _value)
-      {
-        return _value > 1.0f ? 1.0f : _value;
-      }
-      inline float eval_ms(const uint32_t _type, const float _value)
-      {
-        return clip(m_convert[_type] / ((_value * m_millisecond) + 1.0f));
-      }
-      inline void update_ms(const float _value)
-      {
-        m_dx_audio = eval_ms(1, _value);
-        m_dx_fast = eval_ms(2, _value);
-        m_dx_slow = eval_ms(3, _value);
       }
     };
 
@@ -118,6 +89,10 @@ namespace Engine
         param->m_scaling.m_offset = _element.m_ae.m_scaleOffset;
         param->m_position = param->depolarize(_element.m_initial);
         param->m_initial = _element.m_initial;
+        if(_element.m_param.m_index == static_cast<uint32_t>(C15::Parameters::Global_Modulateables::Split_Split_Point))
+        {
+          param->m_splitpoint = true;
+        }
       }
       inline void init_global_unmodulateable(const C15::ParameterDescriptor _element)
       {
@@ -194,10 +169,29 @@ namespace Engine
       {
         return &m_layer[_layerId].m_target[_id];
       }
-      inline Direct_Param* get_local_unison(const Layer _layerId)
+      inline Target_Param* get_global_split_point()
+      {
+        return &m_global.m_target[static_cast<uint32_t>(C15::Parameters::Global_Modulateables::Split_Split_Point)];
+      }
+      inline Direct_Param* get_local_unison_voices(const Layer _layerId)
       {
         return &m_layer[static_cast<uint32_t>(_layerId)]
                     .m_direct[static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Unison_Voices)];
+      }
+      inline Direct_Param* get_local_mono_enable(const Layer _layerId)
+      {
+        return &m_layer[static_cast<uint32_t>(_layerId)]
+                    .m_direct[static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Mono_Grp_Enable)];
+      }
+      inline Direct_Param* get_local_mono_priority(const Layer _layerId)
+      {
+        return &m_layer[static_cast<uint32_t>(_layerId)]
+                    .m_direct[static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Mono_Grp_Prio)];
+      }
+      inline Direct_Param* get_local_mono_legato(const Layer _layerId)
+      {
+        return &m_layer[static_cast<uint32_t>(_layerId)]
+                    .m_direct[static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Mono_Grp_Legato)];
       }
       inline Target_Param* globalChainFirst(const uint32_t _mcId)
       {

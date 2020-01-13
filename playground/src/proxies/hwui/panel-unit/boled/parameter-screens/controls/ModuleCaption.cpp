@@ -20,6 +20,9 @@ ModuleCaption::ModuleCaption(const Rect &pos)
       sigc::hide<0>(sigc::mem_fun(this, &ModuleCaption::onParameterSelected)));
 
   Application::get().getHWUI()->onCurrentVoiceGroupChanged(sigc::mem_fun(this, &ModuleCaption::onSelectionChanged));
+
+  Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
+      sigc::mem_fun(this, &ModuleCaption::onSoundTypeChanged));
 }
 
 Label::StringAndSuffix ModuleCaption::shortenStringIfNeccessary(std::shared_ptr<Font> font,
@@ -52,7 +55,7 @@ void ModuleCaption::updateText(Parameter *newOne)
     if(enableVoiceGroupSuffix())
     {
       auto sel = Application::get().getHWUI()->getCurrentVoiceGroup();
-      auto suffix = std::string{};
+      auto suffix = std::string {};
       if(Application::get().getPresetManager()->getEditBuffer()->getType() != SoundType::Single)
         suffix = " " + toString(sel);
       setText(groupName + suffix);
@@ -63,6 +66,12 @@ void ModuleCaption::updateText(Parameter *newOne)
 }
 
 void ModuleCaption::onSelectionChanged(VoiceGroup v)
+{
+  auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  updateText(selected);
+}
+
+void ModuleCaption::onSoundTypeChanged()
 {
   auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
   updateText(selected);

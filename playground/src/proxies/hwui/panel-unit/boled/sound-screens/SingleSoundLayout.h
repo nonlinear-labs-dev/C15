@@ -6,6 +6,7 @@
 
 class SingleSoundEditMenuLegacy;
 class SingleSoundMenu;
+class Button;
 
 class SingleSoundLayout : public DFBLayout
 {

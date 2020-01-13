@@ -51,10 +51,10 @@ namespace Engine
 
     template <uint32_t Size> struct SplitEnvelope
     {
-      float m_timeFactor[Size][Proto::SegSize - 1] = {}, m_levelFactor[Size] = {};
-      float m_peakLevels[Size] = {}, m_splitValues[2] = {};
       Proto::EnvBody_Split m_body[Size];
       Proto::SplitSegment<Size> m_segment[Proto::SegSize];
+      float m_timeFactor[Size][Proto::SegSize - 1] = {}, m_levelFactor[Size] = {};
+      float m_peakLevels[Size] = {}, m_splitValues[2] = {};
       const uint32_t m_startIndex = 1, m_stopIndex = 4;
       inline SplitEnvelope()
       {
@@ -124,7 +124,7 @@ namespace Engine
             {
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
               body->m_signal_timbre = body->m_start_timbre + (diff_timbre * (1.f - body->m_y));
-              body->m_y *= _mute * (1.f - m_segment[segment].m_dx[_voiceId]);
+              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
             }
             else
             {
@@ -138,7 +138,7 @@ namespace Engine
             {
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
               body->m_signal_timbre = body->m_start_timbre + (diff_timbre * (1.f - body->m_y));
-              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
+              body->m_y *= _mute * (1.f - m_segment[segment].m_dx[_voiceId]);
             }
             else
             {
@@ -227,11 +227,11 @@ namespace Engine
 
     template <uint32_t Size> struct RetriggerEnvelope
     {
+      Proto::EnvBody_Single m_body[Size];
+      Proto::SingleSegment<Size> m_segment[Proto::SegSize];
       float m_timeFactor[Size][Proto::SegSize - 1] = {}, m_levelFactor[Size] = {}, m_clipFactor[Size] = {};
       const uint32_t m_startIndex = 1, m_stopIndex = 4;
       float m_retriggerHardness = 0.f;
-      Proto::EnvBody_Single m_body[Size];
-      Proto::SingleSegment<Size> m_segment[Proto::SegSize];
       inline RetriggerEnvelope()
       {
         for(uint32_t s = 1; s < Proto::SegSize; s++)
@@ -294,7 +294,7 @@ namespace Engine
             if(body->m_y > Proto::renderMin)
             {
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_y *= _mute * (1.f - m_segment[segment].m_dx[_voiceId]);
+              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
             }
             else
             {
@@ -305,7 +305,7 @@ namespace Engine
             if(body->m_y > Proto::renderMin)
             {
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
+              body->m_y *= _mute * (1.f - m_segment[segment].m_dx[_voiceId]);
             }
             else
             {

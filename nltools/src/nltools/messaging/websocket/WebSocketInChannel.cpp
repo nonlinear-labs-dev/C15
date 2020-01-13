@@ -49,9 +49,7 @@ namespace nltools
         }
 
         m_messageLoop = Glib::MainLoop::create(m);
-
         m_conditionEstablishedThreadWaiter.notify();
-
         m_messageLoop->run();
       }
 

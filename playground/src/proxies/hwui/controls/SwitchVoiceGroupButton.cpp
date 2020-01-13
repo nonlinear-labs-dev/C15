@@ -8,25 +8,17 @@
 #include <groups/MonoGroup.h>
 #include <parameters/mono-mode-parameters/MonoGlideTimeParameter.h>
 #include <proxies/hwui/HWUI.h>
+#include <groups/UnisonGroup.h>
+#include <nltools/Types.h>
 
 SwitchVoiceGroupButton::SwitchVoiceGroupButton(Buttons pos)
-    : Button(getTextFor(Application::get().getHWUI()->getCurrentVoiceGroup()), pos)
+    : Button("", pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
       sigc::mem_fun(this, &SwitchVoiceGroupButton::onParameterSelectionChanged));
 
   Application::get().getHWUI()->onCurrentVoiceGroupChanged(
       sigc::mem_fun(this, &SwitchVoiceGroupButton::onVoiceGroupChanged));
-}
-
-Glib::ustring SwitchVoiceGroupButton::getTextFor(VoiceGroup vg)
-{
-  if(vg == VoiceGroup::Global)
-    return "";
-  if(vg == VoiceGroup::I)
-    return "Select II";
-  else
-    return "Select I";
 }
 
 void SwitchVoiceGroupButton::rebuild()
@@ -37,7 +29,7 @@ void SwitchVoiceGroupButton::rebuild()
   auto selectedVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
 
   if(EditBuffer::isDualParameterForSoundType(selected, ebType))
-    setText({ getTextFor(selectedVoiceGroup), 0 });
+    setText({ "I/II", 0 });
   else
     setText({ "", 0 });
 }
@@ -52,24 +44,40 @@ void SwitchVoiceGroupButton::onVoiceGroupChanged(VoiceGroup newVoiceGroup)
   rebuild();
 }
 
-std::unique_ptr<UNDO::TransactionCreationScope>
-    SwitchVoiceGroupButton::createToggleVoiceGroupWithParameterHighlightScope()
+bool SwitchVoiceGroupButton::toggleVoiceGroup()
 {
   auto pm = Application::get().getPresetManager();
   auto eb = pm->getEditBuffer();
   auto selected = eb->getSelected();
 
-  auto hasCounterPart = selected->getVoiceGroup() != VoiceGroup::Global;
+  if(dynamic_cast<const SplitPointParameter*>(selected))
+  {
+    Application::get().getHWUI()->toggleCurrentVoiceGroup();
+    return true;
+  }
 
-  if(hasCounterPart)
+  if(allowToggling(selected, eb))
   {
     auto otherVG = selected->getVoiceGroup() == VoiceGroup::I ? VoiceGroup::II : VoiceGroup::I;
-    auto other = eb->findParameterByID({ selected->getID().getNumber(), otherVG });
-    return pm->getUndoScope().startContinuousTransaction(&other, std::chrono::hours(1), "Select '%0'",
-                                                         other->getGroupAndParameterNameWithVoiceGroup());
+    if(auto other = eb->findParameterByID({ selected->getID().getNumber(), otherVG }))
+    {
+      auto scope = pm->getUndoScope().startContinuousTransaction(&other, std::chrono::hours(1), "Select '%0'",
+                                                                 other->getGroupAndParameterNameWithVoiceGroup());
+      Application::get().getHWUI()->toggleCurrentVoiceGroupAndUpdateParameterSelection(scope->getTransaction());
+      return true;
+    }
   }
-  else
-  {
-    return UNDO::Scope::startTrashTransaction();
-  }
+
+  return false;
+}
+
+bool SwitchVoiceGroupButton::allowToggling(const Parameter* selected, const EditBuffer* editBuffer)
+{
+  auto hasCounterPart = selected->getVoiceGroup() != VoiceGroup::Global;
+  auto layerAndGroupAllowToggling
+      = ((editBuffer->getType() == SoundType::Layer)
+         && (!MonoGroup::isMonoParameter(selected) && !UnisonGroup::isUnisonParameter(selected)))
+      || (editBuffer->getType() != SoundType::Layer);
+
+  return hasCounterPart && layerAndGroupAllowToggling;
 }

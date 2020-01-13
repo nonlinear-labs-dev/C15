@@ -98,10 +98,14 @@ public class LabelModuleHeader extends LabelSmall {
 		setNonSize(parentsWidthFromFirstPass, getNonPosition().getDimension().getHeight());
 	}
 
+	public void drawBackground(Context2d ctx, Rect pixRect) {
+		pixRect.drawRoundedRect(ctx, Rect.ROUNDING_TOP, toXPixels(6), toXPixels(2), new Gray(87), null);
+	}
+
 	@Override
 	public void draw(Context2d ctx, int invalidationMask) {
 		Rect pixRect = getPixRect();
-		pixRect.drawRoundedRect(ctx, Rect.ROUNDING_TOP, toXPixels(6), toXPixels(2), new Gray(87), null);
+		drawBackground(ctx, pixRect);
 		super.draw(ctx, invalidationMask);
 
 		if (isLocked())

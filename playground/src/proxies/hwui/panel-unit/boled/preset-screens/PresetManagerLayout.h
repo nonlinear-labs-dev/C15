@@ -32,6 +32,7 @@ class PresetManagerLayout : public DFBLayout
   virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
 
   bool animateSelectedPreset(std::function<void()> cb);
+  void animateSelectedPresetIfInLoadPartMode(std::function<void()> cb);
 
   std::pair<size_t, size_t> getSelectedPosition() const;
   std::unique_ptr<StoreModeData> &getStoreModePtr();

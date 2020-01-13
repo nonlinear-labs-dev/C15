@@ -209,9 +209,9 @@ bool ModulateableParameterSelectLayout2::onButton(Buttons i, bool down, ButtonMo
       case Buttons::BUTTON_A:
         if(m_mode == Mode::ParameterValue)
         {
-          auto scope = SwitchVoiceGroupButton::createToggleVoiceGroupWithParameterHighlightScope();
-          Application::get().getHWUI()->toggleCurrentVoiceGroupAndUpdateParameterSelection(scope->getTransaction());
-          return true;
+          auto eb = Application::get().getPresetManager()->getEditBuffer();
+
+          return SwitchVoiceGroupButton::toggleVoiceGroup();
         }
         else
         {
@@ -573,7 +573,13 @@ void ModulateableParameterSelectLayout2::installModulationCarousel(const Mode &m
   {
     if(mod->getModulationSource() != MacroControls::NONE && !isModeOf({ Mode::Recall, Mode::ParameterValue }))
     {
-      setCarousel(new ModulationCarousel(ModulationCarousel::Mode::None, Rect(195, 1, 58, 62)));
+      ModulationCarousel::Mode mode = ModulationCarousel::Mode::None;
+      if(auto modCarousel = dynamic_cast<ModulationCarousel *>(getCarousel()))
+      {
+        mode = modCarousel->getMode();
+      }
+
+      setCarousel(new ModulationCarousel(mode, Rect(195, 1, 58, 62)));
     }
     else
     {

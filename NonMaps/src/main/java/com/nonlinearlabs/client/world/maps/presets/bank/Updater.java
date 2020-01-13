@@ -26,7 +26,7 @@ public class Updater {
 			updateBankPosition(bank);
 			updateOrderNumber(bank);
 			this.bank.updateAttributes(bank);
-			this.bank.getPresetList().selectPreset(selectedPreset);
+			this.bank.getPresetList().selectPreset(selectedPreset, false);
 			updatePresets(bank, force);
 			updateAttachment(bank);
 			updateDateOfLastChange(bank);

@@ -8,11 +8,13 @@
 
 ModulationCarousel::ModulationCarousel(Mode mode, const Rect &pos)
     : super(pos)
+    , m_mode{ mode }
 {
-  addControl(new UpperModulationBoundControl(Rect(0, 1, pos.getWidth(), 20)))->setHighlight(mode == Mode::UpperBound);
+  addControl(new UpperModulationBoundControl(Rect(0, 1, pos.getWidth(), 20)))->setHighlight(m_mode == Mode::UpperBound);
   addControl(new CurrentModulatedValueLabel(Rect(0, 21, pos.getWidth(), 20)))
-      ->setHighlight(mode == Mode::ParameterValue);
-  addControl(new LowerModulationBoundControl(Rect(0, 41, pos.getWidth(), 20)))->setHighlight(mode == Mode::LowerBound);
+      ->setHighlight(m_mode == Mode::ParameterValue);
+  addControl(new LowerModulationBoundControl(Rect(0, 41, pos.getWidth(), 20)))
+      ->setHighlight(m_mode == Mode::LowerBound);
 }
 
 void ModulationCarousel::setup(Parameter *p)
@@ -80,4 +82,9 @@ bool ModulationCarousel::onButton(Buttons i, bool down, ButtonModifiers modifier
     }
   }
   return false;
+}
+
+ModulationCarousel::Mode ModulationCarousel::getMode() const
+{
+  return m_mode;
 }

@@ -3,7 +3,7 @@
 /******************************************************************************/
 /** @file       ae_global_section.cpp
     @date
-    @version    1.7-0
+    @version    1.7-3
     @author     M. Seeber
     @brief      new container for all global parameters and dsp
     @todo
@@ -17,6 +17,11 @@ GlobalSection::GlobalSection()
 void GlobalSection::init(const float _sampleInc)
 {
   m_sampleInc = _sampleInc;
+}
+
+void GlobalSection::add_copy_sync_id(const uint32_t _smootherId, const uint32_t _signalId)
+{
+  m_smoothers.m_copy_sync.add_copy_id(_smootherId, _signalId);
 }
 
 void GlobalSection::add_copy_audio_id(const uint32_t _smootherId, const uint32_t _signalId)
@@ -37,6 +42,10 @@ void GlobalSection::add_copy_slow_id(const uint32_t _smootherId, const uint32_t 
 void GlobalSection::start_sync(const uint32_t _id, const float _dest)
 {
   m_smoothers.start_sync(_id, _dest);
+  if(m_smoothers.m_copy_sync.m_smootherId[_id])
+  {
+    m_signals.set(m_smoothers.m_copy_sync.m_signalId[_id], _dest);
+  }
 }
 
 void GlobalSection::start_audio(const uint32_t _id, const float _dx, const float _dest)
@@ -52,15 +61,6 @@ void GlobalSection::start_fast(const uint32_t _id, const float _dx, const float 
 void GlobalSection::start_slow(const uint32_t _id, const float _dx, const float _dest)
 {
   m_smoothers.start_slow(_id, _dx, _dest);
-}
-
-float GlobalSection::key_position(const uint32_t _pos)
-{
-  // provide scaled pitch (without master tune)
-  float pos = static_cast<float>(_pos);                // start with pure keyPosition [0 ... 60]
-  pos -= static_cast<float>(C15::Config::key_center);  // center to C3 -> 0.0
-  pos += evalScale(_pos);                              // add scaling
-  return pos;
 }
 
 void GlobalSection::render_audio(const float _left, const float _right)
@@ -159,26 +159,5 @@ void GlobalSection::postProcess_slow()
   for(uint32_t i = 0; i < traversal->m_length; i++)
   {
     m_signals.set(traversal->m_signalId[i], m_smoothers.get_slow(traversal->m_smootherId[i]));
-  }
-}
-
-float GlobalSection::evalScale(const uint32_t _pos)
-{
-  // strictly avoiding negative values by octave offset
-  int32_t pos = static_cast<int32_t>(_pos + 12);
-  // evaluate relative base key
-  pos -= static_cast<int32_t>(m_smoothers.get(C15::Smoothers::Global_Sync::Scale_Base_Key));
-  // retrieve actual index
-  const uint32_t index = static_cast<uint32_t>(pos) % 12;
-  // return offset according to index
-  if(index == 0)
-  {
-    // at base key, offset is zero
-    return 0.0f;
-  }
-  else
-  {
-    // otherwise, offset is found at actual index (+1, ..., +11)
-    return m_smoothers.get_sync(index);
   }
 }

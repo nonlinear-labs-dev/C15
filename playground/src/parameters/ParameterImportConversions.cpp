@@ -72,12 +72,12 @@ ParameterImportConversions::ParameterImportConversions(bool registerDefaults)
     registerConverter(240, 4, [=](tControlPositionValue v) { return 0.25 + v * 0.75; });
 
     registerConverter(249, 5, [=](tControlPositionValue v) { return v * 0.5; });
+
+    registerConverter(164, 5, [=](tControlPositionValue v) { return driveV5ToV6(v); });
   }
 }
 
-ParameterImportConversions::~ParameterImportConversions()
-{
-}
+ParameterImportConversions::~ParameterImportConversions() = default;
 
 tControlPositionValue ParameterImportConversions::attackV2ToV3(tControlPositionValue in) const
 {
@@ -107,6 +107,12 @@ tControlPositionValue ParameterImportConversions::driveV2ToV3(tControlPositionVa
 {
   // 0 ...25 -> 0 .. 50
   return in / 2;
+}
+
+tControlPositionValue ParameterImportConversions::driveV5ToV6(tControlPositionValue in) const
+{
+  // 0 .. 50 -> 0 .. 70
+  return std::min((5.0/7.0) * in + (2.0/7.0) , 1.0);
 }
 
 void ParameterImportConversions::registerConverter(const tParameterID parameterID, const tFileVersion srcVersion,

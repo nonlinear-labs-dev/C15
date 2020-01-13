@@ -10,6 +10,7 @@
 #include <proxies/hwui/panel-unit/EditPanel.h>
 #include <proxies/hwui/panel-unit/PanelUnit.h>
 #include <http/UndoScope.h>
+#include <groups/MacroControlsGroup.h>
 
 int MacroControlEditButtonMenu::s_lastAction = 1;
 
@@ -73,9 +74,9 @@ void MacroControlEditButtonMenu::smoothing()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   const auto currentID = eb->getSelected()->getID();
-  const auto diffBetweenMacroControlIDAndItsSmoothing = 81;
-  const auto smoothingID = currentID.getNumber() + diffBetweenMacroControlIDAndItsSmoothing;
-  eb->undoableSelectParameter({ smoothingID, currentID.getVoiceGroup() });
+  const auto mc = MacroControlsGroup::paramIDToModSrc(currentID);
+  const auto smoothingID = MacroControlsGroup::modSrcToSmoothingId(mc);
+  eb->undoableSelectParameter(smoothingID);
 }
 
 void MacroControlEditButtonMenu::editInfo()

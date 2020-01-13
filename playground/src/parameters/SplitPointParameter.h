@@ -1,18 +1,17 @@
 #pragma once
-#include "ModulateableParameter.h"
+#include "ModulateableParameterWithUnusualModUnit.h"
 
-class SplitPointParameter : public ModulateableParameter
+class SplitPointParameter : public ModulateableParameterWithUnusualModUnit
 {
  public:
-  SplitPointParameter(ParameterGroup *group, const ParameterId& id);
+  SplitPointParameter(ParameterGroup *group, const ParameterId &id);
   std::string getDisplayValue(VoiceGroup vg) const;
 
-  Glib::ustring getLongName() const override;
-  Glib::ustring getShortName() const override;
-
   DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
-
-  Glib::ustring getGroupAndParameterName() const override;
-
   Glib::ustring getDisplayString() const override;
+
+  ustring stringizeModulationAmount(tControlPositionValue amount) const override;
+
+ protected:
+  ustring modulationValueToDisplayString(tControlPositionValue v) const override;
 };

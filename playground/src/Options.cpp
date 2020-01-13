@@ -37,6 +37,12 @@ Options::Options(int &argc, char **&argv)
   ae.set_description("Where to find the audio-engine");
   mainGroup.add_entry(ae, m_audioEngineHost);
 
+  OptionEntry turn;
+  turn.set_long_name("bbbb-turnaround-times");
+  turn.set_short_name('t');
+  turn.set_arg_description("measure turn around times for knob to BOLED messages");
+  mainGroup.add_entry(turn, m_sendBBBTurnaroundTimes);
+
   ctx.set_main_group(mainGroup);
   ctx.set_help_enabled(true);
 
@@ -129,4 +135,9 @@ const Glib::ustring &Options::getKioskModeFile() const
 const Glib::ustring &Options::getLayoutFolder() const
 {
   return m_layoutFolder;
+}
+
+bool Options::sendBBBBTurnaroundTimestamps() const
+{
+  return m_sendBBBTurnaroundTimes;
 }

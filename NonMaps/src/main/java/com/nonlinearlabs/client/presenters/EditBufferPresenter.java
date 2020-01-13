@@ -1,5 +1,6 @@
 package com.nonlinearlabs.client.presenters;
 
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.RGBA;
 
@@ -12,6 +13,7 @@ public class EditBufferPresenter {
     public ParameterPresenter selectedParameter;
     public String voiceGroup = "";
     public RGB voiceGroupIndicationColor = RGBA.transparent();
+    public VoiceGroup voiceGroupEnum = VoiceGroup.I;
 
     public RGB voiceGroupI_ForegroundColor = RGBA.transparent();
     public RGB voiceGroupII_ForegroundColor = RGBA.transparent();

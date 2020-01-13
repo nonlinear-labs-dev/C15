@@ -30,7 +30,7 @@ void VoiceGroupMasterParameterCarousel::setup(Parameter *selectedParameter)
   auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
 
   if(Application::get().getPresetManager()->getEditBuffer()->getType() == SoundType::Split)
-    setupMasterParameters({ { 356, VoiceGroup::Global }, { 358, vg }, { 360, vg } });
+    setupMasterParameters({ { 358, vg }, { 360, vg }, { 356, VoiceGroup::Global } });
   else
     setupMasterParameters({ { 358, vg }, { 360, vg } });
 

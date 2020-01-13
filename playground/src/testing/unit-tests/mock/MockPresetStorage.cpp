@@ -4,15 +4,17 @@
 #include <presets/Bank.h>
 #include <presets/EditBuffer.h>
 
-inline EditBuffer* getEditBuffer()
+inline EditBuffer *getEditBuffer()
 {
   return Application::get().getPresetManager()->getEditBuffer();
 }
 
 MockPresetStorage::MockPresetStorage()
 {
-  auto scope = TestHelper::createTestScope();
+  auto scope = UNDO::Scope::startTrashTransaction();
   auto transaction = scope->getTransaction();
+
+  m_bank = createBank(transaction);
 
   m_layer = createLayerPreset(transaction);
   m_split = createSplitPreset(transaction);
@@ -21,12 +23,11 @@ MockPresetStorage::MockPresetStorage()
 
 MockPresetStorage::~MockPresetStorage()
 {
-  auto scope = TestHelper::createTestScope();
+  auto scope = UNDO::Scope::startTrashTransaction();
   auto transaction = scope->getTransaction();
-
-  removeBankOfPreset(transaction, m_single);
-  removeBankOfPreset(transaction, m_split);
-  removeBankOfPreset(transaction, m_layer);
+  auto editBuffer = getEditBuffer();
+  auto pm = editBuffer->getParent();
+  pm->deleteBank(transaction, m_bank->getUuid());
 }
 
 Preset *MockPresetStorage::getSinglePreset()
@@ -47,11 +48,8 @@ Preset *MockPresetStorage::getLayerPreset()
 Preset *MockPresetStorage::createSinglePreset(UNDO::Transaction *transaction)
 {
   auto editBuffer = getEditBuffer();
-  auto pm = editBuffer->getParent();
-
   editBuffer->undoableConvertToSingle(transaction, VoiceGroup::I);
-  auto bank = pm->addBank(transaction);
-  auto preset = bank->appendPreset(transaction, std::make_unique<Preset>(bank, *editBuffer));
+  auto preset = m_bank->appendPreset(transaction, std::make_unique<Preset>(m_bank, *editBuffer));
   preset->setName(transaction, "Single Preset");
   return preset;
 }
@@ -59,14 +57,9 @@ Preset *MockPresetStorage::createSinglePreset(UNDO::Transaction *transaction)
 Preset *MockPresetStorage::createSplitPreset(UNDO::Transaction *transaction)
 {
   auto editBuffer = getEditBuffer();
-  auto pm = editBuffer->getParent();
-
   editBuffer->undoableConvertToSingle(transaction, VoiceGroup::I);
-
   editBuffer->undoableConvertToDual(transaction, SoundType::Split);
-
-  auto bank = pm->addBank(transaction);
-  auto preset = bank->appendPreset(transaction, std::make_unique<Preset>(bank, *editBuffer));
+  auto preset = m_bank->appendPreset(transaction, std::make_unique<Preset>(m_bank, *editBuffer));
   preset->setName(transaction, "Split Preset");
   return preset;
 }
@@ -74,19 +67,15 @@ Preset *MockPresetStorage::createSplitPreset(UNDO::Transaction *transaction)
 Preset *MockPresetStorage::createLayerPreset(UNDO::Transaction *transaction)
 {
   auto editBuffer = getEditBuffer();
-  auto pm = editBuffer->getParent();
-
   editBuffer->undoableConvertToDual(transaction, SoundType::Layer);
-  auto bank = pm->addBank(transaction);
-  auto preset = bank->appendPreset(transaction, std::make_unique<Preset>(bank, *editBuffer));
+  auto preset = m_bank->appendPreset(transaction, std::make_unique<Preset>(m_bank, *editBuffer));
   preset->setName(transaction, "Layer Preset");
   return preset;
 }
 
-void MockPresetStorage::removeBankOfPreset(UNDO::Transaction *transaction, Preset *presetToDelete)
+Bank *MockPresetStorage::createBank(UNDO::Transaction *transaction)
 {
-  auto editBuffer = getEditBuffer();
-  auto pm = editBuffer->getParent();
-  if(auto bank = dynamic_cast<Bank *>(presetToDelete->getParent()))
-    pm->deleteBank(transaction, bank->getUuid());
+  auto eb = getEditBuffer();
+  auto pm = eb->getParent();
+  return pm->addBank(transaction);
 }

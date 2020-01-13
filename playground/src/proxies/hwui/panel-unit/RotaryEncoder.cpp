@@ -3,21 +3,20 @@
 #include <device-settings/EncoderAcceleration.h>
 #include <device-settings/Settings.h>
 #include <proxies/hwui/panel-unit/RotaryEncoder.h>
-#include <testing/TestDriver.h>
 #include <proxies/lpc/LPCProxy.h>
 #include <proxies/hwui/Oleds.h>
 #include <tools/PerformanceTimer.h>
-#include <string.h>
 #include <nltools/messaging/Messaging.h>
 #include <nltools/messaging/Message.h>
-
-static TestDriver<RotaryEncoder> tester;
 
 RotaryEncoder::RotaryEncoder()
     : m_throttler(std::chrono::milliseconds(2))
 {
   nltools::msg::receive<nltools::msg::RotaryChangedMessage>(nltools::msg::EndPoint::Playground,
                                                             sigc::mem_fun(this, &RotaryEncoder::onMessage));
+
+  nltools::msg::receive<nltools::msg::TimestampedRotaryChangedMessage>(
+      nltools::msg::EndPoint::Playground, sigc::mem_fun(this, &RotaryEncoder::onMessageTimestamped));
 }
 
 RotaryEncoder::~RotaryEncoder()
@@ -28,6 +27,18 @@ RotaryEncoder::~RotaryEncoder()
 void RotaryEncoder::onMessage(const nltools::msg::RotaryChangedMessage &msg)
 {
   applyIncrement(msg.increment);
+}
+
+void RotaryEncoder::onMessageTimestamped(const nltools::msg::TimestampedRotaryChangedMessage &msg)
+{
+  bool wasDirty = Oleds::get().isDirty();
+  applyIncrement(msg.increment);
+  bool isDirty = Oleds::get().isDirty();
+
+  if(!wasDirty && isDirty && m_oldestPendingTimestamp == 0)
+  {
+    m_oldestPendingTimestamp = msg.timestamp;
+  }
 }
 
 void RotaryEncoder::applyIncrement(tIncrement currentInc)
@@ -62,6 +73,7 @@ sigc::connection RotaryEncoder::onRotaryChanged(sigc::slot<void, tIncrement> slo
   return m_signalRotaryChanged.connect(slot);
 }
 
-void RotaryEncoder::registerTests()
+int64_t RotaryEncoder::resetOldestPendingTimestamp()
 {
+  return std::exchange(m_oldestPendingTimestamp, 0);
 }

@@ -102,7 +102,18 @@ void PanelUnitPresetMode::setStateForButton(Buttons buttonId, const std::list<in
 
     if(parameter != nullptr)
     {
-      if(auto mc = dynamic_cast<MacroControlParameter*>(parameter))
+      auto result = trySpecialCaseParameter(parameter);
+      auto isSpecialCase = result.first;
+      auto enabledLed = result.second;
+      if(isSpecialCase)
+      {
+        if(enabledLed)
+        {
+          states[(int) buttonId] = TwoStateLED::ON;
+          break;
+        }
+      }
+      else if(auto mc = dynamic_cast<MacroControlParameter*>(parameter))
       {
         if(!mc->getTargets().empty())
         {
@@ -129,6 +140,49 @@ void PanelUnitPresetMode::applyStateToLeds(std::array<TwoStateLED::LedState, num
   {
     panelUnit.getLED((Buttons) i)->setState(states[i]);
   }
+}
+
+std::pair<bool, bool> PanelUnitPresetMode::trySpecialCaseParameter(const Parameter* selParam) const
+{
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  if(selParam)
+  {
+    switch(selParam->getID().getNumber())
+    {
+      //Env A/B Sustain
+      case 8:
+      {
+        auto splitLevel = eb->findParameterByID({ 332, selParam->getVoiceGroup() });
+        return {true, splitLevel->getControlPositionValue() != 0 || selParam->getControlPositionValue() > 0};
+      }
+      case 27:
+      {
+        auto splitLevel = eb->findParameterByID({ 338, selParam->getVoiceGroup() });
+        return {true, splitLevel->getControlPositionValue() != 0 || selParam->getControlPositionValue() > 0};
+      }
+        //Flanger Mix
+      case 223:
+      {
+        auto tremolo = eb->findParameterByID({ 389, selParam->getVoiceGroup() });
+        return {true, tremolo->getControlPositionValue() > 0 || selParam->getControlPositionValue() != 0};
+      }
+        //Echo Mix
+      case 233:
+      {
+        auto echoSend = eb->findParameterByID({ 342, selParam->getVoiceGroup() });
+        return {true, echoSend->getControlPositionValue() > 0 && selParam->getControlPositionValue() > 0};
+      }
+        //Reverb Mix
+      case 241:
+      {
+        auto reverbSend = eb->findParameterByID({ 344, selParam->getVoiceGroup() });
+        return {true, reverbSend->getControlPositionValue() > 0 && selParam->getControlPositionValue() > 0};
+      }
+      default:
+        return {false, false};
+    }
+  }
+  return {false, false};
 }
 
 PanelUnitSoundMode::PanelUnitSoundMode()

@@ -24,7 +24,7 @@
           "Class": "Button",
           "Position": "BUTTON_A",
           "Init": {
-            "Text[Text]": "Convert to"
+            "Text[Text]": "Init.."
           }
         },
         "ButtonB": {

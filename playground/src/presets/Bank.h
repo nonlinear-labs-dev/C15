@@ -125,7 +125,6 @@ class Bank : public AttributesOwner
   SaveResult saveMetadata(Glib::RefPtr<Gio::File> bankFolder);
   SaveResult savePresets(Glib::RefPtr<Gio::File> bankFolder);
 
-  std::pair<double, double> calcDefaultPosition() const;
   bool resolveCyclicAttachments(UNDO::Transaction *transaction, std::vector<Bank *> stackedBanks);
 
   UpdateDocumentContributor::tUpdateID onChange(uint64_t flags) override;

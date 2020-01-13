@@ -54,6 +54,7 @@ namespace nltools
         {
           return MessageType::PresetGlitchSetting;
         }
+
         bool m_enabled;
       };
 
@@ -73,6 +74,7 @@ namespace nltools
         {
           return MessageType::TransitionTimeSetting;
         }
+
         float m_value;
       };
 
@@ -82,6 +84,7 @@ namespace nltools
         {
           return MessageType::EditSmoothingTimeSetting;
         }
+
         float m_time;
       };
     }
@@ -154,7 +157,19 @@ namespace nltools
       {
         return MessageType::RotaryChanged;
       }
+
       int8_t increment;
+    };
+
+    struct TimestampedRotaryChangedMessage
+    {
+      constexpr static MessageType getType()
+      {
+        return MessageType::TimestampedRotaryChanged;
+      }
+
+      int8_t increment;
+      uint64_t timestamp;
     };
 
     struct ButtonChangedMessage
@@ -163,6 +178,7 @@ namespace nltools
       {
         return MessageType::ButtonChanged;
       }
+
       int8_t buttonId;
       bool pressed;
     };
@@ -173,6 +189,7 @@ namespace nltools
       {
         return MessageType::SetRibbonLED;
       }
+
       uint8_t id;
       uint8_t brightness;
     };
@@ -183,6 +200,7 @@ namespace nltools
       {
         return MessageType::SetPanelLED;
       }
+
       uint8_t id;
       bool on;
     };
@@ -193,7 +211,19 @@ namespace nltools
       {
         return MessageType::SetOLED;
       }
+
       uint8_t pixels[256][96];
+    };
+
+    struct SetTimestampedOledMessage
+    {
+      constexpr static MessageType getType()
+      {
+        return MessageType::SetOLEDTimestamped;
+      }
+
+      SetOLEDMessage m_oledMessage;
+      int64_t m_timestamp;
     };
 
     struct LPCMessage
@@ -202,6 +232,7 @@ namespace nltools
       {
         return MessageType::LPC;
       }
+
       Glib::RefPtr<Glib::Bytes> message;
     };
 
@@ -215,20 +246,20 @@ namespace nltools
 
     namespace detail
     {
-      template <> inline LPCMessage deserialize<LPCMessage>(const SerializedMessage& s)
+      template <> inline LPCMessage deserialize<LPCMessage>(const SerializedMessage &s)
       {
         LPCMessage ret;
         gsize numBytes = 0;
-        auto data = reinterpret_cast<const uint8_t*>(s->get_data(numBytes));
+        auto data = reinterpret_cast<const uint8_t *>(s->get_data(numBytes));
         ret.message = Glib::Bytes::create(data + 2, numBytes - 2);
         return ret;
       }
 
-      template <> inline SerializedMessage serialize<LPCMessage>(const LPCMessage& msg)
+      template <> inline SerializedMessage serialize<LPCMessage>(const LPCMessage &msg)
       {
         gsize numBytes = 0;
-        auto data = reinterpret_cast<const uint8_t*>(msg.message->get_data(numBytes));
-        auto scratch = reinterpret_cast<uint16_t*>(g_malloc(numBytes + 2));
+        auto data = reinterpret_cast<const uint8_t *>(msg.message->get_data(numBytes));
+        auto scratch = reinterpret_cast<uint16_t *>(g_malloc(numBytes + 2));
         scratch[0] = static_cast<uint16_t>(MessageType::LPC);
         std::memcpy(&scratch[1], data, numBytes);
         auto bytes = g_bytes_new_take(scratch, numBytes + 2);
@@ -253,16 +284,6 @@ namespace nltools
       struct PedalParameter : Parameter
       {
         PedalModes pedalMode{};
-        ReturnMode returnMode{};
-      };
-
-      struct AftertouchParameter : Parameter
-      {
-        ReturnMode returnMode{};
-      };
-
-      struct BenderParameter : Parameter
-      {
         ReturnMode returnMode{};
       };
 
@@ -296,6 +317,56 @@ namespace nltools
       struct SplitPoint : ModulateableParameter
       {
       };
+
+      struct UnisonGroup
+      {
+        ParameterGroups::UnmodulateableParameter unisonVoices;
+        ParameterGroups::ModulateableParameter detune;
+        ParameterGroups::UnmodulateableParameter phase;
+        ParameterGroups::UnmodulateableParameter pan;
+      };
+
+      struct MonoGroup
+      {
+        ParameterGroups::UnmodulateableParameter monoEnable;
+        ParameterGroups::UnmodulateableParameter legato;
+        ParameterGroups::UnmodulateableParameter priority;
+        ParameterGroups::ModulateableParameter glide;
+      };
+
+      inline bool operator==(const Parameter &lhs, const Parameter &rhs)
+      {
+        auto ret = lhs.id == rhs.id;
+        ret &= lhs.controlPosition == rhs.controlPosition;
+        return ret;
+      }
+
+      inline bool operator==(const ModulateableParameter &lhs, const ModulateableParameter &rhs)
+      {
+        auto ret = lhs.id == rhs.id;
+        ret &= lhs.controlPosition == rhs.controlPosition;
+        ret &= lhs.modulationAmount == rhs.modulationAmount;
+        ret &= lhs.mc == rhs.mc;
+        return ret;
+      }
+
+      inline bool operator==(const MonoGroup &lhs, const MonoGroup &rhs)
+      {
+        auto ret = lhs.glide == rhs.glide;
+        ret &= lhs.monoEnable == rhs.monoEnable;
+        ret &= lhs.priority == rhs.priority;
+        ret &= lhs.legato == rhs.legato;
+        return ret;
+      }
+
+      inline bool operator==(const UnisonGroup &lhs, const UnisonGroup &rhs)
+      {
+        auto ret = lhs.unisonVoices == rhs.unisonVoices;
+        ret &= lhs.detune == rhs.detune;
+        ret &= lhs.pan == rhs.pan;
+        ret &= lhs.phase == rhs.phase;
+        return ret;
+      }
     }
 
     struct SinglePresetMessage
@@ -308,17 +379,31 @@ namespace nltools
       std::array<ParameterGroups::MacroParameter, 6> macros;
       std::array<ParameterGroups::UnmodulateableParameter, 6> macrotimes;
 
-      std::array<ParameterGroups::ModulateableParameter, 103> modulateables;
-      std::array<ParameterGroups::UnmodulateableParameter, 93> unmodulateables;
+      std::array<ParameterGroups::ModulateableParameter, 101> modulateables;
+      std::array<ParameterGroups::UnmodulateableParameter, 89> unmodulateables;
 
       std::array<ParameterGroups::HardwareSourceParameter, 8> hwsources;
       std::array<ParameterGroups::HardwareAmountParameter, 48> hwamounts;
 
-      ParameterGroups::UnmodulateableParameter unisonVoices;
-      ParameterGroups::UnmodulateableParameter monoEnable;
+      ParameterGroups::UnisonGroup unison;
+      ParameterGroups::MonoGroup mono;
 
       std::array<ParameterGroups::GlobalParameter, 14> globalparams;
     };
+
+    inline bool operator==(const SinglePresetMessage &lhs, const SinglePresetMessage &rhs)
+    {
+      auto ret = lhs.unmodulateables == rhs.unmodulateables;
+      ret &= lhs.modulateables == rhs.modulateables;
+      ret &= lhs.globalparams == rhs.globalparams;
+      ret &= lhs.mono == rhs.mono;
+      ret &= lhs.unison == rhs.unison;
+      ret &= lhs.hwamounts == rhs.hwamounts;
+      ret &= lhs.hwsources == rhs.hwsources;
+      ret &= lhs.macros == rhs.macros;
+      ret &= lhs.macrotimes == rhs.macrotimes;
+      return ret;
+    }
 
     struct SplitPresetMessage
     {
@@ -327,11 +412,11 @@ namespace nltools
         return MessageType::SplitPreset;
       }
 
-      std::array<std::array<ParameterGroups::ModulateableParameter, 103>, 2> modulateables;
-      std::array<std::array<ParameterGroups::UnmodulateableParameter, 93>, 2> unmodulateables;
+      std::array<std::array<ParameterGroups::ModulateableParameter, 101>, 2> modulateables;
+      std::array<std::array<ParameterGroups::UnmodulateableParameter, 89>, 2> unmodulateables;
 
-      std::array<ParameterGroups::UnmodulateableParameter, 2> unisonVoices;
-      std::array<ParameterGroups::UnmodulateableParameter, 2> monoEnable;
+      std::array<ParameterGroups::UnisonGroup, 2> unison;
+      std::array<ParameterGroups::MonoGroup, 2> mono;
 
       std::array<ParameterGroups::HardwareSourceParameter, 8> hwsources;
       std::array<ParameterGroups::HardwareAmountParameter, 48> hwamounts;
@@ -342,6 +427,21 @@ namespace nltools
       std::array<ParameterGroups::GlobalParameter, 14> globalparams;
       ParameterGroups::SplitPoint splitpoint;
     };
+
+    inline bool operator==(const SplitPresetMessage &lhs, const SplitPresetMessage &rhs)
+    {
+      auto ret = lhs.unmodulateables == rhs.unmodulateables;
+      ret &= lhs.modulateables == rhs.modulateables;
+      ret &= lhs.globalparams == rhs.globalparams;
+      ret &= lhs.mono == rhs.mono;
+      ret &= lhs.unison == rhs.unison;
+      ret &= lhs.hwamounts == rhs.hwamounts;
+      ret &= lhs.hwsources == rhs.hwsources;
+      ret &= lhs.macros == rhs.macros;
+      ret &= lhs.macrotimes == rhs.macrotimes;
+      ret &= lhs.splitpoint == rhs.splitpoint;
+      return ret;
+    }
 
     struct LayerPresetMessage
     {
@@ -356,13 +456,27 @@ namespace nltools
       std::array<ParameterGroups::MacroParameter, 6> macros;
       std::array<ParameterGroups::UnmodulateableParameter, 6> macrotimes;
 
-      std::array<std::array<ParameterGroups::ModulateableParameter, 103>, 2> modulateables;
-      std::array<std::array<ParameterGroups::UnmodulateableParameter, 93>, 2> unmodulateables;
+      std::array<std::array<ParameterGroups::ModulateableParameter, 101>, 2> modulateables;
+      std::array<std::array<ParameterGroups::UnmodulateableParameter, 89>, 2> unmodulateables;
 
-      ParameterGroups::UnmodulateableParameter unisonVoices;
-      ParameterGroups::UnmodulateableParameter monoEnable;
+      ParameterGroups::UnisonGroup unison;
+      ParameterGroups::MonoGroup mono;
 
       std::array<ParameterGroups::GlobalParameter, 14> globalparams;
     };
+
+    inline bool operator==(const LayerPresetMessage &lhs, const LayerPresetMessage &rhs)
+    {
+      auto ret = lhs.unmodulateables == rhs.unmodulateables;
+      ret &= lhs.modulateables == rhs.modulateables;
+      ret &= lhs.globalparams == rhs.globalparams;
+      ret &= lhs.mono == rhs.mono;
+      ret &= lhs.unison == rhs.unison;
+      ret &= lhs.hwamounts == rhs.hwamounts;
+      ret &= lhs.hwsources == rhs.hwsources;
+      ret &= lhs.macros == rhs.macros;
+      ret &= lhs.macrotimes == rhs.macrotimes;
+      return ret;
+    }
   }
 }

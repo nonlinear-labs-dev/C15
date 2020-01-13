@@ -100,23 +100,24 @@ public class PresetList extends LayoutResizingVertical {
 		Preset prev = getPrev(selectedPreset);
 
 		if (prev != null)
-			selectPreset(prev.getUUID());
+			selectPreset(prev.getUUID(), true);
 	}
 
 	public void selectNext() {
 		Preset next = getNext(selectedPreset);
 
 		if (next != null)
-			selectPreset(next.getUUID());
+			selectPreset(next.getUUID(), true);
 	}
 
 	public String getSelectedPreset() {
 		return selectedPreset;
 	}
 
-	public void selectPreset(String uuid) {
+	public void selectPreset(String uuid, boolean sendToServer) {
 		selectedPreset = uuid;
 
+		if(sendToServer)
 		getNonMaps().getServerProxy().selectPreset(uuid);
 
 		requestLayout();

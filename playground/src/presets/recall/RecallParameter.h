@@ -26,5 +26,5 @@ class RecallParameter : public UpdateDocumentContributor
   tControlPositionValue m_recallModAmount = 0;
   MacroControls m_recallModSource = MacroControls::NONE;
 
-  friend class RecallParameterSerializer;
+  friend class RecallEditBufferSerializer;
 };

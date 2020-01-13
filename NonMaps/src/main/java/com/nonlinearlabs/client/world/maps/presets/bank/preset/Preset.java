@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.nonlinearlabs.client.NonMaps;
@@ -13,10 +12,12 @@ import com.nonlinearlabs.client.ServerProxy;
 import com.nonlinearlabs.client.StoreSelectMode;
 import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetSearch;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.LoadMode;
+import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
@@ -193,9 +194,8 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 	@Override
 	public void doSecondLayoutPass(double parentsWidthFromFirstPass, double parentsHeightFromFirstPass) {
-		name.setNonSize(
-				parentsWidthFromFirstPass - number.getNonPosition().getWidth() - tag.getNonPosition().getWidth() - typeLabel.getNonPosition().getWidth(),
-				name.getNonPosition().getHeight());
+		name.setNonSize(parentsWidthFromFirstPass - number.getNonPosition().getWidth() - tag.getNonPosition().getWidth()
+				- typeLabel.getNonPosition().getWidth(), name.getNonPosition().getHeight());
 		setNonSize(parentsWidthFromFirstPass, Math.ceil(getNonPosition().getHeight()));
 	}
 
@@ -363,7 +363,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		if (storeMode != null) {
 			storeMode.setSelectedPreset(this);
 		} else {
-			getParent().getPresetList().selectPreset(getUUID());
+			getParent().getPresetList().selectPreset(getUUID(), true);
 
 		}
 		invalidate(INVALIDATION_FLAG_UI_CHANGED);
@@ -464,14 +464,19 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	public void select() {
-		getParent().getPresetList().selectPreset(getUUID());
+		getParent().getPresetList().selectPreset(getUUID(), true);
 	}
 
 	public void load() {
 		LoadMode loadMode = SetupModel.get().systemSettings.loadMode.getValue();
-		if (loadMode == LoadMode.LoadToPart && type != SoundType.Single) {
-			ChoosePresetPartDialog d = new ChoosePresetPartDialog();
-			d.show();
+		if (loadMode == LoadMode.LoadToPart) {
+			if (type != SoundType.Single) {
+				ChoosePresetPartDialog d = new ChoosePresetPartDialog();
+				d.show();
+			} else {
+				VoiceGroup vg = EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
+				EditBufferUseCases.get().loadSinglePresetIntoPart(getUUID(), vg);
+			}
 		} else {
 			EditBufferUseCases.get().loadPreset(getUUID());
 		}

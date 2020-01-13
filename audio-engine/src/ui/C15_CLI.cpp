@@ -6,7 +6,7 @@
 
 C15_CLI::C15_CLI(C15Synth *synth)
 {
-  m_commands['c'] = [=] { synth->printAndResetTcdInputLog(); };
+  m_commands['c'] = [=] { synth->logStatus(); };
   m_commands['e'] = [=] { synth->resetDSP(); };
   m_commands['t'] = [=] { synth->toggleTestTone(); };
   m_commands['z'] = [=] { synth->selectTestToneFrequency(); };

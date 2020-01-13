@@ -7,7 +7,8 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 
-PresetParameterGroup::PresetParameterGroup()
+PresetParameterGroup::PresetParameterGroup(VoiceGroup vg)
+    : m_voiceGroup { vg }
 {
 }
 
@@ -15,12 +16,16 @@ PresetParameterGroup::PresetParameterGroup(const ::ParameterGroup &other)
 {
   for(auto &g : other.getParameters())
     m_parameters[g->getID()] = std::make_unique<PresetParameter>(*g);
+
+  m_voiceGroup = other.getVoiceGroup();
 }
 
 PresetParameterGroup::PresetParameterGroup(const PresetParameterGroup &other)
 {
   for(auto &g : other.m_parameters)
     m_parameters[g.first] = std::make_unique<PresetParameter>(*g.second);
+
+  m_voiceGroup = other.getVoiceGroup();
 }
 
 PresetParameterGroup::~PresetParameterGroup() = default;
@@ -33,11 +38,18 @@ PresetParameter *PresetParameterGroup::findParameterByID(ParameterId id) const
   return nullptr;
 }
 
+VoiceGroup PresetParameterGroup::getVoiceGroup() const
+{
+  return m_voiceGroup;
+}
+
 void PresetParameterGroup::copyFrom(UNDO::Transaction *transaction, const PresetParameterGroup *other)
 {
   for(auto &g : m_parameters)
     if(auto o = other->findParameterByID(g.first))
       g.second->copyFrom(transaction, o);
+
+  transaction->addUndoSwap(m_voiceGroup, other->getVoiceGroup());
 }
 
 void PresetParameterGroup::copyFrom(UNDO::Transaction *transaction, const ::ParameterGroup *other)
@@ -45,6 +57,8 @@ void PresetParameterGroup::copyFrom(UNDO::Transaction *transaction, const ::Para
   for(auto &g : m_parameters)
     if(auto o = other->getParameterByID(g.first))
       g.second->copyFrom(transaction, o);
+
+  transaction->addUndoSwap(m_voiceGroup, other->getVoiceGroup());
 }
 
 void PresetParameterGroup::writeDiff(Writer &writer, const GroupId &groupId, const PresetParameterGroup *other) const
@@ -67,15 +81,4 @@ void PresetParameterGroup::writeDocument(Writer &writer) const
     const auto param = static_cast<const PresetParameter *>(pair.second.get());
     param->writeDocument(writer);
   }
-}
-
-PresetParameter *PresetParameterGroup::findParameterByNumber(uint16_t number) const
-{
-  for(auto &entry : m_parameters)
-  {
-    if(entry.first.getNumber() == number)
-      return entry.second.get();
-  }
-
-  return nullptr;
 }

@@ -5,9 +5,9 @@ class UnisonVoicesParameter : public UnmodulateableUnisonParameter
 {
  public:
   explicit UnisonVoicesParameter(ParameterGroup* group, VoiceGroup vg);
-  void updateScaling(SoundType type);
+  void updateScaling(UNDO::Transaction* transaction, SoundType type);
 
-protected:
+ protected:
   bool shouldWriteDocProperties(tUpdateID knownRevision) const override;
   bool didScalingChange() const;
 

@@ -2,9 +2,11 @@
 
 #include <proxies/hwui/descriptive-layouts/concrete/sound/menus/items/InitSound.h>
 #include <proxies/hwui/descriptive-layouts/concrete/sound/menus/items/RandomizeItem.h>
+#include <nltools/Types.h>
+#include <proxies/hwui/descriptive-layouts/concrete/sound/menus/items/ConvertToSoundTypeItem.h>
 
 SingleSoundEditMenu::SingleSoundEditMenu(const Rect &r)
-    : SoundEditMenu(r)
+    : ScrollMenu(r)
 {
   init();
 }
@@ -12,6 +14,7 @@ SingleSoundEditMenu::SingleSoundEditMenu(const Rect &r)
 void SingleSoundEditMenu::init()
 {
   auto fullWidth = Rect{ 0, 0, 254, 13 };
-  addItem<InitSound>(fullWidth);
+  addItem<ConvertToSoundTypeItem>(fullWidth, SoundType::Split);
+  addItem<ConvertToSoundTypeItem>(fullWidth, SoundType::Layer);
   addItem<RandomizeItem>(fullWidth);
 }

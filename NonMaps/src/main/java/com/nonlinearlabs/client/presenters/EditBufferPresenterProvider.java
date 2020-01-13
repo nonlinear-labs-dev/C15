@@ -23,6 +23,9 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     private EditBufferPresenterProvider() {
         EditBufferModel.get().voiceGroup.onChange(v -> {
             monitorSelectedParameter();
+
+            presenter.voiceGroupEnum = v;
+
             switch (v) {
             case Global:
                 presenter.voiceGroup = "";

@@ -13,11 +13,14 @@ PolySection::PolySection()
 {
 }
 
-void PolySection::init(exponentiator *_convert, LayerSignalCollection *_z_self, float *_reference, const float _ms,
-                       const float _gateRelease, const float _samplerate)
+void PolySection::init(GlobalSignals *_globalsignals, exponentiator *_convert, Engine::Handle::Time_Handle *_time,
+                       LayerSignalCollection *_z_self, float *_reference, const float _ms, const float _gateRelease,
+                       const float _samplerate)
 {
   // pointer linking (from dsp_host_dual)
+  m_globalsignals = _globalsignals;
   m_convert = _convert;
+  m_time = _time;
   m_z_self = _z_self;
   // init crucial variables
   m_reference = _reference;
@@ -38,6 +41,11 @@ void PolySection::init(exponentiator *_convert, LayerSignalCollection *_z_self, 
   m_outputmixer.init(_samplerate, C15::Config::local_polyphony);
 }
 
+void PolySection::add_copy_sync_id(const uint32_t _smootherId, const uint32_t _signalId)
+{
+  m_smoothers.m_copy_sync.add_copy_id(_smootherId, _signalId);
+}
+
 void PolySection::add_copy_audio_id(const uint32_t _smootherId, const uint32_t _signalId)
 {
   m_smoothers.m_copy_audio.add_copy_id(_smootherId, _signalId);
@@ -56,6 +64,10 @@ void PolySection::add_copy_slow_id(const uint32_t _smootherId, const uint32_t _s
 void PolySection::start_sync(const uint32_t _id, const float _dest)
 {
   m_smoothers.start_sync(_id, _dest);
+  if(m_smoothers.m_copy_sync.m_smootherId[_id])
+  {
+    m_signals.set_mono(m_smoothers.m_copy_sync.m_signalId[_id], _dest);
+  }
 }
 
 void PolySection::start_audio(const uint32_t _id, const float _dx, const float _dest)
@@ -127,10 +139,12 @@ void PolySection::render_fast()
   }
 }
 
-void PolySection::render_slow(const float _masterTune)
+void PolySection::render_slow()
 {
-  m_master_tune = _masterTune;
   m_smoothers.render_slow();
+  // update glide time and render glide smoother
+  m_mono_glide.m_dx = m_time->eval_ms(3, m_smoothers.get(C15::Smoothers::Poly_Slow::Mono_Grp_Glide));
+  m_mono_glide.render();
   auto traversal = &m_smoothers.m_copy_slow;
   for(uint32_t i = 0; i < traversal->m_length; i++)
   {
@@ -139,41 +153,75 @@ void PolySection::render_slow(const float _masterTune)
   postProcess_mono_slow();
   for(uint32_t v = 0; v < m_voices; v++)
   {
+    updateNotePitch(v);
     postProcess_poly_slow(v);
     setSlowFilterCoefs(v);
   }
 }
 
-bool PolySection::keyDown(const uint32_t _voiceId, const uint32_t _unisonIndex, const bool _stolen, const float _tune,
-                          const float _vel)
+bool PolySection::keyDown(PolyKeyEvent *_event)
 {
-  const bool retrigger_mono = m_key_active == 0;
-  const float noteShift = m_shift[_voiceId] = m_note_shift,
-              unisonDetune = m_smoothers.get(C15::Smoothers::Poly_Slow::Unison_Detune),
-              masterTune = m_smoothers.get(C15::Smoothers::Poly_Slow::Voice_Grp_Tune);
-  m_unison_index[_voiceId] = _unisonIndex;
-  m_key_tune[_voiceId] = _tune;
-  const float notePitch = _tune + (unisonDetune * m_spread.m_detune[m_uVoice][_unisonIndex]) + masterTune + noteShift;
-  postProcess_mono_slow();
-  postProcess_poly_key(_voiceId);
-  setSlowFilterCoefs(_voiceId);
-  m_soundgenerator.resetPhase(_voiceId);
-  m_combfilter.setDelaySmoother(_voiceId);
-  if(_stolen)
+  const bool retrigger_mono = (m_key_active == 0);
+  m_shift[_event->m_voiceId] = m_note_shift;
+  m_unison_index[_event->m_voiceId] = _event->m_unisonIndex;
+  m_last_key_tune[_event->m_voiceId] = m_key_tune[_event->m_voiceId];
+  m_key_tune[_event->m_voiceId] = _event->m_tune;
+  m_key_position[_event->m_voiceId] = _event->m_position;
+  if(_event->m_unisonIndex == 0)
   {
-    // todo: noteSteal?
+    if(_event->m_trigger_glide)
+    {
+      m_mono_glide.sync(0.0f);
+      m_mono_glide.start(m_time->eval_ms(3, m_smoothers.get(C15::Smoothers::Poly_Slow::Mono_Grp_Glide)), 1.0f);
+    }
+    else
+    {
+      m_mono_glide.sync(1.0f);
+    }
   }
-  startEnvelopes(_voiceId, notePitch, _vel);
+  if(_event->m_trigger_phase)
+  {
+    m_soundgenerator.resetPhase(_event->m_voiceId);
+    m_combfilter.setDelaySmoother(_event->m_voiceId);
+  }
+  if(_event->m_stolen)
+  {
+    // case NoteSteal (currently nothing)
+  }
+  updateNotePitch(_event->m_voiceId);
+  postProcess_mono_slow();
+  postProcess_poly_key(_event->m_voiceId);
+  setSlowFilterCoefs(_event->m_voiceId);
+  if(_event->m_trigger_env)
+  {
+    startEnvelopes(_event->m_voiceId, m_note_pitch[_event->m_voiceId], _event->m_velocity);
+  }
   m_key_active++;
   return retrigger_mono;
 }
 
-void PolySection::keyUp(const uint32_t _voiceId, const uint32_t _unisonIndex, const float _tune, const float _vel)
+void PolySection::keyUp(PolyKeyEvent *_event)
 {
-  const float noteShift = m_shift[_voiceId], unisonDetune = m_smoothers.get(C15::Smoothers::Poly_Slow::Unison_Detune),
-              masterTune = m_smoothers.get(C15::Smoothers::Poly_Slow::Voice_Grp_Tune);
-  const float notePitch = _tune + (unisonDetune * m_spread.m_detune[m_uVoice][_unisonIndex]) + masterTune + noteShift;
-  stopEnvelopes(_voiceId, notePitch, _vel);
+  m_last_key_tune[_event->m_voiceId] = m_key_tune[_event->m_voiceId];
+  m_key_tune[_event->m_voiceId] = _event->m_tune;
+  m_key_position[_event->m_voiceId] = _event->m_position;
+  if(_event->m_unisonIndex == 0)
+  {
+    if(_event->m_trigger_glide)
+    {
+      m_mono_glide.sync(0.0f);
+      m_mono_glide.start(m_time->eval_ms(3, m_smoothers.get(C15::Smoothers::Poly_Slow::Mono_Grp_Glide)), 1.0f);
+    }
+    else
+    {
+      m_mono_glide.sync(1.0f);
+    }
+  }
+  updateNotePitch(_event->m_voiceId);
+  if(_event->m_trigger_env)
+  {
+    stopEnvelopes(_event->m_voiceId, m_note_pitch[_event->m_voiceId], _event->m_velocity);
+  }
   m_key_active--;
 }
 
@@ -209,6 +257,18 @@ float PolySection::getVoiceGroupVolume()
 float PolySection::evalNyquist(const float _value)
 {
   return _value > m_nyquist ? m_nyquist : _value;
+}
+
+float PolySection::evalScale(const uint32_t _voiceId)
+{
+  // adding one octave offset in order to avoid negative numbers
+  int32_t pos = static_cast<int32_t>(m_key_position[_voiceId] + 12);
+  // subtract base key
+  pos -= static_cast<int32_t>(m_globalsignals->get(C15::Signals::Global_Signals::Scale_Base_Key));
+  // form scale offset index by signal offset + cyclic index
+  const uint32_t index
+      = static_cast<uint32_t>(C15::Signals::Global_Signals::Scale_Offset_0) + (static_cast<uint32_t>(pos) % 12);
+  return m_globalsignals->get(index);
 }
 
 void PolySection::postProcess_poly_audio(const uint32_t _voiceId, const float _mute)
@@ -316,13 +376,9 @@ void PolySection::postProcess_poly_audio(const uint32_t _voiceId, const float _m
 void PolySection::postProcess_poly_fast(const uint32_t _voiceId)
 {
   updateEnvLevels(_voiceId);
-  // pitch, unison
-  const uint32_t uIndex = m_unison_index[_voiceId];
-  const float basePitch = m_key_tune[_voiceId],
-              notePitch = basePitch
-      + (m_smoothers.get(C15::Smoothers::Poly_Slow::Unison_Detune) * m_spread.m_detune[m_uVoice][uIndex])
-      + m_master_tune + m_shift[_voiceId];
   // temporary variables
+  const uint32_t uIndex = m_unison_index[_voiceId];
+  const float basePitch = m_base_pitch[_voiceId], notePitch = m_note_pitch[_voiceId];
   float tmp_lvl, tmp_pan;
   // feedback mixer
   tmp_lvl = m_smoothers.get(C15::Smoothers::Poly_Fast::FB_Mix_Lvl);
@@ -371,12 +427,8 @@ void PolySection::postProcess_poly_slow(const uint32_t _voiceId)
 {
   // envelopes
   updateEnvTimes(_voiceId);
-  // pitch, unison
-  const uint32_t uIndex = m_unison_index[_voiceId];
-  const float notePitch = m_key_tune[_voiceId]
-      + (m_smoothers.get(C15::Smoothers::Poly_Slow::Unison_Detune) * m_spread.m_detune[m_uVoice][uIndex])
-      + m_smoothers.get(C15::Smoothers::Poly_Slow::Voice_Grp_Tune) + m_shift[_voiceId] + m_master_tune;
   // temporary variables
+  const float notePitch = m_note_pitch[_voiceId];
   float keyTracking, unitPitch, envMod, unitSign, unitSpread, unitMod, unitValue;
   // osc a
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_KT);
@@ -472,12 +524,9 @@ void PolySection::postProcess_mono_slow()
 
 void PolySection::postProcess_poly_key(const uint32_t _voiceId)
 {
-  // pitch, unison
+  // pitch, unison, temporary variables
   const uint32_t uIndex = m_unison_index[_voiceId];
-  const float basePitch = m_key_tune[_voiceId],
-              notePitch = basePitch
-      + (m_smoothers.get(C15::Smoothers::Poly_Slow::Unison_Detune) * m_spread.m_detune[m_uVoice][uIndex])
-      + m_smoothers.get(C15::Smoothers::Poly_Slow::Voice_Grp_Tune) + m_shift[_voiceId] + m_master_tune;
+  const float basePitch = m_base_pitch[_voiceId], notePitch = m_note_pitch[_voiceId];
   float keyTracking, unitPitch, envMod, unitSign, unitSpread, unitMod, unitValue, tmp_lvl, tmp_pan;
   // osc a
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_KT);
@@ -802,6 +851,18 @@ void PolySection::updateEnvTimes(const uint32_t _voiceId)
   {
     m_env_c.setSegmentDx(_voiceId, 4, 0.0f);
   }
+}
+
+void PolySection::updateNotePitch(const uint32_t _voiceId)
+{
+  const float glide = m_mono_glide.m_value;
+  m_base_pitch[_voiceId]
+      = ((1.0f - glide) * m_last_key_tune[_voiceId]) + (glide * m_key_tune[_voiceId]) + evalScale(_voiceId);
+  m_note_pitch[_voiceId] = m_base_pitch[_voiceId]
+      + (m_smoothers.get(C15::Smoothers::Poly_Slow::Unison_Detune)
+         * m_spread.m_detune[m_uVoice][m_unison_index[_voiceId]])
+      + m_smoothers.get(C15::Smoothers::Poly_Slow::Voice_Grp_Tune)
+      + m_globalsignals->get(C15::Signals::Global_Signals::Master_Tune) + m_shift[_voiceId];
 }
 
 void PolySection::setSlowFilterCoefs(const uint32_t _voiceId)

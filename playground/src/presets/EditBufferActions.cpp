@@ -11,6 +11,7 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/audio-engine/AudioEngineProxy.h>
 #include <boost/algorithm/string.hpp>
+#include <presets/PresetManager.h>
 
 //NonMember helperFunctions pre:
 IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer);
@@ -214,6 +215,14 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto presetPart = to<VoiceGroup>(request->get("preset-part"));
     auto editbufferPartPart = to<VoiceGroup>(request->get("editbuffer-part"));
     editBuffer->undoableLoadSelectedPresetPartIntoPart(presetPart, editbufferPartPart);
+  });
+
+  addAction("load-preset-into-editbuffer-part", [=](auto request) {
+    auto presetUUID = request->get("uuid");
+    auto loadInto = to<VoiceGroup>(request->get("load-to"));
+
+    if(auto preset = editBuffer->getParent()->findPreset(presetUUID))
+      editBuffer->undoableLoadSinglePreset(preset, loadInto);
   });
 }
 

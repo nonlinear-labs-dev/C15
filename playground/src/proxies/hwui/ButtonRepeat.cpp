@@ -6,9 +6,10 @@ ButtonRepeat::ButtonRepeat(std::function<void()> cb)
 {
   cb();
 
+#warning "adlerauge"
   m_buttonRepeat.disconnect();
   m_buttonRepeat = Application::get().getMainContext()->signal_timeout().connect(
-      sigc::bind(sigc::mem_fun(this, &ButtonRepeat::onButtonRepeatInitialTimeoutElapsed), cb), 500);
+      sigc::bind(sigc::mem_fun(this, &ButtonRepeat::onButtonRepeatInitialTimeoutElapsed), cb), 800);
 }
 
 ButtonRepeat::~ButtonRepeat()

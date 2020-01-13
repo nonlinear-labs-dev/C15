@@ -8,13 +8,9 @@
 #include <parameters/scale-converters/dimension/SplitPointDimension.h>
 
 SplitPointParameter::SplitPointParameter(ParameterGroup *group, const ParameterId &id)
-    : ModulateableParameter(group, id, ScaleConverter::get<SplitPointScaleConverter>(), 0.5, 59, 59)
+    : ModulateableParameterWithUnusualModUnit(group, id, ScaleConverter::get<SplitPointScaleConverter>(),
+                                              ScaleConverter::get<SplitPointScaleConverter>(), 0.5, 59, 59)
 {
-}
-
-Glib::ustring SplitPointParameter::getGroupAndParameterName() const
-{
-  return "Split Point";
 }
 
 DFBLayout *SplitPointParameter::createLayout(FocusAndMode focusAndMode) const
@@ -41,12 +37,13 @@ Glib::ustring SplitPointParameter::getDisplayString() const
   return getDisplayValue(Application::get().getHWUI()->getCurrentVoiceGroup());
 }
 
-Glib::ustring SplitPointParameter::getLongName() const
+Glib::ustring SplitPointParameter::stringizeModulationAmount(tControlPositionValue amount) const
 {
-  return "Split Point";
+  return std::to_string(static_cast<int>(60 * amount)) + " st";
 }
 
-Glib::ustring SplitPointParameter::getShortName() const
+ustring SplitPointParameter::modulationValueToDisplayString(tControlPositionValue v) const
 {
-  return "Split P.";
+  auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
+  return SplitPointDimension::get().stringizeSplitPointDisplay(v, vg);
 }

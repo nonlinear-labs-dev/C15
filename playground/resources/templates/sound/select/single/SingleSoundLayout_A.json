@@ -10,13 +10,6 @@
         "isSingleSound"
       ],
       "Controls": {
-        "ConvertMenu": {
-          "Class": "ConvertSoundMenu",
-          "Position": "3, 23",
-          "Init": {
-            "Text[Text]": "Split"
-          }
-        },
         "Header": {
           "Class": "InvertedLabel",
           "Position": "0, 0",
@@ -31,7 +24,7 @@
           "Class": "HighlightButton",
           "Position": "BUTTON_A",
           "Init": {
-            "Text[Text]": "Convert to"
+            "Text[Text]": "Init.."
           }
         },
         "ButtonB": {
@@ -70,11 +63,11 @@
         }
       },
       "EventSinks": {
-        "BUTTON_A": "IncButtonMenu",
+        "BUTTON_A": "SwitchToInitDetail",
         "BUTTON_B": "SwitchToInitDetail",
         "BUTTON_C": "SwitchToVoicesDetail",
         "BUTTON_D": "OpenMasterParameter",
-        "BUTTON_ENTER": "FireButtonMenu",
+        "BUTTON_ENTER": "InitSound",
         "BUTTON_SOUND": "SwitchToInitDetail"
       }
     }

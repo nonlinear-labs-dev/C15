@@ -3,8 +3,11 @@
 #include <string.h>
 #include <proxies/hwui/panel-unit/RotaryEncoder.h>
 #include <cmath>
+#include <Application.h>
+#include <Options.h>
 
 #include <nltools/messaging/Message.h>
+#include <proxies/hwui/HWUI.h>
 
 FrameBuffer::StackScopeGuard::StackScopeGuard(FrameBuffer *fb)
     : m_fb(fb)
@@ -249,9 +252,20 @@ void FrameBuffer::drawVerticalLine(tCoordinate x, tCoordinate y, tCoordinate len
 void FrameBuffer::swapBuffers()
 {
   using namespace nltools::msg;
-  SetOLEDMessage msg{};
-  memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
-  send(EndPoint::Oled, msg);
+  if(Application::get().getOptions()->sendBBBBTurnaroundTimestamps())
+  {
+    SetTimestampedOledMessage msg{};
+    msg.m_timestamp
+        = Application::get().getHWUI()->getPanelUnit().getEditPanel().getKnob().resetOldestPendingTimestamp();
+    memcpy(msg.m_oledMessage.pixels, m_backBuffer.data(), m_backBuffer.size());
+    send(EndPoint::Oled, msg);
+  }
+  else
+  {
+    SetOLEDMessage msg{};
+    memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
+    send(EndPoint::Oled, msg);
+  }
 }
 
 bool FrameBuffer::isValidColor(Colors c) const

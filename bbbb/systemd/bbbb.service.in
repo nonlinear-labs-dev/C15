@@ -4,7 +4,7 @@ After=syslog.target network.target systemd-modules-load.service install-update-f
 Wants=install-update-from-usb.service
 
 [Service]
-ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/playground/bbbb
+ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/playground/bbbb --playground-host=localhost
 ExecStartPost=-@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/scripts/restart-pg-if-running.sh
 Restart=on-failure
 RestartSec=1

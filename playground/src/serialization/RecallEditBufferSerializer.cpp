@@ -2,7 +2,6 @@
 #include <nltools/logging/Log.h>
 #include "RecallEditBufferSerializer.h"
 #include "PresetParameterGroupSerializer.h"
-#include "RecallParameterSerializer.h"
 #include <presets/recall/RecallParameter.h>
 
 RecallEditBufferSerializer::RecallEditBufferSerializer(EditBuffer *edit)
@@ -16,69 +15,30 @@ Glib::ustring RecallEditBufferSerializer::getTagName()
   return "recall-parameters";
 }
 
-namespace Detail
-{
-  class RecallEditBufferSerializer2 : public Serializer
-  {
-   public:
-    RecallEditBufferSerializer2(EditBuffer *eb, VoiceGroup vg)
-        : Serializer(toString(vg))
-        , m_editBuffer{ eb }
-        , m_voiceGroup{ vg }
-    {
-    }
-
-   protected:
-    void writeTagContent(Writer &writer) const override
-    {
-      auto &parameters = m_editBuffer->getRecallParameterSet().getParameters();
-      for(auto &param : parameters)
-      {
-        auto parameter = param.second.get();
-        RecallParameterSerializer serializer(parameter);
-        serializer.write(writer, Attribute("id", parameter->getID().toString()));
-      }
-    }
-
-    void readTagContent(Reader &reader) const override
-    {
-      reader.onTag(RecallParameterSerializer::getTagName(),
-                   [&, this](const Attributes &attr) mutable -> RecallParameterSerializer * {
-                     auto id = ParameterId(attr.get("id"));
-                     auto &rps = m_editBuffer->getRecallParameterSet();
-                     try
-                     {
-                       if(auto param = rps.findParameterByID(id))
-                         return new RecallParameterSerializer(param);
-                     }
-                     catch(...)
-                     {
-                       nltools::Log::error("Could not find Recall Parameter with ID", id);
-                     }
-                     return nullptr;
-                   });
-    }
-
-    EditBuffer *m_editBuffer;
-    VoiceGroup m_voiceGroup;
-  };
-}
-
 void RecallEditBufferSerializer::writeTagContent(Writer &writer) const
 {
-  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
+  auto &parameters = m_editBuffer->getRecallParameterSet().getParameters();
+  for(auto &param : parameters)
   {
-    Detail::RecallEditBufferSerializer2 ser(m_editBuffer, vg);
-    ser.write(writer);
+    auto parameter = param.second.get();
+
+    writer.writeTextElement("recall-param", to_string(parameter->getRecallValue()),
+                            Attribute("id", parameter->getID().toString()),
+                            Attribute("mod-amt", to_string(parameter->getRecallModulationAmount())),
+                            Attribute("mod-src", to_string(parameter->getRecallModSource())));
   }
 }
 
 void RecallEditBufferSerializer::readTagContent(Reader &reader) const
 {
-  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
-  {
-    reader.onTag(toString(vg), [this, vg](const Attributes &attr) mutable {
-      return new Detail::RecallEditBufferSerializer2(m_editBuffer, vg);
-    });
-  }
+  reader.onTextElement("recall-param", [=](const Glib::ustring &text, const Attributes &attr) {
+    auto id = ParameterId(attr.get("id"));
+    auto &rps = m_editBuffer->getRecallParameterSet();
+    if(auto param = rps.findParameterByID(id))
+    {
+      param->m_recallValue = std::stod(text);
+      param->m_recallModAmount = std::stod(attr.get("mod-amt"));
+      param->m_recallModSource = static_cast<MacroControls>(std::stoi(attr.get("mod-src")));
+    }
+  });
 }

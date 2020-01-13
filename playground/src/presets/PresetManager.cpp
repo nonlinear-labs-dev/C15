@@ -747,7 +747,7 @@ void PresetManager::stressParam(UNDO::Transaction *trans, Parameter *param)
   {
     m_editBuffer->undoableSelectParameter(trans, param);
   }
-  param->stepCPFromHwui(trans, g_random_boolean() ? -1 : 1, ButtonModifiers{});
+  param->stepCPFromHwui(trans, g_random_boolean() ? -1 : 1, ButtonModifiers {});
 }
 
 void PresetManager::stressAllParams(int numParamChangedForEachParameter)
@@ -826,7 +826,7 @@ void PresetManager::incAllParamsFine()
         for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
           for(auto &group : m_editBuffer->getParameterGroups(vg))
             for(auto &param : group->getParameters())
-              param->stepCPFromHwui(trans, 1, ButtonModifiers{ ButtonModifier::FINE });
+              param->stepCPFromHwui(trans, 1, ButtonModifiers { ButtonModifier::FINE });
       },
       20);
 }

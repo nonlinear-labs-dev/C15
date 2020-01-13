@@ -7,11 +7,11 @@ class FBMixerControls extends ParameterGroupControls {
 
 	FBMixerControls(MapsLayout parent) {
 		super(parent);
-		addChild(new CombColumn(this));
-		addChild(new SVFilterColumn(this));
-		addChild(new EffectsColumn(this));
-		addChild(new ReverbColumn(this));
-		addChild(new DriveColumn(this));
-		addChild(new KeyTrackColumn(this));
+		addChild(new FBMixerColumn1(this));
+		addChild(new FBMixerColumn2(this));
+		addChild(new FBMixerColumn3(this));
+		addChild(new FBMixerColumn4(this));
+		addChild(new FBMixerColumn6(this));
+		addChild(new FBMixerColumn7(this));
 	}
 }

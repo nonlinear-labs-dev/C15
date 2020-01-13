@@ -4,6 +4,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/Parameter.h>
+#include <third-party/include/catch.hpp>
 
 namespace TestHelper
 {
@@ -36,6 +37,23 @@ namespace TestHelper
     return std::move(getPresetManager()->getUndoScope().startTestTransaction());
   }
 
+  template <SoundType tType> inline void initDualEditBuffer()
+  {
+    auto scope = UNDO::Scope::startTrashTransaction();
+    auto eb = getEditBuffer();
+    eb->undoableUnlockAllGroups(scope->getTransaction());
+    eb->undoableConvertToDual(scope->getTransaction(), tType);
+    eb->undoableInitSound(scope->getTransaction());
+  }
+
+  inline void initSingleEditBuffer(UNDO::Transaction* transaction)
+  {
+    auto eb = getEditBuffer();
+    eb->undoableUnlockAllGroups(transaction);
+    eb->undoableConvertToSingle(transaction, VoiceGroup::I);
+    eb->undoableInitSound(transaction);
+  }
+
   inline void forceParameterChange(UNDO::Transaction* transaction, Parameter* param)
   {
     auto currentValue = param->getControlPositionValue();
@@ -59,3 +77,29 @@ namespace TestHelper
           cb(p);
   }
 }
+
+inline std::pair<double, double> getNextStepValuesFromValue(Parameter* p, double v)
+{
+  auto scope = UNDO::Scope::startTrashTransaction();
+  auto oldCP = p->getControlPositionValue();
+  p->setCPFromHwui(scope->getTransaction(), v);
+  auto ret
+      = std::make_pair<double, double>(p->getValue().getNextStepValue(-1, {}), p->getValue().getNextStepValue(1, {}));
+  p->setCPFromHwui(scope->getTransaction(), oldCP);
+  return ret;
+}
+
+#define CHECK_PARAMETER_CP_EQUALS_FICTION(p, v)                                                                        \
+  {                                                                                                                    \
+    auto range = getNextStepValuesFromValue(p, v);                                                                     \
+    auto inRange = p->getControlPositionValue() >= range.first && p->getControlPositionValue() <= range.second;        \
+    if(!inRange)                                                                                                       \
+    {                                                                                                                  \
+      nltools::Log::error(p->getLongName(), '(', p->getID().toString(), ") got", p->getControlPositionValue(),         \
+                          "expected ~", v);                                                                            \
+      CHECK(inRange);                                                                                                  \
+      return;                                                                                                          \
+    }                                                                                                                  \
+    CHECK(p->getControlPositionValue() >= range.first);                                                                \
+    CHECK(p->getControlPositionValue() <= range.second);                                                               \
+  }

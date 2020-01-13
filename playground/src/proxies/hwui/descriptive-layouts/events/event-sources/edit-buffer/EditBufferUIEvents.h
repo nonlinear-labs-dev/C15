@@ -86,16 +86,10 @@ namespace DescriptiveLayouts
    public:
     void onChange(const EditBuffer *eb) override
     {
-      auto currentType = eb->getType();
-      if(currentType != SoundType::Single)
-      {
-        auto sel = Application::get().getHWUI()->getCurrentVoiceGroup();
-        setValue({ sel == VoiceGroup::I ? "Select II" : "Select I", 0 });
-      }
+      if(eb->getType() != SoundType::Single)
+        setValue({ "I / II", 0 });
       else
-      {
         setValue({ "", 0 });
-      }
     }
   };
 

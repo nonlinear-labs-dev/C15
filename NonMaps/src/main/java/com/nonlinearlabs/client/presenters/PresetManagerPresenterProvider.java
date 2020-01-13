@@ -48,10 +48,14 @@ public class PresetManagerPresenterProvider {
 		SoundType s = EditBufferModel.get().soundType.getValue();
 		VoiceGroup v = EditBufferModel.get().voiceGroup.getValue();
 
-		pm.showLoadModeMenu = s != SoundType.Single;
-		pm.showLoadModeButton = s == SoundType.Single;
+		pm.loadToPartEnabled = s != SoundType.Single;
 
-		pm.loadModeMenuEntries = new String[] { "Load to Part " + v.toString(), "Select for I/II", "Direct Load I/II" };
+		if(pm.loadToPartEnabled)
+			pm.loadModeMenuEntries = new String[] { "Load to " + v.toString(), "Select Only", "Direct Load" };
+		else
+			pm.loadModeMenuEntries = new String[] { "", "Select Only", "Direct Load"};
+
+
 		pm.loadModeButtonState = l == LoadMode.DirectLoad;
 		pm.directLoadActive = l == LoadMode.DirectLoad;
 		pm.loadToPartActive = l == LoadMode.LoadToPart;

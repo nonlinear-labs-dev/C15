@@ -10,16 +10,16 @@
 #include <functional>
 #include "PresetTypeLabel.h"
 
-const float c_numAnimationSteps = 30;
-const float c_animationLength = 1000;  // ms
+const float c_numAnimationSteps = 15;
+const float c_animationLength = 500;  // ms
 
 PresetListEntry::PresetListEntry(const Rect &pos)
     : super(pos)
     , m_animationProgress(0)
 {
   m_number = addControl(new PresetNumberLabel(Rect(0, 0, 21, 16)));
-  m_name = addControl(new PresetNameLabel(Rect(21, 0, 95, 16)));
-  m_type = addControl(new PresetTypeLabel(Rect(105, 0, 21, 16)));
+  m_name = addControl(new PresetNameLabel(Rect(21, 0, 92, 16)));
+  m_type = addControl(new PresetTypeLabel(Rect(110, 0, 16, 16)));
 }
 
 PresetListEntry::~PresetListEntry()
@@ -109,6 +109,7 @@ bool PresetListEntry::animationProgress()
   if(m_animationProgress > 100)
   {
     m_animationProgress = 0;
+    setDirty();
     doAnimationCallback();
   }
   else

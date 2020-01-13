@@ -15,6 +15,7 @@ class Options
   const Glib::ustring &getBBBB() const;
   const Glib::ustring &getLayoutFolder() const;
   const Glib::ustring &getAudioEngineHost() const;
+  bool sendBBBBTurnaroundTimestamps() const;
 
   Glib::ustring getInstallDir() const;
 
@@ -31,4 +32,5 @@ class Options
   Glib::ustring m_layoutFolder;
   Glib::ustring m_bbbb = "localhost";
   Glib::ustring m_audioEngineHost = "localhost";
+  bool m_sendBBBTurnaroundTimes = false;
 };

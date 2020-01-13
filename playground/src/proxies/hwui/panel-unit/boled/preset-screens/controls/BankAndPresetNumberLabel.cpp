@@ -3,6 +3,8 @@
 #include "presets/PresetManager.h"
 #include <presets/EditBuffer.h>
 #include <presets/Bank.h>
+#include <presets/Preset.h>
+#include <proxies/hwui/HWUI.h>
 #include <iomanip>
 #include <locale>
 #include <sstream>
@@ -25,6 +27,7 @@ void BankAndPresetNumberLabel::onEditBufferChanged()
 bool BankAndPresetNumberLabel::redraw(FrameBuffer &fb)
 {
   auto pm = Application::get().getPresetManager();
+  auto hwui = Application::get().getHWUI();
   auto uuid = pm->getEditBuffer()->getUUIDOfLastLoadedPreset();
   Glib::ustring text = "";
 
@@ -32,12 +35,17 @@ bool BankAndPresetNumberLabel::redraw(FrameBuffer &fb)
   {
     auto bankPos = pm->getBankPosition(bank->getUuid()) + 1;
     auto presetPos = bank->getPresetPosition(uuid) + 1;
+    auto voiceGroup = hwui->getCurrentVoiceGroup();
+
     std::ostringstream presetPosStr;
     presetPosStr.width(3);
     presetPosStr.fill('0');
     presetPosStr << presetPos;
 
-    text = UNDO::StringTools::buildString(bankPos, "-", presetPosStr.str());
+    if(bank->findPreset(uuid)->getType() != SoundType::Single)
+      text = nltools::string::concat(bankPos, "-", presetPosStr.str(), "-", toString(voiceGroup));
+    else
+      text = nltools::string::concat(bankPos, "-", presetPosStr.str());
   }
   else if(uuid == Uuid::converted())
   {
@@ -52,7 +60,7 @@ bool BankAndPresetNumberLabel::redraw(FrameBuffer &fb)
     text = "";
   }
 
-  if(pm->getEditBuffer()->anyParameterChanged() && !text.empty())
+  if(pm->getEditBuffer()->isModified() && !text.empty())
     text += "*";
 
   setText(text);

@@ -2,8 +2,11 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
+import com.nonlinearlabs.client.presenters.EditBufferPresenter;
+import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
@@ -15,7 +18,7 @@ import com.nonlinearlabs.client.world.overlay.SVGImage;
 public class LoadModeMenu extends SVGImage {
 
     LoadModeMenu(OverlayLayout parent) {
-        super(parent, "MC_A_Disabled.svg", "MC_A_Active.svg", "MC_B_Active.svg", "MC_C_Active.svg");
+        super(parent, "Load_Menu_Disabled.svg", "Load_Menu_Load_To_I.svg", "Load_Menu_Load_To_II.svg", "Load_Menu_Select.svg", "Load_Menu_DL.svg");
     }
 
     public boolean isInStoreSelectMode() {
@@ -34,14 +37,19 @@ public class LoadModeMenu extends SVGImage {
     @Override
     public int getSelectedPhase() {
         PresetManagerPresenter p = PresetManagerPresenterProvider.get().getPresenter();
+        EditBufferPresenter eb = EditBufferPresenterProvider.getPresenter();
+
         if (isInStoreSelectMode())
             return 0;
         else if (p.loadToPartActive)
-            return 1;
+            if(eb.voiceGroupEnum == VoiceGroup.I)
+                return 1;
+            else
+                return 2;
         else if (!p.directLoadActive)
-            return 2;
-        else if (p.directLoadActive)
             return 3;
+        else if (p.directLoadActive)
+            return 4;
 
         return 0;
     }

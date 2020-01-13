@@ -88,7 +88,7 @@ void ParameterGroup::copyFrom(UNDO::Transaction *transaction, const PresetParame
 {
   for(auto &myParameter : getParameters())
   {
-    if(auto otherParameter = other->findParameterByNumber(myParameter->getID().getNumber()))
+    if(auto otherParameter = other->findParameterByID({ myParameter->getID().getNumber(), other->getVoiceGroup() }))
     {
       myParameter->copyFrom(transaction, otherParameter);
     }

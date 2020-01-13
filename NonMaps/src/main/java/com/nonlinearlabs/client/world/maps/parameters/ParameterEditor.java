@@ -34,7 +34,7 @@ import com.nonlinearlabs.client.world.maps.parameters.SVFilter.SVFilter;
 import com.nonlinearlabs.client.world.maps.parameters.Scale.Scale;
 import com.nonlinearlabs.client.world.maps.parameters.ShapeA.ShapeA;
 import com.nonlinearlabs.client.world.maps.parameters.ShapeB.ShapeB;
-import com.nonlinearlabs.client.world.maps.parameters.Unison.Unison;
+import com.nonlinearlabs.client.world.maps.parameters.MonoAndUnison.UnisonAndMono;
 import com.nonlinearlabs.client.world.maps.parameters.VoiceGroupMaster.VoiceGroupMaster;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
@@ -162,7 +162,7 @@ public class ParameterEditor extends LayoutResizingVertical {
 				public Masters() {
 					super(SynthParameters.this);
 
-					addChild(new Unison(this));
+					addChild(new UnisonAndMono(this));
 					addChild(new SpacerLarge(this));
 
 					addChild(new VoiceGroupMasterAndSpacer(this));

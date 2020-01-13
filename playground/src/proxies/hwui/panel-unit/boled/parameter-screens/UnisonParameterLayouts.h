@@ -15,6 +15,8 @@ class ModulateableUnisonParameterLayout : public ModulateableParameterSelectLayo
 
  protected:
   Carousel *createCarousel(const Rect &rect) override;
+
+  ModuleCaption *createModuleCaption() const override;
 };
 
 class UnmodulateableUnisonParameterLayout : public UnmodulateableParameterSelectLayout2
@@ -27,4 +29,6 @@ class UnmodulateableUnisonParameterLayout : public UnmodulateableParameterSelect
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
   void init() override;
+
+  ModuleCaption *createModuleCaption() const override;
 };

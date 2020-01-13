@@ -17,6 +17,8 @@
 #include <groups/HardwareSourcesGroup.h>
 #include <groups/MacroControlsGroup.h>
 #include <groups/MasterGroup.h>
+#include <groups/MonoGroup.h>
+#include <groups/UnisonGroup.h>
 #include <groups/ScaleGroup.h>
 
 AudioEngineProxy::AudioEngineProxy()
@@ -122,29 +124,25 @@ nltools::msg::SinglePresetMessage AudioEngineProxy::createSingleEditBufferMessag
 
   for(auto &g : editBuffer->getParameterGroups(VoiceGroup::I))
   {
-    for(auto p : g->getParameters())
+    if(auto unisonGroup = dynamic_cast<UnisonGroup *>(g))
     {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(p))
+      fillUnisonPart(msg.unison, unisonGroup);
+    }
+    else if(auto monoGroup = dynamic_cast<MonoGroup *>(g))
+    {
+      fillMonoPart(msg.mono, monoGroup);
+    }
+    else
+    {
+      for(auto p : g->getParameters())
       {
-        auto &mod = msg.modulateables[modP++];
-        mod.id = modParam->getID().getNumber();
-        mod.controlPosition = modParam->getControlPositionValue();
-        mod.modulationAmount = modParam->getModulationAmount();
-        mod.mc = modParam->getModulationSource();
-      }
-      else
-      {
-        if(p->getID().getNumber() == cUnisonVoicesParameterNumber)
+        if(auto modParam = dynamic_cast<ModulateableParameter *>(p))
         {
-          auto &unisonVoices = msg.unisonVoices;
-          unisonVoices.id = cUnisonVoicesParameterNumber;
-          unisonVoices.controlPosition = p->getControlPositionValue();
-        }
-        else if(p->getID().getNumber() == cMonoEnableParameterNumber)
-        {
-          auto &monoEnable = msg.monoEnable;
-          monoEnable.id = cMonoEnableParameterNumber;
-          monoEnable.controlPosition = p->getControlPositionValue();
+          auto &mod = msg.modulateables[modP++];
+          mod.id = modParam->getID().getNumber();
+          mod.controlPosition = modParam->getControlPositionValue();
+          mod.modulationAmount = modParam->getModulationAmount();
+          mod.mc = modParam->getModulationSource();
         }
         else
         {
@@ -163,6 +161,76 @@ nltools::msg::SinglePresetMessage AudioEngineProxy::createSingleEditBufferMessag
   return msg;
 }
 
+void AudioEngineProxy::fillMonoPart(nltools::msg::ParameterGroups::MonoGroup &monoGroup, ParameterGroup *const &g)
+{
+  auto from = g->getVoiceGroup();
+
+  if(auto enable = g->findParameterByID({ cMonoEnableParameterNumber, from }))
+  {
+    auto &monoEnable = monoGroup.monoEnable;
+    monoEnable.id = cMonoEnableParameterNumber;
+    monoEnable.controlPosition = enable->getControlPositionValue();
+  }
+
+  if(auto prio = g->findParameterByID({ 365, from }))
+  {
+    auto &item = monoGroup.priority;
+    item.id = 365;
+    item.controlPosition = prio->getControlPositionValue();
+  }
+
+  if(auto legato = g->findParameterByID({ 366, from }))
+  {
+    auto &item = monoGroup.legato;
+    item.id = 366;
+    item.controlPosition = legato->getControlPositionValue();
+  }
+
+  if(auto glide = dynamic_cast<ModulateableParameter *>(g->findParameterByID({ 367, from })))
+  {
+    auto &item = monoGroup.glide;
+    item.id = 367;
+    item.controlPosition = glide->getControlPositionValue();
+    item.mc = glide->getModulationSource();
+    item.modulationAmount = glide->getModulationAmount();
+  }
+}
+
+void AudioEngineProxy::fillUnisonPart(nltools::msg::ParameterGroups::UnisonGroup &unisonGroup, ParameterGroup *const &g)
+{
+  auto from = g->getVoiceGroup();
+
+  if(auto unisonParam = g->getParameterByID({ cUnisonVoicesParameterNumber, from }))
+  {
+    auto &unisonVoices = unisonGroup.unisonVoices;
+    unisonVoices.id = cUnisonVoicesParameterNumber;
+    unisonVoices.controlPosition = unisonParam->getControlPositionValue();
+  }
+
+  if(auto unisonDetune = dynamic_cast<ModulateableParameter *>(g->getParameterByID({ 250, from })))
+  {
+    auto &detune = unisonGroup.detune;
+    detune.id = unisonDetune->getID().getNumber();
+    detune.controlPosition = unisonDetune->getControlPositionValue();
+    detune.mc = unisonDetune->getModulationSource();
+    detune.modulationAmount = unisonDetune->getModulationAmount();
+  }
+
+  if(auto unisonPan = g->getParameterByID({ 252, from }))
+  {
+    auto &pan = unisonGroup.pan;
+    pan.id = unisonPan->getID().getNumber();
+    pan.controlPosition = unisonPan->getControlPositionValue();
+  }
+
+  if(auto unisonPhase = g->getParameterByID({ 253, from }))
+  {
+    auto &phase = unisonGroup.phase;
+    phase.id = unisonPhase->getID().getNumber();
+    phase.controlPosition = unisonPhase->getControlPositionValue();
+  }
+}
+
 template <typename tMsg> void fillDualMessage(tMsg &msg, EditBuffer *editBuffer)
 {
   for(auto vg : { VoiceGroup::I, VoiceGroup::II })
@@ -173,6 +241,9 @@ template <typename tMsg> void fillDualMessage(tMsg &msg, EditBuffer *editBuffer)
     auto arrayIndex = static_cast<int>(vg);
     for(auto &g : editBuffer->getParameterGroups(vg))
     {
+      if(dynamic_cast<UnisonGroup *>(g) || dynamic_cast<MonoGroup *>(g))
+        continue;
+
       for(auto p : g->getParameters())
       {
         if(auto modParam = dynamic_cast<ModulateableParameter *>(p))
@@ -214,24 +285,22 @@ nltools::msg::SplitPresetMessage AudioEngineProxy::createSplitEditBufferMessage(
     auto &t = msg.splitpoint;
     t.id = sp->getID().getNumber();
     t.controlPosition = sp->getControlPositionValue();
+    t.modulationAmount = sp->getModulationAmount();
+    t.mc = sp->getModulationSource();
   }
 
   for(auto vg : { VoiceGroup::I, VoiceGroup::II })
   {
     auto vgIndex = static_cast<int>(vg);
 
-    if(auto voicesParameter = editBuffer->findParameterByID({ cUnisonVoicesParameterNumber, vg }))
+    if(auto monoGroup = editBuffer->getParameterGroupByID({ "Mono", vg }))
     {
-      auto &unisonVoices = msg.unisonVoices[vgIndex];
-      unisonVoices.id = cUnisonVoicesParameterNumber;
-      unisonVoices.controlPosition = voicesParameter->getControlPositionValue();
+      fillMonoPart(msg.mono[vgIndex], monoGroup);
     }
 
-    if(auto monoParameter = editBuffer->findParameterByID({ cMonoEnableParameterNumber, vg }))
+    if(auto unisonGroup = editBuffer->getParameterGroupByID({ "Unison", vg }))
     {
-      auto &monoEnable = msg.monoEnable[vgIndex];
-      monoEnable.id = cMonoEnableParameterNumber;
-      monoEnable.controlPosition = monoParameter->getControlPositionValue();
+      fillUnisonPart(msg.unison[vgIndex], unisonGroup);
     }
   }
 
@@ -245,19 +314,11 @@ nltools::msg::LayerPresetMessage AudioEngineProxy::createLayerEditBufferMessage(
   fillMessageWithGlobalParams(msg, editBuffer);
   fillDualMessage(msg, editBuffer);
 
-  if(auto unisonVoicesParameter = editBuffer->findParameterByID({ cUnisonVoicesParameterNumber, VoiceGroup::I }))
-  {
-    auto &unisonVoices = msg.unisonVoices;
-    unisonVoices.id = cUnisonVoicesParameterNumber;
-    unisonVoices.controlPosition = unisonVoicesParameter->getControlPositionValue();
-  }
+  if(auto unisonGroup = editBuffer->getParameterGroupByID({ "Unison", VoiceGroup::I }))
+    fillUnisonPart(msg.unison, unisonGroup);
 
-  if(auto monoParameter = editBuffer->findParameterByID({ cMonoEnableParameterNumber, VoiceGroup::I }))
-  {
-    auto &monoEnable = msg.monoEnable;
-    monoEnable.id = cMonoEnableParameterNumber;
-    monoEnable.controlPosition = monoParameter->getControlPositionValue();
-  }
+  if(auto monoGroup = editBuffer->getParameterGroupByID({ "Mono", VoiceGroup::I }))
+    fillMonoPart(msg.mono, monoGroup);
 
   return msg;
 }
@@ -279,4 +340,19 @@ void AudioEngineProxy::sendEditBuffer()
   }
 
   Application::get().getSettings()->sendToLPC();
+}
+
+template <> nltools::msg::SinglePresetMessage AudioEngineProxy::createMessage<nltools::msg::SinglePresetMessage>()
+{
+  return AudioEngineProxy::createSingleEditBufferMessage();
+}
+
+template <> nltools::msg::SplitPresetMessage AudioEngineProxy::createMessage<nltools::msg::SplitPresetMessage>()
+{
+  return AudioEngineProxy::createSplitEditBufferMessage();
+}
+
+template <> nltools::msg::LayerPresetMessage AudioEngineProxy::createMessage<nltools::msg::LayerPresetMessage>()
+{
+  return AudioEngineProxy::createLayerEditBufferMessage();
 }

@@ -55,7 +55,7 @@
             "LowerText[Text]": "-3.5 dB",
             "ANY[Highlight]": "true"
           },
-          "Events": "isCurrentVGI => ANY[Highlight], VGIMasterTuneText => UpperText[Text], VGIMasterVolumeText => LowerText[Text]"
+          "Events": "isCurrentVGI => ANY[Highlight], VGIMasterTuneText => LowerText[Text], VGIMasterVolumeText => UpperText[Text]"
         },
         "Right": {
           "Class": "SplitVoiceGroupII",
@@ -66,7 +66,7 @@
             "LowerText[Text]": "-3.5 dB",
             "ANY[Highlight]": "false"
           },
-          "Events": "isCurrentVGII => ANY[Highlight], VGIIMasterTuneText => UpperText[Text], VGIIMasterVolumeText => LowerText[Text]"
+          "Events": "isCurrentVGII => ANY[Highlight], VGIIMasterTuneText => LowerText[Text], VGIIMasterVolumeText => UpperText[Text]"
         },
         "Split": {
           "Class": "SplitPoint",

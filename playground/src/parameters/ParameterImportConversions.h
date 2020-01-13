@@ -32,6 +32,7 @@ class ParameterImportConversions
   tControlPositionValue decayV2ToV3(tControlPositionValue in) const;
   tControlPositionValue releaseV2ToV3(tControlPositionValue in) const;
   tControlPositionValue driveV2ToV3(tControlPositionValue in) const;
+  tControlPositionValue driveV5ToV6(tControlPositionValue in) const;
 
   struct ConvertersBySourceFileVersion
   {

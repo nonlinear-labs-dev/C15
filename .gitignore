@@ -39,6 +39,8 @@ NonMaps/.project
 NonMaps/NonMaps.cbp
 NonMaps/CMakeFiles
 NonMaps/cmake_install.cmake
+NonMaps/target
+cmake-build-debug
 playground/CMakeCache.txt
 playground/CMakeFiles
 playground/.idea

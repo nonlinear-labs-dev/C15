@@ -9,6 +9,7 @@ class ReverbControls extends ParameterGroupControls {
 		super(parent);
 		addChild(new SizeColumn(this));
 		addChild(new FilterColumn(this));
+		addChild(new SendColumn(this));
 		addChild(new MixColumn(this));
 	}
 }

@@ -43,5 +43,7 @@ void TestDriverBase::doTests(int &numArgs, char **&argv)
   else
     DebugLevel::info("!!! There have been errors running the tests !!!");
   s_running = false;
+
+  g_log_set_default_handler(g_log_default_handler, nullptr);
 #endif
 }

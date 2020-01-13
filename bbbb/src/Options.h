@@ -19,7 +19,6 @@ class Options
   bool m_doTimeStamps = false;
   bool m_logLpcRaw = false;
   bool m_logHeartBeat = false;
-
   Glib::ustring m_playgroundHost = "localhost";
   Glib::ustring m_audioengineHost = "localhost";
 };

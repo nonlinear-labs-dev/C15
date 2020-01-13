@@ -10,6 +10,7 @@ class EchoControls extends ParameterGroupControls {
 		addChild(new TimeColumn(this));
 		addChild(new StereoColumn(this));
 		addChild(new FeedbackColumn(this));
+		addChild(new SendColumn(this));
 		addChild(new MixColumn(this));
 	}
 }

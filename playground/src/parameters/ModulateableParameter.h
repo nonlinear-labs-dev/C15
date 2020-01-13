@@ -51,7 +51,7 @@ class ModulateableParameter : public Parameter
 
   virtual double getModulationAmountFineDenominator() const;
   virtual double getModulationAmountCoarseDenominator() const;
-  std::pair<Glib::ustring, Glib::ustring> getModRangeAsDisplayValues() const;
+  virtual std::pair<Glib::ustring, Glib::ustring> getModRangeAsDisplayValues() const;
 
   static void registerTests();
 
@@ -74,8 +74,9 @@ class ModulateableParameter : public Parameter
  protected:
   void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
 
+  virtual Glib::ustring modulationValueToDisplayString(tControlPositionValue v) const;
+
  private:
-  Glib::ustring modulationValueToDisplayString(tControlPositionValue v) const;
   int getModAmountDenominator(const ButtonModifiers &modifiers) const;
 
   void sendParameterMessage() const override;

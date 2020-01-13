@@ -25,7 +25,7 @@ class C15Synth : public Synth, public sigc::trackable
   void doAudio(SampleFrame* target, size_t numFrames) override;
 
   void resetDSP() override;
-  void printAndResetTcdInputLog();
+  void logStatus();
   void toggleTestTone();
   void selectTestToneFrequency();
   void selectTestToneAmplitude();

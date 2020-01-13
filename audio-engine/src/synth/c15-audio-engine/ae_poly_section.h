@@ -9,6 +9,7 @@
     @todo
 *******************************************************************************/
 
+#include "key_event.h"
 #include "smoother_handle.h"
 #include "unison_spread_table.h"
 #include "pe_exponentiator.h"
@@ -29,8 +30,10 @@ class PolySection
         m_millisecond = 0.0f;
   uint32_t m_uVoice = 0, m_key_active = 0;
   PolySection();
-  void init(exponentiator *_convert, LayerSignalCollection *_z_self, float *_reference, const float _ms,
-            const float _gateRelease, const float _samplerate);
+  void init(GlobalSignals *_globalsignals, exponentiator *_convert, Engine::Handle::Time_Handle *_time,
+            LayerSignalCollection *_z_self, float *_reference, const float _ms, const float _gateRelease,
+            const float _samplerate);
+  void add_copy_sync_id(const uint32_t _smootherId, const uint32_t _signalId);
   void add_copy_audio_id(const uint32_t _smootherId, const uint32_t _signalId);
   void add_copy_fast_id(const uint32_t _smootherId, const uint32_t _signalId);
   void add_copy_slow_id(const uint32_t _smootherId, const uint32_t _signalId);
@@ -41,10 +44,9 @@ class PolySection
   void render_audio(const float _mute);
   void render_feedback(const LayerSignalCollection &_z_other);
   void render_fast();
-  void render_slow(const float _masterTune);
-  bool keyDown(const uint32_t _voiceId, const uint32_t _unisonIndex, const bool _stolen, const float _tune,
-               const float _vel);
-  void keyUp(const uint32_t _voiceId, const uint32_t _unisonIndex, const float _tune, const float _vel);
+  void render_slow();
+  bool keyDown(PolyKeyEvent *_event);
+  void keyUp(PolyKeyEvent *_event);
   void resetEnvelopes();
   void flushDSP();
   void resetDSP();
@@ -54,7 +56,9 @@ class PolySection
   SmootherHandle<C15::Smoothers::Poly_Sync, C15::Smoothers::Poly_Audio, C15::Smoothers::Poly_Fast,
                  C15::Smoothers::Poly_Slow>
       m_smoothers;
+  GlobalSignals *m_globalsignals;
   exponentiator *m_convert;
+  Engine::Handle::Time_Handle *m_time;
   LayerSignalCollection *m_z_self;
   UnisonSpreadTable<C15::Config::total_polyphony> m_spread;
   Engine::Envelopes::SplitEnvelope<C15::Config::local_polyphony> m_env_a, m_env_b;
@@ -67,12 +71,15 @@ class PolySection
   Engine::PolyOutputMixer m_outputmixer;
   NlToolbox::Curves::Shaper_1_BP m_comb_decayCurve, m_svf_LBH1Curve, m_svf_LBH2Curve;
   NlToolbox::Curves::Shaper_2_BP m_svf_resCurve;
+  ProtoSmoother m_mono_glide;
   const float m_svf_resFactor = 1.0f / 60.0f;
-  float m_shift[C15::Config::local_polyphony] = {}, m_key_tune[C15::Config::local_polyphony] = {},
-        m_comb_decay_times[2] = {}, m_master_tune = 0.0f, m_samplerate, m_nyquist;
-  uint32_t m_unison_index[C15::Config::local_polyphony] = {};
+  float m_note_pitch[C15::Config::local_polyphony] = {}, m_base_pitch[C15::Config::local_polyphony] = {},
+        m_shift[C15::Config::local_polyphony] = {}, m_key_tune[C15::Config::local_polyphony] = {},
+        m_last_key_tune[C15::Config::local_polyphony] = {}, m_comb_decay_times[2] = {}, m_samplerate, m_nyquist;
+  uint32_t m_key_position[C15::Config::local_polyphony] = {}, m_unison_index[C15::Config::local_polyphony] = {};
   const uint32_t m_voices = C15::Config::local_polyphony;
   float evalNyquist(const float _value);
+  float evalScale(const uint32_t _voiceId);
   void postProcess_poly_audio(const uint32_t _voiceId, const float _mute);
   void postProcess_poly_fast(const uint32_t _voiceId);
   void postProcess_mono_fast();
@@ -83,5 +90,6 @@ class PolySection
   void stopEnvelopes(const uint32_t _voiceId, const float _pitch, const float _vel);
   void updateEnvLevels(const uint32_t _voiceId);
   void updateEnvTimes(const uint32_t _voiceId);
+  void updateNotePitch(const uint32_t _voiceId);
   void setSlowFilterCoefs(const uint32_t _voiceId);
 };

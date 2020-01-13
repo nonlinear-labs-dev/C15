@@ -10,7 +10,7 @@ function guid() {
 };
 
 function MacroIDToIndex(mcID) {
-  switch(mcID) {
+  switch(Number(mcID)) {
     case 243:
       return 0;
     case 244:
@@ -83,7 +83,9 @@ class ServerProxy {
       var uuid = serverProxy.getValueForKeyFromMessage(message, "UUID");
       var name = serverProxy.getValueForKeyFromMessage(message, "NAME");
 
-      var mc = model.mcs[MacroIDToIndex(id)];
+      var paramNumber = id.split("-")[1];
+
+      var mc = model.mcs[MacroIDToIndex(paramNumber)];
       if(mc !== undefined) {
         mc.setName(name);
         if(uuid !== serverProxy.uuid.uuid || uuid === "FORCE") {

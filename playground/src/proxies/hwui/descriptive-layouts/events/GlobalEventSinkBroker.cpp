@@ -90,10 +90,8 @@ namespace DescriptiveLayouts
       }
     });
 
-    registerEvent(EventSinks::ToggleVoiceGroupWithParameterSelection, [eb]() {
-      auto scope = SwitchVoiceGroupButton::createToggleVoiceGroupWithParameterHighlightScope();
-      Application::get().getHWUI()->toggleCurrentVoiceGroupAndUpdateParameterSelection(scope->getTransaction());
-    });
+    registerEvent(EventSinks::ToggleVoiceGroupWithParameterSelection,
+                  []() { SwitchVoiceGroupButton::toggleVoiceGroup(); });
 
     registerEvent(EventSinks::ToggleVoiceGroup, [eb]() { Application::get().getHWUI()->toggleCurrentVoiceGroup(); });
 
@@ -240,13 +238,16 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::OpenPartScreen, [hwui, eb]() {
-      if(eb->getType() != SoundType::Split)
-        eb->undoableSelectParameter({ 358, Application::get().getHWUI()->getCurrentVoiceGroup() });
-      else
-        eb->undoableSelectParameter({ 356, VoiceGroup::Global });
+      eb->undoableSelectParameter({ 358, Application::get().getHWUI()->getCurrentVoiceGroup() });
     });
 
     registerEvent(EventSinks::OpenMasterParameter, [eb] { eb->undoableSelectParameter({ 247, VoiceGroup::Global }); });
+
+    registerEvent(EventSinks::InitSound, [eb, hwui] {
+      auto scope = eb->getParent()->getUndoScope().startTransaction("Init Sound");
+      eb->undoableInitSound(scope->getTransaction());
+      Application::get().getHWUI()->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
+    });
 
     registerEvent(EventSinks::OpenUnisonParameter, [hwui, eb]() {
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();

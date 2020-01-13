@@ -6,7 +6,7 @@
 #include <parameters/PitchbendParameter.h>
 #include <parameters/AftertouchParameter.h>
 
-HardwareSourcesGroup::HardwareSourcesGroup(ParameterDualGroupSet *parent)
+HardwareSourcesGroup::HardwareSourcesGroup(ParameterDualGroupSet* parent)
     : ParameterGroup(parent, { "CS", VoiceGroup::Global }, "HW Source", "Hardware Source", "Hardware Source")
 {
 }
@@ -47,8 +47,9 @@ HardwareSourcesGroup::tPhysicalControlParameters HardwareSourcesGroup::getPhysic
   tPhysicalControlParameters ret;
 
   for(auto param : getParameters())
-    if(auto physicalParam = dynamic_cast<PhysicalControlParameter *>(param))
+    if(auto physicalParam = dynamic_cast<PhysicalControlParameter*>(param))
       ret.push_back(physicalParam);
 
   return ret;
 }
+

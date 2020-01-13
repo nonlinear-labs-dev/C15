@@ -37,6 +37,11 @@ void MonoSection::init(exponentiator *_convert, LayerSignalCollection *_z_self, 
   m_reverb.init(_samplerate, 1);  // todo: upsample factor currently not dynamic ...
 }
 
+void MonoSection::add_copy_sync_id(const uint32_t _smootherId, const uint32_t _signalId)
+{
+  m_smoothers.m_copy_sync.add_copy_id(_smootherId, _signalId);
+}
+
 void MonoSection::add_copy_audio_id(const uint32_t _smootherId, const uint32_t _signalId)
 {
   m_smoothers.m_copy_audio.add_copy_id(_smootherId, _signalId);
@@ -55,6 +60,10 @@ void MonoSection::add_copy_slow_id(const uint32_t _smootherId, const uint32_t _s
 void MonoSection::start_sync(const uint32_t _id, const float _dest)
 {
   m_smoothers.start_sync(_id, _dest);
+  if(m_smoothers.m_copy_sync.m_smootherId[_id])
+  {
+    m_signals.set(m_smoothers.m_copy_sync.m_signalId[_id], _dest);
+  }
 }
 
 void MonoSection::start_audio(const uint32_t _id, const float _dx, const float _dest)
@@ -110,9 +119,9 @@ void MonoSection::render_slow()
   m_reverb.set(m_signals);
 }
 
-void MonoSection::keyDown(const float _vel)
+void MonoSection::keyDown(PolyKeyEvent *_event)
 {
-  m_flanger_env.setSegmentDest(0, 1, _vel);
+  m_flanger_env.setSegmentDest(0, 1, _event->m_velocity);
   m_flanger_env.start(0);
 }
 
@@ -194,18 +203,16 @@ void MonoSection::postProcess_fast()
   tmp_val = std::abs(m_smoothers.get(C15::Smoothers::Mono_Fast::Gap_Flt_Mix));
   tmp_wet = NlToolbox::Math::sin(NlToolbox::Constants::halfpi * tmp_val);
   tmp_dry = NlToolbox::Math::sin(NlToolbox::Constants::halfpi * (1.0f - tmp_val));
-  tmp_fb = m_smoothers.get(C15::Smoothers::Mono_Fast::Gap_Flt_Bal);
-  tmp_val = std::abs(tmp_fb);
+  tmp_val = m_smoothers.get(C15::Smoothers::Mono_Fast::Gap_Flt_Bal);
   tmp_hi_par = 0.5f + (0.5f * tmp_val);
-  tmp_lo_par = 1.0f - tmp_hi_par;
+  tmp_lo_par = 1.f - tmp_hi_par;
   tmp_hi_par = NlToolbox::Math::sin(NlToolbox::Constants::halfpi * tmp_hi_par) * NlToolbox::Constants::sqrt_two;
   tmp_lo_par = NlToolbox::Math::sin(NlToolbox::Constants::halfpi * tmp_lo_par) * NlToolbox::Constants::sqrt_two;
   tmp_val *= tmp_val;
-  tmp_hi_ser = tmp_fb > 0.0f ? tmp_val : 0.0f;
-  tmp_lo_ser = tmp_fb > 0.0f ? 0.0f : tmp_val;
+  tmp_hi_ser = m_smoothers.get(C15::Smoothers::Mono_Fast::Gap_Flt_Bal) > 0.0f ? tmp_val : 0.0f;
+  tmp_lo_ser = m_smoothers.get(C15::Smoothers::Mono_Fast::Gap_Flt_Bal) > 0.0f ? 0.0f : tmp_val;
   if(m_smoothers.get(C15::Smoothers::Mono_Fast::Gap_Flt_Mix) > 0.0f)
   {
-    // gap filter - parallel mode
     m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_HP_LP, 0.0f);
     m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_In_LP, 1.0f);
     m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_HP_Out, tmp_wet * tmp_hi_par);
@@ -214,12 +221,11 @@ void MonoSection::postProcess_fast()
   }
   else
   {
-    // gap filter - serial mode
     tmp_val = tmp_wet * tmp_hi_ser;
-    tmp_fb = 1.0f - tmp_lo_ser;
-    m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_HP_LP, tmp_fb);
+    m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_HP_LP, 1.0f - tmp_lo_ser);
     m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_In_LP, tmp_lo_ser);
-    m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_HP_Out, tmp_fb * tmp_val);
+    m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_HP_Out,
+                  m_signals.get(C15::Signals::Mono_Signals::Gap_Flt_HP_LP) * tmp_val);
     m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_LP_Out, tmp_wet - tmp_val);
     m_signals.set(C15::Signals::Mono_Signals::Gap_Flt_In_Out, (tmp_val * tmp_lo_ser) + tmp_dry);
   }

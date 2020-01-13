@@ -12,7 +12,10 @@ import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.presenters.DeviceSettingsProvider;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
@@ -46,6 +49,11 @@ public class Overlay extends OverlayLayout {
 			return EditBufferPresenterProvider.getPresenter().voiceGroup;
 		}
 
+		public boolean isLoadIntoPartEnabled() {
+			PresetManagerPresenter p = PresetManagerPresenterProvider.get().getPresenter();
+			return p.loadToPartActive;
+		}
+
 		@Override
 		protected void drawText(Context2d ctx, String text, Position left) {
 			ctx.setStrokeStyle(RGB.black().toString());
@@ -64,6 +72,27 @@ public class Overlay extends OverlayLayout {
 			RGB c = new RGBA(EditBufferPresenterProvider.getPresenter().voiceGroupIndicationColor, 0.25);
 			getPixRect().fill(ctx, c);
 			super.draw(ctx, invalidationMask);
+
+			if(isLoadIntoPartEnabled())
+			{
+				drawLoadToPartIndication(ctx, c, RGBA.black().withAlpha(0.5));
+			}
+		}
+
+		private void drawLoadToPartIndication(Context2d ctx, RGB fillColor, RGB strokeColor)
+		{
+			Rect px = getPixRect();
+			ctx.beginPath();
+			double width = px.getWidth();
+			ctx.moveTo(px.getLeft() + width / 4, px.getBottom() - 1);
+			ctx.lineTo(px.getRight() - width / 4, px.getBottom() - 1);
+			ctx.lineTo(px.getCenterPoint().getX(), px.getBottom() - px.getHeight() / 4);
+			ctx.closePath();
+			ctx.setFillStyle(fillColor.toString());
+			ctx.setLineWidth(1);
+			ctx.setStrokeStyle(strokeColor.toString());
+			ctx.fill();
+			ctx.stroke();
 		}
 
 		@Override

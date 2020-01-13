@@ -44,9 +44,9 @@ namespace nltools
 
       if(!m_queue.empty())
       {
-        auto &m = m_queue.front();
-        m();
+        auto m = std::move(m_queue.front());
         m_queue.pop_front();
+        m();
       }
 
       if(m_queue.empty())

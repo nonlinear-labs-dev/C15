@@ -57,8 +57,6 @@ namespace DescriptiveLayouts
       {
         text += m.getName() + "\n";
       }
-
-      //DebugLevel::throwException("Can't resolve ambiguity: ", text);
     }
 
     if(it == m_layouts.end())

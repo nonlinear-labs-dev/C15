@@ -107,6 +107,8 @@ void ParameterDualGroupSet::copyFrom(UNDO::Transaction *transaction, const Prese
     for(auto &g : getParameterGroups(vg))
       if(auto c = other->findParameterGroup(g->getID()))
         g->copyFrom(transaction, c);
+      else
+        g->forEachParameter([&](Parameter *p) { p->setDefaultFromHwui(transaction); });
 }
 
 Parameter *ParameterDualGroupSet::findParameterByID(const ParameterId &id) const
@@ -119,6 +121,29 @@ Parameter *ParameterDualGroupSet::findParameterByID(const ParameterId &id) const
   {
     return nullptr;
   }
+}
+
+void ParameterDualGroupSet::forEachParameter(VoiceGroup vg, const std::function<void(Parameter *)> &cb)
+{
+  for(auto g : getParameterGroups(vg))
+    for(auto p : g->getParameters())
+      cb(p);
+}
+
+void ParameterDualGroupSet::forEachParameter(const std::function<void(Parameter *)> &cb)
+{
+  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
+    for(auto g : getParameterGroups(vg))
+      for(auto p : g->getParameters())
+        cb(p);
+}
+
+void ParameterDualGroupSet::forEachParameter(const std::function<void(const Parameter *)> &cb) const
+{
+  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
+    for(auto g : getParameterGroups(vg))
+      for(auto p : g->getParameters())
+        cb(p);
 }
 
 std::map<int, Parameter *> ParameterDualGroupSet::getParametersSortedByNumber(VoiceGroup vg) const
@@ -161,8 +186,6 @@ const IntrusiveList<ParameterDualGroupSet::tParameterGroupPtr> &
 void ParameterDualGroupSet::copyFrom(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup from,
                                      VoiceGroup to)
 {
-  nltools_assertAlways(preset->getType() != SoundType::Single);
-
   for(auto myGroup : getParameterGroups(to))
   {
     if(auto other = preset->findParameterGroup({ myGroup->getID().getName(), from }))
@@ -182,29 +205,7 @@ void ParameterDualGroupSet::loadIntoVoiceGroup(UNDO::Transaction *transaction, P
 {
   nltools_assertOnDevPC(p->getType() == SoundType::Single);
 
-  super::copyFrom(transaction, p);
-
   for(auto &g : getParameterGroups(target))
     if(auto c = p->findParameterGroup({ g->getID().getName(), VoiceGroup::I }))
       g->copyFrom(transaction, c);
-
-  for(auto &g : getParameterGroups(VoiceGroup::Global))
-  {
-    for(auto &globalParam : g->getParameters())
-    {
-      try
-      {
-        if(auto presetGlobalParam = p->findParameterByID(globalParam->getID()))
-        {
-          globalParam->copyFrom(transaction, presetGlobalParam);
-        }
-      }
-      catch(...)
-      {
-        nltools::Log::warning("Parameter with id", globalParam->getID(),
-                              "not found in Preset, falling back to default");
-        globalParam->setDefaultFromHwui(transaction);
-      }
-    }
-  }
 }

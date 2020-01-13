@@ -11,7 +11,6 @@ std::vector<ParameterId> MonoParameterCarousel::getParameterIdsForMode(SoundType
     case SoundType::Split:
       return { { 364, currentVG }, { 365, currentVG }, { 366, currentVG }, { 367, currentVG } };
     case SoundType::Layer:
-      return { { 364, VoiceGroup::I }, { 365, VoiceGroup::I }, { 366, VoiceGroup::I }, { 367, currentVG } };
     case SoundType::Single:
       return { { 364, VoiceGroup::I }, { 365, VoiceGroup::I }, { 366, VoiceGroup::I }, { 367, VoiceGroup::I } };
   }

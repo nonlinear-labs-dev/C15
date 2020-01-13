@@ -119,18 +119,13 @@ void Engine::MonoReverb::set(MonoSignals &_signals)
   float tmpVar;
   float tmp_target;
   tmpVar = _signals.get(C15::Signals::Mono_Signals::Reverb_Size);
-  //    tmp_target = signals.get(SignalLabel::REV_CHO) * (tmpVar * -200.f + 311.f);
-  //    if (m_depth_target - tmp_target != 0.f)
-  //    {
-  //        m_depth_target = tmp_target;
-  //        m_depth_base = m_depth;
-  //        m_depth_diff = m_depth_target - m_depth_base;
-  //        m_depth_ramp = 0.f;
-  //    }
   tmp_target = _signals.get(C15::Signals::Mono_Signals::Reverb_Chorus) * (tmpVar * -200.f + 311.f);
   if(m_depth_target - tmp_target != 0.f)
   {
-    m_depth_inc = (m_depth_target - m_depth) * m_smooth_inc;
+    m_depth_target = tmp_target;
+    m_depth_base = m_depth;
+    m_depth_diff = m_depth_target - m_depth_base;
+    m_depth_ramp = 0.f;
   }
 
   tmp_target = tmpVar * (0.5f - std::abs(tmpVar) * -0.5f);
@@ -200,22 +195,14 @@ void Engine::MonoReverb::apply(MonoSignals &_signals, const float _rawSample_L, 
   //************************** Reverb Modulation ***************************//
   if(!m_slow_tick)
   {
-    //        if(m_depth_ramp > 1.f)                                  // Depth Smth.
-    //        {
-    //            m_depth = m_depth_target;
-    //        }
-    //        else
-    //        {
-    //            m_depth = m_depth_base + (m_depth_diff * m_depth_ramp);
-    //            m_depth_ramp += m_smooth_inc;
-    //        }
-    if(m_depth_target - m_depth != 0.f)
+    if(m_depth_ramp > 1.f)  // Depth Smth.
     {
-      m_depth += m_depth_inc;
+      m_depth = m_depth_target;
     }
     else
     {
-      m_depth = m_depth_target;
+      m_depth = m_depth_base + (m_depth_diff * m_depth_ramp);
+      m_depth_ramp += m_smooth_inc;
     }
 
     if(m_size_ramp > 1.f)  // Size Smth.

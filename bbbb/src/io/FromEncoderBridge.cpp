@@ -20,7 +20,19 @@ void FromEncoderBridge::transmit(Receiver::tMessage msg)
 
 void FromEncoderBridge::sendRotary(int8_t inc)
 {
-  nltools::msg::RotaryChangedMessage msg;
-  msg.increment = inc;
-  nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
+  if(Application::get().getOptions()->doTimeStamps())
+  {
+    nltools::msg::TimestampedRotaryChangedMessage msg;
+    msg.increment = inc;
+    msg.timestamp
+        = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch())
+              .count();
+    nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
+  }
+  else
+  {
+    nltools::msg::RotaryChangedMessage msg;
+    msg.increment = inc;
+    nltools::msg::send(nltools::msg::EndPoint::Playground, msg);
+  }
 }

@@ -18,14 +18,13 @@ using ParameterPtr = std::unique_ptr<PresetParameter>;
 class PresetParameterGroup
 {
  public:
-  PresetParameterGroup();
+  PresetParameterGroup(VoiceGroup vg);
   PresetParameterGroup(const ::ParameterGroup &other);
   PresetParameterGroup(const PresetParameterGroup &other);
   ~PresetParameterGroup();
 
   // accessors
   PresetParameter *findParameterByID(ParameterId id) const;
-  PresetParameter *findParameterByNumber(uint16_t number) const;
 
   void writeDocument(Writer &writer) const;
 
@@ -38,11 +37,14 @@ class PresetParameterGroup
     return m_parameters;
   }
 
+  VoiceGroup getVoiceGroup() const;
+
   // algorithm
   void writeDiff(Writer &writer, const GroupId &groupId, const PresetParameterGroup *other) const;
 
  protected:
   std::map<ParameterId, ParameterPtr> m_parameters;
+  VoiceGroup m_voiceGroup;
 
   friend class PresetParameterGroupSerializer;
 };

@@ -21,9 +21,6 @@ namespace nltools
                 std::make_unique<threading::ContextBoundMessageQueue>(Glib::MainContext::get_default()))
           , m_contextThread(std::bind(&WebSocketOutChannel::backgroundThread, this))
       {
-        auto logger = soup_logger_new(SOUP_LOGGER_LOG_NONE, -1);
-        soup_session_add_feature(m_soupSession.get(), SOUP_SESSION_FEATURE(logger));
-        g_object_unref(logger);
       }
 
       WebSocketOutChannel::~WebSocketOutChannel()

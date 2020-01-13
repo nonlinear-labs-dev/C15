@@ -27,6 +27,8 @@ class Window : public Gtk::Window
 
  private:
   void onFrameBufferMessageReceived(const nltools::msg::SetOLEDMessage &msg);
+  void onFrameBufferTimestampedMessageReceived(const nltools::msg::SetTimestampedOledMessage &msg);
+
   void onPanelLEDsMessageReceived(const nltools::msg::SetPanelLEDMessage &msg);
 
   Gtk::VBox m_box;

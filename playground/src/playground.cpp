@@ -5,8 +5,9 @@
 #include "Options.h"
 #include "playground-helpers.h"
 
-int main(int numArgs, char** argv)
+int main(int numArgs, char **argv)
 {
+  Glib::init();
   Gio::init();
 
   Environment::setupLocale();
@@ -17,7 +18,7 @@ int main(int numArgs, char** argv)
   ::signal(SIGKILL, Environment::printStackTrace);
 
 #ifdef _PROFILING
-  Profiler::get ().enable (true);
+  Profiler::get().enable(true);
 #endif
 
 #ifdef _TESTS

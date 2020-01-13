@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
@@ -34,6 +33,7 @@ public class BeltPresetLayout extends OverlayLayout {
 		addChild(currentPreset = new CurrentPresetNumber(this));
 		addChild(autoLoad = new LoadModeButton(this));
 		addChild(lock = new LockSymbol(this));
+		addChild(autoLoad = new LoadModeMenu(this));
 
 		layouters.add(new PresetBeltLayouterXXL(this));
 		layouters.add(new PresetBeltLayouterXL(this));
@@ -42,23 +42,6 @@ public class BeltPresetLayout extends OverlayLayout {
 		layouters.add(new PresetBeltLayouterS(this));
 		layouters.add(new PresetBeltLayouterXS(this));
 		layouters.add(new PresetBeltLayouterXXS(this));
-
-		PresetManagerPresenterProvider.get().register(p -> {
-			presenter = p;
-
-			if (showLoadModeMenu != p.showLoadModeMenu) {
-				showLoadModeMenu = p.showLoadModeMenu;
-
-				if (p.showLoadModeButton)
-					addChild(autoLoad = new LoadModeButton(this));
-				else
-					addChild(autoLoad = new LoadModeMenu(this));
-
-				requestLayout();
-			}
-
-			return true;
-		});
 	}
 
 	@Override

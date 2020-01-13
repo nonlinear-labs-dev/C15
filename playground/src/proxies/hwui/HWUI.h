@@ -86,6 +86,7 @@ class HWUI
   bool isFineAllowed();
 
   static FocusAndMode fixFocusAndModeWithAnys(FocusAndMode in);
+  static FocusAndMode removeInvalidsFromSound(FocusAndMode in);
 
   FocusAndMode restrictFocusAndMode(FocusAndMode in) const;
   FocusAndMode removeEditOnFocusChange(FocusAndMode in) const;

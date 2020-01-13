@@ -1,13 +1,13 @@
-package com.nonlinearlabs.client.world.maps.parameters.FBMixer;
+package com.nonlinearlabs.client.world.maps.parameters.Reverb;
 
 import com.nonlinearlabs.client.world.maps.MapsLayout;
 import com.nonlinearlabs.client.world.maps.parameters.ModulatableSlider;
 import com.nonlinearlabs.client.world.maps.parameters.ParameterColumn;
 
-class SVFilterColumn extends ParameterColumn {
+class SendColumn extends ParameterColumn {
 
-	SVFilterColumn(MapsLayout parent) {
+	SendColumn(MapsLayout parent) {
 		super(parent);
-		addChild(new ModulatableSlider(this, 158));
+		addChild(new ModulatableSlider(this, 344));
 	}
 }

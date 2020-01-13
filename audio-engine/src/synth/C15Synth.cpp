@@ -74,7 +74,7 @@ void C15Synth::doAudio(SampleFrame *target, size_t numFrames)
   }
 }
 
-void C15Synth::printAndResetTcdInputLog()
+void C15Synth::logStatus()
 {
   m_dsp->logStatus();
 }
@@ -170,14 +170,24 @@ void C15Synth::onUnmodulateableParameterMessage(const nltools::msg::Unmodulateab
       m_dsp->globalTimeChg(element.m_param.m_index, msg);
       return;
     case C15::Descriptors::ParameterType::Local_Unmodulateable:
-      // unison detection
-      if(element.m_param.m_index == static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Unison_Voices))
+      // poly detection
+      switch(static_cast<C15::Parameters::Local_Unmodulateables>(element.m_param.m_index))
       {
-        m_dsp->localUnisonChg(msg);
-      }
-      else
-      {
-        m_dsp->localParChg(element.m_param.m_index, msg);
+        case C15::Parameters::Local_Unmodulateables::Unison_Voices:
+          m_dsp->localUnisonVoicesChg(msg);
+          break;
+        case C15::Parameters::Local_Unmodulateables::Mono_Grp_Enable:
+          m_dsp->localMonoEnableChg(msg);
+          break;
+        case C15::Parameters::Local_Unmodulateables::Mono_Grp_Prio:
+          m_dsp->localMonoPriorityChg(msg);
+          break;
+        case C15::Parameters::Local_Unmodulateables::Mono_Grp_Legato:
+          m_dsp->localMonoLegatoChg(msg);
+          break;
+        default:
+          m_dsp->localParChg(element.m_param.m_index, msg);
+          break;
       }
       return;
     default:

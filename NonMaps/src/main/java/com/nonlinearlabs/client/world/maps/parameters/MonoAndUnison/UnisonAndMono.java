@@ -1,22 +1,18 @@
-package com.nonlinearlabs.client.world.maps.parameters.Unison;
+package com.nonlinearlabs.client.world.maps.parameters.MonoAndUnison;
 
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.ColorTable;
 import com.nonlinearlabs.client.world.RGB;
+import com.nonlinearlabs.client.world.Rect;
+import com.nonlinearlabs.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
-import com.nonlinearlabs.client.world.maps.parameters.LabelModuleHeader;
-import com.nonlinearlabs.client.world.maps.parameters.ParameterGroup;
 
-public class Unison extends ParameterGroup {
+public class UnisonAndMono extends LayoutResizingVertical {
 
-	public Unison(MapsLayout parent) {
-		super(parent, "Unison");
-		addChild(new LabelModuleHeader(this) {
-			@Override
-			public RGB getColorFont() {
-				return RGB.lighterGray();
-			}
-		});
-		addChild(new UnisonControls(this));
+	public UnisonAndMono(MapsLayout parent) {
+		super(parent);
+		addChild(new UnisonAndMonoModuleHeader(this));
+		addChild(new UnisonAndMonoControls(this));
 	}
 
 	@Override
@@ -67,5 +63,17 @@ public class Unison extends ParameterGroup {
 	@Override
 	public RGB getColorIndicator() {
 		return ColorTable.getColorIndicator();
+	}
+
+	protected void fillBackground(Context2d ctx) {
+		getPixRect().drawRoundedRect(ctx, Rect.ROUNDING_ALL, toXPixels(5), toXPixels(2), getColorModuleBackground(), getColorObjectContour());
+	}
+
+	@Override
+	public void draw(Context2d ctx, int invalidationMask) {
+		fillBackground(ctx);
+		super.draw(ctx, invalidationMask);
+		getPixRect().drawRoundedRect(ctx, Rect.ROUNDING_ALL, toXPixels(6), toXPixels(2), null,
+				getColorModuleHeaderBackground());
 	}
 }

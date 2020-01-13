@@ -111,7 +111,7 @@ class PresetManager : public ContentSection
 
   const Preset *getSelectedPreset() const;
 
-private:
+ private:
   void loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder);
   void loadInitSound(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder);
   void loadBanks(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder);

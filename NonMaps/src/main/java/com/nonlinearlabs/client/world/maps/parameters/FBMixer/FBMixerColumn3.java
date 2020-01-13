@@ -2,14 +2,14 @@ package com.nonlinearlabs.client.world.maps.parameters.FBMixer;
 
 import com.nonlinearlabs.client.world.maps.MapsLayout;
 import com.nonlinearlabs.client.world.maps.parameters.ModulatableSlider;
-import com.nonlinearlabs.client.world.maps.parameters.ModulationSourceSlider;
 import com.nonlinearlabs.client.world.maps.parameters.ParameterColumn;
+import com.nonlinearlabs.client.world.maps.parameters.SmallHorizontalDotSlider;
 
-class KeyTrackColumn extends ParameterColumn {
+class FBMixerColumn3 extends ParameterColumn {
 
-	KeyTrackColumn(MapsLayout parent) {
+	FBMixerColumn3(MapsLayout parent) {
 		super(parent);
-		addChild(new ModulatableSlider(this, 299));
-		addChild(new ModulationSourceSlider(this, 168));
+		addChild(new ModulatableSlider(this, 158));
+		addChild(new SmallHorizontalDotSlider(this, 352));
 	}
 }

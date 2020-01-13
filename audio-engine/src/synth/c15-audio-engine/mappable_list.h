@@ -3,7 +3,7 @@
 /******************************************************************************/
 /** @file       mappable_list.h
     @date
-    @version    1.7-0
+    @version    1.7-3
     @author     M. Seeber
     @brief      based on a doubly-linked list, but capable of handling multiple
                 entry and exit points and therefore multiple "sublists"
@@ -12,6 +12,144 @@
 
 #include <stdint.h>
 
+// singular sorted List
+template <uint32_t Length> class SortedList
+{
+ public:
+  uint32_t m_assigned = 0;
+  inline SortedList()
+  {
+    reset();
+  }
+  inline void reset()
+  {
+    m_assigned = 0;
+    m_head = m_tail = -1;
+    for(uint32_t i = 0; i < Length; i++)
+    {
+      m_prev[i] = m_next[i] = -1;
+    }
+  }
+  inline void appendElement(const uint32_t _element)
+  {
+    // two append scenarios:
+    if(m_assigned == 0)
+    {
+      // set first element
+      m_head = m_tail = _element;
+      m_prev[_element] = m_next[_element] = -1;
+    }
+    else
+    {
+      // append subsequent element
+      const int32_t last = m_tail;
+      m_next[last] = m_tail = _element;
+      m_prev[_element] = last;
+      m_next[_element] = -1;
+    }
+    m_assigned++;
+  }
+  inline void insertElement(const uint32_t _element)
+  {
+    // four insert scenarios:
+    if(m_assigned == 0)
+    {
+      // set first element
+      m_head = m_tail = _element;
+      m_prev[_element] = m_next[_element] = -1;
+    }
+    else if(m_head > _element)
+    {
+      // prepend element (before head)
+      const int32_t first = m_head;
+      m_prev[first] = m_head = _element;
+      m_prev[_element] = -1;
+      m_next[_element] = first;
+    }
+    else if(m_tail < _element)
+    {
+      // append subsequent element
+      const int32_t last = m_tail;
+      m_next[last] = m_tail = _element;
+      m_prev[_element] = last;
+      m_next[_element] = -1;
+    }
+    else
+    {
+      // find element position between head and tail
+      for(int32_t entry = m_head; m_next[entry] != -1; entry = m_next[entry])
+      {
+        if((entry < _element) && (m_next[entry] > _element))
+        {
+          // found two neighboring entries for insertion
+          m_next[_element] = m_next[entry];
+          m_next[entry] = _element;
+          m_prev[_element] = entry;
+          m_prev[m_next[_element]] = _element;
+          break;
+        }
+      }
+    }
+    m_assigned++;
+  }
+  inline void removeElement(const uint32_t _element)
+  {
+    // one invalid removal scenario:
+    if(m_assigned == 0)
+    {
+      // ignore removal from empty list
+      return;
+    }
+    // four valid removal scenarios:
+    const int32_t prev = m_prev[_element], next = m_next[_element];
+    m_prev[_element] = m_next[_element] = -1;
+    const uint32_t condition = (prev == -1 ? 1 : 0) + (next == -1 ? 2 : 0);
+    switch(condition)
+    {
+      case 0:
+        // two neighbors, element is in list of at least length 3
+        m_next[prev] = next;
+        m_prev[next] = prev;
+        break;
+      case 1:
+        // one neighbor, element is first in list of at least length 2
+        m_head = next;
+        m_prev[next] = -1;
+        break;
+      case 2:
+        // one neighbor, element is last in list of at least length 2
+        m_tail = prev;
+        m_next[prev] = -1;
+        break;
+      case 3:
+        // no neighbors, element is last in list
+        m_head = m_tail = -1;
+        break;
+    }
+    m_assigned--;
+  }
+  inline const bool isFirstElement(const uint32_t _element)
+  {
+    return m_head == _element;
+  }
+  inline const int32_t getFirstElement()
+  {
+    return m_head;
+  }
+  inline const bool isLastElement(const uint32_t _element)
+  {
+    return m_tail == _element;
+  }
+  inline const int32_t getLastElement()
+  {
+    return m_tail;
+  }
+
+ private:
+  int32_t m_prev[Length] = {}, m_next[Length] = {}, m_head = -1, m_tail = -1;
+};
+
+// mappable list (multiple assignments)
 // specify number of sublists and overall length (number of assignable items)
 template <uint32_t Sublists, uint32_t Length> class MappableList
 {

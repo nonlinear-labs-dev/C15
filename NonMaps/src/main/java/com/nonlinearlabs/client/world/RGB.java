@@ -98,4 +98,8 @@ public class RGB {
 		return new RGB(22, 22, 30);
 	}
 
+	public RGBA withAlpha(double alpha) {
+		return new RGBA(this, alpha);
+	}
+
 }

@@ -9,7 +9,7 @@ Throttler::Throttler(Expiration::Duration maxDelay)
 void Throttler::doTask(Throttler::Task&& task)
 {
   m_isPending = true;
-  m_task = task;
+  m_task = std::move(task);
 
   if(!m_expiration.isPending())
     m_expiration.refresh(std::chrono::milliseconds(1));
@@ -22,13 +22,11 @@ bool Throttler::isPending() const
 
 void Throttler::delayedCallback()
 {
-  Task t;
-  std::swap(t, m_task);
   m_isPending = false;
 
-  if(t)
+  if(Task task = std::move(m_task))
   {
-    t();
+    task();
     m_expiration.refresh(m_maxDelay);
   }
 }

@@ -4,7 +4,7 @@ After=syslog.target network.target systemd-modules-load.service install-update-f
 Wants=install-update-from-usb.service internalstorage.mount
 
 [Service]
-ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/playground/playground --bbbb=localhost
+ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/playground/playground --audio-engine-host=192.168.10.10 --bbbb-host=localhost --layouts=/nonlinear/playground/resources/templates
 ExecStop=-@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/scripts/soled-exit-PG-message.sh
 ExecStopPost=-@CMAKE_INSTALL_FULL_LIBEXECDIR@/nonlinear/scripts/playground-stop-post.sh
 Restart=on-failure

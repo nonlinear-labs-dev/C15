@@ -22,7 +22,8 @@ namespace nltools
     ENUM(MessageType, uint16_t, Preset, Morph_A, Morph_B, Parameter, EditControl, MorphPosition, Setting, Notification,
          Assertion, Request,
 
-         SetRibbonLED, SetPanelLED, SetOLED, RotaryChanged, ButtonChanged, LPC, Ping,
+         SetRibbonLED, SetPanelLED, SetOLED, SetOLEDTimestamped, RotaryChanged, TimestampedRotaryChanged, ButtonChanged,
+         LPC, Ping,
 
          SinglePreset, LayerPreset, SplitPreset, UnmodulateableParameter, ModulateableParameter, MacroControlParameter,
          HWAmountParameter, HWSourceParameter,
@@ -86,6 +87,7 @@ namespace nltools
     };
 
     void init(const Configuration &conf);
+    Configuration swapConfig(const Configuration &conf);
     void deInit();
 
     // wait at most timeOut for the sigc::connection to be established

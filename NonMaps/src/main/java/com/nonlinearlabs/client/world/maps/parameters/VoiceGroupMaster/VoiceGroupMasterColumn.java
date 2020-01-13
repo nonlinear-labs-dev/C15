@@ -28,20 +28,10 @@ public class VoiceGroupMasterColumn extends ParameterColumn {
         }
     }
 
-    private class ToFX extends Parameter {
-
-        private ToFX(MapsLayout parent) {
-            super(parent, 362);
-            addChild(new UnModulateableParameterName(this));
-            addChild(new NumericalControlSmall(this, getParameterNumber()));
-        }
-    }
-
     public VoiceGroupMasterColumn(MapsLayout parent) {
         super(parent);
         addChild(new Level(this));
         addChild(new Tune(this));
-        addChild(new ToFX(this));
     }
 
 }

@@ -8,7 +8,7 @@ import com.nonlinearlabs.client.world.maps.parameters.ParameterColumn;
 import com.nonlinearlabs.client.world.maps.parameters.SizeLinkedParameterColumn;
 import com.nonlinearlabs.client.world.maps.parameters.SmallKnobParameter;
 
-class DriveColumn extends DoubleParameterColumn {
+class FBMixerColumn6 extends DoubleParameterColumn {
 
 	class DriveParameterColumn extends SizeLinkedParameterColumn {
 
@@ -63,7 +63,7 @@ class DriveColumn extends DoubleParameterColumn {
 		}
 	}
 
-	DriveColumn(MapsLayout parent) {
+	FBMixerColumn6(MapsLayout parent) {
 		super(parent);
 		addChild(new DriveParameterColumn(this));
 		addChild(new FoldAndAsymetryColumn(this));

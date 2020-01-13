@@ -3,7 +3,7 @@
 /******************************************************************************/
 /** @file       ae_global_section.h
     @date
-    @version    1.7-0
+    @version    1.7-3
     @author     M. Seeber
     @brief      new container for all global parameters and dsp
     @todo
@@ -20,6 +20,7 @@ class GlobalSection
   float m_out_l = 0.0f, m_out_r = 0.0f;
   GlobalSection();
   void init(const float _sampleInc);
+  void add_copy_sync_id(const uint32_t _smootherId, const uint32_t _signalId);
   void add_copy_audio_id(const uint32_t _smootherId, const uint32_t _signalId);
   void add_copy_fast_id(const uint32_t _smootherId, const uint32_t _signalId);
   void add_copy_slow_id(const uint32_t _smootherId, const uint32_t _signalId);
@@ -27,7 +28,6 @@ class GlobalSection
   void start_audio(const uint32_t _id, const float _dx, const float _dest);
   void start_fast(const uint32_t _id, const float _dx, const float _dest);
   void start_slow(const uint32_t _id, const float _dx, const float _dest);
-  float key_position(const uint32_t _pos);
   void render_audio(const float _left, const float _right);
   void render_fast();
   void render_slow();
@@ -46,5 +46,4 @@ class GlobalSection
   void postProcess_audio();
   void postProcess_fast();
   void postProcess_slow();
-  float evalScale(const uint32_t _pos);
 };

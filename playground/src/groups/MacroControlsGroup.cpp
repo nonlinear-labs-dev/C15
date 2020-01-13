@@ -33,6 +33,35 @@ void MacroControlsGroup::init()
                                 ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(), 0.4, 100, 1000));
 }
 
+ParameterId MacroControlsGroup::modSrcToSmoothingId(MacroControls mcId)
+{
+  switch(mcId)
+  {
+    case MacroControls::MC1:
+      return ParameterId(324, VoiceGroup::Global);
+
+    case MacroControls::MC2:
+      return ParameterId(325, VoiceGroup::Global);
+
+    case MacroControls::MC3:
+      return ParameterId(326, VoiceGroup::Global);
+
+    case MacroControls::MC4:
+      return ParameterId(327, VoiceGroup::Global);
+
+    case MacroControls::MC5:
+      return ParameterId(370, VoiceGroup::Global);
+
+    case MacroControls::MC6:
+      return ParameterId(372, VoiceGroup::Global);
+
+    default:
+      break;
+  }
+
+  return ParameterId::invalid();
+}
+
 ParameterId MacroControlsGroup::modSrcToParamId(MacroControls src)
 {
   switch(src)

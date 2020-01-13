@@ -47,39 +47,25 @@ TEST_CASE("Parameter Dual/Global affiliation - Layer Sound")
 {
   TestHelper::forEachParameter(
       [](const Parameter* parameter) {
-        auto ret = EditBuffer::isDualParameterForSoundType(parameter, SoundType::Layer);
+        auto isDual = EditBuffer::isDualParameterForSoundType(parameter, SoundType::Layer);
 
         if(GroupAffiliation::isRealGlobal(parameter))
         {
-          REQUIRE_FALSE(ret);
+          REQUIRE_FALSE(isDual);
         }
         else
         {
           if(MonoGroup::isMonoParameter(parameter))
           {
-            if(MonoGroup::isMonoGlideParameter(parameter))
-            {
-              REQUIRE(ret);
-            }
-            else
-            {
-              REQUIRE_FALSE(ret);
-            }
+            REQUIRE_FALSE(isDual);
           }
           else if(UnisonGroup::isUnisonParameter(parameter))
           {
-            if(UnisonGroup::isUnisonVoicesParameter(parameter))
-            {
-              REQUIRE_FALSE(ret);
-            }
-            else
-            {
-              REQUIRE(ret);
-            }
+            REQUIRE_FALSE(isDual);
           }
           else
           {
-            REQUIRE(ret);
+            REQUIRE(isDual);
           }
         }
       },

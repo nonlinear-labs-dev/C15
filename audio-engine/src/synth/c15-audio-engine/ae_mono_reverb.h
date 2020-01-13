@@ -62,7 +62,6 @@ namespace Engine
     float m_mod_1a, m_mod_2a, m_mod_1b, m_mod_2b;
     float m_lfo_omega_1, m_lfo_omega_2;
     float m_lfo_stateVar_1, m_lfo_stateVar_2;
-    float m_depth;
 
     //****************************** Loop Filter *****************************//
     float m_warpConst_PI;
@@ -120,7 +119,7 @@ namespace Engine
     //******************************* Smoothing ******************************//
     float m_smooth_inc;
 
-    float m_depth_inc;
+    float m_depth;
     float m_depth_ramp;
     float m_depth_target;
     float m_depth_base;

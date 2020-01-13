@@ -10,6 +10,7 @@ namespace nltools
   namespace msg
   {
     class RotaryChangedMessage;
+    class TimestampedRotaryChangedMessage;
   }
 }
 
@@ -29,18 +30,18 @@ class RotaryEncoder
 
   void fake(tIncrement amount);
   sigc::connection onRotaryChanged(sigc::slot<void, tIncrement> slot);
-
-  static void registerTests();
+  int64_t resetOldestPendingTimestamp();
 
  private:
   void onMessage(const nltools::msg::RotaryChangedMessage &msg);
-  void open();
-  tIncrement speedUp(tIncrement inc);
+  void onMessageTimestamped(const nltools::msg::TimestampedRotaryChangedMessage &msg);
+
   void applyIncrement(tIncrement currentInc);
 
   Signal<void, tIncrement> m_signalRotaryChanged;
   Throttler m_throttler;
   int m_accumulatedIncs = 0;
+  uint64_t m_oldestPendingTimestamp = 0;
 
   sigc::connection m_stress;
 };

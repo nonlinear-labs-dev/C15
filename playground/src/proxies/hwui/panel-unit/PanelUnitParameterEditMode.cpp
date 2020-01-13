@@ -550,14 +550,18 @@ void PanelUnitParameterEditMode::letMacroControlTargetsBlink()
   auto &panelUnit = Application::get().getHWUI()->getPanelUnit();
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
   Parameter *selParam = editBuffer->getSelected();
+  auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
 
   if(auto mc = dynamic_cast<MacroControlParameter *>(selParam))
   {
     for(auto t : mc->getTargets())
     {
-      auto buttonID = m_mappings.findButton(t->getID().getNumber());
-      if(buttonID != Buttons::INVALID)
-        panelUnit.getLED(buttonID)->setState(TwoStateLED::BLINK);
+      if(t->getID().getVoiceGroup() == currentVG)
+      {
+        auto buttonID = m_mappings.findButton(t->getID().getNumber());
+        if(buttonID != Buttons::INVALID)
+          panelUnit.getLED(buttonID)->setState(TwoStateLED::BLINK);
+      }
     }
 
     m_connectionToMacroControl
