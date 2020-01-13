@@ -31,7 +31,6 @@
 								<option id="com.crt.advproject.gcc.arch.1333432797" name="Architecture" superClass="com.crt.advproject.gcc.arch" value="com.crt.advproject.gcc.target.cm4" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.thumb.1814022768" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.2143702141" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="__NEW_PEDALS__"/>
 									<listOptionValue builtIn="false" value="no__NO_USB_MIDI__"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="__REDLIB__"/>
