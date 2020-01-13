@@ -26,7 +26,6 @@
 #define HW_SOURCE_ID_RIBBON_2   7
 #define HW_SOURCE_ID_LAST_KEY   8
 
-
 //------- public functions
 
 void ADC_WORK_Init(void);

@@ -14,7 +14,7 @@
 
 //===========================
 
-#define SW_VERSION 205  // fix for max. Velocity und max. HWSource, added keybed press sent to BBBB
+#define SW_VERSION 205  // fix for max. Velocity und max. HWSource, added keybed press sent to BBBB \
                         // Velocity-Auflösung 14 Bit statt 12 Bit
 
 //===========================
@@ -22,18 +22,18 @@
 // #define BB_MSG_TYPE_PRESET_DIRECT 0x0100  // direction: input; arguments(uint16): N, Nx data
 // #define BB_MSG_TYPE_MORPH_SET_A   0x0200  // not used
 // #define BB_MSG_TYPE_MORPH_SET_B   0x0300  // not used
-#define BB_MSG_TYPE_PARAMETER     0x0400  // direction: output; arguments(uint16): 2, 1x parameter ID , 1x data
-#define BB_MSG_TYPE_EDIT_CONTROL  0x0500  // not used
+#define BB_MSG_TYPE_PARAMETER    0x0400  // direction: output; arguments(uint16): 2, 1x parameter ID , 1x data
+#define BB_MSG_TYPE_EDIT_CONTROL 0x0500  // not used
 // #define BB_MSG_TYPE_MORPH_POS     0x0600  // not used
-#define BB_MSG_TYPE_SETTING       0x0700  // direction: input;  argument (uint16): 2, 1x SETTING_ID_*, 1x data
-#define BB_MSG_TYPE_NOTIFICATION  0x0800  // direction: output; arguments(uint16): 2, 1x type, 1x value
-#define BB_MSG_TYPE_ASSERTION     0x0900  // direction: output; arguments(uint16): n (string)
-#define BB_MSG_TYPE_REQUEST       0x0A00  // direction: input;  argument (uint16): 1, 1x REQUEST_ID_*
-#define BB_MSG_TYPE_HEARTBEAT     0x0B00  // direction: output; arguments(uint16): 4, 4x uint16 (==uint64)
-#define BB_MSG_TYPE_SENSORS_RAW   0x0E00  // direction: output; arguments(uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
+#define BB_MSG_TYPE_SETTING      0x0700  // direction: input;  argument (uint16): 2, 1x SETTING_ID_*, 1x data
+#define BB_MSG_TYPE_NOTIFICATION 0x0800  // direction: output; arguments(uint16): 2, 1x type, 1x value
+#define BB_MSG_TYPE_ASSERTION    0x0900  // direction: output; arguments(uint16): n (string)
+#define BB_MSG_TYPE_REQUEST      0x0A00  // direction: input;  argument (uint16): 1, 1x REQUEST_ID_*
+#define BB_MSG_TYPE_HEARTBEAT    0x0B00  // direction: output; arguments(uint16): 4, 4x uint16 (==uint64)
+#define BB_MSG_TYPE_SENSORS_RAW  0x0E00  // direction: output; arguments(uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
 // TODO implement the following new types in BBBB/Playground also:
-#define BB_MSG_TYPE_MUTESTATUS  0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
-#define BB_MSG_TYPE_RIBBON_CAL  0x0D00  // direction: input; arguments(uint16): 134, 134x data [2x (33x 34x)]
+#define BB_MSG_TYPE_MUTESTATUS 0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
+#define BB_MSG_TYPE_RIBBON_CAL 0x0D00  // direction: input; arguments(uint16): 134, 134x data [2x (33x 34x)]
 
 //----- Setting Ids:
 
@@ -63,13 +63,13 @@
 #define SETTING_ID_PEDAL_3_TYPE 28  // ... SwitchClosing = 2
 #define SETTING_ID_PEDAL_4_TYPE 29  // ... SwitchOpening = 3
 
-#define SETTING_ID_AFTERTOUCH_CURVE          30  // SOFT = 0, NORMAL = 1, HARD = 2
-#define SETTING_ID_BENDER_CURVE              31  // SOFT = 0, NORMAL = 1, HARD = 2
+#define SETTING_ID_AFTERTOUCH_CURVE 30  // SOFT = 0, NORMAL = 1, HARD = 2
+#define SETTING_ID_BENDER_CURVE     31  // SOFT = 0, NORMAL = 1, HARD = 2
 // #define SETTING_ID_PITCHBEND_ON_PRESSED_KEYS 32  // OFF = 0, ON = 1
 // #define SETTING_ID_EDIT_SMOOTHING_TIME       33  // ==> tTcdRange(0, 16000)
 // #define SETTING_ID_PRESET_GLITCH_SUPPRESSION 34  // OFF = 0, ON = 1
-#define SETTING_ID_SOFTWARE_MUTE_OVERRIDE    35  // Software Mute Override
-#define SETTING_ID_SEND_RAW_SENSOR_DATA      36  // direction: input; arguments(uint16): 1, flag (!= 0)
+#define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 35  // Software Mute Override
+#define SETTING_ID_SEND_RAW_SENSOR_DATA   36  // direction: input; arguments(uint16): 1, flag (!= 0)
 
 //----- Request Ids:
 

@@ -29,7 +29,7 @@ static uint32_t velTable[65] = {};  // converts time difference (timeInUs) to ve
 void POLY_Generate_VelTable(uint32_t curve)
 {
   float_t vel_max = 16383.0;  // the hyperbola goes from vel_max (at 0) to 0 (at i_max)
-  float_t b = 0.5;
+  float_t b       = 0.5;
 
   switch (curve)  // b defines the curve shape
   {

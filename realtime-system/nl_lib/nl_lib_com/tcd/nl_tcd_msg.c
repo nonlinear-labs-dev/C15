@@ -78,7 +78,7 @@ void MSG_SendMidiBuffer(void)
     else  // USB failure or "traffic jam"
     {
       DBG_Led_Error_On();  // Turn on ERROR LED for USB send problem
-      COOS_Task_Add(DBG_Led_Error_Off, 1000*8, 0);
+      COOS_Task_Add(DBG_Led_Error_Off, 1000 * 8, 0);
     }
 
     buf = 0;  /// Achtung - damit gibt es beim Scheitern keinen zweiten Sendeversuch !!! Wir beobachten die Error-LED
