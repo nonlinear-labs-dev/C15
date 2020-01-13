@@ -11,7 +11,7 @@ message("building C15 firmware version: ${PLAYGROUND_VERSION}")
 
 OPTION(BUILD_AUDIOENGINE "Enable building of the audio-engine sub project" OFF)
 OPTION(BUILD_BBBB "Enable building of the BeagleBoneBlack-Bridge sub project" ON)
-OPTION(BUILD_PLAYGROUND "Enable building of the Playground and NonMaps sub projects" OFF)
+OPTION(BUILD_PLAYGROUND "Enable building of the Playground and NonMaps sub projects" ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -Wno-deprecated-declarations")
 
