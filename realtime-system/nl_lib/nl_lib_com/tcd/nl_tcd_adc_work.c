@@ -10,7 +10,6 @@
 
 #include "nl_tcd_adc_work.h"
 #include "nl_tcd_msg.h"
-#include "espi/dev/nl_espi_dev_pedals.h"
 #include "ipc/emphase_ipc.h"
 
 #include "ipc/emphase_ipc.h"
@@ -18,6 +17,7 @@
 
 #include "nl_tcd_test.h"
 #include "nl_tcd_interpol.h"
+#include "nl_tcd_pedals.h"
 
 #define GROUND_THRESHOLD     20
 #define CHANGE_FOR_DETECTION 500
@@ -34,47 +34,6 @@
 #define AT_FACTOR    5080  // 5080 / 4096 for saturation = 100 % at 81 % of the input range
 
 static uint32_t bbSendValue[NUM_HW_SOURCES] = {};
-
-static uint32_t pedalDetected[4];
-static uint32_t tipPullup[4];
-static uint32_t inverted[4];
-static uint32_t tipActive[4];
-
-static uint32_t checkPedal[4];
-
-static uint32_t firstTime[4];
-static uint32_t finished[4];
-static uint32_t initialValueTip[4];
-static uint32_t initialValueRing[4];
-
-static uint32_t pedal1Factor;
-static uint32_t pedal2Factor;
-static uint32_t pedal3Factor;
-static uint32_t pedal4Factor;
-
-static uint32_t pedal1Min;
-static uint32_t pedal2Min;
-static uint32_t pedal3Min;
-static uint32_t pedal4Min;
-
-static uint32_t pedal1Max;
-static uint32_t pedal2Max;
-static uint32_t pedal3Max;
-static uint32_t pedal4Max;
-
-static uint32_t pedal1;
-static uint32_t lastPedal1;
-static uint32_t pedal2;
-static uint32_t lastPedal2;
-static uint32_t pedal3;
-static uint32_t lastPedal3;
-static uint32_t pedal4;
-static uint32_t lastPedal4;
-
-static uint32_t pedal1Behaviour;
-static uint32_t pedal2Behaviour;
-static uint32_t pedal3Behaviour;
-static uint32_t pedal4Behaviour;
 
 static int32_t  lastPitchbend;
 static uint32_t pitchbendZero;
@@ -253,50 +212,6 @@ void ADC_WORK_Init(void)
 {
   uint32_t i;
 
-  for (i = 0; i < 4; i++)
-  {
-    pedalDetected[i] = 0;
-    tipPullup[i]     = 0;
-    inverted[i]      = 0;
-    tipActive[i]     = 1;
-
-    checkPedal[i] = 0;
-
-    firstTime[i]        = 1;
-    finished[i]         = 0;
-    initialValueTip[i]  = 0;
-    initialValueRing[i] = 0;
-  }
-
-  pedal1Factor = 0;
-  pedal2Factor = 0;
-  pedal3Factor = 0;
-  pedal4Factor = 0;
-
-  pedal1Min = 2000;
-  pedal2Min = 2000;
-  pedal3Min = 2000;
-  pedal4Min = 2000;
-
-  pedal1Max = 2200;
-  pedal2Max = 2200;
-  pedal3Max = 2200;
-  pedal4Max = 2200;
-
-  pedal1     = 0;
-  lastPedal1 = 0;
-  pedal2     = 0;
-  lastPedal2 = 0;
-  pedal3     = 0;
-  lastPedal3 = 0;
-  pedal4     = 0;
-  lastPedal4 = 0;
-
-  pedal1Behaviour = 0;
-  pedal2Behaviour = 0;
-  pedal3Behaviour = 0;
-  pedal4Behaviour = 0;
-
   lastPitchbend = 0;
   pitchbendZero = 2048;
 
@@ -328,14 +243,9 @@ void ADC_WORK_Init(void)
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
 
+  NL_TCD_PEDALS_Init();
+
   suspend = 0;
-
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
-  //  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_PULLUP);
-
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_TIP_TO_PULLUP | PEDAL_RING_TO_PULLUP);
 }
 
 /*****************************************************************************
@@ -498,23 +408,11 @@ void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour)
 ******************************************************************************/
 void ADC_WORK_SetPedal1Behaviour(uint32_t behaviour)
 {
-  pedal1Behaviour = behaviour;
-
-  if (pedal1Behaviour == RETURN_TO_ZERO)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, 0);
-    TEST_Output(0, 0);
-  }
-  else if (pedal1Behaviour == RETURN_TO_CENTER)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, 8000);
-    TEST_Output(0, 8000);
-  }
 }
 
 uint32_t ADC_WORK_GetPedal1Behaviour(void)
 {
-  return pedal1Behaviour;
+  return 0;
 }
 
 /*****************************************************************************
@@ -523,23 +421,11 @@ uint32_t ADC_WORK_GetPedal1Behaviour(void)
 ******************************************************************************/
 void ADC_WORK_SetPedal2Behaviour(uint32_t behaviour)
 {
-  pedal2Behaviour = behaviour;
-
-  if (pedal2Behaviour == RETURN_TO_ZERO)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, 0);
-    TEST_Output(1, 0);
-  }
-  else if (pedal2Behaviour == RETURN_TO_CENTER)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, 8000);
-    TEST_Output(1, 8000);
-  }
 }
 
 uint32_t ADC_WORK_GetPedal2Behaviour(void)
 {
-  return pedal2Behaviour;
+  return 0;
 }
 
 /*****************************************************************************
@@ -548,23 +434,11 @@ uint32_t ADC_WORK_GetPedal2Behaviour(void)
 ******************************************************************************/
 void ADC_WORK_SetPedal3Behaviour(uint32_t behaviour)
 {
-  pedal3Behaviour = behaviour;
-
-  if (pedal3Behaviour == RETURN_TO_ZERO)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, 0);
-    TEST_Output(2, 0);
-  }
-  else if (pedal3Behaviour == RETURN_TO_CENTER)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, 8000);
-    TEST_Output(2, 8000);
-  }
 }
 
 uint32_t ADC_WORK_GetPedal3Behaviour(void)
 {
-  return pedal3Behaviour;
+  return 0;
 }
 
 /*****************************************************************************
@@ -573,23 +447,11 @@ uint32_t ADC_WORK_GetPedal3Behaviour(void)
 ******************************************************************************/
 void ADC_WORK_SetPedal4Behaviour(uint32_t behaviour)
 {
-  pedal4Behaviour = behaviour;
-
-  if (pedal4Behaviour == RETURN_TO_ZERO)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, 0);
-    TEST_Output(3, 0);
-  }
-  else if (pedal4Behaviour == RETURN_TO_CENTER)
-  {
-    ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, 8000);
-    TEST_Output(3, 8000);
-  }
 }
 
 uint32_t ADC_WORK_GetPedal4Behaviour(void)
 {
-  return pedal4Behaviour;
+  return 0;
 }
 
 /*****************************************************************************
@@ -750,10 +612,6 @@ void ADC_WORK_SetRawSensorMessages(uint32_t flag)
   send_raw_sensor_messages = (flag != 0);
 }
 
-/*****************************************************************************
-* @brief	ADC_WORK_Process -
-******************************************************************************/
-
 void ADC_WORK_Suspend(void)
 {
   suspend = 1;
@@ -764,6 +622,9 @@ void ADC_WORK_Resume(void)
   suspend = 0;
 }
 
+/*****************************************************************************
+* @brief  ADC_WORK_Process -
+******************************************************************************/
 void ADC_WORK_Process(void)
 {
   if (suspend)
@@ -771,7 +632,8 @@ void ADC_WORK_Process(void)
     return;
   }
 
-  if (send_raw_sensor_messages)
+#if 0
+  if (1 || send_raw_sensor_messages)
   {
     uint16_t data[13];
 
@@ -794,316 +656,65 @@ void ADC_WORK_Process(void)
     BB_MSG_WriteMessage(BB_MSG_TYPE_SENSORS_RAW, 13, data);
     BB_MSG_SendTheBuffer();
   }
+#endif
+
+#if 0
+  if (1 || send_raw_sensor_messages)
+  {
+    static uint16_t data[13];
+    static int state=0; // 0:both PU's, 1:ring PU, 2:tip PU
+    static int wait = 0;
+
+    data[0] = (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_DETECT) << 0)
+        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_DETECT) << 1)
+        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_DETECT) << 2)
+        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_DETECT) << 3);
+    data[1]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_TIP);
+    data[2]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_RING);
+    data[9]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PITCHBENDER_ADC);
+    data[10] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_AFTERTOUCH_ADC);
+    data[11] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_1_ADC);
+    data[12] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_2_ADC);
+
+
+    if (wait == 0)
+    {
+      switch (state)
+      {
+      case 0 :
+        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_PULLUP);
+        state = 1;
+        wait=03;
+        // data[3] = data[1]; // tip with PU
+        // data[4] = data[2]; // ring with PU
+        break;
+      case 1 :
+        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_TIP_TO_PULLUP);
+        state = 2;
+        wait=07;
+        data[5] = data[1];  // tip OPEN
+        data[6] = data[2];  // ring with PU
+        break;
+      case 2 :
+        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_PULLUP);
+        state = 1;
+        wait=07;
+        data[7] = data[1];  // tip with PU
+        data[8] = data[2];  // ring OPEN
+        break;
+      }
+      BB_MSG_WriteMessage(BB_MSG_TYPE_SENSORS_RAW, 13, data);
+      BB_MSG_SendTheBuffer();
+    }
+    else
+    {
+      --wait;
+    }
+  }
+#endif
 
   int32_t value;
   int32_t valueToSend;
-
-  //==================== Pedal 1
-
-  if (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_DETECT))
-  {
-    if (checkPedal[0] == 1)
-    {
-      /// CheckPedal(0);
-    }
-    else if (pedalDetected[0] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
-    {
-#ifndef __NEW_PEDALS__
-      if (tipPullup[0] == 1)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_TIP_TO_5V);
-      }
-      else if (tipPullup[0] == 0)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_5V);
-      }
-#endif
-      pedal1Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
-      pedal1Max = 2200;
-
-      pedalDetected[0] = 1;
-    }
-    else  // normal mode
-    {
-      if (tipActive[0])
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_TIP);
-      }
-      else
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_RING);
-      }
-
-      if (value < pedal1Min)
-      {
-        pedal1Min    = value;
-        pedal1Factor = (1024 * 16000) / (pedal1Max - pedal1Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal1Min langsam wieder incrementieren, um auch an steigende Minimalwerte anpassen zu können ?
-      else if (value > pedal1Max)
-      {
-        pedal1Max    = value;
-        pedal1Factor = (1024 * 16000) / (pedal1Max - pedal1Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal1Max langsam wieder decrementieren, um auch an fallende Maximalwerte anpassen zu können ?
-
-      if (((value > pedal1)                       // input signal is rising
-           && ((pedal1 > lastPedal1)              // AND output was rising before
-               || (value > pedal1 + DELTA)))      // OR difference is larger than delta
-          || ((value < pedal1)                    // OR input signal is falling
-              && ((pedal1 < lastPedal1)           // AND output was falling before
-                  || (value + DELTA < pedal1))))  // OR difference is larger than delta
-      {
-        valueToSend = ((value - pedal1Min) * pedal1Factor) >> 10;
-
-        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_1, valueToSend);
-        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_1, valueToSend);
-        TEST_Output(0, valueToSend);
-
-        lastPedal1 = pedal1;
-        pedal1     = value;
-      }
-    }
-  }
-  else
-  {
-    if (pedalDetected[0] == 1)
-    {
-#ifndef __NEW_PEDALS__
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_DEFAULT_OFF);
-#endif
-      pedalDetected[0] = 0;
-    }
-  }
-
-  //==================== Pedal 2
-
-  if (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_DETECT))
-  {
-    if (checkPedal[1] == 1)
-    {
-      /// CheckPedal(1);
-    }
-    else if (pedalDetected[1] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
-    {
-#ifndef __NEW_PEDALS__
-      if (tipPullup[0] == 1)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_TIP_TO_5V);
-      }
-      else if (tipPullup[0] == 0)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_RING_TO_5V);
-      }
-#endif
-
-      pedal2Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
-      pedal2Max = 2200;
-
-      pedalDetected[1] = 1;
-    }
-    else  // normal mode
-    {
-      if (tipActive[1])
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_TIP);
-      }
-      else
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_RING);
-      }
-
-      if (value < pedal2Min)
-      {
-        pedal2Min    = value;
-        pedal2Factor = (1024 * 16000) / (pedal2Max - pedal2Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal2Min langsam wieder incrementieren, um auch an steigende Minimalwerte anpassen zu können ?
-      else if (value > pedal2Max)
-      {
-        pedal2Max    = value;
-        pedal2Factor = (1024 * 16000) / (pedal2Max - pedal2Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal2Max langsam wieder decrementieren, um auch an fallende Maximalwerte anpassen zu können ?
-
-      if (((value > pedal2)                       // input signal is rising
-           && ((pedal2 > lastPedal2)              // AND output was rising before
-               || (value > pedal2 + DELTA)))      // OR difference is larger than delta
-          || ((value < pedal2)                    // OR input signal is falling
-              && ((pedal2 < lastPedal2)           // AND output was falling before
-                  || (value + DELTA < pedal2))))  // OR difference is larger than delta
-      {
-        valueToSend = ((value - pedal2Min) * pedal2Factor) >> 10;
-
-        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_2, valueToSend);
-        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_2, valueToSend);
-        TEST_Output(1, valueToSend);
-
-        lastPedal2 = pedal2;
-        pedal2     = value;
-      }
-    }
-  }
-  else
-  {
-    if (pedalDetected[1] == 1)
-    {
-#ifndef __NEW_PEDALS__
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_STATE, PEDAL_DEFAULT_OFF);
-#endif
-      pedalDetected[1] = 0;
-    }
-  }
-
-  //==================== Pedal 3
-
-  if (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_DETECT))
-  {
-    if (checkPedal[2] == 1)
-    {
-      /// CheckPedal(2);
-    }
-    else if (pedalDetected[2] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
-    {
-#ifndef __NEW_PEDALS__
-      if (tipPullup[0] == 1)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_TIP_TO_5V);
-      }
-      else if (tipPullup[0] == 0)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_RING_TO_5V);
-      }
-#endif
-
-      pedal3Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
-      pedal3Max = 2200;
-
-      pedalDetected[2] = 1;
-    }
-    else  // normal mode
-    {
-      if (tipActive[2])
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_TIP);
-      }
-      else
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_RING);
-      }
-
-      if (value < pedal3Min)
-      {
-        pedal3Min    = value;
-        pedal3Factor = (1024 * 16000) / (pedal3Max - pedal3Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal3Min langsam wieder incrementieren, um auch an steigende Minimalwerte anpassen zu können ?
-      else if (value > pedal3Max)
-      {
-        pedal3Max    = value;
-        pedal3Factor = (1024 * 16000) / (pedal3Max - pedal3Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal3Max langsam wieder decrementieren, um auch an fallende Maximalwerte anpassen zu können ?
-
-      if (((value > pedal3)                       // input signal is rising
-           && ((pedal3 > lastPedal3)              // AND output was rising before
-               || (value > pedal3 + DELTA)))      // OR difference is larger than delta
-          || ((value < pedal3)                    // OR input signal is falling
-              && ((pedal3 < lastPedal3)           // AND output was falling before
-                  || (value + DELTA < pedal3))))  // OR difference is larger than delta
-      {
-        valueToSend = ((value - pedal3Min) * pedal3Factor) >> 10;
-
-        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_3, valueToSend);
-        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_3, valueToSend);
-        TEST_Output(2, valueToSend);
-
-        lastPedal3 = pedal3;
-        pedal3     = value;
-      }
-    }
-  }
-  else
-  {
-    if (pedalDetected[2] == 1)
-    {
-#ifndef __NEW_PEDALS__
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_STATE, PEDAL_DEFAULT_OFF);
-#endif
-      pedalDetected[2] = 0;
-    }
-  }
-
-  //==================== Pedal 4
-
-  if (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_DETECT))
-  {
-    if (checkPedal[3] == 1)
-    {
-      /// CheckPedal(3);
-    }
-    else if (pedalDetected[3] == 0)  // the pedal has recently been plugged (re-plugging can also be used to reset the auto-calibration)
-    {
-#ifndef __NEW_PEDALS__
-      if (tipPullup[0] == 1)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_TIP_TO_5V);
-      }
-      else if (tipPullup[0] == 0)
-      {
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_RING_TO_5V);
-      }
-#endif
-
-      pedal4Min = 1800;  /// Problem, wenn beim Stecken der Pedal-Detekt vor den ADCs anspricht und ein kurzgeschlossener Kontakt als Min interpretiert wird ???
-      pedal4Max = 2200;
-
-      pedalDetected[3] = 1;
-    }
-    else  // normal mode
-    {
-      if (tipActive[3])
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_TIP);
-      }
-      else
-      {
-        value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_RING);
-      }
-
-      if (value < pedal4Min)
-      {
-        pedal4Min    = value;
-        pedal4Factor = (1024 * 16000) / (pedal4Max - pedal4Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal4Min langsam wieder incrementieren, um auch an steigende Minimalwerte anpassen zu können ?
-      else if (value > pedal4Max)
-      {
-        pedal4Max    = value;
-        pedal4Factor = (1024 * 16000) / (pedal4Max - pedal4Min);  // later we will right-shift by 10 bits
-      }                                                           /// pedal4Max langsam wieder decrementieren, um auch an fallende Maximalwerte anpassen zu können ?
-
-      if (((value > pedal4)                       // input signal is rising
-           && ((pedal4 > lastPedal4)              // AND output was rising before
-               || (value > pedal4 + DELTA)))      // OR difference is larger than delta
-          || ((value < pedal4)                    // OR input signal is falling
-              && ((pedal4 < lastPedal4)           // AND output was falling before
-                  || (value + DELTA < pedal4))))  // OR difference is larger than delta
-      {
-        valueToSend = ((value - pedal4Min) * pedal4Factor) >> 10;
-
-        MSG_HWSourceUpdate(HW_SOURCE_ID_PEDAL_4, valueToSend);
-        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PEDAL_4, valueToSend);
-        TEST_Output(3, valueToSend);
-
-        lastPedal4 = pedal4;
-        pedal4     = value;
-      }
-    }
-  }
-  else
-  {
-    if (pedalDetected[3] == 1)
-    {
-#ifndef __NEW_PEDALS__
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_STATE, PEDAL_DEFAULT_OFF);
-#endif
-      pedalDetected[3] = 0;
-    }
-  }
 
   //==================== Pitchbender
 
@@ -1278,4 +889,7 @@ void ADC_WORK_Process(void)
 
   //==================== Ribbons
   ProcessRibbons();
+
+  //==================== Pedals
+  NL_TCD_PEDALS_Process();
 }
