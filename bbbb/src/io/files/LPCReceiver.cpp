@@ -28,20 +28,20 @@ namespace Heartbeat
 namespace Log
 {
 
-  static constexpr uint16_t BB_MSG_TYPE_SENSORS_RAW = 0x0E00;
+  static constexpr uint16_t BB_MSG_TYPE_SENSORS_RAW = 0x0E00;   // raw sensor values (13 words)
+  static constexpr uint16_t BB_MSG_TYPE_RAW_UINT16_T = 0xFFFF;  // raw binary data, arbitrary length (words)
 
   void logMessage(const Glib::RefPtr<Glib::Bytes> &bytes)
   {
-    static uint32_t cntr = 0;
     gsize msgLength = 0;
     auto rawMsg = bytes->get_data(msgLength);
     auto rawWords = reinterpret_cast<const uint16_t *>(rawMsg);
 
     switch(rawWords[0])
     {
-      case BB_MSG_TYPE_SENSORS_RAW:  // all raw sensor values
+      case BB_MSG_TYPE_SENSORS_RAW:  // all raw sensor values, updates in same line
       {
-        if(rawWords[1] != 13)
+        if((msgLength >= 4) && (rawWords[1] != 13))
           return;
         printf("BB_MSG_TYPE_SENSORS_RAW: ");
         // Pedal detect bits (Pedal_4...Pedal_1) :
@@ -54,6 +54,17 @@ namespace Log
         printf("%4d %4d %4d %4d", rawWords[11], rawWords[12], rawWords[13], rawWords[14]);
         printf("\n\033[1A");  // send "cursor up one line"
         fflush(stdout);       // flush output, so that piping updates nicely when used via SSH
+        break;
+      }
+      case BB_MSG_TYPE_RAW_UINT16_T:  // raw hex data, second word is # of words sent
+      {
+        printf("\nBB_MSG_TYPE_RAW_UINT16_T:");
+        if(msgLength >= 4)
+          for(int i = 2; i < 2 + rawWords[1]; i++)
+            printf(" %04X", rawWords[i]);
+        printf("\n");
+        // printf("\n\033[1A");  // send "LF and cursor up one line"
+        fflush(stdout);  // flush output, so that piping updates nicely when used via SSH
         break;
       }
     }
