@@ -70,7 +70,7 @@ static int      sampleBuffersInvalid = 16;  // flag until buffers are full, afte
 ******************************************************************************/
 void InitSampleBuffers(void)
 {
-  sampleBuffersInvalid = 100;
+  sampleBuffersInvalid = 33;
   front                = 0;
   for (int i = 0; i < ADC_CHANNELS; i++)
   {

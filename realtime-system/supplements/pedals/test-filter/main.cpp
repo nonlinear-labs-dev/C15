@@ -33,7 +33,7 @@ int main(void)
     // input line now looks like: "BB_MSG_TYPE_SENSORS_RAW: 1111 2300 4079 2073 4080 2085 4079 2233 4081 2044 4095    0    0"
     buf += MSG_ID_LEN;  // skip ID string
 
-    // read in only last two values of 13 total
+    // read in
     ret = sscanf(buf, "%*s %hu %hu %hu %hu %hu %hu %*s %*s %*s %*s %*s %*s", &tip1, &ring1, &tip2, &ring2, &tip3,
                  &ring3);
     if(ret != 6)  // scanf failed, just in case ?
@@ -70,11 +70,11 @@ int main(void)
     }
 #endif
 
-    printf("%s \n", buf);
+    // printf("%s \n", buf);
     // printf("T:%4hu   R:%4hu   T/R:%5.1lf%%   OUT:%5.1lf%%   max:%5.1lf   min:%5.1lf  \n", wiper1, top1, x, z, max, min);
-    printf("%6d %6d %6d  \n", ring1 - tip1, ring2 - tip2, ring3 - tip3);
+    printf("%5d %5d \n", tip1, ring1);
 
-    printf("\033[2A");
+    printf("\033[1A");
     fflush(stdout);  // flush output, so that piping updates nicely when used via SSH
   }
 }
