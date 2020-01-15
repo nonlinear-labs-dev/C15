@@ -20,15 +20,19 @@
 // =============
 
 // ============= Pot channels
-#define POT_SCALE_FACTOR (10000)  // don't change this unless you know what you do
+#define POT_SCALE_FACTOR  (10000)  // don't change this unless you know what you do
+#define RHEO_SCALE_FACTOR (4500)   // don't change this unless you know what you do
 // autoranging
 #define AR_NOISE_LIMIT     (30)   // 100 -> 1% (assuming SCALE_FACTOR is 10000 !!)
 #define AR_SPAN            (500)  // 500 -> 5% (assuming SCALE_FACTOR is 10000 !!)
-#define AR_UPPER_DEAD_ZONE (3)    // 3 -> 3%
-#define AR_LOWER_DEAD_ZONE (3)    // 3 -> 3%
+#define AR_SPAN_RHEO       (200)  // 200 -> 2.0 (max/min minimum factor)
+#define AR_UPPER_DEAD_ZONE (4)    // 4 -> 4%
+#define AR_LOWER_DEAD_ZONE (4)    // 4 -> 4%
 // settling
-#define CBUF_SIZE (8)  // 2^N !!!
-#define CBUF_MOD  (CBUF_SIZE - 1)
+#define CBUF_SIZE       (8)  // 2^N !!!
+#define CBUF_MOD        (CBUF_SIZE - 1)
+#define SETTLING_OFFSET (10)  // settling minimum in LSBs
+#define SETTLING_GAIN   (30)  // gain factor for how many LSBs to add at fullscale
 
 typedef struct
 {
@@ -47,8 +51,12 @@ typedef struct
   // value buffer
   uint16_t values[CBUF_SIZE];
   uint16_t val_index;
-  // wiper buffer
-  uint16_t invalid;
+  uint16_t valueBufInvalid;
+  // output buffer
+  uint16_t out[CBUF_SIZE];
+  uint16_t out_index;
+  uint16_t outBufInvalid;
+
   // autoranging
   uint16_t min;
   uint16_t max;
@@ -75,6 +83,7 @@ void SendControllerData(uint32_t hwSourceId, uint32_t value)
 ******************************************************************************/
 void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcBuffer_T *top, ControllerType_T type)
 {
+  this->type                     = type;
   this->HwSourceId               = HwSourceId;
   this->min                      = 32767;
   this->max                      = 0;
@@ -82,6 +91,7 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
   this->top                      = NULL;
   this->flags.denoiseWhenSettled = 0;
   this->val_index                = 0;
+  this->out_index                = 0;
 
   switch (type)
   {
@@ -117,7 +127,8 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
       return;
   }
 
-  this->invalid = SBUF_SIZE;  // number of runs before buffer is filled
+  this->valueBufInvalid = SBUF_SIZE;  // number of runs until value buffer is filled
+  this->outBufInvalid   = SBUF_SIZE;  // number of runs until value buffer is filled
 
   this->final             = 0;
   this->lastFinal         = 0xFFFF;
@@ -125,12 +136,12 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
 }
 
 /*************************************************************************/ /**
-* @brief	Get Statistical Data
+* @brief	Get Statistical Data of a Ring Buffer
 * @param	return != 0 : success
 ******************************************************************************/
-int GetCtrlStats(Controller_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg)
+int GetBufferStats(uint16_t *buf, uint16_t pos, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg)
 {
-  if (!this->flags.initialized)
+  if (buf == NULL)
     return 0;
 
   if (bufferDepth < 1)
@@ -140,10 +151,10 @@ int GetCtrlStats(Controller_T *this, int bufferDepth, uint16_t *pMin, uint16_t *
 
   int      avg = 0;
   uint16_t max = 0;
-  uint16_t min = 4095;
+  uint16_t min = 65535;
   for (int i = 0; i < bufferDepth; i++)
   {
-    uint16_t sample = this->values[(this->val_index + i) & CBUF_MOD];
+    uint16_t sample = buf[(pos + i) & CBUF_MOD];
     avg += sample;
     if (sample > max)
       max = sample;
@@ -162,33 +173,56 @@ int GetCtrlStats(Controller_T *this, int bufferDepth, uint16_t *pMin, uint16_t *
 /*************************************************************************/ /**
 * @brief	readout a pot or rheostat, with optional denoising
 ******************************************************************************/
-void readoutPot(Controller_T *this)
+void readoutController(Controller_T *this)
 {
-  if (!this->flags.initialized)
+  if (!this->flags.initialized || (this->type != POT && this->type != RHEOSTAT))
     return;
 
   // get potentiometric value
+  int value;
   this->val_index = (this->val_index + CBUF_MOD) & CBUF_MOD;
-  uint16_t value = this->values[this->val_index] = POT_SCALE_FACTOR * this->wiper->filtered_current / this->top->filtered_current;
+  if (this->type == POT)
+  {
+    value = this->values[this->val_index] = POT_SCALE_FACTOR * this->wiper->filtered_current / this->top->filtered_current;
+  }
+  else  // rheostat
+  {
+    value = this->wiper->filtered_current;
+    if (value > 4000)
+      value = 4000;
+    value = RHEO_SCALE_FACTOR * value / (4096 - value);
+    if (value > 60000)  // limit to uint16 range
+      value = 60000;
+    this->values[this->val_index] = value;
+  }
 
   // wiper buffer filled ?
-  if (this->invalid)
+  if (this->valueBufInvalid)
   {
-    this->invalid--;
+    this->valueBufInvalid--;
     return;
   }
 
   // basic autorange
   if (value > this->max)
-    GetCtrlStats(this, 8, NULL, NULL, &this->max);
+    GetBufferStats(this->values, this->val_index, 8, NULL, NULL, &this->max);
   if (value < this->min)
-    GetCtrlStats(this, 8, NULL, NULL, &this->min);
+    GetBufferStats(this->values, this->val_index, 8, NULL, NULL, &this->min);
 
   // back off autorange limits
   int min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
   int max = this->max - AR_UPPER_DEAD_ZONE * (this->max - this->min) / 100;  // remove upper dead-zone
-  if (max - min <= AR_SPAN)                                                  // not enough autorange span ?
-    return;
+
+  if (this->type == POT)
+  {
+    if (max - min <= AR_SPAN)  // not enough autorange span ?
+      return;
+  }
+  else
+  {
+    if ((max - min <= 0) || (100 * (int) max / (int) min < AR_SPAN_RHEO))  // not enough autorange span (max/min < 2.0)?
+      return;
+  }
 
   // scale output value via autorange
   uint16_t out;
@@ -197,7 +231,16 @@ void readoutPot(Controller_T *this)
   else if (value > max)
     out = 16000;  // 100%
   else
-    out = 16000 * (value - min) / (max - min);  // scale current value with the currently detected span.
+    out = 16000 * (int) (value - min) / (int) (max - min);  // scale current value with the currently detected span.
+
+  this->out_index            = (this->out_index + CBUF_MOD) & CBUF_MOD;
+  this->out[this->out_index] = out;
+  // output buffer filled ?
+  if (this->outBufInvalid)
+  {
+    this->outBufInvalid--;
+    return;
+  }
 
   if (this->flags.denoiseWhenSettled)
   {
@@ -207,18 +250,18 @@ void readoutPot(Controller_T *this)
     int      settled = 0;
     // determine min, max and average wiper sample values
     if (GetADCStats(this->wiper, 64, &min, &max, &avg))
-      settled = (max - min) < 5 + 20 * avg / 4096;  // noise scales with voltage for this ADC chip
-    if (settled)                                    // wiper has settled ?
+      settled = (max - min) < SETTLING_OFFSET + SETTLING_GAIN * avg / 4096;  // noise scales with voltage for this ADC chip
+    if (settled)                                                             // wiper has settled ?
     {
       if (!this->flags.isSettled)  // was not settled before ?
       {
         this->flags.isSettled = 1;
-        this->settledValue    = out;  // freeze current output;
+        GetBufferStats(this->out, this->out_index, 8, NULL, NULL, &this->settledValue);  // freeze current output;
       }
       else
       {
-        if (abs(out - this->settledValue) > 240)  // out value drifted away more than 240/16000 = 1.5% ?
-          this->settledValue = out;               // freeze again current output
+        if (abs(out - this->settledValue) > 240)                                           // out value drifted away more than 240/16000 = 1.5% ?
+          GetBufferStats(this->out, this->out_index, 8, NULL, NULL, &this->settledValue);  // freeze current output;
       }
       if ((out != 0) && (out != 16000))  // use settled output only when not saturated on the edges
         out = this->settledValue;
@@ -240,10 +283,10 @@ void readoutPot(Controller_T *this)
 ******************************************************************************/
 void ProcessPots(void)
 {
-  readoutPot(&ctrl[0]);
-  readoutPot(&ctrl[1]);
-  readoutPot(&ctrl[2]);
-  readoutPot(&ctrl[3]);
+  readoutController(&ctrl[0]);
+  readoutController(&ctrl[1]);
+  readoutController(&ctrl[2]);
+  readoutController(&ctrl[3]);
 }
 
 /*************************************************************************/ /**
@@ -255,7 +298,7 @@ void NL_EHC_InitControllers(void)
   initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], POT);
   initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT);
   initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT);
-  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT);
+  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], NULL, RHEOSTAT);
 }
 
 /*************************************************************************/ /**
