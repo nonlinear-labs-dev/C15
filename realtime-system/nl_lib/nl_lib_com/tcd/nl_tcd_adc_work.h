@@ -31,8 +31,8 @@
 void ADC_WORK_Init(void);
 
 void ADC_WORK_Process(void);
-void ADC_WORK_Suspend(void);
-void ADC_WORK_Resume(void);
+//void ADC_WORK_Suspend(void);
+//void ADC_WORK_Resume(void);
 
 void ADC_WORK_WriteHWValueForBB(uint32_t hwSourceId, uint32_t value);
 void ADC_WORK_SendBBMessages(void);

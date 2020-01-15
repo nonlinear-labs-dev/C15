@@ -17,7 +17,7 @@
 
 #include "nl_tcd_test.h"
 #include "nl_tcd_interpol.h"
-#include "nl_tcd_pedals.h"
+#include "ehc/nl_ehc.h"
 
 #define GROUND_THRESHOLD     20
 #define CHANGE_FOR_DETECTION 500
@@ -243,7 +243,7 @@ void ADC_WORK_Init(void)
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
 
-  NL_TCD_PEDALS_Init();
+  NL_EHC_Init();
 
   suspend = 0;
 }
@@ -890,6 +890,6 @@ void ADC_WORK_Process(void)
   //==================== Ribbons
   ProcessRibbons();
 
-  //==================== Pedals
-  NL_TCD_PEDALS_Process();
+  //==================== External Hardware Controllers
+  NL_EHC_Process();
 }
