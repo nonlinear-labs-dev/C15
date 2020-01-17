@@ -1,4 +1,4 @@
-LPC firmware Version 204 (for Milestone 1.7) features:
+LPC firmware Version 205 (for Milestone 1.7) features:
 
 
 
