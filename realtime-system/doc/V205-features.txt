@@ -102,7 +102,7 @@ new BB message "BB_MSG_TYPE_SENSORS_RAW", useful for debugging and ribbon+bender
 - Ribbon 1
 - Ribbon 2
 The data is send to the BBB every 12.5ms regardless of any other activity.
-Be default, the function is disabled to avoid unneccessary traffic.
+By default, the function is disabled to avoid unneccessary traffic.
 It can be enabled/disabled by new BB message "BB_MSG_TYPE_SETTING, SETTING_ID_SEND_RAW_SENSOR_DATA"
 
 
