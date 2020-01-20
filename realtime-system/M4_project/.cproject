@@ -25,6 +25,7 @@
 								<option id="com.crt.advproject.gcc.arch.2012144108" name="Architecture" superClass="com.crt.advproject.gcc.arch" value="com.crt.advproject.gcc.target.cm4" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.thumb.810644008" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.975996068" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="no__FORCE_UNMUTE__"/>
 									<listOptionValue builtIn="false" value="__MULTICORE_NONE"/>
 									<listOptionValue builtIn="false" value="C15_VERSION_5"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -44,7 +45,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4/src}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.warnings.extrawarn.2145987600" name="Extra warnings (-Wextra)" superClass="gnu.c.compiler.option.warnings.extrawarn" value="true" valueType="boolean"/>
-								<option id="gnu.c.compiler.option.warnings.wconversion.1830195031" superClass="gnu.c.compiler.option.warnings.wconversion" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.warnings.wconversion.1830195031" name="Implicit conversion warnings (-Wconversion)" superClass="gnu.c.compiler.option.warnings.wconversion" value="true" valueType="boolean"/>
 								<inputType id="com.crt.advproject.compiler.input.147953047" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
 							<tool id="com.crt.advproject.gas.exe.debug.832011722" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.debug">

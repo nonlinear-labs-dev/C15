@@ -174,6 +174,10 @@ int main(void)
 {
   Init();
 
+#ifdef __FORCE_UNMUTE__
+  SUP_SetMuteOverride(SUP_UNMUTE_STATUS_SOFTWARE_VALUE | SUP_UNMUTE_STATUS_SOFTWARE_OVERRIDE);
+#endif
+
   while (waitForFirstSysTick)
     ;
 
