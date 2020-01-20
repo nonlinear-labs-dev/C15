@@ -74,8 +74,8 @@
 // #define SETTING_ID_PITCHBEND_ON_PRESSED_KEYS 32  // OFF = 0, ON = 1
 // #define SETTING_ID_EDIT_SMOOTHING_TIME       33  // ==> tTcdRange(0, 16000)
 // #define SETTING_ID_PRESET_GLITCH_SUPPRESSION 34  // OFF = 0, ON = 1
-#define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 35  // Software Mute Override
-#define SETTING_ID_SEND_RAW_SENSOR_DATA   36  // direction: input; arguments(uint16): 1, flag (!= 0)
+#define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
+#define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
 
 //----- Request Ids:
 
