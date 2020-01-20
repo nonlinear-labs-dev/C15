@@ -30,7 +30,7 @@ The ID Numbers+1 will be displayed as LED blinks during Power-Up, after HW- Vers
 	5.2			= 0
 	etc
 ****/
-#define FW5_Version_ID (0)
+#define FW5_Version_ID (1)
 #define FW_Version_ID  (50 + FW5_Version_ID)
 
 // --------- define this != 0 to check and display severe ePC status error
@@ -71,8 +71,8 @@ The ID Numbers+1 will be displayed as LED blinks during Power-Up, after HW- Vers
 
 #define TS_OFFSET (TSLICE / NO_OF_TASKS)  // distribute tasks evenly
 
-#define UNMUTE_TIMEOUT   (25000ul)  // default timeout from power up to audio unmute (overriden by audio engine status scanning, if present)
-#define BOOTING_FINISHED (15000ul)  // estimated booting time (after which ePC/BBB finally respond to "power down" requests, and power button is armed again)
+#define UNMUTE_TIMEOUT   (30000ul)  // default timeout in ms from power up to audio unmute (overriden by audio engine status scanning, if present)
+#define BOOTING_FINISHED (15000ul)  // estimated booting time in ms (after which ePC/BBB finally respond to "power down" requests, and power button is armed again)
 
 #endif
 
