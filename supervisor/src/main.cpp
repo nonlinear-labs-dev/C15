@@ -189,7 +189,7 @@ void SM_Booting(void)
       sm.step++;
       COMM_Init();
       LPC_Reset();
-      LPC_Start_MonitorAudioEngineStatus(UNMUTE_TIMEOUT - BOOTING_FINISHED);
+      LPC_Start_MonitorAudioEngineStatus(UNMUTE_TIMEOUT);
       SM_Pause(BOOTING_FINISHED);
       return;
     case 4:
@@ -240,6 +240,7 @@ void SM_Shutdown(void)
   {
     sm.step = 1;
     Led.Blink_Fast();
+    LPC_Stop_MonitorAudioEngineStatus();
     BitClr(config.status, STAT_MUTING_OVERRIDE_ENABLE);
     Audio.Mute(1);
     ePC.SwitchOff();
@@ -250,7 +251,6 @@ void SM_Shutdown(void)
   {
     if (ePC.IsOff() && BBB.IsOff())
     {
-      LPC_Stop_MonitorAudioEngineStatus();
       COMM_DeInit();
       PwrMonitor.SystemOff();
       SM_TransitionTo(SM_Standby);

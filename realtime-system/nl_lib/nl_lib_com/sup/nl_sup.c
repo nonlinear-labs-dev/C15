@@ -266,6 +266,7 @@ void Detector(void)
 // process to be called constantly, every 10ms (resp., in "SUP_PROCCESS_TIMESLICE" intervals)
 void SUP_Process(void)
 {
+#ifndef __SUP_DEFAULT_UNMUTE__
   Transmitter();
 
   Detector();
@@ -276,6 +277,7 @@ void SUP_Process(void)
     BB_MSG_SendTheBuffer();
     old_unmute_status_bits = unmute_status_bits;
   }
+#endif
 }
 
 // EOF
