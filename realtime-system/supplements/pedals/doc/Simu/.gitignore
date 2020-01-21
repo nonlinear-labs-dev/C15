@@ -1,0 +1,14 @@
+# Blacklist files/folders in same directory as the .gitignore file
+*.raw
+*.log
+*.net
+
+# Whitelist some files
+!*.asc
+!*.plt
+
+# Blacklist files/folders in same directory as the .gitignore file
+
+# Whitelist our folders we want to sync
+# trailing "/" is optional for folders, may match file though.
+# "/" is NOT optional when followed by a *
