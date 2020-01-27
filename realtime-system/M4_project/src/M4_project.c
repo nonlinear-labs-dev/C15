@@ -31,7 +31,7 @@
 #include "sup/nl_sup.h"
 #include "heartbeat/nl_heartbeat.h"
 
-#define DBG_CLOCK_MONITOR (1)
+#define DBG_CLOCK_MONITOR (0)
 
 volatile uint8_t waitForFirstSysTick = 1;
 

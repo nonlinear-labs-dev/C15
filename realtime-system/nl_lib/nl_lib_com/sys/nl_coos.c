@@ -10,7 +10,7 @@
 #define COOS_MAX_TASKS 48  // max number of task the COOS should handle (memory size)
 
 #define LOG_TASK_TIME   (0)
-#define DGB_TIMING_PINS (1)
+#define DGB_TIMING_PINS (0)
 
 static void DispatchTotalTime(int on)
 {
