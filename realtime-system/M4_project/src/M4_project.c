@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "sys/nl_coos.h"
+#include "sys/nl_ticker.h"
 #include "sys/delays.h"
 #include "boards/emphase_v5.h"
 
@@ -29,6 +30,8 @@
 #include "tcd/nl_tcd_msg.h"
 #include "sup/nl_sup.h"
 #include "heartbeat/nl_heartbeat.h"
+
+#define DBG_CLOCK_MONITOR (1)
 
 volatile uint8_t waitForFirstSysTick = 1;
 
@@ -111,11 +114,11 @@ void Init(void)
   DBG_Led_Cpu_Off();
   DBG_Led_Warning_Off();
   DBG_Led_Audio_Off();
+  DBG_Pod_0_Off();
+  DBG_Pod_1_Off();
+  DBG_Pod_2_Off();
+  DBG_Pod_3_Off();
 #if 0
-    DBG_Pod_0_Off();
-    DBG_Pod_1_Off();
-    DBG_Pod_2_Off();
-    DBG_Pod_3_Off();
     DBG_Pod_4_Off();
     DBG_Pod_5_Off();
     DBG_Pod_6_Off();
@@ -187,8 +190,14 @@ int main(void)
 
 void M0CORE_IRQHandler(void)
 {
+  SYS_ticker++;
+#if DBG_CLOCK_MONITOR
+  DBG_Pod_1_On();
+#endif
   LPC_CREG->M0TXEVENT = 0;
-
   waitForFirstSysTick = 0;
   COOS_Update();
+#if DBG_CLOCK_MONITOR
+  DBG_Pod_1_Off();
+#endif
 }

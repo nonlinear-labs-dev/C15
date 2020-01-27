@@ -27,10 +27,8 @@ typedef struct
   GPIO_NAME_T* led_heartbeat;
 } DBG_PINS_T;
 
-#if 0
-extern void (* const DBG_Pod_On[8])(void);
-extern void (* const DBG_Pod_Off[8])(void);
-#endif
+extern void (*const DBG_Pod_On[4])(void);
+extern void (*const DBG_Pod_Off[4])(void);
 
 void DBG_Init(void);
 void DBG_Config(LPC_USARTn_Type* UARTx, uint32_t speed, DBG_PINS_T* dbgpins);
@@ -49,20 +47,22 @@ void DBG_Led_Warning_Off(void);
 void DBG_Led_Cpu_Off(void);
 void DBG_Led_Audio_Off(void);
 
-#if 0
 void DBG_Pod_0_On(void);
 void DBG_Pod_1_On(void);
 void DBG_Pod_2_On(void);
 void DBG_Pod_3_On(void);
+#if 0
 void DBG_Pod_4_On(void);
 void DBG_Pod_5_On(void);
 void DBG_Pod_6_On(void);
 void DBG_Pod_7_On(void);
+#endif
 
 void DBG_Pod_0_Off(void);
 void DBG_Pod_1_Off(void);
 void DBG_Pod_2_Off(void);
 void DBG_Pod_3_Off(void);
+#if 0
 void DBG_Pod_4_Off(void);
 void DBG_Pod_5_Off(void);
 void DBG_Pod_6_Off(void);

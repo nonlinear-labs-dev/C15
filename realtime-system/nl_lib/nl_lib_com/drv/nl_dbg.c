@@ -21,29 +21,31 @@ static uint32_t         dbg_uart_baudrate;
 
 static DBG_PINS_T* pins;
 
+void (*const DBG_Pod_On[4])(void) = {
+  DBG_Pod_0_On,
+  DBG_Pod_1_On,
+  DBG_Pod_2_On,
+  DBG_Pod_3_On,
 #if 0
-void (* const DBG_Pod_On[8])(void) = {
-		DBG_Pod_0_On,
-		DBG_Pod_1_On,
-		DBG_Pod_2_On,
-		DBG_Pod_3_On,
 		DBG_Pod_4_On,
 		DBG_Pod_5_On,
 		DBG_Pod_6_On,
 		DBG_Pod_7_On,
+#endif
 };
 
-void (* const DBG_Pod_Off[8])(void) = {
-		DBG_Pod_0_Off,
-		DBG_Pod_1_Off,
-		DBG_Pod_2_Off,
-		DBG_Pod_3_Off,
+void (*const DBG_Pod_Off[4])(void) = {
+  DBG_Pod_0_Off,
+  DBG_Pod_1_Off,
+  DBG_Pod_2_Off,
+  DBG_Pod_3_Off,
+#if 0
 		DBG_Pod_4_Off,
 		DBG_Pod_5_Off,
 		DBG_Pod_6_Off,
 		DBG_Pod_7_Off,
-};
 #endif
+};
 
 static void DBG_Callback(uint32_t status)
 {
@@ -146,39 +148,40 @@ void DBG_Led_Audio_Off(void)
   NL_GPIO_Clr(pins->led_audio);
 }
 
-#if 0
 void DBG_Pod_0_On(void)
 {
-	NL_GPIO_Set(pins->pod[0]);
+  NL_GPIO_Set(pins->pod[0]);
 }
 void DBG_Pod_0_Off(void)
 {
-	NL_GPIO_Clr(pins->pod[0]);
+  NL_GPIO_Clr(pins->pod[0]);
 }
 void DBG_Pod_1_On(void)
 {
-	NL_GPIO_Set(pins->pod[1]);
+  NL_GPIO_Set(pins->pod[1]);
 }
 void DBG_Pod_1_Off(void)
 {
-	NL_GPIO_Clr(pins->pod[1]);
+  NL_GPIO_Clr(pins->pod[1]);
 }
 void DBG_Pod_2_On(void)
 {
-	NL_GPIO_Set(pins->pod[2]);
+  NL_GPIO_Set(pins->pod[2]);
 }
 void DBG_Pod_2_Off(void)
 {
-	NL_GPIO_Clr(pins->pod[2]);
+  NL_GPIO_Clr(pins->pod[2]);
 }
 void DBG_Pod_3_On(void)
 {
-	NL_GPIO_Set(pins->pod[3]);
+  NL_GPIO_Set(pins->pod[3]);
 }
 void DBG_Pod_3_Off(void)
 {
-	NL_GPIO_Clr(pins->pod[3]);
+  NL_GPIO_Clr(pins->pod[3]);
 }
+
+#if 0
 void DBG_Pod_4_On(void)
 {
 	NL_GPIO_Set(pins->pod[4]);

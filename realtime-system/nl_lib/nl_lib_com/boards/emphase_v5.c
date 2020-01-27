@@ -679,10 +679,10 @@ static PIN_CFG_T lpc_dbg_led_audio_ok = {
   .function     = 0
 };
 
+static PIN_CFG_T lpc_dbg_pod[] = {
 #if 0
-static PIN_CFG_T lpc_dbg_pod[8] = {
 	{
-		.pinId  		= {6,1},
+		.pinId  		= {6,1},            // conflicts with PCB version ID resistor
 		.ioType 		= PIN_TYPE_GPIO,
 		.gpioId 		= {3,0},
 		.direction		= PIN_GPIO_DIR_OUT,
@@ -705,54 +705,57 @@ static PIN_CFG_T lpc_dbg_pod[8] = {
 		.pullUp 		= PIN_PUP_OFF,
 		.function		= 0,
 	},
-	{
-		.pinId  		= {6,3},
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,2},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	},
-	{
-		.pinId  		= {6,4},
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,3},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	},
-	{
-		.pinId  		= {6,5},
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,4},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	},
-	{
-		.pinId  		= {6,9},
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,5},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	},
+#endif
+  {
+      .pinId        = { 6, 3 },
+      .ioType       = PIN_TYPE_GPIO,
+      .gpioId       = { 3, 2 },
+      .direction    = PIN_GPIO_DIR_OUT,
+      .inputBuffer  = PIN_INBUF_OFF,
+      .glitchFilter = PIN_FILTER_ON,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_OFF,
+      .pullUp       = PIN_PUP_OFF,
+      .function     = 0,
+  },
+  {
+      .pinId        = { 6, 4 },  // POD1 : 125us systick clock pulse
+      .ioType       = PIN_TYPE_GPIO,
+      .gpioId       = { 3, 3 },
+      .direction    = PIN_GPIO_DIR_OUT,
+      .inputBuffer  = PIN_INBUF_OFF,
+      .glitchFilter = PIN_FILTER_ON,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_OFF,
+      .pullUp       = PIN_PUP_OFF,
+      .function     = 0,
+  },
+  {
+      .pinId        = { 6, 5 },  // POD2 : individual task time
+      .ioType       = PIN_TYPE_GPIO,
+      .gpioId       = { 3, 4 },
+      .direction    = PIN_GPIO_DIR_OUT,
+      .inputBuffer  = PIN_INBUF_OFF,
+      .glitchFilter = PIN_FILTER_ON,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_OFF,
+      .pullUp       = PIN_PUP_OFF,
+      .function     = 0,
+  },
+  {
+      .pinId        = { 6, 6 },  // POD3 : total task scheduler time
+      .ioType       = PIN_TYPE_GPIO,
+      .gpioId       = { 0, 5 },
+      .direction    = PIN_GPIO_DIR_OUT,
+      .inputBuffer  = PIN_INBUF_OFF,
+      .glitchFilter = PIN_FILTER_ON,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_OFF,
+      .pullUp       = PIN_PUP_OFF,
+      .function     = 0,
+  }
+#if 0
+	,
 	{
 		.pinId  		= {6,10},
 		.ioType 		= PIN_TYPE_GPIO,
@@ -777,8 +780,8 @@ static PIN_CFG_T lpc_dbg_pod[8] = {
 		.pullUp 		= PIN_PUP_OFF,
 		.function		= 0,
 	}
-};
 #endif
+};
 
 static PIN_CFG_T lpc_dbg_uart_tx = {
   .pinId        = { 2, 10 },
@@ -798,11 +801,11 @@ static DBG_PINS_T debug_pins = {
   .led_cpu       = &lpc_dbg_led_m0_hb.gpioId,
   .led_audio     = &lpc_dbg_led_audio_ok.gpioId,
 
+  .pod[0] = &lpc_dbg_pod[0].gpioId,
+  .pod[1] = &lpc_dbg_pod[1].gpioId,
+  .pod[2] = &lpc_dbg_pod[2].gpioId,
+  .pod[3] = &lpc_dbg_pod[3].gpioId,
 #if 0
-	.pod[0] = &lpc_dbg_pod[0].gpioId,
-	.pod[1] = &lpc_dbg_pod[1].gpioId,
-	.pod[2] = &lpc_dbg_pod[2].gpioId,
-	.pod[3] = &lpc_dbg_pod[3].gpioId,
 	.pod[4] = &lpc_dbg_pod[4].gpioId,
 	.pod[5] = &lpc_dbg_pod[5].gpioId,
 	.pod[6] = &lpc_dbg_pod[6].gpioId,
@@ -819,11 +822,11 @@ static void InitDebugPins(void)
   PIN_Config(&lpc_dbg_led_audio_ok);
   PIN_Config(&lpc_dbg_uart_tx);
 
+  PIN_Config(&lpc_dbg_pod[0]);
+  PIN_Config(&lpc_dbg_pod[1]);
+  PIN_Config(&lpc_dbg_pod[2]);
+  PIN_Config(&lpc_dbg_pod[3]);
 #if 0
-	PIN_Config(&lpc_dbg_pod[0]);
-	PIN_Config(&lpc_dbg_pod[1]);
-	PIN_Config(&lpc_dbg_pod[2]);
-	PIN_Config(&lpc_dbg_pod[3]);
 	PIN_Config(&lpc_dbg_pod[4]);
 	PIN_Config(&lpc_dbg_pod[5]);
 	PIN_Config(&lpc_dbg_pod[6]);
