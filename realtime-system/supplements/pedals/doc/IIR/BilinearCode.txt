@@ -1,0 +1,158 @@
+
+August 3, 2015
+
+If you find a problem with this code, please leave us a note on:
+http://www.iowahills.com/feedbackcomments.html
+
+Please note that the code in this file is not stand alone code.
+In particular, all the code needed to get the 4th order bandpass and notch
+sections to 2nd order setions is not in this file.
+
+For more complete code, see our Code Kit on this page. It also contains 
+the required 4th order root solver needed for IIR band pass and notch filters.
+
+http://www.iowahills.com/A7ExampleCodePage.html
+
+
+This is bilinear transform code for IIR filters.
+In order to use these equations, you must define the variables A, B, C, D, E, and F
+which are the coefficients for the low pass prototype function H(s).
+H(s) = ( D*s^2 + E*s + F ) / (A*s^2 + B*s + C)
+
+For example, if you are doing a 6 pole Butterworth, then D = E = 0 and F = 1
+and the 3 denominator polynomials are.
+s^2 +  0.5176380902 s  +  1.0000000000
+s^2 +  1.4142135624 s  +  1.0000000000
+s^2 +  1.9318516526 s  +  1.0000000000
+
+OmegaC and BW are in terms of Nyquist. For example, if the sampling frequency = 20 kHz
+and the 3 dB corner frquncy is 1.5 kHz, then OmegaC = 0.15
+
+These define T and Q. Q is only used for the bandpass and notch filters.
+M_PI_2 and M_PI_4 are Pi/2 and Pi/4 respectively, and should already be defined in math.h
+The Q correction given here was derived from a curve fit of bandwidth error using an uncorrected Q.
+
+ T = 2.0 * tan(OmegaC * M_PI_2);
+ Q = 1.0 + OmegaC;
+ if(Q > 1.95)Q = 1.95;       // Q must be < 2
+ Q = 0.8 * tan(Q * M_PI_4);  // This is the correction factor.
+ Q = OmegaC / BW / Q;        // This is the corrected Q.
+
+
+This code calculates the a's and b's for H(z).
+b's are the numerator  a's are the denominator
+
+  if(Filt.PassType == LPF)
+   {
+	if(A == 0.0 && D == 0.0) // 1 pole case
+	 {
+	  Arg = (2.0*B + C*T);
+	  a2[j] = 0.0;
+	  a1[j] = (-2.0*B + C*T) / Arg;
+	  a0[j] = 1.0;
+
+	  b2[j] = 0.0;
+	  b1[j] = (-2.0*E + F*T) / Arg * C/F;
+	  b0[j] = ( 2.0*E + F*T) / Arg * C/F;
+	 }
+	else // 2 poles
+	 {
+	  Arg = (4.0*A + 2.0*B*T + C*T*T);
+	  a2[j] = (4.0*A - 2.0*B*T + C*T*T) / Arg;
+	  a1[j] = (2.0*C*T*T - 8.0*A) / Arg;
+	  a0[j] = 1.0;
+
+	  b2[j] = (4.0*D - 2.0*E*T + F*T*T) / Arg * C/F;
+	  b1[j] = (2.0*F*T*T - 8.0*D) / Arg * C/F;
+	  b0[j] = (4*D + F*T*T + 2.0*E*T) / Arg * C/F;
+	 }
+   }
+
+  if(Filt.PassType == HPF)
+   {
+	if(A == 0.0 && D == 0.0) // 1 pole
+	 {
+	  Arg = 2.0*C + B*T;
+	  a2[j] = 0.0;
+	  a1[j] = (B*T - 2.0*C) / Arg;
+	  a0[j] = 1.0;
+
+	  b2[j] = 0.0;
+	  b1[j] = (E*T - 2.0*F) / Arg * C/F;
+	  b0[j] = (E*T + 2.0*F) / Arg * C/F;
+	 }
+	else  // 2 poles
+	 {
+	  Arg = A*T*T + 4.0*C + 2.0*B*T;
+	  a2[j] = (A*T*T + 4.0*C - 2.0*B*T) / Arg;
+	  a1[j] = (2.0*A*T*T - 8.0*C) / Arg;
+	  a0[j] = 1.0;
+
+	  b2[j] = (D*T*T - 2.0*E*T + 4.0*F) / Arg * C/F;
+	  b1[j] = (2.0*D*T*T - 8.0*F) / Arg * C/F;
+	  b0[j] = (D*T*T + 4.0*F + 2.0*E*T) / Arg * C/F;
+	 }
+   }
+
+  if(Filt.PassType == BPF)
+   {
+	if(A == 0.0 && D == 0.0) // 1 pole
+	 {
+	  Arg = 4.0*B*Q + 2.0*C*T + B*Q*T*T;
+	  a2[k] = (B*Q*T*T + 4.0*B*Q - 2.0*C*T) / Arg;
+	  a1[k] = (2.0*B*Q*T*T - 8.0*B*Q) / Arg ;
+	  a0[k] = 1.0;
+
+	  b2[k] = (E*Q*T*T + 4.0*E*Q - 2.0*F*T) / Arg * C/F;
+	  b1[k] = (2.0*E*Q*T*T - 8.0*E*Q) / Arg * C/F;
+	  b0[k] = (4.0*E*Q + 2.0*F*T + E*Q*T*T) / Arg * C/F;
+	  k++;
+	 }
+	else //2 Poles
+	 {
+	  a4[j] = (16.0*A*Q*Q + A*Q*Q*T*T*T*T + 8.0*A*Q*Q*T*T - 2.0*B*Q*T*T*T - 8.0*B*Q*T + 4.0*C*T*T) * F;
+	  a3[j] = (4.0*T*T*T*T*A*Q*Q - 4.0*Q*T*T*T*B + 16.0*Q*B*T - 64.0*A*Q*Q) * F;
+	  a2[j] = (96.0*A*Q*Q - 16.0*A*Q*Q*T*T + 6.0*A*Q*Q*T*T*T*T - 8.0*C*T*T) * F;
+	  a1[j] = (4.0*T*T*T*T*A*Q*Q + 4.0*Q*T*T*T*B - 16.0*Q*B*T - 64.0*A*Q*Q) * F;
+	  a0[j] = (16.0*A*Q*Q + A*Q*Q*T*T*T*T + 8.0*A*Q*Q*T*T + 2.0*B*Q*T*T*T + 8.0*B*Q*T + 4.0*C*T*T) * F;
+
+	  b4[j] = (8.0*D*Q*Q*T*T - 8.0*E*Q*T + 16.0*D*Q*Q - 2.0*E*Q*T*T*T + D*Q*Q*T*T*T*T + 4.0*F*T*T) * C;
+	  b3[j] = (16.0*E*Q*T - 4.0*E*Q*T*T*T - 64.0*D*Q*Q + 4.0*D*Q*Q*T*T*T*T) * C;
+	  b2[j] = (96.0*D*Q*Q - 8.0*F*T*T + 6.0*D*Q*Q*T*T*T*T - 16.0*D*Q*Q*T*T) * C;
+	  b1[j] = (4.0*D*Q*Q*T*T*T*T - 64.0*D*Q*Q + 4.0*E*Q*T*T*T - 16.0*E*Q*T) * C;
+	  b0[j] = (16.0*D*Q*Q + 8.0*E*Q*T + 8.0*D*Q*Q*T*T + 2.0*E*Q*T*T*T + 4.0*F*T*T + D*Q*Q*T*T*T*T) * C;
+	 }
+   }
+
+  if(Filt.PassType == NOTCH)
+   {
+	if(A == 0.0 && D == 0.0) // 1 pole
+	 {
+	  Arg = 2.0*B*T + C*Q*T*T + 4.0*C*Q;
+	  a2[k] = (4.0*C*Q - 2.0*B*T + C*Q*T*T) / Arg;
+	  a1[k] = (2.0*C*Q*T*T - 8.0*C*Q) / Arg;
+	  a0[k] = 1.0;
+
+	  b2[k] = (4.0*F*Q - 2.0*E*T + F*Q*T*T) / Arg * C/F;
+	  b1[k] = (2.0*F*Q*T*T - 8.0*F*Q) / Arg *C/F;
+	  b0[k] = (2.0*E*T + F*Q*T*T +4.0*F*Q) / Arg *C/F;
+	  k++;
+	 }
+	else
+	 {
+	  a4[j] = (4.0*A*T*T - 2.0*B*T*T*T*Q + 8.0*C*Q*Q*T*T - 8.0*B*T*Q + C*Q*Q*T*T*T*T + 16.0*C*Q*Q) * -F;
+	  a3[j] = (16.0*B*T*Q + 4.0*C*Q*Q*T*T*T*T - 64.0*C*Q*Q - 4.0*B*T*T*T*Q) * -F;
+	  a2[j] = (96.0*C*Q*Q - 8.0*A*T*T - 16.0*C*Q*Q*T*T + 6.0*C*Q*Q*T*T*T*T) * -F;
+	  a1[j] = (4.0*B*T*T*T*Q - 16.0*B*T*Q - 64.0*C*Q*Q + 4.0*C*Q*Q*T*T*T*T) * -F;
+	  a0[j] = (4.0*A*T*T + 2.0*B*T*T*T*Q + 8.0*C*Q*Q*T*T + 8.0*B*T*Q + C*Q*Q*T*T*T*T + 16.0*C*Q*Q) * -F;
+
+	  b4[j] = (2.0*E*T*T*T*Q - 4.0*D*T*T - 8.0*F*Q*Q*T*T + 8.0*E*T*Q - 16.0*F*Q*Q - F*Q*Q*T*T*T*T) * C;
+	  b3[j] = (64.0*F*Q*Q + 4.0*E*T*T*T*Q - 16.0*E*T*Q - 4.0*F*Q*Q*T*T*T*T) * C;
+	  b2[j] = (8.0*D*T*T - 96.0*F*Q*Q + 16.0*F*Q*Q*T*T - 6.0*F*Q*Q*T*T*T*T) * C;
+	  b1[j] = (16.0*E*T*Q - 4.0*E*T*T*T*Q + 64.0*F*Q*Q - 4.0*F*Q*Q*T*T*T*T) * C;
+	  b0[j] = (-4.0*D*T*T - 2.0*E*T*T*T*Q - 8.0*E*T*Q - 8.0*F*Q*Q*T*T - F*Q*Q*T*T*T*T - 16.0*F*Q*Q) * C;
+     }
+   }
+
+
+
