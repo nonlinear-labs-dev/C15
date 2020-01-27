@@ -12,6 +12,7 @@
 #include "cmsis/lpc43xx_ssp.h"
 #include "string.h"
 #include "dbg/nl_assert.h"
+#include "sys/nl_ticker.h"
 
 static LPC_SSPn_Type*  BB_SSP;
 static SPI_BB_PINS_T*  pins;
@@ -73,7 +74,11 @@ static void SPI_BB_PackageParser(uint8_t* buff, uint32_t len)
 
       if (SPI_BB_MsgCb != NULL)
       {
+        uint32_t time = SYS_ticker;
         SPI_BB_MsgCb(package->header.type, package->header.length, package->values);
+        time = SYS_ticker - time;
+        if (time > 1)
+          time = 0;  // for breakpoint
       }
 
       uint32_t done = sizeof(msg_header_t) + sizeof(uint16_t) * package->header.length;
@@ -194,7 +199,11 @@ static void SPI_BB_ReceiveCallback(uint32_t ret)
 {
   if (ret == SUCCESS)
   {
+    uint32_t time = SYS_ticker;
     SPI_BB_PackageParser(SPI_BB_CurrentBuffer, SPI_BB_BUFFER_SIZE);
+    time = SYS_ticker - time;
+    if (time > 1)
+      time = 0;  // for breakpoint
   }
 }
 

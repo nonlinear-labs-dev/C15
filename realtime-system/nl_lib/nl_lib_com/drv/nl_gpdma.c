@@ -6,6 +6,7 @@
 *******************************************************************************/
 #include "drv/nl_gpdma.h"
 #include "cmsis/lpc43xx_gpdma.h"
+#include "sys/nl_ticker.h"
 
 static TransferCallback NL_GPDMA_Callbacks[8];
 static uint8_t          channels    = 0;
@@ -107,7 +108,13 @@ void NL_GPDMA_Poll(void)
         pDMAch->CConfig &= ~GPDMA_DMACCxConfig_E;
 
         if (NL_GPDMA_Callbacks[tmp])
+        {
+          uint32_t time = SYS_ticker;
           NL_GPDMA_Callbacks[tmp](SUCCESS);
+          time = SYS_ticker - time;
+          if (time > 1)
+            time = 0;
+        }
       }
       /* Check error terminal status */
       if (LPC_GPDMA->INTERRSTAT & GPDMA_DMACIntErrStat_Ch(tmp))
