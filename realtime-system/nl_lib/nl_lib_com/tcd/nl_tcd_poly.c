@@ -16,18 +16,22 @@
 
 static IPC_KEY_EVENT_T keyEvent[32];  // array for new events read from the ring buffer for keybed events
 
-static uint32_t velTable[65] = {};  // converts time difference (timeInUs) to velocities
-                                    // element  0: shortest timeInUs   (2500 us or lower) -> 4096 = max. velocity
-                                    // element 64: longest timeInUs (526788 us or higher) -> 0    = min. velocity
+static uint32_t allVelTables[VEL_CURVE_COUNT][65] = {};  // converts time difference (timeInUs) to velocities
+                                                         // element  0: shortest timeInUs   (2500 us or lower) -> 16383 = max. velocity
+                                                         // element 64: longest timeInUs (526788 us or higher) -> 0     = min. velocity
+static uint32_t *velTable = allVelTables[VEL_CURVE_NORMAL];
 
 /*******************************************************************************
-@brief  	POLY_Generate_VelTable - generates the elements of velTable[]
+@brief  	Generate_VelTable - generates the elements of velTable[]
 @param[in]	curve - selects one of the five verlocity curves
 			table index: 0 ... 64 (shortest ... longest key-switch time)
-			table values: 4095 ... 0
+			table values: 16383 ... 0
 *******************************************************************************/
-void POLY_Generate_VelTable(uint32_t curve)
+void Generate_VelTable(uint32_t curve)
 {
+  if (curve >= VEL_CURVE_COUNT)
+    return;
+
   float_t vel_max = 16383.0;  // the hyperbola goes from vel_max (at 0) to 0 (at i_max)
   float_t b       = 0.5;
 
@@ -59,14 +63,26 @@ void POLY_Generate_VelTable(uint32_t curve)
 
   for (i = 0; i <= i_max; i++)
   {
-    velTable[i] = (uint32_t)((vel_max + vel_max / (b * i_max)) / (1.0 + b * i) - vel_max / (b * i_max) + 0.5);
+    allVelTables[curve][i] = (uint32_t)((vel_max + vel_max / (b * i_max)) / (1.0 + b * i) - vel_max / (b * i_max) + 0.5);
   }
 }
 
 //================= Initialisation:
 void POLY_Init(void)
 {
-  POLY_Generate_VelTable(VEL_CURVE_NORMAL);
+  for (int i = 0; i < VEL_CURVE_COUNT; i++)
+    Generate_VelTable(i);
+  velTable = allVelTables[VEL_CURVE_NORMAL];
+}
+
+/******************************************************************************
+	@brief		POLY_Process: reading new key events from the ring buffer,
+*******************************************************************************/
+void POLY_Select_VelTable(uint32_t curve)
+{
+  if (curve >= VEL_CURVE_COUNT)
+    return;
+  velTable = allVelTables[curve];
 }
 
 /******************************************************************************

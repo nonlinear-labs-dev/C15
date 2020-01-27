@@ -17,10 +17,11 @@
 #define VEL_CURVE_NORMAL    2
 #define VEL_CURVE_HARD      3
 #define VEL_CURVE_VERY_HARD 4
+#define VEL_CURVE_COUNT     5
 
 //======== public functions
 
-void POLY_Generate_VelTable(uint32_t curve);
+void POLY_Select_VelTable(uint32_t curve);
 void POLY_Init(void);
 void POLY_Process(void);
 

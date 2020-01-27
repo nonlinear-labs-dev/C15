@@ -38,16 +38,18 @@ static uint32_t bbSendValue[NUM_HW_SOURCES] = {};
 static int32_t  lastPitchbend;
 static uint32_t pitchbendZero;
 
-static uint32_t pbSignalIsSmall;
-static uint32_t pbTestTime;
-static uint32_t pbTestMode;
-static uint32_t pbRampMode;
-static int32_t  pbRamp;
-static int32_t  pbRampInc;
-static uint32_t benderTable[33] = {};  // contains the chosen aftertouch curve
+static uint32_t  pbSignalIsSmall;
+static uint32_t  pbTestTime;
+static uint32_t  pbTestMode;
+static uint32_t  pbRampMode;
+static int32_t   pbRamp;
+static int32_t   pbRampInc;
+static uint32_t  allBenderTables[2][33] = {};  // contains the bender curves
+static uint32_t* benderTable;
 
-static uint32_t lastAftertouch;
-static uint32_t atTable[33] = {};  // contains the chosen aftertouch curve
+static uint32_t  lastAftertouch;
+static uint32_t  allAftertouchTables[2][33] = {};  // contains the chosen aftertouch curve
+static uint32_t* aftertouchTable;
 
 //========= ribbons ========
 
@@ -147,10 +149,17 @@ static int32_t SetThreshold(int32_t val)
 }
 
 /*****************************************************************************
-* @brief	ADC_WORK_Generate_BenderTable
+* @brief	ADC_WORK_Select_BenderTable
 * @param	0: soft, 1: normal, 2: hard
 ******************************************************************************/
-void ADC_WORK_Generate_BenderTable(uint32_t curve)
+void ADC_WORK_Select_BenderTable(uint32_t curve)
+{
+  if (curve > 2)
+    return;
+  benderTable = allBenderTables[curve];
+}
+
+void Generate_BenderTable(uint32_t curve)
 {
   float_t range = 8000.0;  // separate processing of absolute values for positive and negative range
 
@@ -180,15 +189,22 @@ void ADC_WORK_Generate_BenderTable(uint32_t curve)
   {
     x = (float) i / (float) i_max;
 
-    benderTable[i] = (uint32_t)(range * x * ((1.0 - s) + s * x * x));
+    allBenderTables[curve][i] = (uint32_t)(range * x * ((1.0 - s) + s * x * x));
   }
 }
 
 /*****************************************************************************
-* @brief	ADC_WORK_Generate_AftertouchTable -
+* @brief	ADC_WORK_Select_AftertouchTable -
 * @param	0: soft, 1: normal, 2: hard
 ******************************************************************************/
-void ADC_WORK_Generate_AftertouchTable(uint32_t curve)
+void ADC_WORK_Select_AftertouchTable(uint32_t curve)
+{
+  if (curve > 2)
+    return;
+  aftertouchTable = allAftertouchTables[curve];
+}
+
+void Generate_AftertouchTable(uint32_t curve)
 {
   float_t range = 16000.0;  // full TCD range
 
@@ -218,7 +234,7 @@ void ADC_WORK_Generate_AftertouchTable(uint32_t curve)
   {
     x = (float) i / (float) i_max;
 
-    atTable[i] = (uint32_t)(range * x * ((1.0 - s) + s * x * x * x * x * x));
+    allAftertouchTables[curve][i] = (uint32_t)(range * x * ((1.0 - s) + s * x * x * x * x * x));
   }
 }
 
@@ -238,10 +254,17 @@ void ADC_WORK_Init(void)
   pbRampMode      = 0;
   pbRamp          = 0;
   pbRampInc       = 0;
-  ADC_WORK_Generate_BenderTable(1);
+
+  Generate_BenderTable(0);
+  Generate_BenderTable(1);
+  Generate_BenderTable(2);
+  ADC_WORK_Select_BenderTable(1);
 
   lastAftertouch = 0;
-  ADC_WORK_Generate_AftertouchTable(1);
+  Generate_AftertouchTable(0);
+  Generate_AftertouchTable(1);
+  Generate_AftertouchTable(2);
+  ADC_WORK_Select_AftertouchTable(1);
 
   // initialize ribbon data
   for (i = 0; i <= 1; i++)
@@ -882,9 +905,9 @@ void ADC_WORK_Process(void)
       {
         valueToSend = valueToSend >> 12;  // 0 ... 4095
 
-        uint32_t fract = valueToSend & 0x7F;                                                  // lower 7 bits used for interpolation
-        uint32_t index = valueToSend >> 7;                                                    // upper 5 bits (0...31) used as index in the table
-        valueToSend    = (atTable[index] * (128 - fract) + atTable[index + 1] * fract) >> 7;  // (0...16000) * 128 / 128
+        uint32_t fract = valueToSend & 0x7F;                                                                  // lower 7 bits used for interpolation
+        uint32_t index = valueToSend >> 7;                                                                    // upper 5 bits (0...31) used as index in the table
+        valueToSend    = (aftertouchTable[index] * (128 - fract) + aftertouchTable[index + 1] * fract) >> 7;  // (0...16000) * 128 / 128
       }
 
       MSG_HWSourceUpdate(HW_SOURCE_ID_AFTERTOUCH, valueToSend);

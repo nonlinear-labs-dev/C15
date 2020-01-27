@@ -60,7 +60,7 @@ uint32_t ADC_WORK_GetRibbon2Behaviour(void);
 void ADC_WORK_Check_Pedal_Start(uint32_t pedalId);
 void ADC_WORK_Check_Pedal_Cancel(uint32_t pedalId);
 
-void ADC_WORK_Generate_BenderTable(uint32_t curve);
-void ADC_WORK_Generate_AftertouchTable(uint32_t curve);
+void ADC_WORK_Select_BenderTable(uint32_t curve);
+void ADC_WORK_Select_AftertouchTable(uint32_t curve);
 
 #endif /* TCD_NL_TCD_ADC_WORK_H_ */

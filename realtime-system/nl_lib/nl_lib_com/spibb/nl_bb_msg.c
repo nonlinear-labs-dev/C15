@@ -306,14 +306,14 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case SETTING_ID_UPPER_RIBBON_REL_FACTOR:  // Factor for the increments when a ribbon is in Relative mode
         ADC_WORK_SetRibbonRelFactor(data[1]);   // factor = data[1] / 256
         break;
-      case SETTING_ID_VELOCITY_CURVE:     // Velocity Curve
-        POLY_Generate_VelTable(data[1]);  // Parameter: 0 = very soft ... 4 = very hard
+      case SETTING_ID_VELOCITY_CURVE:   // Velocity Curve
+        POLY_Select_VelTable(data[1]);  // Parameter: 0 = very soft ... 4 = very hard
         break;
-      case SETTING_ID_AFTERTOUCH_CURVE:              // Aftertouch Curve
-        ADC_WORK_Generate_AftertouchTable(data[1]);  // 0: soft, 1: normal, 2: hard
+      case SETTING_ID_AFTERTOUCH_CURVE:            // Aftertouch Curve
+        ADC_WORK_Select_AftertouchTable(data[1]);  // 0: soft, 1: normal, 2: hard
         break;
-      case SETTING_ID_BENDER_CURVE:              // Bender Curve
-        ADC_WORK_Generate_BenderTable(data[1]);  // 0: soft, 1: normal, 2: hard
+      case SETTING_ID_BENDER_CURVE:            // Bender Curve
+        ADC_WORK_Select_BenderTable(data[1]);  // 0: soft, 1: normal, 2: hard
         break;
       case SETTING_ID_SOFTWARE_MUTE_OVERRIDE:
         SUP_SetMuteOverride(data[1]);  // enable/disable Software Mute Override and value
@@ -323,6 +323,7 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;
       default:
         // do nothing
+        type = 0;  // to set a breakpoint only
         break;
     }
   }
@@ -339,7 +340,12 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         BB_MSG_SendTheBuffer();
         break;
       default:
+        type = 0;  // to set a breakpoint only
         break;
     }
+  }
+  else
+  {
+    type = 0;  // to set a breakpoint only
   }
 }
