@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
 #define A (1.0)
 #define B (1.0)    // ==1/q
 #define C (1.0)
-#define OmegaC (0.3)  // w.r.t. Nyquist
+#define OmegaC (0.5)  // w.r.t. Nyquist
 
 double T = 2.0 * tan(OmegaC * M_PI_2);
 double Arg = (4.0*A + 2.0*B*T + C*T*T);
 double a2 = (4.0*A - 2.0*B*T + C*T*T) / Arg;
 double a1 = (2.0*C*T*T - 8.0*A) / Arg;
-double a0 = 1.0;
+//double a0 = 1.0;
 double b2 = (4.0*D - 2.0*E*T + F*T*T) / Arg * C/F;
 double b1 = (2.0*F*T*T - 8.0*D) / Arg * C/F;
 double b0 = (4*D + F*T*T + 2.0*E*T) / Arg * C/F;
@@ -86,7 +86,7 @@ double b0 = (4*D + F*T*T + 2.0*E*T) / Arg * C/F;
 	out_file = OpenOutputFile(argv[2]);
 	while (fread(&x, sizeof(x), 1, in_file) == 1)
 	{
-    y = b0*x + b1*x1 + b2*x2 + a1*y1 + a2*y2;
+    y = 0.6*(b0*x + b1*x1 + b2*x2 + a1*y1 + a2*y2);
     if (fwrite(&y, sizeof(y), 1, out_file) != 1) ERROR();
     x2 = x1;
     x1 = x;
