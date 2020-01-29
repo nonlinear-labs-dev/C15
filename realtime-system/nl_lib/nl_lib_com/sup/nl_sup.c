@@ -144,7 +144,10 @@ void Transmitter(void)
     midi_timeout--;
 
   uint16_t bits = (unmute_status_bits & (SUP_UNMUTE_STATUS_HARDWARE_IS_VALID | SUP_UNMUTE_STATUS_HARDWARE_VALUE));
-  if (NL_GPIO_Get(pins->lpc_unmute_jumper) == 0)  // hardware jumper reads low (jumper set) ?
+
+//  if (NL_GPIO_Get(pins->lpc_unmute_jumper) == 0)  // hardware jumper reads low (jumper set) ?
+#warning "^^ Does not work, reads only 1.5V with pullup"
+  if (0)
   {
     requested_unmute_state = 1;  // 	-> force unmute
     bits |= (SUP_UNMUTE_STATUS_JUMPER_OVERRIDE | SUP_UNMUTE_STATUS_JUMPER_VALUE);
