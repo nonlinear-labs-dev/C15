@@ -16,6 +16,7 @@
 #include "tcd/nl_tcd_msg.h"
 #include "ipc/emphase_ipc.h"
 #include "espi/dev/nl_espi_dev_pedals.h"
+#include "drv/nl_dbg.h"
 
 /*************************************************************************/ /**
 * @brief	init everything
@@ -44,7 +45,9 @@ void NL_EHC_Process(void)
   if (!FillSampleBuffers())
     return;
 
+//  DBG_GPIO3_1_On();
   NL_EHC_ProcessControllers();
+//  DBG_GPIO3_1_Off();
 }
 
 // EOF
