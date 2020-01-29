@@ -11,7 +11,6 @@
 #define PEDAL_DEFAULT_OFF     0b00000000  // 0
 
 void     ESPI_DEV_Pedals_Init(void);
-void     ESPI_DEV_Pedals_Process(void);
 uint16_t ESPI_DEV_Pedals_GetValue(uint8_t id);
 void     ESPI_DEV_Pedals_EspiPullChannel_Blocking(uint8_t channel);
 
