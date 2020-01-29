@@ -25,14 +25,12 @@
 #include "espi/nl_espi_core.h"
 
 #include "espi/dev/nl_espi_dev_aftertouch.h"
-#include "espi/dev/nl_espi_dev_attenuator.h"
 #include "espi/dev/nl_espi_dev_pedals.h"
 #include "espi/dev/nl_espi_dev_pitchbender.h"
 #include "espi/dev/nl_espi_dev_ribbons.h"
-#include "espi/dev/nl_espi_dev_volpoti.h"
 
-#define M0_SYSTICK_IN_NS      62500
-#define M0_SYSTICK_MULTIPLIER 2
+#define M0_SYSTICK_IN_NS      62500  // 62.5us
+#define M0_SYSTICK_MULTIPLIER 2      // 62.5us*2 = 125us --> triggers Timer Interrupt of M4
 
 #define PENDING_INTERRUPT 1
 #define SCHED_FINISHED    0
@@ -70,12 +68,9 @@ P4D3   SET_PULL_R  pedal_audio_board    HC595     W    0/0   1   1    5   5
 
 void Scheduler(void)
 {
-
-#if M0_DEBUG
-  DBG_Pod_3_On();
-#endif
-
   static uint8_t state = 0;
+
+  int32_t val;
 
   switch (state)
   {
@@ -100,54 +95,128 @@ void Scheduler(void)
     {
       SPI_DMA_SwitchMode(ESPI_MODE_ADC);
       NL_GPDMA_Poll();
+
+      // do heartbeat LED here, enough time
+      static uint32_t hbLedCnt = 0;
+      hbLedCnt++;
+      switch (hbLedCnt)
+      {
+        case 1:
+          DBG_Led_Cpu_On();
+          break;
+        case 201:
+          DBG_Led_Cpu_Off();
+          break;
+        case 400:
+          hbLedCnt = 0;
+          break;
+        default:
+          break;
+      }
+
+      // and do pending summing reset
+      if (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_SUM_RESET))
+      {
+    	  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_SUM_RESET, 0);
+
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_1_ADC_RING_SUM);
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_1_ADC_TIP_SUM);
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_2_ADC_RING_SUM);
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_2_ADC_TIP_SUM);
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_3_ADC_RING_SUM);
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_3_ADC_TIP_SUM);
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_4_ADC_RING_SUM);
+    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_4_ADC_TIP_SUM);
+      }
+
       break;
     }
 
     case 2:  // pedal 1 : 57 µs
     {
+#if M0_DEBUG
+      DBG_GPIO3_2_On();
+#endif
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_1_ADC_RING);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_ADC_RING, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_1_ADC_RING));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_1_ADC_RING);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_ADC_RING, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_1_ADC_RING_SUM, val);
 
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_1_ADC_TIP);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_ADC_TIP, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_1_ADC_TIP));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_1_ADC_TIP);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_ADC_TIP, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_1_ADC_TIP_SUM, val);
+#if M0_DEBUG
+      DBG_GPIO3_2_Off();
+#endif
       break;
     }
 
     case 4:  // pedal 2 : 57 µs
     {
+#if M0_DEBUG
+      DBG_GPIO3_2_On();
+#endif
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_2_ADC_RING);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_ADC_RING, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_2_ADC_RING));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_2_ADC_RING);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_ADC_RING, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_2_ADC_RING_SUM, val);
 
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_2_ADC_TIP);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_ADC_TIP, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_2_ADC_TIP));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_2_ADC_TIP);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_ADC_TIP, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_2_ADC_TIP_SUM, val);
+#if M0_DEBUG
+      DBG_GPIO3_2_Off();
+#endif
       break;
     }
 
     case 6:  // pedal 3 : 57 µs
     {
+#if M0_DEBUG
+      DBG_GPIO3_2_On();
+#endif
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_3_ADC_RING);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_ADC_RING, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_3_ADC_RING));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_3_ADC_RING);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_ADC_RING, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_3_ADC_RING_SUM, val);
 
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_3_ADC_TIP);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_ADC_TIP, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_3_ADC_TIP));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_3_ADC_TIP);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_ADC_TIP, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_3_ADC_TIP_SUM, val);
+#if M0_DEBUG
+      DBG_GPIO3_2_Off();
+#endif
       break;
     }
 
     case 8:  // pedal 4 : 57 µs
     {
+#if M0_DEBUG
+      DBG_GPIO3_2_On();
+#endif
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_4_ADC_RING);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_ADC_RING, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_4_ADC_RING));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_4_ADC_RING);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_ADC_RING, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_4_ADC_RING_SUM, val);
 
       ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_4_ADC_TIP);
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_ADC_TIP, ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_4_ADC_TIP));
+      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_4_ADC_TIP);
+      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_ADC_TIP, val);
+      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_4_ADC_TIP_SUM, val);
+#if M0_DEBUG
+      DBG_GPIO3_2_Off();
+#endif
       break;
     }
 
@@ -183,21 +252,7 @@ void Scheduler(void)
       break;
     }
 
-    case 14:  // attenuator: best case: 4.9 µs, worst case: 44.8 µs
-    {
-      uint8_t attenuatorValue = (uint8_t)(127 - (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_VOLUME_POTI_ADC) >> 5));
-      ESPI_Attenuator_Channel_Set(0, attenuatorValue);
-      ESPI_Attenuator_Channel_Set(1, attenuatorValue);
-
-      ESPI_Attenuator_EspiSendIfChanged(0);
-      NL_GPDMA_Poll();
-
-      ESPI_Attenuator_EspiSendIfChanged(1);
-      NL_GPDMA_Poll();
-      break;
-    }
-
-    case 16:  // pitchbender: 42 µs
+    case 14:  // pitchbender: 42 µs
     {
       SPI_DMA_SwitchMode(ESPI_MODE_ADC);
       NL_GPDMA_Poll();
@@ -209,7 +264,7 @@ void Scheduler(void)
       break;
     }
 
-    case 18:  // aftertouch: 29 µs
+    case 16:  // aftertouch: 29 µs
     {
       ESPI_DEV_Aftertouch_EspiPull();
       NL_GPDMA_Poll();
@@ -218,7 +273,7 @@ void Scheduler(void)
       break;
     }
 
-    case 20:  // 2 ribbons: 57 µs
+    case 18:  // 2 ribbons: 57 µs
     {
       ESPI_DEV_Ribbons_EspiPull_Upper();
       NL_GPDMA_Poll();
@@ -230,47 +285,16 @@ void Scheduler(void)
       break;
     }
 
-    case 22:  // volume poti: 29 µs
-    {
-      ESPI_DEV_VolPoti_EspiPull();
-      NL_GPDMA_Poll();
-
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_VOLUME_POTI_ADC, ESPI_DEV_VolPoti_GetValue());
-
-      static uint32_t hbLedCnt = 0;
-      hbLedCnt++;
-
-      switch (hbLedCnt)
-      {
-        case 1:
-          DBG_Led_Cpu_On();
-          break;
-        case 201:
-          DBG_Led_Cpu_Off();
-          break;
-        case 400:
-          hbLedCnt = 0;
-          break;
-        default:
-          break;
-      }
-
-      break;
-    }
-
     default:
       break;
   }
 
   state++;
-  if (state == 24)
+
+  if (state == 20)
     state = 0;
 
   stateFlag = SCHED_FINISHED;
-
-#if M0_DEBUG
-  DBG_Pod_3_Off();
-#endif
 }
 
 /******************************************************************************/
@@ -285,10 +309,8 @@ int main(void)
 
   ESPI_Init(1600000);
 
-  ESPI_DEV_VolPoti_Init();
   ESPI_DEV_Pedals_Init();
   ESPI_DEV_Aftertouch_Init();
-  ESPI_DEV_Attenuator_Init();
   ESPI_DEV_Pitchbender_Init();
   ESPI_DEV_Ribbons_Init();
 
