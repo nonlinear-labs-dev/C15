@@ -30,14 +30,14 @@
 
 // main working variable
 AdcBuffer_T adc[ADC_CHANNELS] = {  // order must be exactly like this !!
-  { EMPHASE_IPC_PEDAL_1_ADC_TIP, EMPHASE_IPC_PEDAL_1_DETECT, EMPHASE_IPC_PEDAL_1_STATE },
-  { EMPHASE_IPC_PEDAL_1_ADC_RING, EMPHASE_IPC_PEDAL_1_DETECT, EMPHASE_IPC_PEDAL_1_STATE },
-  { EMPHASE_IPC_PEDAL_2_ADC_TIP, EMPHASE_IPC_PEDAL_2_DETECT, EMPHASE_IPC_PEDAL_2_STATE },
-  { EMPHASE_IPC_PEDAL_2_ADC_RING, EMPHASE_IPC_PEDAL_2_DETECT, EMPHASE_IPC_PEDAL_2_STATE },
-  { EMPHASE_IPC_PEDAL_3_ADC_TIP, EMPHASE_IPC_PEDAL_3_DETECT, EMPHASE_IPC_PEDAL_3_STATE },
-  { EMPHASE_IPC_PEDAL_3_ADC_RING, EMPHASE_IPC_PEDAL_3_DETECT, EMPHASE_IPC_PEDAL_3_STATE },
-  { EMPHASE_IPC_PEDAL_4_ADC_TIP, EMPHASE_IPC_PEDAL_4_DETECT, EMPHASE_IPC_PEDAL_4_STATE },
-  { EMPHASE_IPC_PEDAL_4_ADC_RING, EMPHASE_IPC_PEDAL_4_DETECT, EMPHASE_IPC_PEDAL_4_STATE }
+  { EMPHASE_IPC_PEDAL_1_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_1_DETECT, EMPHASE_IPC_PEDAL_1_STATE },
+  { EMPHASE_IPC_PEDAL_1_ADC_RING_SUM, EMPHASE_IPC_PEDAL_1_DETECT, EMPHASE_IPC_PEDAL_1_STATE },
+  { EMPHASE_IPC_PEDAL_2_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_2_DETECT, EMPHASE_IPC_PEDAL_2_STATE },
+  { EMPHASE_IPC_PEDAL_2_ADC_RING_SUM, EMPHASE_IPC_PEDAL_2_DETECT, EMPHASE_IPC_PEDAL_2_STATE },
+  { EMPHASE_IPC_PEDAL_3_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_3_DETECT, EMPHASE_IPC_PEDAL_3_STATE },
+  { EMPHASE_IPC_PEDAL_3_ADC_RING_SUM, EMPHASE_IPC_PEDAL_3_DETECT, EMPHASE_IPC_PEDAL_3_STATE },
+  { EMPHASE_IPC_PEDAL_4_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_4_DETECT, EMPHASE_IPC_PEDAL_4_STATE },
+  { EMPHASE_IPC_PEDAL_4_ADC_RING_SUM, EMPHASE_IPC_PEDAL_4_DETECT, EMPHASE_IPC_PEDAL_4_STATE }
 };
 
 static uint16_t sbuf_index;                 // index of current front element for all sample buffers
@@ -87,11 +87,12 @@ int FillSampleBuffers(void)
   // read data from current conversion
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
-    adc[i].current = adc[i].values[sbuf_index] = Emphase_IPC_PlayBuffer_Read(adc[i].ipcAdcID);
-    adc[i].detect                              = Emphase_IPC_PlayBuffer_Read(adc[i].ipcDetectID);
+    adc[i].current = adc[i].values[sbuf_index] = Emphase_IPC_PlayBuffer_ReadSummed(adc[i].ipcAdcID);
+    adc[i].detect                              = Emphase_IPC_PlayBuffer_ReadSummed(adc[i].ipcDetectID);
     adc[i].detect_and_config[sbuf_index]       = adc[i].detect
         | (adc[i].flags.pullup_5V << 7) | (adc[i].flags.pullup_10k << 6);
   }
+  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_SUM_RESET, 1);
 
   // set PULLUP bits for next conversion
   for (int i = 0; i < ADC_CHANNELS; i += 2)
