@@ -22,29 +22,17 @@ static uint32_t         dbg_uart_baudrate;
 static DBG_PINS_T* pins;
 
 void (*const DBG_Pod_On[4])(void) = {
-  DBG_Pod_0_On,
-  DBG_Pod_1_On,
-  DBG_Pod_2_On,
-  DBG_Pod_3_On,
-#if 0
-		DBG_Pod_4_On,
-		DBG_Pod_5_On,
-		DBG_Pod_6_On,
-		DBG_Pod_7_On,
-#endif
+  DBG_GPIO3_1_On,
+  DBG_GPIO3_2_On,
+  DBG_GPIO3_3_On,
+  DBG_GPIO3_4_On,
 };
 
 void (*const DBG_Pod_Off[4])(void) = {
-  DBG_Pod_0_Off,
-  DBG_Pod_1_Off,
-  DBG_Pod_2_Off,
-  DBG_Pod_3_Off,
-#if 0
-		DBG_Pod_4_Off,
-		DBG_Pod_5_Off,
-		DBG_Pod_6_Off,
-		DBG_Pod_7_Off,
-#endif
+  DBG_GPIO3_1_On,
+  DBG_GPIO3_2_On,
+  DBG_GPIO3_3_On,
+  DBG_GPIO3_4_On,
 };
 
 static void DBG_Callback(uint32_t status)
@@ -148,73 +136,38 @@ void DBG_Led_Audio_Off(void)
   NL_GPIO_Clr(pins->led_audio);
 }
 
-void DBG_Pod_0_On(void)
+void DBG_GPIO3_1_On(void)
 {
   NL_GPIO_Set(pins->pod[0]);
 }
-void DBG_Pod_0_Off(void)
+void DBG_GPIO3_1_Off(void)
 {
   NL_GPIO_Clr(pins->pod[0]);
 }
-void DBG_Pod_1_On(void)
+void DBG_GPIO3_2_On(void)
 {
   NL_GPIO_Set(pins->pod[1]);
 }
-void DBG_Pod_1_Off(void)
+void DBG_GPIO3_2_Off(void)
 {
   NL_GPIO_Clr(pins->pod[1]);
 }
-void DBG_Pod_2_On(void)
+void DBG_GPIO3_3_On(void)
 {
   NL_GPIO_Set(pins->pod[2]);
 }
-void DBG_Pod_2_Off(void)
+void DBG_GPIO3_3_Off(void)
 {
   NL_GPIO_Clr(pins->pod[2]);
 }
-void DBG_Pod_3_On(void)
+void DBG_GPIO3_4_On(void)
 {
   NL_GPIO_Set(pins->pod[3]);
 }
-void DBG_Pod_3_Off(void)
+void DBG_GPIO3_4_Off(void)
 {
   NL_GPIO_Clr(pins->pod[3]);
 }
-
-#if 0
-void DBG_Pod_4_On(void)
-{
-	NL_GPIO_Set(pins->pod[4]);
-}
-void DBG_Pod_4_Off(void)
-{
-	NL_GPIO_Clr(pins->pod[4]);
-}
-void DBG_Pod_5_On(void)
-{
-	NL_GPIO_Set(pins->pod[5]);
-}
-void DBG_Pod_5_Off(void)
-{
-	NL_GPIO_Clr(pins->pod[5]);
-}
-void DBG_Pod_6_On(void)
-{
-	NL_GPIO_Set(pins->pod[6]);
-}
-void DBG_Pod_6_Off(void)
-{
-	NL_GPIO_Clr(pins->pod[6]);
-}
-void DBG_Pod_7_On(void)
-{
-	NL_GPIO_Set(pins->pod[7]);
-}
-void DBG_Pod_7_Off(void)
-{
-	NL_GPIO_Clr(pins->pod[7]);
-}
-#endif
 
 /******************************************************************************/
 /** @brief    	This function takes care about the heartbeat led. It toggles

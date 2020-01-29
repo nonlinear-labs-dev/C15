@@ -680,32 +680,18 @@ static PIN_CFG_T lpc_dbg_led_audio_ok = {
 };
 
 static PIN_CFG_T lpc_dbg_pod[] = {
-#if 0
-	{
-		.pinId  		= {6,1},            // conflicts with PCB version ID resistor
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,0},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	},
-	{
-		.pinId  		= {6,2},			// conflicts with config jumper for forced unmute
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,1},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	},
-#endif
+  {
+      .pinId        = { 6, 2 },
+      .ioType       = PIN_TYPE_GPIO,
+      .gpioId       = { 3, 1 },
+      .direction    = PIN_GPIO_DIR_OUT,
+      .inputBuffer  = PIN_INBUF_OFF,
+      .glitchFilter = PIN_FILTER_ON,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_OFF,
+      .pullUp       = PIN_PUP_OFF,
+      .function     = 0,
+  },
   {
       .pinId        = { 6, 3 },
       .ioType       = PIN_TYPE_GPIO,
@@ -719,7 +705,7 @@ static PIN_CFG_T lpc_dbg_pod[] = {
       .function     = 0,
   },
   {
-      .pinId        = { 6, 4 },  // POD1 : 125us systick clock pulse
+      .pinId        = { 6, 4 },
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 3 },
       .direction    = PIN_GPIO_DIR_OUT,
@@ -731,7 +717,7 @@ static PIN_CFG_T lpc_dbg_pod[] = {
       .function     = 0,
   },
   {
-      .pinId        = { 6, 5 },  // POD2 : individual task time
+      .pinId        = { 6, 5 },
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 4 },
       .direction    = PIN_GPIO_DIR_OUT,
@@ -741,46 +727,7 @@ static PIN_CFG_T lpc_dbg_pod[] = {
       .pullDown     = PIN_PDN_OFF,
       .pullUp       = PIN_PUP_OFF,
       .function     = 0,
-  },
-  {
-      .pinId        = { 6, 6 },  // POD3 : total task scheduler time
-      .ioType       = PIN_TYPE_GPIO,
-      .gpioId       = { 0, 5 },
-      .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
-      .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
-      .function     = 0,
   }
-#if 0
-	,
-	{
-		.pinId  		= {6,10},
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,6},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	},
-	{
-		.pinId  		= {6,11},
-		.ioType 		= PIN_TYPE_GPIO,
-		.gpioId 		= {3,7},
-		.direction		= PIN_GPIO_DIR_OUT,
-		.inputBuffer	= PIN_INBUF_OFF,
-		.glitchFilter 	= PIN_FILTER_ON,
-		.slewRate 		= PIN_SRATE_SLOW,
-		.pullDown 		= PIN_PDN_OFF,
-		.pullUp 		= PIN_PUP_OFF,
-		.function		= 0,
-	}
-#endif
 };
 
 static PIN_CFG_T lpc_dbg_uart_tx = {
@@ -805,12 +752,6 @@ static DBG_PINS_T debug_pins = {
   .pod[1] = &lpc_dbg_pod[1].gpioId,
   .pod[2] = &lpc_dbg_pod[2].gpioId,
   .pod[3] = &lpc_dbg_pod[3].gpioId,
-#if 0
-	.pod[4] = &lpc_dbg_pod[4].gpioId,
-	.pod[5] = &lpc_dbg_pod[5].gpioId,
-	.pod[6] = &lpc_dbg_pod[6].gpioId,
-	.pod[7] = &lpc_dbg_pod[7].gpioId
-#endif
 };
 
 static void InitDebugPins(void)
@@ -826,12 +767,6 @@ static void InitDebugPins(void)
   PIN_Config(&lpc_dbg_pod[1]);
   PIN_Config(&lpc_dbg_pod[2]);
   PIN_Config(&lpc_dbg_pod[3]);
-#if 0
-	PIN_Config(&lpc_dbg_pod[4]);
-	PIN_Config(&lpc_dbg_pod[5]);
-	PIN_Config(&lpc_dbg_pod[6]);
-	PIN_Config(&lpc_dbg_pod[7]);
-#endif
 
   DBG_Config(LPC_USART2, 115200, &debug_pins);
 }
@@ -866,9 +801,10 @@ static PIN_CFG_T lpc_sup_mute_ack = {
 };
 
 static PIN_CFG_T lpc_unmute_jumper = {
-  .pinId        = { 6, 2 },  // conflicts with lpc_dbg_pod[1]
-  .ioType       = PIN_TYPE_GPIO,
-  .gpioId       = { 3, 1 },
+  .pinId  = { 6, 6 },
+  .ioType = PIN_TYPE_GPIO,
+#warning "Does not work, reads only 1.5V with pullup"
+  .gpioId       = { 0, 5 },
   .direction    = PIN_GPIO_DIR_IN,
   .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,

@@ -19,7 +19,7 @@
 /** note: check emphase_v5.c for exact led names */
 typedef struct
 {
-  GPIO_NAME_T* pod[8];
+  GPIO_NAME_T* pod[4];
   GPIO_NAME_T* led_cpu;
   GPIO_NAME_T* led_audio;
   GPIO_NAME_T* led_error;
@@ -47,27 +47,15 @@ void DBG_Led_Warning_Off(void);
 void DBG_Led_Cpu_Off(void);
 void DBG_Led_Audio_Off(void);
 
-void DBG_Pod_0_On(void);
-void DBG_Pod_1_On(void);
-void DBG_Pod_2_On(void);
-void DBG_Pod_3_On(void);
-#if 0
-void DBG_Pod_4_On(void);
-void DBG_Pod_5_On(void);
-void DBG_Pod_6_On(void);
-void DBG_Pod_7_On(void);
-#endif
+void DBG_GPIO3_1_On(void);
+void DBG_GPIO3_2_On(void);
+void DBG_GPIO3_3_On(void);
+void DBG_GPIO3_4_On(void);
 
-void DBG_Pod_0_Off(void);
-void DBG_Pod_1_Off(void);
-void DBG_Pod_2_Off(void);
-void DBG_Pod_3_Off(void);
-#if 0
-void DBG_Pod_4_Off(void);
-void DBG_Pod_5_Off(void);
-void DBG_Pod_6_Off(void);
-void DBG_Pod_7_Off(void);
-#endif
+void DBG_GPIO3_1_Off(void);
+void DBG_GPIO3_2_Off(void);
+void DBG_GPIO3_3_Off(void);
+void DBG_GPIO3_4_Off(void);
 
 /** emphase v5 functions and wrappers */
 void DBG_Process_M4(void);
