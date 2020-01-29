@@ -13,7 +13,7 @@
 static volatile IPC_KEY_EVENT_T* keyBufferData;
 static volatile uint32_t*        keyBufferWritePos;
 static volatile uint32_t*        keyBufferReadPos;
-static volatile uint16_t*        playBufferData;
+static volatile int32_t*         playBufferData;
 
 static void Init_Addr(void)
 {
@@ -28,8 +28,8 @@ static void Init_Addr(void)
   keyBufferReadPos = (uint32_t*) (addr);
   addr += sizeof(uint32_t);
 
-  playBufferData = (uint16_t*) (addr);
-  addr += EMPHASE_NUMBER_OF_PLAY_DEVICES * sizeof(uint16_t);
+  playBufferData = (int32_t*) (addr);
+  addr += EMPHASE_NUMBER_OF_PLAY_DEVICES * sizeof(uint32_t);
 }
 
 /******************************************************************************/
@@ -127,18 +127,33 @@ uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* pKeyEvent, uint8_t
 	ESPI_DEV_PedalsV2_SetPedalState	26..29 | 0..3    4 Bit  v5
 
 *******************************************************************************/
-void Emphase_IPC_PlayBuffer_Write(uint8_t id, uint16_t val)
+void Emphase_IPC_PlayBuffer_Write(uint8_t id, int32_t val)
 {
   playBufferData[id] = val;
+}
+
+void Emphase_IPC_PlayBuffer_WriteSummed(uint8_t id, int32_t val)
+{
+  playBufferData[id] += val;
+  playBufferData[id + 1]++;
+}
+void Emphase_IPC_PlayBuffer_ResetSummed(uint8_t id)
+{
+  playBufferData[id]     = 0;
+  playBufferData[id + 1] = 0;
 }
 
 /******************************************************************************/
 /**	@brief
  	@return
 *******************************************************************************/
-uint16_t Emphase_IPC_PlayBuffer_Read(uint8_t id)
+int32_t Emphase_IPC_PlayBuffer_Read(uint8_t id)
 {
   return playBufferData[id];
+}
+int32_t Emphase_IPC_PlayBuffer_ReadSummed(uint8_t id)
+{
+  return playBufferData[id] / playBufferData[id + 1];
 }
 
 /******************************************************************************/
