@@ -35,67 +35,6 @@
 
 volatile uint8_t waitForFirstSysTick = 1;
 
-#if 0
-void BbbCallback(uint16_t type, uint16_t length, uint16_t* data)
-{
-	uint32_t param = *data;
-	uint32_t value1 = *(data + 1);
-
-	uint32_t value2;
-
-	if (length == 3)
-	{
-		value2 = *(data + 2);
-	}
-
-	if (type == BB_MSG_TYPE_PARAMETER)
-	{
-		if (length == 3)
-		{
-			PARAM_Set2(param, value1, value2);
-		}
-		else
-		{
-			PARAM_Set(param, value1);
-		}
-	}
-	else if (type == BB_MSG_TYPE_SETTING)
-	{
-		if (param == 0)							//  Ribbon 1 Mode
-		{
-			ADC_WORK_SetRibbon1AsEditControl(value1);			// 0: Play Control, 1: Edit Control
-		}
-	}
-}
-#endif
-
-void ToggleGpios(void)
-{
-  static uint8_t tgl = 0;
-
-  if (tgl == 0)
-  {
-    SPI_BB_TestGpios(0);
-    tgl = 1;
-  }
-  else
-  {
-    SPI_BB_TestGpios(1);
-    tgl = 0;
-  }
-}
-
-void Task_TestBbbLpc(void)
-{
-  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_PARAMETER, 284, 10);
-
-  if (BB_MSG_SendTheBuffer() < 0)
-  {
-    DBG_Led_Error_On();
-    COOS_Task_Add(DBG_Led_Error_Off, 1600, 0);
-  }
-}
-
 void Init(void)
 {
   /* board */
@@ -114,17 +53,10 @@ void Init(void)
   DBG_Led_Cpu_Off();
   DBG_Led_Warning_Off();
   DBG_Led_Audio_Off();
-  DBG_Pod_0_Off();
-  DBG_Pod_1_Off();
-  DBG_Pod_2_Off();
-  DBG_Pod_3_Off();
-#if 0
-    DBG_Pod_4_Off();
-    DBG_Pod_5_Off();
-    DBG_Pod_6_Off();
-    DBG_Pod_7_Off();
-#endif
-
+  DBG_GPIO3_1_Off();
+  DBG_GPIO3_2_Off();
+  DBG_GPIO3_3_Off();
+  DBG_GPIO3_4_Off();
   /* USB */
   USB_MIDI_Init();
   USB_MIDI_Config(HBT_MidiReceive);
@@ -149,21 +81,26 @@ void Init(void)
   /* scheduler */
   COOS_Init();
 
-  COOS_Task_Add(NL_GPDMA_Poll, 10, 1);  // every 125 us, for all the DMA transfers (SPI devices)
-  COOS_Task_Add(USB_MIDI_Poll, 15, 1);  // every 125 us, same time grid as in USB 2.0
+  // clang-format off
+  // fast and simultaneous processes
+  COOS_Task_Add(NL_GPDMA_Poll,            10, 1);     // every 125 us, for all the DMA transfers (SPI devices)
+  COOS_Task_Add(USB_MIDI_Poll,            20, 1);     // every 125 us, same time grid as in USB 2.0
+  COOS_Task_Add(POLY_Process,             30, 1);     // every 125 us, reading and applying keybed events
+  COOS_Task_Add(SPI_BB_Polling,           40, 1);     // every 125 us, checking the buffer with messages from the BBB and driving the LPC-BB "heartbeat"
 
-  COOS_Task_Add(POLY_Process, 20, 1);  // every 125 us, reading and applying keybed events
+  // slower stuff
+  //   to avoid potential overrun by any of these falling into the same time slot when their time-slices are integer multiples,
+  //   the start offsets are fine-stepped in increments, the max increments being less that the shortest time-slice
+  COOS_Task_Add(ADC_WORK_Process,         60+2, 100);   // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_SendBBMessages,  70+4, 800);   // every 100 ms, sending the results of the ADC processing to the BBB
+  COOS_Task_Add(MSG_CheckUSB,             80+6, 1600);  // every 200 ms, checking if the USB connection to the ePC or the ePC is still working
+  COOS_Task_Add(DBG_Process,              80+8, 4800);  // every 600 ms
+  COOS_Task_Add(SUP_Process,              90+10, SUP_PROCESS_TIMESLICE * 8);  // supervisor communication every 10ms
+  COOS_Task_Add(HBT_Process,              100+12, HBT_PROCESS_TIMESLICE * 8); // heartbeat communication every 10ms
 
-  COOS_Task_Add(SPI_BB_Polling, 30, 1);  // every 125 us, checking the buffer with messages from the BBB and driving the LPC-BB "heartbeat"
-
-  COOS_Task_Add(ADC_WORK_Init, 50, 0);              // preparing the ADC processing (will be executed after the M0 has been initialized)
-  COOS_Task_Add(ADC_WORK_Process, 60, 100);         // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_SendBBMessages, 85, 800);  // every 100 ms, sending the results of the ADC processing to the BBB
-
-  COOS_Task_Add(MSG_CheckUSB, 70, 1600);  // every 200 ms, checking if the USB connection to the ePC or the ePC is still working
-  COOS_Task_Add(DBG_Process, 80, 4800);   // every 600 ms
-  COOS_Task_Add(SUP_Process, 90, SUP_PROCESS_TIMESLICE * 8);
-  COOS_Task_Add(HBT_Process, 100, HBT_PROCESS_TIMESLICE * 8);
+  // single run stuff
+  COOS_Task_Add(ADC_WORK_Init,            50, 0);     // preparing the ADC processing (will be executed after the M0 has been initialized)
+  // clang-format on
 
   /* M0 */
   CPU_M0_Init();
@@ -188,16 +125,21 @@ int main(void)
   return 0;
 }
 
+/*************************************************************************/ /**
+* @brief	ticker interrupt
+* this will be triggered every 125us from M0 core, to sync it with M0's data
+* aquisition
+******************************************************************************/
 void M0CORE_IRQHandler(void)
 {
   SYS_ticker++;
 #if DBG_CLOCK_MONITOR
-  DBG_Pod_1_On();
+  DBG_GPIO3_1_On();
 #endif
   LPC_CREG->M0TXEVENT = 0;
   waitForFirstSysTick = 0;
   COOS_Update();
 #if DBG_CLOCK_MONITOR
-  DBG_Pod_1_Off();
+  DBG_GPIO3_1_Off();
 #endif
 }
