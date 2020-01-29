@@ -31,8 +31,8 @@
 // settling
 #define CBUF_SIZE       (8)  // 2^N !!!
 #define CBUF_MOD        (CBUF_SIZE - 1)
-#define SETTLING_OFFSET (10)  // settling minimum in LSBs
-#define SETTLING_GAIN   (30)  // gain factor for how many LSBs to add at fullscale
+#define SETTLING_OFFSET (2)  // settling minimum in LSBs
+#define SETTLING_GAIN   (8)  // gain factor for how many LSBs to add at fullscale
 
 typedef struct
 {
