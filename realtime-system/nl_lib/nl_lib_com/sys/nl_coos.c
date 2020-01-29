@@ -16,9 +16,9 @@ static void DispatchTotalTime(int on)
 {
 #if DGB_TIMING_PINS
   if (on)
-    DBG_Pod_3_On();
+    DBG_GPIO3_2_On();
   else
-    DBG_Pod_3_Off();
+    DBG_GPIO3_2_Off();
 #endif
 }
 
@@ -26,9 +26,9 @@ static void DispatchTaskTime(int on)
 {
 #if DGB_TIMING_PINS
   if (on)
-    DBG_Pod_2_On();
+    DBG_GPIO3_3_On();
   else
-    DBG_Pod_2_Off();
+    DBG_GPIO3_3_Off();
 #endif
 }
 
