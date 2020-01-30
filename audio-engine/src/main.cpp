@@ -6,13 +6,12 @@
 #include <nltools/logging/Log.h>
 #include <nltools/StringTools.h>
 #include <nltools/messaging/Messaging.h>
-#include "io/Log.h"
 #include "io/MidiHeartBeat.h"
 
 #include <glibmm.h>
 #include <iostream>
 
-#include <ui/C15_CLI.h>
+#include "ui/C15_CLI.h"
 
 static Glib::RefPtr<Glib::MainLoop> theMainLoop;
 static std::unique_ptr<Options> theOptions;

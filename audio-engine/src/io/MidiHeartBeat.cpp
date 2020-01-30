@@ -1,11 +1,11 @@
 #include "MidiHeartBeat.h"
-#include "io/Log.h"
+#include <nltools/logging/Log.h>
 
 MidiHeartBeat::MidiHeartBeat(const std::string &device)
 {
   if(device.empty())
   {
-    Log::warning("No Heartbeat device - please use '--heartbeat=device' command line option.");
+    nltools::Log::warning("No Heartbeat device - please use '--heartbeat=device' command line option.");
   }
   else if((m_output = std::make_unique<AlsaMidiOutput>(device)))
   {

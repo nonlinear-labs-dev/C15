@@ -1,10 +1,10 @@
 #include "AlsaMidiOutput.h"
-#include "io/Log.h"
+#include <nltools/logging/Log.h>
 
 AlsaMidiOutput::AlsaMidiOutput(const std::string &device)
 {
   if(snd_rawmidi_open(nullptr, &m_handle, device.c_str(), SND_RAWMIDI_NONBLOCK))
-    Log::error("Could not open midi output device");
+    nltools::Log::error("Could not open midi output device");
 }
 
 AlsaMidiOutput::~AlsaMidiOutput()
@@ -21,7 +21,7 @@ void AlsaMidiOutput::send(const uint8_t *data, size_t numBytes)
     {
       if(size_t(res) != numBytes)
       {
-        Log::error("Could not write message into midi output device");
+        nltools::Log::error("Could not write message into midi output device");
       }
     }
 
