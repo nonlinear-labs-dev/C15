@@ -365,7 +365,8 @@ void PolySection::postProcess_poly_audio(const uint32_t _voiceId, const float _m
       69.0f - (tmp_amt * m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)));
   m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Freq_Env_C, _voiceId, tmp_env);
   tmp_env = m_signals.get(C15::Signals::Truepoly_Signals::Env_G_Sig, _voiceId);
-  tmp_amt = NlToolbox::Crossfades::unipolarCrossFade(m_comb_decay_times[0], m_comb_decay_times[1], tmp_env);
+  tmp_amt = NlToolbox::Crossfades::unipolarCrossFade(m_comb_decay_times[0][_voiceId], m_comb_decay_times[1][_voiceId],
+                                                     tmp_env);
   m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Decay, _voiceId, tmp_amt);
   // unison (phase)
   const float phase = m_smoothers.get(C15::Smoothers::Poly_Audio::Unison_Phase)
@@ -468,8 +469,8 @@ void PolySection::postProcess_poly_slow(const uint32_t _voiceId)
   envMod = 1.0f - m_comb_decayCurve.applyCurve(m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay_Gate));
   unitMod = std::abs(m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay));
   unitPitch = (-0.5f * notePitch * keyTracking);
-  m_comb_decay_times[0] = m_convert->eval_level(unitPitch + (unitMod * envMod)) * unitSign;
-  m_comb_decay_times[1] = m_convert->eval_level(unitPitch + unitMod) * unitSign;
+  m_comb_decay_times[0][_voiceId] = m_convert->eval_level(unitPitch + (unitMod * envMod)) * unitSign;
+  m_comb_decay_times[1][_voiceId] = m_convert->eval_level(unitPitch + unitMod) * unitSign;
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_KT);
   unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_Tune);
   envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
@@ -566,8 +567,8 @@ void PolySection::postProcess_poly_key(const uint32_t _voiceId)
   envMod = 1.0f - m_comb_decayCurve.applyCurve(m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay_Gate));
   unitMod = std::abs(m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay));
   unitPitch = (-0.5f * notePitch * keyTracking);
-  m_comb_decay_times[0] = m_convert->eval_level(unitPitch + (unitMod * envMod)) * unitSign;
-  m_comb_decay_times[1] = m_convert->eval_level(unitPitch + unitMod) * unitSign;
+  m_comb_decay_times[0][_voiceId] = m_convert->eval_level(unitPitch + (unitMod * envMod)) * unitSign;
+  m_comb_decay_times[1][_voiceId] = m_convert->eval_level(unitPitch + unitMod) * unitSign;
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_KT);
   unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_Tune);
   envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
