@@ -8,7 +8,7 @@ StartLimitInterval=0
 Environment="LD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/nonlinear/audio-engine/"
 WorkingDirectory=@CMAKE_INSTALL_PREFIX@/nonlinear/audio-engine
 ExecStartPre=amixer -D hw:PCH set Master 100%
-ExecStart=@CMAKE_INSTALL_PREFIX@/nonlinear/auW per Default
+ExecStart=@CMAKE_INSTALL_PREFIX@/nonlinear/audio-engine/audio-engine -h hw:EMPHASE  -m hw:EMPHASE -a hw:PCH -n 3 -s 49 --playground-host=192.168.10.11
 Restart=on-failure
 RestartSec=1
 
