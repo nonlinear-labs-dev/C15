@@ -178,20 +178,20 @@ bool PolySection::keyDown(PolyKeyEvent *_event)
     {
       m_mono_glide.sync(1.0f);
     }
+    postProcess_mono_slow();
   }
   if(_event->m_trigger_phase)
   {
     m_soundgenerator.resetPhase(_event->m_voiceId);
-    m_combfilter.setDelaySmoother(_event->m_voiceId);
   }
   if(_event->m_stolen)
   {
     // case NoteSteal (currently nothing)
   }
   updateNotePitch(_event->m_voiceId);
-  postProcess_mono_slow();
   postProcess_poly_key(_event->m_voiceId);
   setSlowFilterCoefs(_event->m_voiceId);
+  m_combfilter.setDelaySmoother(_event->m_voiceId);
   if(_event->m_trigger_env)
   {
     startEnvelopes(_event->m_voiceId, m_note_pitch[_event->m_voiceId], _event->m_velocity);
