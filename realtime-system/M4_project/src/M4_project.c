@@ -44,7 +44,7 @@ void Init(void)
   SUP_Init();
 
   /* system */
-  Emphase_IPC_M4_Init();
+  Emphase_IPC_Init();
   NL_GPDMA_Init(0b11111100);
 
   /* debug */
