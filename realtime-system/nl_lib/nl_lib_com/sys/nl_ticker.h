@@ -10,6 +10,6 @@
 
 #include "stdint.h"
 
-volatile uint32_t SYS_ticker;
+extern volatile uint32_t SYS_ticker;
 
 #endif
