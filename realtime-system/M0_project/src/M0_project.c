@@ -40,6 +40,21 @@
 #define ESPI_MODE_ADC      LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_ATT_DOUT LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_DIN      LPC_SSP0, ESPI_CPOL_1 | ESPI_CPHA_1
+// ID's for the low-level fetch routines
+// DO NOT CHANGE !!
+#define ESPI_PEDAL_1_ADC_RING 7
+#define ESPI_PEDAL_1_ADC_TIP  6
+#define ESPI_PEDAL_2_ADC_RING 5
+#define ESPI_PEDAL_2_ADC_TIP  4
+#define ESPI_PEDAL_3_ADC_RING 3
+#define ESPI_PEDAL_3_ADC_TIP  2
+#define ESPI_PEDAL_4_ADC_RING 1
+#define ESPI_PEDAL_4_ADC_TIP  0
+#define ESPI_PITCHBENDER_ADC 8
+#define ESPI_AFTERTOUCH_ADC  9
+#define ESPI_RIBBON_1_ADC    10
+#define ESPI_RIBBON_2_ADC    11
+
 
 static volatile uint8_t stateFlag = 0;
 
@@ -114,40 +129,26 @@ void Scheduler(void)
           break;
       }
 
-      // and do pending summing reset
-      if (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_SUM_RESET))
-      {
-    	  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_SUM_RESET, 0);
-
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_1_ADC_RING_SUM);
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_1_ADC_TIP_SUM);
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_2_ADC_RING_SUM);
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_2_ADC_TIP_SUM);
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_3_ADC_RING_SUM);
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_3_ADC_TIP_SUM);
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_4_ADC_RING_SUM);
-    	  Emphase_IPC_PlayBuffer_ResetSummed(EMPHASE_IPC_PEDAL_4_ADC_TIP_SUM);
-      }
-
       break;
     }
 
     case 2:  // pedal 1 : 57 µs
     {
+       // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
+    	IPC_AdcBufferWriteNext();
+
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_1_ADC_RING);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_RING);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_1_ADC_RING);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_ADC_RING, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_1_ADC_RING_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_RING);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_RING, val);
 
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_1_ADC_TIP);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_TIP);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_1_ADC_TIP);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_ADC_TIP, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_1_ADC_TIP_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_TIP);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_TIP, val);
 #if M0_DEBUG
       DBG_GPIO3_2_Off();
 #endif
@@ -159,17 +160,15 @@ void Scheduler(void)
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_2_ADC_RING);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_RING);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_2_ADC_RING);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_ADC_RING, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_2_ADC_RING_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_RING);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_RING, val);
 
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_2_ADC_TIP);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_TIP);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_2_ADC_TIP);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_ADC_TIP, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_2_ADC_TIP_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_TIP);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_TIP, val);
 #if M0_DEBUG
       DBG_GPIO3_2_Off();
 #endif
@@ -181,17 +180,15 @@ void Scheduler(void)
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_3_ADC_RING);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_RING);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_3_ADC_RING);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_ADC_RING, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_3_ADC_RING_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_RING);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_RING, val);
 
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_3_ADC_TIP);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_TIP);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_3_ADC_TIP);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_ADC_TIP, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_3_ADC_TIP_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_TIP);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_TIP, val);
 #if M0_DEBUG
       DBG_GPIO3_2_Off();
 #endif
@@ -203,17 +200,15 @@ void Scheduler(void)
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_4_ADC_RING);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_RING);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_4_ADC_RING);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_ADC_RING, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_4_ADC_RING_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_RING);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_RING, val);
 
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(EMPHASE_IPC_PEDAL_4_ADC_TIP);
+      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_TIP);
       NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(EMPHASE_IPC_PEDAL_4_ADC_TIP);
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_ADC_TIP, val);
-      Emphase_IPC_PlayBuffer_WriteSummed(EMPHASE_IPC_PEDAL_4_ADC_TIP_SUM, val);
+      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_TIP);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_TIP, val);
 #if M0_DEBUG
       DBG_GPIO3_2_Off();
 #endif
@@ -229,10 +224,11 @@ void Scheduler(void)
       NL_GPDMA_Poll();
 
       uint8_t detect = ESPI_DEV_Pedals_Detect_GetValue();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_4_DETECT, ((detect & 0b00010000) >> 4));
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_3_DETECT, ((detect & 0b00100000) >> 5));
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_2_DETECT, ((detect & 0b01000000) >> 6));
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_DETECT, ((detect & 0b10000000) >> 7));
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_DETECT, ((detect & 0b00010000) >> 4) << 12);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_DETECT, ((detect & 0b00100000) >> 5) << 12);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_DETECT, ((detect & 0b01000000) >> 6) << 12);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) << 12);
+
       break;
     }
 
@@ -241,10 +237,11 @@ void Scheduler(void)
       SPI_DMA_SwitchMode(ESPI_MODE_ATT_DOUT);
       NL_GPDMA_Poll();
 
-      ESPI_DEV_Pedals_SetPedalState(1, (uint8_t) Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_STATE));
-      ESPI_DEV_Pedals_SetPedalState(2, (uint8_t) Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_STATE));
-      ESPI_DEV_Pedals_SetPedalState(3, (uint8_t) Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_STATE));
-      ESPI_DEV_Pedals_SetPedalState(4, (uint8_t) Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_STATE));
+      uint32_t config = IPC_ReadPedalAdcConfig();
+      ESPI_DEV_Pedals_SetPedalState(1, (uint8_t)((config >> 0) & 0xFF));
+      ESPI_DEV_Pedals_SetPedalState(2, (uint8_t)((config >> 8) & 0xFF));
+      ESPI_DEV_Pedals_SetPedalState(3, (uint8_t)((config >> 16) & 0xFF));
+      ESPI_DEV_Pedals_SetPedalState(4, (uint8_t)((config >> 24) & 0xFF));
 
       ESPI_DEV_Pedals_PullResistors_EspiSendIfChanged();
 
@@ -260,7 +257,7 @@ void Scheduler(void)
       ESPI_DEV_Pitchbender_EspiPull();
       NL_GPDMA_Poll();
 
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PITCHBENDER_ADC, ESPI_DEV_Pitchbender_GetValue());
+      IPC_WriteAdcBuffer(IPC_ADC_PITCHBENDER, ESPI_DEV_Pitchbender_GetValue());
       break;
     }
 
@@ -269,7 +266,7 @@ void Scheduler(void)
       ESPI_DEV_Aftertouch_EspiPull();
       NL_GPDMA_Poll();
 
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_AFTERTOUCH_ADC, ESPI_DEV_Aftertouch_GetValue());
+      IPC_WriteAdcBuffer(IPC_ADC_AFTERTOUCH, ESPI_DEV_Aftertouch_GetValue());
       break;
     }
 
@@ -277,11 +274,14 @@ void Scheduler(void)
     {
       ESPI_DEV_Ribbons_EspiPull_Upper();
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_RIBBON_1_ADC, ESPI_DEV_Ribbons_GetValue(UPPER_RIBBON));
+      IPC_WriteAdcBuffer(IPC_ADC_RIBBON1, ESPI_DEV_Ribbons_GetValue(UPPER_RIBBON));
 
       ESPI_DEV_Ribbons_EspiPull_Lower();
       NL_GPDMA_Poll();
-      Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_RIBBON_2_ADC, ESPI_DEV_Ribbons_GetValue(LOWER_RIBBON));
+      IPC_WriteAdcBuffer(IPC_ADC_RIBBON2, ESPI_DEV_Ribbons_GetValue(LOWER_RIBBON));
+
+      // now, all adc channel & detect values have been read ==> sync read index to write index
+      IPC_AdcUpdateReadIndex();
       break;
     }
 
@@ -303,7 +303,7 @@ int main(void)
 {
   EMPHASE_V5_M0_Init();
 
-  Emphase_IPC_M0_Init();
+  Emphase_IPC_Init();
 
   NL_GPDMA_Init(0b00000011);  /// inverse to the mask in the M4_Main
 
