@@ -151,9 +151,9 @@ void Emphase_IPC_Init(void)
   for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
     for (int k = 0; k < IPC_ADC_BUFFER_SIZE; k++)
       adcBufferData[i].values[k] = 0;
-  *adcConfigData      = 0;
-  adcBufferReadIndex  = 0;
-  adcBufferWriteIndex = 0;
+  *adcConfigData       = 0;
+  *adcBufferReadIndex  = 0;
+  *adcBufferWriteIndex = 0;
 }
 
 /******************************************************************************/
