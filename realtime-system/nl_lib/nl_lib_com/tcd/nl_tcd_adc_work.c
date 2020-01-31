@@ -18,6 +18,7 @@
 #include "nl_tcd_test.h"
 #include "nl_tcd_interpol.h"
 #include "ehc/nl_ehc.h"
+#include "drv/nl_dbg.h"
 
 #define GROUND_THRESHOLD     20
 #define CHANGE_FOR_DETECTION 500
@@ -672,84 +673,32 @@ void ADC_WORK_Process(void)
     return;
   }
 
+  //  DBG_GPIO3_1_On();
+
 #if 0
   if (1 || send_raw_sensor_messages)
   {
     uint16_t data[13];
-
-    data[0] = (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_DETECT) << 0)
-        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_DETECT) << 1)
-        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_DETECT) << 2)
-        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_DETECT) << 3);
-    data[1]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_TIP);
-    data[2]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_RING);
-    data[3]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_TIP);
-    data[4]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_ADC_RING);
-    data[5]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_TIP);
-    data[6]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_ADC_RING);
-    data[7]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_TIP);
-    data[8]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_ADC_RING);
-    data[9]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PITCHBENDER_ADC);
-    data[10] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_AFTERTOUCH_ADC);
-    data[11] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_1_ADC);
-    data[12] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_2_ADC);
+    // clang-format off
+    data[0] = (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_DETECT) >= 2048) ? 1 : 0) << 0)
+            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_DETECT) >= 2048) ? 1 : 0) << 1)
+            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_DETECT) >= 2048) ? 1 : 0) << 2)
+            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_DETECT) >= 2048) ? 1 : 0) << 3);
+    // clang-format on
+    data[1]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_TIP);
+    data[2]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_RING);
+    data[3]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_TIP);
+    data[4]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_RING);
+    data[5]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_TIP);
+    data[6]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_RING);
+    data[7]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_TIP);
+    data[8]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_RING);
+    data[9]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PITCHBENDER);
+    data[10] = IPC_ReadAdcBufferAveraged(IPC_ADC_AFTERTOUCH);
+    data[11] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON1);
+    data[12] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON2);
     BB_MSG_WriteMessage(BB_MSG_TYPE_SENSORS_RAW, 13, data);
     BB_MSG_SendTheBuffer();
-  }
-#endif
-
-#if 0
-  if (1 || send_raw_sensor_messages)
-  {
-    static uint16_t data[13];
-    static int state=0; // 0:both PU's, 1:ring PU, 2:tip PU
-    static int wait = 0;
-
-    data[0] = (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_DETECT) << 0)
-        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_2_DETECT) << 1)
-        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_3_DETECT) << 2)
-        | (Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_4_DETECT) << 3);
-    data[1]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_TIP);
-    data[2]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PEDAL_1_ADC_RING);
-    data[9]  = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PITCHBENDER_ADC);
-    data[10] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_AFTERTOUCH_ADC);
-    data[11] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_1_ADC);
-    data[12] = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_RIBBON_2_ADC);
-
-
-    if (wait == 0)
-    {
-      switch (state)
-      {
-      case 0 :
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_PULLUP);
-        state = 1;
-        wait=03;
-        // data[3] = data[1]; // tip with PU
-        // data[4] = data[2]; // ring with PU
-        break;
-      case 1 :
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_TIP_TO_PULLUP);
-        state = 2;
-        wait=07;
-        data[5] = data[1];  // tip OPEN
-        data[6] = data[2];  // ring with PU
-        break;
-      case 2 :
-        Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_1_STATE, PEDAL_RING_TO_PULLUP);
-        state = 1;
-        wait=07;
-        data[7] = data[1];  // tip with PU
-        data[8] = data[2];  // ring OPEN
-        break;
-      }
-      BB_MSG_WriteMessage(BB_MSG_TYPE_SENSORS_RAW, 13, data);
-      BB_MSG_SendTheBuffer();
-    }
-    else
-    {
-      --wait;
-    }
   }
 #endif
 
@@ -932,4 +881,6 @@ void ADC_WORK_Process(void)
 
   //==================== External Hardware Controllers
   NL_EHC_Process();
+
+  //  DBG_GPIO3_1_Off();
 }
