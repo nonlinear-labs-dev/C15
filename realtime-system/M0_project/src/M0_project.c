@@ -28,6 +28,7 @@
 #include "espi/dev/nl_espi_dev_pedals.h"
 #include "espi/dev/nl_espi_dev_pitchbender.h"
 #include "espi/dev/nl_espi_dev_ribbons.h"
+#include "espi/dev/nl_espi_dev_adc.h"
 
 #define M0_SYSTICK_IN_NS      62500  // 62.5us
 #define M0_SYSTICK_MULTIPLIER 2      // 62.5us*2 = 125us --> triggers Timer Interrupt of M4
@@ -40,21 +41,6 @@
 #define ESPI_MODE_ADC      LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_ATT_DOUT LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_DIN      LPC_SSP0, ESPI_CPOL_1 | ESPI_CPHA_1
-// ID's for the low-level fetch routines
-// DO NOT CHANGE !!
-#define ESPI_PEDAL_1_ADC_RING 7
-#define ESPI_PEDAL_1_ADC_TIP  6
-#define ESPI_PEDAL_2_ADC_RING 5
-#define ESPI_PEDAL_2_ADC_TIP  4
-#define ESPI_PEDAL_3_ADC_RING 3
-#define ESPI_PEDAL_3_ADC_TIP  2
-#define ESPI_PEDAL_4_ADC_RING 1
-#define ESPI_PEDAL_4_ADC_TIP  0
-#define ESPI_PITCHBENDER_ADC 8
-#define ESPI_AFTERTOUCH_ADC  9
-#define ESPI_RIBBON_1_ADC    10
-#define ESPI_RIBBON_2_ADC    11
-
 
 static volatile uint8_t stateFlag = 0;
 
@@ -134,8 +120,8 @@ void Scheduler(void)
 
     case 2:  // pedal 1 : 57 µs
     {
-       // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
-    	IPC_AdcBufferWriteNext();
+      // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
+      IPC_AdcBufferWriteNext();
 
 #if M0_DEBUG
       DBG_GPIO3_2_On();
