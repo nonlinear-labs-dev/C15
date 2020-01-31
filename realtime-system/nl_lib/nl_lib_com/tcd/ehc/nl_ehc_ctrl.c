@@ -28,11 +28,21 @@
 #define AR_SPAN_RHEO       (200)  // 200 -> 2.0 (max/min minimum factor)
 #define AR_UPPER_DEAD_ZONE (4)    // 4 -> 4%
 #define AR_LOWER_DEAD_ZONE (4)    // 4 -> 4%
+
 // settling
-#define CBUF_SIZE       (8)  // 2^N !!!
-#define CBUF_MOD        (CBUF_SIZE - 1)
-#define SETTLING_OFFSET (2)  // settling minimum in LSBs
-#define SETTLING_GAIN   (8)  // gain factor for how many LSBs to add at fullscale
+#define CBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
+#define CBUF_MOD  (CBUF_SIZE - 1)
+
+// Offset: settling minimum in LSBs.
+// Stable/low-creepage pedals are OK with 3..10, bad pedals (Moog) may need 20..50
+// The higher the value, the more there is a step transition on a change, after settling
+#warning "ToDo : make this parametrizable. Like 3 10dB steps 'Pedal Auto-Stabilizing' : weak(4), normal(13), strong(40)"
+// This mainly important when the pedal is shared with a ribbon, noise (from vibration, creep) shall not overwrite
+// the ribbon value(but even when the pedal is the only modulator, too much noise is not ideal).
+// Therefore, the PG should temporarily increase the stabilizing level by one when pedal and ribbon / other pedal run shared.
+#define SETTLING_OFFSET (4)
+// gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values
+#define SETTLING_GAIN (8)
 
 typedef struct
 {
@@ -249,7 +259,7 @@ void readoutController(Controller_T *this)
     uint16_t avg;
     int      settled = 0;
     // determine min, max and average wiper sample values
-    if (GetADCStats(this->wiper, 64, &min, &max, &avg))
+    if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &avg))
       settled = (max - min) < SETTLING_OFFSET + SETTLING_GAIN * avg / 4096;  // noise scales with voltage for this ADC chip
     if (settled)                                                             // wiper has settled ?
     {
@@ -298,7 +308,7 @@ void NL_EHC_InitControllers(void)
   initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], POT);
   initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT);
   initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT);
-  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], NULL, RHEOSTAT);
+  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT);
 }
 
 /*************************************************************************/ /**
