@@ -22,11 +22,11 @@
 #define ILLEGAL_ADC_VALUE (11111)          // "illegal" value way out of range of 0...4095
 
 // IIR lowpass coefficients
-#define C1 (4786)  // 0.20657 * 2^15
-#define C2 (9573)  // 0.41314 * 2^15
-#define C3 (C1)    //
-#define C4 (8562)  // 0.36953‬ * 2^15
-#define C5 (4537)  // 0.19582‬ * 2^15
+#define B0 (6554)
+#define B1 (13107)
+#define B2 (6554)
+#define A1 (0)
+#define A2 (6554)
 
 // main working variable
 AdcBuffer_T adc[ADC_CHANNELS] = {
@@ -106,12 +106,16 @@ int FillSampleBuffers(void)
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
     if (adc[i].flags.useIIR)
+    {
       adc[i].filtered_current = adc[i].filtered_values[sbuf_index] =           // y[k] =
-          multQ15(C1, adc[i].values[sbuf_index])                               // + C1*x[k]
-          + multQ15(C2, adc[i].values[(sbuf_index + 1) & SBUF_MOD])            // + C2*x[k-1]
-          + multQ15(C3, adc[i].values[(sbuf_index + 2) & SBUF_MOD])            // + C3*x[k-2]
-          + multQ15(C4, adc[i].filtered_values[(sbuf_index + 1) & SBUF_MOD])   // + C4*y[k-1]
-          + multQ15(C5, adc[i].filtered_values[(sbuf_index + 2) & SBUF_MOD]);  // + C5*y[k-2]
+          multQ15(B0, adc[i].values[sbuf_index])                               // + B0*x[k]
+          + multQ15(B1, adc[i].values[(sbuf_index + 1) & SBUF_MOD])            // + B1*x[k-1]
+          + multQ15(B2, adc[i].values[(sbuf_index + 2) & SBUF_MOD])            // + B2*x[k-2]
+          + multQ15(A1, adc[i].filtered_values[(sbuf_index + 1) & SBUF_MOD])   // + A1*y[k-1]
+          + multQ15(A2, adc[i].filtered_values[(sbuf_index + 2) & SBUF_MOD]);  // + A2*y[k-2]
+    }
+    else
+      adc[i].filtered_current = adc[i].current;
   }
 
   if (sampleBuffersInvalid)
