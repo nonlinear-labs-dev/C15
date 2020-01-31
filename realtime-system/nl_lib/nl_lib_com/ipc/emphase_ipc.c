@@ -30,7 +30,6 @@ static volatile uint32_t*        adcConfigData;
 static volatile int*             adcBufferWriteIndex;
 static volatile int*             adcBufferReadIndex;
 
-
 /******************************************************************************
 *	Functions for both the M4 and M0 to interface the PlayBuffers.
 ******************************************************************************/
@@ -68,13 +67,12 @@ void IPC_WriteAdcBuffer(uint8_t adc_id, int32_t value)
   adcBufferData[adc_id].values[*adcBufferWriteIndex] = value;
 }
 
-
 /******************************************************************************/
 /**	@brief      Advance write buffer index to next position
 ******************************************************************************/
 void IPC_AdcBufferWriteNext(void)
 {
-	*adcBufferWriteIndex = (*adcBufferWriteIndex + 1) & IPC_ADC_BUFFER_MASK;
+  *adcBufferWriteIndex = (*adcBufferWriteIndex + 1) & IPC_ADC_BUFFER_MASK;
 }
 
 /******************************************************************************/
@@ -82,7 +80,7 @@ void IPC_AdcBufferWriteNext(void)
 ******************************************************************************/
 void IPC_AdcUpdateReadIndex(void)
 {
-	*adcBufferReadIndex = *adcBufferWriteIndex;
+  *adcBufferReadIndex = *adcBufferWriteIndex;
 }
 
 /******************************************************************************/
@@ -153,8 +151,8 @@ void Emphase_IPC_Init(void)
   for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
     for (int k = 0; k < IPC_ADC_BUFFER_SIZE; k++)
       adcBufferData[i].values[k] = 0;
-  *adcConfigData = 0;
-  adcBufferReadIndex = 0;
+  *adcConfigData      = 0;
+  adcBufferReadIndex  = 0;
   adcBufferWriteIndex = 0;
 }
 
