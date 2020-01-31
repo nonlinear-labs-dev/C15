@@ -210,10 +210,10 @@ void Scheduler(void)
       NL_GPDMA_Poll();
 
       uint8_t detect = ESPI_DEV_Pedals_Detect_GetValue();
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_DETECT, ((detect & 0b00010000) >> 4) << 12);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_DETECT, ((detect & 0b00100000) >> 5) << 12);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_DETECT, ((detect & 0b01000000) >> 6) << 12);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) << 12);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_DETECT, ((detect & 0b00010000) >> 4) ? 4095 : 0);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_DETECT, ((detect & 0b00100000) >> 5) ? 4095 : 0);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_DETECT, ((detect & 0b01000000) >> 6) ? 4095 : 0);
+      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) ? 4095 : 0);
 
       break;
     }
