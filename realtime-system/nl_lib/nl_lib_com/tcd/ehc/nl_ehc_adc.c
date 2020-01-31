@@ -29,15 +29,16 @@
 #define C5 (4537)  // 0.19582‬ * 2^15
 
 // main working variable
-AdcBuffer_T adc[ADC_CHANNELS] = {  // order must be exactly like this !!
-  { EMPHASE_IPC_PEDAL_1_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_1_DETECT, EMPHASE_IPC_PEDAL_1_STATE },
-  { EMPHASE_IPC_PEDAL_1_ADC_RING_SUM, EMPHASE_IPC_PEDAL_1_DETECT, EMPHASE_IPC_PEDAL_1_STATE },
-  { EMPHASE_IPC_PEDAL_2_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_2_DETECT, EMPHASE_IPC_PEDAL_2_STATE },
-  { EMPHASE_IPC_PEDAL_2_ADC_RING_SUM, EMPHASE_IPC_PEDAL_2_DETECT, EMPHASE_IPC_PEDAL_2_STATE },
-  { EMPHASE_IPC_PEDAL_3_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_3_DETECT, EMPHASE_IPC_PEDAL_3_STATE },
-  { EMPHASE_IPC_PEDAL_3_ADC_RING_SUM, EMPHASE_IPC_PEDAL_3_DETECT, EMPHASE_IPC_PEDAL_3_STATE },
-  { EMPHASE_IPC_PEDAL_4_ADC_TIP_SUM, EMPHASE_IPC_PEDAL_4_DETECT, EMPHASE_IPC_PEDAL_4_STATE },
-  { EMPHASE_IPC_PEDAL_4_ADC_RING_SUM, EMPHASE_IPC_PEDAL_4_DETECT, EMPHASE_IPC_PEDAL_4_STATE }
+AdcBuffer_T adc[ADC_CHANNELS] = {
+  // order must be exactly like this !!
+  { IPC_ADC_PEDAL1_TIP, IPC_ADC_PEDAL1_DETECT },
+  { IPC_ADC_PEDAL1_RING, IPC_ADC_PEDAL1_DETECT },
+  { IPC_ADC_PEDAL2_TIP, IPC_ADC_PEDAL2_DETECT },
+  { IPC_ADC_PEDAL2_RING, IPC_ADC_PEDAL2_DETECT },
+  { IPC_ADC_PEDAL3_TIP, IPC_ADC_PEDAL3_DETECT },
+  { IPC_ADC_PEDAL3_RING, IPC_ADC_PEDAL3_DETECT },
+  { IPC_ADC_PEDAL4_TIP, IPC_ADC_PEDAL4_DETECT },
+  { IPC_ADC_PEDAL4_RING, IPC_ADC_PEDAL4_DETECT },
 };
 
 static uint16_t sbuf_index;                 // index of current front element for all sample buffers
@@ -54,9 +55,8 @@ void initSampleBuffers(void)
   {
     for (int k = 0; k < SBUF_SIZE; k++)
     {
-      adc[i].values[k]            = ILLEGAL_ADC_VALUE;
-      adc[i].filtered_values[k]   = ILLEGAL_ADC_VALUE;
-      adc[i].detect_and_config[k] = 0xFF;
+      adc[i].values[k]          = ILLEGAL_ADC_VALUE;
+      adc[i].filtered_values[k] = ILLEGAL_ADC_VALUE;
     }
     adc[i].flags.pullup_10k  = 1;  // force pullup on every pin, initially
     adc[i].flags.pullup_5V   = 0;
@@ -87,23 +87,20 @@ int FillSampleBuffers(void)
   // read data from current conversion
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
-    adc[i].current = adc[i].values[sbuf_index] = Emphase_IPC_PlayBuffer_ReadSummed(adc[i].ipcAdcID);
-    adc[i].detect                              = Emphase_IPC_PlayBuffer_ReadSummed(adc[i].ipcDetectID);
-    adc[i].detect_and_config[sbuf_index]       = adc[i].detect
-        | (adc[i].flags.pullup_5V << 7) | (adc[i].flags.pullup_10k << 6);
+    adc[i].current = adc[i].values[sbuf_index] = IPC_ReadAdcBufferAveraged(adc[i].ipcAdcID);
+    adc[i].detect                              = IPC_ReadAdcBufferAveraged(adc[i].ipcDetectID);
   }
-  Emphase_IPC_PlayBuffer_Write(EMPHASE_IPC_PEDAL_SUM_RESET, 1);
 
   // set PULLUP bits for next conversion
+  uint32_t cfg = 0;
   for (int i = 0; i < ADC_CHANNELS; i += 2)
   {
-    uint16_t cfg = 0;
     if (adc[i].flags.pullup_10k)
-      cfg |= PEDAL_TIP_TO_PULLUP;
+      cfg |= (PEDAL_TIP_TO_PULLUP << 8 * (i / 2));
     if (adc[i + 1].flags.pullup_10k)
-      cfg |= PEDAL_RING_TO_PULLUP;
-    Emphase_IPC_PlayBuffer_Write(adc[i].ipcControlID, cfg);
+      cfg |= (PEDAL_RING_TO_PULLUP << 8 * (i / 2));
   }
+  IPC_WritePedalAdcConfig(cfg);
 
   // IIR lowpass filtering
   for (int i = 0; i < ADC_CHANNELS; i++)

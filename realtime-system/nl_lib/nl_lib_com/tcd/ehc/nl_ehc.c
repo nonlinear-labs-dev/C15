@@ -45,9 +45,9 @@ void NL_EHC_Process(void)
   if (!FillSampleBuffers())
     return;
 
-//  DBG_GPIO3_1_On();
+  //  DBG_GPIO3_1_On();
   NL_EHC_ProcessControllers();
-//  DBG_GPIO3_1_Off();
+  //  DBG_GPIO3_1_Off();
 }
 
 // EOF

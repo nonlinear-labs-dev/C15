@@ -20,9 +20,8 @@
 
 typedef struct
 {
-  uint16_t ipcAdcID;      // ADC channel value access ID
-  uint16_t ipcDetectID;   // Plug detect access ID
-  uint16_t ipcControlID;  // channel pullup control access ID
+  uint16_t ipcAdcID;     // ADC channel value access ID
+  uint16_t ipcDetectID;  // Plug detect access ID
   struct
   {
     // input
@@ -35,9 +34,8 @@ typedef struct
   } flags;
 
   // raw data
-  uint16_t values[SBUF_SIZE];             // raw values
-  uint16_t filtered_values[SBUF_SIZE];    // values after IIR filtering
-  uint8_t  detect_and_config[SBUF_SIZE];  // buffer for the cable detect(bit 0) and 5v/pullup config (bits 7/6)
+  uint16_t values[SBUF_SIZE];           // raw values
+  uint16_t filtered_values[SBUF_SIZE];  // values after IIR filtering
   // pre-processed data
   uint16_t current;           // == filtered_values[sbuf_index]
   uint16_t filtered_current;  // == values[sbuf_index]

@@ -279,7 +279,7 @@ void ADC_WORK_Init(void)
     ribbon[i].output        = 0;
     ribbon[i].calibration   = (i == 0 ? &RIBBON_1_DEFAULT_CALIBRATION_DATA : &RIBBON_2_DEFAULT_CALIBRATION_DATA);  // use default calibration
     ribbon[i].threshold     = SetThreshold(ribbon[i].calibration->x_values[0]);
-    ribbon[i].ipcId         = (i == 0 ? EMPHASE_IPC_RIBBON_1_ADC : EMPHASE_IPC_RIBBON_2_ADC);
+    ribbon[i].ipcId         = (i == 0 ? IPC_ADC_RIBBON1 : IPC_ADC_RIBBON1);
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
 
@@ -558,7 +558,7 @@ static void ProcessRibbons(void)
     uint32_t touchBegins = 0;
     int32_t  inc         = 0;
 
-    value = Emphase_IPC_PlayBuffer_Read(ribbon[i].ipcId);
+    value = IPC_ReadAdcBufferAveraged(ribbon[i].ipcId);
 
     if (value > ribbon[i].last + 1)  // rising values (min. +2)
     {
@@ -758,7 +758,7 @@ void ADC_WORK_Process(void)
 
   //==================== Pitchbender
 
-  value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_PITCHBENDER_ADC);  // 0 ... 4095
+  value = IPC_ReadAdcBufferAveraged(IPC_ADC_PITCHBENDER);  // 0 ... 4095
 
   value = value - pitchbendZero;  // -2048 ... 2047 (after initialization)
 
@@ -887,7 +887,7 @@ void ADC_WORK_Process(void)
 
   //==================== Aftertouch
 
-  value = Emphase_IPC_PlayBuffer_Read(EMPHASE_IPC_AFTERTOUCH_ADC);
+  value = IPC_ReadAdcBufferAveraged(IPC_ADC_AFTERTOUCH);
 
   if (value != lastAftertouch)
   {
