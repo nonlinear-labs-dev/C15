@@ -19,7 +19,7 @@
 
 // ============= ADC channels with sync'd buffers
 #define SBUF_MOD          (SBUF_SIZE - 1)  // value for predecrement and masking
-#define ILLEGAL_ADC_VALUE (11111)          // "illegal" value way out of range of 0...4095
+#define DEFAULT_ADC_VALUE (2047)           // "default" value, initial dummy input
 
 // IIR lowpass coefficients
 #define B0 (6554)
@@ -49,21 +49,21 @@ static int      sampleBuffersInvalid = 40;  // flag until buffers are full, afte
 ******************************************************************************/
 void initSampleBuffers(void)
 {
-  sampleBuffersInvalid = 40;
+  sampleBuffersInvalid = SBUF_SIZE * 2;
   sbuf_index           = 0;
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
     for (int k = 0; k < SBUF_SIZE; k++)
     {
-      adc[i].values[k]          = ILLEGAL_ADC_VALUE;
-      adc[i].filtered_values[k] = ILLEGAL_ADC_VALUE;
+      adc[i].values[k]          = DEFAULT_ADC_VALUE;
+      adc[i].filtered_values[k] = DEFAULT_ADC_VALUE;
     }
     adc[i].flags.pullup_10k  = 1;  // force pullup on every pin, initially
     adc[i].flags.pullup_5V   = 0;
     adc[i].flags.useIIR      = 0;
     adc[i].flags.useStats    = 0;
-    adc[i].current           = ILLEGAL_ADC_VALUE;
-    adc[i].filtered_current  = ILLEGAL_ADC_VALUE;
+    adc[i].current           = DEFAULT_ADC_VALUE;
+    adc[i].filtered_current  = DEFAULT_ADC_VALUE;
     adc[i].detect            = 0xFF;
     adc[i].flags.initialized = 1;
   }

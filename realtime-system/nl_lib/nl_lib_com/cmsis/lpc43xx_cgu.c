@@ -1017,7 +1017,7 @@ int CGU_FrequencyMonitor(CGU_ENTITY_T Clock, uint32_t *m, uint32_t *d)
  **********************************************************************/
 uint32_t CGU_RealFrequencyCompare(CGU_ENTITY_T Clock, CGU_ENTITY_T CompareToClock, uint32_t *m, uint32_t *d)
 {
-  uint32_t m1, m2, d1, d2;
+  uint32_t m1 = 0, m2 = 0, d1 = 0, d2 = 0;
   /* Check Parameter */
   if ((Clock > CGU_CLKSRC_IDIVE) || (CompareToClock > CGU_CLKSRC_IDIVE))
     return CGU_ERROR_INVALID_PARAM;

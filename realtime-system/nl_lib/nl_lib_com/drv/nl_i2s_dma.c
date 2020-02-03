@@ -26,7 +26,7 @@ static Status I2S_DMA_CalculateFreq(uint8_t bits, uint32_t freq, int32_t* n, uin
   uint32_t x, y;
   uint16_t dif;
   uint16_t error;
-  uint16_t x_divide, y_divide;
+  uint16_t x_divide = 0, y_divide = 0;
   uint16_t ErrorOptimal = 0xFFFF;
   int32_t  N;
 
@@ -91,8 +91,8 @@ static Status I2S_DMA_CalculateFreq(uint8_t bits, uint32_t freq, int32_t* n, uin
 void I2S_DMA_Init(LPC_I2Sn_Type* I2Sx, uint8_t bits, uint32_t freq, uint8_t mode)
 {
   uint32_t wordwidth;
-  int32_t  n;
-  uint16_t xdiv, ydiv;
+  int32_t  n    = 0;
+  uint16_t xdiv = 0, ydiv = 0;
 
   if (bits == 32 || bits == 24)
   {
