@@ -56,7 +56,8 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
     auto bank = presetManager.addBank(transaction);
     bank->setX(transaction, x);
     bank->setY(transaction, y);
-    auto preset = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *presetManager.getEditBuffer()));
+    auto preset
+        = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *presetManager.getEditBuffer()));
     bank->selectPreset(transaction, preset->getUuid());
     presetManager.selectBank(transaction, bank->getUuid());
   });
@@ -208,19 +209,33 @@ PresetManagerActions::~PresetManagerActions()
 }
 
 void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction, SoupBuffer *buffer,
-                                                  std::shared_ptr<HTTPRequest> http)
+                                                  const std::shared_ptr<HTTPRequest> &http)
 {
   if(auto lock = m_presetManager.getLoadingLock())
   {
-    m_presetManager.clear(transaction);
 
     MemoryInStream stream(buffer, true);
     XmlReader reader(stream, transaction);
 
+    std::string errorMessage = "Invalid Backup File! Please choose correct xml.tar.gz file!";
+
+    reader.onFileVersionRead([&](int version) {
+      if(version > VersionAttribute::getCurrentFileVersion())
+      {
+        errorMessage = "Invalid: Unsupported File Version. The backup was created with a newer firmware. Please update "
+                       "your C15.";
+        return Reader::FileVersionCheckResult::Unsupported;
+      }
+      return Reader::FileVersionCheckResult::OK;
+    });
+
+    m_presetManager.clear(transaction);
+
     if(!reader.read<PresetManagerSerializer>(&m_presetManager))
     {
+      DebugLevel::error("Could not load Preset Manager from Backup File:", errorMessage);
       transaction->rollBack();
-      http->respond("Invalid File. Please choose correct xml.tar.gz or xml.zip file.");
+      http->respond(errorMessage);
     }
     else
     {
