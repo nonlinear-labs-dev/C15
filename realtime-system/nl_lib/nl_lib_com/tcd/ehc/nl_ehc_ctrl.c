@@ -326,11 +326,13 @@ void NL_EHC_ProcessControllers(void)
 {
   ProcessPots();
 
+#if 0
   // temp ????? LED is OFF while any pot is still settling or still below autoranging span
   if (ctrl[0].flags.isSettled && ctrl[1].flags.isSettled && ctrl[2].flags.isSettled && ctrl[3].flags.isSettled)
     DBG_Led_Error_Off();
   else
     DBG_Led_Error_On();
+#endif
 
 // temp ????? send raw data
 #if 0
