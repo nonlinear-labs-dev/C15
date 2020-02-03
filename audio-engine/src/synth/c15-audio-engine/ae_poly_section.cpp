@@ -167,6 +167,7 @@ bool PolySection::keyDown(PolyKeyEvent *_event)
   m_last_key_tune[_event->m_voiceId] = m_key_tune[_event->m_voiceId];
   m_key_tune[_event->m_voiceId] = _event->m_tune;
   m_key_position[_event->m_voiceId] = _event->m_position;
+  m_comb_gate[_event->m_voiceId] = 1.0f;
   if(_event->m_unisonIndex == 0)
   {
     if(_event->m_trigger_glide)
@@ -205,6 +206,7 @@ void PolySection::keyUp(PolyKeyEvent *_event)
   m_last_key_tune[_event->m_voiceId] = m_key_tune[_event->m_voiceId];
   m_key_tune[_event->m_voiceId] = _event->m_tune;
   m_key_position[_event->m_voiceId] = _event->m_position;
+  m_comb_gate[_event->m_voiceId] = 0.0f;
   if(_event->m_unisonIndex == 0)
   {
     if(_event->m_trigger_glide)
@@ -364,7 +366,9 @@ void PolySection::postProcess_poly_audio(const uint32_t _voiceId, const float _m
   tmp_env = m_convert->eval_lin_pitch(
       69.0f - (tmp_amt * m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)));
   m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Freq_Env_C, _voiceId, tmp_env);
-  tmp_env = m_signals.get(C15::Signals::Truepoly_Signals::Env_G_Sig, _voiceId);
+  // new application of comb filter gate (now using a 0ms attack/release event gate)
+  //tmp_env = m_signals.get(C15::Signals::Truepoly_Signals::Env_G_Sig, _voiceId); // former application of gate signal (with 10ms release)
+  tmp_env = m_comb_gate[_voiceId];  // current application of (event) gatze signal (0ms release)
   tmp_amt = NlToolbox::Crossfades::unipolarCrossFade(m_comb_decay_times[0][_voiceId], m_comb_decay_times[1][_voiceId],
                                                      tmp_env);
   m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Decay, _voiceId,
