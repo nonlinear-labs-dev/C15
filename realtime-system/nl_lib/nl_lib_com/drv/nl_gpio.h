@@ -15,6 +15,7 @@
 
 void    NL_GPIO_Set(GPIO_NAME_T* gpio);
 void    NL_GPIO_Clr(GPIO_NAME_T* gpio);
+int     NL_GPIO_Tgl(GPIO_NAME_T* gpio, int on);
 void    NL_GPIO_Dir(GPIO_NAME_T* gpio, uint8_t dir);
 void    NL_GPIO_SetState(GPIO_NAME_T* gpio, uint8_t state);
 uint8_t NL_GPIO_Get(GPIO_NAME_T* gpio);
