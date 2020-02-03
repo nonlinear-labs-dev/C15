@@ -226,10 +226,10 @@ void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction
                        "your C15.";
         return Reader::FileVersionCheckResult::Unsupported;
       }
+
+      m_presetManager.clear(transaction);
       return Reader::FileVersionCheckResult::OK;
     });
-
-    m_presetManager.clear(transaction);
 
     if(!reader.read<PresetManagerSerializer>(&m_presetManager))
     {
