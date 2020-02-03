@@ -75,8 +75,6 @@ void PanelUnitParameterEditMode::setupFocusAndMode(FocusAndMode focusAndMode)
 void PanelUnitParameterEditMode::assertAllButtonsAssigned()
 {
 #if _TESTS
-#warning "FIXME"
-  return;
   if(Application::get().getPresetManager()->getEditBuffer()->countParameters() != assignedAudioIDs.size())
   {
     int lastOne = -1;
