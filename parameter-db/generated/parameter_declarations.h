@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_declarations.h
-    @date       2020-01-12, 20:13
+    @date       2020-02-03, 18:34
     @version	1.7B-3
     @author     M. Seeber
     @brief      descriptors for all parameter-related details
@@ -179,6 +179,7 @@ namespace C15
       Master_Volume,
       Master_Tune,
       Scale_Base_Key,
+      Scale_Offset_0,
       Scale_Offset_1,
       Scale_Offset_2,
       Scale_Offset_3,
@@ -343,6 +344,7 @@ namespace C15
       Osc_A_PM_B_Shp,
       Osc_A_PM_FB_Env_C,
       Osc_A_Chirp,
+      Osc_A_Reset,
       Shp_A_Drive_Env_A,
       Shp_A_Fold,
       Shp_A_Asym,
@@ -356,6 +358,7 @@ namespace C15
       Osc_B_PM_A_Shp,
       Osc_B_PM_FB_Env_C,
       Osc_B_Chirp,
+      Osc_B_Reset,
       Shp_B_Drive_Env_B,
       Shp_B_Fold,
       Shp_B_Asym,
@@ -426,6 +429,7 @@ namespace C15
     enum class Global_Slow
     {
       Master_Tune,
+      Scale_Offset_0,
       Scale_Offset_1,
       Scale_Offset_2,
       Scale_Offset_3,
@@ -466,6 +470,8 @@ namespace C15
       Env_C_Time_KT,
       Env_C_Att_Curve,
       Env_C_Retr_H,
+      Osc_A_Reset,
+      Osc_B_Reset,
       _LENGTH_
     };
 
@@ -704,6 +710,7 @@ namespace C15
       Osc_A_PM_Self_Shp,
       Osc_A_PM_B_Shp,
       Osc_A_Phase,
+      Osc_A_Reset,
       Osc_A_Chirp,
       Shp_A_Fold,
       Shp_A_Asym,
@@ -713,6 +720,7 @@ namespace C15
       Osc_B_PM_Self_Shp,
       Osc_B_PM_A_Shp,
       Osc_B_Phase,
+      Osc_B_Reset,
       Osc_B_Chirp,
       Shp_B_Fold,
       Shp_B_Asym,

@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       c15_config.h
-    @date       2020-01-12, 20:13
+    @date       2020-02-03, 18:34
     @version	1.7B-3
     @author     M. Seeber
     @brief      crucial information about the audio engine

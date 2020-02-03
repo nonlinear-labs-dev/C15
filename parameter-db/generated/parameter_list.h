@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_list.h
-    @date       2020-01-12, 20:13
+    @date       2020-02-03, 18:34
     @version	1.7B-3
     @author     M. Seeber
     @brief      complete list of parameters (and their properties) in TCD order
@@ -2101,10 +2101,27 @@ namespace C15
         Properties::SmootherScale::Linear, 1.0f, 0.0f, false },
       { "0", "Flanger", "Flanger", "Tremolo", "Tremolo", "" } },
     { None },
+    { Parameters::Global_Unmodulateables::Scale_Offset_0,
+      391,
+      0.0f,
+      { Smoothers::Global_Slow::Scale_Offset_0, Signals::Global_Signals::Scale_Offset_0,
+        Properties::SmootherScale::Linear, 8.0f, 0.0f, false },
+      { "", "Scale", "Scale", "Offset +0", "Offset +0",
+        "Offset of the base key [in cents]. At zero, the interval to the base key would be the minor second of the "
+        "equally tempered scale." } },
     { None },
-    { None },
-    { None },
-    { None },
+    { Parameters::Local_Unmodulateables::Osc_A_Reset,
+      393,
+      0.0f,
+      { Smoothers::Poly_Sync::Osc_A_Reset, Signals::Quasipoly_Signals::Osc_A_Reset, Properties::SmootherScale::Linear,
+        1.0f, 0.0f, false },
+      { "", "Oscillator A", "Oscillator A", "Reset", "Reset", "" } },
+    { Parameters::Local_Unmodulateables::Osc_B_Reset,
+      394,
+      0.0f,
+      { Smoothers::Poly_Sync::Osc_B_Reset, Signals::Quasipoly_Signals::Osc_B_Reset, Properties::SmootherScale::Linear,
+        1.0f, 0.0f, false },
+      { "", "Oscillator B", "Oscillator B", "Reset", "Reset", "" } },
     { None },
     { None },
     { None },
