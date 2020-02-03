@@ -662,7 +662,7 @@ void PolySection::startEnvelopes(const uint32_t _voiceId, const float _pitch, co
   m_env_a.m_timeFactor[_voiceId][0] = m_convert->eval_level(timeKT + attackVel) * m_millisecond;
   m_env_a.m_timeFactor[_voiceId][1] = m_convert->eval_level(timeKT + decay1Vel) * m_millisecond;
   m_env_a.m_timeFactor[_voiceId][2] = m_convert->eval_level(timeKT + decay2Vel) * m_millisecond;
-  m_env_a.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_Split));
+  m_env_a.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_Elevate));
   m_env_a.setAttackCurve(m_smoothers.get(C15::Smoothers::Poly_Sync::Env_A_Att_Curve));
   m_env_a.setPeakLevel(_voiceId, peak);
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_A_Att) * m_env_a.m_timeFactor[_voiceId][0];
@@ -688,7 +688,7 @@ void PolySection::startEnvelopes(const uint32_t _voiceId, const float _pitch, co
   m_env_b.m_timeFactor[_voiceId][0] = m_convert->eval_level(timeKT + attackVel) * m_millisecond;
   m_env_b.m_timeFactor[_voiceId][1] = m_convert->eval_level(timeKT + decay1Vel) * m_millisecond;
   m_env_b.m_timeFactor[_voiceId][2] = m_convert->eval_level(timeKT + decay2Vel) * m_millisecond;
-  m_env_b.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_B_Split));
+  m_env_b.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_B_Elevate));
   m_env_b.setAttackCurve(m_smoothers.get(C15::Smoothers::Poly_Sync::Env_B_Att_Curve));
   m_env_b.setPeakLevel(_voiceId, peak);
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_B_Att) * m_env_b.m_timeFactor[_voiceId][0];
@@ -790,14 +790,14 @@ void PolySection::updateEnvLevels(const uint32_t _voiceId)
 {
   float peak, dest;
   // env a
-  m_env_a.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_Split));
+  m_env_a.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_Elevate));
   peak = m_env_a.m_levelFactor[_voiceId];
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_BP);
   m_env_a.setSegmentDest(_voiceId, 2, true, dest);
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_Sus);
   m_env_a.setSegmentDest(_voiceId, 3, true, dest);
   // env b
-  m_env_b.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_B_Split));
+  m_env_b.setSplitValue(m_smoothers.get(C15::Smoothers::Poly_Fast::Env_B_Elevate));
   peak = m_env_b.m_levelFactor[_voiceId];
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_B_BP);
   m_env_b.setSegmentDest(_voiceId, 2, true, dest);

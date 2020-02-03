@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_list.h
-    @date       2020-02-03, 18:53
+    @date       2020-02-03, 19:44
     @version	1.7B-3
     @author     M. Seeber
     @brief      complete list of parameters (and their properties) in TCD order
@@ -1818,11 +1818,11 @@ namespace C15
       { Smoothers::Poly_Sync::Env_A_Dec_2_Vel, None, Properties::SmootherScale::Linear, 60.0f, 0.0f, true },
       { "", "Envelope A", "Envelope A", "Decay 2 Velocity", "Dec 2 Vel", "" } },
     { None },
-    { Parameters::Local_Unmodulateables::Env_A_Split,
+    { Parameters::Local_Unmodulateables::Env_A_Elevate,
       332,
       0.0f,
-      { Smoothers::Poly_Fast::Env_A_Split, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
-      { "", "Envelope A", "Envelope A", "Split Levels", "Split Lvls", "" } },
+      { Smoothers::Poly_Fast::Env_A_Elevate, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
+      { "", "Envelope A", "Envelope A", "Elevate T - A", "Elevate", "" } },
     { None },
     { Parameters::Local_Unmodulateables::Env_B_Dec_1_Vel,
       334,
@@ -1836,11 +1836,11 @@ namespace C15
       { Smoothers::Poly_Sync::Env_B_Dec_2_Vel, None, Properties::SmootherScale::Linear, 60.0f, 0.0f, true },
       { "", "Envelope B", "Envelope B", "Decay 2 Velocity", "Dec 2 Vel", "" } },
     { None },
-    { Parameters::Local_Unmodulateables::Env_B_Split,
+    { Parameters::Local_Unmodulateables::Env_B_Elevate,
       338,
       0.0f,
-      { Smoothers::Poly_Fast::Env_B_Split, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
-      { "", "Envelope B", "Envelope B", "Split Levels", "Split Lvls", "" } },
+      { Smoothers::Poly_Fast::Env_B_Elevate, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
+      { "", "Envelope B", "Envelope B", "Elevate T - A", "Elevate", "" } },
     { None },
     { Parameters::Local_Unmodulateables::Env_C_Retr_H,
       340,
