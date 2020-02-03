@@ -48,7 +48,7 @@ namespace UNDO
 
   void Transaction::close()
   {
-    tCommandList todo;
+    tCommandList todo{};
 
     swap(todo, m_postfixCommands);
 
