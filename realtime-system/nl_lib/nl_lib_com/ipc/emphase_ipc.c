@@ -140,7 +140,7 @@ void Emphase_IPC_Init(void)
   Init_Addr();
 
   *keyBufferWritePos = 0;
-  *keyBufferReadPos = 0;
+  *keyBufferReadPos  = 0;
 
   for (int i = 0; i < EMPHASE_IPC_KEYBUFFER_SIZE; i++)
   {

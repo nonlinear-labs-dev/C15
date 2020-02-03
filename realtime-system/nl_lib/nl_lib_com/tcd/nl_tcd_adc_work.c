@@ -673,7 +673,7 @@ void ADC_WORK_Process(void)
 
   //  DBG_GPIO3_1_On();
 
-#if 0
+#if 01
   if (1 || send_raw_sensor_messages)
   {
     uint16_t data[13];
