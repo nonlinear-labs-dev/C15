@@ -173,6 +173,8 @@ void ParameterImportConversions::registerTests()
 
     a.registerConverter(10, 7, [](tControlPositionValue v) { return v * 4; });
 
+    a.registerConverter(249, 5, [](tControlPositionValue v) { return v * 0.5; });
+
     g_assert(a.convert(9, 0.5, 2) == 0.5);
     g_assert(a.convert(9, 0.5, 4) == 0.5);
     g_assert(a.convert(9, 0.5, 7) == 0.5);
@@ -187,5 +189,9 @@ void ParameterImportConversions::registerTests()
     g_assert(a.convert(10, 0.5, 7) == 0.5 * 4);
     g_assert(a.convert(10, 0.5, 8) == 0.5);
     g_assert(a.convert(10, 0.5, 9) == 0.5);
+
+    g_assert(a.convert(249, 0.5, 5) == 0.25);
+    g_assert(a.convert(249, 0, 5) == 0);
+    g_assert(a.convert(249, 1, 5) == 0.5);
   });
 }
