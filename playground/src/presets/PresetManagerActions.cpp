@@ -209,7 +209,7 @@ PresetManagerActions::~PresetManagerActions()
 }
 
 void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction, SoupBuffer *buffer,
-                                                  std::shared_ptr<HTTPRequest> http)
+                                                  const std::shared_ptr<HTTPRequest> &http)
 {
   if(auto lock = m_presetManager.getLoadingLock())
   {
