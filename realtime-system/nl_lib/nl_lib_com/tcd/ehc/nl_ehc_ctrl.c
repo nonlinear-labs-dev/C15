@@ -103,6 +103,16 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
   this->val_index                = 0;
   this->out_index                = 0;
 
+  if ((type != POT) && (top))
+  {                              // if a top channel was supplied, clear it unless it's for a pot
+    top->flags.useIIR      = 0;  // low pass filter the raw input
+    top->flags.useStats    = 0;  // enable min/max/avg statistics
+    top->flags.pullup_10k  = 0;  // readout wiper without pullup;
+    top->flags.useIIR      = 0;  // low pass filter the raw input
+    top->flags.useStats    = 0;  // enable min/max/avg statistics
+    top->flags.initialized = 0;
+  }
+
   switch (type)
   {
     case POT:
@@ -305,7 +315,7 @@ void ProcessPots(void)
 void NL_EHC_InitControllers(void)
 {
   // ???? temp init
-  initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], POT);
+  initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], RHEOSTAT);
   initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT);
   initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT);
   initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT);
