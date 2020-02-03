@@ -171,8 +171,7 @@ void COOS_Dispatch(void)
 
   if (taskOverflow)
   {
-    DBG_Led_Warning_On();
-    COOS_Task_Add(DBG_Led_Warning_Off, 2000, 0);  // stays on for 250ms sec
+    DBG_Led_Warning_TimedOn(3);
     taskOverflow = 0;
   }
   DispatchTotalTime(0);
