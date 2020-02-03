@@ -56,7 +56,8 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
     auto bank = presetManager.addBank(transaction);
     bank->setX(transaction, x);
     bank->setY(transaction, y);
-    auto preset = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *presetManager.getEditBuffer()));
+    auto preset
+        = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *presetManager.getEditBuffer()));
     bank->selectPreset(transaction, preset->getUuid());
     presetManager.selectBank(transaction, bank->getUuid());
   });
@@ -217,10 +218,18 @@ void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction
     MemoryInStream stream(buffer, true);
     XmlReader reader(stream, transaction);
 
+    reader.onFileVersionRead([&](int version) {
+      if(version > VersionAttribute::getCurrentFileVersion())
+        return Reader::FileVersionCheckResult::Unsupported;
+      else
+        return Reader::FileVersionCheckResult::OK;
+    });
+
     if(!reader.read<PresetManagerSerializer>(&m_presetManager))
     {
       transaction->rollBack();
-      http->respond("Invalid File. Please choose correct xml.tar.gz or xml.zip file.");
+      http->respond(
+          "Invalid: Unsupported File Version. The backup was created with a newer firmware. Please update your C15.");
     }
     else
     {
