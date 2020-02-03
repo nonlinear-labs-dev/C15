@@ -16,6 +16,15 @@ void NL_GPIO_Clr(GPIO_NAME_T* gpio)
   LPC_GPIO_PORT->CLR[gpio->port] = (uint32_t)(1 << gpio->pin);
 }
 
+int NL_GPIO_Tgl(GPIO_NAME_T* gpio, int on)
+{
+  if (on)
+    LPC_GPIO_PORT->SET[gpio->port] = (uint32_t)(1 << gpio->pin);
+  else
+    LPC_GPIO_PORT->CLR[gpio->port] = (uint32_t)(1 << gpio->pin);
+  return !on;
+}
+
 void NL_GPIO_Dir(GPIO_NAME_T* gpio, uint8_t dir)
 {
   if (dir == NL_GPIO_IN)
