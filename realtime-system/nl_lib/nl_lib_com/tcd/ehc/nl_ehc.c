@@ -36,12 +36,12 @@ void NL_EHC_DeInit(void)
 }
 
 /*************************************************************************/ /**
-* @brief	init everything
+* @brief	main process
 * main repetitive process called from ADC_Work_Process
 ******************************************************************************/
 void NL_EHC_Process(void)
 {
-  // additional processing only after buffers are fully filled, also gives some initial power-up settling
+  // any processing only after buffers are fully filled initially, also gives some initial power-up settling
   if (!FillSampleBuffers())
     return;
 

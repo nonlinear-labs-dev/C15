@@ -164,7 +164,7 @@ void Generate_BenderTable(uint32_t curve)
 {
   float_t range = 8000.0;  // separate processing of absolute values for positive and negative range
 
-  float_t s = 0.5;
+  float_t s;
 
   switch (curve)  // s defines the curve shape
   {
@@ -178,8 +178,7 @@ void Generate_BenderTable(uint32_t curve)
       s = 1.0;  // y = x^3
       break;
     default:
-      /// Error
-      break;
+      return;
   }
 
   uint32_t i_max = 32;
@@ -209,7 +208,7 @@ void Generate_AftertouchTable(uint32_t curve)
 {
   float_t range = 16000.0;  // full TCD range
 
-  float_t s = 0.7;
+  float_t s;
 
   switch (curve)  // s defines the curve shape
   {
@@ -223,8 +222,7 @@ void Generate_AftertouchTable(uint32_t curve)
       s = 0.95;  // y = 0.05 * x + 0.95 * x^6
       break;
     default:
-      /// Error
-      break;
+      return;
   }
 
   uint32_t i_max = 32;
