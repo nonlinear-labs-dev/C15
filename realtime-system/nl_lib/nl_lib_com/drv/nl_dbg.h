@@ -42,6 +42,9 @@ void DBG_Led_Warning_On(void);
 void DBG_Led_Cpu_On(void);
 void DBG_Led_Audio_On(void);
 
+void DBG_Led_Error_TimedOn(uint16_t time);
+void DBG_Led_Warning_TimedOn(uint16_t time);
+
 void DBG_Led_Error_Off(void);
 void DBG_Led_Warning_Off(void);
 void DBG_Led_Cpu_Off(void);

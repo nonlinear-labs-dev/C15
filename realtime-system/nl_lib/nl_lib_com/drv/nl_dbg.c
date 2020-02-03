@@ -169,23 +169,50 @@ void DBG_GPIO3_4_Off(void)
   NL_GPIO_Clr(pins->pod[3]);
 }
 
+static uint16_t ErrorTimer   = 0;
+static uint16_t WarningTimer = 0;
+
+void DBG_Led_Error_TimedOn(uint16_t time)
+{
+  if (!time)
+    return;
+  if (time >= ErrorTimer)
+    ErrorTimer = time;
+  DBG_Led_Error_On();
+}
+
+void DBG_Led_Warning_TimedOn(uint16_t time)
+{
+  if (!time)
+    return;
+  if (time >= WarningTimer)
+    WarningTimer = time;
+  DBG_Led_Warning_On();
+}
+
 /******************************************************************************/
-/** @brief    	This function takes care about the heartbeat led. It toggles
-				the led every call. So it has to be called regulary to get the
-				blinking LED.
+/** @brief    	Handling the M4 LEDs (HeartBeat, Warning, Error), every 100ms
 *******************************************************************************/
 void DBG_Process(void)
 {
-  static uint8_t toggle = 0;
-  if (toggle == 0)
+  static int HB_Toggle = 0;
+  static int HB_Timer  = 5;
+  if (!--HB_Timer)
   {
-    NL_GPIO_Set(pins->led_heartbeat);
-    toggle = 1;
+    HB_Toggle = NL_GPIO_Tgl(pins->led_heartbeat, HB_Toggle);
+    HB_Timer  = 5;
   }
-  else
+
+  if (ErrorTimer)
   {
-    NL_GPIO_Clr(pins->led_heartbeat);
-    toggle = 0;
+    if (!--ErrorTimer)
+      DBG_Led_Error_Off();
+  }
+
+  if (WarningTimer)
+  {
+    if (!--WarningTimer)
+      DBG_Led_Warning_Off();
   }
 }
 
