@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_list.h
-    @date       2020-02-03, 18:34
+    @date       2020-02-03, 18:53
     @version	1.7B-3
     @author     M. Seeber
     @brief      complete list of parameters (and their properties) in TCD order
@@ -2112,13 +2112,13 @@ namespace C15
     { None },
     { Parameters::Local_Unmodulateables::Osc_A_Reset,
       393,
-      0.0f,
+      1.0f,
       { Smoothers::Poly_Sync::Osc_A_Reset, Signals::Quasipoly_Signals::Osc_A_Reset, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
       { "", "Oscillator A", "Oscillator A", "Reset", "Reset", "" } },
     { Parameters::Local_Unmodulateables::Osc_B_Reset,
       394,
-      0.0f,
+      1.0f,
       { Smoothers::Poly_Sync::Osc_B_Reset, Signals::Quasipoly_Signals::Osc_B_Reset, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
       { "", "Oscillator B", "Oscillator B", "Reset", "Reset", "" } },
