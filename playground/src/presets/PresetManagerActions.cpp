@@ -211,25 +211,36 @@ PresetManagerActions::~PresetManagerActions()
 void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction, SoupBuffer *buffer,
                                                   const std::shared_ptr<HTTPRequest> &http)
 {
+  DebugLevel::warning("Starting handleImportBackupFile!");
   if(auto lock = m_presetManager.getLoadingLock())
   {
-    m_presetManager.clear(transaction);
 
     MemoryInStream stream(buffer, true);
     XmlReader reader(stream, transaction);
 
+    bool isValidFileVersion = false;
+
     reader.onFileVersionRead([&](int version) {
-      if(version > VersionAttribute::getCurrentFileVersion())
-        return Reader::FileVersionCheckResult::Unsupported;
-      else
-        return Reader::FileVersionCheckResult::OK;
+      auto unsupported = version > VersionAttribute::getCurrentFileVersion();
+      isValidFileVersion = !unsupported;
+
+      if(isValidFileVersion)
+        m_presetManager.clear(transaction);
+
+      return unsupported ? Reader::FileVersionCheckResult::Unsupported : Reader::FileVersionCheckResult::OK;
     });
 
     if(!reader.read<PresetManagerSerializer>(&m_presetManager))
     {
-      transaction->rollBack();
-      http->respond(
-          "Invalid: Unsupported File Version. The backup was created with a newer firmware. Please update your C15.");
+      if(isValidFileVersion)
+      {
+        http->respond("Invalid Backup File! Please choose correct xml.tar.gz file! ");
+      }
+      else
+      {
+        http->respond(
+            "Invalid: Unsupported File Version. The backup was created with a newer firmware. Please update your C15.");
+      }
     }
     else
     {

@@ -5,6 +5,7 @@
 #include <tools/StringTools.h>
 #include "RowStream.h"
 #include <parameters/Parameter.h>
+#include <device-settings/DebugLevel.h>
 
 ParameterDB &ParameterDB::get()
 {
@@ -77,17 +78,41 @@ tControlPositionValue ParameterDB::parseSignalPathIndication(const std::string &
 
 ustring ParameterDB::getLongName(int id) const
 {
-  return m_spec.at(id).longName;
+  try
+  {
+    return m_spec.at(id).longName;
+  }
+  catch(...)
+  {
+    DebugLevel::error("ParameterDB: ", id, ": long name not found!");
+    return "";
+  }
 }
 
 ustring ParameterDB::getShortName(int id) const
 {
-  return m_spec.at(id).shortName;
+  try
+  {
+    return m_spec.at(id).shortName;
+  }
+  catch(...)
+  {
+    DebugLevel::error("ParameterDB: ", id, ": short name not found!");
+    return "";
+  }
 }
 
 tControlPositionValue ParameterDB::getSignalPathIndication(int id) const
 {
-  return m_spec.at(id).signalPathIndication;
+  try
+  {
+    return m_spec.at(id).signalPathIndication;
+  }
+  catch(...)
+  {
+    DebugLevel::error("ParameterDB: ", id, ": signal path indication not found!");
+    return 0;
+  }
 }
 
 bool ParameterDB::isActive(const Parameter *p) const
