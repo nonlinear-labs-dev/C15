@@ -48,7 +48,6 @@ namespace UNDO
 
   void Transaction::close()
   {
-    DebugLevel::warning("Transaction::Close");
     tCommandList todo{};
 
     if(!m_postfixCommands.empty())

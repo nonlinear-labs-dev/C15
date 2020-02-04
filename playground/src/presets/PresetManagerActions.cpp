@@ -128,7 +128,6 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
   addAction("import-all-banks", [&](std::shared_ptr<NetworkRequest> request) mutable {
     if(auto http = std::dynamic_pointer_cast<HTTPRequest>(request))
     {
-      DebugLevel::warning("import-all-banks");
       auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
       auto scope = presetManager.getUndoScope().startTransaction("Import all Banks");
       auto transaction = scope->getTransaction();
@@ -222,7 +221,6 @@ void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction
     std::string errorMessage = "Invalid Backup File! Please choose correct xml.tar.gz file!";
 
     reader.onFileVersionRead([&](int version) {
-      DebugLevel::warning("Version of Import:", version);
       if(version > VersionAttribute::getCurrentFileVersion())
       {
         errorMessage = "Invalid: Unsupported File Version. The backup was created with a newer firmware. Please update "
@@ -237,7 +235,6 @@ void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction
     {
       if(!reader.read<PresetManagerSerializer>(&m_presetManager))
       {
-        DebugLevel::warning("RollBack!", errorMessage);
         transaction->rollBack();
         http->respond(errorMessage);
       }
@@ -248,10 +245,9 @@ void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction
     }
     catch(...)
     {
-      DebugLevel::warning("Catched Exception of Unknown Type!!");
-
       if(auto eptr = std::current_exception())
-        DebugLevel::warning(eptr.__cxa_exception_type()->name());
+        DebugLevel::warning("Uncaught Exception in PresetManagerActions::handleImportBackupFile:",
+                            eptr.__cxa_exception_type()->name());
 
       transaction->rollBack();
       http->respond(errorMessage);
