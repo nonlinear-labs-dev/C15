@@ -169,25 +169,37 @@ void DBG_GPIO3_4_Off(void)
   NL_GPIO_Clr(pins->pod[3]);
 }
 
-static uint16_t ErrorTimer   = 0;
-static uint16_t WarningTimer = 0;
+static uint16_t errorTimer          = 0;
+static uint16_t warningTimer        = 0;
+static uint16_t errorTimerFlicker   = 0;
+static uint16_t warningTimerFlicker = 0;
 
 void DBG_Led_Error_TimedOn(uint16_t time)
 {
   if (!time)
     return;
-  if (time >= ErrorTimer)
-    ErrorTimer = time;
-  DBG_Led_Error_On();
+  if (errorTimer)
+    errorTimerFlicker = 1;
+  if (time >= errorTimer)
+    errorTimer = time;
+  if (errorTimerFlicker)
+    DBG_Led_Error_Off();
+  else
+    DBG_Led_Error_On();
 }
 
 void DBG_Led_Warning_TimedOn(uint16_t time)
 {
   if (!time)
     return;
-  if (time >= WarningTimer)
-    WarningTimer = time;
-  DBG_Led_Warning_On();
+  if (warningTimer)
+    warningTimerFlicker = 1;
+  if (time >= warningTimer)
+    warningTimer = time;
+  if (warningTimerFlicker)
+    DBG_Led_Warning_Off();
+  else
+    DBG_Led_Warning_On();
 }
 
 /******************************************************************************/
@@ -203,15 +215,31 @@ void DBG_Process(void)
     HB_Timer  = 5;
   }
 
-  if (ErrorTimer)
+  // Error LED
+  if (errorTimerFlicker)
   {
-    if (!--ErrorTimer)
+    if (!--errorTimerFlicker)
+    {
+      DBG_Led_Error_On();
+    }
+  }
+  else if (errorTimer)
+  {
+    if (!--errorTimer)
       DBG_Led_Error_Off();
   }
 
-  if (WarningTimer)
+  // Warning LED
+  if (warningTimerFlicker)
   {
-    if (!--WarningTimer)
+    if (!--warningTimerFlicker)
+    {
+      DBG_Led_Warning_On();
+    }
+  }
+  else if (warningTimer)
+  {
+    if (!--warningTimer)
       DBG_Led_Warning_Off();
   }
 }
