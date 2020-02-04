@@ -1490,7 +1490,10 @@ uint32_t USB_ReadReqEP(uint32_t EPNum, uint8_t *pData, uint32_t len)
 *******************************************************************************/
 uint32_t USB_Core_BytesToSend(uint32_t endbuff, uint32_t ep)
 {
-  return ((endbuff - ep_QH[EPAdr(ep)].buffer0) & 0xFFF);
+  uint32_t x = ep_QH[EPAdr(ep)].buffer0;
+  if (x == 0)  // seems to fix the "USB reconnect traffic jam"
+    return 0;
+  return ((endbuff - x) & 0xFFF);
 }
 
 void USB_Core_Device_Descriptor_Set(const uint8_t *ddesc)
