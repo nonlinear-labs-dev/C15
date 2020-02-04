@@ -11,13 +11,18 @@
 #include "spibb/nl_bb_msg.h"
 #include "sup/nl_sup.h"
 #include "drv/nl_dbg.h"
+#include "tcd/nl_tcd_msg.h"
 
+#ifdef MS1_5_HEARTBEAT
 static uint64_t audio_engine_heartbeat = 0;  // accumulator for collect proccess
-static uint64_t lpc_heartbeat          = 0;  // our own value
 static uint64_t heartbeat              = 0;  // value to transmit
 static uint8_t  heartbeat_update       = 0;  // flag for pending transmit
 static uint8_t  step                   = 0;  // collect process step chain
-static uint8_t  traffic_update         = 0;  // flag for incoming traffic
+#endif
+
+static uint8_t  traffic_update = 0;  // flag for incoming traffic
+static uint64_t lpc_heartbeat  = 0;  // our own value
+static int      any_traffic    = 0;
 
 /******************************************************************************/
 /** @brief		process incoming Midi data, interrupt(!!) callback for "USB_MIDI_Config()"
@@ -28,6 +33,11 @@ void HBT_MidiReceive(uint8_t *buff, uint32_t len)
 {
   traffic_update = 1;
 
+  if (!any_traffic)
+    MSG_DropMidiMessages(0);
+  any_traffic = 1;
+
+#ifdef MS1_5_HEARTBEAT
   // CAUTION : this assumes only 3-byte midi commands are ever received!
   // Also, each command in the buffer is preceded by a dummy byte (for unknown reasons)
   // which has to be skipped
@@ -66,9 +76,12 @@ void HBT_MidiReceive(uint8_t *buff, uint32_t len)
         break;
     }  // switch
   }    // for
+#endif
 }
 
-// periodically called every 10ms or so, to process pending updates
+/******************************************************************************/
+/** @brief		periodically called every 10ms so, to process pending updates
+*******************************************************************************/
 void HBT_Process(void)
 {
   if (traffic_update)
@@ -77,12 +90,26 @@ void HBT_Process(void)
     traffic_update = 0;
   }
 
+#ifdef MS1_5_HEARTBEAT
   if (heartbeat_update)
   {
     BB_MSG_WriteMessage(BB_MSG_TYPE_HEARTBEAT, 4, (uint16_t *) &heartbeat);
     BB_MSG_SendTheBuffer();
     heartbeat_update = 0;
   }
+#else
+  static uint16_t cntr = 10;
+  if (cntr)
+  {
+    if (!--cntr)
+    {
+      cntr = 10;
+      lpc_heartbeat++;
+      BB_MSG_WriteMessage(BB_MSG_TYPE_HEARTBEAT, 4, (uint16_t *) &lpc_heartbeat);
+      BB_MSG_SendTheBuffer();
+    }
+  }
+#endif
 }
 
 // EOF
