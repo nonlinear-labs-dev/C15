@@ -21,6 +21,7 @@
 
 void MSG_CheckUSB(void);
 void MSG_SendMidiBuffer(void);
+void MSG_DropMidiMessages(uint8_t drop);
 
 void MSG_KeyPosition(uint32_t key);
 void MSG_KeyDown(uint32_t vel);

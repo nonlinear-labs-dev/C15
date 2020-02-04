@@ -30,6 +30,12 @@ static uint32_t buf                  = 0;   // Counts the used bytes of the bulk
 static uint32_t writeBuffer = 0;
 
 static uint8_t midiUSBConfigured = 0;
+static uint8_t dropMessages      = 0;
+
+void MSG_DropMidiMessages(uint8_t drop)
+{
+  dropMessages = drop;
+}
 
 /******************************************************************************/
 /** @brief		A scheduler task function for regular checks of the USB
@@ -64,6 +70,12 @@ void MSG_CheckUSB(void)  // every 200 ms
 *******************************************************************************/
 void MSG_SendMidiBuffer(void)
 {
+
+  if (dropMessages)
+  {
+    buf = 0;  // discard all messages
+    return;
+  }
   if (buf)  // Anything to send
   {
 #if 0
