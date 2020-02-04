@@ -59,6 +59,7 @@ void Init(void)
   DBG_GPIO3_4_Off();
   /* USB */
   USB_MIDI_Init();
+  MSG_DropMidiMessages(1);
   USB_MIDI_Config(HBT_MidiReceive);
 
   volatile uint32_t timeOut = 0x0FFFFF;
@@ -93,7 +94,7 @@ void Init(void)
   //   the start offsets are fine-stepped in increments, the max increments being less that the shortest time-slice
   COOS_Task_Add(ADC_WORK_Process,         60+2, 100);   // every 12.5 ms, reading ADC values and applying changes
   COOS_Task_Add(ADC_WORK_SendBBMessages,  70+4, 800);   // every 100 ms, sending the results of the ADC processing to the BBB
-  COOS_Task_Add(MSG_CheckUSB,             80+6, 1600);  // every 200 ms, checking if the USB connection to the ePC or the ePC is still working
+//COOS_Task_Add(MSG_CheckUSB,             80+6, 1600);  // every 200 ms, checking if the USB connection to the ePC or the ePC is still working
   COOS_Task_Add(DBG_Process,              80+8, 100 * 8);  // every 100 ms
   COOS_Task_Add(SUP_Process,              90+10, SUP_PROCESS_TIMESLICE * 8);  // supervisor communication every 10ms
   COOS_Task_Add(HBT_Process,              100+12, HBT_PROCESS_TIMESLICE * 8); // heartbeat communication every 10ms
