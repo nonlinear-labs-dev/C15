@@ -71,7 +71,11 @@ ParameterImportConversions::ParameterImportConversions(bool registerDefaults)
 
     registerConverter(240, 4, [=](tControlPositionValue v) { return 0.25 + v * 0.75; });
 
-    registerConverter(249, 5, [=](tControlPositionValue v) { return v * 0.5; });
+    registerConverter(249, 5, [=](tControlPositionValue v) { 
+      if(v == 1.0)
+        return 0.5 - (1.0 / 24.0);
+      return v * 0.5; 
+    });
   }
 }
 
