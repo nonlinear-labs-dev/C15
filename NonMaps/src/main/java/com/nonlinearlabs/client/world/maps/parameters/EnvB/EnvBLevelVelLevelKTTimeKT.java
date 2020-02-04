@@ -43,6 +43,16 @@ class EnvBLevelVelLevelKTTimeKT extends ParameterGroupControls {
 		}
 	}
 
+
+	@Override
+	public double getLeftMargin() {
+		return 82;
+	}
+
+	public double getRightMargin() {
+		return -1;
+	}
+
 	EnvBLevelVelLevelKTTimeKT(MapsLayout parent) {
 		super(parent);
 		addChild(new LvlVel(this));

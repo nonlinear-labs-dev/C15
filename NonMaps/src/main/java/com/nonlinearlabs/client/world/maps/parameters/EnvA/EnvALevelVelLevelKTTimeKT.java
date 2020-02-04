@@ -7,6 +7,7 @@ import com.nonlinearlabs.client.world.maps.parameters.ModulationSourceHighPriori
 import com.nonlinearlabs.client.world.maps.parameters.ModulationSourceSlider;
 import com.nonlinearlabs.client.world.maps.parameters.ParameterGroupControls;
 import com.nonlinearlabs.client.world.maps.parameters.SliderHorizontal;
+import com.nonlinearlabs.client.world.maps.parameters.Spacer;
 import com.nonlinearlabs.client.world.maps.parameters.ValueDisplaySmall;
 
 class EnvALevelVelLevelKTTimeKT extends ParameterGroupControls {
@@ -48,6 +49,15 @@ class EnvALevelVelLevelKTTimeKT extends ParameterGroupControls {
 		protected int getBackgroundRoundings() {
 			return Rect.ROUNDING_ALL;
 		}
+	}
+
+	@Override
+	public double getLeftMargin() {
+		return 82;
+	}
+
+	public double getRightMargin() {
+		return -1;
 	}
 
 	EnvALevelVelLevelKTTimeKT(MapsLayout parent) {
