@@ -12,7 +12,8 @@ namespace UNDO
 
   TransactionCreationScope::~TransactionCreationScope()
   {
-    m_transaction->close();
+    if(!m_transaction->isClosed())
+      m_transaction->close();
 
     if(m_transactionOwned)
       delete m_transaction;

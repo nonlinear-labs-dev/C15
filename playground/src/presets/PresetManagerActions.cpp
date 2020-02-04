@@ -56,7 +56,8 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
     auto bank = presetManager.addBank(transaction);
     bank->setX(transaction, x);
     bank->setY(transaction, y);
-    auto preset = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *presetManager.getEditBuffer()));
+    auto preset
+        = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *presetManager.getEditBuffer()));
     bank->selectPreset(transaction, preset->getUuid());
     presetManager.selectBank(transaction, bank->getUuid());
   });
@@ -127,6 +128,7 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
   addAction("import-all-banks", [&](std::shared_ptr<NetworkRequest> request) mutable {
     if(auto http = std::dynamic_pointer_cast<HTTPRequest>(request))
     {
+      DebugLevel::warning("import-all-banks");
       auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
       auto scope = presetManager.getUndoScope().startTransaction("Import all Banks");
       auto transaction = scope->getTransaction();
@@ -217,14 +219,42 @@ void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction
     MemoryInStream stream(buffer, true);
     XmlReader reader(stream, transaction);
 
-    if(!reader.read<PresetManagerSerializer>(&m_presetManager))
+    std::string errorMessage = "Invalid Backup File! Please choose correct xml.tar.gz file!";
+
+    reader.onFileVersionRead([&](int version) {
+      DebugLevel::warning("Version of Import:", version);
+      if(version > VersionAttribute::getCurrentFileVersion())
+      {
+        errorMessage = "Invalid: Unsupported File Version. The backup was created with a newer firmware. Please update "
+                       "your C15.";
+        return Reader::FileVersionCheckResult::Unsupported;
+      }
+
+      return Reader::FileVersionCheckResult::OK;
+    });
+
+    try
     {
-      transaction->rollBack();
-      http->respond("Invalid File. Please choose correct xml.tar.gz or xml.zip file.");
+      if(!reader.read<PresetManagerSerializer>(&m_presetManager))
+      {
+        DebugLevel::warning("RollBack!", errorMessage);
+        transaction->rollBack();
+        http->respond(errorMessage);
+      }
+      else
+      {
+        m_presetManager.getEditBuffer()->sendToLPC();
+      }
     }
-    else
+    catch(...)
     {
-      m_presetManager.getEditBuffer()->sendToLPC();
+      DebugLevel::warning("Catched Exception of Unknown Type!!");
+
+      if(auto eptr = std::current_exception())
+        DebugLevel::warning(eptr.__cxa_exception_type()->name());
+
+      transaction->rollBack();
+      http->respond(errorMessage);
     }
   }
 }

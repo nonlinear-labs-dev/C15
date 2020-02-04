@@ -48,12 +48,15 @@ namespace UNDO
 
   void Transaction::close()
   {
-    tCommandList todo;
+    DebugLevel::warning("Transaction::Close");
+    tCommandList todo{};
 
-    swap(todo, m_postfixCommands);
-
-    for(const auto &h : todo)
-      addCommand(h);
+    if(!m_postfixCommands.empty())
+    {
+      swap(todo, m_postfixCommands);
+      for(const auto &h : todo)
+        addCommand(h);
+    }
 
     m_isClosed = true;
   }
@@ -276,7 +279,7 @@ namespace UNDO
 
   void Transaction::traverse(std::function<void(const UNDO::Transaction *)> cb) const
   {
-    std::vector<const Transaction *> list{ this };
+    std::vector<const Transaction *> list { this };
     unsigned long long index = 0;
 
     while(index < list.size())
