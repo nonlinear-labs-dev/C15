@@ -792,7 +792,6 @@ void ADC_WORK_Process(void)
 
       MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, valueToSend);
       ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
-      TEST_Output(4, valueToSend);
     }
     else if (value < -BENDER_DEADRANGE)  // is in the negative work range
     {
@@ -817,7 +816,6 @@ void ADC_WORK_Process(void)
 
       MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, valueToSend);
       ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
-      TEST_Output(4, valueToSend);
     }
     else  // is in the dead range
     {
@@ -825,7 +823,6 @@ void ADC_WORK_Process(void)
       {
         MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, 8000);
         ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, 8000);
-        TEST_Output(4, 8000);
       }
     }
 
@@ -859,7 +856,6 @@ void ADC_WORK_Process(void)
 
       MSG_HWSourceUpdate(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
       ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
-      TEST_Output(5, valueToSend);
     }
     else  // inside of the dead range
     {
@@ -867,7 +863,6 @@ void ADC_WORK_Process(void)
       {
         MSG_HWSourceUpdate(HW_SOURCE_ID_AFTERTOUCH, 0);
         ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, 0);
-        TEST_Output(5, 0);
       }
     }
 
