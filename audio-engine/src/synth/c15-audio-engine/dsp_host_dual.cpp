@@ -215,12 +215,12 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
         break;
     }
   }
+  // temporary: load initials in order to have valid osc reset params
+  onSettingInitialSinglePreset();
   if(LOG_INIT)
   {
     nltools::Log::info("dsp_host_dual::init - engine dsp status: global");
-    nltools::Log::info("todo: engine - check reverb dsp/params ...");
     nltools::Log::info("missing: nltools::msg - reference, initial:", m_reference.m_scaled);
-    nltools::Log::info("todo: Mono stuff ...");
   }
 }
 
@@ -1254,7 +1254,7 @@ void dsp_host_dual::keyDown(const float _vel)
                            ", unisonIndex:", event->m_unisonIndex, ", stolen:", event->m_stolen,
                            ", tune:", event->m_tune, ", velocity:", event->m_velocity, ")");
         nltools::Log::info("key_details(active:", event->m_active, ", trigger_env:", event->m_trigger_env,
-                           ", trigger_glide:", event->m_trigger_glide, ", trigger_phase:", event->m_trigger_phase, ")");
+                           ", trigger_glide:", event->m_trigger_glide, ")");
       }
     }
   }
@@ -1281,7 +1281,7 @@ void dsp_host_dual::keyUp(const float _vel)
         nltools::Log::info("key_up_poly(group:", event->m_localIndex, "voice:", event->m_voiceId,
                            ", tune:", event->m_tune, ", velocity:", event->m_velocity, ")");
         nltools::Log::info("key_details(active:", event->m_active, ", trigger_env:", event->m_trigger_env,
-                           ", trigger_glide:", event->m_trigger_glide, ", trigger_phase:", event->m_trigger_phase, ")");
+                           ", trigger_glide:", event->m_trigger_glide, ")");
       }
     }
   }

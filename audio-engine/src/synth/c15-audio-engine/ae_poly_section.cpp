@@ -121,7 +121,7 @@ void PolySection::render_audio(const float _mute)
 void PolySection::render_feedback(const LayerSignalCollection &_z_other)
 {
   m_feedbackmixer.apply(m_signals, *m_z_self, _z_other);
-  m_soundgenerator.m_feedback_phase = m_feedbackmixer.m_out;
+  m_soundgenerator.m_feedback_phase_A = m_soundgenerator.m_feedback_phase_B = m_feedbackmixer.m_out;
 }
 
 void PolySection::render_fast()
@@ -161,7 +161,9 @@ void PolySection::render_slow()
 
 bool PolySection::keyDown(PolyKeyEvent *_event)
 {
-  const bool retrigger_mono = (m_key_active == 0);
+  const bool retrigger_mono = (m_key_active == 0),
+             rstA = static_cast<bool>(m_signals.get(C15::Signals::Quasipoly_Signals::Osc_A_Reset)),
+             rstB = static_cast<bool>(m_signals.get(C15::Signals::Quasipoly_Signals::Osc_B_Reset));
   m_shift[_event->m_voiceId] = m_note_shift;
   m_unison_index[_event->m_voiceId] = _event->m_unisonIndex;
   m_last_key_tune[_event->m_voiceId] = m_key_tune[_event->m_voiceId];
@@ -181,14 +183,11 @@ bool PolySection::keyDown(PolyKeyEvent *_event)
     }
     postProcess_mono_slow();
   }
-  if(_event->m_trigger_phase)
-  {
-    m_soundgenerator.resetPhase(_event->m_voiceId);
-  }
   if(_event->m_stolen)
   {
     // case NoteSteal (currently nothing)
   }
+  m_soundgenerator.resetPhase(_event->m_voiceId, rstA, rstB);
   updateNotePitch(_event->m_voiceId);
   postProcess_poly_key(_event->m_voiceId);
   setSlowFilterCoefs(_event->m_voiceId);
