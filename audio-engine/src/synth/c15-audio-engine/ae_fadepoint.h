@@ -16,9 +16,10 @@ enum class FadeEvent
 {
   None,
   RecallMute,
-  RecallUnmute,
   ToneMute,
-  ToneUnmute
+  UnisonMute,
+  MonoMute,
+  Unmute  // unmute is common
 };
 
 class ae_fade_table
@@ -42,6 +43,8 @@ class ae_fade_table
 class ae_fader
 {
  public:
+  uint32_t m_preloaded_layerId;  // context-agnostic (mono and unison) latch for layer focus
+  float m_preloaded_position;    // context-agnostic (mono and unison) latch for changed parameter position
   ae_fader();
   void init(float* _fade_table);
   void pick(const uint32_t _index);

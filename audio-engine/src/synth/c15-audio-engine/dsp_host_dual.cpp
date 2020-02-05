@@ -840,23 +840,11 @@ void dsp_host_dual::localUnisonVoicesChg(const nltools::msg::UnmodulateableParam
     {
       nltools::Log::info("unison_voices_edit(layer:", layerId, ", pos:", param->m_position, ")");
     }
-    m_alloc.setUnison(layerId, param->m_position);
-    const uint32_t uVoice = m_alloc.m_unison - 1;
-    if(m_layer_mode == LayerMode::Split)
-    {
-      m_poly[layerId].resetEnvelopes();
-      m_poly[layerId].m_uVoice = uVoice;
-      m_poly[layerId].m_key_active = 0;
-    }
-    else
-    {
-      for(uint32_t lId = 0; lId < m_params.m_layer_count; lId++)
-      {
-        m_poly[lId].resetEnvelopes();
-        m_poly[lId].m_uVoice = uVoice;
-        m_poly[lId].m_key_active = 0;
-      }
-    }
+    // application now via fade point
+    m_fade.enable(FadeEvent::UnisonMute, 0);
+    m_output_mute.pick(0);
+    m_output_mute.m_preloaded_layerId = layerId;
+    m_output_mute.m_preloaded_position = param->m_position;
   }
 }
 
@@ -871,20 +859,11 @@ void dsp_host_dual::localMonoEnableChg(const nltools::msg::UnmodulateableParamet
       nltools::Log::info("mono_enable_edit(layer:", layerId, ", pos:", param->m_position, ")");
     }
     param->m_scaled = scale(param->m_scaling, param->m_position);
-    m_alloc.setMonoEnable(layerId, param->m_scaled);
-    if(m_layer_mode == LayerMode::Split)
-    {
-      m_poly[layerId].resetEnvelopes();
-      m_poly[layerId].m_key_active = 0;
-    }
-    else
-    {
-      for(uint32_t lId = 0; lId < m_params.m_layer_count; lId++)
-      {
-        m_poly[lId].resetEnvelopes();
-        m_poly[lId].m_key_active = 0;
-      }
-    }
+    // application now via fade point
+    m_fade.enable(FadeEvent::MonoMute, 0);
+    m_output_mute.pick(0);
+    m_output_mute.m_preloaded_layerId = layerId;
+    m_output_mute.m_preloaded_position = param->m_scaled;
   }
 }
 void dsp_host_dual::localMonoPriorityChg(const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
@@ -1752,19 +1731,57 @@ void dsp_host_dual::evalFadePoint()
         }
         m_fade.stop();
         m_output_mute.pick(2);
-        m_fade.enable(FadeEvent::RecallUnmute, 1);
-        break;
-      case FadeEvent::RecallUnmute:
-        m_fade.stop();
-        m_output_mute.stop();
+        m_fade.enable(FadeEvent::Unmute, 1);
         break;
       case FadeEvent::ToneMute:
         m_global.update_tone_mode(m_tone_state);
         m_fade.stop();
         m_output_mute.pick(2);
-        m_fade.enable(FadeEvent::ToneUnmute, 1);
+        m_fade.enable(FadeEvent::Unmute, 1);
         break;
-      case FadeEvent::ToneUnmute:
+      case FadeEvent::UnisonMute:
+        // apply preloaded unison change
+        m_alloc.setUnison(m_output_mute.m_preloaded_layerId, m_output_mute.m_preloaded_position);
+        if(m_layer_mode == LayerMode::Split)
+        {
+          m_poly[m_output_mute.m_preloaded_layerId].resetEnvelopes();
+          m_poly[m_output_mute.m_preloaded_layerId].m_uVoice = m_alloc.m_unison - 1;
+          m_poly[m_output_mute.m_preloaded_layerId].m_key_active = 0;
+        }
+        else
+        {
+          for(uint32_t layerId = 0; layerId < m_params.m_layer_count; layerId++)
+          {
+            m_poly[layerId].resetEnvelopes();
+            m_poly[layerId].m_uVoice = m_alloc.m_unison - 1;
+            m_poly[layerId].m_key_active = 0;
+          }
+        }
+        m_fade.stop();
+        m_output_mute.pick(2);
+        m_fade.enable(FadeEvent::Unmute, 1);
+        break;
+      case FadeEvent::MonoMute:
+        // apply preloaded mono change
+        m_alloc.setMonoEnable(m_output_mute.m_preloaded_layerId, m_output_mute.m_preloaded_position);
+        if(m_layer_mode == LayerMode::Split)
+        {
+          m_poly[m_output_mute.m_preloaded_layerId].resetEnvelopes();
+          m_poly[m_output_mute.m_preloaded_layerId].m_key_active = 0;
+        }
+        else
+        {
+          for(uint32_t layerId = 0; layerId < m_params.m_layer_count; layerId++)
+          {
+            m_poly[layerId].resetEnvelopes();
+            m_poly[layerId].m_key_active = 0;
+          }
+        }
+        m_fade.stop();
+        m_output_mute.pick(2);
+        m_fade.enable(FadeEvent::Unmute, 1);
+        break;
+      case FadeEvent::Unmute:
         m_fade.stop();
         m_output_mute.stop();
         break;
