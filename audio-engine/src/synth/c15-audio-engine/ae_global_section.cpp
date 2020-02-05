@@ -63,6 +63,16 @@ void GlobalSection::start_slow(const uint32_t _id, const float _dx, const float 
   m_smoothers.start_slow(_id, _dx, _dest);
 }
 
+void GlobalSection::start_base_key(const float _dx, const float _dest)
+{
+  auto baseKey = m_smoothers.get_smoother(C15::Smoothers::Global_Slow::Scale_Base_Key);
+  // apply transition and update baseKey-related signals (start, dest, pos)
+  m_signals.set(C15::Signals::Global_Signals::Scale_Base_Key_Start, baseKey->m_start);
+  m_signals.set(C15::Signals::Global_Signals::Scale_Base_Key_Dest, _dest);
+  baseKey->start(_dx, _dest);
+  m_signals.set(C15::Signals::Global_Signals::Scale_Base_Key_Pos, baseKey->m_x);
+}
+
 void GlobalSection::render_audio(const float _left, const float _right)
 {
   // common dsp: smoothers, signal post processing
@@ -160,4 +170,7 @@ void GlobalSection::postProcess_slow()
   {
     m_signals.set(traversal->m_signalId[i], m_smoothers.get_slow(traversal->m_smootherId[i]));
   }
+  // apply scale base key fade value (pos)
+  m_signals.set(C15::Signals::Global_Signals::Scale_Base_Key_Pos,
+                m_smoothers.get_smoother(C15::Smoothers::Global_Slow::Scale_Base_Key)->m_x);
 }

@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_declarations.h
-    @date       2020-02-04, 16:58
+    @date       2020-02-05, 22:22
     @version	1.7B-3
     @author     M. Seeber
     @brief      descriptors for all parameter-related details
@@ -411,7 +411,6 @@ namespace C15
 
     enum class Global_Sync
     {
-      Scale_Base_Key,
       _LENGTH_
     };
 
@@ -429,6 +428,7 @@ namespace C15
     enum class Global_Slow
     {
       Master_Tune,
+      Scale_Base_Key,
       Scale_Offset_0,
       Scale_Offset_1,
       Scale_Offset_2,
@@ -689,7 +689,9 @@ namespace C15
     enum class Global_Signals
     {
       Master_Tune,
-      Scale_Base_Key,
+      Scale_Base_Key_Pos,
+      Scale_Base_Key_Start,
+      Scale_Base_Key_Dest,
       Scale_Offset_0,
       Scale_Offset_1,
       Scale_Offset_2,
