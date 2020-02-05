@@ -719,7 +719,14 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::Unmodul
     {
       nltools::Log::info("global_direct_edit(pos:", param->m_position, ", val:", param->m_scaled, ")");
     }
-    globalTransition(param, m_edit_time.m_dx);
+    if(_id == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_edit_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_edit_time.m_dx);
+    }
   }
 }
 
@@ -1900,7 +1907,14 @@ void dsp_host_dual::recallSingle()
   for(uint32_t i = 0; i < m_params.m_global.m_direct_count; i++)
   {
     auto param = m_params.get_global_direct(i);
-    globalTransition(param, m_transition_time.m_dx);
+    if(i == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_transition_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_transition_time.m_dx);
+    }
   }
   // start transitions: global modulateables
   for(uint32_t i = 0; i < m_params.m_global.m_target_count; i++)
@@ -2042,7 +2056,14 @@ void dsp_host_dual::recallSplit()
   for(uint32_t i = 0; i < m_params.m_global.m_direct_count; i++)
   {
     auto param = m_params.get_global_direct(i);
-    globalTransition(param, m_transition_time.m_dx);
+    if(i == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_transition_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_transition_time.m_dx);
+    }
   }
   // start transitions: global modulateables
   for(uint32_t i = 0; i < m_params.m_global.m_target_count; i++)
@@ -2176,7 +2197,14 @@ void dsp_host_dual::recallLayer()
   for(uint32_t i = 0; i < m_params.m_global.m_direct_count; i++)
   {
     auto param = m_params.get_global_direct(i);
-    globalTransition(param, m_transition_time.m_dx);
+    if(i == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_transition_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_transition_time.m_dx);
+    }
   }
   // start transitions: global modulateables
   for(uint32_t i = 0; i < m_params.m_global.m_target_count; i++)

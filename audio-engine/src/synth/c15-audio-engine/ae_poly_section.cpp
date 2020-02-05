@@ -263,13 +263,20 @@ float PolySection::evalNyquist(const float _value)
 float PolySection::evalScale(const uint32_t _voiceId)
 {
   // adding one octave offset in order to avoid negative numbers
-  int32_t pos = static_cast<int32_t>(m_key_position[_voiceId] + 12);
-  // subtract base key
-  pos -= static_cast<int32_t>(m_globalsignals->get(C15::Signals::Global_Signals::Scale_Base_Key));
-  // form scale offset index by signal offset + cyclic index
-  const uint32_t index
-      = static_cast<uint32_t>(C15::Signals::Global_Signals::Scale_Offset_0) + (static_cast<uint32_t>(pos) % 12);
-  return m_globalsignals->get(index);
+  const int32_t pos = static_cast<int32_t>(m_key_position[_voiceId] + 12);
+  // subtract base key -- twice
+  const int32_t pos_start
+      = pos - static_cast<int32_t>(m_globalsignals->get(C15::Signals::Global_Signals::Scale_Base_Key_Start));
+  const int32_t pos_dest
+      = pos - static_cast<int32_t>(m_globalsignals->get(C15::Signals::Global_Signals::Scale_Base_Key_Dest));
+  // form scale offset index by signal offset + cyclic index -- twice
+  const uint32_t index_start
+      = static_cast<uint32_t>(C15::Signals::Global_Signals::Scale_Offset_0) + (static_cast<uint32_t>(pos_start) % 12);
+  const uint32_t index_dest
+      = static_cast<uint32_t>(C15::Signals::Global_Signals::Scale_Offset_0) + (static_cast<uint32_t>(pos_dest) % 12);
+  // retrieve base key smoother fade position and crossfade offsets
+  const float fade = m_globalsignals->get(C15::Signals::Global_Signals::Scale_Base_Key_Pos);
+  return ((1.0f - fade) * m_globalsignals->get(index_start)) + (fade * m_globalsignals->get(index_dest));
 }
 
 void PolySection::postProcess_poly_audio(const uint32_t _voiceId, const float _mute)

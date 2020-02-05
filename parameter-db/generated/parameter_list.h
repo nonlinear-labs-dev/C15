@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_list.h
-    @date       2020-02-04, 16:58
+    @date       2020-02-05, 22:22
     @version	1.7B-3
     @author     M. Seeber
     @brief      complete list of parameters (and their properties) in TCD order
@@ -1685,8 +1685,7 @@ namespace C15
     { Parameters::Global_Unmodulateables::Scale_Base_Key,
       312,
       0.0f,
-      { Smoothers::Global_Sync::Scale_Base_Key, Signals::Global_Signals::Scale_Base_Key,
-        Properties::SmootherScale::Linear, 11.0f, 0.0f, false },
+      { Smoothers::Global_Slow::Scale_Base_Key, None, Properties::SmootherScale::Linear, 11.0f, 0.0f, false },
       { "", "Scale", "Scale", "Base Key", "Base Key",
         "Sets the base key for the custom scale. The scale is defined for the eleven keys above the base key and will "
         "be applied to all octaves accordingly." } },
@@ -2105,7 +2104,7 @@ namespace C15
       391,
       0.0f,
       { Smoothers::Global_Slow::Scale_Offset_0, Signals::Global_Signals::Scale_Offset_0,
-        Properties::SmootherScale::Linear, 8.0f, 0.0f, false },
+        Properties::SmootherScale::Linear, 8.0f, 0.0f, true },
       { "", "Scale", "Scale", "Offset +0", "Offset +0",
         "Offset of the base key [in cents]. At zero, the interval to the base key would be the minor second of the "
         "equally tempered scale." } },
