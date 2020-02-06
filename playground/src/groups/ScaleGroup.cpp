@@ -37,6 +37,8 @@ void ScaleGroup::init()
   appendParameter(baseKeyParam);
 
   appendParameter(
+      new ScaleParameter(this, { 391, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
+  appendParameter(
       new ScaleParameter(this, { 313, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
   appendParameter(
       new ScaleParameter(this, { 314, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
@@ -58,8 +60,6 @@ void ScaleGroup::init()
       new ScaleParameter(this, { 322, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
   appendParameter(
       new ScaleParameter(this, { 323, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
-  appendParameter(
-      new ScaleParameter(this, { 391, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
 }
 
 void ScaleGroup::onBaseKeyParameterChanged(const Parameter* baseKeyParameter)

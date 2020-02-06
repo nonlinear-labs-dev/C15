@@ -86,19 +86,34 @@ bool ScaleParameterSelectLayout::resetEnabled() const
 
 void ScaleParameterSelectLayout::selectParameter(int inc)
 {
-  const auto min = 312;
-  const auto max = 323;
-  const auto range = (max - min) + 1;
-
+  static const auto ids = std::vector<int> { 312, 391, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323 };
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   auto selectedID = eb->getSelected()->getID();
-  auto id = selectedID.getNumber() + inc;
+  auto id = selectedID.getNumber();
 
-  while(id > max)
-    id -= range;
+  auto idIt = std::find(ids.begin(), ids.end(), id);
+  if(idIt == ids.end())
+  {
+    id = 312;
+  }
+  else
+  {
+    auto toEnd = std::distance(idIt, ids.end());
+    auto toBegin = std::distance(ids.begin(), idIt);
 
-  while(id < min)
-    id += range;
+    if(inc > 0 && toEnd != 1)
+      inc = std::min<int>(toEnd, inc);
+    else if(inc > 0)
+      idIt = ids.begin();
+
+    if(inc < 0 && toBegin != 0)
+      inc = std::min<int>(toBegin, inc);
+    else if(inc < 0)
+      idIt = ids.end();
+
+    idIt += inc;
+    id = *idIt;
+  }
 
   eb->undoableSelectParameter({ id, selectedID.getVoiceGroup() });
 }
