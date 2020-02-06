@@ -59,10 +59,13 @@ Glib::ustring ScaleParameter::getLongName() const
 {
   static const auto baseKeyParameterID = ParameterId(312, VoiceGroup::Global);
 
+  const auto baseKey = getParentGroup()->getParameterByID(baseKeyParameterID);
+  auto offset = 0;
+  if(getID().getNumber() != 391)
+    offset = getID().getNumber() - baseKeyParameterID.getNumber();
+
   if(getID() != baseKeyParameterID)
   {
-    const auto baseKey = getParentGroup()->getParameterByID(baseKeyParameterID);
-    const auto offset = getID().getNumber() - baseKeyParameterID.getNumber();
     const auto key = static_cast<int>(baseKey->getDisplayValue() + offset);
     const auto stringizedKey = NoteDimension::get().stringize(key % 12);
     return UNDO::StringTools::buildString(super::getLongName(), " (", stringizedKey, ")");
