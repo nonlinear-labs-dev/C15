@@ -138,8 +138,8 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   m_buffer_indx = (m_buffer_indx + 1) & m_buffer_sz_m1;
   auto tmpByp = _signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_Bypass);
   m_out = tmpByp * holdsample + (1.f - tmpByp) * m_out;
-  // decay
-  m_decayStateVar = m_out * m_decayGain;
+  // decay (now fully reduced to signal)
+  m_decayStateVar = m_out * _signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_Decay);
 }
 
 void Engine::PolyCombFilter::set(PolySignals &_signals, const float _samplerate, const uint32_t _voiceId)
@@ -226,9 +226,26 @@ void Engine::PolyCombFilter::set(PolySignals &_signals, const float _samplerate,
   }
   tmpVar *= 0.159155f;
   m_delaySamples[_voiceId] = m_delaySamples[_voiceId] * tmpVar + m_delaySamples[_voiceId];
-  // decay gain
-  tmpVar = _signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_Decay)[_voiceId];
-  frequency = _signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_Freq)[_voiceId] * std::abs(tmpVar);
+  // decay gain (now fully reduced to signal)
+}
+
+void Engine::PolyCombFilter::setDelaySmoother(const uint32_t _voiceId)
+{
+  m_delayStateVar[_voiceId] = m_delaySamples[_voiceId];
+}
+
+void Engine::PolyCombFilter::resetDSP()
+{
+  m_out = m_decayStateVar = m_hpInStateVar = m_hpOutStateVar = 0.0f;
+  m_lpStateVar = m_apStateVar_1 = m_apStateVar_2 = m_apStateVar_3 = m_apStateVar_4 = 0.0f;
+  std::fill(m_buffer.begin(), m_buffer.end(), 0.0f);
+  m_delaySamples = m_delayStateVar = 0.0f;
+}
+
+float Engine::PolyCombFilter::calcDecayGain(const float _decay, const float _frequency)
+{
+  // previously in slow set function, now public for evaluation in PolySection postProcessing
+  float frequency = _frequency * std::abs(_decay);
   frequency = std::max(frequency, NlToolbox::Constants::DNC_const);
   frequency = (1.0f / frequency) * -6.28318f;
   if(frequency > 0.0f)  // Exp Clipped
@@ -243,22 +260,9 @@ void Engine::PolyCombFilter::set(PolySignals &_signals, const float _samplerate,
   {
     frequency = std::pow(2.71828f, frequency);
   }
-  if(tmpVar < 0.0f)
+  if(_decay < 0.0f)
   {
     frequency *= -1.0f;
   }
-  m_decayGain[_voiceId] = frequency;
-}
-
-void Engine::PolyCombFilter::setDelaySmoother(const uint32_t _voiceId)
-{
-  m_delayStateVar[_voiceId] = m_delaySamples[_voiceId];
-}
-
-void Engine::PolyCombFilter::resetDSP()
-{
-  m_out = m_decayStateVar = m_hpInStateVar = m_hpOutStateVar = 0.0f;
-  m_lpStateVar = m_apStateVar_1 = m_apStateVar_2 = m_apStateVar_3 = m_apStateVar_4 = 0.0f;
-  std::fill(m_buffer.begin(), m_buffer.end(), 0.0f);
-  m_delaySamples = m_delayStateVar = 0.0f;
+  return frequency;
 }

@@ -21,7 +21,6 @@
 // temporary:
 inline constexpr bool ENABLE_MONO = true;         // enable/disable mono mode completely
 inline constexpr bool ENABLE_MONO_LEGATO = true;  // enable/disable mono legato
-inline constexpr bool APPLY_MONO_PHASE = false;   // enable/disable mono phase reset
 
 // Descriptors
 
@@ -56,6 +55,11 @@ struct KeyAssignment
     m_position = m_key = _keyPos;
     m_velocity = _vel;
   }
+  inline uint32_t setVoiceId(const uint32_t _voiceId, const uint32_t _unison)
+  {
+    m_voiceId = _voiceId;
+    return _unison * _voiceId;
+  }
 };
 
 struct VoiceAssignment
@@ -73,8 +77,7 @@ template <uint32_t Keys> class MonoVoiceAllocator
   // public member variables provide key event information and allocator settings
   MonoPriority m_priority = MonoPriority::Latest;
   uint32_t m_key_position = 0;
-  bool m_state = false, m_enabled = false, m_legato = false, m_retrigger_env = false, m_retrigger_glide = false,
-       m_retrigger_phase = false;
+  bool m_state = false, m_enabled = false, m_legato = false, m_retrigger_env = false, m_retrigger_glide = false;
   inline MonoVoiceAllocator()
   {
   }
@@ -98,16 +101,14 @@ template <uint32_t Keys> class MonoVoiceAllocator
           if(m_legato && priorKeysPressed)
           {
             // if legato is enabled and and keys already were pressed:
-            m_retrigger_env = false;    // envelope does not restart
-            m_retrigger_glide = true;   // glide does start
-            m_retrigger_phase = false;  // osc phases do not reset
+            m_retrigger_env = false;   // envelope does not restart
+            m_retrigger_glide = true;  // glide does start
           }
           else
           {
             // if legato is disabled or no keys were pressed:
-            m_retrigger_env = true;                // envelope does restart
-            m_retrigger_glide = false;             // glide does not start
-            m_retrigger_phase = APPLY_MONO_PHASE;  // osc phases do reset
+            m_retrigger_env = true;     // envelope does restart
+            m_retrigger_glide = false;  // glide does not start
           }
         }
         else
@@ -115,7 +116,6 @@ template <uint32_t Keys> class MonoVoiceAllocator
           // if key is not lowest
           m_retrigger_env = false;    // envelope does not restart
           m_retrigger_glide = false;  // glide does not start
-          m_retrigger_phase = false;  // osc phases do not reset
         }
         break;
       case MonoPriority::Latest:
@@ -124,16 +124,14 @@ template <uint32_t Keys> class MonoVoiceAllocator
         if(m_legato && priorKeysPressed)
         {
           // if legato is enabled and keys already were pressed:
-          m_retrigger_env = false;    // envelope does not restart
-          m_retrigger_glide = true;   // glide does start
-          m_retrigger_phase = false;  // osc phases do not reset
+          m_retrigger_env = false;   // envelope does not restart
+          m_retrigger_glide = true;  // glide does start
         }
         else
         {
           // if legato is disabled or no keys were pressed:
-          m_retrigger_env = true;                // envelope does restart
-          m_retrigger_glide = false;             // glide does not start
-          m_retrigger_phase = APPLY_MONO_PHASE;  // osc phases do reset
+          m_retrigger_env = true;     // envelope does restart
+          m_retrigger_glide = false;  // glide does not start
         }
         break;
       case MonoPriority::Highest:
@@ -145,16 +143,14 @@ template <uint32_t Keys> class MonoVoiceAllocator
           if(m_legato && priorKeysPressed)
           {
             // if legato is enabled and and keys already were pressed:
-            m_retrigger_env = false;    // envelope does not restart
-            m_retrigger_glide = true;   // glide does start
-            m_retrigger_phase = false;  // osc phases do not reset
+            m_retrigger_env = false;   // envelope does not restart
+            m_retrigger_glide = true;  // glide does start
           }
           else
           {
             // if legato is disabled or no keys were pressed:
-            m_retrigger_env = true;                // envelope does restart
-            m_retrigger_glide = false;             // glide does not start
-            m_retrigger_phase = APPLY_MONO_PHASE;  // osc phases do reset
+            m_retrigger_env = true;     // envelope does restart
+            m_retrigger_glide = false;  // glide does not start
           }
         }
         else
@@ -162,7 +158,6 @@ template <uint32_t Keys> class MonoVoiceAllocator
           // if key is not lowest
           m_retrigger_env = false;    // envelope does not restart
           m_retrigger_glide = false;  // glide does not start
-          m_retrigger_phase = false;  // osc phases do not reset
         }
         break;
     }
@@ -176,7 +171,6 @@ template <uint32_t Keys> class MonoVoiceAllocator
     m_latest.removeElement(_keyPosition);
     m_highest.removeElement(_keyPosition);
     const bool stillKeysPressed = (m_latest.m_assigned > 0);
-    m_retrigger_phase = false;  // osc phases do not reset
     // resolve priority and legato conditions
     if(m_state)
     {
@@ -559,24 +553,26 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
         {
           // single mono keyDown
           m_global_mono.keyDown(_keyState->m_key);
-          _keyState->m_voiceId = 0;
+          //_keyState->m_voiceId = 0;
+          firstVoice = _keyState->setVoiceId(0, unisonVoices);
           _keyState->m_position = m_global_mono.m_key_position;
           m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_global_mono.m_retrigger_env,
-                                 m_global_mono.m_retrigger_glide, m_global_mono.m_retrigger_phase);
+                                 m_global_mono.m_retrigger_glide);
         }
         else
         {
           // single poly keyDown
-          _keyState->m_voiceId = m_global.keyDown();
-          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, true);
+          //_keyState->m_voiceId = m_global.keyDown();
+          firstVoice = _keyState->setVoiceId(m_global.keyDown(), unisonVoices);
+          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
+          //clear stolen key first(all associated voices will be lost)
+          if(m_voiceState[firstVoice].m_active)
+          {
+            keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
+          }
         }
         // common single keyDown
-        firstVoice = _keyState->m_voiceId * unisonVoices;
-        // clear stolen key first (all associated voices will be lost)
-        //        if(m_voiceState[firstVoice].m_active)
-        //        {
-        //          keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
-        //        }
+        //firstVoice = _keyState->m_voiceId * unisonVoices;
         // unison loop
         keyDown_unisonLoop(_keyState->m_position, firstVoice, unisonVoices);
         break;
@@ -590,24 +586,26 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
           {
             // split[I] mono keyDown
             m_local_mono[0].keyDown(_keyState->m_key);
-            _keyState->m_voiceId = 0;
+            //_keyState->m_voiceId = 0;
+            firstVoice = _keyState->setVoiceId(0, unisonVoices);
             _keyState->m_position = m_local_mono[0].m_key_position;
             m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_local_mono[0].m_retrigger_env,
-                                   m_local_mono[0].m_retrigger_glide, m_local_mono[0].m_retrigger_phase);
+                                   m_local_mono[0].m_retrigger_glide);
           }
           else
           {
             // split[I] poly keyDown
-            _keyState->m_voiceId = m_local[0].keyDown();
-            m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, true);
+            //_keyState->m_voiceId = m_local[0].keyDown();
+            firstVoice = _keyState->setVoiceId(m_local[0].keyDown(), unisonVoices);
+            m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
+            // clear stolen key first (all associated voices will be lost)
+            if(m_voiceState[firstVoice].m_active)
+            {
+              keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
+            }
           }
           // common split[I] keyDown
-          firstVoice = _keyState->m_voiceId * unisonVoices;
-          // clear stolen key first (all associated voices will be lost)
-          //          if(m_voiceState[firstVoice].m_active)
-          //          {
-          //            keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
-          //          }
+          //firstVoice = _keyState->m_voiceId * unisonVoices;
           // unison loop
           keyDown_unisonLoop(_keyState->m_position, firstVoice, unisonVoices);
         }
@@ -619,24 +617,26 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
           {
             // split[II] mono keyDown
             m_local_mono[1].keyDown(_keyState->m_key);
-            _keyState->m_voiceId = 0;
+            //_keyState->m_voiceId = 0;
+            firstVoice = LocalVoices + _keyState->setVoiceId(0, unisonVoices);
             _keyState->m_position = m_local_mono[1].m_key_position;
             m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_local_mono[1].m_retrigger_env,
-                                   m_local_mono[1].m_retrigger_glide, m_local_mono[1].m_retrigger_phase);
+                                   m_local_mono[1].m_retrigger_glide);
           }
           else
           {
             // split[II] poly keyDown
-            _keyState->m_voiceId = m_local[1].keyDown();
-            m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, true);
+            //_keyState->m_voiceId = m_local[1].keyDown();
+            firstVoice = LocalVoices + _keyState->setVoiceId(m_local[1].keyDown(), unisonVoices);
+            m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
+            // clear stolen key first (all associated voices will be lost)
+            if(m_voiceState[firstVoice].m_active)
+            {
+              keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
+            }
           }
           // common split[II] keyDown
-          firstVoice = LocalVoices + (_keyState->m_voiceId * unisonVoices);
-          // clear stolen key first (all associated voices will be lost)
-          //          if(m_voiceState[firstVoice].m_active)
-          //          {
-          //            keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
-          //          }
+          //firstVoice = LocalVoices + (_keyState->m_voiceId * unisonVoices);
           // unison loop
           keyDown_unisonLoop(_keyState->m_position, firstVoice, unisonVoices);
         }
@@ -648,24 +648,26 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
         {
           // layer[I&II] mono keyDown
           m_local_mono[0].keyDown(_keyState->m_key);
-          _keyState->m_voiceId = 0;
+          //_keyState->m_voiceId = 0;
+          firstVoice = _keyState->setVoiceId(0, unisonVoices);
           _keyState->m_position = m_local_mono[0].m_key_position;
           m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_local_mono[0].m_retrigger_env,
-                                 m_local_mono[0].m_retrigger_glide, m_local_mono[0].m_retrigger_phase);
+                                 m_local_mono[0].m_retrigger_glide);
         }
         else
         {
           // layer[I&II] poly keyDown
-          _keyState->m_voiceId = m_local[0].keyDown();
-          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, true);
+          //_keyState->m_voiceId = m_local[0].keyDown();
+          firstVoice = _keyState->setVoiceId(m_local[0].keyDown(), unisonVoices);
+          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
+          // clear stolen key first (all associated voices will be lost)
+          if(m_voiceState[firstVoice].m_active)
+          {
+            keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
+          }
         }
         // common layer[I&II] keyDown
-        firstVoice = _keyState->m_voiceId * unisonVoices;
-        // clear stolen key first (all associated voices will be lost)
-        //        if(m_voiceState[firstVoice].m_active)
-        //        {
-        //          keyUp_confirm(&m_keyState[m_voiceState[firstVoice].m_keyId]);
-        //        }
+        //firstVoice = _keyState->m_voiceId * unisonVoices;
         // unison loop
         keyDown_unisonLoop(_keyState->m_position, firstVoice, unisonVoices);
         keyDown_unisonLoop(_keyState->m_position, LocalVoices + firstVoice, unisonVoices);
@@ -690,12 +692,12 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
           _keyState->m_voiceId = 0;
           _keyState->m_position = m_global_mono.m_key_position;
           m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_global_mono.m_retrigger_env,
-                                 m_global_mono.m_retrigger_glide, m_global_mono.m_retrigger_phase);
+                                 m_global_mono.m_retrigger_glide);
         }
         else
         {
           // single poly keyUp
-          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, false);
+          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
           m_global.keyUp(_keyState->m_voiceId);
         }
         firstVoice = _keyState->m_voiceId * unisonVoices;
@@ -711,12 +713,12 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
           _keyState->m_voiceId = 0;
           _keyState->m_position = m_local_mono[0].m_key_position;
           m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_local_mono[0].m_retrigger_env,
-                                 m_local_mono[0].m_retrigger_glide, m_local_mono[0].m_retrigger_phase);
+                                 m_local_mono[0].m_retrigger_glide);
         }
         else
         {
           // split[I] poly keyUp
-          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, false);
+          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
           m_local[0].keyUp(_keyState->m_voiceId);
         }
         firstVoice = _keyState->m_voiceId * unisonVoices;
@@ -732,12 +734,12 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
           _keyState->m_voiceId = 0;
           _keyState->m_position = m_local_mono[1].m_key_position;
           m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_local_mono[1].m_retrigger_env,
-                                 m_local_mono[1].m_retrigger_glide, m_local_mono[1].m_retrigger_phase);
+                                 m_local_mono[1].m_retrigger_glide);
         }
         else
         {
           // split[II] poly keyUp
-          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, false);
+          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
           m_local[1].keyUp(_keyState->m_voiceId);
         }
         firstVoice = _keyState->m_voiceId * unisonVoices;
@@ -753,12 +755,12 @@ template <uint32_t GlobalVoices, uint32_t LocalVoices, uint32_t Keys> class Voic
           _keyState->m_voiceId = 0;
           _keyState->m_position = m_local_mono[0].m_key_position;
           m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, m_local_mono[0].m_retrigger_env,
-                                 m_local_mono[0].m_retrigger_glide, m_local_mono[0].m_retrigger_phase);
+                                 m_local_mono[0].m_retrigger_glide);
         }
         else
         {
           // layer[I&II] poly keyUp
-          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false, false);
+          m_traversal.startEvent(_keyState->m_position, _keyState->m_velocity, true, false);
           m_local[0].keyUp(_keyState->m_voiceId);
         }
         firstVoice = _keyState->m_voiceId * unisonVoices;

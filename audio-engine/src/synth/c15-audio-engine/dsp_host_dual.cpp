@@ -215,12 +215,12 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
         break;
     }
   }
+  // temporary: load initials in order to have valid osc reset params
+  onSettingInitialSinglePreset();
   if(LOG_INIT)
   {
     nltools::Log::info("dsp_host_dual::init - engine dsp status: global");
-    nltools::Log::info("todo: engine - check reverb dsp/params ...");
     nltools::Log::info("missing: nltools::msg - reference, initial:", m_reference.m_scaled);
-    nltools::Log::info("todo: Mono stuff ...");
   }
 }
 
@@ -719,7 +719,14 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::Unmodul
     {
       nltools::Log::info("global_direct_edit(pos:", param->m_position, ", val:", param->m_scaled, ")");
     }
-    globalTransition(param, m_edit_time.m_dx);
+    if(_id == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_edit_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_edit_time.m_dx);
+    }
   }
 }
 
@@ -840,23 +847,11 @@ void dsp_host_dual::localUnisonVoicesChg(const nltools::msg::UnmodulateableParam
     {
       nltools::Log::info("unison_voices_edit(layer:", layerId, ", pos:", param->m_position, ")");
     }
-    m_alloc.setUnison(layerId, param->m_position);
-    const uint32_t uVoice = m_alloc.m_unison - 1;
-    if(m_layer_mode == LayerMode::Split)
-    {
-      m_poly[layerId].resetEnvelopes();
-      m_poly[layerId].m_uVoice = uVoice;
-      m_poly[layerId].m_key_active = 0;
-    }
-    else
-    {
-      for(uint32_t lId = 0; lId < m_params.m_layer_count; lId++)
-      {
-        m_poly[lId].resetEnvelopes();
-        m_poly[lId].m_uVoice = uVoice;
-        m_poly[lId].m_key_active = 0;
-      }
-    }
+    // application now via fade point
+    m_fade.enable(FadeEvent::UnisonMute, 0);
+    m_output_mute.pick(0);
+    m_output_mute.m_preloaded_layerId = layerId;
+    m_output_mute.m_preloaded_position = param->m_position;
   }
 }
 
@@ -871,20 +866,11 @@ void dsp_host_dual::localMonoEnableChg(const nltools::msg::UnmodulateableParamet
       nltools::Log::info("mono_enable_edit(layer:", layerId, ", pos:", param->m_position, ")");
     }
     param->m_scaled = scale(param->m_scaling, param->m_position);
-    m_alloc.setMonoEnable(layerId, param->m_scaled);
-    if(m_layer_mode == LayerMode::Split)
-    {
-      m_poly[layerId].resetEnvelopes();
-      m_poly[layerId].m_key_active = 0;
-    }
-    else
-    {
-      for(uint32_t lId = 0; lId < m_params.m_layer_count; lId++)
-      {
-        m_poly[lId].resetEnvelopes();
-        m_poly[lId].m_key_active = 0;
-      }
-    }
+    // application now via fade point
+    m_fade.enable(FadeEvent::MonoMute, 0);
+    m_output_mute.pick(0);
+    m_output_mute.m_preloaded_layerId = layerId;
+    m_output_mute.m_preloaded_position = param->m_scaled;
   }
 }
 void dsp_host_dual::localMonoPriorityChg(const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
@@ -1254,7 +1240,7 @@ void dsp_host_dual::keyDown(const float _vel)
                            ", unisonIndex:", event->m_unisonIndex, ", stolen:", event->m_stolen,
                            ", tune:", event->m_tune, ", velocity:", event->m_velocity, ")");
         nltools::Log::info("key_details(active:", event->m_active, ", trigger_env:", event->m_trigger_env,
-                           ", trigger_glide:", event->m_trigger_glide, ", trigger_phase:", event->m_trigger_phase, ")");
+                           ", trigger_glide:", event->m_trigger_glide, ")");
       }
     }
   }
@@ -1281,7 +1267,7 @@ void dsp_host_dual::keyUp(const float _vel)
         nltools::Log::info("key_up_poly(group:", event->m_localIndex, "voice:", event->m_voiceId,
                            ", tune:", event->m_tune, ", velocity:", event->m_velocity, ")");
         nltools::Log::info("key_details(active:", event->m_active, ", trigger_env:", event->m_trigger_env,
-                           ", trigger_glide:", event->m_trigger_glide, ", trigger_phase:", event->m_trigger_phase, ")");
+                           ", trigger_glide:", event->m_trigger_glide, ")");
       }
     }
   }
@@ -1752,19 +1738,57 @@ void dsp_host_dual::evalFadePoint()
         }
         m_fade.stop();
         m_output_mute.pick(2);
-        m_fade.enable(FadeEvent::RecallUnmute, 1);
-        break;
-      case FadeEvent::RecallUnmute:
-        m_fade.stop();
-        m_output_mute.stop();
+        m_fade.enable(FadeEvent::Unmute, 1);
         break;
       case FadeEvent::ToneMute:
         m_global.update_tone_mode(m_tone_state);
         m_fade.stop();
         m_output_mute.pick(2);
-        m_fade.enable(FadeEvent::ToneUnmute, 1);
+        m_fade.enable(FadeEvent::Unmute, 1);
         break;
-      case FadeEvent::ToneUnmute:
+      case FadeEvent::UnisonMute:
+        // apply preloaded unison change
+        m_alloc.setUnison(m_output_mute.m_preloaded_layerId, m_output_mute.m_preloaded_position);
+        if(m_layer_mode == LayerMode::Split)
+        {
+          m_poly[m_output_mute.m_preloaded_layerId].resetEnvelopes();
+          m_poly[m_output_mute.m_preloaded_layerId].m_uVoice = m_alloc.m_unison - 1;
+          m_poly[m_output_mute.m_preloaded_layerId].m_key_active = 0;
+        }
+        else
+        {
+          for(uint32_t layerId = 0; layerId < m_params.m_layer_count; layerId++)
+          {
+            m_poly[layerId].resetEnvelopes();
+            m_poly[layerId].m_uVoice = m_alloc.m_unison - 1;
+            m_poly[layerId].m_key_active = 0;
+          }
+        }
+        m_fade.stop();
+        m_output_mute.pick(2);
+        m_fade.enable(FadeEvent::Unmute, 1);
+        break;
+      case FadeEvent::MonoMute:
+        // apply preloaded mono change
+        m_alloc.setMonoEnable(m_output_mute.m_preloaded_layerId, m_output_mute.m_preloaded_position);
+        if(m_layer_mode == LayerMode::Split)
+        {
+          m_poly[m_output_mute.m_preloaded_layerId].resetEnvelopes();
+          m_poly[m_output_mute.m_preloaded_layerId].m_key_active = 0;
+        }
+        else
+        {
+          for(uint32_t layerId = 0; layerId < m_params.m_layer_count; layerId++)
+          {
+            m_poly[layerId].resetEnvelopes();
+            m_poly[layerId].m_key_active = 0;
+          }
+        }
+        m_fade.stop();
+        m_output_mute.pick(2);
+        m_fade.enable(FadeEvent::Unmute, 1);
+        break;
+      case FadeEvent::Unmute:
         m_fade.stop();
         m_output_mute.stop();
         break;
@@ -1883,7 +1907,14 @@ void dsp_host_dual::recallSingle()
   for(uint32_t i = 0; i < m_params.m_global.m_direct_count; i++)
   {
     auto param = m_params.get_global_direct(i);
-    globalTransition(param, m_transition_time.m_dx);
+    if(i == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_transition_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_transition_time.m_dx);
+    }
   }
   // start transitions: global modulateables
   for(uint32_t i = 0; i < m_params.m_global.m_target_count; i++)
@@ -2025,7 +2056,14 @@ void dsp_host_dual::recallSplit()
   for(uint32_t i = 0; i < m_params.m_global.m_direct_count; i++)
   {
     auto param = m_params.get_global_direct(i);
-    globalTransition(param, m_transition_time.m_dx);
+    if(i == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_transition_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_transition_time.m_dx);
+    }
   }
   // start transitions: global modulateables
   for(uint32_t i = 0; i < m_params.m_global.m_target_count; i++)
@@ -2159,7 +2197,14 @@ void dsp_host_dual::recallLayer()
   for(uint32_t i = 0; i < m_params.m_global.m_direct_count; i++)
   {
     auto param = m_params.get_global_direct(i);
-    globalTransition(param, m_transition_time.m_dx);
+    if(i == static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Scale_Base_Key))
+    {
+      m_global.start_base_key(m_transition_time.m_dx.m_dx_slow, param->m_scaled);
+    }
+    else
+    {
+      globalTransition(param, m_transition_time.m_dx);
+    }
   }
   // start transitions: global modulateables
   for(uint32_t i = 0; i < m_params.m_global.m_target_count; i++)

@@ -16,7 +16,7 @@ struct PolyKeyEvent
 {
   uint32_t m_localIndex = 0, m_voiceId = 0, m_unisonIndex = 0, m_position = 0;
   float m_velocity = 0.0f, m_tune = 0.0f;
-  bool m_active = false, m_stolen = false, m_trigger_env = false, m_trigger_glide = false, m_trigger_phase = false;
+  bool m_active = false, m_stolen = false, m_trigger_env = false, m_trigger_glide = false;
 };
 
 template <uint32_t Voices> class PolyKeyPacket
@@ -30,7 +30,7 @@ template <uint32_t Voices> class PolyKeyPacket
     m_length = 0;
   }
   inline void startEvent(const uint32_t _keyPos, const float _vel, const bool _retrigger_env,
-                         const bool _retrigger_glide, const bool _retrigger_phase)
+                         const bool _retrigger_glide)
   {
     // setting up common settings
     m_data[m_length].m_position = _keyPos;
@@ -38,7 +38,6 @@ template <uint32_t Voices> class PolyKeyPacket
     m_data[m_length].m_tune = static_cast<float>(_keyPos) - static_cast<float>(C15::Config::key_center);
     m_data[m_length].m_trigger_env = _retrigger_env;
     m_data[m_length].m_trigger_glide = _retrigger_glide;
-    m_data[m_length].m_trigger_phase = _retrigger_phase;
   }
   inline PolyKeyEvent* first()
   {
@@ -78,7 +77,6 @@ template <uint32_t Voices> class PolyKeyPacket
     m_data[m_length].m_velocity = m_data[0].m_velocity;
     m_data[m_length].m_tune = m_data[0].m_tune;
     m_data[m_length].m_trigger_env = m_data[0].m_trigger_env;
-    m_data[m_length].m_trigger_phase = m_data[0].m_trigger_phase;
     m_length++;
   }
   PolyKeyEvent m_data[Voices];
