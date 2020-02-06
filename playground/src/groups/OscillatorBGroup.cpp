@@ -75,7 +75,7 @@ void OscillatorBGroup::init()
 
   appendParameter(new ModulateableParameterWithUnusualModUnit(
       this, { 302, getVoiceGroup() }, ScaleConverter::get<PhaseBipolar180DegreeScaleConverter>(),
-      ScaleConverter::get<PhaseBipolar180DegreeScaleConverter>(), 0, 180, 1800));
+      ScaleConverter::get<PhaseBipolar360DegreeScaleConverter>(), 0, 180, 1800));
 
   appendParameter(new Parameter(this, { 304, getVoiceGroup() }, ScaleConverter::get<Linear80To140StScaleConverter>(),
                                 4.0 / 6.0, 60, 600));
