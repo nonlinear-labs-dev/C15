@@ -15,6 +15,7 @@ class Options
   // alsa midi
   std::string getMidiInputDeviceName() const;
   std::chrono::nanoseconds getAdditionalMidiDelay() const;
+  std::string getHeartBeatDeviceName() const;
 
   // alsa audio
   std::string getAudioOutputDeviceName() const;
@@ -33,6 +34,7 @@ class Options
   Glib::ustring m_playgroundHost = "localhost";
   Glib::ustring m_midiInputDeviceName;
   std::chrono::nanoseconds m_additionalMidiDelay = std::chrono::nanoseconds::zero();
+  Glib::ustring m_heartBeatDeviceName;
 
   Glib::ustring m_audioOutputDeviceName;
   int m_framesPerPeriod = 96;
