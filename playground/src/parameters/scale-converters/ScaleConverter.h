@@ -39,9 +39,8 @@ class ScaleConverter
 
     if(it == s_converters.end())
     {
-      auto ret = new T();
-      s_converters[key] = std::unique_ptr<T>(ret);
-      return ret;
+      s_converters[key] = std::make_unique<T>();
+      return s_converters[key].get();
     }
     return it->second.get();
   }

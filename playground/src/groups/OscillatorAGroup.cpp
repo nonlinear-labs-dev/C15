@@ -19,6 +19,7 @@
 #include <parameters/scale-converters/LinearBipolar200PercentScaleConverter.h>
 #include <parameters/scale-converters/PitchOscLinearStScaleModulationConverter.h>
 #include <parameters/ModulateableParameterWithUnusualModUnit.h>
+#include <parameters/scale-converters/OnOffScaleConverter.h>
 
 OscillatorAGroup::OscillatorAGroup(ParameterDualGroupSet *parent, VoiceGroup vg)
     : ParameterGroup(parent, { "Osc A", vg }, "Oscillator A", "Oscillator A", "Oscillator A")
@@ -74,9 +75,11 @@ void OscillatorAGroup::init()
   appendParameter(new Parameter(this, { 70, getVoiceGroup() }, ScaleConverter::get<Linear100PercentScaleConverter>(), 0,
                                 100, 1000));
 
-  appendParameter(new ModulateableParameter(this, { 301, getVoiceGroup() },
-                                ScaleConverter::get<PhaseBipolar180DegreeScaleConverter>(), 0, 180, 1800));
+  appendParameter(new ModulateableParameterWithUnusualModUnit(this, { 301, getVoiceGroup() },
+                                            ScaleConverter::get<PhaseBipolar180DegreeScaleConverter>(), ScaleConverter::get<PhaseBipolar360DegreeScaleConverter>(), 0, 180, 1800));
 
   appendParameter(new Parameter(this, { 303, getVoiceGroup() }, ScaleConverter::get<Linear80To140StScaleConverter>(),
                                 4.0 / 6.0, 60, 600));
+
+  appendParameter(new Parameter(this, { 393, getVoiceGroup() }, ScaleConverter::get<OnOffScaleConverter>(), 1, 1, 1));
 }

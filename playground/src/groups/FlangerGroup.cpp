@@ -11,6 +11,7 @@
 #include <parameters/scale-converters/Parabolic10HzScaleConverter.h>
 #include <parameters/scale-converters/Parabolic50MsScaleConverter.h>
 #include <parameters/scale-converters/ScaleConverter.h>
+#include <parameters/scale-converters/LinearBipolar140StScaleConverter.h>
 
 FlangerGroup::FlangerGroup(ParameterDualGroupSet *parent, VoiceGroup vg)
     : ParameterGroup(parent, { "Flang", vg }, "Flanger", "Flanger", "Flanger")
@@ -58,8 +59,9 @@ void FlangerGroup::init()
   appendParameter(new ModulateableParameter(
       this, { 308, getVoiceGroup() }, ScaleConverter::get<LinearBipolar100PercentScaleConverter>(), 0.0, 100, 1000));
 
-  appendParameter(new ModulateableParameter(this, { 310, getVoiceGroup() },
-                                            ScaleConverter::get<Linear0To140StScaleConverter>(), 1.0, 140, 1400));
+  appendParameter(new ModulateableParameterWithUnusualModUnit(
+      this, { 310, getVoiceGroup() }, ScaleConverter::get<Linear0To140StScaleConverter>(),
+      ScaleConverter::get<LinearBipolar140StScaleConverter>(), 1.0, 140, 1400));
 
   appendParameter(new ModulateableParameter(this, { 389, getVoiceGroup() },
                                             ScaleConverter::get<Linear100PercentScaleConverter>(), 0.0, 100, 1000));

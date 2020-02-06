@@ -58,6 +58,8 @@ void ScaleGroup::init()
       new ScaleParameter(this, { 322, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
   appendParameter(
       new ScaleParameter(this, { 323, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
+  appendParameter(
+      new ScaleParameter(this, { 391, VoiceGroup::Global }, ScaleConverter::get<KeyScaleConverter>(), 0, 800, 8000));
 }
 
 void ScaleGroup::onBaseKeyParameterChanged(const Parameter* baseKeyParameter)
@@ -71,7 +73,7 @@ void ScaleGroup::onBaseKeyParameterChanged(const Parameter* baseKeyParameter)
 bool ScaleGroup::isScaleParameter(const ParameterId& id)
 {
   auto number = id.getNumber();
-  return number >= 312 && number <= 323;
+  return (number >= 312 && number <= 323) || number == 391;
 }
 
 bool ScaleGroup::isScaleParameter(const Parameter* parameter)
