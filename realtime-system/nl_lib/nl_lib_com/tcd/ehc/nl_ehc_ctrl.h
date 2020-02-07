@@ -21,7 +21,14 @@ typedef enum
   CV
 } ControllerType_T;
 
+typedef enum
+{
+  INVERT     = 1,
+  NON_INVERT = 0
+} ControlerInvert_T;
+
 void NL_EHC_InitControllers(void);
+void NL_EHC_SetLegacyPedalType(uint16_t channel, uint16_t type);
 void NL_EHC_DeInitControllers(void);
 void NL_EHC_ProcessControllers(void);
 

@@ -56,7 +56,8 @@ typedef struct
     unsigned initialized : 1;
     unsigned isSettled : 1;
     // input
-    unsigned denoiseWhenSettled : 1;  // 1 --> denoise output when settled long and close enough
+    unsigned          denoiseWhenSettled : 1;  // 1 --> denoise output when settled long and close enough
+    ControlerInvert_T polarity : 1;            // invert final output value or not
   } flags;
   // value buffer
   uint16_t values[CBUF_SIZE];
@@ -91,7 +92,7 @@ void SendControllerData(uint32_t hwSourceId, uint32_t value)
 /*************************************************************************/ /**
 * @brief	Init a controller
 ******************************************************************************/
-void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcBuffer_T *top, ControllerType_T type)
+void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcBuffer_T *top, ControllerType_T type, ControlerInvert_T polarity)
 {
   this->type                     = type;
   this->HwSourceId               = HwSourceId;
@@ -102,6 +103,7 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
   this->flags.denoiseWhenSettled = 0;
   this->val_index                = 0;
   this->out_index                = 0;
+  this->flags.polarity           = polarity;
 
   if ((type != POT) && (top))
   {                              // if a top channel was supplied, clear it unless it's for a pot
@@ -294,7 +296,7 @@ void readoutController(Controller_T *this)
   if (out != this->lastFinal)
   {
     this->lastFinal = out;
-    SendControllerData(this->HwSourceId, out);
+    SendControllerData(this->HwSourceId, (this->flags.polarity == NON_INVERT) ? out : 16000 - out);
   }
 }
 
@@ -315,14 +317,70 @@ void ProcessPots(void)
 void NL_EHC_InitControllers(void)
 {
   // ???? temp init
-  initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], RHEOSTAT);
-  initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT);
-  initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT);
-  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT);
+  initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], POT, NON_INVERT);
+  initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT, NON_INVERT);
+  initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT, NON_INVERT);
+  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT, NON_INVERT);
 }
 
 /*************************************************************************/ /**
-* @brief	init everything
+* @brief	 Set Pedal Type, Legacy Style
+* @param[in] channel (SETTING_ID_PEDAL_1_TYPE ... SETTING_ID_PEDAL_4_TYPE)
+* @param[in] type (0/1:pot tip/ring act.; 2/3:switch closing/opening)
+******************************************************************************/
+void NL_EHC_SetLegacyPedalType(uint16_t channel, uint16_t type)
+{
+  typedef struct
+  {
+    Controller_T *controller;
+    int           hwSource;
+    AdcBuffer_T * adcTip;
+    AdcBuffer_T * adcRing;
+  } assignmentTable_T;
+
+  static assignmentTable_T assignmentTable[4] = {
+    { &ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1] },
+    { &ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3] },
+    { &ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5] },
+    { &ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7] },
+  };
+
+  assignmentTable_T *this;
+
+  switch (channel)
+  {
+    case SETTING_ID_PEDAL_1_TYPE:
+      this = &assignmentTable[0];
+      break;
+    case SETTING_ID_PEDAL_2_TYPE:
+      this = &assignmentTable[1];
+      break;
+    case SETTING_ID_PEDAL_3_TYPE:
+      this = &assignmentTable[2];
+      break;
+    case SETTING_ID_PEDAL_4_TYPE:
+      this = &assignmentTable[3];
+      break;
+    default:
+      return;
+  }
+  switch (type)
+  {
+    case 0:  // pot, tip active
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT);
+      break;
+    case 1:  // pot, ring active
+      initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT);
+      break;
+    case 2:
+    case 3:
+    default:
+      return;
+  }
+}
+
+/*************************************************************************/ /**
+* @brief	de-init everything
 ******************************************************************************/
 void NL_EHC_DeInitControllers(void)
 {
