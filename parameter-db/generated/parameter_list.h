@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_list.h
-    @date       2020-02-06, 17:20
+    @date       2020-02-07, 14:37
     @version	1.7B-3
     @author     M. Seeber
     @brief      complete list of parameters (and their properties) in TCD order
@@ -384,8 +384,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::Shp_A_Asym, Signals::Quasipoly_Signals::Shp_A_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Shaper A", "Shaper A", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
+      { "", "Shaper A", "Shaper A", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Shp_A_Mix,
       76,
@@ -544,8 +544,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::Shp_B_Asym, Signals::Quasipoly_Signals::Shp_B_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Shaper B", "Shaper B", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
+      { "", "Shaper B", "Shaper B", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Shp_B_Mix,
       106,
@@ -855,8 +855,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::FB_Mix_Asym, Signals::Quasipoly_Signals::FB_Mix_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Feedback Mixer", "FB Mixer", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
+      { "", "Feedback Mixer", "FB Mixer", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Unmodulateables::FB_Mix_Lvl_KT,
       168,
@@ -940,8 +940,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::Out_Mix_Asym, Signals::Quasipoly_Signals::Out_Mix_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Output Mixer", "Output Mixer", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
+      { "", "Output Mixer", "Output Mixer", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Out_Mix_Lvl,
       185,
@@ -982,8 +982,8 @@ namespace C15
       0.25f,
       { Smoothers::Mono_Slow::Cabinet_Asym, Signals::Mono_Signals::Cabinet_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Cabinet", "Cabinet", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
+      { "", "Cabinet", "Cabinet", "Asymmetry", "Asmymetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Cabinet_Tilt,
       192,
