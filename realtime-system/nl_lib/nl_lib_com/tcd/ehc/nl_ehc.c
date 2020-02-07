@@ -10,12 +10,6 @@
 #include "nl_ehc.h"
 #include "nl_ehc_adc.h"
 #include "nl_ehc_ctrl.h"
-
-#include "tcd/nl_tcd_adc_work.h"
-#include "spibb/nl_bb_msg.h"
-#include "tcd/nl_tcd_msg.h"
-#include "ipc/emphase_ipc.h"
-#include "espi/dev/nl_espi_dev_pedals.h"
 #include "drv/nl_dbg.h"
 
 /*************************************************************************/ /**
