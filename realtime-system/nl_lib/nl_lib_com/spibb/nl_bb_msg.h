@@ -52,10 +52,11 @@
 
 #define SETTING_ID_EDIT_MODE_RIBBON_BEHAVIOUR 4  // ==> RELATIVE = 0, ABSOLUTE = 1
 
-#define SETTING_ID_PEDAL_1_MODE 5  // ==> STAY = 0
-#define SETTING_ID_PEDAL_2_MODE 6  // ... RETURN_TO_ZERO = 1
-#define SETTING_ID_PEDAL_3_MODE 7  // ... RETURN_TO_CENTER = 2,
-#define SETTING_ID_PEDAL_4_MODE 8
+// the next four settings were implemented in the parser but never had any effect in pedal code
+//#define SETTING_ID_PEDAL_1_MODE 5  // ==> STAY = 0
+//#define SETTING_ID_PEDAL_2_MODE 6  // ... RETURN_TO_ZERO = 1
+//#define SETTING_ID_PEDAL_3_MODE 7  // ... RETURN_TO_CENTER = 2,
+//#define SETTING_ID_PEDAL_4_MODE 8
 
 #define SETTING_ID_UPPER_RIBBON_REL_FACTOR 9   // ==> tTcdRange(256, 2560)
 #define SETTING_ID_LOWER_RIBBON_REL_FACTOR 10  // ==> tTcdRange(256, 2560)
@@ -64,10 +65,10 @@
 
 // #define SETTING_ID_TRANSITION_TIME 12  // ==> tTcdRange(0, 16000)
 
-#define SETTING_ID_PEDAL_1_TYPE 26  // ==> PotTipActive = 0
+#define SETTING_ID_PEDAL_1_TYPE 26  // ==> PotTipActive  = 0
 #define SETTING_ID_PEDAL_2_TYPE 27  // ... PotRingActive = 1
-#define SETTING_ID_PEDAL_3_TYPE 28  // ... SwitchClosing = 2
-#define SETTING_ID_PEDAL_4_TYPE 29  // ... SwitchOpening = 3
+#define SETTING_ID_PEDAL_3_TYPE 28  // ... SwitchClosing = 2 // aka momentary switch, normally open
+#define SETTING_ID_PEDAL_4_TYPE 29  // ... SwitchOpening = 3 // aka momentary switch, normally closed
 
 #define SETTING_ID_AFTERTOUCH_CURVE 30  // SOFT = 0, NORMAL = 1, HARD = 2
 #define SETTING_ID_BENDER_CURVE     31  // SOFT = 0, NORMAL = 1, HARD = 2

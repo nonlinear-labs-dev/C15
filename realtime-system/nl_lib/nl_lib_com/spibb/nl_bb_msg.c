@@ -17,6 +17,7 @@
 #include "dbg/nl_assert.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_coos.h"
+#include "tcd/ehc/nl_ehc_ctrl.h"
 
 #define SENDBUFFER_SIZE 510  // 16-bit words, stays below the maximum of 1020 bytes
 
@@ -290,18 +291,6 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case SETTING_ID_EDIT_MODE_RIBBON_BEHAVIOUR:   // Parameter edit mode ribbon behaviour
         ADC_WORK_SetRibbon1EditBehaviour(data[1]);  // 0: Rel, 1: Abs
         break;
-      case SETTING_ID_PEDAL_1_MODE:            // Behaviour of Pedal 1
-        ADC_WORK_SetPedal1Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
-        break;
-      case SETTING_ID_PEDAL_2_MODE:            // Behaviour of Pedal 2
-        ADC_WORK_SetPedal2Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
-        break;
-      case SETTING_ID_PEDAL_3_MODE:            // Behaviour of Pedal 3
-        ADC_WORK_SetPedal3Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
-        break;
-      case SETTING_ID_PEDAL_4_MODE:            // Behaviour of Pedal 4
-        ADC_WORK_SetPedal4Behaviour(data[1]);  // 0: Non-Return, 1: Return to Zero, 2: Return to Center
-        break;
       case SETTING_ID_UPPER_RIBBON_REL_FACTOR:  // Factor for the increments when a ribbon is in Relative mode
         ADC_WORK_SetRibbonRelFactor(data[1]);   // factor = data[1] / 256
         break;
@@ -319,6 +308,12 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;                         // see sup/nl_sup.h for bit patterns
       case SETTING_ID_SEND_RAW_SENSOR_DATA:
         ADC_WORK_SetRawSensorMessages(data[1]);
+        break;
+      case SETTING_ID_PEDAL_1_TYPE:
+      case SETTING_ID_PEDAL_2_TYPE:
+      case SETTING_ID_PEDAL_3_TYPE:
+      case SETTING_ID_PEDAL_4_TYPE:
+        NL_EHC_SetLegacyPedalType(data[0], data[1]);
         break;
       default:
         // do nothing

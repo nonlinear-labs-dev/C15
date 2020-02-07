@@ -442,58 +442,6 @@ void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour)
 }
 
 /*****************************************************************************
-* @brief	ADC_WORK_SetPedal1Behaviour -
-* @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
-******************************************************************************/
-void ADC_WORK_SetPedal1Behaviour(uint32_t behaviour)
-{
-}
-
-uint32_t ADC_WORK_GetPedal1Behaviour(void)
-{
-  return 0;
-}
-
-/*****************************************************************************
-* @brief	ADC_WORK_SetPedal2Behaviour -
-* @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
-******************************************************************************/
-void ADC_WORK_SetPedal2Behaviour(uint32_t behaviour)
-{
-}
-
-uint32_t ADC_WORK_GetPedal2Behaviour(void)
-{
-  return 0;
-}
-
-/*****************************************************************************
-* @brief	ADC_WORK_SetPedal3Behaviour -
-* @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
-******************************************************************************/
-void ADC_WORK_SetPedal3Behaviour(uint32_t behaviour)
-{
-}
-
-uint32_t ADC_WORK_GetPedal3Behaviour(void)
-{
-  return 0;
-}
-
-/*****************************************************************************
-* @brief	ADC_WORK_SetPedal4Behaviour -
-* @param	0: Non-Return, 1: Return to Zero, 2: Return to Center
-******************************************************************************/
-void ADC_WORK_SetPedal4Behaviour(uint32_t behaviour)
-{
-}
-
-uint32_t ADC_WORK_GetPedal4Behaviour(void)
-{
-  return 0;
-}
-
-/*****************************************************************************
 * @brief	ADC_WORK_SetRibbonCalibration -
 * @param	length: # of words in data array
 * @param	data: array containing calibration data sets for the ribbons

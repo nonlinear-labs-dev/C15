@@ -37,11 +37,6 @@ void ADC_WORK_Process(void);
 void ADC_WORK_WriteHWValueForBB(uint32_t hwSourceId, uint32_t value);
 void ADC_WORK_SendBBMessages(void);
 
-void ADC_WORK_SetPedal1Behaviour(uint32_t behaviour);
-void ADC_WORK_SetPedal2Behaviour(uint32_t behaviour);
-void ADC_WORK_SetPedal3Behaviour(uint32_t behaviour);
-void ADC_WORK_SetPedal4Behaviour(uint32_t behaviour);
-
 void ADC_WORK_SetRibbon1EditMode(uint32_t mode);
 void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour);
 void ADC_WORK_SetRibbon1Behaviour(uint32_t behaviour);
@@ -50,15 +45,8 @@ void ADC_WORK_SetRibbonRelFactor(uint32_t factor);
 void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data);
 void ADC_WORK_SetRawSensorMessages(uint32_t flag);
 
-uint32_t ADC_WORK_GetPedal1Behaviour(void);
-uint32_t ADC_WORK_GetPedal2Behaviour(void);
-uint32_t ADC_WORK_GetPedal3Behaviour(void);
-uint32_t ADC_WORK_GetPedal4Behaviour(void);
 uint32_t ADC_WORK_GetRibbon1Behaviour(void);
 uint32_t ADC_WORK_GetRibbon2Behaviour(void);
-
-void ADC_WORK_Check_Pedal_Start(uint32_t pedalId);
-void ADC_WORK_Check_Pedal_Cancel(uint32_t pedalId);
 
 void ADC_WORK_Select_BenderTable(uint32_t curve);
 void ADC_WORK_Select_AftertouchTable(uint32_t curve);
