@@ -1,1 +1,0 @@
-The room size and reverb time are set here.

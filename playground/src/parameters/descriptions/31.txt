@@ -1,1 +1,0 @@
-Gain [in dB] of the envelope signal. As this signal modulates the Oscillator and Shaper B, the Gain influences the level and the amount of phase modulation and distortion.

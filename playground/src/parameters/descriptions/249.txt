@@ -1,1 +1,0 @@
-Number of unsion voices that will be assigned to a key. At 1 the unison effect is disabled. If there are not enough voices to serve all pressed keys, the number per key is temporarily reduced.

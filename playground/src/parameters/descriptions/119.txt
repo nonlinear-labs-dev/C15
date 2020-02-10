@@ -1,1 +1,0 @@
-Amount of the internal feedback noticable as the decay time of the impulse response [logarithmic scaling]. At negative values the feedback signal is inverted which shifts the fundamental resonance down by one octave.

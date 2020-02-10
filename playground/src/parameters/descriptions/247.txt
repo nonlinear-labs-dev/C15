@@ -1,1 +1,0 @@
-Master volume [in dB], applied at the end of the effect chain, before the soft clipper.

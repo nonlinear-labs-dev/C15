@@ -1,1 +1,0 @@
-This control is the parameter representation of the "Pedal 4" Hardware Source. If a pedal is connected, the control will directly follow the pedal position.

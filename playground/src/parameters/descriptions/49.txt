@@ -1,1 +1,0 @@
-Velocity influence on the Attack time. The value represents the logarithmic amount of the reduction of the Attack time by high Note-On velocities.

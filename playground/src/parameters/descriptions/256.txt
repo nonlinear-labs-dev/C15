@@ -1,3 +1,0 @@
-Determines the influence of Pedal 1 on Macro Control B.
-If the pedal is set to a returning mode, the amount can be adjusted continuously, otherwise it will be switch-like.
-Continuous amounts can be set [in percent] and can cover the whole range of the Macro Control in both directions (-100 ... 100 %).

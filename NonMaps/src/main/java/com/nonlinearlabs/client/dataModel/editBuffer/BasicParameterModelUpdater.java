@@ -16,7 +16,7 @@ public class BasicParameterModelUpdater extends Updater {
 	public void doUpdate() {
 		String shortName = getChildText(root, "short-name");
 		String longName = getChildText(root, "long-name");
-		String description = getChildText(root, "info-text");
+		String info = getChildText(root, "info-text");
 		
 		if (!shortName.isEmpty())
 			target.shortName.setValue(shortName);
@@ -24,8 +24,8 @@ public class BasicParameterModelUpdater extends Updater {
 		if (!longName.isEmpty())
 			target.longName.setValue(longName);
 
-		if(!description.isEmpty())
-			target.info.setValue(description);
+		if(!info.isEmpty())
+			target.info.setValue(info);
 
 		target.locked.setValue(getAttributeValue(root, "locked").equals("1"));
 

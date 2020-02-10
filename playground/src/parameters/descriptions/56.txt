@@ -1,1 +1,0 @@
-Amount of pitch modulation by Envelope C [in semitones]

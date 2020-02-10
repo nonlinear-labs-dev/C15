@@ -1,2 +1,0 @@
-Amount of the cross feedback between the left and right channel.
-(0.0 - no cross feedback, 100.0 - all feedback is cross feedback)

@@ -2,7 +2,6 @@
 #include <Application.h>
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
-#include <parameters/descriptions/ParameterDescriptionDatabase.h>
 #include <parameters/names/ParameterDB.h>
 
 ParameterInfoText::ParameterInfoText(ControlOwner *parent)

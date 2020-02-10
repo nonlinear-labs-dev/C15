@@ -1,1 +1,0 @@
-Voice panning inside of a group of unison voices. At 1.0 the voices are spread over the full stereo base.

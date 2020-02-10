@@ -1,1 +1,0 @@
-Crossfades between the dry signal and the filtered signal. At positive values the filter runs in parallel (band reject) mode, at negative values it is a bandpass filter (in serial mode).

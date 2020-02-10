@@ -107,6 +107,8 @@ class Parameter : public UpdateDocumentContributor,
 
   virtual Glib::ustring getLongName() const;
   virtual Glib::ustring getShortName() const;
+  Glib::ustring getInfoText() const;
+
   virtual Glib::ustring getMiniParameterEditorName() const;
   virtual Glib::ustring getGroupAndParameterName() const;
   virtual Glib::ustring getGroupAndParameterNameWithVoiceGroup() const;

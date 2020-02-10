@@ -1,2 +1,0 @@
-Curvature of the (polynomial) Attack Segment
-(negative: decelerating slope, zero: linear, positive: accelerating slope)

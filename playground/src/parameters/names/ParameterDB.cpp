@@ -64,10 +64,14 @@ Glib::ustring ParameterDB::getShortName(const ParameterId &id) const
   return replaceVoiceGroupInDynamicLabels(d.m_pg.m_param_label_short, id.getVoiceGroup());
 }
 
-Glib::ustring ParameterDB::getDescription(const ParameterId& id) const
+Glib::ustring ParameterDB::getDescription(const ParameterId &id) const
 {
   auto num = id.getNumber();
+  return getDescription(num);
+}
 
+Glib::ustring ParameterDB::getDescription(const int num) const
+{
   assert(num >= 0);
   assert(num < C15::Config::tcd_elements);
 
@@ -80,7 +84,6 @@ Glib::ustring ParameterDB::getDescription(const ParameterId& id) const
 
   return d.m_pg.m_param_info;
 }
-
 
 tControlPositionValue ParameterDB::getSignalPathIndication(int id) const
 {

@@ -30,7 +30,7 @@ Parameter::Parameter(ParameterGroup *group, ParameterId id, const ScaleConverter
     , m_id(id)
     , m_value(this, scaling, def, coarseDenominator, fineDenominator)
     , m_lastSnapshotedValue(c_invalidSnapshotValue)
-    , m_voiceGroup{ group->getVoiceGroup() }
+    , m_voiceGroup { group->getVoiceGroup() }
 {
 }
 
@@ -312,6 +312,11 @@ Glib::ustring Parameter::getShortName() const
   return ParameterDB::get().getShortName(getID());
 }
 
+Glib::ustring Parameter::getInfoText() const
+{
+  return ParameterDB::get().getDescription(getID());
+}
+
 Glib::ustring Parameter::getMiniParameterEditorName() const
 {
   return getShortName();
@@ -351,9 +356,9 @@ void Parameter::writeDocProperties(Writer &writer, tUpdateID knownRevision) cons
     writer.writeTextElement("bipolar", to_string(m_value.isBiPolar()));
     writer.writeTextElement("long-name", getLongName());
     writer.writeTextElement("short-name", getShortName());
+    writer.writeTextElement("info-text", getInfoText());
     writer.writeTextElement("coarse-denominator", to_string(m_value.getCoarseDenominator()));
     writer.writeTextElement("fine-denominator", to_string(m_value.getFineDenominator()));
-    writer.writeTextElement("info-text", ParameterDB::get().getDescription(getID()));
   }
 }
 

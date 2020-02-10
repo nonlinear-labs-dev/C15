@@ -1,2 +1,0 @@
-Offset between the cutoffs of the lowpass and the highpass [in semitones].
-When the filters are running in parallel (Mix > 0), the Gap determines the width of the attenuated band, in serial mode (Mix < 0), the Gap determines the width of the passed band.

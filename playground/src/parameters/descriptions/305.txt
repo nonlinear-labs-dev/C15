@@ -1,2 +1,0 @@
-Amount of gating applied to the decay time. It reduces the decay time when the key is released (note-off).
-(0.0: same decay time in the release phase, 100.0: the decay time is set to zero at the release of the key)

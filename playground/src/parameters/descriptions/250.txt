@@ -1,1 +1,0 @@
-Spreading of the pitches of the unison voices. Hold the Shift key for adjustments in steps of 0.001 (0.1 cent).

@@ -1,1 +1,0 @@
-Crossfades between the signal of branch A and the multiplication (ring modulation) product of branch A and branch B. At lower values the result is an amplitude modulation of signal A (carrier) by signal B (modulator). At 100 % signal A is fully cancelled and the output is only the product "A x B" containing frequencies that are sums and differences of their original frequencies.

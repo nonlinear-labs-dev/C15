@@ -1,2 +1,0 @@
-Mean value of the delay times in the left and right channel. The Stereo parameter allows to create a time offset between the channels.
-When the Time of the Flanger is set to zero the overall effect is determined by the phase shifting of the allpass.

@@ -1,1 +1,0 @@
-Output level [dB] of the saturation effect before it is mixed with the dry signal

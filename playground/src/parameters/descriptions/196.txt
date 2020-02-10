@@ -1,1 +1,0 @@
-Cutoff frequency [semitones] of the highpass filter at the input

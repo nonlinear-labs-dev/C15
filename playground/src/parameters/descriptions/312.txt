@@ -1,1 +1,0 @@
-Sets the base key for the custom scale. The scale is defined for the eleven keys above the base key and will be applied to all octaves accordingly.

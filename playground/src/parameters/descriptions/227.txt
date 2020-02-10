@@ -1,1 +1,0 @@
-Sets the ratio between the delay times of the left and of the right channel [the value shows the offset to 100.0 %]. In the center position the offset is zero and both delay times are equal.

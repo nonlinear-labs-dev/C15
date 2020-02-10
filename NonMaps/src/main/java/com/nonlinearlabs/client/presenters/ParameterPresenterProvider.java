@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.AftertouchParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
@@ -86,6 +85,7 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 
 		presenter.shortName = e.shortName.getValue();
 		presenter.longName = e.longName.getValue();
+		presenter.parameterInfo = e.info.getValue();
 
 		presenter.valueChanged = isValueChanged(e);
 
