@@ -39,7 +39,7 @@ typedef struct
   // pre-processed data
   uint16_t current;           // == filtered_values[sbuf_index]
   uint16_t filtered_current;  // == values[sbuf_index]
-  uint8_t  detect;            // == detect_and_config[sbuf_index] & 1
+  uint16_t detect;
 } AdcBuffer_T;
 
 extern AdcBuffer_T adc[ADC_CHANNELS];

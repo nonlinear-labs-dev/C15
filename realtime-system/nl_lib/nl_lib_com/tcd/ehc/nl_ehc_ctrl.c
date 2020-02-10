@@ -19,6 +19,10 @@
 // ============= local constants and types
 // =============
 
+#define WAIT_TIME_AFTER_PLUGIN (80)  // timeout after a plug-in event, in 12.5ms units (80 == 1000 milliseconds)
+
+#define NUMBER_OF_CONTROLLERS (4)  // may increase to 8, later
+
 // ============= Pot channels
 #define POT_SCALE_FACTOR  (10000)  // don't change this unless you know what you do
 #define RHEO_SCALE_FACTOR (4500)   // don't change this unless you know what you do
@@ -44,6 +48,12 @@
 // gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values
 #define SETTLING_GAIN (8)
 
+// ============= Switch channels
+#define SWITCH_DEADRANGE_LOW      (900)   // only values below this are accepted as "switch closed"
+#define SWITCH_DEADRANGE_HIGH     (1900)  // only values below this are accepted as "switch open"
+#define SWITCH_TRIGGER_HYSTERESIS (100)   // hysteresis for stabilizing triggers
+#define SWITCH_DEBOUNCE_TIME      (20)     // debounce switch time in 12.5ms units (20 == 250ms, shorter than any intentional switching)
+
 typedef struct
 {
   ControllerType_T type;
@@ -54,10 +64,13 @@ typedef struct
   {
     // output
     unsigned initialized : 1;
+    unsigned isReset : 1;
     unsigned isSettled : 1;
+    unsigned outputIsValid : 1;
     // input
-    unsigned          denoiseWhenSettled : 1;  // 1 --> denoise output when settled long and close enough
+    unsigned          denoiseWhenSettled : 1;  // denoise output when settled long and close enough
     ControlerInvert_T polarity : 1;            // invert final output value or not
+    unsigned          debounce : 1;            // enable switch debouncing
   } flags;
   // value buffer
   uint16_t values[CBUF_SIZE];
@@ -76,9 +89,13 @@ typedef struct
   // final HW-source output
   uint16_t final;
   uint16_t lastFinal;
+
+  // control
+  uint16_t wait;
+  uint16_t step;
 } Controller_T;
 
-Controller_T ctrl[4];  // main working variable
+Controller_T ctrl[NUMBER_OF_CONTROLLERS];  // main working variable
 
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
@@ -104,13 +121,19 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
   this->val_index                = 0;
   this->out_index                = 0;
   this->flags.polarity           = polarity;
+  this->flags.outputIsValid      = 0;
+  this->flags.isReset            = 1;
+  this->flags.debounce           = 01; // ??? temp
+  this->wait                     = 0;
+  this->step                     = 0;
+
 
   if ((type != POT) && (top))
   {                              // if a top channel was supplied, clear it unless it's for a pot
     top->flags.useIIR      = 0;  // low pass filter the raw input
     top->flags.useStats    = 0;  // enable min/max/avg statistics
-    top->flags.pullup_10k  = 0;  // readout wiper without pullup;
-    top->flags.useIIR      = 0;  // low pass filter the raw input
+    top->flags.pullup_10k  = 0;  // no pullup;
+    top->flags.useIIR      = 0;  // no low pass filter the raw input
     top->flags.useStats    = 0;  // enable min/max/avg statistics
     top->flags.initialized = 0;
   }
@@ -153,9 +176,34 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
   this->outBufInvalid   = SBUF_SIZE;  // number of runs until value buffer is filled
 
   this->final             = 0;
-  this->lastFinal         = 0xFFFF;
+  this->lastFinal         = ~this->final;
   this->flags.initialized = 1;
 }
+
+/*************************************************************************/ /**
+* @brief	Reset a controller
+******************************************************************************/
+void resetController(Controller_T *this, uint16_t wait_time)
+{
+  if (!this || !this->flags.initialized)
+    return;
+  if (this->flags.isReset)
+    return;
+  this->wait                = wait_time;
+  this->min                 = 32767;
+  this->max                 = 0;
+  this->val_index           = 0;
+  this->out_index           = 0;
+  this->flags.outputIsValid = 0;
+  this->valueBufInvalid     = SBUF_SIZE;  // number of runs until value buffer is filled
+  this->outBufInvalid       = SBUF_SIZE;  // number of runs until value buffer is filled
+  this->final               = 0;
+  this->lastFinal           = 0xFFFF;
+  this->flags.initialized   = 1;
+  this->flags.isReset       = 1;
+  this->step                = 0;
+}
+
 
 /*************************************************************************/ /**
 * @brief	Get Statistical Data of a Ring Buffer
@@ -195,10 +243,20 @@ int GetBufferStats(uint16_t *buf, uint16_t pos, int bufferDepth, uint16_t *pMin,
 /*************************************************************************/ /**
 * @brief	readout a pot or rheostat, with optional denoising
 ******************************************************************************/
-void readoutController(Controller_T *this)
+void readoutPotOrRheostat(Controller_T *this)
 {
+  uint16_t out = 8000;
+
   if (!this->flags.initialized || (this->type != POT && this->type != RHEOSTAT))
     return;
+
+  this->flags.isReset = 0;
+
+  if (this->wait)
+  {  // some settling time was requested, so delay any processing until then
+    this->wait--;
+    return;
+  }
 
   // get potentiometric value
   int value;
@@ -247,13 +305,16 @@ void readoutController(Controller_T *this)
   }
 
   // scale output value via autorange
-  uint16_t out;
   if (value < min)
     out = 0;
   else if (value > max)
     out = 16000;  // 100%
   else
     out = 16000 * (int) (value - min) / (int) (max - min);  // scale current value with the currently detected span.
+  if (out < 0)
+    out = 0;
+  if (out > 16000)
+    out = 16000;
 
   this->out_index            = (this->out_index + CBUF_MOD) & CBUF_MOD;
   this->out[this->out_index] = out;
@@ -263,6 +324,7 @@ void readoutController(Controller_T *this)
     this->outBufInvalid--;
     return;
   }
+  this->flags.outputIsValid = 1;
 
   if (this->flags.denoiseWhenSettled)
   {
@@ -301,14 +363,83 @@ void readoutController(Controller_T *this)
 }
 
 /*************************************************************************/ /**
-* @brief	process all pots or rheostats
+* @brief	readout a switch
 ******************************************************************************/
-void ProcessPots(void)
+void readoutSwitch(Controller_T *this)
 {
-  readoutController(&ctrl[0]);
-  readoutController(&ctrl[1]);
-  readoutController(&ctrl[2]);
-  readoutController(&ctrl[3]);
+  if (!this->flags.initialized || (this->type != SWITCH))
+    return;
+
+  this->flags.isReset = 0;
+
+  if (this->wait)
+  {  // some settling time was requested, so delay any processing until then
+    this->wait--;
+    return;
+  }
+
+  // get  value
+  uint16_t out = this->wiper->current;
+
+  switch (this->step)
+  {
+    case 0:  // wait for initial clear edge
+      if (out > SWITCH_DEADRANGE_HIGH)
+      {
+        out        = 16000;
+        this->step = 20;  // now wait for positive hysteresis point
+      }
+      else if (out < SWITCH_DEADRANGE_LOW)
+      {
+        out        = 0;
+        this->step = 40;  // now wait for negative hysteresis point
+      }
+      else
+        return;
+      break;
+
+    case 10:  // wait for positive going trigger point
+      if (out < SWITCH_DEADRANGE_LOW)
+        return;
+      this->step = 20;  // now wait for positive hysteresis point
+      out        = 16000;
+      if (this->flags.debounce)
+	    this->wait = SWITCH_DEBOUNCE_TIME;
+      break;  // and transmit edge
+
+    case 20:  // wait for positive hysteresis point reached, or below trigger again (with some hysteresis)
+      if ((out > SWITCH_DEADRANGE_LOW - SWITCH_TRIGGER_HYSTERESIS) && (out < SWITCH_DEADRANGE_HIGH))
+        return;
+      this->step = 30;  // now wait for negative trigger
+      return;
+
+    case 30:  // wait for negative going trigger point
+      if (out > SWITCH_DEADRANGE_HIGH)
+        return;
+      this->step = 40;  // now wait for negative hysteresis point
+      out        = 0;
+      if (this->flags.debounce)
+	    this->wait = SWITCH_DEBOUNCE_TIME;
+      break;  // and transmit edge
+
+    case 40:  // wait for negative hysteresis point reached, or above trigger again
+      if ((out > SWITCH_DEADRANGE_LOW) && (out < SWITCH_DEADRANGE_HIGH + SWITCH_TRIGGER_HYSTERESIS))
+        return;
+      this->step = 10;  // now wait for positive trigger
+      return;
+
+    default:
+      this->step = 0;
+      return;
+  }
+
+  this->final = out;
+  if (this->lastFinal != this->final)
+  {
+    this->lastFinal = this->final;
+    SendControllerData(this->HwSourceId, (this->flags.polarity == NON_INVERT) ? this->final : 16000 - this->final);
+    this->flags.outputIsValid = 1;
+  }
 }
 
 /*************************************************************************/ /**
@@ -372,8 +503,12 @@ void NL_EHC_SetLegacyPedalType(uint16_t channel, uint16_t type)
     case 1:  // pot, ring active
       initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT);
       break;
-    case 2:
-    case 3:
+    case 2:  // switch, closing
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT);
+      break;
+    case 3:  // switch, opening
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT);
+      break;
     default:
       return;
   }
@@ -387,12 +522,35 @@ void NL_EHC_DeInitControllers(void)
 }
 
 /*************************************************************************/ /**
-* @brief	init everything
+* @brief	NL_EHC_ProcessControllers
 * main repetitive process called from ADC_Work_Process
 ******************************************************************************/
 void NL_EHC_ProcessControllers(void)
 {
-  ProcessPots();
+  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+  {
+    if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?
+    {
+      switch (ctrl[i].type)
+      {
+        case POT:
+        case RHEOSTAT:
+          readoutPotOrRheostat(&ctrl[i]);
+          break;
+        case SWITCH:
+          readoutSwitch(&ctrl[i]);
+          break;
+        case CV:
+          break;
+        case UNKNOWN:
+          break;
+        default:
+          break;
+      }
+    }
+    else
+      resetController(&ctrl[i], WAIT_TIME_AFTER_PLUGIN);
+  }
 
 #if 0
   // temp ????? LED is OFF while any pot is still settling or still below autoranging span
