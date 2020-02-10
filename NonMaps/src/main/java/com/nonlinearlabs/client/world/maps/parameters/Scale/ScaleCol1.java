@@ -7,7 +7,7 @@ class ScaleCol1 extends ScaleCol {
 	ScaleCol1(MapsLayout parent) {
 		super(parent);
 
-		addChild(new ScaleParameter(this, 312));
+		addChild(new ScaleParameter(this, 391));
 		addChild(new ScaleParameter(this, 316));
 		addChild(new ScaleParameter(this, 320));
 	}

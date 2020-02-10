@@ -24,23 +24,6 @@ public class MonoColumn extends ParameterColumn {
         public PriorityControlSmall(MapsLayout parent, int parameterID) {
             super(parent, parameterID);
         }
-
-        @Override
-        public String getDisplayValue() {
-            double value = Double.parseDouble(super.getDisplayValue());
-            if(value == 0)
-            {
-                return "Lowest";
-            }
-            else if(value == 50)
-            {
-                return "Latest";
-            }
-            else
-            {
-                return "Highest";
-            }
-        }
     }
 
     private class Priority extends Parameter {

@@ -8,11 +8,6 @@ public class BooleanControlSmall extends NumericalControlSmall {
 		super(parent, parameterID);
 	}
 
-    @Override
-    public String getDisplayValue() {
-        return Double.parseDouble(super.getDisplayValue()) == 0 ? "off" : "on";
-    }
-
 	@Override
 	protected double getFontHeight() {
 		return 11;
