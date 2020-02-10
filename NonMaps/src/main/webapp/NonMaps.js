@@ -12,6 +12,10 @@ function formatNote(note) {
   return base + octave;
 }
 
+function formatOnOff(cp) {
+  return Number(cp) <= Number(1) ? "Off" : "On";
+}
+
 function formatDimensionRounded(value, unit, withUnit, roundTo) {
   if (value == Number.POSITIVE_INFINITY)
     return "inf";

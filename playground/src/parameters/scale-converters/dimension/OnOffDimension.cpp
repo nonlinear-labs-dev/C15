@@ -7,5 +7,5 @@ Glib::ustring OnOffDimension::stringize(const tDisplayValue& displayValue) const
 
 Glib::ustring OnOffDimension::getStingizerJS() const
 {
-  return "cpValue == 0 ? 'Off' : 'On'";
+  return "formatOnOff(cpValue)";
 }

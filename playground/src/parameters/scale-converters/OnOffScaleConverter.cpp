@@ -15,11 +15,6 @@ tControlPositionValue OnOffScaleConverter::tcdToControlPosition(tTcdValue v) con
   return v;
 }
 
-Glib::ustring OnOffScaleConverter::controlPositionToDisplayJS() const
-{
-  return getDimension().getStingizerJS();
-}
-
 bool OnOffScaleConverter::isBiPolar() const
 {
   return false;
