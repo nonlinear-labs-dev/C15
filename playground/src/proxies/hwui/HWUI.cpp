@@ -683,12 +683,5 @@ FocusAndMode HWUI::restrictFocusAndMode(FocusAndMode in) const
   in = fixFocusAndModeWithAnys(in);
   in = removeEditOnFocusChange(in);
   in = removeInvalidsFromSound(in);
-
-  const bool isDesiredPresetManager = (in.focus == UIFocus::Banks) || (in.focus == UIFocus::Presets);
-
-  if(isDesiredPresetManager)
-    if(in.mode == UIMode::Store && Application::get().getPresetManager()->getNumBanks() == 0)
-      return { in.focus, UIMode::Select };
-
   return in;
 }

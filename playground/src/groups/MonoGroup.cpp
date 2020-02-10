@@ -1,6 +1,5 @@
 #include <parameters/mono-mode-parameters/MonoLegatoParameter.h>
 #include <parameters/mono-mode-parameters/MonoGlideTimeParameter.h>
-#include <parameters/mono-mode-parameters/MonoPriorityParameter.h>
 #include <parameters/scale-converters/LinearCountScaleConverter.h>
 #include <parameters/scale-converters/dimension/OnOffDimension.h>
 #include <parameters/scale-converters/MonoPriorityScaleConverter.h>
