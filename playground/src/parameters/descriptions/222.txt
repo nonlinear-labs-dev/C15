@@ -1,1 +1,0 @@
-Cutoff frequency [in semitones] of the filter that damps the higher frequencies of the delayed signal

@@ -1,2 +1,0 @@
-Amount of splitting of the cutoffs of the two 2-pole filters. Half of the value is applied as a positive offset to the adjusted cutoff for the first stage and as a negative offset for the second stage [in semitones].
-The split reduces the strong resonance peak in the 4-pole mode and allows filter curves with two formants. In bandpass/bandreject mode it controls the width of the band.

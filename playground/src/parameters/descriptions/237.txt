@@ -1,1 +1,0 @@
-Pre delay time, shifting the late reflections. This has a profound effect on the perceived room size.

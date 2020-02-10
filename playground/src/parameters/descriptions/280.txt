@@ -1,2 +1,0 @@
-Determines the influence of the Aftertouch on Macro Control A.
-The amount can be adjusted continuously [in percent] and can cover the whole range of the Macro Control in both directions (-100 ... 100 %).

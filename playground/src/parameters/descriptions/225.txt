@@ -1,1 +1,0 @@
-Mean delay time [in milliseconds]. As there can be an offset between the left and right channel, this control shows the mean value.

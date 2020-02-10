@@ -1,1 +1,0 @@
-Crossfades between Oscillator & Shaper A (at zero) and the Feedback signal for the signal A.

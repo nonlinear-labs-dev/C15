@@ -1,1 +1,0 @@
-Master output level [dB] of the synth. The output signal will be processed by the (monophonic) chain of effects

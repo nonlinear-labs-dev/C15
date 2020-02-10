@@ -1,1 +1,0 @@
-Offset of the seventh key following the base key [in cents]. At zero,the interval to the base key would be the fifth of the equally tempered scale.

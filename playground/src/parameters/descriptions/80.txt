@@ -1,1 +1,0 @@
-Envelope (C) amount for the Feedback Mix. At zero only a Gate signal is applied, at higher values Envelope C is faded in.

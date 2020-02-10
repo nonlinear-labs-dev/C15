@@ -1,1 +1,0 @@
-Center frequency of the 2-pole allpass filter [in semitones]. It is the frequency where the phase is shifted by 180 degrees. The allpass is in series with the delay. At the maximum position (140) the allpass has no effect.

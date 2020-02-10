@@ -1,4 +1,0 @@
-Key tracking of the envelope's peak, breakpoint and sustain levels [dB per semitone]
-Positive values: higher levels for higher notes (+1.0 = +12 dB per octave)
-Negative values: lower levels for higher notes (-1.0 = -12 dB per octave)
-Origin at C3=60.

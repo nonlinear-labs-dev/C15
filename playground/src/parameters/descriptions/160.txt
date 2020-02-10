@@ -1,1 +1,0 @@
-Feedback mix factor for the output of the effects chain. The reverb amount in the feedback can be set by the Reverb fader independantly. Since the signal is monophonic such feedback will cause intermodulation between the voices.

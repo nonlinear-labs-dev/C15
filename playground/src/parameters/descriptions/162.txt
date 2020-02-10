@@ -1,1 +1,0 @@
-Controls the amount of reverb in the feedback independantly from the Mix in the Reverb section. (0.0: dry, no reverb signal, 50.0: mix of 50% dry and 50% wet signal, 100.0: wet, 100 % reverb signal)

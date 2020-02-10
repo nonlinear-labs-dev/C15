@@ -1,3 +1,0 @@
-Determines the influence of the Bender on Macro Control C.
-The amount can be adjusted continuously [in percent] and can cover the whole range of the Macro Control in both directions (-100 ... 100 %).
-The bipolar range of the Bender is mapped to the unipolar range of the Macro Control by an amount of 50 %.

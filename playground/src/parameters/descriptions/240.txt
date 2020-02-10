@@ -1,1 +1,0 @@
-This controls the internal modulation of the reverberation delays. At higher amounts there is more movement and the diffusion is smoother. At lower settings the reverb becomes more static and metallic.

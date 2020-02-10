@@ -1,1 +1,0 @@
-Output mix factor for the signal from Oscillator & Shaper B

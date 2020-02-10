@@ -1,1 +1,0 @@
-Pan position of the signal from the Comb Filter in the output mix

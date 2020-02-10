@@ -28,6 +28,4 @@ class ParameterInfoText : public MultiLineLabel, public Scrollable
   void onTextLoaded(const Glib::ustring &text);
 
   ControlOwner *m_parent;
-  RecursionGuard m_dirtyGuard;
-  sigc::connection m_connection;
 };

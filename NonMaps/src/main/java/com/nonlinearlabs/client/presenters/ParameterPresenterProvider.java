@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.AftertouchParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
@@ -32,11 +31,6 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 			Arrays.asList(135, 155, 254, 259, 264, 269, 284, 289, 274, 279, 243, 244, 245, 246));
 
 	public ParameterPresenterProvider(ParameterId parameterId) {
-
-		NonMaps.get().getServerProxy().loadParameterDescription(parameterId.getNumber(), v -> {
-			presenter.parameterInfo = v;
-			notifyChanges();
-		});
 
 		presenter.id = parameterId;
 
@@ -91,6 +85,7 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 
 		presenter.shortName = e.shortName.getValue();
 		presenter.longName = e.longName.getValue();
+		presenter.parameterInfo = e.info.getValue();
 
 		presenter.valueChanged = isValueChanged(e);
 

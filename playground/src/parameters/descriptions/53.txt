@@ -1,2 +1,0 @@
-Pitch (logarithmic frequency) of Oscillator A at C3 (MIDI note 60) [in semitones, based on MIDI note numbers].
-The range below zero is shaped in the way that -20 corresponds to 0 Hz.

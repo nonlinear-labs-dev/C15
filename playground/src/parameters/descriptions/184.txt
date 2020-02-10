@@ -1,1 +1,0 @@
-Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a parabolic curve that shifts the frequency of the fundamental to its double.

@@ -1,1 +1,0 @@
-Amount of cutoff modulation by Envelope C [in semitones]

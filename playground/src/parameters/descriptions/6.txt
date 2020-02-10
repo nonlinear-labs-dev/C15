@@ -1,1 +1,0 @@
-Time of the second (exponential) Decay Segment in Milliseconds

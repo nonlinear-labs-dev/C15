@@ -1,2 +1,0 @@
-Balance between the levels of the ranges above and below the gap.
-In the center position both ranges are equally weighted. Negative values boost the lower range and attenuates the higher range, positive values have the opposite effect.

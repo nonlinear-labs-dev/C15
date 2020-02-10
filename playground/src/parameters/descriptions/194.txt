@@ -1,1 +1,0 @@
-Cutoff frequency [semitones] of the lowpass filter at the output

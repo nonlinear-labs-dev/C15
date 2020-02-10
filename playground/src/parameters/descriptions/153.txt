@@ -1,1 +1,0 @@
-Amount of modulation of the cutoff frequencies by the output signals of Osc+Shaper A and B, with the FFM A-B knob determining their mix.

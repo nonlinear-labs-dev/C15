@@ -1,2 +1,0 @@
-Key scaling of the lowpass cutoff frequency
-(0.0: same cutoff for all keys, 100.0: full tracking with the keys, Origin at C3=60)

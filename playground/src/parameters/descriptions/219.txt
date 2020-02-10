@@ -1,1 +1,0 @@
-Amount of the internal feedback. At negative values the feedback is inverted and will emphasize other frequencies than in the non-inverted mode.

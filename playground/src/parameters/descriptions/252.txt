@@ -1,1 +1,0 @@
-Spreading the start phases of the unison voices to get different phase cancellations at the beginning of a note. The value is the phase range [in degrees] covered by a group of unison voices.

@@ -1,1 +1,0 @@
-Amount of filter resonance, creating peaks at the cutoff frequencies

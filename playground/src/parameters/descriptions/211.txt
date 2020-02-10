@@ -1,1 +1,0 @@
-Relative amount of the modulation of the delay times by the LFO and/or the Envelope.
