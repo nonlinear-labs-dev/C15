@@ -18,6 +18,8 @@
 /*	modul local defines														  */
 /******************************************************************************/
 
+#define IMPLEMENT_ACTIVE_SENSING (0)  // set to != 0 to enable
+
 #define BUFFER_SIZE 512
 
 /******************************************************************************/
@@ -85,14 +87,14 @@ void MSG_SendMidiBuffer(void)
     if ((USB_MIDI_BytesToSend() == 0)                   // Last transfer has finished
         && (USB_MIDI_Send(buff[writeBuffer], buf, 0)))  // Sending of the current writeBuffer and checking for success
     {
-      writeBuffer = !writeBuffer;  // Use the other buffer for next writing	/// better use [0] and [1], or +1  modulo_2
+      writeBuffer = (writeBuffer + 1) & 0x1;  // Use the other buffer for next writing
     }
     else  // USB failure or "traffic jam"
     {
       DBG_Led_Error_TimedOn(10);
     }
 
-    buf = 0;  /// Achtung - damit gibt es beim Scheitern keinen zweiten Sendeversuch !!! Wir beobachten die Error-LED
+    buf = 0;  // this discard the messages in case of error, no re-send attempts
   }
 }
 
@@ -177,4 +179,24 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
   {
     MSG_SendMidiBuffer();
   }
+}
+
+/*****************************************************************************
+*   @brief	MSG_SendActiveSensing
+*   Sends an "Active Sensing" MIDI command to AE, to indicate LPC is up and running
+******************************************************************************/
+void MSG_SendActiveSensing(void)
+{
+#if IMPLEMENT_ACTIVE_SENSING
+  buff[writeBuffer][buf++] = 0xFE;  // MIDI command "active sensing"
+  // since all "TCD" type transfers are 4 bytes, just send another 3 copies of it
+  buff[writeBuffer][buf++] = 0xFE;
+  buff[writeBuffer][buf++] = 0xFE;
+  buff[writeBuffer][buf++] = 0xFE;
+
+  if (buf == BUFFER_SIZE)
+  {
+    MSG_SendMidiBuffer();
+  }
+#endif
 }

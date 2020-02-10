@@ -80,13 +80,14 @@ void HBT_MidiReceive(uint8_t *buff, uint32_t len)
 }
 
 /******************************************************************************/
-/** @brief		periodically called every 10ms so, to process pending updates
+/** @brief		periodically called every 10ms, to process pending updates
 *******************************************************************************/
 void HBT_Process(void)
 {
   if (traffic_update)
   {
     SUP_MidiTrafficDetected();
+    MSG_SendActiveSensing();  // acknowledge any(!) incoming traffic with an "ActiveSensing" MIDI command
     traffic_update = 0;
   }
 

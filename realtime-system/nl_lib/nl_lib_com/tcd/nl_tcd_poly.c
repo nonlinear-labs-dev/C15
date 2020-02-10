@@ -131,5 +131,5 @@ void POLY_Process(void)
     }
   }
 
-  MSG_SendMidiBuffer();
+  MSG_SendMidiBuffer();  // note this call also takes care of sending all other pending MIDI data, like HWSources and ActiveSensing!
 }

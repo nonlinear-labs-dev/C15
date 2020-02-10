@@ -28,5 +28,6 @@ void MSG_KeyDown(uint32_t vel);
 void MSG_KeyUp(uint32_t vel);
 
 void MSG_HWSourceUpdate(uint32_t source, uint32_t position);
+void MSG_SendActiveSensing(void);
 
 #endif /* NL_TCD_MSG_H_ */
