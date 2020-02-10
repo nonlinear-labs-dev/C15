@@ -21,7 +21,7 @@
 
 // ==== V 206 ====
 // complete revised "pedals" (aka external controllers) proccessing
-#define SW_VERSION 206
+#define SW_VERSION 55206
 
 //===========================
 
