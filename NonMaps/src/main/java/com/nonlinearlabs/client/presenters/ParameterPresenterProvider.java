@@ -33,11 +33,6 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 
 	public ParameterPresenterProvider(ParameterId parameterId) {
 
-		NonMaps.get().getServerProxy().loadParameterDescription(parameterId.getNumber(), v -> {
-			presenter.parameterInfo = v;
-			notifyChanges();
-		});
-
 		presenter.id = parameterId;
 
 		BasicParameterModel p = EditBufferModel.get().getParameter(parameterId);

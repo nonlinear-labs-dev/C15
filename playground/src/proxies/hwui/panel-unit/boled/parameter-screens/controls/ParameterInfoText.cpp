@@ -3,6 +3,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/descriptions/ParameterDescriptionDatabase.h>
+#include <parameters/names/ParameterDB.h>
 
 ParameterInfoText::ParameterInfoText(ControlOwner *parent)
     : super("")
@@ -17,9 +18,8 @@ void ParameterInfoText::loadInfoText(Parameter *oldParam, Parameter *newParam)
 {
   if(newParam)
   {
-    auto &db = ParameterDescriptionDatabase::get();
-    m_connection.disconnect();
-    m_connection = db.load(newParam->getID(), mem_fun(this, &ParameterInfoText::onTextLoaded));
+    auto &db = ParameterDB::get();
+    onTextLoaded(db.getDescription(newParam->getID()));
     scrollTop();
   }
 }

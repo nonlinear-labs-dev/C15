@@ -64,6 +64,24 @@ Glib::ustring ParameterDB::getShortName(const ParameterId &id) const
   return replaceVoiceGroupInDynamicLabels(d.m_pg.m_param_label_short, id.getVoiceGroup());
 }
 
+Glib::ustring ParameterDB::getDescription(const ParameterId& id) const
+{
+  auto num = id.getNumber();
+
+  assert(num >= 0);
+  assert(num < C15::Config::tcd_elements);
+
+  auto d = C15::ParameterList[num];
+  if(!d.m_pg.m_param_info)
+  {
+    nltools::Log::error("there is no short name entry in parameter list for parameter", num);
+    return "";
+  }
+
+  return d.m_pg.m_param_info;
+}
+
+
 tControlPositionValue ParameterDB::getSignalPathIndication(int id) const
 {
   assert(id >= 0);

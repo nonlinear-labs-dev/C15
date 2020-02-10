@@ -353,6 +353,7 @@ void Parameter::writeDocProperties(Writer &writer, tUpdateID knownRevision) cons
     writer.writeTextElement("short-name", getShortName());
     writer.writeTextElement("coarse-denominator", to_string(m_value.getCoarseDenominator()));
     writer.writeTextElement("fine-denominator", to_string(m_value.getFineDenominator()));
+    writer.writeTextElement("info-text", ParameterDB::get().getDescription(getID()));
   }
 }
 
