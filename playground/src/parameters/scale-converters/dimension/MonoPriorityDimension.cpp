@@ -2,7 +2,18 @@
 
 Glib::ustring MonoPriorityDimension::stringize(const tDisplayValue& displayValue) const
 {
-  return Glib::ustring();
+  auto castedDisplay = static_cast<int>(displayValue);
+
+  switch(castedDisplay)
+  {
+    case 0:
+      return "Lowest";
+    case 1:
+    default:
+      return "Latest";
+    case 2:
+      return "Highest";
+  };
 }
 
 Glib::ustring MonoPriorityDimension::getStingizerJS() const

@@ -50,12 +50,12 @@ namespace DescriptiveLayouts
       {
         auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
         if(auto param = eb->findParameterByID({ 364, vg }))
-          setValue(param->getDisplayString() == "On");
+          setValue(param->getControlPositionValue() != 0);
       }
       else
       {
         if(auto param = eb->findParameterByID({ 364, VoiceGroup::I }))
-          setValue(param->getDisplayString() == "On");
+          setValue(param->getControlPositionValue() != 0);
       }
     }
   };

@@ -13,16 +13,16 @@ function formatNote(note) {
 }
 
 function formatOnOff(cp) {
-  return Number(cp) <= Number(1) ? "Off" : "On";
+  return Number(cp) === Number(1) ? "On" : "Off";
 }
 
 function formatPriority(cp) {
   switch (Number(cp)) {
-    case 1:
+    case 0:
       return "Lowest";
-    case 2:
+    case 1:
       return "Latest";
-    case 3:
+    case 2:
       return "Highest";
   }
 }
