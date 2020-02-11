@@ -1,6 +1,7 @@
 package com.nonlinearlabs.client.world.overlay.belt.sound;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
@@ -87,15 +88,22 @@ public class SplitSoundLayout extends SoundLayout {
 	private class VoiceGroupSoundSettings extends OverlayLayout {
 		VoiceGroup group;
 
+		VoiceGroupLabel m_voiceGroupLabel;
+		PresetName m_presetName;
+		VolumeLabel m_volumeLabel;
+		Volume m_volumeValue;
+		TuneLabel m_tuneLabel;
+		TuneReference m_tuneValue;
+
 		VoiceGroupSoundSettings(VoiceGroup g, SplitSoundSettings parent) {
 			super(parent);
 			group = g;
-			addChild(new VoiceGroupLabel(this));
-			addChild(new PresetName(this));
-			addChild(new VolumeLabel(this));
-			addChild(new Volume(this));
-			addChild(new TuneLabel(this));
-			addChild(new TuneReference(this));
+			m_voiceGroupLabel = addChild(new VoiceGroupLabel(this));
+			m_presetName = addChild(new PresetName(this));
+			m_volumeLabel = addChild(new VolumeLabel(this));
+			m_volumeValue = addChild(new Volume(this));
+			m_tuneLabel = addChild(new TuneLabel(this));
+			m_tuneValue = addChild(new TuneReference(this));
 		}
 
 		@Override
@@ -109,12 +117,27 @@ public class SplitSoundLayout extends SoundLayout {
 			double middleLine = h / 2;
 			double labelHeight = ((h / 20) * 9) - margin * 2;
 
-			getChildren().get(0).doLayout(margin, middleLine - labelHeight / 2, 2 * xunit, labelHeight);
-			getChildren().get(1).doLayout(margin + 4 * xunit, margin, 16 * xunit, 5 * yunit);
-			getChildren().get(2).doLayout(margin + 4 * xunit, margin + 8 * yunit, 6 * xunit, 5 * yunit);
-			getChildren().get(3).doLayout(margin + 10 * xunit, margin + 8 * yunit, 10 * xunit, 5 * yunit);
-			getChildren().get(4).doLayout(margin + 4 * xunit, margin + 15 * yunit, 6 * xunit, 5 * yunit);
-			getChildren().get(5).doLayout(margin + 10 * xunit, margin + 15 * yunit, 10 * xunit, 5 * yunit);
+			double voiceGroupLabelWidth = 3 * xunit;
+			double presetNameWidth = 16 * xunit;
+			double parameterLabelWidth = 6 * xunit;
+			double parameterValueWidth = 10 * xunit;
+
+
+			if(group == VoiceGroup.I) {
+				m_voiceGroupLabel.doLayout(margin, middleLine - labelHeight / 2, voiceGroupLabelWidth, labelHeight);
+				m_presetName.doLayout(margin + 4 * xunit, margin, presetNameWidth, 5 * yunit);
+				m_volumeLabel.doLayout(margin + 4 * xunit, margin + 8 * yunit, parameterLabelWidth, 5 * yunit);
+				m_volumeValue.doLayout(margin + 10 * xunit, margin + 8 * yunit, parameterValueWidth, 5 * yunit);
+				m_tuneLabel.doLayout(margin + 4 * xunit, margin + 15 * yunit, parameterLabelWidth, 5 * yunit);
+				m_tuneValue.doLayout(margin + 10 * xunit, margin + 15 * yunit, parameterValueWidth, 5 * yunit);
+			} else {
+				m_tuneValue.doLayout(margin, margin + 15 * yunit, parameterValueWidth, 5 * yunit);
+				m_tuneLabel.doLayout(margin + parameterValueWidth, margin + 15 * yunit, parameterLabelWidth, 5 * yunit);
+				m_volumeValue.doLayout(margin, margin + 8 * yunit, parameterValueWidth, 5 * yunit);
+				m_volumeLabel.doLayout(margin + parameterValueWidth, margin + 8 * yunit, parameterLabelWidth, 5 * yunit);
+				m_presetName.doLayout(margin, margin, presetNameWidth, 5 * yunit);
+				m_voiceGroupLabel.doLayout(w - margin - voiceGroupLabelWidth, middleLine - labelHeight / 2, voiceGroupLabelWidth, labelHeight);
+			}
 		}
 
 		@Override
@@ -128,9 +151,17 @@ public class SplitSoundLayout extends SoundLayout {
 
 			double contentLeft = getChildren().get(1).getPixRect().getLeft();
 			double contentRight = getPixRect().getRight();
-			Rect contentRect = new Rect(contentLeft - 2 * margin, getPixRect().getTop() + 1 * margin,
-					contentRight - contentLeft + 1 * margin, getPixRect().getHeight() - 2 * margin);
-			contentRect.drawRoundedArea(ctx, margin, 1, new Gray(30), new Gray(30));
+			if(group == VoiceGroup.I) {
+				Rect contentRect = new Rect(contentLeft - 2 * margin, getPixRect().getTop() + 1 * margin,
+						contentRight - contentLeft + 1 * margin, getPixRect().getHeight() - 2 * margin);
+				contentRect.drawRoundedArea(ctx, margin, 1, new Gray(30), new Gray(30));
+			} else {
+				Rect r = getPixRect().getReducedBy(margin*2).copy();
+				double spaceBetwheenLabelAndLabel = m_voiceGroupLabel.getPixRect().getLeft() - m_presetName.getPixRect().getRight();
+				r.set(r.getLeft(), r.getTop(), r.getWidth() - (m_voiceGroupLabel.getPixRect().getWidth() + spaceBetwheenLabelAndLabel), r.getHeight());
+				r.drawRoundedArea(ctx, margin, 1, new Gray(30), new Gray(30));
+			}
+			
 			super.draw(ctx, invalidationMask);
 		}
 
