@@ -3,6 +3,7 @@ package com.nonlinearlabs.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
@@ -10,6 +11,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 
 class WebSocketConnection {
 	JavaScriptObject webSocketConnection;
@@ -63,6 +65,15 @@ class WebSocketConnection {
 		} else {
 			webSocketOpen(Window.Location.getHost());
 		}
+
+		SetupModel.get().systemSettings.deviceName.onChange(t -> {
+			if(lastDeviceName != null && !lastDeviceName.isEmpty() && !t.isEmpty() && lastDeviceName != t) {
+				notifyHostChanged(lastDeviceName, t);
+			}
+
+			lastDeviceName = t;
+			return true;
+		});
 	}
 
 	private native int getBufferedAmount()
@@ -217,4 +228,12 @@ class WebSocketConnection {
 			pollTimer.schedule(timeout);
 		}
 	}
+
+
+	private void notifyHostChanged(String oldHost, String newHost) {
+		GWT.log("old: " + oldHost + " new: " + newHost);
+	}
+
+	String lastDeviceName = null;
+
 }
