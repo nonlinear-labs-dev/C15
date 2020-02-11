@@ -38,15 +38,15 @@
 #define CBUF_MOD  (CBUF_SIZE - 1)
 
 // Offset: settling minimum in LSBs.
+#define SETTLING_OFFSET (8)  // 4, 8, 16  (6dB steps)
+// gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values)
+#define SETTLING_GAIN (23)  // 4, 13, 40  (10dB steps)
 // Stable/low-creepage pedals are OK with 3..10, bad pedals (Moog) may need 20..50
 // The higher the value, the more there is a step transition on a change, after settling
 #warning "ToDo : make this parametrizable. Like 3 10dB steps 'Pedal Auto-Stabilizing' : weak(4), normal(13), strong(40)"
 // This mainly important when the pedal is shared with a ribbon, noise (from vibration, creep) shall not overwrite
 // the ribbon value(but even when the pedal is the only modulator, too much noise is not ideal).
 // Therefore, the PG should temporarily increase the stabilizing level by one when pedal and ribbon / other pedal run shared.
-#define SETTLING_OFFSET (4)
-// gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values
-#define SETTLING_GAIN (8)
 
 // ============= Switch channels
 #define SWITCH_DEADRANGE_LOW      (900)   // only values below this are accepted as "switch closed"
@@ -123,7 +123,7 @@ void initController(Controller_T *this, int HwSourceId, AdcBuffer_T *wiper, AdcB
   this->flags.polarity           = polarity;
   this->flags.outputIsValid      = 0;
   this->flags.isReset            = 1;
-  this->flags.debounce           = 01; // ??? temp
+  this->flags.debounce           = 0; // ??? temp
   this->wait                     = 0;
   this->step                     = 0;
 
