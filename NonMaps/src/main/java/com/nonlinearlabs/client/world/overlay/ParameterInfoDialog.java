@@ -258,8 +258,7 @@ public class ParameterInfoDialog extends GWTDialog {
 		if (theDialog != null) {
 			theDialog.commit();
 		} else {
-			if (!NonMaps.theMaps.getNonLinearWorld().getPresetManager().isEmpty())
-				theDialog = new ParameterInfoDialog();
+			theDialog = new ParameterInfoDialog();
 		}
 	}
 
