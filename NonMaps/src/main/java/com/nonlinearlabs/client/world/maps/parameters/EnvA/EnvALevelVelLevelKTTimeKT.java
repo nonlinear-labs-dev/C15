@@ -7,7 +7,6 @@ import com.nonlinearlabs.client.world.maps.parameters.ModulationSourceHighPriori
 import com.nonlinearlabs.client.world.maps.parameters.ModulationSourceSlider;
 import com.nonlinearlabs.client.world.maps.parameters.ParameterGroupControls;
 import com.nonlinearlabs.client.world.maps.parameters.SliderHorizontal;
-import com.nonlinearlabs.client.world.maps.parameters.Spacer;
 import com.nonlinearlabs.client.world.maps.parameters.ValueDisplaySmall;
 
 class EnvALevelVelLevelKTTimeKT extends ParameterGroupControls {
