@@ -40,10 +40,12 @@ public class EditBufferUseCases {
 			PhysicalControlParameterModel m = (PhysicalControlParameterModel) p;
 			applyPhysicalControlModulation(m, diff);
 
-			if (setAnimationTimeout)
-				animationManager.startDelayedAnimation(m, 2000);
-			else
-				animationManager.cancelAnimation(m);
+			if(m.isReturning()) {
+				if (setAnimationTimeout)
+					animationManager.startDelayedAnimation(m, 2000);
+				else
+					animationManager.cancelAnimation(m);
+			}
 		}
 
 		if (p instanceof MacroControlParameterModel)

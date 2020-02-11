@@ -24,16 +24,16 @@ class PedalParameter : public PhysicalControlParameter
   std::shared_ptr<PedalType> getAssociatedPedalTypeSetting() const;
 
  protected:
-  virtual void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
-  virtual void onPresetSentToLpc() const override;
-  virtual bool shouldWriteDocProperties(tUpdateID knownRevision) const override;
+  void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
+  void onPresetSentToLpc() const override;
+  bool shouldWriteDocProperties(tUpdateID knownRevision) const override;
 
-  virtual bool hasBehavior() const override;
-  virtual Glib::ustring getCurrentBehavior() const override;
-  virtual void undoableStepBehavior(UNDO::Transaction *transaction, int direction) override;
+  bool hasBehavior() const override;
+  Glib::ustring getCurrentBehavior() const override;
+  void undoableStepBehavior(UNDO::Transaction *transaction, int direction) override;
 
-  virtual DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
-  virtual size_t getHash() const override;
+  DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  size_t getHash() const override;
 
  private:
   const ScaleConverter *createScaleConverter() const;
