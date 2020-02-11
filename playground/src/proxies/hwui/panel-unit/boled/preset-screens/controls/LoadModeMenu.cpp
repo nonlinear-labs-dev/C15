@@ -32,7 +32,7 @@ class EntryLabel : public Label
       fb.setColor(FrameBuffer::C103);
 
     fb.fillRect(getPosition());
-    
+
     fb.setColor(oldColor);
 
     return Label::redraw(fb);

@@ -17,7 +17,7 @@ const VoicesDimension &VoicesDimension::get()
 
 Glib::ustring VoicesDimension::getStingizerJS() const
 {
-  return "((cpValue == 0) ? '1' + (withUnit ? ' voice' : '') + ' (off)' : formatDimensionDigits(cpValue, 'voices', "
+  return "((cpValue == 0) ? '1' + (withUnit ? ' voice' : '') + ' (off)' : formatDimensionDigits(cpValue + 1, 'voices', "
          "withUnit, 2))";
 }
 
