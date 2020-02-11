@@ -1,0 +1,21 @@
+#pragma once
+#include <proxies/hwui/controls/ButtonMenu.h>
+#include <nltools/Types.h>
+#include <device-settings/LoadModeSetting.h>
+
+class LoadModeMenu : public ControlWithChildren
+{
+ public:
+  explicit LoadModeMenu(const Rect &rect);
+
+  void turn();
+  void antiTurn();
+ private:
+
+  void bruteForce();
+  std::map<int, LoadMode> m_entries;
+
+  sigc::connection m_soundTypeConnection;
+
+  static SoundType getSoundType();
+};

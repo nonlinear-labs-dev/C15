@@ -55,14 +55,19 @@ void LoadModeSetting::cycleForSoundType(SoundType type)
 
 Glib::ustring LoadModeSetting::getDisplayStringForVoiceGroup(VoiceGroup vg) const
 {
-  switch(get())
+  return getDisplayStringForVoiceGroup(vg, get());
+}
+
+Glib::ustring LoadModeSetting::getDisplayStringForVoiceGroup(VoiceGroup vg, LoadMode setting) const
+{
+  switch(setting)
   {
     case LoadMode::Select:
     case LoadMode::DirectLoad:
-      return getDisplayString();
+      return enumToDisplayString()[static_cast<int>(setting)];
     case LoadMode::LoadToPart:
       return UNDO::StringTools::buildString("Load to ", toString(vg));
   }
 
-  return Glib::ustring();
+  return "";
 }

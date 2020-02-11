@@ -15,6 +15,7 @@ class LoadModeSetting : public EnumSetting<LoadMode>
   explicit LoadModeSetting(Settings& settings);
 
   Glib::ustring getDisplayStringForVoiceGroup(VoiceGroup vg) const;
+  Glib::ustring getDisplayStringForVoiceGroup(VoiceGroup vg, LoadMode setting) const;
 
   LoadModeSetting(const LoadModeSetting& other) = delete;
   LoadModeSetting& operator=(const LoadModeSetting&) = delete;

@@ -157,7 +157,7 @@ connection EditBuffer::onRecallValuesChanged(const sigc::slot<void> &s)
 
 connection EditBuffer::onSoundTypeChanged(sigc::slot<void> s)
 {
-  return m_signalTypeChanged.connect(s);
+  return m_signalTypeChanged.connectAndInit(s);
 }
 
 UpdateDocumentContributor::tUpdateID EditBuffer::onChange(uint64_t flags)
