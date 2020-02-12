@@ -30,7 +30,7 @@ class EnvBControls extends ParameterGroupControls {
 			addChild(new HorizontalBlock(this));
 			addChild(new Spacer(this, 1, 45 / 2.0));
 			addChild(new EnvBLevelVelLevelKTTimeKT(this));
-			addChild(new Spacer(this, 1, 45 / 3.0));
+			addChild(new Spacer(this, 1, 15));
 		}
 	}
 
