@@ -3,11 +3,11 @@
     "SplitPoint": {
       "Text": {
         "Class": "Text",
-        "Rect": "0, 8, 24, 8"
+        "Rect": "0, 10, 24, 8"
       },
       "Line": {
         "Class": "Bar",
-        "Rect": "11, 0, 1, 24"
+        "Rect": "11, 2, 1, 22"
       }
     }
   },

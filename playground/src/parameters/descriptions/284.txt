@@ -1,1 +1,0 @@
-This control is the parameter representation of the "Ribbon 1" Hardware Source. It will directly follow the Ribbon and vice versa.

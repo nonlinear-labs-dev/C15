@@ -1,34 +1,29 @@
 #include "ButtonRepeat.h"
 #include "Application.h"
-#include <device-settings/DebugLevel.h>
+#include <nltools/logging/Log.h>
+#include <glibmm/main.h>
 
-ButtonRepeat::ButtonRepeat(std::function<void()> cb)
+ButtonRepeat::ButtonRepeat(Callback cb)
 {
-  cb();
-
-#warning "adlerauge"
-  m_buttonRepeat.disconnect();
-  m_buttonRepeat = Application::get().getMainContext()->signal_timeout().connect(
-      sigc::bind(sigc::mem_fun(this, &ButtonRepeat::onButtonRepeatInitialTimeoutElapsed), cb), 800);
+  installRepeat(cb, 500);
 }
 
 ButtonRepeat::~ButtonRepeat()
 {
+  nltools::Log::warning("ButtonRepeat destroyed");
 }
 
-bool ButtonRepeat::onButtonRepeatInitialTimeoutElapsed(std::function<void()> cb)
+void ButtonRepeat::installRepeat(Callback cb, uint ms)
 {
   cb();
-
   m_buttonRepeat.disconnect();
   m_buttonRepeat = Application::get().getMainContext()->signal_timeout().connect(
-      sigc::bind(sigc::mem_fun(this, &ButtonRepeat::onButtonRepeatRegularTimeoutElapsed), cb), 120);
-
-  return false;
+      sigc::bind(sigc::mem_fun(this, &ButtonRepeat::onTimeoutElapsed), cb), ms);
 }
 
-bool ButtonRepeat::onButtonRepeatRegularTimeoutElapsed(std::function<void()> cb)
+bool ButtonRepeat::onTimeoutElapsed(Callback cb)
 {
-  cb();
-  return true;
+  nltools::Log::warning("ButtonRepeat elapsed");
+  installRepeat(cb, 120);
+  return false;
 }

@@ -19,7 +19,7 @@ class ProtoSmoother
 {
  public:
   // smoothed value
-  float m_value = 0.0f, m_dx = 0.0f;
+  float m_value = 0.0f, m_start = 0.0f, m_x = 0.0f, m_dx = 0.0f;
   // constructor
   inline ProtoSmoother()
   {
@@ -64,7 +64,7 @@ class ProtoSmoother
 
  private:
   // segment-specific private variables
-  float m_start, m_diff, m_x;
+  float m_diff;
   bool m_state = false;
 };
 
@@ -160,6 +160,10 @@ template <class Sync, class Audio, class Fast, class Slow> class SmootherHandle
   inline float get_slow(const uint32_t _id)
   {
     return m_slow[_id].m_value;
+  }
+  inline ProtoSmoother *get_smoother(const Slow _id)
+  {
+    return &m_slow[static_cast<uint32_t>(_id)];
   }
   // get method (auto-deducing clock type, in case of compile-time-related access)
   inline float get(const Sync _id)

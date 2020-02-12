@@ -1,1 +1,0 @@
-Crossfades between the signals of the LFO and the Envelope as modulation sources for the delay times and the allpass center frequencies.

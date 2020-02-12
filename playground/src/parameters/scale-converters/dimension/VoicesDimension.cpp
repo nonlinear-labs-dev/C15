@@ -17,16 +17,17 @@ const VoicesDimension &VoicesDimension::get()
 
 Glib::ustring VoicesDimension::getStingizerJS() const
 {
-  return "((cpValue == 1) ? '1' + (withUnit ? ' voice' : '') + ' (off)' : formatDimensionDigits(cpValue, 'voices', "
+  return "((cpValue == 0) ? '1' + (withUnit ? ' voice' : '') + ' (off)' : formatDimensionDigits(cpValue + 1, 'voices', "
          "withUnit, 2))";
 }
 
 Glib::ustring VoicesDimension::stringize(const tDisplayValue &displayValue) const
 {
-  if(displayValue == 1)
+  if(displayValue == 0)
     return "1 voice (off)";
 
+  auto numVoices = displayValue + 1;
   char txt[256];
-  sprintf(txt, "%ld voices", std::lround(displayValue));
+  sprintf(txt, "%ld voices", std::lround(numVoices));
   return txt;
 }

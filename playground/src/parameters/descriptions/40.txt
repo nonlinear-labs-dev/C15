@@ -1,2 +1,0 @@
-Decay time [in milliseconds] of the first (linear) decay segment.
-With the Breakpoint level at 1.0 it becomes a hold time.

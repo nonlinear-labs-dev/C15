@@ -219,6 +219,10 @@ public class ParameterInfoDialog extends GWTDialog {
 		}
 
 		parameterNameView.setText(selectedParameter.fullNameWithGroup);
+		String info = presenter.parameterInfo;
+		if (!info.isEmpty()) {
+			setDescription(info);
+		}
 		centerIfOutOfView();
 	}
 
@@ -254,8 +258,7 @@ public class ParameterInfoDialog extends GWTDialog {
 		if (theDialog != null) {
 			theDialog.commit();
 		} else {
-			if (!NonMaps.theMaps.getNonLinearWorld().getPresetManager().isEmpty())
-				theDialog = new ParameterInfoDialog();
+			theDialog = new ParameterInfoDialog();
 		}
 	}
 

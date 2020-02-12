@@ -73,6 +73,7 @@ void RecallParameterGroups::writeDocument(Writer &writer, UpdateDocumentContribu
 
 UpdateDocumentContributor::tUpdateID RecallParameterGroups::onChange(uint64_t flags)
 {
-  m_signalRecallValues.send();
+  //m_signalRecallValues.send();
+  m_signalRecallValues.deferedSend();
   return UpdateDocumentContributor::onChange(flags);
 }

@@ -1,2 +1,0 @@
-Controls two inverted shelving EQs before and after the distortion stage.
-(negative: more distortion at high frequencies, positive: more distortion at low frequencies)

@@ -1,1 +1,0 @@
-Coarse pitch of the comb filter (delay) at C3 (MIDI note 60) [in semitones, based on MIDI note numbers]

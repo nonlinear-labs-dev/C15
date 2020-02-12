@@ -1,1 +1,0 @@
-Phase offset between the LFO signals modulating the delay times in the  left and the right channel.

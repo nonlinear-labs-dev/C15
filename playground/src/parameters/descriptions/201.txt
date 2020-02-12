@@ -1,1 +1,0 @@
-Shifts the mean cutoff frequency of both 4-pole filters on both channels up or down [semitones]

@@ -3,13 +3,20 @@ package com.nonlinearlabs.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
+import com.nonlinearlabs.client.world.overlay.GWTDialog;
 
 class WebSocketConnection {
 	JavaScriptObject webSocketConnection;
@@ -63,6 +70,15 @@ class WebSocketConnection {
 		} else {
 			webSocketOpen(Window.Location.getHost());
 		}
+
+		SetupModel.get().systemSettings.deviceName.onChange(t -> {
+			if(lastDeviceName != null && !lastDeviceName.isEmpty() && !t.isEmpty() && lastDeviceName != t) {
+				notifyHostChanged(lastDeviceName, t);
+			}
+
+			lastDeviceName = t;
+			return true;
+		});
 	}
 
 	private native int getBufferedAmount()
@@ -217,4 +233,79 @@ class WebSocketConnection {
 			pollTimer.schedule(timeout);
 		}
 	}
+
+	static int ssid_left = 0;
+	static int ssid_top = 0;
+	static SSIDChangedDialog m_dialog = null;
+
+	public class SSIDChangedDialog extends GWTDialog {
+
+		public SSIDChangedDialog() {
+			setModal(true);
+			setWidth("20em");
+			addHeader("C15 SSID change detected!");
+	
+			HTMLPanel panel = new HTMLPanel("");
+			HTMLPanel buttons = new HTMLPanel("");
+			panel.add(new Label("The SSID of the connected C15 instrument has changed. Do you want to reload the Graphical User Interface now?", true));
+	
+			Button yes, cancelButton;
+	
+			buttons.add(cancelButton = new Button("Cancel", new ClickHandler() {
+	
+				@Override
+				public void onClick(ClickEvent arg0) {
+					commit();
+				}
+			}));
+
+			buttons.add(yes = new Button("Reload", new ClickHandler() {
+	
+				@Override
+				public void onClick(ClickEvent arg0) {
+					Window.Location.reload();
+					commit();
+				}
+			}));
+
+			yes.getElement().addClassName("modal-button-button");
+			cancelButton.getElement().addClassName("modal-button-button");
+			buttons.getElement().addClassName("modal-button-div");
+			panel.add(buttons);
+			add(panel);
+
+			m_dialog = this;
+		}
+
+		@Override
+		protected void setLastPopupPos(int popupLeft, int popupTop) {
+			ssid_left = popupLeft;
+			ssid_top = popupTop;
+		}
+
+		@Override
+		protected int getLastPopupPosTop() {
+			return ssid_top;
+		}
+
+		@Override
+		protected int getLastPopupPosLeft() {
+			return ssid_left;
+		}
+
+		@Override
+		protected void commit() {
+			hide();
+			m_dialog = null;
+		}
+
+	};
+
+	private void notifyHostChanged(String oldHost, String newHost) {
+		SSIDChangedDialog dialog = new SSIDChangedDialog();
+		dialog.center();
+	}
+
+	String lastDeviceName = null;
+
 }

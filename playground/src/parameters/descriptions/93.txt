@@ -1,1 +1,0 @@
-Mix amount of Shaper B in the signal being used for phase modulation (self). At zero the output signal of Oscillator B is used. At negative values the signal from the Shaper is inverted.

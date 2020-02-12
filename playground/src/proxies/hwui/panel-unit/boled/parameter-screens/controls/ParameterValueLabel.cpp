@@ -8,11 +8,11 @@
 ParameterValueLabel::ParameterValueLabel(const Parameter *param, const Rect &pos)
     : Label(pos)
 {
-  if(param)
-    m_connection = param->onParameterChanged(mem_fun(this, &ParameterValueLabel::updateText));
+
+  updateParameter(param);
 
   m_vgSelectionConnection = Application::get().getHWUI()->onCurrentVoiceGroupChanged(
-      sigc::hide(sigc::mem_fun(this, &ParameterValueLabel::updateVoiceGroup)));
+      sigc::mem_fun(this, &ParameterValueLabel::updateVoiceGroup));
 }
 
 ParameterValueLabel::~ParameterValueLabel()
@@ -26,9 +26,21 @@ void ParameterValueLabel::updateText(const Parameter *param)
   setText(param->getDisplayString());
 }
 
-void ParameterValueLabel::updateVoiceGroup()
+void ParameterValueLabel::updateVoiceGroup(VoiceGroup newVoiceGroup)
 {
-  updateText(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  if(m_currentParameter)
+  {
+    if(m_currentParameter->getID().getVoiceGroup() != newVoiceGroup)
+    {
+      auto newSelection = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+          { m_currentParameter->getID().getNumber(), newVoiceGroup });
+      if(newSelection)
+      {
+        updateParameter(newSelection);
+        updateText(m_currentParameter);
+      }
+    }
+  }
 }
 
 void ParameterValueLabel::updateParameter(const Parameter *param)
@@ -37,4 +49,6 @@ void ParameterValueLabel::updateParameter(const Parameter *param)
 
   if(param)
     m_connection = param->onParameterChanged(mem_fun(this, &ParameterValueLabel::updateText));
+
+  m_currentParameter = param;
 }

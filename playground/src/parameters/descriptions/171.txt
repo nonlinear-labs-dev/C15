@@ -1,1 +1,0 @@
-Pan position of the signal from Oscillator & Shaper A in the output mix

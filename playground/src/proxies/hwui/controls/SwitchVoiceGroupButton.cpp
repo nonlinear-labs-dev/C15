@@ -29,7 +29,7 @@ void SwitchVoiceGroupButton::rebuild()
   auto selectedVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
 
   if(EditBuffer::isDualParameterForSoundType(selected, ebType))
-    setText({ "I/II", 0 });
+    setText({ "I / II", 0 });
   else
     setText({ "", 0 });
 }

@@ -1,4 +1,0 @@
-Key scaling of the feedback level [dB per semitone]
-Positive values: higher level for higher notes (+1.0 = +12 dB per octave)
-Negative values: lower level for higher notes (-1.0 = -12 dB per octave)
-Origin at C3=60.

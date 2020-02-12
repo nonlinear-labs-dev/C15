@@ -1,1 +1,0 @@
-The signal for the Comb Filter as a crossfade between the outputs of Oscillator & Shaper A and Oscillator & Shaper B.

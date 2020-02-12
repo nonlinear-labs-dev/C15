@@ -8,7 +8,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.MacroControlParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel.ModSource;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulationRouterParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterFactory;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -41,10 +40,12 @@ public class EditBufferUseCases {
 			PhysicalControlParameterModel m = (PhysicalControlParameterModel) p;
 			applyPhysicalControlModulation(m, diff);
 
-			if (setAnimationTimeout)
-				animationManager.startDelayedAnimation(m, 2000);
-			else
-				animationManager.cancelAnimation(m);
+			if(m.isReturning()) {
+				if (setAnimationTimeout)
+					animationManager.startDelayedAnimation(m, 2000);
+				else
+					animationManager.cancelAnimation(m);
+			}
 		}
 
 		if (p instanceof MacroControlParameterModel)
@@ -397,18 +398,18 @@ public class EditBufferUseCases {
 		SoundType s = EditBufferModel.get().soundType.getValue();
 
 		if (s == SoundType.Single) {
-			if (l != LoadMode.DirectLoad) {
-				l = LoadMode.DirectLoad;
+			if (l != LoadMode.directload) {
+				l = LoadMode.directload;
 			} else {
-				l = LoadMode.Select;
+				l = LoadMode.select;
 			}
 		} else {
-			if (l == LoadMode.DirectLoad) {
-				l = LoadMode.LoadToPart;
-			} else if (l == LoadMode.LoadToPart) {
-				l = LoadMode.Select;
+			if (l == LoadMode.directload) {
+				l = LoadMode.loadtopart;
+			} else if (l == LoadMode.loadtopart) {
+				l = LoadMode.select;
 			} else {
-				l = LoadMode.Select;
+				l = LoadMode.select;
 			}
 		}
 

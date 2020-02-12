@@ -1,14 +1,24 @@
 {
   "controls": {
     "ParameterPair": {
+      "BackG": {
+        "Class": "Bar",
+        "Rect": "1, 0, 2, 11",
+        "Tag": "Background"
+      },
+      "BackG2": {
+        "Class": "Bar",
+        "Rect": "89, 0, 2, 11",
+        "Tag": "Background"
+      },
       "Label": {
         "Class": "Text",
-        "Rect": "1, 0, 35, 11",
+        "Rect": "3, 0, 35, 11",
         "Tag": "Label"
       },
       "Value": {
         "Class": "Text",
-        "Rect": "36, 0, 55, 11",
+        "Rect": "36, 0, 54, 11",
         "Tag": "Value"
       },
       "Left": {
@@ -27,13 +37,8 @@
     "ParameterPairTop": {
       "Label": {
         "Class": "Text",
-        "Rect": "1, 2, 35, 9",
+        "Rect": "1, 2, 90, 9",
         "Tag": "Label"
-      },
-      "Value": {
-        "Class": "Text",
-        "Rect": "36, 2, 55, 9",
-        "Tag": "Value"
       },
       "Left": {
         "Class": "Bar",
@@ -57,27 +62,49 @@
       }
     },
     "ParameterPairBottom": {
+      "BackG": {
+        "Class": "Bar",
+        "Rect": "1, 0, 2, 11",
+        "Tag": "Background"
+      },
+      "BackG2": {
+        "Class": "Bar",
+        "Rect": "89, 0, 2, 11",
+        "Tag": "Background"
+      },
       "Label": {
         "Class": "Text",
-        "Rect": "1, 0, 35, 11",
+        "Rect": "3, 0, 35, 11",
         "Tag": "Label"
       },
       "Value": {
         "Class": "Text",
-        "Rect": "36, 0, 55, 11",
+        "Rect": "36, 0, 54, 11",
         "Tag": "Value"
       },
       "Bottom2": {
         "Class": "Bar",
-        "Rect": "1, 11, 90, 1"
+        "Rect": "2, 11, 88, 1"
+      },
+      "Bottom3": {
+        "Class": "Bar",
+        "Rect": "1, 10, 1, 1"
       },
       "left": {
         "Class": "Bar",
-        "Rect": "0, 0, 1, 11"
+        "Rect": "0, 0, 1, 10"
+      },
+      "left2": {
+        "Class": "Bar",
+        "Rect": "1, 10, 1, 1"
       },
       "right": {
         "Class": "Bar",
-        "Rect": "91, 0, 1, 11"
+        "Rect": "91, 0, 1, 10"
+      },
+      "right2": {
+        "Class": "Bar",
+        "Rect": "90, 10, 1, 1"
       }
     }
   },
@@ -87,10 +114,10 @@
         "ControlClasses": "ParameterPairTop"
       },
       "styles": {
-        "Color": "C77",
+        "Color": "C255",
         "HighlightColor": "C255",
-        "BackgroundColor": "C179",
-        "HighlightBackgroundColor": "C179"
+        "BackgroundColor": "C128",
+        "HighlightBackgroundColor": "C128"
       }
     },
     "ParameterPair-Bottom": {
@@ -104,14 +131,36 @@
         "HighlightBackgroundColor": "C77"
       }
     },
-    "ParameterPair-border": {
+    "ParameterPairTop-border": {
       "selector": {
         "ControlClasses": "ParameterPairTop",
         "PrimitiveClasses": "Bar"
       },
       "styles": {
-        "Color": "C179",
-        "HighlightColor": "C179"
+        "Color": "C128",
+        "HighlightColor": "C128"
+      }
+    },
+    "ParameterPair-background": {
+      "selector": {
+        "ControlClasses": "ParameterPair",
+        "PrimitiveClasses": "Bar",
+        "Tag": "Background"
+      },
+      "styles": {
+        "Color": "C77",
+        "HighlightColor": "C77"
+      }
+    },
+    "ParameterPairBottom-background": {
+      "selector": {
+        "ControlClasses": "ParameterPairBottom",
+        "PrimitiveClasses": "Bar",
+        "Tag": "Background"
+      },
+      "styles": {
+        "Color": "C77",
+        "HighlightColor": "C77"
       }
     },
     "ParameterPair-border-bottom": {
@@ -121,7 +170,17 @@
       },
       "styles": {
         "Color": "C128",
-        "HighlightColor": "C179"
+        "HighlightColor": "C128"
+      }
+    },
+    "ParameterPair-middle-border": {
+      "selector": {
+        "ControlClasses": "ParameterPair",
+        "PrimitiveClasses": "Bar"
+      },
+      "styles": {
+        "Color": "C128",
+        "HighlightColor": "C128"
       }
     },
     "ParameterPair-DefaultStyle": {
@@ -130,7 +189,7 @@
       },
       "styles": {
         "Color": "C128",
-        "HighlightColor": "C179",
+        "HighlightColor": "C204",
         "BackgroundColor": "C77",
         "HighlightBackgroundColor": "C77"
       }
@@ -143,7 +202,7 @@
       "styles": {
         "TextAlign": "Right",
         "Color": "C128",
-        "HighlightColor": "C179",
+        "HighlightColor": "C204",
         "BackgroundColor": "C77",
         "HighlightBackgroundColor": "C77"
       }
@@ -154,9 +213,9 @@
         "Tag": "Label"
       },
       "styles": {
-        "TextAlign": "Center",
+        "TextAlign": "Left",
         "Color": "C128",
-        "HighlightColor": "C179",
+        "HighlightColor": "C204",
         "BackgroundColor": "C77",
         "HighlightBackgroundColor": "C77"
       }
@@ -170,13 +229,30 @@
         "TextAlign": "Right"
       }
     },
-    "ParamPair-Bottom-Label": {
+    "ParamPair-Bottom-Value": {
       "selector": {
         "ControlClasses": "ParameterPairBottom",
         "Tag": "Value"
       },
       "styles": {
-        "TextAlign": "Right"
+        "TextAlign": "Right",
+        "Color": "C128",
+        "HighlightColor": "C204",
+        "BackgroundColor": "C77",
+        "HighlightBackgroundColor": "C77"
+      }
+    },
+    "ParamPair-Bottom-Label": {
+      "selector": {
+        "ControlClasses": "ParameterPairBottom",
+        "Tag": "Label"
+      },
+      "styles": {
+        "TextAlign": "Left",
+        "Color": "C128",
+        "HighlightColor": "C204",
+        "BackgroundColor": "C77",
+        "HighlightBackgroundColor": "C77"
       }
     }
   }

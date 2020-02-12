@@ -67,7 +67,7 @@ public class SetupModel {
 	}
 
 	public enum LoadMode {
-		LoadToPart, Select, DirectLoad
+		loadtopart, select, directload
 	}
 
 	private <T extends Enum<T>> EnumDataModelEntity<T> createEnumDataModelEntity(Class<T> c, T def) {
@@ -100,7 +100,7 @@ public class SetupModel {
 	public class SystemSettings {
 		public EnumDataModelEntity<AftertouchCurve> aftertouchCurve = createEnumDataModelEntity(AftertouchCurve.class,
 				AftertouchCurve.normal);
-		public EnumDataModelEntity<LoadMode> loadMode = createEnumDataModelEntity(LoadMode.class, LoadMode.Select);
+		public EnumDataModelEntity<LoadMode> loadMode = createEnumDataModelEntity(LoadMode.class, LoadMode.select);
 		public EnumDataModelEntity<BaseUnitUIMode> baseUnitUIMode = createEnumDataModelEntity(BaseUnitUIMode.class,
 				BaseUnitUIMode.parameter_edit);
 		public EnumDataModelEntity<BenderCurve> benderCurve = createEnumDataModelEntity(BenderCurve.class,

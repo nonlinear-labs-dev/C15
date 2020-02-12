@@ -1,1 +1,0 @@
-Time of the (exponential) Release Segment in Milliseconds (infinite at maximum)

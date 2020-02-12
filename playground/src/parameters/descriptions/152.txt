@@ -1,3 +1,0 @@
-At zero the two 2-pole filter stages are in series forming a 4-pole filter. Positive values crossfade from the serial structure to a paralllel structure where the filter outputs are added. 
-In bandpass mode (L-B-H = 1) the parallel structure with a negative Spread works as a band-reject filter. 
-Negative values also crossfade to a parallel structure but here the lower filter is subtracted, which leads to phase cancellations.

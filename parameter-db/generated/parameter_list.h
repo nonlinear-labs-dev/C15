@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_list.h
-    @date       2020-01-12, 20:13
+    @date       2020-02-07, 14:37
     @version	1.7B-3
     @author     M. Seeber
     @brief      complete list of parameters (and their properties) in TCD order
@@ -384,8 +384,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::Shp_A_Asym, Signals::Quasipoly_Signals::Shp_A_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Shaper A", "Shaper A", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
+      { "", "Shaper A", "Shaper A", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Shp_A_Mix,
       76,
@@ -544,8 +544,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::Shp_B_Asym, Signals::Quasipoly_Signals::Shp_B_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Shaper B", "Shaper B", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
+      { "", "Shaper B", "Shaper B", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Shp_B_Mix,
       106,
@@ -855,8 +855,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::FB_Mix_Asym, Signals::Quasipoly_Signals::FB_Mix_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Feedback Mixer", "FB Mixer", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
+      { "", "Feedback Mixer", "FB Mixer", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Unmodulateables::FB_Mix_Lvl_KT,
       168,
@@ -940,8 +940,8 @@ namespace C15
       0.0f,
       { Smoothers::Poly_Fast::Out_Mix_Asym, Signals::Quasipoly_Signals::Out_Mix_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Output Mixer", "Output Mixer", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
+      { "", "Output Mixer", "Output Mixer", "Asymmetry", "Asymmetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Out_Mix_Lvl,
       185,
@@ -982,8 +982,8 @@ namespace C15
       0.25f,
       { Smoothers::Mono_Slow::Cabinet_Asym, Signals::Mono_Signals::Cabinet_Asym, Properties::SmootherScale::Linear,
         1.0f, 0.0f, false },
-      { "", "Cabinet", "Cabinet", "Asymetry", "Asymetry",
-        "Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
+      { "", "Cabinet", "Cabinet", "Asymmetry", "Asmymetry",
+        "Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values, it becomes a "
         "parabolic curve that shifts the frequency of the fundamental to its double." } },
     { Parameters::Local_Modulateables::Cabinet_Tilt,
       192,
@@ -1685,8 +1685,7 @@ namespace C15
     { Parameters::Global_Unmodulateables::Scale_Base_Key,
       312,
       0.0f,
-      { Smoothers::Global_Sync::Scale_Base_Key, Signals::Global_Signals::Scale_Base_Key,
-        Properties::SmootherScale::Linear, 11.0f, 0.0f, false },
+      { Smoothers::Global_Slow::Scale_Base_Key, None, Properties::SmootherScale::Linear, 11.0f, 0.0f, false },
       { "", "Scale", "Scale", "Base Key", "Base Key",
         "Sets the base key for the custom scale. The scale is defined for the eleven keys above the base key and will "
         "be applied to all octaves accordingly." } },
@@ -1818,11 +1817,11 @@ namespace C15
       { Smoothers::Poly_Sync::Env_A_Dec_2_Vel, None, Properties::SmootherScale::Linear, 60.0f, 0.0f, true },
       { "", "Envelope A", "Envelope A", "Decay 2 Velocity", "Dec 2 Vel", "" } },
     { None },
-    { Parameters::Local_Unmodulateables::Env_A_Split,
+    { Parameters::Local_Unmodulateables::Env_A_Elevate,
       332,
       0.0f,
-      { Smoothers::Poly_Fast::Env_A_Split, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
-      { "", "Envelope A", "Envelope A", "Split Levels", "Split Lvls", "" } },
+      { Smoothers::Poly_Fast::Env_A_Elevate, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
+      { "", "Envelope A", "Envelope A", "Elevate T - A", "Elevate", "" } },
     { None },
     { Parameters::Local_Unmodulateables::Env_B_Dec_1_Vel,
       334,
@@ -1836,11 +1835,11 @@ namespace C15
       { Smoothers::Poly_Sync::Env_B_Dec_2_Vel, None, Properties::SmootherScale::Linear, 60.0f, 0.0f, true },
       { "", "Envelope B", "Envelope B", "Decay 2 Velocity", "Dec 2 Vel", "" } },
     { None },
-    { Parameters::Local_Unmodulateables::Env_B_Split,
+    { Parameters::Local_Unmodulateables::Env_B_Elevate,
       338,
       0.0f,
-      { Smoothers::Poly_Fast::Env_B_Split, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
-      { "", "Envelope B", "Envelope B", "Split Levels", "Split Lvls", "" } },
+      { Smoothers::Poly_Fast::Env_B_Elevate, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, true },
+      { "", "Envelope B", "Envelope B", "Elevate T - A", "Elevate", "" } },
     { None },
     { Parameters::Local_Unmodulateables::Env_C_Retr_H,
       340,
@@ -2101,10 +2100,27 @@ namespace C15
         Properties::SmootherScale::Linear, 1.0f, 0.0f, false },
       { "0", "Flanger", "Flanger", "Tremolo", "Tremolo", "" } },
     { None },
+    { Parameters::Global_Unmodulateables::Scale_Offset_0,
+      391,
+      0.0f,
+      { Smoothers::Global_Slow::Scale_Offset_0, Signals::Global_Signals::Scale_Offset_0,
+        Properties::SmootherScale::Linear, 8.0f, 0.0f, true },
+      { "", "Scale", "Scale", "Offset +0", "Offset +0",
+        "Offset of the base key [in cents]. At zero, the interval to the base key would be the minor second of the "
+        "equally tempered scale." } },
     { None },
-    { None },
-    { None },
-    { None },
+    { Parameters::Local_Unmodulateables::Osc_A_Reset,
+      393,
+      1.0f,
+      { Smoothers::Poly_Sync::Osc_A_Reset, Signals::Quasipoly_Signals::Osc_A_Reset, Properties::SmootherScale::Linear,
+        1.0f, 0.0f, false },
+      { "", "Oscillator A", "Oscillator A", "Reset", "Reset", "" } },
+    { Parameters::Local_Unmodulateables::Osc_B_Reset,
+      394,
+      1.0f,
+      { Smoothers::Poly_Sync::Osc_B_Reset, Signals::Quasipoly_Signals::Osc_B_Reset, Properties::SmootherScale::Linear,
+        1.0f, 0.0f, false },
+      { "", "Oscillator B", "Oscillator B", "Reset", "Reset", "" } },
     { None },
     { None },
     { None },

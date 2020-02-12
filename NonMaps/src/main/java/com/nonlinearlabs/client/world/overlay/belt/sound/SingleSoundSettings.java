@@ -72,8 +72,8 @@ public class SingleSoundSettings extends OverlayLayout {
 		int parts = 20;
 		double partSize = w / parts;
 		presetName.doLayout(0, 0, w, h / 3);
-		tune.doLayout(0, h / 3, 9 * partSize, 2 * h / 3);
-		volume.doLayout(11 * partSize, h / 3, 9 * partSize, 2 * h / 3);
+		volume.doLayout(0, h / 3, 9 * partSize, 2 * h / 3);
+		tune.doLayout(11 * partSize, h / 3, 9 * partSize, 2 * h / 3);
 	}
 
 }

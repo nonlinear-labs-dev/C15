@@ -1,1 +1,0 @@
-Crossfades between the lowpass, bandpass and highpass outputs of the two filter stages. (first stage -> second stage: LP -> LP, BP -> LP, HP -> LP, HP -> BP, HP -> HP)

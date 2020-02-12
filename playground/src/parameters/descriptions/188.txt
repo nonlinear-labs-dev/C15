@@ -1,1 +1,0 @@
-Gain [dB] for the input signal. Higher gains will increase the amount of distortion/saturation.

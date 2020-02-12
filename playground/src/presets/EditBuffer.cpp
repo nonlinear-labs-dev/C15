@@ -32,6 +32,8 @@
 #include <groups/MonoGroup.h>
 #include <groups/UnisonGroup.h>
 #include <presets/PresetParameter.h>
+#include <tools/PerformanceTimer.h>
+
 
 EditBuffer::EditBuffer(PresetManager *parent)
     : ParameterDualGroupSet(parent)
@@ -113,9 +115,13 @@ void EditBuffer::resetModifiedIndicator(UNDO::Transaction *transaction, size_t h
   auto swap = UNDO::createSwapData(false, hash);
 
   transaction->addSimpleCommand([=](UNDO::Command::State) {
+    auto oldState = m_isModified;
+
     swap->swapWith<0>(m_isModified);
     swap->swapWith<1>(m_hashOnStore);
-    m_signalModificationState.send(m_isModified);
+
+    if(oldState != m_isModified)
+      m_signalModificationState.send(m_isModified);
   });
 }
 
@@ -151,7 +157,7 @@ connection EditBuffer::onRecallValuesChanged(const sigc::slot<void> &s)
 
 connection EditBuffer::onSoundTypeChanged(sigc::slot<void> s)
 {
-  return m_signalTypeChanged.connect(s);
+  return m_signalTypeChanged.connectAndInit(s);
 }
 
 UpdateDocumentContributor::tUpdateID EditBuffer::onChange(uint64_t flags)
@@ -440,6 +446,8 @@ void EditBuffer::undoableLoad(Preset *preset)
 
 void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset)
 {
+  PerformanceTimer timer(__PRETTY_FUNCTION__);
+
   auto ae = Application::get().getAudioEngineProxy();
   ae->toggleSuppressParameterChanges(transaction);
 
@@ -879,6 +887,13 @@ void EditBuffer::copySumOfMasterGroupToVoiceGroupMasterGroup(UNDO::Transaction *
   auto partVolume = findParameterByID({ 358, copyTo });
   auto partTune = findParameterByID({ 360, copyTo });
 
-  partVolume->setCPFromHwui(transaction, presetGlobalVolume->getValue() + presetPartVolume->getValue());
+  auto volumeScaleConverter = static_cast<const ParabolicGainDbScaleConverter *>(partVolume->getValue().getScaleConverter());
+  auto globalVolumeDV = volumeScaleConverter->controlPositionToDisplay(presetGlobalVolume->getValue());
+  auto partVolumeDV = volumeScaleConverter->controlPositionToDisplay(presetPartVolume->getValue());
+
+  auto newVolumeDV = globalVolumeDV + partVolumeDV;
+  auto newVolumeCP = volumeScaleConverter->displayToControlPosition(newVolumeDV);
+
+  partVolume->setCPFromHwui(transaction, newVolumeCP);
   partTune->setCPFromHwui(transaction, presetGlobalTune->getValue() + presetPartTune->getValue());
 }

@@ -1,1 +1,0 @@
-Time of the (polynomial) Attack Segment in Milliseconds

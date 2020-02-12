@@ -1,1 +1,0 @@
-This control is the parameter representation of the "Aftertouch" Hardware Source. It will directly follow the aftertouch pressure.

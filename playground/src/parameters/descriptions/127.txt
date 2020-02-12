@@ -1,1 +1,0 @@
-Resonance of the 2-pole allpass. Determines how much the phase shift increases around the center frequency.

@@ -1,2 +1,0 @@
-Envelope (C) amount for the phase modulation by the Feedback signal.
-At zero the modulation stays constant, at higher values the envelope applies a time-variant attenuation.

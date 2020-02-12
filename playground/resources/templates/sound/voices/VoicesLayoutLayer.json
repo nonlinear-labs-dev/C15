@@ -48,7 +48,7 @@
           "Init": {
             "Label[Text]": "Mono"
           },
-          "Events": "MonoEnabledText => Value[Text], MonoEnabled => ANY[Highlight]"
+          "Events": "MonoEnabledText => Label[Text], MonoEnabled => ANY[Highlight]"
         },
         "Priority": {
           "Class": "ParameterPair",
@@ -80,7 +80,7 @@
           "Init": {
             "Label[Text]": "Unison"
           },
-          "Events": "UnisonVoicesText => Value[Text], UnisonEnabled => ANY[Highlight]"
+          "Events": "UnisonVoicesText => Label[Text], UnisonEnabled => ANY[Highlight]"
         },
         "Detune": {
           "Class": "ParameterPair",

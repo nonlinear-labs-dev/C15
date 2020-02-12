@@ -1,2 +1,0 @@
-Key scaling of the decay time
-(0.0: equal time for all keys, 100.0: shortening to half time per octave, Origin at C3=60)

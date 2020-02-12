@@ -1,1 +1,0 @@
-Pan position of the signal from the State Variable Filter in the output mix

@@ -18,6 +18,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -Wno-depre
 add_subdirectory(nltools)
 add_subdirectory(parameter-db)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+
 IF(BUILD_AUDIOENGINE)
     add_subdirectory(audio-engine)
 ENDIF(BUILD_AUDIOENGINE)

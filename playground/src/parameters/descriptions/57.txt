@@ -1,2 +1,0 @@
-Fluctuation of the oscillator frequency. 
-If the parameter is set larger than 0 % the frequency is changed at the beginning of each oscillation period by a random amount. At 100 % the maximum frequency variation is +/-95 %.

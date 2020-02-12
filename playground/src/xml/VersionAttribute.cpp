@@ -17,5 +17,5 @@ VersionAttribute &VersionAttribute::get()
 
 int VersionAttribute::getCurrentFileVersion()
 {
-  return 5;
+  return 7;
 }

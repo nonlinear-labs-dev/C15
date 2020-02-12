@@ -1,1 +1,0 @@
-The input signal of the State Variable Filter as mix of the signals from the A-B Mixer and from the Comb Filter. Negative mix amounts will create different comb filter (cancelation) effects.

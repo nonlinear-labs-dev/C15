@@ -71,7 +71,7 @@ ParameterImportConversions::ParameterImportConversions(bool registerDefaults)
 
     registerConverter(240, 4, [=](tControlPositionValue v) { return 0.25 + v * 0.75; });
 
-    registerConverter(249, 5, [=](tControlPositionValue v) { return v * 0.5; });
+    registerConverter(249, 5, [=](tControlPositionValue v) { return voicesV5ToV6(v); });
 
     registerConverter(164, 5, [=](tControlPositionValue v) { return driveV5ToV6(v); });
   }
@@ -112,7 +112,7 @@ tControlPositionValue ParameterImportConversions::driveV2ToV3(tControlPositionVa
 tControlPositionValue ParameterImportConversions::driveV5ToV6(tControlPositionValue in) const
 {
   // 0 .. 50 -> 0 .. 70
-  return std::min((5.0/7.0) * in + (2.0/7.0) , 1.0);
+  return std::min((5.0 / 7.0) * in + (2.0 / 7.0), 1.0);
 }
 
 void ParameterImportConversions::registerConverter(const tParameterID parameterID, const tFileVersion srcVersion,
@@ -194,4 +194,11 @@ void ParameterImportConversions::registerTests()
     g_assert(a.convert(10, 0.5, 8) == 0.5);
     g_assert(a.convert(10, 0.5, 9) == 0.5);
   });
+}
+
+tControlPositionValue ParameterImportConversions::voicesV5ToV6(tControlPositionValue unisonVoices) const
+{
+  if(unisonVoices == 1.0)
+    return 0.5 - (1.0 / 24.0);
+  return unisonVoices * 0.5;
 }

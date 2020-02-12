@@ -5,7 +5,7 @@
 #include <proxies/audio-engine/AudioEngineProxy.h>
 
 PresetGlitchSuppression::PresetGlitchSuppression(Settings &settings)
-    : super(settings, false)
+    : super(settings, true)
 {
 }
 

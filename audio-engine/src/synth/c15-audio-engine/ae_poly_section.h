@@ -72,10 +72,11 @@ class PolySection
   NlToolbox::Curves::Shaper_1_BP m_comb_decayCurve, m_svf_LBH1Curve, m_svf_LBH2Curve;
   NlToolbox::Curves::Shaper_2_BP m_svf_resCurve;
   ProtoSmoother m_mono_glide;
+  PolyValue m_comb_decay_times[2] = {};
   const float m_svf_resFactor = 1.0f / 60.0f;
   float m_note_pitch[C15::Config::local_polyphony] = {}, m_base_pitch[C15::Config::local_polyphony] = {},
         m_shift[C15::Config::local_polyphony] = {}, m_key_tune[C15::Config::local_polyphony] = {},
-        m_last_key_tune[C15::Config::local_polyphony] = {}, m_comb_decay_times[2] = {}, m_samplerate, m_nyquist;
+        m_last_key_tune[C15::Config::local_polyphony] = {}, m_samplerate, m_nyquist;
   uint32_t m_key_position[C15::Config::local_polyphony] = {}, m_unison_index[C15::Config::local_polyphony] = {};
   const uint32_t m_voices = C15::Config::local_polyphony;
   float evalNyquist(const float _value);

@@ -19,13 +19,13 @@ namespace Engine
   class PolySoundGenerator
   {
    public:
-    PolyValue m_out_A, m_out_B, m_feedback_phase;
+    PolyValue m_out_A, m_out_B, m_feedback_phase_A, m_feedback_phase_B;
     // feedback phase: differs from feedback signal, because it will be reset on key down (in contrast to signal)
     PolySoundGenerator();
     void init(const uint32_t _voices, const float _samplerate);
     void set(PolySignals &_signals, const uint32_t _voiceId);
     void generate(PolySignals &_signals, const PolyValue _feedbackSignal);  // feedback signal: for shp fb mix
-    void resetPhase(uint32_t _voiceID);
+    void resetPhase(const uint32_t _voiceId, const bool _rstA, const bool _rstB);
     void resetDSP();
 
    private:

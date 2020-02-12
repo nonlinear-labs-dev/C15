@@ -27,18 +27,16 @@ namespace DescriptiveLayouts
    public:
     void onChange(const EditBuffer *eb) override
     {
-      if(eb->getType() == SoundType::Split)
+      auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
+
+      if(eb->getType() != SoundType::Split)
       {
-        auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
-        if(auto param = eb->findParameterByID({ 364, vg }))
-        {
-          setValue({ param->getDisplayString(), 0 });
-        }
+        vg = VoiceGroup::I;
       }
-      else
+
+      if(auto param = eb->findParameterByID({ 364, vg }))
       {
-        if(auto param = eb->findParameterByID({ 364, VoiceGroup::I }))
-          setValue({ param->getDisplayString(), 0 });
+        setValue({ "Mono: " + param->getDisplayString(), 0 });
       }
     }
   };
@@ -52,12 +50,12 @@ namespace DescriptiveLayouts
       {
         auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
         if(auto param = eb->findParameterByID({ 364, vg }))
-          setValue(param->getDisplayString() == "On");
+          setValue(param->getControlPositionValue() != 0);
       }
       else
       {
         if(auto param = eb->findParameterByID({ 364, VoiceGroup::I }))
-          setValue(param->getDisplayString() == "On");
+          setValue(param->getControlPositionValue() != 0);
       }
     }
   };
@@ -141,17 +139,15 @@ namespace DescriptiveLayouts
    public:
     void onChange(const EditBuffer *editBuffer)
     {
-      if(editBuffer->getType() == SoundType::Split)
+      auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
+
+      if(editBuffer->getType() != SoundType::Split)
       {
-        auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
-        if(auto param = editBuffer->findParameterByID({ 249, vg }))
-          setValue({ param->getControlPositionValue() == 0 ? "Off" : param->getDisplayString(), 0 });
+        vg = VoiceGroup::I;
       }
-      else
-      {
-        if(auto param = editBuffer->findParameterByID({ 249, VoiceGroup::I }))
-          setValue({ param->getControlPositionValue() == 0 ? "Off" : param->getDisplayString(), 0 });
-      }
+
+      if(auto param = editBuffer->findParameterByID({ 249, vg }))
+        setValue({ "Unison: " + (param->getControlPositionValue() == 0 ? "Off" : param->getDisplayString()), 0 });
     }
   };
 

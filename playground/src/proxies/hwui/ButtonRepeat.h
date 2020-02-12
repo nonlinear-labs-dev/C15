@@ -8,12 +8,13 @@
 class ButtonRepeat : public sigc::trackable
 {
  public:
-  ButtonRepeat(std::function<void()> cb);
+  using Callback = std::function<void()>;
+  ButtonRepeat(Callback cb);
   ~ButtonRepeat();
 
  private:
-  bool onButtonRepeatInitialTimeoutElapsed(std::function<void()> cb);
-  bool onButtonRepeatRegularTimeoutElapsed(std::function<void()> cb);
+  bool onTimeoutElapsed(Callback cb);
+  void installRepeat(Callback cb, uint ms);
 
   sigc::connection m_buttonRepeat;
 };

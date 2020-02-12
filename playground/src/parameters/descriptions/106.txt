@@ -1,1 +1,0 @@
-Mix amount of Shaper B in the signal sent to the Filters and to the Output Mixer. At zero it is the input signal of the Shaper - behind FB Mix. At negative values the signal from the Shaper is inverted.

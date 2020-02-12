@@ -24,7 +24,7 @@
           "Class": "HighlightButton",
           "Position": "BUTTON_A",
           "Init": {
-            "Text[Text]": "Init.."
+            "Text[Text]": "Init"
           }
         },
         "ButtonB": {
@@ -36,14 +36,16 @@
           "Position": "BUTTON_C",
           "Init": {
             "Text[Text]": "Voices.."
-          }
+          },
+          "Events": "SoundVoicesButtonText => Text[Text]"
         },
         "ButtonD": {
           "Class": "Button",
           "Position": "BUTTON_D",
           "Init": {
             "Text[Text]": "Master.."
-          }
+          },
+          "Events": "SoundMasterButtonText => Text[Text]"
         },
         "UnisonLabel": {
           "Class": "SingleSoundTop",

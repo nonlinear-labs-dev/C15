@@ -15,6 +15,10 @@ class ParameterDB
 
   Glib::ustring getLongName(const ParameterId& id) const;
   Glib::ustring getShortName(const ParameterId& id) const;
+  Glib::ustring getDescription(const ParameterId& id) const;
+
+  Glib::ustring getDescription(const int parameterNumber) const;
+
   tControlPositionValue getSignalPathIndication(int id) const;
 
   static constexpr tControlPositionValue getInvalidSignalPathIndication()

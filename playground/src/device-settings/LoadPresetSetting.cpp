@@ -6,13 +6,14 @@
 
 LoadModeSetting::LoadModeSetting(Settings &settings)
     : super(settings, LoadMode::Select)
+    , m_dualSoundOrder{ LoadMode::LoadToPart, LoadMode::Select, LoadMode::DirectLoad }
+    , m_singleSoundOrder{ LoadMode::Select, LoadMode::DirectLoad }
 {
 }
 
 const std::vector<ustring> &LoadModeSetting::enumToString() const
 {
-  static auto strs = getAllStrings<LoadMode>();
-  static auto ret = std::vector<Glib::ustring>(strs.begin(), strs.end());
+  static auto ret = std::vector<Glib::ustring>{ "loadtopart", "select", "directload" };
   return ret;
 }
 
@@ -22,64 +23,54 @@ const std::vector<ustring> &LoadModeSetting::enumToDisplayString() const
   return ret;
 }
 
-bool LoadModeSetting::set(tEnum m)
-{
-  bool ret = super::set(m);
-
-  if(m == LoadMode::DirectLoad && !getSettings()->isLoading() && !m_inToggle)
-  {
-    Application::get().getPresetManager()->doAutoLoadSelectedPreset();
-  }
-
-  return ret;
-}
-
 void LoadModeSetting::cycleForSoundType(SoundType type)
 {
-  m_inToggle = true;
+  auto current = static_cast<int>(get());
+  current++;
 
   if(type == SoundType::Single)
-  {
-    switch(get())
-    {
-      case LoadMode::Select:
-      case LoadMode::LoadToPart:
-        set(LoadMode::DirectLoad);
-        break;
-      case LoadMode::DirectLoad:
-        set(LoadMode::Select);
-        break;
-    }
-  }
+    updateLoadMode(current, m_singleSoundOrder);
   else
-  {
-    switch(get())
-    {
-      case LoadMode::LoadToPart:
-        set(LoadMode::Select);
-        break;
-      case LoadMode::Select:
-        set(LoadMode::DirectLoad);
-        break;
-      case LoadMode::DirectLoad:
-        set(LoadMode::LoadToPart);
-        break;
-    }
-  }
+    updateLoadMode(current, m_dualSoundOrder);
+}
 
-  m_inToggle = false;
+void LoadModeSetting::antiCycleForSoundType(SoundType type)
+{
+  auto current = static_cast<int>(get());
+  
+
+  if(type == SoundType::Single)
+    updateLoadMode(current, m_singleSoundOrder);
+  else
+    updateLoadMode(current, m_dualSoundOrder);
+}
+
+template <typename T> void LoadModeSetting::updateLoadMode(int current, const T &loadModeOrder)
+{
+  if(current == loadModeOrder.size())
+    current = 0;
+
+  if(current <= 0)
+    current = loadModeOrder.size();
+
+  set(loadModeOrder[current]);
 }
 
 Glib::ustring LoadModeSetting::getDisplayStringForVoiceGroup(VoiceGroup vg) const
 {
-  switch(get())
+  return getDisplayStringForVoiceGroup(vg, get());
+}
+
+Glib::ustring LoadModeSetting::getDisplayStringForVoiceGroup(VoiceGroup vg, LoadMode setting) const
+{
+  switch(setting)
   {
     case LoadMode::Select:
     case LoadMode::DirectLoad:
-      return getDisplayString();
+      return enumToDisplayString()[static_cast<int>(setting)];
     case LoadMode::LoadToPart:
       return UNDO::StringTools::buildString("Load to ", toString(vg));
   }
 
-  return Glib::ustring();
+  return "";
 }

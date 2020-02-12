@@ -1,1 +1,0 @@
-Velocity influence on the Release time. The value represents the logarithmic amount of the reduction of the Release time by high Note-Off velocities.

@@ -1,1 +1,0 @@
-Input gain [in dB] of the sine shaper stage. Higher gains will create more distortion and harmonics.

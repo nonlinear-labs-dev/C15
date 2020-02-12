@@ -1,1 +1,0 @@
-This control is the parameter representation of the "Bender" Hardware Source. It will directly follow the Bender position.

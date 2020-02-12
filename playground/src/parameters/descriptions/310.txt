@@ -1,3 +1,0 @@
-Mean center frequency of the 4-pole allpass filters which are in series with the delays. Their frequency-dependent phase shifts can create a "Phaser" effect.
-The phase shift is minimized by setting Allpass Tune to its maximum.
-When the Time of the Flanger is set to zero the allpass becomes the dominant part.

@@ -1,1 +1,0 @@
-Cutoff of the filter that damps the lower frequencies of the reverberation signal

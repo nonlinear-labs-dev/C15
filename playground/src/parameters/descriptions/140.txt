@@ -1,2 +1,0 @@
-Static value of the filter cutoff frequency at C3 [in MIDI semitones].
-Applies to both stages of the filter. The offsets between their individual cutoffs is controlled by "Spread".

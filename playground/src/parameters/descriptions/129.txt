@@ -1,1 +1,0 @@
-Cutoff frequency [in semitones] of the lowpass filter that damps the higher frequencies in the comb filter's signal path.

@@ -48,7 +48,7 @@
         },
         "Left": {
           "Class": "SplitVoiceGroupI",
-          "Position": "15, 16",
+          "Position": "15, 17",
           "Init": {
             "VoiceGroupIdentifier[Text]": "I",
             "UpperText[Text]": "+12.00 st",
@@ -59,7 +59,7 @@
         },
         "Right": {
           "Class": "SplitVoiceGroupII",
-          "Position": "145, 16",
+          "Position": "145, 17",
           "Init": {
             "VoiceGroupIdentifier[Text]": "II",
             "UpperText[Text]": "+12.00 st",

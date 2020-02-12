@@ -25,6 +25,7 @@
 #include <vector>
 #include <proxies/hwui/panel-unit/boled/undo/UndoIndicator.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/AnyParameterLockedIndicator.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/controls/LoadModeMenu.h>
 #include "presets/Preset.h"
 #include "SelectVoiceGroupLayout.h"
 
@@ -52,8 +53,8 @@ void PresetManagerLayout::setFocusAndMode(FocusAndMode focusAndMode)
 void PresetManagerLayout::setup()
 {
   m_menu = nullptr;
-  m_autoLoad = nullptr;
   m_presets = nullptr;
+  m_loadMode = nullptr;
 
   clear();
 
@@ -122,7 +123,7 @@ void PresetManagerLayout::setupBankSelect()
   addControl(new UndoIndicator(Rect{ 5, 14, 15, 5 }));
 
   addControl(new AnyParameterLockedIndicator(Rect(244, 2, 10, 11)));
-  m_autoLoad = addControl(new Button("Direct Load", Buttons::BUTTON_D));
+  m_loadMode = addControl(new LoadModeMenu(Rect(195, 1, 58, 62)));
   m_presets = addControl(new PresetList(Rect(64, 0, 128, 63), true));
   m_presets->setBankFocus();
   Application::get().getSettings()->getSetting<LoadModeSetting>()->onChange(
@@ -199,7 +200,7 @@ void PresetManagerLayout::setupPresetSelect()
   addControl(new BankAndPresetNumberLabel(Rect(0, 1, 64, 14)));
   addControl(new NumPresetsInBankLabel(Rect(192, 1, 64, 14)));
   addControl(new AnyParameterLockedIndicator(Rect(244, 2, 10, 11)));
-  m_autoLoad = addControl(new Button("Direct Load", Buttons::BUTTON_D));
+  m_loadMode = addControl(new LoadModeMenu(Rect(195, 1, 58, 62)));
   m_presets = addControl(new PresetList(Rect(64, 0, 128, 63), true));
 
   addControl(new UndoIndicator(Rect{ 5, 14, 15, 5 }));
@@ -263,10 +264,12 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
             m_menu->toggle();
           }
         }
-        else if(m_autoLoad)
+        else if(m_loadMode)
         {
-          auto type = getPresetManager()->getEditBuffer()->getType();
-          Application::get().getSettings()->getSetting<LoadModeSetting>()->cycleForSoundType(type);
+          if(modifiers[SHIFT] == 1)
+            m_loadMode->antiTurn();
+          else
+            m_loadMode->turn();
         }
 
         return true;
@@ -306,19 +309,6 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
     }
   }
 
-  if(i == Buttons::BUTTON_INC || i == Buttons::BUTTON_DEC)
-  {
-    if(down)
-    {
-      int direction = (i == Buttons::BUTTON_INC) ? 1 : -1;
-      onRotary(direction, modifiers);
-      return true;
-    }
-  }
-
-  return false;
-
-#warning "Adlerauge Hotfix NAMM"
   return super::onButton(i, down, modifiers);
 }
 
@@ -330,12 +320,15 @@ bool PresetManagerLayout::onRotary(int inc, ButtonModifiers modifiers)
 
 void PresetManagerLayout::updateAutoLoadButton(const Setting *setting)
 {
+  return;
+  /*
   if(m_autoLoad)
   {
     const auto *s = dynamic_cast<const LoadModeSetting *>(setting);
     auto selectedVG = Application::get().getHWUI()->getCurrentVoiceGroup();
     m_autoLoad->setText({ s->getDisplayStringForVoiceGroup(selectedVG) });
   }
+   */
 }
 
 bool PresetManagerLayout::animateSelectedPreset(std::function<void()> cb)

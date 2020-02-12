@@ -15,7 +15,7 @@ Engine::PolySoundGenerator::PolySoundGenerator()
 
 void Engine::PolySoundGenerator::init(const uint32_t _voices, const float _samplerate)
 {
-  m_feedback_phase = m_out_A = m_out_B = 0.0f;
+  m_feedback_phase_A = m_feedback_phase_B = m_out_A = m_out_B = 0.0f;
   m_sample_interval = 1.0f / _samplerate;
   m_warpConst_PI = 3.14159f / _samplerate;
   m_chiA_stateVar = m_chiB_stateVar = 0.0f;
@@ -45,7 +45,7 @@ void Engine::PolySoundGenerator::generate(PolySignals &_signals, const PolyValue
   // modulation a
   auto oscSampleA = m_oscA_selfmix * _signals.get(C15::Signals::Truepoly_Signals::Osc_A_PM_Self_Env_A);
   oscSampleA = oscSampleA + m_oscB_crossmix * _signals.get(C15::Signals::Truepoly_Signals::Osc_A_PM_B_Env_B);
-  oscSampleA = oscSampleA + m_feedback_phase * _signals.get(C15::Signals::Truepoly_Signals::Osc_A_PM_FB_Env_C);
+  oscSampleA = oscSampleA + m_feedback_phase_A * _signals.get(C15::Signals::Truepoly_Signals::Osc_A_PM_FB_Env_C);
   // oscillator a
   oscSampleA -= (m_chiA_a1 * m_chiA_stateVar);  // chirp IIR
   oscSampleA *= m_chiA_a0;
@@ -76,7 +76,7 @@ void Engine::PolySoundGenerator::generate(PolySignals &_signals, const PolyValue
   // modulation b
   auto oscSampleB = m_oscB_selfmix * _signals.get(C15::Signals::Truepoly_Signals::Osc_B_PM_Self_Env_B);
   oscSampleB = oscSampleB + m_oscA_crossmix * _signals.get(C15::Signals::Truepoly_Signals::Osc_B_PM_A_Env_A);
-  oscSampleB = oscSampleB + m_feedback_phase * _signals.get(C15::Signals::Truepoly_Signals::Osc_B_PM_FB_Env_C);
+  oscSampleB = oscSampleB + m_feedback_phase_B * _signals.get(C15::Signals::Truepoly_Signals::Osc_B_PM_FB_Env_C);
   // oscillator b
   oscSampleB -= (m_chiB_a1 * m_chiB_stateVar);  // cChirp IIR
   oscSampleB *= m_chiB_a0;
@@ -144,16 +144,23 @@ void Engine::PolySoundGenerator::generate(PolySignals &_signals, const PolyValue
   m_out_B = unipolarCrossFade(m_out_B, res, _signals.get(C15::Signals::Quasipoly_Signals::Shp_B_Ring_Mod));
 }
 
-void Engine::PolySoundGenerator::resetPhase(uint32_t _voiceId)
+void Engine::PolySoundGenerator::resetPhase(const uint32_t _voiceId, const bool _rstA, const bool _rstB)
 {
-  m_feedback_phase[_voiceId] = m_oscA_phase[_voiceId] = m_oscB_phase[_voiceId] = 0.0f;
-  m_oscA_selfmix[_voiceId] = m_oscA_crossmix[_voiceId] = m_chiA_stateVar[_voiceId] = 0.0f;
-  m_oscB_selfmix[_voiceId] = m_oscB_crossmix[_voiceId] = m_chiB_stateVar[_voiceId] = 0.0f;
+  if(_rstA)
+  {
+    m_feedback_phase_A[_voiceId] = m_oscA_phase[_voiceId] = m_oscA_selfmix[_voiceId] = m_oscA_crossmix[_voiceId]
+        = m_chiA_stateVar[_voiceId] = 0.0f;
+  }
+  if(_rstB)
+  {
+    m_feedback_phase_B[_voiceId] = m_oscB_phase[_voiceId] = m_oscB_selfmix[_voiceId] = m_oscB_crossmix[_voiceId]
+        = m_chiB_stateVar[_voiceId] = 0.0f;
+  }
 }
 
 void Engine::PolySoundGenerator::resetDSP()
 {
-  m_feedback_phase = m_out_A = m_out_B = 0.0f;
+  m_feedback_phase_A = m_feedback_phase_B = m_out_A = m_out_B = 0.0f;
   m_chiA_stateVar = m_chiB_stateVar = 0.0f;
   m_oscA_selfmix = m_oscA_crossmix = m_oscA_phase_stateVar = 0.0f;
   m_oscB_selfmix = m_oscB_crossmix = m_oscB_phase_stateVar = 0.0f;

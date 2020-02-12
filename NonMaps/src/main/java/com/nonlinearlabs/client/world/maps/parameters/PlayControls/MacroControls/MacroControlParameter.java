@@ -49,6 +49,16 @@ public abstract class MacroControlParameter extends Parameter implements Renamea
 				return 80;
 			}
 
+			@Override
+			protected String getDisplayText() {
+				MacroControlParameter mc = (MacroControlParameter)(getParent());
+				if(mc != null)
+				{
+					return mc.getTitleName();
+				}
+				return super.getDisplayText();
+			}
+
 		});
 		addChild(new MacroControlSlider(this, getParameterNumber()));
 		addChild(new MacroControlValueDisplay(this, getParameterNumber()));

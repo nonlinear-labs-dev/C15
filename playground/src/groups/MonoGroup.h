@@ -10,7 +10,4 @@ class MonoGroup : public ParameterGroup
 
   static bool isMonoParameter(const ParameterId& id);
   static bool isMonoParameter(const Parameter* param);
-
-  static bool isMonoGlideParameter(const Parameter* parameter);
-  static bool isMonoGlideParameter(const ParameterId& id);
 };

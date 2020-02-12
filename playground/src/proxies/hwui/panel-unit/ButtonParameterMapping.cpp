@@ -34,10 +34,10 @@ ButtonParameterMapping::ButtonParameterMapping()
   addMapping(Buttons::BUTTON_29, { 74 });
   addMapping(Buttons::BUTTON_30, { 104 });
   addMapping(Buttons::BUTTON_31, { 87, 89 });
-  addMapping(Buttons::BUTTON_32, { 301 });
+  addMapping(Buttons::BUTTON_32, { 301, 393 });
   addMapping(Buttons::BUTTON_33, { 75 });
   addMapping(Buttons::BUTTON_34, { 105 });
-  addMapping(Buttons::BUTTON_35, { 302 });
+  addMapping(Buttons::BUTTON_35, { 302, 394 });
   addMapping(Buttons::BUTTON_36, { 60, 62, 63 });
   addMapping(Buttons::BUTTON_37, { 76 });
   addMapping(Buttons::BUTTON_38, { 106 });

@@ -22,7 +22,7 @@ public class LoadModeContextMenu extends ContextMenu {
             addChild(new ContextMenuItem(this, entries[0]) {
                 @Override
                 public Control click(Position eventPoint) {
-                    EditBufferUseCases.get().setLoadMode(LoadMode.LoadToPart);
+                    EditBufferUseCases.get().setLoadMode(LoadMode.loadtopart);
                     return super.click(eventPoint);
                 }
             });
@@ -31,7 +31,7 @@ public class LoadModeContextMenu extends ContextMenu {
         addChild(new ContextMenuItem(this, entries[1]) {
             @Override
             public Control click(Position eventPoint) {
-                EditBufferUseCases.get().setLoadMode(LoadMode.Select);
+                EditBufferUseCases.get().setLoadMode(LoadMode.select);
                 return super.click(eventPoint);
             }
         });
@@ -39,7 +39,7 @@ public class LoadModeContextMenu extends ContextMenu {
         addChild(new ContextMenuItem(this, entries[2]) {
             @Override
             public Control click(Position eventPoint) {
-                EditBufferUseCases.get().setLoadMode(LoadMode.DirectLoad);
+                EditBufferUseCases.get().setLoadMode(LoadMode.directload);
                 return super.click(eventPoint);
             }
         });

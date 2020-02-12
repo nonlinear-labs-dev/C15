@@ -64,6 +64,12 @@ class ValueEdit extends Label {
 	}
 
 	@Override
+	public Control doubleClick() {
+		EditBufferUseCases.get().setToDefault(parameter.getNumber());
+		return this;
+	}
+
+	@Override
 	public Control mouseDrag(Position oldPoint, Position newPoint, boolean fine) {
 		double xPix = newPoint.getX() - oldPoint.getX();
 		double yPix = oldPoint.getY() - newPoint.getY();

@@ -469,7 +469,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 	public void load() {
 		LoadMode loadMode = SetupModel.get().systemSettings.loadMode.getValue();
-		if (loadMode == LoadMode.LoadToPart) {
+		if (loadMode == LoadMode.loadtopart) {
 			if (type != SoundType.Single) {
 				ChoosePresetPartDialog d = new ChoosePresetPartDialog();
 				d.show();

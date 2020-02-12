@@ -1,1 +1,0 @@
-Amount of key panning for each Note (referring to the key position relative to the center). At zero, each Note is centered before being passed to the panning section in the mix. At maximum, low Notes will be panned to the left, high Notes to the right.

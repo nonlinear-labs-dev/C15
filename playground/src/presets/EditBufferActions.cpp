@@ -12,6 +12,7 @@
 #include <proxies/audio-engine/AudioEngineProxy.h>
 #include <boost/algorithm/string.hpp>
 #include <presets/PresetManager.h>
+#include <parameters/names/ParameterDB.h>
 
 //NonMember helperFunctions pre:
 IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer);
@@ -194,21 +195,21 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto transaction = scope->getTransaction();
     auto voiceGroup = to<VoiceGroup>(request->get("voice-group"));
     editBuffer->undoableConvertToSingle(transaction, voiceGroup);
-    Application::get().getHWUI()->setFocusAndMode(FocusAndMode{ UIFocus::Sound, UIMode::Select, UIDetail::Init });
+    Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });
   });
 
   addAction("convert-to-split", [=](auto request) {
     auto scope = editBuffer->getUndoScope().startTransaction("Convert to Split");
     auto transaction = scope->getTransaction();
     editBuffer->undoableConvertToDual(transaction, SoundType::Split);
-    Application::get().getHWUI()->setFocusAndMode(FocusAndMode{ UIFocus::Sound, UIMode::Select, UIDetail::Init });
+    Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });
   });
 
   addAction("convert-to-layer", [=](auto request) {
     auto scope = editBuffer->getUndoScope().startTransaction("Convert to Layer");
     auto transaction = scope->getTransaction();
     editBuffer->undoableConvertToDual(transaction, SoundType::Layer);
-    Application::get().getHWUI()->setFocusAndMode(FocusAndMode{ UIFocus::Sound, UIMode::Select, UIDetail::Init });
+    Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });
   });
 
   addAction("load-preset-part-into-editbuffer-part", [=](auto request) {

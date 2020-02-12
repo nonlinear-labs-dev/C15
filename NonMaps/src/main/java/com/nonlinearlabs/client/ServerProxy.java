@@ -376,21 +376,6 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void loadParameterDescription(int id, final Consumer<String> client) {
-		downloadFile("/resources/parameter-descriptions/" + id + ".txt", new DownloadHandler() {
-
-			@Override
-			public void onFileDownloaded(String text) {
-				client.accept(text);
-			}
-
-			@Override
-			public void onError() {
-				client.accept("");
-			}
-		});
-	}
-
 	public void appendPreset(IPreset srcPreset, Bank targetBank) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "append-preset-to-bank");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank-uuid", targetBank.getUUID()),

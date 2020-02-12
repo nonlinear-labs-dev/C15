@@ -35,8 +35,8 @@ public class LayerSoundLayout extends SoundLayout {
 			super.doLayout(x, y, w, h);
 			double parts = 20;
 			double unit = h / parts;
-			getChildren().get(0).doLayout(0, 1 * unit, w, 8 * unit);
-			getChildren().get(1).doLayout(0, 11 * unit, w, 8 * unit);
+			getChildren().get(0).doLayout(0, 1.5 * unit, w, 8 * unit);
+			getChildren().get(1).doLayout(0, 10.5 * unit, w, 8 * unit);
 		}
 	}
 
@@ -48,8 +48,8 @@ public class LayerSoundLayout extends SoundLayout {
 			group = g;
 			addChild(new VoiceGroupLabel(this));
 			addChild(new PresetName(this));
-			addChild(new TuneReference(this));
 			addChild(new Volume(this));
+			addChild(new TuneReference(this));
 		}
 
 		@Override

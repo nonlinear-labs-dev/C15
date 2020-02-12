@@ -33,6 +33,7 @@ class ParameterImportConversions
   tControlPositionValue releaseV2ToV3(tControlPositionValue in) const;
   tControlPositionValue driveV2ToV3(tControlPositionValue in) const;
   tControlPositionValue driveV5ToV6(tControlPositionValue in) const;
+  tControlPositionValue voicesV5ToV6(tControlPositionValue unisonVoices) const;
 
   struct ConvertersBySourceFileVersion
   {
@@ -42,4 +43,5 @@ class ParameterImportConversions
 
   std::map<tParameterID, ConvertersBySourceFileVersion> m_converters;
   std::map<tParameterID, ConvertersBySourceFileVersion> m_mcAmountConverters;
+
 };

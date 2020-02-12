@@ -56,9 +56,9 @@ public class PresetManagerPresenterProvider {
 			pm.loadModeMenuEntries = new String[] { "", "Select Only", "Direct Load"};
 
 
-		pm.loadModeButtonState = l == LoadMode.DirectLoad;
-		pm.directLoadActive = l == LoadMode.DirectLoad;
-		pm.loadToPartActive = l == LoadMode.LoadToPart;
+		pm.loadModeButtonState = l == LoadMode.directload;
+		pm.directLoadActive = l == LoadMode.directload;
+		pm.loadToPartActive = l == LoadMode.loadtopart;
 
 		notifyClients();
 	}

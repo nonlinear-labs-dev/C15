@@ -12,8 +12,23 @@ function formatNote(note) {
   return base + octave;
 }
 
+function formatOnOff(cp) {
+  return Number(cp) === Number(1) ? "On" : "Off";
+}
+
+function formatPriority(cp) {
+  switch (Number(cp)) {
+    case 0:
+      return "Lowest";
+    case 1:
+      return "Latest";
+    case 2:
+      return "Highest";
+  }
+}
+
 function formatDimensionRounded(value, unit, withUnit, roundTo) {
-  if (value == Number.POSITIVE_INFINITY)
+  if (value === Number.POSITIVE_INFINITY)
     return "inf";
 
   var cnt = 0;
@@ -21,7 +36,7 @@ function formatDimensionRounded(value, unit, withUnit, roundTo) {
   var valueIsNegative = value < 0;
   value = Math.abs(value);
 
-  while (Math.round(roundTo) < 1 && roundTo != 0) {
+  while (Math.round(roundTo) < 1 && roundTo !== 0) {
     roundTo *= 10;
     value *= 10;
     cnt++;
@@ -32,7 +47,7 @@ function formatDimensionRounded(value, unit, withUnit, roundTo) {
   value /= roundTo;
   value = Math.round(value);
 
-  if (value == -0.0)
+  if (value === -0.0)
     value = 0.0;
 
   value *= roundTo;
@@ -41,7 +56,7 @@ function formatDimensionRounded(value, unit, withUnit, roundTo) {
   if (valueIsNegative)
     value = -1.0 * value;
 
-  var num = new Number(value);
+  var num = Number(value);
   var ret = num.toFixed(cnt);
 
   if (withUnit)
@@ -51,7 +66,7 @@ function formatDimensionRounded(value, unit, withUnit, roundTo) {
 }
 
 function formatDimensionDigits(value, unit, withUnit, numDigits) {
-  if (value == Number.POSITIVE_INFINITY)
+  if (value === Number.POSITIVE_INFINITY)
     return "inf";
 
   var intermediate = Number(value).toPrecision(numDigits);
@@ -69,13 +84,12 @@ function formatDimension(value, stringizer, withUnit) {
   var key = stringizer;
   var cachedFn = stingizerMap.get(key);
 
-  if (cachedFn == undefined) {
+  if (cachedFn === undefined) {
     var fnBody = "{ return " + stringizer + "; }";
     var fn = new Function("cpValue", "withUnit", fnBody);
     stingizerMap.set(key, fn);
     cachedFn = fn;
   }
 
-  var ret = cachedFn(value, withUnit);
-  return ret;
+  return cachedFn(value, withUnit);
 }

@@ -1,1 +1,0 @@
-Amount of (phase) modulation of the comb filter pitch (delay time) by the output signals of Osc+Shaper A and B, with the PM A-B knob determining their mix.

@@ -1,3 +1,0 @@
-Amount of folding back of the shaper curve for high input amplitudes
-(0.0: flat saturation, no folding, 100.0: fully folded back, periodic sine curve)
-A higher amount of folding leads to a softer but more nasal sound.

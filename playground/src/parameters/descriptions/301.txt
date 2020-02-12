@@ -1,1 +1,0 @@
-Start phase [in degrees]. The oscillator will be set to this phase position when a key is pressed.

@@ -1,2 +1,0 @@
-Envelope (B) amount for the phase modulation by Oscillator & Shaper B.
-At zero the modulation stays constant, at higher values the envelope applies a time-variant attenuation.
