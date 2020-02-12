@@ -46,7 +46,7 @@ void UnisonVoicesParameter::updateScaling(UNDO::Transaction* transaction, SoundT
   }
 
   setCPFromHwui(transaction, 0);
-  stepCPFromHwui(transaction, oldVoices - 1, {});
+  stepCPFromHwui(transaction, oldVoices, {});
 
   m_scalingChanged = true;
   onChange();
