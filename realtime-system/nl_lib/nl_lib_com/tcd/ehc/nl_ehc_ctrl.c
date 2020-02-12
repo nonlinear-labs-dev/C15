@@ -48,6 +48,8 @@
 // the ribbon value(but even when the pedal is the only modulator, too much noise is not ideal).
 // Therefore, the PG should temporarily increase the stabilizing level by one when pedal and ribbon / other pedal run shared.
 
+#define MAX_DRIFT (240)  // max drift = 240/16000 = 1.5%
+
 // ============= Switch channels
 #define SWITCH_DEADRANGE_LOW      (900)   // only values below this are accepted as "switch closed"
 #define SWITCH_DEADRANGE_HIGH     (1900)  // only values below this are accepted as "switch open"
@@ -344,14 +346,20 @@ void readoutPotOrRheostat(Controller_T *this)
       }
       else
       {
-        if (abs(out - this->settledValue) > 240)                                           // out value drifted away more than 240/16000 = 1.5% ?
+        if (abs(out - this->settledValue) > MAX_DRIFT)                                     // out value drifted away ?
           GetBufferStats(this->out, this->out_index, 8, NULL, NULL, &this->settledValue);  // freeze current output;
       }
       if ((out != 0) && (out != 16000))  // use settled output only when not saturated on the edges
         out = this->settledValue;
     }
     else  // not settled
+    {
+      if (this->flags.isSettled)  // was settled before ?
+      { // now ramp to new value
+    	  ;
+      }
       this->flags.isSettled = 0;
+    }
   }
 
   this->final = out;
