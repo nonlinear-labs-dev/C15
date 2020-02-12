@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
-import com.google.gwt.core.client.GWT;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
@@ -20,7 +19,7 @@ import com.nonlinearlabs.client.world.overlay.SVGImage;
 public class LoadModeMenu extends SVGImage {
 
     LoadModeMenu(OverlayLayout parent) {
-        super(parent, "Menu_Dir-Load_Disabled.svg", "Menu_Load-I_Active.svg", "Menu_Load-II_Active.svg", "Menu_Select_Enabled.svg", "Menu_Dir-Load_Enabled.svg");
+        super(parent, "Menu_Dir-Load_Disabled.svg", "Menu_Load-I_Enabled.svg", "Menu_Load-II_Enabled.svg", "Menu_Select_Enabled.svg", "Menu_Dir-Load_Enabled.svg");
 
         SetupModel.get().systemSettings.loadMode.onChange((LoadMode mode) -> {
             requestLayout();
