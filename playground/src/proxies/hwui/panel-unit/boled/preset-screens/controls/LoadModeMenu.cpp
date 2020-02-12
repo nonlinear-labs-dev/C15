@@ -16,6 +16,14 @@ LoadModeMenu::LoadModeMenu(const Rect& rect)
 {
   m_soundTypeConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
       sigc::mem_fun(this, &LoadModeMenu::bruteForce));
+
+  m_settingConnection = getSetting()->onChange(sigc::hide(sigc::mem_fun(this, &LoadModeMenu::bruteForce)));
+}
+
+LoadModeMenu::~LoadModeMenu()
+{
+  m_soundTypeConnection.disconnect();
+  m_settingConnection.disconnect();
 }
 
 class EntryLabel : public Label
@@ -41,51 +49,45 @@ class EntryLabel : public Label
 
 void LoadModeMenu::bruteForce()
 {
+  clear();
+
   std::vector<LoadMode> entries;
 
   if(getSoundType() != SoundType::Single)
-  {
     entries = { LoadMode::LoadToPart, LoadMode::Select, LoadMode::DirectLoad };
-  }
   else
-  {
     entries = { LoadMode::Select, LoadMode::DirectLoad };
-  }
 
-  clear();
-
-  auto numItems = entries.size();
+  const auto numItems = entries.size();
   const auto buttonHeight = 13;
   auto y = getPosition().getBottom() - numItems * (buttonHeight - 1) - 2;
 
-  const auto& setting = getSetting();
-  const auto& displayStrings = setting->enumToDisplayString();
+  const auto& loadModeSetting = getSetting();
+  const auto& loadModeDisplayStrings = loadModeSetting->enumToDisplayString();
 
-  const auto& currentMode = setting->get();
-  const auto currentVg = Application::get().getHWUI()->getCurrentVoiceGroup();
+  const auto& currentMode = loadModeSetting->get();
+  const auto currentVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
 
   for(const auto& entry : entries)
   {
-    auto text = setting->getDisplayStringForVoiceGroup(currentVg, entry);
-
-    auto c = addControl(new EntryLabel({ text, 0 }, Rect(0, y, getWidth(), buttonHeight)));
-    y += (buttonHeight - 1);
+    const auto text = loadModeSetting->getDisplayStringForVoiceGroup(currentVoiceGroup, entry);
+    auto newControl = addControl(new EntryLabel({ text, 0 }, Rect(0, y, getWidth(), buttonHeight)));
 
     if(entry == currentMode)
-      c->setHighlight(true);
+      newControl->setHighlight(true);
+
+    y += (buttonHeight - 1);
   }
 }
 
 void LoadModeMenu::turn()
 {
   getSetting()->cycleForSoundType(getSoundType());
-  bruteForce();
 }
 
 void LoadModeMenu::antiTurn()
 {
-  getSetting()->cycleForSoundType(getSoundType());
-  bruteForce();
+  getSetting()->antiCycleForSoundType(getSoundType());
 }
 
 SoundType LoadModeMenu::getSoundType()

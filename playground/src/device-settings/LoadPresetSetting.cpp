@@ -6,6 +6,8 @@
 
 LoadModeSetting::LoadModeSetting(Settings &settings)
     : super(settings, LoadMode::Select)
+    , m_dualSoundOrder{ LoadMode::LoadToPart, LoadMode::Select, LoadMode::DirectLoad }
+    , m_singleSoundOrder{ LoadMode::Select, LoadMode::DirectLoad }
 {
 }
 
@@ -23,34 +25,35 @@ const std::vector<ustring> &LoadModeSetting::enumToDisplayString() const
 
 void LoadModeSetting::cycleForSoundType(SoundType type)
 {
+  auto current = static_cast<int>(get());
+  current++;
+
   if(type == SoundType::Single)
-  {
-    switch(get())
-    {
-      case LoadMode::Select:
-      case LoadMode::LoadToPart:
-        set(LoadMode::DirectLoad);
-        break;
-      case LoadMode::DirectLoad:
-        set(LoadMode::Select);
-        break;
-    }
-  }
+    updateLoadMode(current, m_singleSoundOrder);
   else
-  {
-    switch(get())
-    {
-      case LoadMode::LoadToPart:
-        set(LoadMode::Select);
-        break;
-      case LoadMode::Select:
-        set(LoadMode::DirectLoad);
-        break;
-      case LoadMode::DirectLoad:
-        set(LoadMode::LoadToPart);
-        break;
-    }
-  }
+    updateLoadMode(current, m_dualSoundOrder);
+}
+
+void LoadModeSetting::antiCycleForSoundType(SoundType type)
+{
+  auto current = static_cast<int>(get());
+  
+
+  if(type == SoundType::Single)
+    updateLoadMode(current, m_singleSoundOrder);
+  else
+    updateLoadMode(current, m_dualSoundOrder);
+}
+
+template <typename T> void LoadModeSetting::updateLoadMode(int current, const T &loadModeOrder)
+{
+  if(current == loadModeOrder.size())
+    current = 0;
+
+  if(current <= 0)
+    current = loadModeOrder.size();
+
+  set(loadModeOrder[current]);
 }
 
 Glib::ustring LoadModeSetting::getDisplayStringForVoiceGroup(VoiceGroup vg) const

@@ -24,4 +24,10 @@ class LoadModeSetting : public EnumSetting<LoadMode>
   const std::vector<ustring>& enumToDisplayString() const override;
 
   void cycleForSoundType(SoundType type);
+  void antiCycleForSoundType(SoundType type);
+
+ private:
+  std::array<LoadMode, 2> m_singleSoundOrder;
+  std::array<LoadMode, 3> m_dualSoundOrder;
+  template <typename T> void updateLoadMode(int current, const T& loadModeOrder);
 };

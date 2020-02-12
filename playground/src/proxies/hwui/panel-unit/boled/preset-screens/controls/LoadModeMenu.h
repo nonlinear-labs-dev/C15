@@ -7,14 +7,16 @@ class LoadModeMenu : public ControlWithChildren
 {
  public:
   explicit LoadModeMenu(const Rect &rect);
+  ~LoadModeMenu() override;
 
   void turn();
   void antiTurn();
- private:
 
+ private:
   void bruteForce();
 
   sigc::connection m_soundTypeConnection;
+  sigc::connection m_settingConnection;
 
   static SoundType getSoundType();
 };
