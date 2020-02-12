@@ -38,9 +38,9 @@
 #define CBUF_MOD  (CBUF_SIZE - 1)
 
 // Offset: settling minimum in LSBs.
-#define SETTLING_OFFSET (8)  // 4, 8, 16  (6dB steps)
+#define SETTLING_OFFSET (12)  // 4, 8, 16  (6dB steps)
 // gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values)
-#define SETTLING_GAIN (23)  // 4, 13, 40  (10dB steps)
+#define SETTLING_GAIN (25)  // 4, 13, 40  (10dB steps)
 // Stable/low-creepage pedals are OK with 3..10, bad pedals (Moog) may need 20..50
 // The higher the value, the more there is a step transition on a change, after settling
 #warning "ToDo : make this parametrizable. Like 3 10dB steps 'Pedal Auto-Stabilizing' : weak(4), normal(13), strong(40)"
