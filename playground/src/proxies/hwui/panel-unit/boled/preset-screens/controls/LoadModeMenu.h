@@ -13,7 +13,6 @@ class LoadModeMenu : public ControlWithChildren
  private:
 
   void bruteForce();
-  std::map<int, LoadMode> m_entries;
 
   sigc::connection m_soundTypeConnection;
 

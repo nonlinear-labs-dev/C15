@@ -22,59 +22,56 @@ class EntryLabel : public Label
 {
  public:
   using Label::Label;
-  bool redraw(FrameBuffer& fb) override
+
+  void drawBackground(FrameBuffer& fb) override
   {
-    auto oldColor = fb.getColor();
+    const Rect& r = getPosition();
 
     if(isHighlight())
-      fb.setColor(FrameBuffer::C128);
+    {
+      fb.setColor(FrameBuffer::Colors::C128);
+      fb.fillRect(r.getX() + 1, r.getTop() + 1, r.getWidth() - 2, r.getHeight() - 2);
+    }
     else
-      fb.setColor(FrameBuffer::C103);
-
-    fb.fillRect(getPosition());
-
-    fb.setColor(oldColor);
-
-    return Label::redraw(fb);
+    {
+      Label::drawBackground(fb);
+    }
   }
 };
 
 void LoadModeMenu::bruteForce()
 {
-  m_entries.clear();
+  std::vector<LoadMode> entries;
 
   if(getSoundType() != SoundType::Single)
   {
-    m_entries[0] = LoadMode::LoadToPart;
-    m_entries[1] = LoadMode::Select;
-    m_entries[2] = LoadMode::DirectLoad;
+    entries = { LoadMode::LoadToPart, LoadMode::Select, LoadMode::DirectLoad };
   }
   else
   {
-    m_entries[0] = LoadMode::Select;
-    m_entries[1] = LoadMode::DirectLoad;
+    entries = { LoadMode::Select, LoadMode::DirectLoad };
   }
 
   clear();
 
-  auto y = 0;
-  auto numItems = m_entries.size();
-  auto wastedSpace = getHeight() - numItems * 13;
-  y = wastedSpace;
+  auto numItems = entries.size();
+  const auto buttonHeight = 13;
+  auto y = getPosition().getBottom() - numItems * (buttonHeight - 1) - 2;
 
   const auto& setting = getSetting();
   const auto& displayStrings = setting->enumToDisplayString();
 
-  const auto& current = setting->get();
+  const auto& currentMode = setting->get();
   const auto currentVg = Application::get().getHWUI()->getCurrentVoiceGroup();
 
-  for(const auto& entry : m_entries)
+  for(const auto& entry : entries)
   {
-    auto text = setting->getDisplayStringForVoiceGroup(currentVg, entry.second);
+    auto text = setting->getDisplayStringForVoiceGroup(currentVg, entry);
 
-    auto c = addControl(new EntryLabel({ text, 0 }, Rect(0, y, getWidth(), 13)));
-    y += 13;
-    if(entry.second == current)
+    auto c = addControl(new EntryLabel({ text, 0 }, Rect(0, y, getWidth(), buttonHeight)));
+    y += (buttonHeight - 1);
+
+    if(entry == currentMode)
       c->setHighlight(true);
   }
 }
