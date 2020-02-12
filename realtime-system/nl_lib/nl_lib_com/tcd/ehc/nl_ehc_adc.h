@@ -45,7 +45,7 @@ typedef struct
 extern AdcBuffer_T adc[ADC_CHANNELS];
 
 // returns actually used "bufferDepth" (which is != 0) on success
-int GetADCStats(AdcBuffer_T *this, int bufferDepth, uint16_t *min, uint16_t *max, uint16_t *avg);
+int GetADCStats(const AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg);
 
 void initSampleBuffers(void);
 int  FillSampleBuffers(void);

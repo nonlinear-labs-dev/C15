@@ -72,7 +72,7 @@ void initSampleBuffers(void)
 /*************************************************************************/ /**
 * @brief	multiplication for IIR
 ******************************************************************************/
-static inline int multQ15(int a, int b)
+static inline int multQ15(const int a, const int b)
 {
   return (a * b) >> 15;
 }
@@ -127,27 +127,25 @@ int FillSampleBuffers(void)
 * @brief	Get Statistical Data
 * @param	return != 0 : success
 ******************************************************************************/
-int GetADCStats(AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg)
+int GetADCStats(const AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg)
 {
-  if (!this->flags.initialized)
+  if (!this->flags.initialized || !this->flags.useStats)
     return 0;
-
-  if (!this->flags.useStats)
-    return this->flags.useIIR ? this->filtered_current : this->current;
 
   if (bufferDepth < 1)
     bufferDepth = 1;
   if (bufferDepth > SBUF_SIZE)
     bufferDepth = SBUF_SIZE;
 
-  uint16_t *buffer = this->flags.useIIR ? this->filtered_values : this->values;
+  const register uint16_t *buffer = this->flags.useIIR ? this->filtered_values : this->values;
+  const register uint16_t  index  = sbuf_index;
 
-  int      avg = 0;
-  uint16_t max = 0;
-  uint16_t min = 4095;
-  for (int i = 0; i < bufferDepth; i++)
+  register int      avg = 0;
+  register uint16_t max = 0;
+  register uint16_t min = 4095;
+  for (register int i = bufferDepth - 1; i >= 0; i--)
   {
-    uint16_t sample = buffer[(sbuf_index + i) & SBUF_MOD];
+    uint16_t sample = buffer[(index + i) & SBUF_MOD];
     avg += sample;
     if (sample > max)
       max = sample;
