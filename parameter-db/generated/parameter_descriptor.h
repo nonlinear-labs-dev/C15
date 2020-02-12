@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**   @file       parameter_descriptor.h
-      @date       2020-02-07, 14:37
+      @date       2020-02-12, 18:42
       @version    1.7B-3
       @author     M. Seeber
       @brief      provide a flexible descriptor structure
@@ -15,7 +15,7 @@
 namespace C15
 {
 
-  const uint32_t None = 0;
+  constexpr uint32_t None = 0;
 
   namespace Descriptors
   {
@@ -219,6 +219,7 @@ namespace C15
 
     struct PlaygroundParamDescriptor
     {
+      const uint32_t m_coarse_cp = 0, m_fine_cp = 0, m_coarse_amt = 0, m_fine_amt = 0;
       const char *m_inactive_cp = nullptr, *m_group_label_long = nullptr, *m_group_label_short = nullptr,
                  *m_param_label_long = nullptr, *m_param_label_short = nullptr, *m_param_info = nullptr;
     };
