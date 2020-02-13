@@ -39,7 +39,6 @@ class PresetManagerLayout : public DFBLayout
   std::unique_ptr<StoreModeData> &getStoreModePtr();
 
  private:
-  void updateAutoLoadButton(const Setting *setting);
   void setup();
   PresetManager *getPresetManager() const;
 
