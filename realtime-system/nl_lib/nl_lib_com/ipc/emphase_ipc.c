@@ -15,20 +15,20 @@
 
 typedef struct
 {
-  int32_t values[IPC_ADC_BUFFER_SIZE];
-} ADC_BUFFER_T;
+  int32_t values[IPC_ADC_NUMBER_OF_CHANNELS][IPC_ADC_BUFFER_SIZE];
+} ADC_BUFFER_ARRAY_T;
 
 #define EMPHASE_IPC_KEYBUFFER_SIZE (64)
 #define EMPHASE_IPC_KEYBUFFER_MASK (EMPHASE_IPC_KEYBUFFER_SIZE - 1)
 
 // data in shared memory is accessible via pointers only, can't define variables directly
-static volatile IPC_KEY_EVENT_T* keyBufferData;
-static volatile uint32_t*        keyBufferWritePos;
-static volatile uint32_t*        keyBufferReadPos;
-static volatile ADC_BUFFER_T*    adcBufferData;
-static volatile uint32_t*        adcConfigData;
-static volatile int*             adcBufferWriteIndex;
-static volatile int*             adcBufferReadIndex;
+static volatile IPC_KEY_EVENT_T*    keyBufferData;
+static volatile uint32_t*           keyBufferWritePos;
+static volatile uint32_t*           keyBufferReadPos;
+static volatile ADC_BUFFER_ARRAY_T* adcBufferData;
+static volatile uint32_t*           adcConfigData;
+static volatile int*                adcBufferWriteIndex;
+static volatile int*                adcBufferReadIndex;
 
 /******************************************************************************
 *	Functions for both the M4 and M0 to interface the PlayBuffers.
@@ -41,7 +41,7 @@ static volatile int*             adcBufferReadIndex;
 ******************************************************************************/
 int32_t IPC_ReadAdcBuffer(uint8_t adc_id)
 {
-  return adcBufferData[adc_id].values[*adcBufferReadIndex];
+  return adcBufferData->values[adc_id][*adcBufferReadIndex];
 }
 
 /******************************************************************************/
@@ -53,7 +53,7 @@ int32_t IPC_ReadAdcBufferAveraged(uint8_t adc_id)
 {
   int32_t x = 0;
   for (int i = 0; i < IPC_ADC_BUFFER_SIZE; i++)
-    x += adcBufferData[adc_id].values[i];
+    x += adcBufferData->values[adc_id][i];
   return x / IPC_ADC_BUFFER_SIZE;
 }
 
@@ -64,7 +64,7 @@ int32_t IPC_ReadAdcBufferAveraged(uint8_t adc_id)
 ******************************************************************************/
 void IPC_WriteAdcBuffer(uint8_t adc_id, int32_t value)
 {
-  adcBufferData[adc_id].values[*adcBufferWriteIndex] = value;
+  adcBufferData->values[adc_id][*adcBufferWriteIndex] = value;
 }
 
 /******************************************************************************/
@@ -119,8 +119,8 @@ static void Init_Addr(void)
   keyBufferReadPos = (uint32_t*) (addr);
   addr += sizeof(uint32_t);
 
-  adcBufferData = (ADC_BUFFER_T*) (addr);
-  addr += IPC_ADC_NUMBER_OF_CHANNELS * sizeof adcBufferData[0];
+  adcBufferData = (ADC_BUFFER_ARRAY_T*) (addr);
+  addr += sizeof(ADC_BUFFER_ARRAY_T);
 
   adcConfigData = (uint32_t*) (addr);
   addr += sizeof adcConfigData[0];
@@ -151,7 +151,7 @@ void Emphase_IPC_Init(void)
 
   for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
     for (int k = 0; k < IPC_ADC_BUFFER_SIZE; k++)
-      adcBufferData[i].values[k] = 2047;
+      adcBufferData->values[i][k] = 2047;
   *adcConfigData       = 0;
   *adcBufferReadIndex  = 0;
   *adcBufferWriteIndex = 0;
