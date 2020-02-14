@@ -35,9 +35,10 @@
 #define AT_FACTOR    5080  // 5080 / 4096 for saturation = 100 % at 81 % of the input range
 
 static uint32_t bbSendValue[NUM_HW_SOURCES] = {};
+static int      dummy[20];
 
-static int32_t  lastPitchbend;
-static uint32_t pitchbendZero;
+static int32_t lastPitchbend;
+static int32_t pitchbendZero;
 
 static uint32_t  pbSignalIsSmall;
 static uint32_t  pbTestTime;
@@ -45,11 +46,11 @@ static uint32_t  pbTestMode;
 static uint32_t  pbRampMode;
 static int32_t   pbRamp;
 static int32_t   pbRampInc;
-static uint32_t  allBenderTables[2][33] = {};  // contains the bender curves
+static uint32_t  allBenderTables[3][33] = {};  // contains the bender curves
 static uint32_t* benderTable;
 
 static uint32_t  lastAftertouch;
-static uint32_t  allAftertouchTables[2][33] = {};  // contains the chosen aftertouch curve
+static uint32_t  allAftertouchTables[3][33] = {};  // contains the chosen aftertouch curve
 static uint32_t* aftertouchTable;
 
 //========= ribbons ========
@@ -139,7 +140,7 @@ static Ribbon_Data_T ribbon[2];  // two ribbons
 #define RIB2 1
 
 // global control
-static uint32_t suspend;
+static uint32_t suspend                  = 1;  // will be set to zero by ADC_WORK_Init()
 static int      send_raw_sensor_messages = 0;  // sends raw sensor values every 12.5ms when set (!= 0)
 
 static int32_t SetThreshold(int32_t val)
@@ -237,6 +238,12 @@ void Generate_AftertouchTable(uint32_t curve)
   }
 }
 
+void ClearHWValuesForBB(void)
+{
+  for (int i = 0; i < NUM_HW_SOURCES; i++)
+    bbSendValue[i] = 0;
+}
+
 /*****************************************************************************
 * @brief	ADC_WORK_Init -
 ******************************************************************************/
@@ -283,6 +290,8 @@ void ADC_WORK_Init(void)
   }
 
   NL_EHC_Init();
+
+  ClearHWValuesForBB();
 
   suspend = 0;
 }
@@ -347,7 +356,7 @@ void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
 
   for (i = 0; i < NUM_HW_SOURCES; i++)
   {
-    if (bbSendValue[i] > 0)
+    if (bbSendValue[i] > 0)  // and by this, the 0x80000 update flag is detected, regardless of parameter value
     {
       if (BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_PARAMETER, i, (bbSendValue[i] & 0xFFFF)) > -1)
       {
@@ -505,7 +514,8 @@ static void ProcessRibbons(void)
     uint32_t touchBegins = 0;
     int32_t  inc         = 0;
 
-    value = IPC_ReadAdcBufferAveraged(ribbon[i].ipcId);
+    // value = IPC_ReadAdcBufferAveraged(ribbon[i].ipcId); ???
+    value = IPC_ReadAdcBuffer(ribbon[i].ipcId);
 
     if (value > ribbon[i].last + 1)  // rising values (min. +2)
     {
@@ -615,11 +625,9 @@ void ADC_WORK_Resume(void)
 void ADC_WORK_Process(void)
 {
   if (suspend)
-  {
     return;
-  }
 
-  //  DBG_GPIO3_1_On();
+    //  DBG_GPIO3_1_On();
 
 #if 01
   if (1 || send_raw_sensor_messages)
