@@ -10,7 +10,7 @@
 // ADC ring buffers
 // Must be 2^N in size. This also determines the averaging.
 // Size should NOT be larger than the number of aquisitions between M4 read-out operations
-#define IPC_ADC_BUFFER_SIZE (8)
+#define IPC_ADC_BUFFER_SIZE (16)
 #define IPC_ADC_BUFFER_MASK (IPC_ADC_BUFFER_SIZE - 1)
 
 typedef struct
@@ -151,7 +151,7 @@ void Emphase_IPC_Init(void)
 
   for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
     for (int k = 0; k < IPC_ADC_BUFFER_SIZE; k++)
-      adcBufferData[i].values[k] = 0;
+      adcBufferData[i].values[k] = 2047;
   *adcConfigData       = 0;
   *adcBufferReadIndex  = 0;
   *adcBufferWriteIndex = 0;
