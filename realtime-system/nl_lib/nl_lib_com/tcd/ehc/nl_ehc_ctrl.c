@@ -19,26 +19,27 @@
 // ============= local constants and types
 // =============
 
-#define WAIT_TIME_AFTER_PLUGIN (80)  // timeout after a plug-in event, in 12.5ms units (80 == 1000 milliseconds)
+#define WAIT_TIME_AFTER_PLUGIN (120)  // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
 
-#define NUMBER_OF_CONTROLLERS (4)  // may increase to 8, later
+#define NUMBER_OF_CONTROLLERS (8)  // 4 jacks, each with tip and ring ADC channels
 
 // ============= Pot channels
 #define POT_SCALE_FACTOR  (10000)  // don't change this unless you know what you do
 #define RHEO_SCALE_FACTOR (4500)   // don't change this unless you know what you do
 // autoranging
-#define AR_NOISE_LIMIT     (30)   // 100 -> 1% (assuming SCALE_FACTOR is 10000 !!)
 #define AR_SPAN            (500)  // 500 -> 5% (assuming SCALE_FACTOR is 10000 !!)
-#define AR_SPAN_RHEO       (200)  // 200 -> 2.0 (max/min minimum factor)
-#define AR_UPPER_DEAD_ZONE (4)    // 4 -> 4%
-#define AR_LOWER_DEAD_ZONE (4)    // 4 -> 4%
+#define AR_SPAN_RHEO       (117)  // 117 -> 1.17 (max/min minimum factor, must be greater than 1.0, of course)
+#define AR_UPPER_DEAD_ZONE (5)    // 5 -> 5%, electrical dead zone
+#define AR_LOWER_DEAD_ZONE (4)    // 4 -> 4%, electrical dead zone
 
 // settling
 #define CBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
 #define CBUF_MOD  (CBUF_SIZE - 1)
 
 // max long-term drift before forced update even when settled
-#define MAX_DRIFT (160 * 2)  // 2%
+#define MAX_DRIFT                  (160 * 2)  // 2%
+#define DRIFT_INDUCED_RAMPING_TIME (60)       // 60*12.5ms = 750ms, the larger MAX_DRIFT the longer this should be set
+#define NORMAL_RAMPING_TIME        (12)       // 12*12.5ms = 150ms
 // offset: settling minimum in LSBs, of wiper ADC channel.
 #define SETTLING_OFFSET (12)  // 4, 8, 16  (6dB steps)
 // gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values)
@@ -51,10 +52,13 @@
 // Therefore, the PG should temporarily increase the stabilizing level by one when pedal and ribbon / other pedal run shared.
 
 // ============= Switch channels
-#define SWITCH_DEADRANGE_LOW      (900)   // only values below this are accepted as "switch closed"
-#define SWITCH_DEADRANGE_HIGH     (1900)  // only values below this are accepted as "switch open"
-#define SWITCH_TRIGGER_HYSTERESIS (100)   // hysteresis for stabilizing triggers
-#define SWITCH_DEBOUNCE_TIME      (20)    // debounce switch time in 12.5ms units (20 == 250ms, shorter than any intentional switching)
+#define SWITCH_INITIAL_RAW_THRESHOLD (1400)  // raw ADC value that determinis inital switch state (> means "high")
+// the next 3 values are relative to 0...16000 output range
+#define SWITCH_DEADRANGE_LOW      (3000)   // only values below this are accepted as "switch closed", 3000/16000 = 18.75%
+#define SWITCH_DEADRANGE_HIGH     (13000)  // only values below this are accepted as "switch open",  13000/16000 = 81.25%
+#define SWITCH_TRIGGER_HYSTERESIS (1000)   // hysteresis for stabilizing triggers, 1000/16000 = 6.25%
+
+#define SWITCH_DEBOUNCE_TIME (20)  // debounce switch time in 12.5ms units (20 == 250ms, shorter than any intentional switching)
 
 typedef struct
 {
@@ -73,6 +77,7 @@ typedef struct
     unsigned          denoiseWhenSettled : 1;  // denoise output when settled long and close enough
     ControlerInvert_T polarity : 1;            // invert final output value or not
     unsigned          debounce : 1;            // enable switch debouncing
+    unsigned          ramping : 1;
   } flags;
   // value buffer
   uint16_t values[CBUF_SIZE];
@@ -95,9 +100,25 @@ typedef struct
   // control
   uint16_t wait;
   uint16_t step;
+
+  // ramping
+  uint16_t rampStart;
+  uint16_t rampTime;
+  uint16_t rampStep;
 } Controller_T;
 
-Controller_T ctrl[NUMBER_OF_CONTROLLERS];  // main working variable
+// main working variable, array of 8 controllers
+// controllers 0...3 are the primary controllers, one of:
+//   - 3-wire Pot on both T and R channels, wiper selected as Tip or Ring
+//   - 2-wire Pot on either T or R channel, directly selected as Tip or Ring
+//   - 2-wire Switch on either T or R channel, directly selected as Tip or Ring
+//   - 2-wire Control Voltage on either T or R channel, directly selected as Tip or Ring
+// controllers 4...7 are the secondary controllers, one of:
+//   - 2-wire Pot on either T or R channel, indirectly selected as the other channel from the corresponding primary controller
+//   - 2-wire Switch on either T or R channel, indirectly selected as the other channel from the corresponding primary controller
+//   - 2-wire Control Voltage on either T or R channel, indirectly selected as the other channel from the corresponding primary controller
+// NOTE: a secondary controller is not available when the corresponding primary controller is a three-wire pot.
+Controller_T ctrl[NUMBER_OF_CONTROLLERS];
 
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
@@ -125,6 +146,7 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
   this->flags.polarity           = polarity;
   this->flags.outputIsValid      = 0;
   this->flags.isReset            = 1;
+  this->flags.ramping            = 0;
   this->flags.debounce           = 0;  // ??? temp
   this->wait                     = 0;
   this->step                     = 0;
@@ -173,7 +195,7 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
   }
 
   this->valueBufInvalid = SBUF_SIZE;  // number of runs until value buffer is filled
-  this->outBufInvalid   = SBUF_SIZE;  // number of runs until value buffer is filled
+  this->outBufInvalid   = CBUF_SIZE;  // number of runs until final output buffer is filled
 
   this->final             = 0;
   this->lastFinal         = ~this->final;
@@ -195,13 +217,22 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   this->val_index           = 0;
   this->out_index           = 0;
   this->flags.outputIsValid = 0;
+  this->flags.ramping       = 0;
   this->valueBufInvalid     = SBUF_SIZE;  // number of runs until value buffer is filled
-  this->outBufInvalid       = SBUF_SIZE;  // number of runs until value buffer is filled
+  this->outBufInvalid       = CBUF_SIZE;  // number of runs until final output buffer is filled
   this->final               = 0;
   this->lastFinal           = 0xFFFF;
   this->flags.initialized   = 1;
   this->flags.isReset       = 1;
   this->step                = 0;
+}
+
+/*************************************************************************/ /**
+* @brief	Clear / Disable a controller
+******************************************************************************/
+static void clearController(Controller_T *const this)
+{
+  this->flags.initialized = 0;
 }
 
 /*************************************************************************/ /**
@@ -225,12 +256,12 @@ static int getBufferAverage(uint16_t *const buf, const uint16_t pos, int bufferD
   return avg / bufferDepth;
 }
 
-// --------------- get potentiometric value
-static int getPotentiometricValue(Controller_T *const this)
+// --------------- get potentiometer or variable resistor value
+static int getPotOrRheoValue(Controller_T *const this, const int isPot)
 {
   int value;
   this->val_index = (this->val_index + CBUF_MOD) & CBUF_MOD;
-  if (this->type == POT)
+  if (isPot)
   {  // potentiometric ratio wiper/top
     value = this->values[this->val_index] = POT_SCALE_FACTOR * this->wiper->filtered_current / this->top->filtered_current;
   }
@@ -248,7 +279,7 @@ static int getPotentiometricValue(Controller_T *const this)
 }
 
 // --------------- do autoraging, return != 0 if successful;
-static int potAutorange(Controller_T *const this, const int value, int *const out)
+static int doAutoRange(Controller_T *const this, const int value, int *const out, const int isPot)
 {
   // basic autorange
   if (value > this->max)
@@ -260,14 +291,14 @@ static int potAutorange(Controller_T *const this, const int value, int *const ou
   int min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
   int max = this->max - AR_UPPER_DEAD_ZONE * (this->max - this->min) / 100;  // remove upper dead-zone
 
-  if (this->type == POT)
+  if (isPot)
   {
     if (max - min <= AR_SPAN)  // not enough autorange span ?
       return 0;
   }
   else
   {
-    if ((max - min <= 0) || (100 * (int) max / (int) min < AR_SPAN_RHEO))  // not enough autorange span (max/min < 2.0)?
+    if ((max - min <= 0) || (100 * (int) max / (int) min < AR_SPAN_RHEO))  // not enough autorange span (max/min < limit)?
       return 0;
   }
 
@@ -286,6 +317,32 @@ static int potAutorange(Controller_T *const this, const int value, int *const ou
   return 1;
 }
 
+// --------------- initialize ramping to new value
+void initRamping(Controller_T *const this, const uint16_t start, const uint16_t time)
+{
+  this->rampStart     = start;
+  this->rampTime      = time;
+  this->rampStep      = 0;
+  this->flags.ramping = 1;
+}
+
+// --------------- ramp to new value
+uint16_t doRamping(Controller_T *const this, const uint16_t value, const int update)
+{
+  if (!this->flags.ramping)
+    return value;
+
+  if (this->rampStep > this->rampTime)  // ramping finished ?
+  {
+    this->flags.ramping = 0;
+    return value;
+  }
+  int tmp = 1024 * this->rampStep / this->rampTime;
+  if (update)
+    this->rampStep++;
+  return this->rampStart + (value - this->rampStart) * tmp / 1024;
+}
+
 // --------------- implement auto-hold
 static int doAutoHold(Controller_T *const this, int value)
 {
@@ -298,7 +355,7 @@ static int doAutoHold(Controller_T *const this, int value)
     // determine min, max and average wiper sample values
     if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &avg))
       settled = (max - min) < SETTLING_OFFSET + SETTLING_GAIN * avg / 4096;  // noise scales with voltage for this ADC chip
-    // note this is dynamic rate-of-change settling, that is the span of values in the buffer is smaller than some limit,
+    // note this is a dynamic rate-of-change settling, that is the span of values in the buffer is smaller than some limit,
     // whereas the absolute values are irrelevant. This means very slowly changing values always are considered settled
     if (settled)  // wiper has settled ?
     {
@@ -310,10 +367,11 @@ static int doAutoHold(Controller_T *const this, int value)
       }
       else  // already settled
       {
-        if (abs(value - this->settledValue) > MAX_DRIFT)  // value drifted away too far?
-                                                          // update current averaged output as new "settled" value to avoid larger jumps
-                                                          // when leaving dynamic settling with
-          this->settledValue = getBufferAverage(this->out, this->out_index, 8);
+        if (abs(value - this->settledValue) > MAX_DRIFT)
+        {  // value drifted away too far?
+          initRamping(this, this->settledValue, DRIFT_INDUCED_RAMPING_TIME);
+          this->settledValue = getBufferAverage(this->out, this->out_index, 8);  // update current averaged output as new "settled" value to avoid larger jumps
+        }
       }
       // use settled output only when input is not at range ends
       // if not done, the range ends could never be reached
@@ -324,11 +382,13 @@ static int doAutoHold(Controller_T *const this, int value)
     {
       if (this->flags.isSettled)  // was settled before ?
       {                           // now ramp to new value
-        ;
+        this->settledValue = doRamping(this, this->settledValue, 0);
+        initRamping(this, this->settledValue, NORMAL_RAMPING_TIME);  // 12*12.5ms = 150ms
       }
       this->flags.isSettled = 0;
     }
   }
+  value = doRamping(this, value, 1);
   return value;
 }
 
@@ -359,7 +419,7 @@ static void readoutPotOrRheostat(Controller_T *const this)
     return;
   }
 
-  int value = getPotentiometricValue(this);
+  int value = getPotOrRheoValue(this, (this->type == POT));
 
   // wiper buffer filled ?
   if (this->valueBufInvalid)
@@ -369,11 +429,12 @@ static void readoutPotOrRheostat(Controller_T *const this)
   }
 
   int out = 0;
-  if (!potAutorange(this, value, &out))
+  if (!doAutoRange(this, value, &out, this->type == POT))
     return;
 
   this->out_index            = (this->out_index + CBUF_MOD) & CBUF_MOD;
   this->out[this->out_index] = out;
+
   // output buffer filled ?
   if (this->outBufInvalid)
   {
@@ -402,7 +463,25 @@ static void readoutSwitch(Controller_T *const this)
   }
 
   // get  value
-  uint16_t out = this->wiper->current;
+  int value = getPotOrRheoValue(this, 0);  // read switch as rheostat
+
+  // wiper buffer filled ?
+  if (this->valueBufInvalid)
+  {
+    this->valueBufInvalid--;
+    return;
+  }
+
+  int out = 0;
+  if (!doAutoRange(this, value, &out, 0))
+  {  // auto-ranging not finished, so force a best guess value from direct readout
+    value = this->wiper->filtered_current;
+    if (value > SWITCH_INITIAL_RAW_THRESHOLD)
+      out = 16000;
+    else
+      out = 0;
+    this->step = 0;  // force step chain to judge initial value
+  }
 
   switch (this->step)
   {
@@ -456,7 +535,7 @@ static void readoutSwitch(Controller_T *const this)
       return;
   }
 
-  updateAndOutput(this, out);
+  updateAndOutput(this, 16000 - out);  // initial output must be inverted as we've worked on the resistance
 }
 
 /*************************************************************************/ /**
@@ -469,12 +548,16 @@ void NL_EHC_InitControllers(void)
   initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT, NON_INVERT);
   initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT, NON_INVERT);
   initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT, NON_INVERT);
+  clearController(&ctrl[4]);
+  clearController(&ctrl[5]);
+  clearController(&ctrl[6]);
+  clearController(&ctrl[7]);
 }
 
 /*************************************************************************/ /**
 * @brief	 Set Pedal Type, Legacy Style
 * @param[in] channel (SETTING_ID_PEDAL_1_TYPE ... SETTING_ID_PEDAL_4_TYPE)
-* @param[in] type (0/1:pot tip/ring act.; 2/3:switch closing/opening)
+* @param[in] type (0/1:pot tip/ring act.; 2/3:switch closing/opening on tip)
 ******************************************************************************/
 void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
 {
@@ -520,10 +603,10 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
     case 1:  // pot, ring active
       initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT);
       break;
-    case 2:  // switch, closing
+    case 2:  // switch, closing, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
       initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT);
       break;
-    case 3:  // switch, opening
+    case 3:  // switch, opening, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
       initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT);
       break;
     default:
@@ -546,6 +629,8 @@ void NL_EHC_ProcessControllers(void)
 {
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
   {
+    if (!ctrl[i].flags.initialized)
+      continue;
     if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?
     {
       switch (ctrl[i].type)
