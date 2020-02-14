@@ -100,7 +100,7 @@ void Init(void)
   COOS_Task_Add(HBT_Process,              100+12, HBT_PROCESS_TIMESLICE * 8); // heartbeat communication every 10ms
 
   // single run stuff
-  COOS_Task_Add(ADC_WORK_Init,            50, 0);     // preparing the ADC processing (will be executed after the M0 has been initialized)
+  COOS_Task_Add(ADC_WORK_Init,            120, 0);     // preparing the ADC processing (will be executed after the M0 has been initialized)
   // clang-format on
 
   /* M0 */
