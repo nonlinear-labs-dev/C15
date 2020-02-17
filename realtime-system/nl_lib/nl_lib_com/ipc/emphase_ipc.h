@@ -63,6 +63,7 @@ uint32_t Emphase_IPC_KeyBuffer_GetSize();
 
 int32_t  IPC_ReadAdcBuffer(const uint8_t id);
 int32_t  IPC_ReadAdcBufferAveraged(const uint8_t id);
+int32_t  IPC_ReadAdcBufferSum(const uint8_t adc_id);
 void     IPC_WriteAdcBuffer(const uint8_t id, const int32_t value);
 void     IPC_AdcBufferWriteNext(void);
 void     IPC_AdcUpdateReadIndex(void);
