@@ -55,15 +55,15 @@ void initSampleBuffers(void)
   {
     for (int k = 0; k < SBUF_SIZE; k++)
     {
-      adc[i].values[k]          = DEFAULT_ADC_VALUE;
-      adc[i].filtered_values[k] = DEFAULT_ADC_VALUE;
+      adc[i].values[k]          = DEFAULT_ADC_VALUE * AVG_DIV;
+      adc[i].filtered_values[k] = DEFAULT_ADC_VALUE * AVG_DIV;
     }
     adc[i].flags.pullup_10k  = 1;  // force pullup on every pin, initially
     adc[i].flags.pullup_5V   = 0;
     adc[i].flags.useIIR      = 0;
     adc[i].flags.useStats    = 0;
-    adc[i].current           = DEFAULT_ADC_VALUE;
-    adc[i].filtered_current  = DEFAULT_ADC_VALUE;
+    adc[i].current           = DEFAULT_ADC_VALUE * AVG_DIV;
+    adc[i].filtered_current  = DEFAULT_ADC_VALUE * AVG_DIV;
     adc[i].detect            = 0xFF;
     adc[i].flags.initialized = 1;
   }
@@ -87,7 +87,7 @@ int FillSampleBuffers(void)
   // read data from current conversion
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
-    adc[i].current = adc[i].values[sbuf_index] = IPC_ReadAdcBufferAveraged(adc[i].ipcAdcID);
+    adc[i].current = adc[i].values[sbuf_index] = IPC_ReadAdcBufferSum(adc[i].ipcAdcID);
     adc[i].detect                              = IPC_ReadAdcBufferAveraged(adc[i].ipcDetectID);
   }
 
@@ -142,10 +142,10 @@ int GetADCStats(const AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16
 
   register int      avg = 0;
   register uint16_t max = 0;
-  register uint16_t min = 4095;
+  register uint16_t min = 4095 * AVG_DIV;
   for (register int i = bufferDepth - 1; i >= 0; i--)
   {
-    uint16_t sample = buffer[(index + i) & SBUF_MOD];
+    register uint16_t sample = buffer[(index + i) & SBUF_MOD];
     avg += sample;
     if (sample > max)
       max = sample;
