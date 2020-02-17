@@ -19,34 +19,36 @@
 // ============= local constants and types
 // =============
 
+#define SHOW_SETTLING (1)
+
 #define WAIT_TIME_AFTER_PLUGIN (120)  // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
 
 #define NUMBER_OF_CONTROLLERS (8)  // 4 jacks, each with tip and ring ADC channels
 
 // ============= Pot channels
-#define POT_SCALE_FACTOR  (10000)  // don't change this unless you know what you do
+#define POT_SCALE_FACTOR  (20000)  // don't change this unless you know what you do
 #define RHEO_SCALE_FACTOR (4500)   // don't change this unless you know what you do
 // autoranging
-#define AR_SPAN            (500)  // 500 -> 5% (assuming SCALE_FACTOR is 10000 !!)
-#define AR_SPAN_RHEO       (117)  // 117 -> 1.17 (max/min minimum factor, must be greater than 1.0, of course)
-#define AR_UPPER_DEAD_ZONE (5)    // 5 -> 5%, electrical dead zone
-#define AR_LOWER_DEAD_ZONE (4)    // 4 -> 4%, electrical dead zone
+#define AR_SPAN            (1000)  // 1000/20000 -> 5%
+#define AR_SPAN_RHEO       (117)   // 117 -> 1.17 (max/min minimum factor, must be greater than 1.0, of course)
+#define AR_UPPER_DEAD_ZONE (5)     // 5 -> 5%, electrical dead zone
+#define AR_LOWER_DEAD_ZONE (4)     // 4 -> 4%, electrical dead zone
 
 // settling
 #define CBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
 #define CBUF_MOD  (CBUF_SIZE - 1)
 
 // max long-term drift before forced update even when settled
-#define MAX_DRIFT                  (160 * 2)  // 2%
-#define DRIFT_INDUCED_RAMPING_TIME (60)       // 60*12.5ms = 750ms, the larger MAX_DRIFT the longer this should be set
-#define NORMAL_RAMPING_TIME        (12)       // 12*12.5ms = 150ms
-#define SHORT_RAMPING_TIME         (3)        // 3*12.5ms  = 38ms
-#define SHOCK_CHANGE_THRESHOLD     (2000)     // 2000/16000 : > 12.5% max change is considered a shock change
+#define MAX_DRIFT                  (160 * 5 / 10)  // 0.5%
+#define DRIFT_INDUCED_RAMPING_TIME (30)            // 30*12.5ms = 357ms, the larger MAX_DRIFT the longer this should be set
+#define NORMAL_RAMPING_TIME        (16)            // 16*12.5ms = 200ms
+#define SHORT_RAMPING_TIME         (3)             // 3*12.5ms  = 38ms
+#define SHOCK_CHANGE_THRESHOLD     (2000)          // 2000/16000 : > 12.5% max change is considered a shock change
 
 // offset: settling minimum in LSBs, of wiper ADC channel.
-#define SETTLING_OFFSET (12)  // 4, 8, 16  (6dB steps)
+#define SETTLING_OFFSET (12)  // 6, 12, 24  (6dB steps)
 // gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values)
-#define SETTLING_GAIN (25)  // 4, 13, 40  (10dB steps)
+#define SETTLING_GAIN (24)  // 6, 12, 24  (6dB steps)
 // Stable/low-creepage pedals are OK with 3..10, bad pedals (Moog) may need 20..50
 // The higher the value, the more there is a step transition on a change, after settling
 #warning "ToDo : make all three value parametrizable. Like 3 10dB steps 'Pedal Auto-Stabilizing' : weak(4), normal(13), strong(40)"
@@ -57,9 +59,9 @@
 // ============= Switch channels
 #define SWITCH_INITIAL_RAW_THRESHOLD (1400)  // raw ADC value that determinis inital switch state (> means "high")
 // the next 3 values are relative to 0...16000 output range
-#define SWITCH_DEADRANGE_LOW      (3000)   // only values below this are accepted as "switch closed", 3000/16000 = 18.75%
-#define SWITCH_DEADRANGE_HIGH     (13000)  // only values below this are accepted as "switch open",  13000/16000 = 81.25%
-#define SWITCH_TRIGGER_HYSTERESIS (1000)   // hysteresis for stabilizing triggers, 1000/16000 = 6.25%
+#define SWITCH_DEADRANGE_LOW      (6000)   // only values below this are accepted as "switch closed", 6000/16000 = 37.5%
+#define SWITCH_DEADRANGE_HIGH     (10000)  // only values below this are accepted as "switch open",  10000/16000 = 62.5%
+#define SWITCH_TRIGGER_HYSTERESIS (1600)   // hysteresis for stabilizing triggers, 16000/16000 = 10%
 
 #define SWITCH_DEBOUNCE_TIME (20)  // debounce switch time in 12.5ms units (20 == 250ms, shorter than any intentional switching)
 
@@ -86,10 +88,12 @@ typedef struct
   uint16_t values[CBUF_SIZE];
   uint16_t val_index;
   uint16_t valueBufInvalid;
+  uint32_t valSum;
   // output buffer
   uint16_t out[CBUF_SIZE];
   uint16_t out_index;
   uint16_t outBufInvalid;
+  uint32_t outSum;
 
   // autoranging
   uint16_t min;
@@ -104,7 +108,7 @@ typedef struct
   uint16_t wait;
   uint16_t step;
 
-  // ramping
+  // auto-hold and ramping
   uint16_t rampStart;
   uint16_t rampTime;
   uint16_t rampStep;
@@ -139,7 +143,7 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
 {
   this->type                = type;
   this->HwSourceId          = HwSourceId;
-  this->min                 = 32767;
+  this->min                 = 65535;
   this->max                 = 0;
   this->wiper               = wiper;
   this->top                 = NULL;
@@ -153,6 +157,13 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
   this->flags.debounce      = 0;  // ??? temp
   this->wait                = 0;
   this->step                = 0;
+  this->valSum              = 0;
+  this->outSum              = 0;
+  for (int i = 0; i < CBUF_SIZE; i++)
+  {
+    this->values[i] = 0;
+    this->out[i]    = 0;
+  }
 
   if ((type != POT) && (top))
   {  // if a top channel was supplied, clear it unless it's for a pot
@@ -168,16 +179,16 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
     case POT:
       this->top                     = top;
       this->top->flags.pullup_10k   = 1;  // apply pullup to top (input pin)
-      this->top->flags.useIIR       = 1;  // low pass filter the raw input
+      this->top->flags.useIIR       = 0;  // ??? low pass filter the raw input
       this->top->flags.useStats     = 0;  // disable min/max/avg statistics
       this->wiper->flags.pullup_10k = 0;  // readout wiper without pullup;
-      this->wiper->flags.useIIR     = 1;  // low pass filter the raw input
+      this->wiper->flags.useIIR     = 0;  // ??? low pass filter the raw input
       this->wiper->flags.useStats   = 1;  // enable min/max/avg statistics
-      this->flags.autoHold          = 1;
+      this->flags.autoHold          = 1;  // ??? temp
       break;
     case RHEOSTAT:
       this->wiper->flags.pullup_10k = 1;  // readout wiper with pullup;
-      this->wiper->flags.useIIR     = 1;  // low pass filter the raw input
+      this->wiper->flags.useIIR     = 0;  // ??? low pass filter the raw input
       this->wiper->flags.useStats   = 1;  // enable min/max/avg statistics
       this->flags.autoHold          = 1;
       break;
@@ -188,7 +199,7 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
       break;
     case CV:
       this->wiper->flags.pullup_10k = 0;  // readout wiper without pullup;
-      this->wiper->flags.useIIR     = 1;  // low pass filter the raw input
+      this->wiper->flags.useIIR     = 0;  // ??? low pass filter the raw input
       this->wiper->flags.useStats   = 0;  // DISable min/max/avg statistics
       break;
     case UNKNOWN:
@@ -197,8 +208,8 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
       return;
   }
 
-  this->valueBufInvalid = SBUF_SIZE;  // number of runs until value buffer is filled
-  this->outBufInvalid   = CBUF_SIZE;  // number of runs until final output buffer is filled
+  this->valueBufInvalid = SBUF_SIZE + CBUF_SIZE + 1;  // number of runs until value buffer is filled
+  this->outBufInvalid   = CBUF_SIZE;                  // number of runs until final output buffer is filled
 
   this->final             = 0;
   this->lastFinal         = ~this->final;
@@ -215,7 +226,7 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   if (this->flags.isReset)
     return;
   this->wait                = wait_time;
-  this->min                 = 32767;
+  this->min                 = 65535;
   this->max                 = 0;
   this->val_index           = 0;
   this->out_index           = 0;
@@ -228,6 +239,13 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   this->flags.initialized   = 1;
   this->flags.isReset       = 1;
   this->step                = 0;
+  this->valSum              = 0;
+  this->outSum              = 0;
+  for (int i = 0; i < CBUF_SIZE; i++)
+  {
+    this->values[i] = 0;
+    this->out[i]    = 0;
+  }
 }
 
 /*************************************************************************/ /**
@@ -238,6 +256,7 @@ static void clearController(Controller_T *const this)
   this->flags.initialized = 0;
 }
 
+#if 0
 /*************************************************************************/ /**
 * @brief	Get Average of a Ring Buffer
 ******************************************************************************/
@@ -251,13 +270,14 @@ static int getBufferAverage(uint16_t *const buf, const uint16_t pos, int bufferD
   if (bufferDepth > CBUF_SIZE)
     bufferDepth = CBUF_SIZE;
 
-  register int             avg      = 0;
+  register int             sum      = 0;
   const register uint16_t  position = pos;
   const register uint16_t *buffer   = buf;
   for (register int i = bufferDepth - 1; i >= 0; i--)
-    avg += buffer[(position + i) & CBUF_MOD];
-  return avg / bufferDepth;
+    sum += buffer[(position + i) & CBUF_MOD];
+  return sum / bufferDepth;
 }
+#endif
 
 // --------------- get potentiometer or variable resistor value
 static int getPotOrRheoValue(Controller_T *const this, const int isPot)
@@ -266,18 +286,23 @@ static int getPotOrRheoValue(Controller_T *const this, const int isPot)
   this->val_index = (this->val_index + CBUF_MOD) & CBUF_MOD;
   if (isPot)
   {  // potentiometric ratio wiper/top
-    value = this->values[this->val_index] = POT_SCALE_FACTOR * this->wiper->filtered_current / this->top->filtered_current;
+    int top   = this->top->filtered_current;
+    int wiper = this->wiper->filtered_current;
+    if (top < 10 * AVG_DIV)
+      top = 10 * AVG_DIV;
+    value = POT_SCALE_FACTOR * wiper / top;
   }
   else  // rheostat
   {     // get calculate absolute resistance value
     value = this->wiper->filtered_current;
-    if (value > 4000)
-      value = 4000;  // avoid excessive values after division
-    value = RHEO_SCALE_FACTOR * value / (4096 - value);
+    if (value > 4000 * AVG_DIV)
+      value = 4000 * AVG_DIV;  // avoid excessive values after division
+    value = RHEO_SCALE_FACTOR * value / (4096 * AVG_DIV - value);
     if (value > 60000)  // limit to uint16 range, 100k pot shall be still within
       value = 60000;
-    this->values[this->val_index] = value;
   }
+  this->valSum += value - (int) this->values[this->val_index];
+  this->values[this->val_index] = value;
   return value;
 }
 
@@ -285,10 +310,11 @@ static int getPotOrRheoValue(Controller_T *const this, const int isPot)
 static int doAutoRange(Controller_T *const this, const int value, int *const out, const int isPot)
 {
   // basic autorange
+
   if (value > this->max)
-    this->max = getBufferAverage(this->values, this->val_index, 8);
+    this->max = this->valSum / CBUF_SIZE;
   if (value < this->min)
-    this->min = getBufferAverage(this->values, this->val_index, 8);
+    this->min = this->valSum / CBUF_SIZE;
 
   // back off autorange limits
   int min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
@@ -340,10 +366,11 @@ uint16_t doRamping(Controller_T *const this, const uint16_t value, const int upd
     this->flags.ramping = 0;
     return value;
   }
-  int tmp = 1024 * this->rampStep / this->rampTime;
+  int tmp = 1024 - 1024 * this->rampStep / this->rampTime;
   if (update)
     this->rampStep++;
-  return this->rampStart + (value - this->rampStart) * tmp / 1024;
+  //  return this->rampStart + (value - this->rampStart) * tmp / 1024;
+  return value + (this->rampStart - value) * tmp / 1024;
 }
 
 // --------------- implement auto-hold
@@ -354,27 +381,40 @@ static int doAutoHold(Controller_T *const this, int value)
 
   uint16_t min;
   uint16_t max;
-  uint16_t avg;
+  uint16_t sum;
   int      settled = 0;
   // determine min, max and average wiper sample values
-  if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &avg))
-    settled = (max - min) < SETTLING_OFFSET + SETTLING_GAIN * avg / 4096;  // noise scales with voltage for this ADC chip
+  if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &sum))
+  {
+    if (this->flags.isSettled)
+      settled = (int) (max - min) < SETTLING_OFFSET * AVG_DIV + SETTLING_GAIN * AVG_DIV * (int) sum / (4096 * AVG_DIV);              // noise scales with voltage for this ADC chip
+    else                                                                                                                             // use 3x more sensitive detector when not yet settled
+      settled = (int) (max - min) < (SETTLING_OFFSET * AVG_DIV / 3) + (SETTLING_GAIN * AVG_DIV / 3) * (int) sum / (4096 * AVG_DIV);  // noise scales with voltage for this ADC chip
+  }
   // note this is a dynamic rate-of-change settling, that is the span of values in the buffer is smaller than some limit,
   // whereas the absolute values are irrelevant. This means very slowly changing values always are considered settled
+
+#if SHOW_SETTLING
+  if (settled)
+    DBG_Led_Error_Off();
+  else
+    DBG_Led_Error_On();
+#endif
   if (settled)  // wiper has settled ?
   {
     if (!this->flags.isSettled)  // was not settled before ?
     {
       this->flags.isSettled = 1;
       // freeze current averaged output as "settled" value;
-      this->settledValue = getBufferAverage(this->out, this->out_index, 8);
+      this->settledValue = this->outSum / CBUF_SIZE;
     }
     else  // already settled
     {
       if (abs(value - this->settledValue) > MAX_DRIFT)
-      {  // value drifted away too far?
+      {                                                               // value drifted away too far?
+        this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
         initRamping(this, this->settledValue, DRIFT_INDUCED_RAMPING_TIME);
-        this->settledValue = getBufferAverage(this->out, this->out_index, 8);  // update current averaged output as new "settled" value to avoid larger jumps
+        this->settledValue = this->outSum / CBUF_SIZE;  // update current averaged output as new "settled" value to avoid larger jumps
       }
     }
     // use settled output only when input is not at range ends
@@ -388,13 +428,23 @@ static int doAutoHold(Controller_T *const this, int value)
     {                                                               // now ramp to new value
       this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
       initRamping(this, this->settledValue, NORMAL_RAMPING_TIME);   // and ramp from there
+      // DBG_Led_Warning_TimedOn(3);
     }
     this->flags.isSettled = 0;
   }
   int new = doRamping(this, value, 0);                         // get next output candidate value
   if (abs(new - value) > SHOCK_CHANGE_THRESHOLD)               // fast "shock" change present ?
+  {
     initRamping(this, (new + value) / 2, SHORT_RAMPING_TIME);  //   then init a short "shock" ramp from half-way there
+    // DBG_Led_Error_TimedOn(3);
+  }
   value = doRamping(this, value, 1);                           // now perform the actual ramping
+#if SHOW_SETTLING
+  if (this->flags.ramping)
+    DBG_Led_Warning_On();
+  else
+	DBG_Led_Warning_Off();
+#endif
   return value;
 }
 
@@ -430,7 +480,12 @@ static void readoutPotOrRheostat(Controller_T *const this)
   // wiper buffer filled ?
   if (this->valueBufInvalid)
   {
-    this->valueBufInvalid--;
+    if (!--this->valueBufInvalid)
+    {
+      this->valSum = 0;
+      for (int i = 0; i < CBUF_SIZE; i++)
+        this->valSum += this->values[i];
+    }
     return;
   }
 
@@ -438,13 +493,19 @@ static void readoutPotOrRheostat(Controller_T *const this)
   if (!doAutoRange(this, value, &out, this->type == POT))
     return;
 
-  this->out_index            = (this->out_index + CBUF_MOD) & CBUF_MOD;
+  this->out_index = (this->out_index + CBUF_MOD) & CBUF_MOD;
+  this->outSum += out - (int) this->out[this->out_index];
   this->out[this->out_index] = out;
 
   // output buffer filled ?
   if (this->outBufInvalid)
   {
-    this->outBufInvalid--;
+    if (!--this->outBufInvalid)
+    {
+      this->outSum = 0;
+      for (int i = 0; i < CBUF_SIZE; i++)
+        this->outSum += this->out[i];
+    }
     return;
   }
 
@@ -474,7 +535,12 @@ static void readoutSwitch(Controller_T *const this)
   // wiper buffer filled ?
   if (this->valueBufInvalid)
   {
-    this->valueBufInvalid--;
+    if (!--this->valueBufInvalid)
+    {
+      this->valSum = 0;
+      for (int i = 0; i < CBUF_SIZE; i++)
+        this->valSum += this->values[i];
+    }
     return;
   }
 
@@ -482,7 +548,7 @@ static void readoutSwitch(Controller_T *const this)
   if (!doAutoRange(this, value, &out, 0))
   {  // auto-ranging not finished, so force a best guess value from direct readout
     value = this->wiper->filtered_current;
-    if (value > SWITCH_INITIAL_RAW_THRESHOLD)
+    if (value > SWITCH_INITIAL_RAW_THRESHOLD * AVG_DIV)
       out = 16000;
     else
       out = 0;
@@ -606,8 +672,9 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
     case 0:  // pot, tip active
       initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT);
       break;
-    case 1:  // pot, ring active
-      initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT);
+    case 1:                                                                                                 // pot, ring active
+                                                                                                            // initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT);
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, RHEOSTAT, NON_INVERT);  // ???
       break;
     case 2:  // switch, closing, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
       initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT);
