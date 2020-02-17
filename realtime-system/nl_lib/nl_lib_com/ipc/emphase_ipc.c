@@ -7,15 +7,12 @@
 #include <stdint.h>
 #include "ipc/emphase_ipc.h"
 
-// ADC ring buffers
-// Must be 2^N in size. This also determines the averaging.
-// Size should NOT be larger than the number of aquisitions between M4 read-out operations
-#define IPC_ADC_BUFFER_SIZE (16)
-#define IPC_ADC_BUFFER_MASK (IPC_ADC_BUFFER_SIZE - 1)
+#define IPC_ADC_DEFAULT (2048)
 
 typedef struct
 {
   int32_t values[IPC_ADC_NUMBER_OF_CHANNELS][IPC_ADC_BUFFER_SIZE];
+  int32_t sum[IPC_ADC_NUMBER_OF_CHANNELS];
 } ADC_BUFFER_ARRAY_T;
 
 #define EMPHASE_IPC_KEYBUFFER_SIZE (64)
@@ -39,7 +36,7 @@ static volatile int*                adcBufferReadIndex;
 *   @param[in]	IPC id of the adc channel 0...15
 *   @return     adc channel value
 ******************************************************************************/
-int32_t IPC_ReadAdcBuffer(uint8_t adc_id)
+int32_t IPC_ReadAdcBuffer(const uint8_t adc_id)
 {
   return adcBufferData->values[adc_id][*adcBufferReadIndex];
 }
@@ -49,21 +46,38 @@ int32_t IPC_ReadAdcBuffer(uint8_t adc_id)
 *   @param[in]	IPC id of the adc channel 0...15
 *   @return     adc channel value
 ******************************************************************************/
-int32_t IPC_ReadAdcBufferAveraged(uint8_t adc_id)
+int32_t IPC_ReadAdcBufferAveraged(const uint8_t adc_id)
 {
+#if 0  // old algo
   int32_t x = 0;
   for (int i = 0; i < IPC_ADC_BUFFER_SIZE; i++)
     x += adcBufferData->values[adc_id][i];
   return x / IPC_ADC_BUFFER_SIZE;
+#endif
+
+  return adcBufferData->sum[adc_id] / IPC_ADC_BUFFER_SIZE;
 }
 
 /******************************************************************************/
-/**	@brief      Write ADC value
+/**	@brief      Read ADC channel value as sum of whole ring buffer contents
+*   @param[in]	IPC id of the adc channel 0...15
+*   @return     adc channel value
+******************************************************************************/
+int32_t IPC_ReadAdcBufferSum(const uint8_t adc_id)
+{
+  return adcBufferData->sum[adc_id];
+}
+
+/******************************************************************************/
+/**	@brief      Write ADC value (must be called only once per cycle!)
 *   @param[in]	IPC id of the adc channel 0...15
 *   @param[in]  adc channel value
 ******************************************************************************/
-void IPC_WriteAdcBuffer(uint8_t adc_id, int32_t value)
+void IPC_WriteAdcBuffer(const uint8_t adc_id, const int32_t value)
 {
+  // subtract out the overwritten value and add in new value to sum
+  adcBufferData->sum[adc_id] += -(adcBufferData->values[adc_id][*adcBufferWriteIndex]) + value;
+  // write value to ring buffer
   adcBufferData->values[adc_id][*adcBufferWriteIndex] = value;
 }
 
@@ -98,7 +112,7 @@ uint32_t IPC_ReadPedalAdcConfig(void)
 *   @param{in]  config bits [32 bits, 4 bytes from ADC67(MSB) to ADC12(LSB)]
 *   for bit masks see  espi/dev/nl_espi_dev_pedals.h
 ******************************************************************************/
-void IPC_WritePedalAdcConfig(uint32_t config)
+void IPC_WritePedalAdcConfig(const uint32_t config)
 {
   *adcConfigData = config;
 }
@@ -150,8 +164,11 @@ void Emphase_IPC_Init(void)
   }
 
   for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
+  {
     for (int k = 0; k < IPC_ADC_BUFFER_SIZE; k++)
-      adcBufferData->values[i][k] = 2047;
+      adcBufferData->values[i][k] = IPC_ADC_DEFAULT;
+    adcBufferData->sum[i] = IPC_ADC_DEFAULT * IPC_ADC_BUFFER_SIZE;
+  }
   *adcConfigData       = 0;
   *adcBufferReadIndex  = 0;
   *adcBufferWriteIndex = 0;
@@ -163,7 +180,7 @@ void Emphase_IPC_Init(void)
      @param[in] keyEvent: A struct containing the index of the key
                 and the direction and travel time of the last key action
 *******************************************************************************/
-void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(IPC_KEY_EVENT_T keyEvent)
+void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(const IPC_KEY_EVENT_T keyEvent)
 {
   keyBufferData[*keyBufferWritePos] = keyEvent;
 
@@ -178,7 +195,7 @@ void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(IPC_KEY_EVENT_T keyEvent)
                 maxNumOfEventsToRead: size of the array pointed by pKeyEvent
     @return     Number of new key events (0: nothing to do)
 *******************************************************************************/
-uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* pKeyEvent, uint8_t maxNumOfEventsToRead)
+uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* const pKeyEvent, const uint8_t maxNumOfEventsToRead)
 {
   uint8_t count = 0;
 

@@ -8,19 +8,6 @@
 #define EMPHASE_IPC_H
 #include <stdint.h>
 
-#define KEY_DIR_UP 1
-#define KEY_DIR_DN -1
-
-#define SHARED_MEMORY_BASE 0x10088000
-
-#ifndef STACK_SIZE
-#define STACK_SIZE 0x800
-#endif
-
-#ifndef HEAP_SIZE
-#define HEAP_SIZE 0x6000
-#endif
-
 // ID's for IPC
 // M0-->M4
 // 1. ADC's
@@ -42,6 +29,25 @@
 #define IPC_ADC_RIBBON2            (15)
 #define IPC_ADC_NUMBER_OF_CHANNELS (16)
 
+// ADC ring buffers
+// Must be 2^N in size and <= 16. This also determines the averaging.
+// Size should NOT be larger than the number of aquisitions between M4 read-out operations
+#define IPC_ADC_BUFFER_SIZE (16)
+#define IPC_ADC_BUFFER_MASK (IPC_ADC_BUFFER_SIZE - 1)
+
+#define KEY_DIR_UP 1
+#define KEY_DIR_DN -1
+
+#define SHARED_MEMORY_BASE 0x10088000
+
+#ifndef STACK_SIZE
+#define STACK_SIZE 0x800
+#endif
+
+#ifndef HEAP_SIZE
+#define HEAP_SIZE 0x6000
+#endif
+
 typedef struct
 {
   uint32_t key;
@@ -50,17 +56,17 @@ typedef struct
 } IPC_KEY_EVENT_T;
 
 void     Emphase_IPC_Init(void);
-void     Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(IPC_KEY_EVENT_T keyEvent);
-uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* keyEvent, uint8_t maxNumOfMsgsToRead);
+void     Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(const IPC_KEY_EVENT_T keyEvent);
+uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* const keyEvent, const uint8_t maxNumOfMsgsToRead);
 
 uint32_t Emphase_IPC_KeyBuffer_GetSize();
 
-int32_t  IPC_ReadAdcBuffer(uint8_t id);
-int32_t  IPC_ReadAdcBufferAveraged(uint8_t id);
-void     IPC_WriteAdcBuffer(uint8_t id, int32_t value);
+int32_t  IPC_ReadAdcBuffer(const uint8_t id);
+int32_t  IPC_ReadAdcBufferAveraged(const uint8_t id);
+void     IPC_WriteAdcBuffer(const uint8_t id, const int32_t value);
 void     IPC_AdcBufferWriteNext(void);
 void     IPC_AdcUpdateReadIndex(void);
 uint32_t IPC_ReadPedalAdcConfig(void);
-void     IPC_WritePedalAdcConfig(uint32_t config);
+void     IPC_WritePedalAdcConfig(const uint32_t config);
 
 #endif
