@@ -7,6 +7,8 @@
     @ingroup	nl_tcd_modules
 *******************************************************************************/
 
+#include "ipc/emphase_ipc.h"
+
 #include <stdint.h>
 
 #ifndef NL_EHC_ADC_H_
@@ -17,6 +19,8 @@
 
 #define ADC_PIN_TO_5V     (0b10000000)  // not used atm
 #define ADC_PIN_TO_PULLUP (0b01000000)  // tie input via 10kOhm to +5V
+
+#define AVG_DIV (IPC_ADC_BUFFER_SIZE)
 
 typedef struct
 {
