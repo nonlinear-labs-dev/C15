@@ -40,6 +40,9 @@
 #define MAX_DRIFT                  (160 * 2)  // 2%
 #define DRIFT_INDUCED_RAMPING_TIME (60)       // 60*12.5ms = 750ms, the larger MAX_DRIFT the longer this should be set
 #define NORMAL_RAMPING_TIME        (12)       // 12*12.5ms = 150ms
+#define SHORT_RAMPING_TIME         (3)        // 3*12.5ms  = 38ms
+#define SHOCK_CHANGE_THRESHOLD     (2000)     // 2000/16000 : > 12.5% max change is considered a shock change
+
 // offset: settling minimum in LSBs, of wiper ADC channel.
 #define SETTLING_OFFSET (12)  // 4, 8, 16  (6dB steps)
 // gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values)
@@ -74,9 +77,9 @@ typedef struct
     unsigned isSettled : 1;
     unsigned outputIsValid : 1;
     // input
-    unsigned          denoiseWhenSettled : 1;  // denoise output when settled long and close enough
-    ControlerInvert_T polarity : 1;            // invert final output value or not
-    unsigned          debounce : 1;            // enable switch debouncing
+    unsigned          autoHold : 1;  // denoise output when settled long and close enough
+    ControlerInvert_T polarity : 1;  // invert final output value or not
+    unsigned          debounce : 1;  // enable switch debouncing
     unsigned          ramping : 1;
   } flags;
   // value buffer
@@ -134,22 +137,22 @@ static void sendControllerData(const uint32_t const hwSourceId, const uint32_t v
 ******************************************************************************/
 static void initController(Controller_T *const this, const int HwSourceId, AdcBuffer_T *const wiper, AdcBuffer_T *const top, const ControllerType_T type, const ControlerInvert_T polarity)
 {
-  this->type                     = type;
-  this->HwSourceId               = HwSourceId;
-  this->min                      = 32767;
-  this->max                      = 0;
-  this->wiper                    = wiper;
-  this->top                      = NULL;
-  this->flags.denoiseWhenSettled = 0;
-  this->val_index                = 0;
-  this->out_index                = 0;
-  this->flags.polarity           = polarity;
-  this->flags.outputIsValid      = 0;
-  this->flags.isReset            = 1;
-  this->flags.ramping            = 0;
-  this->flags.debounce           = 0;  // ??? temp
-  this->wait                     = 0;
-  this->step                     = 0;
+  this->type                = type;
+  this->HwSourceId          = HwSourceId;
+  this->min                 = 32767;
+  this->max                 = 0;
+  this->wiper               = wiper;
+  this->top                 = NULL;
+  this->flags.autoHold      = 0;
+  this->val_index           = 0;
+  this->out_index           = 0;
+  this->flags.polarity      = polarity;
+  this->flags.outputIsValid = 0;
+  this->flags.isReset       = 1;
+  this->flags.ramping       = 0;
+  this->flags.debounce      = 0;  // ??? temp
+  this->wait                = 0;
+  this->step                = 0;
 
   if ((type != POT) && (top))
   {  // if a top channel was supplied, clear it unless it's for a pot
@@ -163,20 +166,20 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
   switch (type)
   {
     case POT:
-      this->top                      = top;
-      this->top->flags.pullup_10k    = 1;  // apply pullup to top (input pin)
-      this->top->flags.useIIR        = 1;  // low pass filter the raw input
-      this->top->flags.useStats      = 0;  // disable min/max/avg statistics
-      this->wiper->flags.pullup_10k  = 0;  // readout wiper without pullup;
-      this->wiper->flags.useIIR      = 1;  // low pass filter the raw input
-      this->wiper->flags.useStats    = 1;  // enable min/max/avg statistics
-      this->flags.denoiseWhenSettled = 1;
+      this->top                     = top;
+      this->top->flags.pullup_10k   = 1;  // apply pullup to top (input pin)
+      this->top->flags.useIIR       = 1;  // low pass filter the raw input
+      this->top->flags.useStats     = 0;  // disable min/max/avg statistics
+      this->wiper->flags.pullup_10k = 0;  // readout wiper without pullup;
+      this->wiper->flags.useIIR     = 1;  // low pass filter the raw input
+      this->wiper->flags.useStats   = 1;  // enable min/max/avg statistics
+      this->flags.autoHold          = 1;
       break;
     case RHEOSTAT:
-      this->wiper->flags.pullup_10k  = 1;  // readout wiper with pullup;
-      this->wiper->flags.useIIR      = 1;  // low pass filter the raw input
-      this->wiper->flags.useStats    = 1;  // enable min/max/avg statistics
-      this->flags.denoiseWhenSettled = 1;
+      this->wiper->flags.pullup_10k = 1;  // readout wiper with pullup;
+      this->wiper->flags.useIIR     = 1;  // low pass filter the raw input
+      this->wiper->flags.useStats   = 1;  // enable min/max/avg statistics
+      this->flags.autoHold          = 1;
       break;
     case SWITCH:
       this->wiper->flags.pullup_10k = 1;  // readout wiper with pullup;
@@ -346,53 +349,56 @@ uint16_t doRamping(Controller_T *const this, const uint16_t value, const int upd
 // --------------- implement auto-hold
 static int doAutoHold(Controller_T *const this, int value)
 {
-  if (this->flags.denoiseWhenSettled)
+  if (!this->flags.autoHold)
+    return value;
+
+  uint16_t min;
+  uint16_t max;
+  uint16_t avg;
+  int      settled = 0;
+  // determine min, max and average wiper sample values
+  if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &avg))
+    settled = (max - min) < SETTLING_OFFSET + SETTLING_GAIN * avg / 4096;  // noise scales with voltage for this ADC chip
+  // note this is a dynamic rate-of-change settling, that is the span of values in the buffer is smaller than some limit,
+  // whereas the absolute values are irrelevant. This means very slowly changing values always are considered settled
+  if (settled)  // wiper has settled ?
   {
-    uint16_t min;
-    uint16_t max;
-    uint16_t avg;
-    int      settled = 0;
-    // determine min, max and average wiper sample values
-    if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &avg))
-      settled = (max - min) < SETTLING_OFFSET + SETTLING_GAIN * avg / 4096;  // noise scales with voltage for this ADC chip
-    // note this is a dynamic rate-of-change settling, that is the span of values in the buffer is smaller than some limit,
-    // whereas the absolute values are irrelevant. This means very slowly changing values always are considered settled
-    if (settled)  // wiper has settled ?
+    if (!this->flags.isSettled)  // was not settled before ?
     {
-      if (!this->flags.isSettled)  // was not settled before ?
-      {
-        this->flags.isSettled = 1;
-        // freeze current averaged output as "settled" value;
-        this->settledValue = getBufferAverage(this->out, this->out_index, 8);
-      }
-      else  // already settled
-      {
-        if (abs(value - this->settledValue) > MAX_DRIFT)
-        {  // value drifted away too far?
-          initRamping(this, this->settledValue, DRIFT_INDUCED_RAMPING_TIME);
-          this->settledValue = getBufferAverage(this->out, this->out_index, 8);  // update current averaged output as new "settled" value to avoid larger jumps
-        }
-      }
-      // use settled output only when input is not at range ends
-      // if not done, the range ends could never be reached
-      if ((value != 0) && (value != 16000))
-        value = this->settledValue;
+      this->flags.isSettled = 1;
+      // freeze current averaged output as "settled" value;
+      this->settledValue = getBufferAverage(this->out, this->out_index, 8);
     }
-    else  // wiper not settled, hence use raw input value
+    else  // already settled
     {
-      if (this->flags.isSettled)  // was settled before ?
-      {                           // now ramp to new value
-        this->settledValue = doRamping(this, this->settledValue, 0);
-        initRamping(this, this->settledValue, NORMAL_RAMPING_TIME);  // 12*12.5ms = 150ms
+      if (abs(value - this->settledValue) > MAX_DRIFT)
+      {  // value drifted away too far?
+        initRamping(this, this->settledValue, DRIFT_INDUCED_RAMPING_TIME);
+        this->settledValue = getBufferAverage(this->out, this->out_index, 8);  // update current averaged output as new "settled" value to avoid larger jumps
       }
-      this->flags.isSettled = 0;
     }
+    // use settled output only when input is not at range ends
+    // if not done, the range ends could never be reached
+    if ((value != 0) && (value != 16000))
+      value = this->settledValue;
   }
-  value = doRamping(this, value, 1);
+  else  // wiper not settled, hence use raw input value
+  {
+    if (this->flags.isSettled)                                      // was settled before ?
+    {                                                               // now ramp to new value
+      this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
+      initRamping(this, this->settledValue, NORMAL_RAMPING_TIME);   // and ramp from there
+    }
+    this->flags.isSettled = 0;
+  }
+  int new = doRamping(this, value, 0);                         // get next output candidate value
+  if (abs(new - value) > SHOCK_CHANGE_THRESHOLD)               // fast "shock" change present ?
+    initRamping(this, (new + value) / 2, SHORT_RAMPING_TIME);  //   then init a short "shock" ramp from half-way there
+  value = doRamping(this, value, 1);                           // now perform the actual ramping
   return value;
 }
 
-// --------------- udpate and output final value
+// --------------- update and output final value
 void updateAndOutput(Controller_T *const this, const uint16_t value)
 {
   this->final = value;
