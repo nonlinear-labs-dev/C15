@@ -35,10 +35,8 @@
 #define AT_FACTOR    5080  // 5080 / 4096 for saturation = 100 % at 81 % of the input range
 
 static uint32_t bbSendValue[NUM_HW_SOURCES] = {};
-static int      dummy[20];
-
-static int32_t lastPitchbend;
-static int32_t pitchbendZero;
+static int32_t  lastPitchbend;
+static int32_t  pitchbendZero;
 
 static uint32_t  pbSignalIsSmall;
 static uint32_t  pbTestTime;
