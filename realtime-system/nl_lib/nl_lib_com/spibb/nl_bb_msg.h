@@ -65,6 +65,7 @@
 
 // #define SETTING_ID_TRANSITION_TIME 12  // ==> tTcdRange(0, 16000)
 
+// SETTING_ID_PEDAL_x_TYPE must be a monotonic rising sequence
 #define SETTING_ID_PEDAL_1_TYPE 26  // ==> PotTipActive  = 0
 #define SETTING_ID_PEDAL_2_TYPE 27  // ... PotRingActive = 1
 #define SETTING_ID_PEDAL_3_TYPE 28  // ... SwitchClosing = 2 // aka momentary switch, normally open
@@ -76,6 +77,14 @@
 // #define SETTING_ID_EDIT_SMOOTHING_TIME       33  // ==> tTcdRange(0, 16000)
 // #define SETTING_ID_PRESET_GLITCH_SUPPRESSION 34  // OFF = 0, ON = 1
 // #define BENDER_RAMP_BYPASS                   35  // OFF = 0, ON = 1
+
+// new setting ID's
+// SETTING_ID_PEDAL_x_PARAM_SET must be a monotonic sequence
+#define SETTING_ID_PEDAL_1_PARAM_SET 36  // Select pedal parameter set.
+#define SETTING_ID_PEDAL_2_PARAM_SET 37  // For pots and rheosats, this is..
+#define SETTING_ID_PEDAL_3_PARAM_SET 38  // ..auto-hold / denoising strength:
+#define SETTING_ID_PEDAL_4_PARAM_SET 39  // 0=weak, 1=medium, 2=strong, 3=extreme
+
 #define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
 #define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
 

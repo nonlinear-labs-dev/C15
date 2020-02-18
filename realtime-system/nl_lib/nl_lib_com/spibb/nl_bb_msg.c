@@ -313,7 +313,13 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case SETTING_ID_PEDAL_2_TYPE:
       case SETTING_ID_PEDAL_3_TYPE:
       case SETTING_ID_PEDAL_4_TYPE:
-        NL_EHC_SetLegacyPedalType(data[0], data[1]);
+        NL_EHC_SetLegacyPedalType(data[0] - SETTING_ID_PEDAL_1_TYPE, data[1]);
+        break;
+      case SETTING_ID_PEDAL_1_PARAM_SET:
+      case SETTING_ID_PEDAL_2_PARAM_SET:
+      case SETTING_ID_PEDAL_3_PARAM_SET:
+      case SETTING_ID_PEDAL_4_PARAM_SET:
+        NL_EHC_SetLegacyPedalParameterSet(data[0] - SETTING_ID_PEDAL_1_PARAM_SET, data[1]);
         break;
       default:
         // do nothing
