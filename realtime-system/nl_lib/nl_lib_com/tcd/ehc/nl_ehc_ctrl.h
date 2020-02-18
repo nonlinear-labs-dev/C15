@@ -12,25 +12,11 @@
 
 #include <stdint.h>
 
-typedef enum
-{
-  UNKNOWN,
-  POT,
-  RHEOSTAT,
-  SWITCH,
-  CV
-} ControllerType_T;
-
-typedef enum
-{
-  INVERT     = 1,
-  NON_INVERT = 0
-} ControlerInvert_T;
-
 void NL_EHC_InitControllers(void);
-void NL_EHC_SetLegacyPedalType(const uint16_t channel, const uint16_t type);
 void NL_EHC_DeInitControllers(void);
 void NL_EHC_ProcessControllers(void);
+void NL_EHC_SetLegacyPedalType(const uint16_t channel, const uint16_t type);
+void NL_EHC_SetLegacyPedalParameterSet(uint16_t const channel, uint16_t paramSet);
 
 #endif
 //EOF

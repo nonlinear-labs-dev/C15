@@ -38,23 +38,25 @@
 #define CBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
 #define CBUF_MOD  (CBUF_SIZE - 1)
 
+#if 0
 // max long-term drift before forced update even when settled
-#define MAX_DRIFT                  (160 * 5 / 10)  // 0.5%
-#define DRIFT_INDUCED_RAMPING_TIME (30)            // 30*12.5ms = 357ms, the larger MAX_DRIFT the longer this should be set
-#define NORMAL_RAMPING_TIME        (16)            // 16*12.5ms = 200ms
+#define MAX_DRIFT                  (160 * 3 / 10)  // 0.3%
+#define DRIFT_INDUCED_RAMPING_TIME (20)            // 20*12.5ms = 250ms, the larger MAX_DRIFT the longer this should be set
+#define NORMAL_RAMPING_TIME        (10)            // 10*12.5ms = 100ms
 #define SHORT_RAMPING_TIME         (3)             // 3*12.5ms  = 38ms
 #define SHOCK_CHANGE_THRESHOLD     (2000)          // 2000/16000 : > 12.5% max change is considered a shock change
 
 // offset: settling minimum in LSBs, of wiper ADC channel.
-#define SETTLING_OFFSET (12)  // 6, 12, 24  (6dB steps)
+#define SETTLING_OFFSET            (12)            // 6, 12, 24  (6dB steps)
 // gain factor for how many LSBs to add at fullscale (this is because the ADC has more noise at larger values)
-#define SETTLING_GAIN (24)  // 6, 12, 24  (6dB steps)
+#define SETTLING_GAIN              (24)            // 6, 12, 24  (6dB steps)
 // Stable/low-creepage pedals are OK with 3..10, bad pedals (Moog) may need 20..50
 // The higher the value, the more there is a step transition on a change, after settling
 #warning "ToDo : make all three value parametrizable. Like 3 10dB steps 'Pedal Auto-Stabilizing' : weak(4), normal(13), strong(40)"
 // This mainly important when the pedal is shared with a ribbon, noise (from vibration, creep) shall not overwrite
 // the ribbon value(but even when the pedal is the only modulator, too much noise is not ideal).
 // Therefore, the PG should temporarily increase the stabilizing level by one when pedal and ribbon / other pedal run shared.
+#endif
 
 // ============= Switch channels
 #define SWITCH_INITIAL_RAW_THRESHOLD (1400)  // raw ADC value that determinis inital switch state (> means "high")
@@ -65,6 +67,100 @@
 
 #define SWITCH_DEBOUNCE_TIME (20)  // debounce switch time in 12.5ms units (20 == 250ms, shorter than any intentional switching)
 
+#define ADC_MAX_SCALED (4096 * AVG_DIV)
+
+typedef struct
+{
+  const int MAX_DRIFT;
+  const int DRIFT_INDUCED_RAMPING_TIME;
+  const int DRIFT_INDUCED_RAMPING_TIME_REDUCED;
+  const int NORMAL_RAMPING_TIME;
+  const int SHORT_RAMPING_TIME;
+  const int SHOCK_CHANGE_THRESHOLD;
+  const int SETTLING_OFFSET;
+  const int SETTLING_GAIN;
+  const int SETTLING_OFFSET_REDUCED;
+  const int SETTLING_GAIN_REDUCED;
+} ControllerParameterSet_T;
+
+#define PARAMETER_SETS (4)  // number of different parameter sets
+
+const ControllerParameterSet_T CTRL_PARAMS[PARAMETER_SETS] = {
+  {
+      // set 0 : high sensitivity to noise & drifts
+      /* MAX_DRIFT                          */ (160 * 1 / 10),      // 0.1%
+      /* DRIFT_INDUCED_RAMPING_TIME         */ (10),                // 10*12.5ms = 125ms, the larger MAX_DRIFT the longer this should be set
+      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (10 / 2),            //
+      /* NORMAL_RAMPING_TIME                */ (6),                 // 6*12.5ms = 75ms
+      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
+      /* SHOCK_CHANGE_THRESHOLD             */ (1600),              // 1600/16000 : > 10% max change is considered a shock change
+      /* SETTLING_OFFSET                    */ (5 * AVG_DIV),       //
+      /* SETTLING_GAIN                      */ (10 * AVG_DIV),      //
+      /* SETTLING_OFFSET_REDUCED            */ (5 * AVG_DIV / 2),   //
+      /* SETTLING_GAIN_REDUCED              */ (10 * AVG_DIV / 2),  //
+  },
+  {
+      // set 1 : normal sensitivity to noise & drifts
+      /* MAX_DRIFT                          */ (160 * 3 / 10),      // 0.3%
+      /* DRIFT_INDUCED_RAMPING_TIME         */ (20),                // 20*12.5ms = 250ms, the larger MAX_DRIFT the longer this should be set
+      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (20 / 2),            //
+      /* NORMAL_RAMPING_TIME                */ (10),                // 10*12.5ms = 100ms
+      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
+      /* SHOCK_CHANGE_THRESHOLD             */ (2000),              // 2000/16000 : > 12.5% max change is considered a shock change
+      /* SETTLING_OFFSET                    */ (11 * AVG_DIV),      //
+      /* SETTLING_GAIN                      */ (22 * AVG_DIV),      //
+      /* SETTLING_OFFSET_REDUCED            */ (11 * AVG_DIV / 3),  //
+      /* SETTLING_GAIN_REDUCED              */ (22 * AVG_DIV / 3),  //
+  },
+  {
+      // set 2 : medium-low sensitivity to noise & drifts
+      /* MAX_DRIFT                          */ (160 * 10 / 10),     // 1%
+      /* DRIFT_INDUCED_RAMPING_TIME         */ (40),                // 40*12.5ms = 500ms, the larger MAX_DRIFT the longer this should be set
+      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (40 / 2),            //
+      /* NORMAL_RAMPING_TIME                */ (10),                // 10*12.5ms = 100ms
+      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
+      /* SHOCK_CHANGE_THRESHOLD             */ (3000),              // 3000/16000 : > 19% max change is considered a shock change
+      /* SETTLING_OFFSET                    */ (25 * AVG_DIV),      //
+      /* SETTLING_GAIN                      */ (50 * AVG_DIV),      //
+      /* SETTLING_OFFSET_REDUCED            */ (25 * AVG_DIV / 2),  //
+      /* SETTLING_GAIN_REDUCED              */ (50 * AVG_DIV / 2),  //
+  },
+  {
+      // set 3 : lowest sensitivity to noise & drifts
+      /* MAX_DRIFT                          */ (160 * 15 / 10),     // 1.5%
+      /* DRIFT_INDUCED_RAMPING_TIME         */ (40),                // 50*12.5ms = 625ms, the larger MAX_DRIFT the longer this should be set
+      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (40 / 2),            //
+      /* NORMAL_RAMPING_TIME                */ (10),                // 10*12.5ms = 100ms
+      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
+      /* SHOCK_CHANGE_THRESHOLD             */ (3000),              // 3000/16000 : > 19% max change is considered a shock change
+      /* SETTLING_OFFSET                    */ (35 * AVG_DIV),      //
+      /* SETTLING_GAIN                      */ (70 * AVG_DIV),      //
+      /* SETTLING_OFFSET_REDUCED            */ (35 * AVG_DIV / 2),  //
+      /* SETTLING_GAIN_REDUCED              */ (70 * AVG_DIV / 2),  //
+  },
+};
+
+typedef enum
+{
+  UNKNOWN,
+  POT,
+  RHEOSTAT,
+  SWITCH,
+  CV
+} ControllerType_T;
+
+typedef enum
+{
+  INVERT     = 1,
+  NON_INVERT = 0
+} ControlerInvert_T;
+
+typedef enum
+{
+  RETRANSMIT    = 1,
+  NO_RETRANSMIT = 0
+} ControlerReXmit_T;
+
 typedef struct
 {
   ControllerType_T type;
@@ -74,10 +170,11 @@ typedef struct
   struct
   {
     // output
-    unsigned initialized : 1;
-    unsigned isReset : 1;
-    unsigned isSettled : 1;
-    unsigned outputIsValid : 1;
+    unsigned          initialized : 1;
+    unsigned          isReset : 1;
+    ControlerReXmit_T reXmitOnReinit : 1;
+    unsigned          isSettled : 1;
+    unsigned          outputIsValid : 1;
     // input
     unsigned          autoHold : 1;  // denoise output when settled long and close enough
     ControlerInvert_T polarity : 1;  // invert final output value or not
@@ -105,6 +202,7 @@ typedef struct
   uint16_t lastFinal;
 
   // control
+  uint16_t paramSet;
   uint16_t wait;
   uint16_t step;
 
@@ -139,8 +237,27 @@ static void sendControllerData(const uint32_t const hwSourceId, const uint32_t v
 /*************************************************************************/ /**
 * @brief	Init a controller
 ******************************************************************************/
-static void initController(Controller_T *const this, const int HwSourceId, AdcBuffer_T *const wiper, AdcBuffer_T *const top, const ControllerType_T type, const ControlerInvert_T polarity)
+static void initController(Controller_T *const this, const int HwSourceId, AdcBuffer_T *const wiper, AdcBuffer_T *const top,
+                           const ControllerType_T type, const ControlerInvert_T polarity, const uint16_t paramSet, const ControlerReXmit_T reXmit)
 {
+  this->flags.reXmitOnReinit = reXmit;
+  this->flags.polarity       = polarity;
+  if (paramSet < 0)
+    this->paramSet = 0;
+  else if (paramSet >= PARAMETER_SETS)
+    this->paramSet = PARAMETER_SETS - 1;
+  else
+    this->paramSet = paramSet;
+  if (this->flags.initialized
+      && (this->type == type)
+      && (this->HwSourceId == HwSourceId)
+      && (this->wiper == wiper)
+      && (this->top == top))
+  {  // re-init: already have a valid setup, so only set Polarity and ParamSet changes
+    if (this->flags.reXmitOnReinit)
+      this->lastFinal = ~this->final;  // forces a new transmit to AE and UI
+    return;
+  }
   this->type                = type;
   this->HwSourceId          = HwSourceId;
   this->min                 = 65535;
@@ -150,7 +267,6 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
   this->flags.autoHold      = 0;
   this->val_index           = 0;
   this->out_index           = 0;
-  this->flags.polarity      = polarity;
   this->flags.outputIsValid = 0;
   this->flags.isReset       = 1;
   this->flags.ramping       = 0;
@@ -184,7 +300,7 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
       this->wiper->flags.pullup_10k = 0;  // readout wiper without pullup;
       this->wiper->flags.useIIR     = 0;  // ??? low pass filter the raw input
       this->wiper->flags.useStats   = 1;  // enable min/max/avg statistics
-      this->flags.autoHold          = 1;  // ??? temp
+      this->flags.autoHold          = 1;
       break;
     case RHEOSTAT:
       this->wiper->flags.pullup_10k = 1;  // readout wiper with pullup;
@@ -211,7 +327,7 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
   this->valueBufInvalid = SBUF_SIZE + CBUF_SIZE + 1;  // number of runs until value buffer is filled
   this->outBufInvalid   = CBUF_SIZE;                  // number of runs until final output buffer is filled
 
-  this->final             = 0;
+  this->final             = 8000;
   this->lastFinal         = ~this->final;
   this->flags.initialized = 1;
 }
@@ -225,22 +341,23 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
     return;
   if (this->flags.isReset)
     return;
-  this->wait                = wait_time;
-  this->min                 = 65535;
-  this->max                 = 0;
-  this->val_index           = 0;
-  this->out_index           = 0;
-  this->flags.outputIsValid = 0;
-  this->flags.ramping       = 0;
-  this->valueBufInvalid     = SBUF_SIZE;  // number of runs until value buffer is filled
-  this->outBufInvalid       = CBUF_SIZE;  // number of runs until final output buffer is filled
-  this->final               = 0;
-  this->lastFinal           = 0xFFFF;
-  this->flags.initialized   = 1;
-  this->flags.isReset       = 1;
-  this->step                = 0;
-  this->valSum              = 0;
-  this->outSum              = 0;
+  this->flags.reXmitOnReinit = 0;
+  this->wait                 = wait_time;
+  this->min                  = 65535;
+  this->max                  = 0;
+  this->val_index            = 0;
+  this->out_index            = 0;
+  this->flags.outputIsValid  = 0;
+  this->flags.ramping        = 0;
+  this->valueBufInvalid      = SBUF_SIZE;  // number of runs until value buffer is filled
+  this->outBufInvalid        = CBUF_SIZE;  // number of runs until final output buffer is filled
+  this->final                = 8000;
+  this->lastFinal            = ~this->final;
+  this->flags.initialized    = 1;
+  this->flags.isReset        = 1;
+  this->step                 = 0;
+  this->valSum               = 0;
+  this->outSum               = 0;
   for (int i = 0; i < CBUF_SIZE; i++)
   {
     this->values[i] = 0;
@@ -297,7 +414,7 @@ static int getPotOrRheoValue(Controller_T *const this, const int isPot)
     value = this->wiper->filtered_current;
     if (value > 4000 * AVG_DIV)
       value = 4000 * AVG_DIV;  // avoid excessive values after division
-    value = RHEO_SCALE_FACTOR * value / (4096 * AVG_DIV - value);
+    value = RHEO_SCALE_FACTOR * value / (ADC_MAX_SCALED - value);
     if (value > 60000)  // limit to uint16 range, 100k pot shall be still within
       value = 60000;
   }
@@ -386,10 +503,11 @@ static int doAutoHold(Controller_T *const this, int value)
   // determine min, max and average wiper sample values
   if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &sum))
   {
+    // noise scales with voltage for this ADC chip
     if (this->flags.isSettled)
-      settled = (int) (max - min) < SETTLING_OFFSET * AVG_DIV + SETTLING_GAIN * AVG_DIV * (int) sum / (4096 * AVG_DIV);              // noise scales with voltage for this ADC chip
-    else                                                                                                                             // use 3x more sensitive detector when not yet settled
-      settled = (int) (max - min) < (SETTLING_OFFSET * AVG_DIV / 3) + (SETTLING_GAIN * AVG_DIV / 3) * (int) sum / (4096 * AVG_DIV);  // noise scales with voltage for this ADC chip
+      settled = (int) (max - min) < CTRL_PARAMS[this->paramSet].SETTLING_OFFSET + CTRL_PARAMS[this->paramSet].SETTLING_GAIN * (int) sum / ADC_MAX_SCALED;
+    else
+      settled = (int) (max - min) < CTRL_PARAMS[this->paramSet].SETTLING_OFFSET_REDUCED + CTRL_PARAMS[this->paramSet].SETTLING_GAIN_REDUCED * (int) sum / ADC_MAX_SCALED;
   }
   // note this is a dynamic rate-of-change settling, that is the span of values in the buffer is smaller than some limit,
   // whereas the absolute values are irrelevant. This means very slowly changing values always are considered settled
@@ -402,49 +520,60 @@ static int doAutoHold(Controller_T *const this, int value)
 #endif
   if (settled)  // wiper has settled ?
   {
+    int avg = this->outSum / CBUF_SIZE;
     if (!this->flags.isSettled)  // was not settled before ?
     {
       this->flags.isSettled = 1;
       // freeze current averaged output as "settled" value;
-      this->settledValue = this->outSum / CBUF_SIZE;
+      this->settledValue = avg;
     }
     else  // already settled
     {
-      if (abs(value - this->settledValue) > MAX_DRIFT)
-      {                                                               // value drifted away too far?
+      if (abs(avg - this->settledValue) > CTRL_PARAMS[this->paramSet].MAX_DRIFT)
+      {  // value drifted away too far?
+        int alreadyRamping = this->flags.ramping;
         this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
-        initRamping(this, this->settledValue, DRIFT_INDUCED_RAMPING_TIME);
-        this->settledValue = this->outSum / CBUF_SIZE;  // update current averaged output as new "settled" value to avoid larger jumps
+        if (alreadyRamping)
+          initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].DRIFT_INDUCED_RAMPING_TIME_REDUCED);
+        else
+          initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].DRIFT_INDUCED_RAMPING_TIME);
+        this->settledValue = avg;  // update current averaged output as new "settled" value to avoid larger jumps
       }
     }
     // use settled output only when input is not at range ends
     // if not done, the range ends could never be reached
-    if ((value != 0) && (value != 16000))
-      value = this->settledValue;
+    if ((value == 0 && this->settledValue != 0) || (value == 16000 && this->settledValue != 16000))
+    {
+      this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
+      initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].NORMAL_RAMPING_TIME);
+    }
+    value = this->settledValue;
   }
   else  // wiper not settled, hence use raw input value
   {
-    if (this->flags.isSettled)                                      // was settled before ?
-    {                                                               // now ramp to new value
-      this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
-      initRamping(this, this->settledValue, NORMAL_RAMPING_TIME);   // and ramp from there
+    if (this->flags.isSettled)                                                                 // was settled before ?
+    {                                                                                          // now ramp to new value
+      this->settledValue = doRamping(this, this->settledValue, 0);                             // advance to next output candidate value
+      initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].NORMAL_RAMPING_TIME);  // and ramp from there
       // DBG_Led_Warning_TimedOn(3);
     }
     this->flags.isSettled = 0;
   }
-  int new = doRamping(this, value, 0);                         // get next output candidate value
-  if (abs(new - value) > SHOCK_CHANGE_THRESHOLD)               // fast "shock" change present ?
+  int new = doRamping(this, value, 0);                                        // get next output candidate value
+  if (abs(new - value) > CTRL_PARAMS[this->paramSet].SHOCK_CHANGE_THRESHOLD)  // fast "shock" change present ?
   {
-    initRamping(this, (new + value) / 2, SHORT_RAMPING_TIME);  //   then init a short "shock" ramp from half-way there
+    initRamping(this, (new + value) / 2, CTRL_PARAMS[this->paramSet].SHORT_RAMPING_TIME);  //   then init a short "shock" ramp from half-way there
     // DBG_Led_Error_TimedOn(3);
   }
-  value = doRamping(this, value, 1);                           // now perform the actual ramping
+  value = doRamping(this, value, 1);  // now perform the actual ramping
 #if SHOW_SETTLING
   if (this->flags.ramping)
     DBG_Led_Warning_On();
   else
-	DBG_Led_Warning_Off();
+    DBG_Led_Warning_Off();
 #endif
+
+  // value = this->outSum / CBUF_SIZE; // ???
   return value;
 }
 
@@ -616,14 +745,50 @@ static void readoutSwitch(Controller_T *const this)
 void NL_EHC_InitControllers(void)
 {
   // ???? temp init
-  initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], POT, NON_INVERT);
-  initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT, NON_INVERT);
-  initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT, NON_INVERT);
-  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT, NON_INVERT);
+  initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], POT, NON_INVERT, 0, NO_RETRANSMIT);
+  initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT, NON_INVERT, 0, NO_RETRANSMIT);
+  initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT, NON_INVERT, 0, NO_RETRANSMIT);
+  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT, NON_INVERT, 0, NO_RETRANSMIT);
   clearController(&ctrl[4]);
   clearController(&ctrl[5]);
   clearController(&ctrl[6]);
   clearController(&ctrl[7]);
+}
+
+typedef struct
+{
+  Controller_T *const controller;
+  const int           hwSource;
+  AdcBuffer_T *const  adcTip;
+  AdcBuffer_T *const  adcRing;
+} assignmentTable_T;
+
+static const assignmentTable_T assignmentTable[4] = {
+  { &ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1] },
+  { &ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3] },
+  { &ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5] },
+  { &ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7] },
+};
+
+/*************************************************************************/ /**
+* @brief	 Select Pedal Parameter Set
+* @param[in] channel (SETTING_ID_PEDAL_1_TYPE ... SETTING_ID_PEDAL_4_TYPE)
+* @param[in] for pots/rheos, auto-hold ::  0=weak: 1=medium  2=strong 3=extreme
+******************************************************************************/
+void NL_EHC_SetLegacyPedalParameterSet(uint16_t const channel, uint16_t paramSet)
+{
+  if (channel >= 4)
+    return;
+
+  const assignmentTable_T *this = &assignmentTable[channel];
+  if (!this->controller->flags.initialized)
+    return;
+  if (this->controller->type != POT && this->controller->type != RHEOSTAT)
+    return;
+  if (paramSet >= PARAMETER_SETS)
+    paramSet = PARAMETER_SETS - 1;
+
+  this->controller->paramSet = paramSet;
 }
 
 /*************************************************************************/ /**
@@ -633,54 +798,37 @@ void NL_EHC_InitControllers(void)
 ******************************************************************************/
 void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
 {
-  typedef struct
+  if (channel >= 4)
+    return;
+
+  const assignmentTable_T *this = &assignmentTable[channel];
+
+  // ??? temp to select param sets for pedal 0...2
+  if (channel == 3)
   {
-    Controller_T *controller;
-    int           hwSource;
-    AdcBuffer_T * adcTip;
-    AdcBuffer_T * adcRing;
-  } assignmentTable_T;
-
-  static assignmentTable_T assignmentTable[4] = {
-    { &ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1] },
-    { &ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3] },
-    { &ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5] },
-    { &ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7] },
-  };
-
-  assignmentTable_T *this;
-
-  switch (channel)
-  {
-    case SETTING_ID_PEDAL_1_TYPE:
-      this = &assignmentTable[0];
-      break;
-    case SETTING_ID_PEDAL_2_TYPE:
-      this = &assignmentTable[1];
-      break;
-    case SETTING_ID_PEDAL_3_TYPE:
-      this = &assignmentTable[2];
-      break;
-    case SETTING_ID_PEDAL_4_TYPE:
-      this = &assignmentTable[3];
-      break;
-    default:
-      return;
+    NL_EHC_SetLegacyPedalParameterSet(0, type);
+    NL_EHC_SetLegacyPedalParameterSet(1, type);
+    NL_EHC_SetLegacyPedalParameterSet(2, type);
+    return;
   }
+
   switch (type)
   {
-    case 0:  // pot, tip active
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT);
+    case 0:
+      // pot, tip active
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT, 1, NO_RETRANSMIT);
       break;
-    case 1:                                                                                                 // pot, ring active
-                                                                                                            // initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT);
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, RHEOSTAT, NON_INVERT);  // ???
+    case 1:
+      // pot, ring active
+      initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT, 1, NO_RETRANSMIT);
       break;
-    case 2:  // switch, closing, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT);
+    case 2:
+      // switch, closing, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT, 1, NO_RETRANSMIT);
       break;
-    case 3:  // switch, opening, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT);
+    case 3:
+      // switch, opening, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT, 1, NO_RETRANSMIT);
       break;
     default:
       return;
