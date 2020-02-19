@@ -83,7 +83,8 @@ typedef struct
   const int SETTLING_GAIN_REDUCED;
 } ControllerParameterSet_T;
 
-#define PARAMETER_SETS (4)  // number of different parameter sets
+#define PARAMETER_SETS        (4)  // number of different parameter sets
+#define DEFAULT_PARAMETER_SET (1)
 
 const ControllerParameterSet_T CTRL_PARAMS[PARAMETER_SETS] = {
   {
@@ -164,7 +165,7 @@ typedef enum
 // ----------
 typedef struct
 {
-  unsigned id : 3;                // controller number 0...7, aka input (main) ADC channel 0...7, 0/1=J1T/R, 2/3=J2T/R, etc,
+  unsigned id : 3;  // controller number 0...7, aka input (main) ADC channel 0...7, 0/1=J1T/R, 2/3=J2T/R, etc,
   //                                   3wire disables 2wire sharing the same channels automatically
   //                                   2wire disables 3wire pot sharing the same channel automatically
   unsigned connectionType : 1;    // controller connection type, 0=3wire(pot), 1=2wire(rheo/sw/cv)
@@ -178,7 +179,7 @@ typedef struct
 typedef struct
 {
   unsigned initialized : 1;    // controller is initialized (has valid setup)
-  unsigend pluggedIn : 1;      // controller is plugged in
+  unsigned pluggedIn : 1;      // controller is plugged in
   unsigned outputIsValid : 1;  // controller final output value has been set
   unsigned isAutoRanged : 1;   // controller has finished auto-ranging (always=1 when disabled)
   unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
@@ -545,7 +546,8 @@ static int doAutoHold(Controller_T *const this, int value)
 #endif
   if (settled)  // wiper has settled ?
   {
-    int avg = this->outSum / CBUF_SIZE;
+    int avg       = this->outSum / CBUF_SIZE;
+    int saturated = ((avg == 0) || (avg == 16000));
     if (!this->flags.isSettled)  // was not settled before ?
     {
       this->flags.isSettled = 1;
@@ -554,23 +556,19 @@ static int doAutoHold(Controller_T *const this, int value)
     }
     else  // already settled
     {
-      if (abs(avg - this->settledValue) > CTRL_PARAMS[this->paramSet].MAX_DRIFT)
-      {  // value drifted away too far?
+      if (saturated || (abs(avg - this->settledValue) > CTRL_PARAMS[this->paramSet].MAX_DRIFT))
+      {  // value drifted away too far, or reached end points?
         int alreadyRamping = this->flags.ramping;
         this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
-        if (alreadyRamping)
-          initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].DRIFT_INDUCED_RAMPING_TIME_REDUCED);
-        else
-          initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].DRIFT_INDUCED_RAMPING_TIME);
-        this->settledValue = avg;  // update current averaged output as new "settled" value to avoid larger jumps
+        if (this->settledValue != avg)
+        {
+          if (alreadyRamping)
+            initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].DRIFT_INDUCED_RAMPING_TIME_REDUCED);
+          else
+            initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].DRIFT_INDUCED_RAMPING_TIME);
+          this->settledValue = avg;  // update current averaged output as new "settled" value to avoid larger jumps
+        }
       }
-    }
-    // use settled output only when input is not at range ends
-    // if not done, the range ends could never be reached
-    if ((value == 0 && this->settledValue != 0) || (value == 16000 && this->settledValue != 16000))
-    {
-      this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
-      initRamping(this, this->settledValue, CTRL_PARAMS[this->paramSet].NORMAL_RAMPING_TIME);
     }
     value = this->settledValue;
   }
@@ -770,10 +768,10 @@ static void readoutSwitch(Controller_T *const this)
 void NL_EHC_InitControllers(void)
 {
   // ???? temp init
-  initController(&ctrl[0], HW_SOURCE_ID_PEDAL_1, &adc[0], &adc[1], POT, NON_INVERT, 0, NO_RETRANSMIT);
-  initController(&ctrl[1], HW_SOURCE_ID_PEDAL_2, &adc[2], &adc[3], POT, NON_INVERT, 0, NO_RETRANSMIT);
-  initController(&ctrl[2], HW_SOURCE_ID_PEDAL_3, &adc[4], &adc[5], POT, NON_INVERT, 0, NO_RETRANSMIT);
-  initController(&ctrl[3], HW_SOURCE_ID_PEDAL_4, &adc[6], &adc[7], POT, NON_INVERT, 0, NO_RETRANSMIT);
+  clearController(&ctrl[0]);
+  clearController(&ctrl[1]);
+  clearController(&ctrl[2]);
+  clearController(&ctrl[3]);
   clearController(&ctrl[4]);
   clearController(&ctrl[5]);
   clearController(&ctrl[6]);
@@ -828,6 +826,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
 
   const assignmentTable_T *this = &assignmentTable[channel];
 
+#if 0
   // ??? temp to select param sets for pedal 0...2
   if (channel == 3)
   {
@@ -836,24 +835,25 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
     NL_EHC_SetLegacyPedalParameterSet(2, type);
     return;
   }
+#endif
 
   switch (type)
   {
     case 0:
       // pot, tip active
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT, 1, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
       break;
     case 1:
       // pot, ring active
-      initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT, 1, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
       break;
     case 2:
       // switch, closing, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT, 1, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
       break;
     case 3:
       // switch, opening, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT, 1, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
       break;
     default:
       return;
