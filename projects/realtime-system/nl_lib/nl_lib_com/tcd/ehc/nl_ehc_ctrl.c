@@ -35,8 +35,8 @@
 #define AR_LOWER_DEAD_ZONE (4)     // 4 -> 4%, electrical dead zone
 
 // settling
-#define CBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
-#define CBUF_MOD  (CBUF_SIZE - 1)
+#define VALBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
+#define VALBUF_MOD  (VALBUF_SIZE - 1)
 
 #if 0
 // max long-term drift before forced update even when settled
@@ -156,25 +156,19 @@ typedef enum
   NON_INVERT = 0
 } ControlerInvert_T;
 
-typedef enum
-{
-  RETRANSMIT    = 1,
-  NO_RETRANSMIT = 0
-} ControlerReXmit_T;
-
 // ----------
 typedef struct
 {
   unsigned id : 3;  // controller number 0...7, aka input (main) ADC channel 0...7, 0/1=J1T/R, 2/3=J2T/R, etc,
-  //                                   3wire disables 2wire sharing the same channels automatically
-  //                                   2wire disables 3wire pot sharing the same channel automatically
+  //                    - 3wire disables 2wire sharing the same channels automatically
+  //                    - 2wire disables 3wire pot sharing the same channel automatically
   unsigned connectionType : 1;    // controller connection type, 0=3wire(pot), 1=2wire(rheo/sw/cv)
   unsigned inputSense : 1;        // controller input sensing, 0=unloaded(pot/CV), 1=pullup(rheo/sw)
   unsigned outputType : 1;        // controller output type, 0=continuous(all), 1=bi-stable(all)
   unsigned polarityInvert : 1;    // invert, or don't, the final output(all)
   unsigned autoHoldStrength : 3;  // controller auto-hold 0..7, 0(off)...4=autoHold-Strength for pot/rheo
   unsigned doAutoRanging : 1;     // enable auto-ranging, or assume static (but adjustable) thresholds/levels
-} ControllerConfig_T;
+} EHC_ControllerConfig_T;
 
 typedef struct
 {
@@ -184,39 +178,70 @@ typedef struct
   unsigned isAutoRanged : 1;   // controller has finished auto-ranging (always=1 when disabled)
   unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
   unsigned isRamping : 1;      // controller currently does a ramp to the actual value (pot/rheo) (not valid for bi-stable)
-} ControllerStatus_T;
+} EHC_ControllerStatus_T;
 // ----------
+
+// ---------------- begin Value Buffer defs
+typedef struct
+{
+  uint16_t values[VALBUF_SIZE];
+  uint16_t index;
+  uint16_t invalidCntr;
+  int      sum;
+} ValueBuffer_T;
+
+void clearValueBuffer(ValueBuffer_T *const this)
+{
+  this->index       = 0;
+  this->sum         = 0;
+  this->invalidCntr = VALBUF_SIZE;
+  for (int i = 0; i < VALBUF_SIZE; i++)
+    this->values[i] = 0;
+}
+
+uint16_t addInValueBuffer(ValueBuffer_T *const this, const uint16_t value)
+{
+  this->index = (this->index + 1) & VALBUF_MOD;
+  if (this->invalidCntr)
+    this->invalidCntr--;
+  this->sum += (int) value - (int) this->values[this->index];
+  this->values[this->index] = value;
+  return value;
+}
+
+uint16_t getAvgFromValueBuffer(const ValueBuffer_T *const this)
+{
+  return this->sum / VALBUF_SIZE;
+}
+
+int isValueBufferFilled(ValueBuffer_T *const this)
+{
+  return (this->invalidCntr == 0);
+}
+// ---------------- end Value Buffer defs
 
 typedef struct
 {
   ControllerType_T type;
   int              HwSourceId;  // Id for AE and UI "changed value event" messages
-  AdcBuffer_T *    wiper;       // pot (or rheostat) wiper
-  AdcBuffer_T *    top;         // pot top (not used for rheostat)
+  EHC_AdcBuffer_T *wiper;       // pot (or rheostat) wiper
+  EHC_AdcBuffer_T *top;         // pot top (not used for rheostat)
   struct
   {
     // output
-    unsigned          initialized : 1;
-    unsigned          isReset : 1;
-    ControlerReXmit_T reXmitOnReinit : 1;
-    unsigned          isSettled : 1;
-    unsigned          outputIsValid : 1;
+    unsigned initialized : 1;
+    unsigned isReset : 1;
+    unsigned isSettled : 1;
+    unsigned outputIsValid : 1;
     // input
     unsigned          autoHold : 1;  // denoise output when settled long and close enough
     ControlerInvert_T polarity : 1;  // invert final output value or not
     unsigned          debounce : 1;  // enable switch debouncing
     unsigned          ramping : 1;
   } flags;
-  // value buffer
-  uint16_t values[CBUF_SIZE];
-  uint16_t val_index;
-  uint16_t valueBufInvalid;
-  uint32_t valSum;
-  // output buffer
-  uint16_t out[CBUF_SIZE];
-  uint16_t out_index;
-  uint16_t outBufInvalid;
-  uint32_t outSum;
+
+  ValueBuffer_T rawBuffer;  // intermediate value buffer
+  ValueBuffer_T outBuffer;  // output buffer
 
   // autoranging
   uint16_t min;
@@ -263,11 +288,10 @@ static void sendControllerData(const uint32_t const hwSourceId, const uint32_t v
 /*************************************************************************/ /**
 * @brief	Init a controller
 ******************************************************************************/
-static void initController(Controller_T *const this, const int HwSourceId, AdcBuffer_T *const wiper, AdcBuffer_T *const top,
-                           const ControllerType_T type, const ControlerInvert_T polarity, const uint16_t paramSet, const ControlerReXmit_T reXmit)
+static void initController(Controller_T *const this, const int HwSourceId, EHC_AdcBuffer_T *const wiper, EHC_AdcBuffer_T *const top,
+                           const ControllerType_T type, const ControlerInvert_T polarity, const uint16_t paramSet)
 {
-  this->flags.reXmitOnReinit = reXmit;
-  this->flags.polarity       = polarity;
+  this->flags.polarity = polarity;
   if (paramSet < 0)
     this->paramSet = 0;
   else if (paramSet >= PARAMETER_SETS)
@@ -280,8 +304,7 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
       && (this->wiper == wiper)
       && (this->top == top))
   {  // re-init: already have a valid setup, so only set Polarity and ParamSet changes
-    if (this->flags.reXmitOnReinit)
-      this->lastFinal = ~this->final;  // forces a new transmit to AE and UI
+     //  this->lastFinal = ~this->final;  // forces a new transmit to AE and UI
     return;
   }
   this->type                = type;
@@ -291,21 +314,14 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
   this->wiper               = wiper;
   this->top                 = NULL;
   this->flags.autoHold      = 0;
-  this->val_index           = 0;
-  this->out_index           = 0;
   this->flags.outputIsValid = 0;
   this->flags.isReset       = 1;
   this->flags.ramping       = 0;
   this->flags.debounce      = 0;  // ??? temp
   this->wait                = 0;
   this->step                = 0;
-  this->valSum              = 0;
-  this->outSum              = 0;
-  for (int i = 0; i < CBUF_SIZE; i++)
-  {
-    this->values[i] = 0;
-    this->out[i]    = 0;
-  }
+  clearValueBuffer(&this->rawBuffer);
+  clearValueBuffer(&this->outBuffer);
 
   if ((type != POT) && (top))
   {  // if a top channel was supplied, clear it unless it's for a pot
@@ -350,9 +366,6 @@ static void initController(Controller_T *const this, const int HwSourceId, AdcBu
       return;
   }
 
-  this->valueBufInvalid = SBUF_SIZE + CBUF_SIZE + 1;  // number of runs until value buffer is filled
-  this->outBufInvalid   = CBUF_SIZE;                  // number of runs until final output buffer is filled
-
   this->final             = 8000;
   this->lastFinal         = ~this->final;
   this->flags.initialized = 1;
@@ -367,28 +380,18 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
     return;
   if (this->flags.isReset)
     return;
-  this->flags.reXmitOnReinit = 0;
-  this->wait                 = wait_time;
-  this->min                  = 65535;
-  this->max                  = 0;
-  this->val_index            = 0;
-  this->out_index            = 0;
-  this->flags.outputIsValid  = 0;
-  this->flags.ramping        = 0;
-  this->valueBufInvalid      = SBUF_SIZE;  // number of runs until value buffer is filled
-  this->outBufInvalid        = CBUF_SIZE;  // number of runs until final output buffer is filled
-  this->final                = 8000;
-  this->lastFinal            = ~this->final;
-  this->flags.initialized    = 1;
-  this->flags.isReset        = 1;
-  this->step                 = 0;
-  this->valSum               = 0;
-  this->outSum               = 0;
-  for (int i = 0; i < CBUF_SIZE; i++)
-  {
-    this->values[i] = 0;
-    this->out[i]    = 0;
-  }
+  this->wait                = wait_time;
+  this->min                 = 65535;
+  this->max                 = 0;
+  this->flags.outputIsValid = 0;
+  this->flags.ramping       = 0;
+  this->final               = 8000;
+  this->lastFinal           = ~this->final;
+  this->flags.initialized   = 1;
+  this->flags.isReset       = 1;
+  this->step                = 0;
+  clearValueBuffer(&this->rawBuffer);
+  clearValueBuffer(&this->outBuffer);
 }
 
 /*************************************************************************/ /**
@@ -410,14 +413,14 @@ static int getBufferAverage(uint16_t *const buf, const uint16_t pos, int bufferD
 
   if (bufferDepth < 1)
     bufferDepth = 1;
-  if (bufferDepth > CBUF_SIZE)
-    bufferDepth = CBUF_SIZE;
+  if (bufferDepth > VALBUF_SIZE)
+    bufferDepth = VALBUF_SIZE;
 
   register int             sum      = 0;
   const register uint16_t  position = pos;
   const register uint16_t *buffer   = buf;
   for (register int i = bufferDepth - 1; i >= 0; i--)
-    sum += buffer[(position + i) & CBUF_MOD];
+    sum += buffer[(position + i) & VALBUF_MOD];
   return sum / bufferDepth;
 }
 #endif
@@ -426,7 +429,7 @@ static int getBufferAverage(uint16_t *const buf, const uint16_t pos, int bufferD
 static int getPotOrRheoValue(Controller_T *const this, const int isPot)
 {
   int value;
-  this->val_index = (this->val_index + CBUF_MOD) & CBUF_MOD;
+
   if (isPot)
   {  // potentiometric ratio wiper/top
     int top   = this->top->filtered_current;
@@ -444,8 +447,6 @@ static int getPotOrRheoValue(Controller_T *const this, const int isPot)
     if (value > 60000)  // limit to uint16 range, 100k pot shall be still within
       value = 60000;
   }
-  this->valSum += value - (int) this->values[this->val_index];
-  this->values[this->val_index] = value;
   return value;
 }
 
@@ -455,9 +456,9 @@ static int doAutoRange(Controller_T *const this, const int value, int *const out
   // basic autorange
 
   if (value > this->max)
-    this->max = this->valSum / CBUF_SIZE;
+    this->max = getAvgFromValueBuffer(&this->rawBuffer);
   if (value < this->min)
-    this->min = this->valSum / CBUF_SIZE;
+    this->min = getAvgFromValueBuffer(&this->rawBuffer);
 
   // back off autorange limits
   int min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
@@ -527,7 +528,7 @@ static int doAutoHold(Controller_T *const this, int value)
   uint16_t sum;
   int      settled = 0;
   // determine min, max and average wiper sample values
-  if (GetADCStats(this->wiper, SBUF_SIZE, &min, &max, &sum))
+  if (EHC_getADCStats(this->wiper, SBUF_SIZE, &min, &max, &sum))
   {
     // noise scales with voltage for this ADC chip
     if (this->flags.isSettled)
@@ -546,7 +547,7 @@ static int doAutoHold(Controller_T *const this, int value)
 #endif
   if (settled)  // wiper has settled ?
   {
-    int avg       = this->outSum / CBUF_SIZE;
+    int avg       = getAvgFromValueBuffer(&this->outBuffer);
     int saturated = ((avg == 0) || (avg == 16000));
     if (!this->flags.isSettled)  // was not settled before ?
     {
@@ -611,55 +612,45 @@ void updateAndOutput(Controller_T *const this, const uint16_t value)
     this->flags.outputIsValid = 1;
   }
 }
+
+/*************************************************************************/ /**
+* @brief	readout intermediate value, return != 0 when value is valid
+******************************************************************************/
+static int basicReadout(Controller_T *const this, int *ret)
+{
+  if (!this->flags.initialized)
+    return 0;
+  this->flags.isReset = 0;
+  if (this->wait)
+  {  // some settling time was requested, so delay any processing until then
+    this->wait--;
+    return 0;
+  }
+  *ret = getPotOrRheoValue(this, (this->type == POT));
+  addInValueBuffer(&this->rawBuffer, *ret);
+  // wiper buffer filled ?
+  if (!isValueBufferFilled(&this->rawBuffer))
+    return 0;
+  return 1;
+}
+
 /*************************************************************************/ /**
 * @brief	readout a pot or rheostat, with optional denoising
 ******************************************************************************/
 static void readoutPotOrRheostat(Controller_T *const this)
 {
-  if (!this->flags.initialized || (this->type != POT && this->type != RHEOSTAT))
+  int value = 0;
+  if (!basicReadout(this, &value))
     return;
-
-  this->flags.isReset = 0;
-
-  if (this->wait)
-  {  // some settling time was requested, so delay any processing until then
-    this->wait--;
-    return;
-  }
-
-  int value = getPotOrRheoValue(this, (this->type == POT));
-
-  // wiper buffer filled ?
-  if (this->valueBufInvalid)
-  {
-    if (!--this->valueBufInvalid)
-    {
-      this->valSum = 0;
-      for (int i = 0; i < CBUF_SIZE; i++)
-        this->valSum += this->values[i];
-    }
-    return;
-  }
 
   int out = 0;
   if (!doAutoRange(this, value, &out, this->type == POT))
     return;
 
-  this->out_index = (this->out_index + CBUF_MOD) & CBUF_MOD;
-  this->outSum += out - (int) this->out[this->out_index];
-  this->out[this->out_index] = out;
-
+  addInValueBuffer(&this->outBuffer, out);
   // output buffer filled ?
-  if (this->outBufInvalid)
-  {
-    if (!--this->outBufInvalid)
-    {
-      this->outSum = 0;
-      for (int i = 0; i < CBUF_SIZE; i++)
-        this->outSum += this->out[i];
-    }
+  if (!isValueBufferFilled(&this->outBuffer))
     return;
-  }
 
   out = doAutoHold(this, out);
   updateAndOutput(this, out);
@@ -670,31 +661,9 @@ static void readoutPotOrRheostat(Controller_T *const this)
 ******************************************************************************/
 static void readoutSwitch(Controller_T *const this)
 {
-  if (!this->flags.initialized || (this->type != SWITCH))
+  int value = 0;
+  if (!basicReadout(this, &value))
     return;
-
-  this->flags.isReset = 0;
-
-  if (this->wait)
-  {  // some settling time was requested, so delay any processing until then
-    this->wait--;
-    return;
-  }
-
-  // get  value
-  int value = getPotOrRheoValue(this, 0);  // read switch as rheostat
-
-  // wiper buffer filled ?
-  if (this->valueBufInvalid)
-  {
-    if (!--this->valueBufInvalid)
-    {
-      this->valSum = 0;
-      for (int i = 0; i < CBUF_SIZE; i++)
-        this->valSum += this->values[i];
-    }
-    return;
-  }
 
   int out = 0;
   if (!doAutoRange(this, value, &out, 0))
@@ -767,7 +736,7 @@ static void readoutSwitch(Controller_T *const this)
 ******************************************************************************/
 void NL_EHC_InitControllers(void)
 {
-  // ???? temp init
+  EHC_initSampleBuffers();
   clearController(&ctrl[0]);
   clearController(&ctrl[1]);
   clearController(&ctrl[2]);
@@ -780,10 +749,10 @@ void NL_EHC_InitControllers(void)
 
 typedef struct
 {
-  Controller_T *const controller;
-  const int           hwSource;
-  AdcBuffer_T *const  adcTip;
-  AdcBuffer_T *const  adcRing;
+  Controller_T *const    controller;
+  const int              hwSource;
+  EHC_AdcBuffer_T *const adcTip;
+  EHC_AdcBuffer_T *const adcRing;
 } assignmentTable_T;
 
 static const assignmentTable_T assignmentTable[4] = {
@@ -841,19 +810,19 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
   {
     case 0:
       // pot, tip active
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, POT, NON_INVERT, DEFAULT_PARAMETER_SET);
       break;
     case 1:
       // pot, ring active
-      initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcRing, this->adcTip, POT, NON_INVERT, DEFAULT_PARAMETER_SET);
       break;
     case 2:
       // switch, closing, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, NON_INVERT, DEFAULT_PARAMETER_SET);
       break;
     case 3:
       // switch, opening, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
-      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT, DEFAULT_PARAMETER_SET, NO_RETRANSMIT);
+      initController(this->controller, this->hwSource, this->adcTip, this->adcRing, SWITCH, INVERT, DEFAULT_PARAMETER_SET);
       break;
     default:
       return;
@@ -861,18 +830,15 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
 }
 
 /*************************************************************************/ /**
-* @brief	de-init everything
-******************************************************************************/
-void NL_EHC_DeInitControllers(void)
-{
-}
-
-/*************************************************************************/ /**
 * @brief	NL_EHC_ProcessControllers
-* main repetitive process called from ADC_Work_Process
+* main repetitive process called from ADC_Work_Process every 12.5ms
 ******************************************************************************/
 void NL_EHC_ProcessControllers(void)
 {
+  // any processing only after buffers are fully filled initially, also gives some initial power-up settling
+  if (!EHC_fillSampleBuffers())
+    return;
+
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
   {
     if (!ctrl[i].flags.initialized)
