@@ -44,15 +44,15 @@ typedef struct
   uint16_t current;           // == filtered_values[sbuf_index]
   uint16_t filtered_current;  // == values[sbuf_index]
   uint16_t detect;
-} AdcBuffer_T;
+} EHC_AdcBuffer_T;
 
-extern AdcBuffer_T adc[ADC_CHANNELS];
+extern EHC_AdcBuffer_T adc[ADC_CHANNELS];
 
 // returns actually used "bufferDepth" (which is != 0) on success
-int GetADCStats(const AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg);
+int EHC_getADCStats(const EHC_AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg);
 
-void initSampleBuffers(void);
-int  FillSampleBuffers(void);
+void EHC_initSampleBuffers(void);
+int  EHC_fillSampleBuffers(void);
 
 #endif
 //EOF

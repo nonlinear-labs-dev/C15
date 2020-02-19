@@ -29,7 +29,7 @@
 #define A2 (6554)
 
 // main working variable
-AdcBuffer_T adc[ADC_CHANNELS] = {
+EHC_AdcBuffer_T adc[ADC_CHANNELS] = {
   // order must be exactly like this !!
   { IPC_ADC_PEDAL1_TIP, IPC_ADC_PEDAL1_DETECT },
   { IPC_ADC_PEDAL1_RING, IPC_ADC_PEDAL1_DETECT },
@@ -47,7 +47,7 @@ static int      sampleBuffersInvalid = 40;  // flag until buffers are full, afte
 /*************************************************************************/ /**
 * @brief	InitSampleBuffers and ADCs
 ******************************************************************************/
-void initSampleBuffers(void)
+void EHC_initSampleBuffers(void)
 {
   sampleBuffersInvalid = SBUF_SIZE * 2;
   sbuf_index           = 0;
@@ -80,7 +80,7 @@ static inline int multQ15(const int a, const int b)
 /*************************************************************************/ /**
 * @brief	fill sample buffers and do some pre-processing / denoising
 ******************************************************************************/
-int FillSampleBuffers(void)
+int EHC_fillSampleBuffers(void)
 {
   sbuf_index = (sbuf_index + SBUF_MOD) & SBUF_MOD;  // pre-decrement ...modulo buffer size
 
@@ -127,7 +127,7 @@ int FillSampleBuffers(void)
 * @brief	Get Statistical Data
 * @param	return != 0 : success
 ******************************************************************************/
-int GetADCStats(const AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg)
+int EHC_getADCStats(const EHC_AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg)
 {
   if (!this->flags.initialized || !this->flags.useStats)
     return 0;
