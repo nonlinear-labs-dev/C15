@@ -60,7 +60,6 @@ add_custom_command(
     COMMENT "Build BBB rootfs"
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/nonlinux/output/images/rootfs.tar.gz
     DEPENDS .nonlinux-update
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/nonlinux/.config
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
