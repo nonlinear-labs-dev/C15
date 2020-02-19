@@ -17,7 +17,7 @@
 
 #include "nl_tcd_test.h"
 #include "nl_tcd_interpol.h"
-#include "ehc/nl_ehc.h"
+#include "ehc/nl_ehc_ctrl.h"
 #include "drv/nl_dbg.h"
 
 #define GROUND_THRESHOLD     20
@@ -287,7 +287,7 @@ void ADC_WORK_Init(void)
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
 
-  NL_EHC_Init();
+  NL_EHC_InitControllers();
 
   ClearHWValuesForBB();
 
@@ -827,7 +827,7 @@ void ADC_WORK_Process(void)
   ProcessRibbons();
 
   //==================== External Hardware Controllers
-  NL_EHC_Process();
+  NL_EHC_ProcessControllers();
 
   //  DBG_GPIO3_1_Off();
 }
