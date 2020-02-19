@@ -11,7 +11,6 @@
 #define NL_EHC_H_
 
 void NL_EHC_Init(void);
-void NL_EHC_DeInit(void);
 void NL_EHC_Process(void);
 
 #endif
