@@ -161,6 +161,31 @@ typedef enum
   NO_RETRANSMIT = 0
 } ControlerReXmit_T;
 
+// ----------
+typedef struct
+{
+  unsigned id : 3;                // controller number 0...7, aka input (main) ADC channel 0...7, 0/1=J1T/R, 2/3=J2T/R, etc,
+  //                                   3wire disables 2wire sharing the same channels automatically
+  //                                   2wire disables 3wire pot sharing the same channel automatically
+  unsigned connectionType : 1;    // controller connection type, 0=3wire(pot), 1=2wire(rheo/sw/cv)
+  unsigned inputSense : 1;        // controller input sensing, 0=unloaded(pot/CV), 1=pullup(rheo/sw)
+  unsigned outputType : 1;        // controller output type, 0=continuous(all), 1=bi-stable(all)
+  unsigned polarityInvert : 1;    // invert, or don't, the final output(all)
+  unsigned autoHoldStrength : 3;  // controller auto-hold 0..7, 0(off)...4=autoHold-Strength for pot/rheo
+  unsigned doAutoRanging : 1;     // enable auto-ranging, or assume static (but adjustable) thresholds/levels
+} ControllerConfig_T;
+
+typedef struct
+{
+  unsigned initialized : 1;    // controller is initialized (has valid setup)
+  unsigend pluggedIn : 1;      // controller is plugged in
+  unsigned outputIsValid : 1;  // controller final output value has been set
+  unsigned isAutoRanged : 1;   // controller has finished auto-ranging (always=1 when disabled)
+  unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
+  unsigned isRamping : 1;      // controller currently does a ramp to the actual value (pot/rheo) (not valid for bi-stable)
+} ControllerStatus_T;
+// ----------
+
 typedef struct
 {
   ControllerType_T type;
