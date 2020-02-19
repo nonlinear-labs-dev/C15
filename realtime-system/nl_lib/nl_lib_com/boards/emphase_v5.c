@@ -803,7 +803,6 @@ static PIN_CFG_T lpc_sup_mute_ack = {
 static PIN_CFG_T lpc_unmute_jumper = {
   .pinId  = { 6, 6 },
   .ioType = PIN_TYPE_GPIO,
-#warning "Does not work, reads only 1.5V with pullup"
   .gpioId       = { 0, 5 },
   .direction    = PIN_GPIO_DIR_IN,
   .inputBuffer  = PIN_INBUF_ON,
