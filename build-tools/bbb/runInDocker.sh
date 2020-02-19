@@ -4,6 +4,10 @@ BINARY_DIR=$1
 shift
 SOURCE_DIR=$1
 shift
+USER_ID=$1
+shift
+DOCKER_GROUP_ID=$1
+shift
 
 SCRIPT="echo \"Starting script:\""
 
@@ -14,8 +18,6 @@ done
 
 SCRIPT="$SCRIPT && echo \"Script done.\""
 
-USER_ID=$(id -u $USER)
-DOCKER_GROUP_ID=$(getent group docker | cut -d: -f3)
 DOCKERNAME="nl-cross-build-environment-$USER"
 
 docker run --privileged -u $USER_ID:$DOCKER_GROUP_ID --rm -v $BINARY_DIR:/workdir -v $SOURCE_DIR:/sources $DOCKERNAME bash -c "$SCRIPT"

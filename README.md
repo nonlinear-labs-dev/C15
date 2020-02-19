@@ -18,6 +18,16 @@ cmake -DDEV_PC=On|Off -DBUILD_AUDIOENGINE=On|Off -DBUILD_BBBB=On|Off -DBUILD_PLA
 
 This option enables some tests, assertions and debug features.
 
+### DOCKER_GROUP_ID
+
+You might use for example
+
+```
+cmake -DDOCKER_GROUP_ID=`getent group vboxfs | cut -d: -f3` .
+```
+
+in order to fix permission issues with virtual box shared folders.
+
 ### BUILD_AUDIOENGINE
 
 If switched 'On', the build system will make the audioengine binary for the current platform. The engine contains the synth algorithm driving the C15 keyboard synthesizer. 

@@ -9,7 +9,12 @@ list(REMOVE_ITEM ALL_FILES_IN_PROJECT EXCLUDE REGEX ${REALTIME_SYSTEM_TARGET_FIL
 file(GLOB_RECURSE SUPERVISOR_TARGET_FILES ${CMAKE_SOURCE_DIR}/projects/supervisor/*)
 list(REMOVE_ITEM ALL_FILES_IN_PROJECT EXCLUDE REGEX ${SUPERVISOR_TARGET_FILES})
 
-EXECUTE_PROCESS(OUTPUT_VARIABLE DOCKER_GROUP_ID COMMAND sh -c "getent group docker | cut -d: -f3")
+if(NOT DOCKER_GROUP_ID)
+    EXECUTE_PROCESS(OUTPUT_VARIABLE DOCKER_GROUP_ID COMMAND sh -c "getent group docker | cut -d: -f3")
+endif()
+
+message("Docker group id is ${DOCKER_GROUP_ID}")
+
 EXECUTE_PROCESS(OUTPUT_VARIABLE USER_ID COMMAND sh -c "id -u $USER")
 string(STRIP ${DOCKER_GROUP_ID} DOCKER_GROUP_ID)
 string(STRIP ${USER_ID} USER_ID)
@@ -44,6 +49,8 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
+        ${USER_ID}
+        ${DOCKER_GROUP_ID}
         "export HOME=/workdir/ccache"
         "cd /workdir/nonlinux"
         "make nonlinear_defconfig"
@@ -58,6 +65,8 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
+        ${USER_ID}
+        ${DOCKER_GROUP_ID}
         "rsync -a --delete /sources/projects /workdir/nonlinux/output/build/C15-master"
     COMMAND touch .nonlinux-update
 )
@@ -69,7 +78,9 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
-        "export HOME=/workdir/ccache"
+        ${USER_ID}
+        ${DOCKER_GROUP_ID}
+        "export HOME=rworkdir/ccache"
         "cd /workdir/nonlinux"
         "make C15-rebuild"
         "make"

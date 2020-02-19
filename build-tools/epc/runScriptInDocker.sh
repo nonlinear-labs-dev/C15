@@ -8,7 +8,6 @@ TMPDIRNAME=$(dirname $TMPSCRIPT)
 TMPSCRIPTBASE=$(basename $TMPSCRIPT)
 
 USER_ID=$(id -u $USER)
-DOCKER_GROUP_ID=$(getent group docker | cut -d: -f3)
 DOCKERNAME="nl-epc-build-environment-$USER"
 
 cp $SCRIPT $TMPSCRIPT
