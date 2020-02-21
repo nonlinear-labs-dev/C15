@@ -27,7 +27,7 @@ int main(int const argc, char const* const argv[])
   FILE* outfile;
   if((outfile = fopen(argv[2], "wb")) == nullptr)
   {
-    printf("FATAL: Cannot open output file \"%s\"\n", argv[1]);
+    printf("FATAL: Cannot open output file \"%s\"\n", argv[2]);
     return 3;  // --> exit
   }
 
