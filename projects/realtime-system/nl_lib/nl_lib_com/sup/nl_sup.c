@@ -145,12 +145,15 @@ void Transmitter(void)
 
   uint16_t bits = (unmute_status_bits & (SUP_UNMUTE_STATUS_HARDWARE_IS_VALID | SUP_UNMUTE_STATUS_HARDWARE_VALUE));
 
+#if 0  // IO pin doesn't seem to work reliably on all boards
   if (NL_GPIO_Get(pins->lpc_unmute_jumper) == 0)  // hardware jumper reads low (jumper set) ?
   {
     requested_unmute_state = 1;  // 	-> force unmute
     bits |= (SUP_UNMUTE_STATUS_JUMPER_OVERRIDE | SUP_UNMUTE_STATUS_JUMPER_VALUE);
   }
-  else if (override)  // software override ?
+  else
+#endif
+  if (override)  // software override ?
   {
     requested_unmute_state = override_state;  //  -> use override state
     bits |= SUP_UNMUTE_STATUS_SOFTWARE_OVERRIDE;
