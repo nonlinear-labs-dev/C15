@@ -554,6 +554,8 @@ static int doAutoHold(Controller_T *const this, int value)
       this->flags.isSettled = 1;
       // freeze current averaged output as "settled" value;
       this->settledValue = avg;
+      value = doRamping(this, value, 0);
+      initRamping(this, value, CTRL_PARAMS[this->paramSet].NORMAL_RAMPING_TIME);
     }
     else  // already settled
     {
@@ -788,21 +790,21 @@ void NL_EHC_SetLegacyPedalParameterSet(uint16_t const channel, uint16_t paramSet
 * @param[in] channel (SETTING_ID_PEDAL_1_TYPE ... SETTING_ID_PEDAL_4_TYPE)
 * @param[in] type (0/1:pot tip/ring act.; 2/3:switch closing/opening on tip)
 ******************************************************************************/
-void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t const type)
+void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t type)
 {
   if (channel >= 4)
     return;
 
   const assignmentTable_T *this = &assignmentTable[channel];
 
-#if 0
+#if 01
   // ??? temp to select param sets for pedal 0...2
   if (channel == 3)
   {
     NL_EHC_SetLegacyPedalParameterSet(0, type);
     NL_EHC_SetLegacyPedalParameterSet(1, type);
     NL_EHC_SetLegacyPedalParameterSet(2, type);
-    return;
+    type = 0;
   }
 #endif
 
