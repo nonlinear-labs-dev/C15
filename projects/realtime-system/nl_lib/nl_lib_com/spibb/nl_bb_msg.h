@@ -24,7 +24,6 @@
 // 56 == release candidate, beta test
 #define SW_VERSION 56206
 
-
 //===========================
 
 // #define BB_MSG_TYPE_PRESET_DIRECT 0x0100  // direction: input; arguments(uint16): N, Nx data
