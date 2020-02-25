@@ -10,16 +10,27 @@
         "isSingleSound"
       ],
       "Controls": {
-        "Header": {
-          "Class": "FullWidthInvertedLabel",
+        "FocusHeader": {
+          "Class": "InvertedLabel",
           "Position": "0, 0",
           "Init": {
-            "Text[Text]": "Single Edit"
+            "Text[Text]": "Single Sound"
+          }
+        },
+        "VoiceGroupHeader": {
+          "Class": "WideInvertedLabel",
+          "Position": "64, 0"
+        },
+        "EditTextHeader": {
+          "Class": "InvertedLabel",
+          "Position": "192, 0",
+          "Init": {
+            "Text[Text]": "Edit"
           }
         },
         "Content": {
           "Class": "SingleSoundEditMenu",
-          "Position": "0, 11"
+          "Position": "0, 16"
         }
       }
     }

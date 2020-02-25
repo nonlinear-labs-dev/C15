@@ -159,3 +159,8 @@ bool DescriptiveLayouts::UnisonButtonText::isChanged(const EditBuffer *eb)
   }
   return false;
 }
+
+void DescriptiveLayouts::CurrentVoiceGroupText::onChange(VoiceGroup newSelection)
+{
+  setValue({ toString(newSelection), 0 });
+}

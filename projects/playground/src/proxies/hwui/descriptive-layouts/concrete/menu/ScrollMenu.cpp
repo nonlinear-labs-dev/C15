@@ -132,7 +132,7 @@ void ScrollMenu::doLayout()
   {
     if(c == nullptr)
     {
-      maxY += 13;
+      maxY += getDefaultItemHeight();
     }
     else
     {
@@ -144,4 +144,9 @@ void ScrollMenu::doLayout()
   }
 
   setDirty();
+}
+
+int ScrollMenu::getDefaultItemHeight() const
+{
+  return 13;
 }

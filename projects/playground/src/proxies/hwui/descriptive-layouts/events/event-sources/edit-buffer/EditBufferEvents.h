@@ -34,6 +34,12 @@ namespace DescriptiveLayouts
     void onChange(const EditBuffer *eb) override;
   };
 
+  class CurrentVoiceGroupText : public VoiceGroupSelectedEvent<DisplayString>
+  {
+   public:
+    void onChange(VoiceGroup newSelection) override;
+  };
+
   class SoundParamsButtonText : public EditBufferEvent<DisplayString>
   {
    public:

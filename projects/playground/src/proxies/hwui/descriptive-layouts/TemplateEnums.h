@@ -48,7 +48,7 @@ namespace DescriptiveLayouts
 
        CurrentNumber, CurrentName, CurrentSelected, CurrentLoaded,
 
-       NextNumber, NextName, NextSelected, NextLoaded, PreviousType, NextType, CurrentType);
+       NextNumber, NextName, NextSelected, NextLoaded, PreviousType, NextType, CurrentType, CurrentVoiceGroupText);
 
   ENUM(EventSinks, uint8_t, SwitchToInitDetail, SwitchToEditMode, SwitchToSelectMode, SwitchToSetupFocus,
        SwitchToParameterFocus, SwitchToBankFocus, SwitchToPresetFocus, SwitchToSoundFocus, SwitchToMCSelectDetail,

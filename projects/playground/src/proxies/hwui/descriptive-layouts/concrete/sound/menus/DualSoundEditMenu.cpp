@@ -15,8 +15,13 @@ DualSoundEditMenu::DualSoundEditMenu(const Rect &r)
 
 void DualSoundEditMenu::init()
 {
-  auto fullWidth = Rect{ 0, 0, 256, 13 };
+  auto fullWidth = Rect { 0, 0, 256, 12 };
   addItem<PartLabelItem>(fullWidth);
   addItem<ConvertToSoundTypeItem>(fullWidth, SoundType::Single);
   addItem<InitPart>(fullWidth);
+}
+
+int DualSoundEditMenu::getDefaultItemHeight() const
+{
+  return 12;
 }
