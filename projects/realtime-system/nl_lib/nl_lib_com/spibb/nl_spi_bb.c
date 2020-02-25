@@ -11,7 +11,6 @@
 #include "drv/nl_gpio.h"
 #include "cmsis/lpc43xx_ssp.h"
 #include "string.h"
-#include "dbg/nl_assert.h"
 #include "sys/nl_ticker.h"
 
 static LPC_SSPn_Type*  BB_SSP;

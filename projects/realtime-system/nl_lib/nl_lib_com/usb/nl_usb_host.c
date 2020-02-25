@@ -13,7 +13,7 @@
 
 #define ALIGN32(x) (x & ~(0x1F))
 
-static uint8_t  USBH_Connected       = 0;
+// static uint8_t  USBH_Connected       = 0;
 static uint8_t  USBH_DeviceSpeed     = 0;
 static uint16_t USBH_Config_Desc_Len = 0;
 
@@ -214,10 +214,11 @@ void USB_Host_Task(void)
   }
 }
 
+#if 0
 /******************************************************************************/
 /** @brief		USB Interrupt Service Routine
 *******************************************************************************/
-void USB0_IRQHandler(void)
+static void USB0_IRQHandler(void)
 {
   uint32_t hisr;
 
@@ -253,6 +254,7 @@ void USB0_IRQHandler(void)
 
   return;
 }
+#endif
 
 void USB_Host_QH_Init(QH_T* qh, uint8_t epnum, uint16_t maxpkt)
 {

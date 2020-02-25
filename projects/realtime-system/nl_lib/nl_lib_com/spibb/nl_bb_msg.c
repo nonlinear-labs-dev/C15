@@ -13,9 +13,8 @@
 
 #include "tcd/nl_tcd_adc_work.h"
 #include "tcd/nl_tcd_poly.h"
-#include "sup/nl_sup.h"
-#include "dbg/nl_assert.h"
 #include "drv/nl_dbg.h"
+#include "sup/nl_sup.h"
 #include "sys/nl_coos.h"
 #include "tcd/ehc/nl_ehc_ctrl.h"
 
@@ -159,8 +158,6 @@ int32_t BB_MSG_WriteMessage2Arg(uint16_t type, uint16_t arg0, uint16_t arg1)
 
   sendBuffer[sendBufferLen] = arg1;
   sendBufferLen++;
-
-  NL_ASSERT(sendBufferLen < SENDBUFFER_SIZE);
 
   return remainingBuffer;
 #else
