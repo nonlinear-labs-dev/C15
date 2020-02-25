@@ -554,7 +554,7 @@ static int doAutoHold(Controller_T *const this, int value)
       this->flags.isSettled = 1;
       // freeze current averaged output as "settled" value;
       this->settledValue = avg;
-      value = doRamping(this, value, 0);
+      value              = doRamping(this, value, 0);
       initRamping(this, value, CTRL_PARAMS[this->paramSet].NORMAL_RAMPING_TIME);
     }
     else  // already settled
