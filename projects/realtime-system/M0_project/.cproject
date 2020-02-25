@@ -34,8 +34,8 @@
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1591062592" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.992298924" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
-								<option id="com.crt.advproject.gcc.hdrlib.719278978" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.specs.11525054" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.719278978" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.11525054" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1451063649" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/nl_lib_com}&quot;"/>
@@ -51,8 +51,8 @@
 								<option id="com.crt.advproject.gas.arch.843585388" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm0" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.thumb.476638752" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.both.asm.option.flags.crt.1459284844" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__MULTICORE_NONE -DDEBUG -D__CODE_RED -DCORE_M0 -D__LPC43XX__ -D__NEWLIB__" valueType="string"/>
-								<option id="com.crt.advproject.gas.hdrlib.1997077378" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gas.specs.2048029444" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.hdrlib.1997077378" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.specs.2048029444" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlibnano" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.include.paths.1566342186" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0}&quot;"/>
 								</option>
@@ -73,7 +73,7 @@
 									<listOptionValue builtIn="false" value="--gc-sections"/>
 									<listOptionValue builtIn="false" value="-print-memory-usage"/>
 								</option>
-								<option id="com.crt.advproject.link.gcc.hdrlib.2078176112" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlib.nohost" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.gcc.hdrlib.2078176112" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.835746821" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave"/>
 								<option id="gnu.c.link.option.paths.1273528108" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/Debug}&quot;"/>
@@ -97,7 +97,7 @@
 				<externalSettings containerId="nl_lib_m0;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/nl_lib_m0"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m0/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m0/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="nl_lib_m0" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -128,7 +128,7 @@
 								<option id="com.crt.advproject.gcc.thumb.8165266" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1090666149" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__MULTICORE_NONE"/>
-									<listOptionValue builtIn="false" value="DEBUG"/>
+									<listOptionValue builtIn="false" value="RELEASE"/>
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M0"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
@@ -136,8 +136,8 @@
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.92120640" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.239271170" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
-								<option id="com.crt.advproject.gcc.hdrlib.683141649" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.specs.1713976219" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.683141649" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.1713976219" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1937775030" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/nl_lib_com}&quot;"/>
@@ -153,8 +153,8 @@
 								<option id="com.crt.advproject.gas.arch.1890738205" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm0" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.thumb.837276167" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.both.asm.option.flags.crt.642560622" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__MULTICORE_NONE -DDEBUG -D__CODE_RED -DCORE_M0 -D__LPC43XX__ -D__NEWLIB__" valueType="string"/>
-								<option id="com.crt.advproject.gas.hdrlib.287316002" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gas.specs.1658556568" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.hdrlib.287316002" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.specs.1658556568" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlibnano" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.include.paths.1015404274" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0}&quot;"/>
 								</option>
@@ -167,7 +167,7 @@
 								<option id="com.crt.advproject.link.gcc.multicore.master.userobjs.1385981043" name="Slave Objects (not visible)" superClass="com.crt.advproject.link.gcc.multicore.master.userobjs" valueType="userObjs"/>
 								<option id="com.crt.advproject.link.arch.1930823601" name="Architecture" superClass="com.crt.advproject.link.arch" value="com.crt.advproject.link.target.cm0" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.thumb.353372447" name="Thumb mode" superClass="com.crt.advproject.link.thumb" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.script.838636466" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;M0_project_Debug.ld&quot;" valueType="string"/>
+								<option id="com.crt.advproject.link.script.838636466" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;M0_project_Release.ld&quot;" valueType="string"/>
 								<option id="com.crt.advproject.link.manage.554666827" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.nostdlibs.1226068798" name="No startup or default libs (-nostdlib)" superClass="gnu.c.link.option.nostdlibs" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.other.1523146941" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList">
@@ -175,10 +175,10 @@
 									<listOptionValue builtIn="false" value="--gc-sections"/>
 									<listOptionValue builtIn="false" value="-print-memory-usage"/>
 								</option>
-								<option id="com.crt.advproject.link.gcc.hdrlib.1375992962" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlib.nohost" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.gcc.hdrlib.1375992962" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.705683183" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave"/>
 								<option id="gnu.c.link.option.paths.538056965" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/Release}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.libs.335126723" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="nl_lib_m0"/>
@@ -199,7 +199,7 @@
 				<externalSettings containerId="nl_lib_m0;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/nl_lib_m0"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m0/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m0/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="nl_lib_m0" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

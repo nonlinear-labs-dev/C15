@@ -31,23 +31,24 @@
 								<option id="com.crt.advproject.gcc.arch.762373082" name="Architecture" superClass="com.crt.advproject.gcc.arch" value="com.crt.advproject.gcc.target.cm0" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.thumb.1870340677" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1261924365" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="__REDLIB__"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M0"/>
 									<listOptionValue builtIn="false" value="__USE_CMSIS=CMSIS_LPC43xx_DriverLib-M0"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
+									<listOptionValue builtIn="false" value="__NEWLIB__"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1667077569" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.778598365" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/nl_lib_com}&quot;"/>
 								</option>
-								<option id="com.crt.advproject.gcc.hdrlib.206939929" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.codered" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.206939929" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lib.debug.option.optimization.level.1184800494" name="Optimization Level" superClass="com.crt.advproject.gcc.lib.debug.option.optimization.level" value="gnu.c.optimization.level.general" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lib.debug.option.debugging.level.246782415" name="Debug Level" superClass="com.crt.advproject.gcc.lib.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lto.1954013495" name="Enable Link-time optimization (-flto)" superClass="com.crt.advproject.gcc.lto" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.optimization.flags.619263890" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="" valueType="string"/>
+								<option id="com.crt.advproject.gcc.specs.348718536" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
 								<inputType id="com.crt.advproject.compiler.input.1567317380" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
 							<tool id="com.crt.advproject.gas.lib.debug.536713422" name="MCU Assembler" superClass="com.crt.advproject.gas.lib.debug">
@@ -100,23 +101,24 @@
 								<option id="com.crt.advproject.gcc.arch.1773046689" name="Architecture" superClass="com.crt.advproject.gcc.arch" value="com.crt.advproject.gcc.target.cm0" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.thumb.977144056" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1960726870" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="__REDLIB__"/>
-									<listOptionValue builtIn="false" value="DEBUG"/>
+									<listOptionValue builtIn="false" value="RELEASE"/>
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M0"/>
 									<listOptionValue builtIn="false" value="__USE_CMSIS=CMSIS_LPC43xx_DriverLib-M0"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
+									<listOptionValue builtIn="false" value="__NEWLIB__"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.205404986" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.1030038782" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/nl_lib_com}&quot;"/>
 								</option>
-								<option id="com.crt.advproject.gcc.hdrlib.616178245" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.codered" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.616178245" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lib.debug.option.optimization.level.730483335" name="Optimization Level" superClass="com.crt.advproject.gcc.lib.debug.option.optimization.level" value="gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lib.debug.option.debugging.level.1349754559" name="Debug Level" superClass="com.crt.advproject.gcc.lib.debug.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lto.168814337" name="Enable Link-time optimization (-flto)" superClass="com.crt.advproject.gcc.lto" value="true" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.optimization.flags.392209884" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="" valueType="string"/>
+								<option id="com.crt.advproject.gcc.specs.383515468" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
 								<inputType id="com.crt.advproject.compiler.input.1015914450" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
 							<tool id="com.crt.advproject.gas.lib.debug.309701316" name="MCU Assembler" superClass="com.crt.advproject.gas.lib.debug">

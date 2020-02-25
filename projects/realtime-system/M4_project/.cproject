@@ -35,8 +35,8 @@
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1285262424" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fsingle-precision-constant" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.426990680" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
-								<option id="com.crt.advproject.gcc.hdrlib.240799218" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.specs.1682595867" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.240799218" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.1682595867" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.fpu.1806773663" name="Floating point" superClass="com.crt.advproject.gcc.fpu" value="com.crt.advproject.gcc.fpu.fpv4" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.198105696" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4}&quot;"/>
@@ -54,8 +54,8 @@
 								<option id="com.crt.advproject.gas.arch.1410443324" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.thumb.516838533" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.both.asm.option.flags.crt.82852245" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__MULTICORE_NONE -DDEBUG -D__CODE_RED -DCORE_M4 -D__LPC43XX__ -D__NEWLIB__" valueType="string"/>
-								<option id="com.crt.advproject.gas.hdrlib.2146274432" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gas.specs.983988381" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.hdrlib.2146274432" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.specs.983988381" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlibnano" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.fpu.1338139477" name="Floating point" superClass="com.crt.advproject.gas.fpu" value="com.crt.advproject.gas.fpu.fpv4" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.include.paths.546889442" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4}&quot;"/>
@@ -78,7 +78,7 @@
 									<listOptionValue builtIn="false" value="--gc-sections"/>
 									<listOptionValue builtIn="false" value="-print-memory-usage"/>
 								</option>
-								<option id="com.crt.advproject.link.gcc.hdrlib.1270721734" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlib.nohost" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.gcc.hdrlib.1270721734" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.fpu.1822461799" name="Floating point" superClass="com.crt.advproject.link.fpu" value="com.crt.advproject.link.fpu.fpv4" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.crpenable.2104230494" name="Enable Code Read Protection" superClass="com.crt.advproject.link.crpenable"/>
 								<option id="gnu.c.link.option.paths.1701144898" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
@@ -104,7 +104,7 @@
 				<externalSettings containerId="nl_lib_m4;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/nl_lib_m4"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m4/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m4/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="nl_lib_m4" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -136,7 +136,7 @@
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1474566579" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__MULTICORE_NONE"/>
 									<listOptionValue builtIn="false" value="C15_VERSION_5"/>
-									<listOptionValue builtIn="false" value="DEBUG"/>
+									<listOptionValue builtIn="false" value="RELEASE"/>
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M4"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
@@ -144,8 +144,8 @@
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.156282244" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fsingle-precision-constant" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.860221422" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
-								<option id="com.crt.advproject.gcc.hdrlib.1439989580" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.specs.1598866722" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.1439989580" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.1598866722" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.fpu.266891691" name="Floating point" superClass="com.crt.advproject.gcc.fpu" value="com.crt.advproject.gcc.fpu.fpv4" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.13070883" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4}&quot;"/>
@@ -163,8 +163,8 @@
 								<option id="com.crt.advproject.gas.arch.1439862566" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.thumb.2069648147" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.both.asm.option.flags.crt.1165520251" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__MULTICORE_NONE -DDEBUG -D__CODE_RED -DCORE_M4 -D__LPC43XX__ -D__NEWLIB__" valueType="string"/>
-								<option id="com.crt.advproject.gas.hdrlib.1935647769" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlib" valueType="enumerated"/>
-								<option id="com.crt.advproject.gas.specs.608347175" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlib" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.hdrlib.1935647769" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.specs.608347175" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.newlibnano" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.fpu.1325773390" name="Floating point" superClass="com.crt.advproject.gas.fpu" value="com.crt.advproject.gas.fpu.fpv4" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.include.paths.127134199" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4}&quot;"/>
@@ -179,7 +179,7 @@
 								<option id="com.crt.advproject.link.gcc.multicore.master.userobjs.448988145" name="Slave Objects (not visible)" superClass="com.crt.advproject.link.gcc.multicore.master.userobjs" valueType="userObjs"/>
 								<option id="com.crt.advproject.link.arch.947827103" name="Architecture" superClass="com.crt.advproject.link.arch" value="com.crt.advproject.link.target.cm4" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.thumb.608287040" name="Thumb mode" superClass="com.crt.advproject.link.thumb" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.script.660039071" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;M4_project_Debug.ld&quot;" valueType="string"/>
+								<option id="com.crt.advproject.link.script.660039071" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;M4_project_Release.ld&quot;" valueType="string"/>
 								<option id="com.crt.advproject.link.manage.1893110260" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.nostdlibs.817953786" name="No startup or default libs (-nostdlib)" superClass="gnu.c.link.option.nostdlibs" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.other.1360031828" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList">
@@ -187,11 +187,11 @@
 									<listOptionValue builtIn="false" value="--gc-sections"/>
 									<listOptionValue builtIn="false" value="-print-memory-usage"/>
 								</option>
-								<option id="com.crt.advproject.link.gcc.hdrlib.487088590" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlib.nohost" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.gcc.hdrlib.487088590" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.fpu.1994058958" name="Floating point" superClass="com.crt.advproject.link.fpu" value="com.crt.advproject.link.fpu.fpv4" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.crpenable.859543526" name="Enable Code Read Protection" superClass="com.crt.advproject.link.crpenable"/>
 								<option id="gnu.c.link.option.paths.834977301" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4/Release}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.libs.1491289133" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="nl_lib_m4"/>
@@ -213,7 +213,7 @@
 				<externalSettings containerId="nl_lib_m4;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/nl_lib_m4"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m4/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/nl_lib_m4/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="nl_lib_m4" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
