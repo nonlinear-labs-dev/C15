@@ -21,7 +21,9 @@
 
 // ==== V 206 ====
 // complete revised "pedals" (aka external controllers) proccessing
-#define SW_VERSION 55206
+// 56 == release candidate, beta test
+#define SW_VERSION 56206
+
 
 //===========================
 

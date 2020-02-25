@@ -797,7 +797,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t type)
 
   const assignmentTable_T *this = &assignmentTable[channel];
 
-#if 01
+#if 0
   // ??? temp to select param sets for pedal 0...2
   if (channel == 3)
   {
