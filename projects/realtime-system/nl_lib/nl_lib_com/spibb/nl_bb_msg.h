@@ -10,7 +10,7 @@
 #ifndef NL_DRV_NL_BB_MSG_H_
 #define NL_DRV_NL_BB_MSG_H_
 
-#include "stdint.h"
+#include <stdint.h>
 
 //===========================
 
@@ -21,8 +21,8 @@
 
 // ==== V 206 ====
 // complete revised "pedals" (aka external controllers) proccessing
-// 56 == release candidate, beta test
-#define SW_VERSION 56206
+// 58 == release candidate, beta test
+#define SW_VERSION 58206
 
 //===========================
 
