@@ -190,16 +190,19 @@ typedef struct
   int      sum;
 } ValueBuffer_T;
 
-void clearValueBuffer(ValueBuffer_T *const this)
+static void clearValueBuffer(ValueBuffer_T *const this, const uint16_t invalidCount)
 {
   this->index       = 0;
   this->sum         = 0;
-  this->invalidCntr = VALBUF_SIZE;
+  if (invalidCount < VALBUF_SIZE)
+    this->invalidCntr = VALBUF_SIZE;
+  else
+    this->invalidCntr = invalidCount;
   for (int i = 0; i < VALBUF_SIZE; i++)
     this->values[i] = 0;
 }
 
-uint16_t addInValueBuffer(ValueBuffer_T *const this, const uint16_t value)
+static uint16_t addInValueBuffer(ValueBuffer_T *const this, const uint16_t value)
 {
   this->index = (this->index + 1) & VALBUF_MOD;
   if (this->invalidCntr)
@@ -209,12 +212,12 @@ uint16_t addInValueBuffer(ValueBuffer_T *const this, const uint16_t value)
   return value;
 }
 
-uint16_t getAvgFromValueBuffer(const ValueBuffer_T *const this)
+static uint16_t getAvgFromValueBuffer(const ValueBuffer_T *const this)
 {
   return this->sum / VALBUF_SIZE;
 }
 
-int isValueBufferFilled(ValueBuffer_T *const this)
+static int isValueBufferFilled(ValueBuffer_T *const this)
 {
   return (this->invalidCntr == 0);
 }
@@ -320,8 +323,8 @@ static void initController(Controller_T *const this, const int HwSourceId, EHC_A
   this->flags.debounce      = 0;  // ??? temp
   this->wait                = 0;
   this->step                = 0;
-  clearValueBuffer(&this->rawBuffer);
-  clearValueBuffer(&this->outBuffer);
+  clearValueBuffer(&this->rawBuffer, SBUF_SIZE+VALBUF_SIZE);
+  clearValueBuffer(&this->outBuffer, VALBUF_SIZE);
 
   if ((type != POT) && (top))
   {  // if a top channel was supplied, clear it unless it's for a pot
@@ -390,8 +393,8 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   this->flags.initialized   = 1;
   this->flags.isReset       = 1;
   this->step                = 0;
-  clearValueBuffer(&this->rawBuffer);
-  clearValueBuffer(&this->outBuffer);
+  clearValueBuffer(&this->rawBuffer, SBUF_SIZE+VALBUF_SIZE);
+  clearValueBuffer(&this->outBuffer, VALBUF_SIZE);
 }
 
 /*************************************************************************/ /**
@@ -797,7 +800,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const channel, uint16_t type)
 
   const assignmentTable_T *this = &assignmentTable[channel];
 
-#if 0
+#if 01
   // ??? temp to select param sets for pedal 0...2
   if (channel == 3)
   {
