@@ -20,18 +20,9 @@ int main(int numArgs, char **argv)
   ::signal(SIGBUS, Environment::printStackTrace);
   ::signal(SIGKILL, Environment::printStackTrace);
 
-  TestDriverBase::doTests(numArgs, argv);
-
-  Application app(numArgs, argv);
-
+  Application app(0, nullptr);
   nltools::Log::setLevel(nltools::Log::Error);
 
   app.stopWatchDog();
-
-  std::vector<const char *> args;
-  args.emplace_back(argv[0]);
-  //args.emplace_back("-s");  //this line enables showing of passed tests
-
-  int result = Catch::Session().run(args.size(), args.data());
-  return result;
+  return Catch::Session().run(numArgs, argv);
 }
