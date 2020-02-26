@@ -1,11 +1,11 @@
 #pragma once
 
 /******************************************************************************/
-/**	@file       parameter_declarations.h
-    @date       2020-02-12, 18:42
+/**	@file	parameter_declarations.h
+    @date	2020-02-26, 16:22
     @version	1.7B-4
-    @author     M. Seeber
-    @brief      descriptors for all parameter-related details
+    @author	M. Seeber
+    @brief	descriptors for all parameter-related details
     @todo
 *******************************************************************************/
 
@@ -401,6 +401,7 @@ namespace C15
       Echo_Hi_Cut,
       Reverb_Pre_Dly,
       Reverb_Chorus,
+      Voice_Grp_Mute,
       _LENGTH_
     };
 
@@ -472,6 +473,7 @@ namespace C15
       Env_C_Retr_H,
       Osc_A_Reset,
       Osc_B_Reset,
+      Voice_Grp_Mute,
       _LENGTH_
     };
 

@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file	parameter_list.h
-    @date	2020-02-12, 18:42
+    @date	2020-02-26, 16:22
     @version	1.7B-4
     @author	M. Seeber
     @brief	complete list of parameters (and their properties) in TCD order
@@ -1671,7 +1671,7 @@ namespace C15
       308,
       0.0f,
       { Smoothers::Mono_Slow::Flanger_AP_Mod, None, Properties::SmootherScale::Linear, 70.0f, 0.0f, true },
-      { 100, 1000, 0, 0, "", "Flanger", "Flanger", "Allpass Mod", "AP Mod",
+      { 100, 1000, 1000, 1000, "", "Flanger", "Flanger", "Allpass Mod", "AP Mod",
         "Relative amount of the modulation of the allpass center frequencies by the LFO and/or the envelope. The "
         "allpass creates the effect of a phaser." } },
     { None },
@@ -2168,7 +2168,11 @@ namespace C15
       { 1, 1, None, None, "", "Oscillator B", "Oscillator B", "Reset", "Reset",
         "If enabled, every pressed key will cause the Oscillator to reset it’s phase (for the corresponding voice). If "
         "disabled, the Oscillator is in free-running mode." } },
-    { None },
+    { Parameters::Local_Unmodulateables::Voice_Grp_Mute,
+      395,
+      0.0f,
+      { Smoothers::Poly_Sync::Voice_Grp_Mute, None, Properties::SmootherScale::Linear, 1.0f, 0.0f, false },
+      { 1, 1, None, None, "", "Voices", "Voices", "Part Mute", "Part Mute", "Part mute (0 or 1)" } },
     { None },
     { None },
     { None },

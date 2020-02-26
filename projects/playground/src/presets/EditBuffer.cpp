@@ -635,6 +635,10 @@ void EditBuffer::undoableConvertDualToSingle(UNDO::Transaction *transaction, Voi
   auto masterVolumeParameter = masterGroup->getParameterByID({ 247, VoiceGroup::Global });
   auto masterTuneParameter = masterGroup->getParameterByID({ 248, VoiceGroup::Global });
 
+  // unmute both parts
+  findParameterByID({ 395, VoiceGroup::I })->setCPFromHwui(transaction, 0);
+  findParameterByID({ 395, VoiceGroup::II })->setCPFromHwui(transaction, 0);
+
   ParabolicGainDbScaleConverter dbGainConverter;
 
   auto vgVolumeDisplay = dbGainConverter.controlPositionToDisplay(originVolume->getControlPositionValue());
@@ -685,8 +689,14 @@ void EditBuffer::undoableConvertToDual(UNDO::Transaction *transaction, SoundType
   copyAndInitGlobalMasterGroupToPartMasterGroups(transaction);
 
   initSplitPoint(transaction);
-
   initRecallValues(transaction);
+
+  if(type != SoundType::Layer)
+  {
+    // unmute both parts
+    findParameterByID({ 395, VoiceGroup::I })->setCPFromHwui(transaction, 0);
+    findParameterByID({ 395, VoiceGroup::II })->setCPFromHwui(transaction, 0);
+  }
 
   transaction->addUndoSwap(this, m_lastLoadedPreset, Uuid::converted());
 

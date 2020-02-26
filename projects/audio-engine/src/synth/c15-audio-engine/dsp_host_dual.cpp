@@ -1106,6 +1106,7 @@ void dsp_host_dual::render()
   m_poly[0].render_audio(mute);
   m_poly[1].render_audio(mute);
   // - audio dsp mono - each layer with separate sends - left, right)
+
   m_mono[0].render_audio(m_poly[0].m_send_self_l + m_poly[1].m_send_other_l,
                          m_poly[0].m_send_self_r + m_poly[1].m_send_other_r, m_poly[0].getVoiceGroupVolume());
   m_mono[1].render_audio(m_poly[0].m_send_other_l + m_poly[1].m_send_self_l,

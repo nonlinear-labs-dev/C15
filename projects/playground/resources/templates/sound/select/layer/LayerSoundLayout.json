@@ -69,7 +69,11 @@
         "BUTTON_A": "ToggleVoiceGroup",
         "BUTTON_B": "OpenPartScreen",
         "BUTTON_C": "SwitchToVoicesDetail",
-        "BUTTON_D": "OpenMasterParameter"
+        "BUTTON_D": "OpenMasterParameter",
+        "BUTTON_INC": "LayerMuteInc",
+        "BUTTON_DEC": "LayerMuteDec",
+        "ROTARY_PLUS": "LayerMuteInc",
+        "ROTARY_MINUS": "LayerMuteDec"
       }
     }
   }
