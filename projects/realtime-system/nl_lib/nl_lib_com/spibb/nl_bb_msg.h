@@ -80,12 +80,6 @@
 // #define BENDER_RAMP_BYPASS                   35  // OFF = 0, ON = 1
 
 // new setting ID's
-// SETTING_ID_PEDAL_x_PARAM_SET must be a monotonic sequence
-#define SETTING_ID_PEDAL_1_PARAM_SET 36  // Select pedal parameter set.
-#define SETTING_ID_PEDAL_2_PARAM_SET 37  // For pots and rheosats, this is..
-#define SETTING_ID_PEDAL_3_PARAM_SET 38  // ..auto-hold / denoising strength:
-#define SETTING_ID_PEDAL_4_PARAM_SET 39  // 0=weak, 1=medium, 2=strong, 3=extreme
-
 #define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
 #define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
 
