@@ -14,8 +14,7 @@
 
 void NL_EHC_InitControllers(void);
 void NL_EHC_ProcessControllers(void);
-void NL_EHC_SetLegacyPedalType(const uint16_t channel, uint16_t type);
-void NL_EHC_SetLegacyPedalParameterSet(uint16_t const channel, uint16_t paramSet);
+void NL_EHC_SetLegacyPedalType(const uint16_t controller, uint16_t type);
 
 #endif
 //EOF
