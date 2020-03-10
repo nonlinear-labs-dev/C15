@@ -174,12 +174,13 @@ static uint16_t warningTimer        = 0;
 static uint16_t errorTimerFlicker   = 0;
 static uint16_t warningTimerFlicker = 0;
 
-void DBG_Led_Error_TimedOn(uint16_t time)
+void DBG_Led_Error_TimedOn(int16_t time)
 {
-  if (!time)
+  if (time == 0)
     return;
-  if (errorTimer)
-    errorTimerFlicker = 1;
+  errorTimerFlicker = errorTimer != 0 && time > 0;
+  if (time < 0)
+    time = -time;
   if (time >= errorTimer)
     errorTimer = time;
   if (errorTimerFlicker)
@@ -188,12 +189,13 @@ void DBG_Led_Error_TimedOn(uint16_t time)
     DBG_Led_Error_On();
 }
 
-void DBG_Led_Warning_TimedOn(uint16_t time)
+void DBG_Led_Warning_TimedOn(int16_t time)
 {
-  if (!time)
+  if (time == 0)
     return;
-  if (warningTimer)
-    warningTimerFlicker = 1;
+  warningTimerFlicker = warningTimer != 0 && time > 0;
+  if (time < 0)
+    time = -time;
   if (time >= warningTimer)
     warningTimer = time;
   if (warningTimerFlicker)
