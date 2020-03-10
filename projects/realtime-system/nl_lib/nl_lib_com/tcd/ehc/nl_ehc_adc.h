@@ -46,7 +46,7 @@ typedef struct
   uint16_t detect;
 } EHC_AdcBuffer_T;
 
-extern EHC_AdcBuffer_T adc[ADC_CHANNELS];
+extern EHC_AdcBuffer_T EHC_adc[ADC_CHANNELS];
 
 // returns actually used "bufferDepth" (which is != 0) on success
 int EHC_getADCStats(const EHC_AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg);

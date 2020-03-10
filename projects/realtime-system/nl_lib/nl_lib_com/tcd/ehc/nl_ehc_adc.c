@@ -29,7 +29,7 @@
 #define A2 (6554)
 
 // main working variable
-EHC_AdcBuffer_T adc[ADC_CHANNELS] = {
+EHC_AdcBuffer_T EHC_adc[ADC_CHANNELS] = {
   // order must be exactly like this !!
   { IPC_ADC_PEDAL1_TIP, IPC_ADC_PEDAL1_DETECT },
   { IPC_ADC_PEDAL1_RING, IPC_ADC_PEDAL1_DETECT },
@@ -55,17 +55,17 @@ void EHC_initSampleBuffers(void)
   {
     for (int k = 0; k < SBUF_SIZE; k++)
     {
-      adc[i].values[k]          = DEFAULT_ADC_VALUE * AVG_DIV;
-      adc[i].filtered_values[k] = DEFAULT_ADC_VALUE * AVG_DIV;
+      EHC_adc[i].values[k]          = DEFAULT_ADC_VALUE * AVG_DIV;
+      EHC_adc[i].filtered_values[k] = DEFAULT_ADC_VALUE * AVG_DIV;
     }
-    adc[i].flags.pullup_10k  = 1;  // force pullup on every pin, initially
-    adc[i].flags.pullup_5V   = 0;
-    adc[i].flags.useIIR      = 0;
-    adc[i].flags.useStats    = 0;
-    adc[i].current           = DEFAULT_ADC_VALUE * AVG_DIV;
-    adc[i].filtered_current  = DEFAULT_ADC_VALUE * AVG_DIV;
-    adc[i].detect            = 0xFF;
-    adc[i].flags.initialized = 1;
+    EHC_adc[i].flags.pullup_10k  = 1;  // force pullup on every pin, initially
+    EHC_adc[i].flags.pullup_5V   = 0;
+    EHC_adc[i].flags.useIIR      = 0;
+    EHC_adc[i].flags.useStats    = 0;
+    EHC_adc[i].current           = DEFAULT_ADC_VALUE * AVG_DIV;
+    EHC_adc[i].filtered_current  = DEFAULT_ADC_VALUE * AVG_DIV;
+    EHC_adc[i].detect            = 0xFF;
+    EHC_adc[i].flags.initialized = 1;
   }
 }
 
@@ -87,17 +87,17 @@ int EHC_fillSampleBuffers(void)
   // read data from current conversion
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
-    adc[i].current = adc[i].values[sbuf_index] = IPC_ReadAdcBufferSum(adc[i].ipcAdcID);
-    adc[i].detect                              = IPC_ReadAdcBufferAveraged(adc[i].ipcDetectID);
+    EHC_adc[i].current = EHC_adc[i].values[sbuf_index] = IPC_ReadAdcBufferSum(EHC_adc[i].ipcAdcID);
+    EHC_adc[i].detect                                  = IPC_ReadAdcBufferAveraged(EHC_adc[i].ipcDetectID);
   }
 
   // set PULLUP bits for next conversion
   uint32_t cfg = 0;
   for (int i = 0; i < ADC_CHANNELS; i += 2)
   {
-    if (adc[i].flags.pullup_10k)
+    if (EHC_adc[i].flags.pullup_10k)
       cfg |= (PEDAL_TIP_TO_PULLUP << 8 * (i / 2));
-    if (adc[i + 1].flags.pullup_10k)
+    if (EHC_adc[i + 1].flags.pullup_10k)
       cfg |= (PEDAL_RING_TO_PULLUP << 8 * (i / 2));
   }
   IPC_WritePedalAdcConfig(cfg);
@@ -105,17 +105,17 @@ int EHC_fillSampleBuffers(void)
   // IIR lowpass filtering
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
-    if (adc[i].flags.useIIR)
+    if (EHC_adc[i].flags.useIIR)
     {
-      adc[i].filtered_current = adc[i].filtered_values[sbuf_index] =           // y[k] =
-          multQ15(B0, adc[i].values[sbuf_index])                               // + B0*x[k]
-          + multQ15(B1, adc[i].values[(sbuf_index + 1) & SBUF_MOD])            // + B1*x[k-1]
-          + multQ15(B2, adc[i].values[(sbuf_index + 2) & SBUF_MOD])            // + B2*x[k-2]
-          + multQ15(A1, adc[i].filtered_values[(sbuf_index + 1) & SBUF_MOD])   // + A1*y[k-1]
-          + multQ15(A2, adc[i].filtered_values[(sbuf_index + 2) & SBUF_MOD]);  // + A2*y[k-2]
+      EHC_adc[i].filtered_current = EHC_adc[i].filtered_values[sbuf_index] =       // y[k] =
+          multQ15(B0, EHC_adc[i].values[sbuf_index])                               // + B0*x[k]
+          + multQ15(B1, EHC_adc[i].values[(sbuf_index + 1) & SBUF_MOD])            // + B1*x[k-1]
+          + multQ15(B2, EHC_adc[i].values[(sbuf_index + 2) & SBUF_MOD])            // + B2*x[k-2]
+          + multQ15(A1, EHC_adc[i].filtered_values[(sbuf_index + 1) & SBUF_MOD])   // + A1*y[k-1]
+          + multQ15(A2, EHC_adc[i].filtered_values[(sbuf_index + 2) & SBUF_MOD]);  // + A2*y[k-2]
     }
     else
-      adc[i].filtered_current = adc[i].current;
+      EHC_adc[i].filtered_current = EHC_adc[i].current;
   }
 
   if (sampleBuffersInvalid)
