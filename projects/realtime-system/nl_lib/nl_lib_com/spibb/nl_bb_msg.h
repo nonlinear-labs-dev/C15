@@ -80,6 +80,7 @@
 // #define BENDER_RAMP_BYPASS                   35  // OFF = 0, ON = 1
 
 // new setting ID's
+#define SETTING_ID_EHC_CONFIG             36      // External Hardware Controller Configuration
 #define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
 #define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
 

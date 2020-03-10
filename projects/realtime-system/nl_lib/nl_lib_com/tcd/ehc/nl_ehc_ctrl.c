@@ -837,6 +837,17 @@ void NL_EHC_InitControllers(void)
 }
 
 /*************************************************************************/ /**
+* @brief	 Configurate External Hardware Controller
+* @param[in] configuration bit field
+******************************************************************************/
+void NL_EHC_SetEHCconfig(const uint16_t config)
+{
+  EHC_ControllerConfig_T c = uint16ToConfig(config);
+  Controller_T *this       = &ctrl[c.ctrlId];
+  initController(this, c, 0);
+}
+
+/*************************************************************************/ /**
 * @brief	 Set Pedal Type, Legacy Style
 * @param[in] controller 0...3
 * @param[in] type (0/1:pot tip/ring act.; 2/3:switch closing/opening on tip)
