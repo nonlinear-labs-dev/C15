@@ -163,6 +163,33 @@ typedef struct
   unsigned doAutoRanging : 1;     // enable auto-ranging, or assume static (but adjustable) thresholds/levels
 } EHC_ControllerConfig_T;
 
+uint16_t configToUint16(EHC_ControllerConfig_T c)
+{
+  uint16_t ret = 0;
+  ret |= c.doAutoRanging << 0;
+  ret |= c.autoHoldStrength << 1;
+  ret |= c.polarityInvert << 4;
+  ret |= c.continuous << 5;
+  ret |= c.pullup << 6;
+  ret |= c.is3wire << 7;
+  ret |= c.hwId << 8;
+  ret |= c.ctrlId << 13;
+  return ret;
+}
+EHC_ControllerConfig_T uint16ToConfig(uint16_t c)
+{
+  EHC_ControllerConfig_T ret;
+  ret.doAutoRanging    = (c & 0b0000000000000001) >> 0;
+  ret.autoHoldStrength = (c & 0b0000000000001110) >> 1;
+  ret.polarityInvert   = (c & 0b0000000000010000) >> 4;
+  ret.continuous       = (c & 0b0000000000100000) >> 5;
+  ret.pullup           = (c & 0b0000000001000000) >> 6;
+  ret.is3wire          = (c & 0b0000000010000000) >> 7;
+  ret.hwId             = (c & 0b0001111100000000) >> 8;
+  ret.ctrlId           = (c & 0b1110000000000000) >> 13;
+  return ret;
+}
+
 typedef struct
 {
   unsigned initialized : 1;    // controller is initialized (has valid setup)
@@ -173,6 +200,19 @@ typedef struct
   unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
   unsigned isRamping : 1;      // controller currently does a ramp to the actual value (pot/rheo) (not valid for bi-stable)
 } EHC_ControllerStatus_T;
+
+uint16_t statusToUint16(EHC_ControllerStatus_T s)
+{
+  uint16_t ret = 0;
+  ret |= s.initialized << 0;
+  ret |= s.isReset << 1;
+  ret |= s.pluggedIn << 2;
+  ret |= s.outputIsValid << 3;
+  ret |= s.isAutoRanged << 4;
+  ret |= s.isSettled << 5;
+  ret |= s.isRamping << 6;
+  return ret;
+}
 // ----------
 
 // ---------------- begin Value Buffer defs
@@ -336,6 +376,31 @@ static void initController(Controller_T *const this, const EHC_ControllerConfig_
   )
   {
     return;
+  }
+
+  // check for conflicting controllers and disable them
+  Controller_T *that;
+  if (this->config.is3wire)  // controller using both ADCs ?
+  {                          // check if there is something on the secondary channel and disable it
+    that = &ctrl[this->config.ctrlId ^ 0b001];
+    if (that->status.initialized)
+    {
+      that->status.initialized = 0;  // remove controller from processing
+    }                                // subsequent init will take care of pullups
+  }
+  else  // 2-wire now, so check if there is a 3-wire pot on this jack and clear/disable
+  {
+    if (this->status.initialized && old.is3wire)
+    {                                   // found an initialized 3-wire at this very controller ID
+      this->top->flags.pullup_10k = 0;  // make the top end input High-Z
+    }
+
+    that = &ctrl[this->config.ctrlId ^ 0b001];
+    if (that->status.initialized && that->config.is3wire)
+    {                                   // found an initialized 3-wire at the adjacent controller ID
+      that->top->flags.pullup_10k = 0;  // make the top end input High-Z
+      that->status.initialized    = 0;  // and remove controller from processing
+    }
   }
 
   // full init
@@ -778,7 +843,6 @@ void NL_EHC_InitControllers(void)
 ******************************************************************************/
 void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
 {
-  return;  // debug ???
   if (controller >= 4 || type >= 4)
     return;
 
@@ -790,11 +854,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
   {
     case 0:
       // pot, tip active
-      // clear controller on the other side of the jack
-      tmp.ctrlId = controller * 2 + 1;
-      this       = &ctrl[tmp.ctrlId];
-      clearController(this);
-      // init new controller
       tmp.ctrlId           = controller * 2;  // even adc's are tip
       this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
@@ -807,11 +866,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       break;
     case 1:
       // pot, ring active
-      // clear controller on the other side of the jack
-      tmp.ctrlId = controller * 2;
-      this       = &ctrl[tmp.ctrlId];
-      clearController(this);
-      // init new controller
       tmp.ctrlId           = controller * 2 + 1;  // odd adc's are ring
       this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
@@ -821,22 +875,21 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.autoHoldStrength = 2;
       tmp.polarityInvert   = 0;
       tmp.doAutoRanging    = 1;
-      break;
-    case 2:
-      // switch, closing, on Tip
-      // first, high-Z the ADC channel of a potential secondary controller on the same jack, then disable it
-      tmp.ctrlId           = controller * 2 + 1;  // secondary controller on ring
+#if 0  // ??? debug
+      // rheo, tip active
+      tmp.ctrlId           = controller * 2;  // even adc's are tip
       this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
       tmp.is3wire          = 0;
-      tmp.pullup           = 0;
-      tmp.continuous       = 0;
-      tmp.autoHoldStrength = 0;
+      tmp.pullup           = 1;
+      tmp.continuous       = 1;
+      tmp.autoHoldStrength = 2;
       tmp.polarityInvert   = 0;
-      tmp.doAutoRanging    = 0;
-      initController(this, tmp, 1);
-      clearController(this);
-      // init the main controller on tip
+      tmp.doAutoRanging    = 1;
+#endif
+      break;
+    case 2:
+      // switch, closing, on Tip
       tmp.ctrlId           = controller * 2;  // even adc's are tip
       this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
@@ -848,20 +901,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.polarityInvert   = 0;
       break;
     case 3:
-      // switch, opening, on Tip, and high-Z the ADC channel of a potential secondary controller on the same jack
-      // first, high-Z the ADC channel of a potential secondary controller on the same jack, then disable it
-      tmp.ctrlId           = controller * 2 + 1;  // secondary controller on ring
-      this                 = &ctrl[tmp.ctrlId];
-      tmp.hwId             = controller;
-      tmp.is3wire          = 0;
-      tmp.pullup           = 0;
-      tmp.continuous       = 0;
-      tmp.autoHoldStrength = 0;
-      tmp.polarityInvert   = 0;
-      tmp.doAutoRanging    = 0;
-      initController(this, tmp, 1);
-      clearController(this);
-      // init the main controller on tip
+      // switch, opening, on Tip
       tmp.ctrlId           = controller * 2;  // even adc's are tip
       this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
