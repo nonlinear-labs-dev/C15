@@ -164,7 +164,7 @@ typedef struct
   unsigned doAutoRanging : 1;     // enable auto-ranging, or assume static (but adjustable) thresholds/levels
 } EHC_ControllerConfig_T;
 
-uint16_t configToUint16(EHC_ControllerConfig_T c)
+uint16_t configToUint16(const EHC_ControllerConfig_T c)
 {
   uint16_t ret = 0;
   ret |= c.doAutoRanging << 0;
@@ -178,7 +178,7 @@ uint16_t configToUint16(EHC_ControllerConfig_T c)
   ret |= c.ctrlId << 13;
   return ret;
 }
-EHC_ControllerConfig_T uint16ToConfig(uint16_t c)
+EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
 {
   EHC_ControllerConfig_T ret;
   ret.doAutoRanging    = (c & 0b0000000000000001) >> 0;
@@ -204,7 +204,7 @@ typedef struct
   unsigned isRamping : 1;      // controller currently does a ramp to the actual value (pot/rheo) (not valid for bi-stable)
 } EHC_ControllerStatus_T;
 
-uint16_t statusToUint16(EHC_ControllerStatus_T s)
+uint16_t statusToUint16(const EHC_ControllerStatus_T s)
 {
   uint16_t ret = 0;
   ret |= s.initialized << 0;
@@ -316,7 +316,7 @@ static void sendControllerData(const EHC_ControllerConfig_T config, const uint32
 }
 
 // --------------- init autoranging, that is, set reasonable default for fixed ranges
-void InitAutoRange(Controller_T *this)
+void InitAutoRange(Controller_T *const this)
 {
   if (this->config.doAutoRanging)
   {  // set min and max so as to catch range
