@@ -167,29 +167,29 @@ typedef struct
 uint16_t configToUint16(const EHC_ControllerConfig_T c)
 {
   uint16_t ret = 0;
-  ret |= c.doAutoRanging << 0;
-  ret |= c.autoHoldStrength << 1;
-  ret |= c.polarityInvert << 4;
-  ret |= c.continuous << 5;
+  ret |= c.autoHoldStrength << 0;
+  ret |= c.continuous << 3;
+  ret |= c.doAutoRanging << 4;
+  ret |= c.polarityInvert << 5;
   ret |= c.pullup << 6;
   ret |= c.is3wire << 7;
-  ret |= c.silent << 8;
-  ret |= c.hwId << 9;
-  ret |= c.ctrlId << 13;
+  ret |= c.ctrlId << 8;
+  ret |= c.silent << 11;
+  ret |= c.hwId << 12;
   return ret;
 }
 EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
 {
   EHC_ControllerConfig_T ret;
-  ret.doAutoRanging    = (c & 0b0000000000000001) >> 0;
-  ret.autoHoldStrength = (c & 0b0000000000001110) >> 1;
-  ret.polarityInvert   = (c & 0b0000000000010000) >> 4;
-  ret.continuous       = (c & 0b0000000000100000) >> 5;
+  ret.autoHoldStrength = (c & 0b0000000000000111) >> 0;
+  ret.continuous       = (c & 0b0000000000001000) >> 3;
+  ret.doAutoRanging    = (c & 0b0000000000010000) >> 4;
+  ret.polarityInvert   = (c & 0b0000000000100000) >> 5;
   ret.pullup           = (c & 0b0000000001000000) >> 6;
   ret.is3wire          = (c & 0b0000000010000000) >> 7;
-  ret.silent           = (c & 0b0000000100000000) >> 8;
-  ret.hwId             = (c & 0b0001111000000000) >> 9;
-  ret.ctrlId           = (c & 0b1110000000000000) >> 13;
+  ret.ctrlId           = (c & 0b0000111100000000) >> 8;
+  ret.silent           = (c & 0b0001000000000000) >> 11;
+  ret.hwId             = (c & 0b1111000000000000) >> 12;
   return ret;
 }
 
@@ -397,7 +397,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   {
     if (this->status.initialized && old.is3wire)
     {                                   // found an initialized 3-wire at this very controller ID
-      this->top->flags.pullup_10k = 0;  // make the top end input High-Z
+      this->top->flags.pullup_10k = 0;  // make the former top end input High-Z
     }
 
     that = &ctrl[this->config.ctrlId ^ 0b001];
