@@ -154,7 +154,8 @@ const ControllerParameterSet_T CTRL_PARAMS[PARAMETER_SETS] = {
 typedef struct
 {
   unsigned ctrlId : 3;            // controller number 0...7, aka input (main) ADC channel 0...7, 0/1=J1T/R, 2/3=J2T/R, etc,
-  unsigned hwId : 5;              // hardware ID used for messages to AE and PG
+  unsigned hwId : 4;              // hardware ID used for messages to AE and PG
+  unsigned silent : 1;            // disable messaging to AudioEngine
   unsigned is3wire : 1;           // controller connection type, 0=2wire(rheo/sw/cv), 1=3wire(pot)
   unsigned pullup : 1;            // controller input sensing, 0=unloaded(pot/CV), 1=with pullup(rheo/sw)
   unsigned continuous : 1;        // controller output type, 0=continuous(all), 1=bi-stable(all)
@@ -172,7 +173,8 @@ uint16_t configToUint16(EHC_ControllerConfig_T c)
   ret |= c.continuous << 5;
   ret |= c.pullup << 6;
   ret |= c.is3wire << 7;
-  ret |= c.hwId << 8;
+  ret |= c.silent << 8;
+  ret |= c.hwId << 9;
   ret |= c.ctrlId << 13;
   return ret;
 }
@@ -185,7 +187,8 @@ EHC_ControllerConfig_T uint16ToConfig(uint16_t c)
   ret.continuous       = (c & 0b0000000000100000) >> 5;
   ret.pullup           = (c & 0b0000000001000000) >> 6;
   ret.is3wire          = (c & 0b0000000010000000) >> 7;
-  ret.hwId             = (c & 0b0001111100000000) >> 8;
+  ret.silent           = (c & 0b0000000100000000) >> 8;
+  ret.hwId             = (c & 0b0001111000000000) >> 9;
   ret.ctrlId           = (c & 0b1110000000000000) >> 13;
   return ret;
 }
@@ -303,10 +306,13 @@ Controller_T ctrl[NUMBER_OF_CONTROLLERS];
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
 ******************************************************************************/
-static void sendControllerData(const uint32_t const hwSourceId, const uint32_t value)
+static void sendControllerData(const EHC_ControllerConfig_T config, const uint32_t value)
 {
-  MSG_HWSourceUpdate(hwSourceId, value);
-  ADC_WORK_WriteHWValueForBB(hwSourceId, value);
+  if (config.hwId == 15)  // catch de-activated controller, just in case
+    return;
+  if (!config.silent)
+    MSG_HWSourceUpdate(config.hwId, value);
+  ADC_WORK_WriteHWValueForBB(config.hwId, value);
 }
 
 // --------------- init autoranging, that is, set reasonable default for fixed ranges
@@ -340,11 +346,11 @@ void InitAutoRange(Controller_T *this)
 /*************************************************************************/ /**
 * @brief	Init a controller
 ******************************************************************************/
-static void initController(Controller_T *const this, const EHC_ControllerConfig_T config, const int forced)
+static void initController(const EHC_ControllerConfig_T config, const int forced)
 {
-
-  if (config.hwId == 31)
-  {  // hardware source ID #31 is special and will de-activate the controller
+  Controller_T *this = &ctrl[config.ctrlId];
+  if (config.hwId == 15)
+  {  // hardware source ID #15 is special and will de-activate the controller
     this->status.initialized = 0;
     return;
   }
@@ -366,15 +372,14 @@ static void initController(Controller_T *const this, const EHC_ControllerConfig_
   if (!forced && this->status.initialized
       && this->wiper == wiper
       && this->top == top
-      && this->config.continuous == old.continuous
-      && this->config.ctrlId == old.ctrlId
-      && this->config.doAutoRanging == old.doAutoRanging
-      && this->config.hwId == old.hwId
       && this->config.is3wire == old.is3wire
       && this->config.pullup == old.pullup
-      // we don't check auto-hold strength and polarity as those can be changed on the fly
+      // we don't check auto-ranging, auto-hold strength, continuous, polarity
+      // silent and hwId, as those can be changed on the fly
   )
   {
+    if (this->config.doAutoRanging != old.doAutoRanging)
+      InitAutoRange(this);  // re-init auto-ranging only when changed
     return;
   }
 
@@ -653,8 +658,7 @@ void updateAndOutput(Controller_T *const this, const uint16_t value)
   if (this->final != this->lastFinal)
   {
     this->lastFinal = this->final;
-    if (this->config.hwId < 30)  // don't transmit data for reserved HwSrc ID 30 and 31
-      sendControllerData(this->config.hwId, (this->config.polarityInvert) ? 16000 - value : value);
+    sendControllerData(this->config, (this->config.polarityInvert) ? 16000 - value : value);
     this->status.outputIsValid = 1;
   }
 }
@@ -790,7 +794,6 @@ void NL_EHC_InitControllers(void)
 
 #if 0
   // debug ??? enable all 8 controllers as rheostats
-  Controller_T *this;
   EHC_ControllerConfig_T config;
 
   config.autoHoldStrength = 2;
@@ -818,20 +821,19 @@ void NL_EHC_InitControllers(void)
 	  config.hwId = 3;
 	  break;
 	case 4 :
-	  config.hwId = 30;
+	  config.hwId = 8;
 	  break;
 	case 5 :
-	  config.hwId = 30;
+	  config.hwId = 9;
 	  break;
 	case 6 :
-	  config.hwId = 30;
+	  config.hwId = 10;
 	  break;
 	case 7 :
-	  config.hwId = 30;
+	  config.hwId = 11;
 	  break;
 	}
-	this = &ctrl[i];
-	initController(this, config, 1);
+	initController(config, 1);
   }
 #endif
 }
@@ -842,9 +844,7 @@ void NL_EHC_InitControllers(void)
 ******************************************************************************/
 void NL_EHC_SetEHCconfig(const uint16_t config)
 {
-  EHC_ControllerConfig_T c = uint16ToConfig(config);
-  Controller_T *this       = &ctrl[c.ctrlId];
-  initController(this, c, 0);
+  initController(uint16ToConfig(config), 0);
 }
 
 /*************************************************************************/ /**
@@ -857,8 +857,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
   if (controller >= 4 || type >= 4)
     return;
 
-  Controller_T *this;
-
   // de-init any controllers that are active on that jack
   EHC_ControllerConfig_T tmp;
   switch (type)
@@ -866,7 +864,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
     case 0:
       // pot, tip active
       tmp.ctrlId           = controller * 2;  // even adc's are tip
-      this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
       tmp.is3wire          = 1;
       tmp.pullup           = 0;
@@ -878,7 +875,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
     case 1:
       // pot, ring active
       tmp.ctrlId           = controller * 2 + 1;  // odd adc's are ring
-      this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
       tmp.is3wire          = 1;
       tmp.pullup           = 0;
@@ -889,7 +885,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
 #if 0  // ??? debug
       // rheo, tip active
       tmp.ctrlId           = controller * 2;  // even adc's are tip
-      this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
       tmp.is3wire          = 0;
       tmp.pullup           = 1;
@@ -902,7 +897,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
     case 2:
       // switch, closing, on Tip
       tmp.ctrlId           = controller * 2;  // even adc's are tip
-      this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
       tmp.is3wire          = 0;
       tmp.pullup           = 1;
@@ -914,7 +908,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
     case 3:
       // switch, opening, on Tip
       tmp.ctrlId           = controller * 2;  // even adc's are tip
-      this                 = &ctrl[tmp.ctrlId];
       tmp.hwId             = controller;
       tmp.is3wire          = 0;
       tmp.pullup           = 1;
@@ -926,7 +919,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
     default:
       return;
   }
-  initController(this, tmp, 0);
+  initController(tmp, 0);
 }
 
 /*************************************************************************/ /**
