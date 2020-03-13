@@ -303,6 +303,8 @@ typedef struct
 // NOTE: a secondary controller is not available when the corresponding primary controller is a three-wire pot.
 Controller_T ctrl[NUMBER_OF_CONTROLLERS];
 
+static int RequestGetEHCdata = 0;
+
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
 ******************************************************************************/
@@ -782,6 +784,7 @@ static void readoutBiStable(Controller_T *const this)
 ******************************************************************************/
 void NL_EHC_InitControllers(void)
 {
+  RequestGetEHCdata = 0;
   EHC_initSampleBuffers();
   clearController(&ctrl[0]);
   clearController(&ctrl[1]);
@@ -845,6 +848,29 @@ void NL_EHC_InitControllers(void)
 void NL_EHC_SetEHCconfig(const uint16_t config)
 {
   initController(uint16ToConfig(config), 0);
+}
+/*************************************************************************/ /**
+* @brief	 Send Config, Status and Last value to BB (all 8 controllers)
+******************************************************************************/
+void NL_EHC_SendEHCdata(void)
+{
+#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 3)
+  uint16_t  data[EHC_DATA_MSG_SIZE];
+  uint16_t *p = data;
+  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+  {
+    *p++ = configToUint16(ctrl[i].config);
+    *p++ = statusToUint16(ctrl[i].status);
+    *p++ = ctrl[i].lastFinal;
+  }
+  BB_MSG_WriteMessage(BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
+  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_EHC_DATA, 1);
+  BB_MSG_SendTheBuffer();
+#undef EHC_DATA_MSG_SIZE
+}
+void NL_EHC_RequestToSendEHCdata(void)
+{
+  RequestGetEHCdata = 1;
 }
 
 /*************************************************************************/ /**
@@ -949,6 +975,12 @@ void NL_EHC_ProcessControllers(void)
       resetController(&ctrl[i], WAIT_TIME_AFTER_PLUGIN);
   }
   ShowSettlingDisplay();
+
+  if (RequestGetEHCdata)
+  {
+    RequestGetEHCdata = 0;
+    NL_EHC_SendEHCdata();
+  }
 
 // temp ????? send raw data
 #if 0
