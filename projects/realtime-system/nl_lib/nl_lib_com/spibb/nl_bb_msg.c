@@ -330,8 +330,11 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         BB_MSG_SendTheBuffer();
         break;
       case REQUEST_ID_UNMUTE_STATUS:  // sending the muting status to the BB
-        BB_MSG_WriteMessage2Arg(NOTIFICATION_ID_UNMUTE_STATUS, NOTIFICATION_ID_UNMUTE_STATUS, SUP_GetUnmuteStatusBits());
+        BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_UNMUTE_STATUS, SUP_GetUnmuteStatusBits());
         BB_MSG_SendTheBuffer();
+        break;
+      case REQUEST_ID_EHC_DATA:  // send EHC data to BB
+        NL_EHC_RequestToSendEHCdata();
         break;
       default:
         type = 0;  // to set a breakpoint only

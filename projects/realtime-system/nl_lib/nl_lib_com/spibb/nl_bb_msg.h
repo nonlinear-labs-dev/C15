@@ -41,6 +41,7 @@
 // TODO implement the following new types in BBBB/Playground also:
 #define BB_MSG_TYPE_MUTESTATUS 0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
 #define BB_MSG_TYPE_RIBBON_CAL 0x0D00  // direction: input; arguments(uint16): 134, 134x data [2x (33x 34x)]
+#define BB_MSG_TYPE_EHC_DATA   0x0E00  // direction: output;  arguments(uint16): ??, (see nl_ehc_ctrl.c)
 
 //----- Setting Ids:
 
@@ -88,11 +89,13 @@
 
 #define REQUEST_ID_SW_VERSION    0x0000
 #define REQUEST_ID_UNMUTE_STATUS 0x0001
+#define REQUEST_ID_EHC_DATA      0x0002
 
 //----- Notification Ids:
 
 #define NOTIFICATION_ID_SW_VERSION    0x0000
 #define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
+#define NOTIFICATION_ID_EHC_DATA      0x0002
 
 void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t *data);
 void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg);
