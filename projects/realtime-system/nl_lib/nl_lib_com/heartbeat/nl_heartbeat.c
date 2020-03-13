@@ -106,8 +106,12 @@ void HBT_Process(void)
     {
       cntr = 10;
       lpc_heartbeat++;
+#ifndef __NO_HEARTBEAT__
       BB_MSG_WriteMessage(BB_MSG_TYPE_HEARTBEAT, 4, (uint16_t *) &lpc_heartbeat);
       BB_MSG_SendTheBuffer();
+#else
+#warning "HEARTBEAT turned off, please check __NO_HEARTBEAT__ define in compiler settings"
+#endif
     }
   }
 #endif
