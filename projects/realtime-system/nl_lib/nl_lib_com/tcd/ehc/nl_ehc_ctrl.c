@@ -196,8 +196,8 @@ EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
 typedef struct
 {
   unsigned initialized : 1;    // controller is initialized (has valid setup)
-  unsigned isReset : 1;        // controller is freshly reset
   unsigned pluggedIn : 1;      // controller is plugged in
+  unsigned isReset : 1;        // controller is freshly reset
   unsigned outputIsValid : 1;  // controller final output value has been set
   unsigned isAutoRanged : 1;   // controller has finished auto-ranging (always=1 when disabled)
   unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
@@ -208,8 +208,8 @@ uint16_t statusToUint16(const EHC_ControllerStatus_T s)
 {
   uint16_t ret = 0;
   ret |= s.initialized << 0;
-  ret |= s.isReset << 1;
-  ret |= s.pluggedIn << 2;
+  ret |= s.pluggedIn << 1;
+  ret |= s.isReset << 2;
   ret |= s.outputIsValid << 3;
   ret |= s.isAutoRanged << 4;
   ret |= s.isSettled << 5;
@@ -271,8 +271,10 @@ typedef struct
   ValueBuffer_T outBuffer;  // output buffer
 
   // autoranging
-  uint16_t min;
-  uint16_t max;
+  uint16_t min;       // values used to reflect ...
+  uint16_t max;       // ... physical ranges.
+  uint16_t used_min;  // values used for the actual ranging, ...
+  uint16_t used_max;  // ... even with auto-ranging off.
   // settling
   uint16_t settledValue;
   // final HW-source output
@@ -322,27 +324,27 @@ void InitAutoRange(Controller_T *const this)
 {
   if (this->config.doAutoRanging)
   {  // set min and max so as to catch range
-    this->min                 = 65535;
-    this->max                 = 0;
-    this->status.isAutoRanged = 0;
+    this->used_min = this->min = 65535;
+    this->used_max = this->max = 0;
+    this->status.isAutoRanged  = 0;
     return;
   }
   this->status.isAutoRanged = 1;
   if (this->config.is3wire)
   {  // for 3-wire pot we use a range from 5% to 95% full scale
-    this->min = 1 * POT_SCALE_FACTOR / 20;
-    this->max = 19 * POT_SCALE_FACTOR / 20;
+    this->used_min = 1 * POT_SCALE_FACTOR / 20;
+    this->used_max = 19 * POT_SCALE_FACTOR / 20;
     return;
   }
   if (this->config.pullup)
   {  // for rheostats/switches we use a nominal range of 0...10kOhms
-    this->min = 0;
-    this->max = RHEO_SCALE_FACTOR;
+    this->used_min = 0;
+    this->used_max = RHEO_SCALE_FACTOR;
     return;
   }
   // for direct CV we will use the full ADC range
-  this->min = 0;
-  this->max = AVG_DIV * 4095;
+  this->used_min = 0;
+  this->used_max = AVG_DIV * 4095;
 }
 
 /*************************************************************************/ /**
@@ -354,6 +356,20 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   if (config.hwId == 15)
   {  // hardware source ID #15 is special and will de-activate the controller
     this->status.initialized = 0;
+    if (config.silent)
+    {  // clear all data fields
+      this->config               = uint16ToConfig(0);
+      this->final                = 8000;
+      this->lastFinal            = ~this->final;
+      this->used_max             = 0;
+      this->used_min             = 65535;
+      this->status.isAutoRanged  = 0;
+      this->status.isRamping     = 0;
+      this->status.isReset       = 0;
+      this->status.isSettled     = 0;
+      this->status.outputIsValid = 0;
+      this->status.pluggedIn     = 0;
+    }
     return;
   }
 
@@ -508,8 +524,6 @@ static int getIntermediateValue(Controller_T *const this)
 static int doAutoRange(Controller_T *const this, const int value, int *const out)
 {
   // basic autorange
-  int min = this->min;
-  int max = this->max;
   if (this->config.doAutoRanging)
   {  // adapt range to input span only when requested
     if (value > this->max)
@@ -518,29 +532,31 @@ static int doAutoRange(Controller_T *const this, const int value, int *const out
       this->min = getAvgFromValueBuffer(&this->rawBuffer);
 
     // back off autorange limits
-    min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
-    max = this->max - AR_UPPER_DEAD_ZONE * (this->max - this->min) / 100;  // remove upper dead-zone
+    this->used_min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
+    this->used_max = this->max - AR_UPPER_DEAD_ZONE * (this->max - this->min) / 100;  // remove upper dead-zone
 
     if (this->config.is3wire)
     {
-      if (max - min <= AR_SPAN)  // not enough autorange span ?
+      if (this->used_max <= this->used_min + AR_SPAN)  // not enough autorange span ?
         return 0;
     }
     else
     {
-      if ((max - min <= 0) || (100 * (int) max / (int) min < AR_SPAN_RHEO))  // not enough autorange span (max/min < limit)?
+      if ((this->used_max <= this->used_min) || (100 * (int) this->used_max / (int) this->used_min < AR_SPAN_RHEO))  // not enough autorange span (max/min < limit)?
         return 0;
     }
     this->status.isAutoRanged = 1;  // a valid auto-range span of values has been detected
   }
+  if (this->used_min >= this->used_max)
+    return 0;
 
   // scale output value via autorange
-  if (value < min)
+  if (value < this->used_min)
     *out = 0;
-  else if (value > max)
+  else if (value > this->used_max)
     *out = 16000;  // 100%
   else
-    *out = 16000 * (int) (value - min) / (int) (max - min);  // scale current value with the currently detected span.
+    *out = 16000 * (int) (value - this->used_min) / (int) (this->used_max - this->used_min);  // scale current value with the currently detected span.
   // clip values, and that's why we used signed ints
   if (*out < 0)
     *out = 0;
@@ -841,20 +857,46 @@ void NL_EHC_InitControllers(void)
 #endif
 }
 
+// set ranging min and max
+void setRangeMin(uint8_t which, uint16_t min)
+{
+  if (which >= NUMBER_OF_CONTROLLERS)
+    return;
+  ctrl[which].used_min = min;
+}
+void setRangeMax(uint8_t which, uint16_t min)
+{
+  if (which >= NUMBER_OF_CONTROLLERS)
+    return;
+  ctrl[which].used_min = min;
+}
+
 /*************************************************************************/ /**
 * @brief	 Configurate External Hardware Controller
-* @param[in] configuration bit field
+* @param[in] command
+* @param[in] data
 ******************************************************************************/
-void NL_EHC_SetEHCconfig(const uint16_t config)
+void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
 {
-  initController(uint16ToConfig(config), 0);
+  switch (cmd & 0xFF00)
+  {
+    case 0x0100:  // config control register
+      initController(uint16ToConfig(data), 0);
+      break;
+    case 0x0200:  // set ranging min
+      setRangeMin(cmd & 0xFF, data);
+      break;
+    case 0x0300:  // set ranging max
+      setRangeMax(cmd & 0xFF, data);
+      break;
+  }
 }
 /*************************************************************************/ /**
 * @brief	 Send Config, Status and Last value to BB (all 8 controllers)
 ******************************************************************************/
 void NL_EHC_SendEHCdata(void)
 {
-#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 3)
+#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 5)
   uint16_t  data[EHC_DATA_MSG_SIZE];
   uint16_t *p = data;
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
@@ -862,6 +904,8 @@ void NL_EHC_SendEHCdata(void)
     *p++ = configToUint16(ctrl[i].config);
     *p++ = statusToUint16(ctrl[i].status);
     *p++ = ctrl[i].lastFinal;
+    *p++ = ctrl[i].used_min;
+    *p++ = ctrl[i].used_max;
   }
   BB_MSG_WriteMessage(BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
   BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_EHC_DATA, 1);
@@ -897,6 +941,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.autoHoldStrength = 2;
       tmp.polarityInvert   = 0;
       tmp.doAutoRanging    = 1;
+      tmp.silent           = 0;
       break;
     case 1:
       // pot, ring active
@@ -908,6 +953,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.autoHoldStrength = 2;
       tmp.polarityInvert   = 0;
       tmp.doAutoRanging    = 1;
+      tmp.silent           = 0;
 #if 0  // ??? debug
       // rheo, tip active
       tmp.ctrlId           = controller * 2;  // even adc's are tip
@@ -918,6 +964,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.autoHoldStrength = 2;
       tmp.polarityInvert   = 0;
       tmp.doAutoRanging    = 1;
+      tmp.silent           = 0;
 #endif
       break;
     case 2:
@@ -930,6 +977,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.autoHoldStrength = 0;
       tmp.doAutoRanging    = 1;
       tmp.polarityInvert   = 0;
+      tmp.silent           = 0;
       break;
     case 3:
       // switch, opening, on Tip
@@ -941,6 +989,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.autoHoldStrength = 0;
       tmp.doAutoRanging    = 1;
       tmp.polarityInvert   = 1;
+      tmp.silent           = 0;
       break;
     default:
       return;
