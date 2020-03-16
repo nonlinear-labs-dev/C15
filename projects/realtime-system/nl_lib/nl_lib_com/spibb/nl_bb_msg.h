@@ -32,7 +32,7 @@
 #define BB_MSG_TYPE_PARAMETER    0x0400  // direction: output; arguments(uint16): 2, 1x parameter ID , 1x data
 #define BB_MSG_TYPE_EDIT_CONTROL 0x0500  // not used
 // #define BB_MSG_TYPE_MORPH_POS     0x0600  // not used
-#define BB_MSG_TYPE_SETTING      0x0700  // direction: input;  argument (uint16): 2, 1x SETTING_ID_*, 1x data
+#define BB_MSG_TYPE_SETTING      0x0700  // direction: input;  arguments (uint16): 2, 1x SETTING_ID_*, 1x data
 #define BB_MSG_TYPE_NOTIFICATION 0x0800  // direction: output; arguments(uint16): 2, 1x type, 1x value
 #define BB_MSG_TYPE_ASSERTION    0x0900  // direction: output; arguments(uint16): n (string)
 #define BB_MSG_TYPE_REQUEST      0x0A00  // direction: input;  argument (uint16): 1, 1x REQUEST_ID_*
@@ -42,6 +42,7 @@
 #define BB_MSG_TYPE_MUTESTATUS 0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
 #define BB_MSG_TYPE_RIBBON_CAL 0x0D00  // direction: input; arguments(uint16): 134, 134x data [2x (33x 34x)]
 #define BB_MSG_TYPE_EHC_DATA   0x0E00  // direction: output;  arguments(uint16): ??, (see nl_ehc_ctrl.c)
+#define BB_MSG_TYPE_EHC_CONFIG 0x0F00  //  direction: input;  arguments (uint16): 2, 1x command, 1x data
 
 //----- Setting Ids:
 
@@ -81,7 +82,6 @@
 // #define BENDER_RAMP_BYPASS                   35  // OFF = 0, ON = 1
 
 // new setting ID's
-#define SETTING_ID_EHC_CONFIG             36      // External Hardware Controller Configuration
 #define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
 #define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
 

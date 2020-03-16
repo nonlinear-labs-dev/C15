@@ -264,13 +264,17 @@ int32_t BB_MSG_SendTheBuffer(void)
 
 void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
 {
-  // data[0]	- parameter id
+  // data[0]  - parameter id
   // data[1]  - first value
   // data[2]  - second value
 
   if (type == BB_MSG_TYPE_RIBBON_CAL)
   {
     ADC_WORK_SetRibbonCalibration(length, data);
+  }
+  else if (type == BB_MSG_TYPE_EHC_CONFIG)
+  {
+    NL_EHC_SetEHCconfig(data[0], data[1]);  // Configurate External Hardware Controller
   }
   else if (type == BB_MSG_TYPE_SETTING)
   {
@@ -311,9 +315,6 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case SETTING_ID_PEDAL_3_TYPE:
       case SETTING_ID_PEDAL_4_TYPE:
         NL_EHC_SetLegacyPedalType(data[0] - SETTING_ID_PEDAL_1_TYPE, data[1]);
-        break;
-      case SETTING_ID_EHC_CONFIG:
-        NL_EHC_SetEHCconfig(data[1]);  // Configurate External Hardware Controller
         break;
       default:
         // do nothing
