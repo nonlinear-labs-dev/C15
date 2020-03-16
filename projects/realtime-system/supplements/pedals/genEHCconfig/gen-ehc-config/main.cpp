@@ -48,19 +48,33 @@ int main(void)
   printf("generating EHC config register bits\n");
   EHC_ControllerConfig_T c;
 
-  c.hwId             = 0;
+  c.hwId             = 1;
   c.ctrlId           = 0;
   c.pullup           = 0;
   c.silent           = 0;
-  c.is3wire          = 0;
-  c.continuous       = 0;
-  c.doAutoRanging    = 0;
+  c.is3wire          = 1;
+  c.continuous       = 1;
+  c.doAutoRanging    = 1;
   c.polarityInvert   = 0;
-  c.autoHoldStrength = 0;
+  c.autoHoldStrength = 2;
+
+  const char fname[] = "EHC-P1T-C2-POT-AR.lpcmsg";
 
   uint16_t bits = configToUint16(c);
 
   printf("bits (hex) : %04X\n\n", bits);
 
+  FILE *out = fopen(fname, "wb");
+  if (!out)
+    return 3;
+  uint16_t data[4];
+  data[0] = 0x0F00;  // EHC Configuration message
+  data[1] = 2;
+  data[2] = 0x0100;  // EHC Command : Set config register
+  data[3] = bits;
+
+  if (fwrite(data, sizeof(uint16_t), 4, out) != 4)
+    return 3;
+  printf("EHC config file \"%s\" written\n", fname);
   return 0;
 }
