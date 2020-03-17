@@ -30,6 +30,7 @@
 #include "tcd/nl_tcd_msg.h"
 #include "sup/nl_sup.h"
 #include "heartbeat/nl_heartbeat.h"
+#include "sys/nl_eeprom.h"
 
 #define DBG_CLOCK_MONITOR (0)
 
@@ -37,6 +38,7 @@ volatile uint8_t waitForFirstSysTick = 1;
 
 void Init(void)
 {
+  
   /* board */
   EMPHASE_V5_M4_Init();
 
@@ -57,6 +59,10 @@ void Init(void)
   DBG_GPIO3_2_Off();
   DBG_GPIO3_3_Off();
   DBG_GPIO3_4_Off();
+
+  /* EEPROM */
+  NL_EEPROM_Init();
+
   /* USB */
   USB_MIDI_Init();
   MSG_DropMidiMessages(1);
