@@ -84,6 +84,7 @@
 // new setting ID's
 #define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
 #define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
+#define SETTING_ID_SEND_FORCED_KEY        0xFF03  // direction: input; arguments(uint16): 1, midi key number
 
 //----- Request Ids:
 

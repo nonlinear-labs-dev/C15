@@ -38,7 +38,7 @@ volatile uint8_t waitForFirstSysTick = 1;
 
 void Init(void)
 {
-  
+
   /* board */
   EMPHASE_V5_M4_Init();
 
