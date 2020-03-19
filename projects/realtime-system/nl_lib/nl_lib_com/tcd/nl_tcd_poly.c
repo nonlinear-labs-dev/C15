@@ -22,7 +22,7 @@ static uint32_t allVelTables[VEL_CURVE_COUNT][65] = {};  // converts time differ
 static uint32_t *velTable = allVelTables[VEL_CURVE_NORMAL];
 
 #define FORCE_KEY_MAX (8000)  // 1 second of 125us time slices
-static int forceKey = 0;
+static int             forceKey       = 0;
 static IPC_KEY_EVENT_T forcedKeyEvent = { 0, 2501 };
 
 /*******************************************************************************
