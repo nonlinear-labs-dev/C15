@@ -276,6 +276,10 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
   {
     NL_EHC_SetEHCconfig(data[0], data[1]);  // Configurate External Hardware Controller
   }
+  else if (type == BB_MSG_TYPE_KEY_EMUL)
+  {
+    POLY_ForceKey(data[0], data[1], data[2]);
+  }
   else if (type == BB_MSG_TYPE_SETTING)
   {
     switch (data[0])
@@ -316,10 +320,7 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case SETTING_ID_PEDAL_4_TYPE:
         NL_EHC_SetLegacyPedalType(data[0] - SETTING_ID_PEDAL_1_TYPE, data[1]);
         break;
-      case SETTING_ID_SEND_FORCED_KEY:
-        POLY_ForceKey(data[1]);
-        break;
-      case SETTING_ID_ENABLE_EHC :
+      case SETTING_ID_ENABLE_EHC:
         NL_EHC_Enable(data[1]);
         break;
       default:
