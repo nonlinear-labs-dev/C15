@@ -11,7 +11,7 @@ int main(void)
   uint16_t tip3;
   uint16_t ring3;
   char buffer[1024];
-  char *buf;
+  char* buf;
   char MSG_ID[] = "BB_MSG_TYPE_SENSORS_RAW: ";
   int MSG_ID_LEN;
   int ret;
