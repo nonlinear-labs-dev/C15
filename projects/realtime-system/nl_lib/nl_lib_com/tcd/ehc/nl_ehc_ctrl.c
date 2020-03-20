@@ -292,20 +292,16 @@ typedef struct
   uint16_t rampStep;
 } Controller_T;
 
+// =============
+// ============= local variables
+// =============
+
 // main working variable, array of 8 controllers
-// controllers 0...3 are the primary controllers, one of:
-//   - 3-wire Pot on both T and R channels, wiper selected as Tip or Ring
-//   - 2-wire Pot on either T or R channel, directly selected as Tip or Ring
-//   - 2-wire Switch on either T or R channel, directly selected as Tip or Ring
-//   - 2-wire Control Voltage on either T or R channel, directly selected as Tip or Ring
-// controllers 4...7 are the secondary controllers, one of:
-//   - 2-wire Pot on either T or R channel, indirectly selected as the other channel from the corresponding primary controller
-//   - 2-wire Switch on either T or R channel, indirectly selected as the other channel from the corresponding primary controller
-//   - 2-wire Control Voltage on either T or R channel, indirectly selected as the other channel from the corresponding primary controller
-// NOTE: a secondary controller is not available when the corresponding primary controller is a three-wire pot.
 Controller_T ctrl[NUMBER_OF_CONTROLLERS];
 
-static int RequestGetEHCdata = 0;
+static int requestGetEHCdata = 0;  // flag for pending send of EHC data
+
+static int enableEHC = 1;  // master enable flag for all runtime processing (except init() etc)
 
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
@@ -800,7 +796,8 @@ static void readoutBiStable(Controller_T *const this)
 ******************************************************************************/
 void NL_EHC_InitControllers(void)
 {
-  RequestGetEHCdata = 0;
+  requestGetEHCdata = 0;
+  enableEHC         = 1;
   EHC_initSampleBuffers();
   clearController(&ctrl[0]);
   clearController(&ctrl[1]);
@@ -872,7 +869,7 @@ void setRangeMax(uint8_t which, uint16_t min)
 }
 
 /*************************************************************************/ /**
-* @brief	 Configurate External Hardware Controller
+* @brief	 Configure External Hardware Controller
 * @param[in] command
 * @param[in] data
 ******************************************************************************/
@@ -892,7 +889,7 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
   }
 }
 /*************************************************************************/ /**
-* @brief	 Send Config, Status and Last value to BB (all 8 controllers)
+* @brief	 Send Config, Status, Last value, and Min/Max to BB (all 8 controllers)
 ******************************************************************************/
 void NL_EHC_SendEHCdata(void)
 {
@@ -914,7 +911,12 @@ void NL_EHC_SendEHCdata(void)
 }
 void NL_EHC_RequestToSendEHCdata(void)
 {
-  RequestGetEHCdata = 1;
+  requestGetEHCdata = 1;
+}
+
+void NL_EHC_Enable(uint16_t flag)
+{
+  enableEHC = (flag != 0);
 }
 
 /*************************************************************************/ /**
@@ -1015,19 +1017,22 @@ void NL_EHC_ProcessControllers(void)
     if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?
     {
       ctrl[i].status.pluggedIn = 1;
-      if (ctrl[i].config.continuous)
-        readoutContinuous(&ctrl[i]);
-      else
-        readoutBiStable(&ctrl[i]);
+      if (enableEHC)
+      {
+        if (ctrl[i].config.continuous)
+          readoutContinuous(&ctrl[i]);
+        else
+          readoutBiStable(&ctrl[i]);
+      }
     }
     else
       resetController(&ctrl[i], WAIT_TIME_AFTER_PLUGIN);
   }
   ShowSettlingDisplay();
 
-  if (RequestGetEHCdata)
+  if (requestGetEHCdata)
   {
-    RequestGetEHCdata = 0;
+    requestGetEHCdata = 0;
     NL_EHC_SendEHCdata();
   }
 

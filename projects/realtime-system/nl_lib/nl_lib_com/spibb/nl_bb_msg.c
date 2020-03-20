@@ -319,6 +319,9 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case SETTING_ID_SEND_FORCED_KEY:
         POLY_ForceKey(data[1]);
         break;
+      case SETTING_ID_ENABLE_EHC :
+        NL_EHC_Enable(data[1]);
+        break;
       default:
         // do nothing
         type = 0;  // to set a breakpoint only

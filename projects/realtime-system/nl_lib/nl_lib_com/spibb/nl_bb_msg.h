@@ -22,7 +22,8 @@
 // ==== V 206 ====
 // complete revised "pedals" (aka external controllers) proccessing
 // 58 == release candidate, beta test
-#define SW_VERSION 58206
+// 59 == release candidate, beta test
+#define SW_VERSION 59206
 
 //===========================
 
@@ -85,6 +86,7 @@
 #define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
 #define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
 #define SETTING_ID_SEND_FORCED_KEY        0xFF03  // direction: input; arguments(uint16): 1, midi key number
+#define SETTING_ID_ENABLE_EHC             0xFF04  // direction: input; arguments(uint16): 1, flag (!= 0)
 
 //----- Request Ids:
 
