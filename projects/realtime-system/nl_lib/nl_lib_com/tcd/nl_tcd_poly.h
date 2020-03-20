@@ -24,6 +24,6 @@
 void POLY_Select_VelTable(uint32_t curve);
 void POLY_Init(void);
 void POLY_Process(void);
-void POLY_ForceKey(uint16_t midiKeyNumber);
+void POLY_ForceKey(uint16_t midiKeyNumber, uint16_t timeLow, uint16_t timeHigh);
 
 #endif /* NL_TCD_POLY_H_ */

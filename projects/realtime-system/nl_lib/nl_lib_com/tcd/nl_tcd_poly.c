@@ -21,10 +21,6 @@ static uint32_t allVelTables[VEL_CURVE_COUNT][65] = {};  // converts time differ
                                                          // element 64: longest timeInUs (526788 us or higher) -> 0     = min. velocity
 static uint32_t *velTable = allVelTables[VEL_CURVE_NORMAL];
 
-#define FORCE_KEY_MAX (8000)  // 1 second of 125us time slices
-static int             forceKey       = 0;
-static IPC_KEY_EVENT_T forcedKeyEvent = { 0, 2501 };
-
 /*******************************************************************************
 @brief  	Generate_VelTable - generates the elements of velTable[]
 @param[in]	curve - selects one of the five verlocity curves
@@ -77,7 +73,6 @@ void POLY_Init(void)
   for (int i = 0; i < VEL_CURVE_COUNT; i++)
     Generate_VelTable(i);
   velTable = allVelTables[VEL_CURVE_NORMAL];
-  forceKey = 0;
 }
 
 /******************************************************************************
@@ -91,15 +86,27 @@ void POLY_Select_VelTable(uint32_t curve)
 }
 
 /******************************************************************************
-	@brief		POLY_ForceKey : force a key down/up sequence via software
+	@brief		POLY_ForceKey : force a key down/up event via software
+	            This is *NOT* thread-safe, eg when M0 core writes the buffer
+	            at the same time there will be corruption
+	            Use for testing only.
 *******************************************************************************/
-void POLY_ForceKey(uint16_t midiKeyNumber)
+void POLY_ForceKey(uint16_t midiKeyNumber, uint16_t timeLow, uint16_t timeHigh)
 {
-  if (!forceKey)
+  IPC_KEY_EVENT_T forcedKeyEvent;
+  int             time;
+
+  forcedKeyEvent.key = midiKeyNumber;
+  time               = (int) (((uint32_t) timeHigh << 16) + (uint32_t) timeLow);
+  if (time < 0)
   {
-    forceKey           = FORCE_KEY_MAX;
-    forcedKeyEvent.key = midiKeyNumber - 36;
+    forcedKeyEvent.direction = KEY_DIR_UP;
+    time                     = -time;
   }
+  else
+    forcedKeyEvent.direction = KEY_DIR_DN;
+  forcedKeyEvent.timeInUs = time;
+  Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(forcedKeyEvent);
 }
 
 /******************************************************************************
@@ -110,21 +117,6 @@ void POLY_Process(void)
   uint32_t i;
   uint32_t time;
   uint32_t vel;
-
-  if (forceKey)
-  {
-    if (forceKey == FORCE_KEY_MAX)  // key down trigger
-    {
-      forcedKeyEvent.direction = KEY_DIR_DN;
-      Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(forcedKeyEvent);
-    }
-    else if (forceKey == 1)  // key up trigger
-    {
-      forcedKeyEvent.direction = KEY_DIR_UP;
-      Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(forcedKeyEvent);
-    }
-    forceKey--;
-  }
 
   uint32_t numKeyEvents = Emphase_IPC_M4_KeyBuffer_ReadBuffer(keyEvent, 32);  // reads the latest key up/down events from the ring buffer shared with the M0
 
