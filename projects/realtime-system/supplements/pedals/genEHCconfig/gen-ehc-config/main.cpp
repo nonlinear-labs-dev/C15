@@ -48,17 +48,17 @@ int main(void)
   printf("generating EHC config register bits\n");
   EHC_ControllerConfig_T c;
 
-  c.hwId             = 1;
+  c.hwId             = 0;
   c.ctrlId           = 0;
-  c.pullup           = 0;
+  c.pullup           = 1;
   c.silent           = 0;
-  c.is3wire          = 1;
+  c.is3wire          = 0;
   c.continuous       = 1;
-  c.doAutoRanging    = 1;
+  c.doAutoRanging    = 0;
   c.polarityInvert   = 0;
   c.autoHoldStrength = 2;
 
-  const char fname[] = "EHC-P1T-C2-POT-AR.lpcmsg";
+  const char fname[] = "EHC-P1T-C1-RHEO.lpcmsg";
 
   uint16_t bits = configToUint16(c);
 
