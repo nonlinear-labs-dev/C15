@@ -61,7 +61,7 @@ static void ShowSettlingDisplay(void)
 #define RHEO_SCALE_FACTOR (4500)   // don't change this unless you know what you do
 // autoranging
 #define AR_SPAN            (1000)  // 1000/20000 -> 5%
-#define AR_SPAN_RHEO       (117)   // 117 -> 1.17 (max/min minimum factor, must be greater than 1.0, of course)
+#define AR_SPAN_RHEO       (115)   // 115 -> 1.15 (max/min minimum factor, must be greater than 1.0, of course)
 #define AR_UPPER_DEAD_ZONE (5)     // 5 -> 5%, electrical dead zone
 #define AR_LOWER_DEAD_ZONE (4)     // 4 -> 4%, electrical dead zone
 
@@ -270,11 +270,12 @@ typedef struct
   ValueBuffer_T rawBuffer;  // intermediate value buffer
   ValueBuffer_T outBuffer;  // output buffer
 
-  // autoranging
-  uint16_t min;       // values used to reflect ...
-  uint16_t max;       // ... physical ranges.
-  uint16_t used_min;  // values used for the actual ranging, ...
-  uint16_t used_max;  // ... even with auto-ranging off.
+  // (auto-)ranging
+  uint16_t min;          // values used to reflect ...
+  uint16_t max;          // ... physical ranges.
+  uint16_t used_min;     // values used for the actual ranging, ...
+  uint16_t used_max;     // ... even with auto-ranging off.
+  uint16_t range_scale;  // scale (100%) value for the actual ranging
   // settling
   uint16_t settledValue;
   // final HW-source output
@@ -318,6 +319,13 @@ static void sendControllerData(const EHC_ControllerConfig_T config, const uint32
 // --------------- init autoranging, that is, set reasonable default for fixed ranges
 void InitAutoRange(Controller_T *const this)
 {
+
+  this->range_scale = AVG_DIV * 4095;  // assume CV first
+  if (this->config.is3wire)
+    this->range_scale = POT_SCALE_FACTOR;  // 3-wire means potentiometric readout
+  else if (this->config.pullup)
+    this->range_scale = RHEO_SCALE_FACTOR;  // 2-wire and pullup means rheostatic readout
+
   if (this->config.doAutoRanging)
   {  // set min and max so as to catch range
     this->used_min = this->min = 65535;
@@ -359,6 +367,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
       this->lastFinal            = ~this->final;
       this->used_max             = 0;
       this->used_min             = 65535;
+      this->range_scale          = 0;
       this->status.isAutoRanged  = 0;
       this->status.isRamping     = 0;
       this->status.isReset       = 0;
@@ -889,11 +898,11 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
   }
 }
 /*************************************************************************/ /**
-* @brief	 Send Config, Status, Last value, and Min/Max to BB (all 8 controllers)
+* @brief	 Send Config, Status, Last value, and Min/Max/Scale to BB (all 8 controllers)
 ******************************************************************************/
 void NL_EHC_SendEHCdata(void)
 {
-#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 5)
+#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 6)
   uint16_t  data[EHC_DATA_MSG_SIZE];
   uint16_t *p = data;
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
@@ -903,6 +912,7 @@ void NL_EHC_SendEHCdata(void)
     *p++ = ctrl[i].lastFinal;
     *p++ = ctrl[i].used_min;
     *p++ = ctrl[i].used_max;
+    *p++ = ctrl[i].range_scale;
   }
   BB_MSG_WriteMessage(BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
   BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_EHC_DATA, 1);
