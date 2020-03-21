@@ -168,6 +168,7 @@ void processReadMsgs(uint16_t cmd, uint16_t len, uint16_t *data)
 {
   int       i;
   uint16_t *p;
+  double    last, min, max, scale;
 
   EHC_ControllerConfig_T config;
   EHC_ControllerStatus_T status;
@@ -193,7 +194,7 @@ void processReadMsgs(uint16_t cmd, uint16_t len, uint16_t *data)
     case BB_MSG_TYPE_MUTESTATUS:
       break;
     case BB_MSG_TYPE_EHC_DATA:
-      if (len != 8 * 5)
+      if (len != 8 * 6)
       {
         printf("EHC DATA : wrong length of %d\n", len);
         break;
@@ -203,13 +204,18 @@ void processReadMsgs(uint16_t cmd, uint16_t len, uint16_t *data)
       {
         config = uint16ToConfig(*p++);
         status = uint16ToStatus(*p++);
-        printf("EHC  CONFIG = HWSID:%02d SIL:%d CTRLID:%d POT:%d PUP:%d INV:%d ARAE:%d CONT:%d AHS:%d\n",
-               config.hwId, config.silent, config.ctrlId, config.is3wire, config.pullup, config.polarityInvert, config.doAutoRanging, config.continuous, config.autoHoldStrength);
-        printf("     STATUS = INI:%d PLUGD:%d, RES:%d, VALID:%d, RANGD:%d, SETLD:%d RAMP:%d\n",
+        printf("EHC%d config = HWSID:%02d SIL:%d CTRLID:%d POT:%d PUP:%d INV:%d ARAE:%d CONT:%d AHS:%d\n",
+               i + 1, config.hwId, config.silent, config.ctrlId, config.is3wire, config.pullup, config.polarityInvert, config.doAutoRanging, config.continuous, config.autoHoldStrength);
+        printf("     status = INI:%d PLUGD:%d RES:%d VALID:%d RANGD:%d SETLD:%d RAMP:%d\n",
                status.initialized, status.pluggedIn, status.isReset, status.outputIsValid, status.isAutoRanged, status.isSettled, status.isRamping);
-        printf("     LAST   = %d   ", *p++);
-        printf("     MIN    = %d   ", *p++);
-        printf("     MAX    = %d\n", *p++);
+        last = *p++;
+        if (!status.outputIsValid)
+          last = -0.01;
+        min   = *p++;
+        max   = *p++;
+        scale = *p++;
+        printf("     last / min / max / scale :  %d(%.1lf%%) / %d(%.1lf%%) / %d(%.1lf%%) / %5d\n",
+               (uint16_t) last, 100 * last / 16000, (uint16_t) min, 100 * min / scale, (uint16_t) max, 100 * max / scale, (uint16_t) scale);
       }
       printf("\n");
       break;
