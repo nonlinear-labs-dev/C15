@@ -1,18 +1,13 @@
 # Blacklist files/folders in same directory as the .gitignore file
-/*
 
 # Whitelist some files
-!.*
-!*.pro
-!*.cpp
-!*.c
-!*.h
-
 
 # Blacklist files/folders in same directory as the .gitignore file
 .qmake*
 Makefile
-*.pro.user
+gen-ehc-config.pro.user
+*.exe
+*.o
 
 # Whitelist our folders we want to sync
 # trailing "/" is optional for folders, may match file though.
