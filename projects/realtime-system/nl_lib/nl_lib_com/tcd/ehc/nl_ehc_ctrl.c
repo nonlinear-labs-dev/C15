@@ -58,7 +58,7 @@ static void ShowSettlingDisplay(void)
 
 // ============= Pot channels
 #define POT_SCALE_FACTOR  (20000)  // don't change this unless you know what you do
-#define RHEO_SCALE_FACTOR (4500)   // don't change this unless you know what you do
+#define RHEO_SCALE_FACTOR (10000)  // don't change this unless you know what you do
 // autoranging
 #define AR_SPAN            (1000)  // 1000/20000 -> 5%
 #define AR_SPAN_RHEO       (115)   // 115 -> 1.15 (max/min minimum factor, must be greater than 1.0, of course)
@@ -341,9 +341,10 @@ void InitAutoRange(Controller_T *const this)
     return;
   }
   if (this->config.pullup)
-  {  // for rheostats/switches we use a nominal range of 0...10kOhms
-    this->used_min = 0;
-    this->used_max = RHEO_SCALE_FACTOR;
+  {  // for rheostats/switches we use a nominal range of 5% to 90%
+     // wrt a resistance of 10k
+    this->used_min = 1 * RHEO_SCALE_FACTOR / 20;
+    this->used_max = 18 * RHEO_SCALE_FACTOR / 20;
     return;
   }
   // for direct CV we will use the full ADC range
@@ -465,7 +466,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
 }
 
 /*************************************************************************/ /**
-* @brief	Reset a controller
+* @brief	Reset an initialized controller
 ******************************************************************************/
 static void resetController(Controller_T *const this, const uint16_t wait_time)
 {
@@ -484,7 +485,10 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   this->status.isReset       = 1;
   this->status.pluggedIn     = 0;
   this->step                 = 0;
-  InitAutoRange(this);
+  if (this->config.doAutoRanging)
+    InitAutoRange(this);
+  else
+    this->status.isAutoRanged = 1;
   clearValueBuffer(&this->rawBuffer, SBUF_SIZE + VALBUF_SIZE);
   clearValueBuffer(&this->outBuffer, VALBUF_SIZE);
 }
@@ -517,7 +521,7 @@ static int getIntermediateValue(Controller_T *const this)
     {                                       // get calculate absolute resistance value
       if (value > 4000 * AVG_DIV)
         value = 4000 * AVG_DIV;  // avoid excessive values after division
-      value = RHEO_SCALE_FACTOR * value / (ADC_MAX_SCALED - value);
+      value = RHEO_SCALE_FACTOR * value / (ADC_MAX_SCALED - value) / 2;
       if (value > 60000)  // limit to uint16 range, 100k pot shall be still within
         value = 60000;
     }
@@ -870,11 +874,11 @@ void setRangeMin(uint8_t which, uint16_t min)
     return;
   ctrl[which].used_min = min;
 }
-void setRangeMax(uint8_t which, uint16_t min)
+void setRangeMax(uint8_t which, uint16_t max)
 {
   if (which >= NUMBER_OF_CONTROLLERS)
     return;
-  ctrl[which].used_min = min;
+  ctrl[which].used_max = max;
 }
 
 /*************************************************************************/ /**
