@@ -1,1 +1,1 @@
-scp %1 root@192.168.8.2:/nonlinear/utilities
+scp %1 root@192.168.8.2:/nonlinear/playground
