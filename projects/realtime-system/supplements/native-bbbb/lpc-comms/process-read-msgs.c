@@ -12,7 +12,7 @@
 #define BB_MSG_TYPE_MUTESTATUS   0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
 #define BB_MSG_TYPE_RIBBON_CAL   0x0D00  // direction: input; arguments(uint16): 134, 134x data [2x (33x 34x)]
 #define BB_MSG_TYPE_SENSORS_RAW  0x0E00  // direction: output; arguments(uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
-#define BB_MSG_TYPE_EHC_CONFIG   0x0F00  //  direction: input;  arguments (uint16): 2, 1x command, 1x data
+#define BB_MSG_TYPE_EHC_CONFIG   0x0F00  // direction: input;  arguments (uint16): 2, 1x command, 1x data
 #define BB_MSG_TYPE_EHC_DATA     0x1000  // direction: output;  arguments(uint16): ??, (see nl_ehc_ctrl.c)
 
 //----- Setting Ids:
