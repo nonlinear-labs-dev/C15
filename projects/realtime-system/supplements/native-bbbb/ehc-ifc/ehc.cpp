@@ -35,11 +35,14 @@ void Usage(void)
   puts("  clear-all       : reset&clear all EHCs");
   puts("  enable          : enable EHC processing");
   puts("  disable         : disable EHC processing");
-  puts("  range <id>, <min>, <max>  : set range of ehc id to min..max (uint16)");
+  puts("  range <port>, <min>, <max>  : set range of controller to min..max (uint16)");
+  puts("  reset <port>    : reset controller at port");
   puts("  config <params> : configure an EHC");
-  puts("    params : <id> <port> [<flag>, ...]");
-  puts("      id    : logical ID (1...8)");
-  puts("      port  : physical port (p1t, p1r, p2t, ..., p4r)");
+  puts("    params : <port> <id> [<flag>, ...]");
+  puts("      port  : physical port name (p1t, p1r, p2t, ..., p4r),");
+  puts("              or equivalent controller ID 1..8");
+  puts("      id    : HWSID, logical EHC ID ([ehc]1...[ehc]8), or one of");
+  puts("              the built-in controllers (pb, at, r1, r2)");
   puts("      flags :");
   puts("         sil   : silent (no msgs to ePC)");
   puts("         pot   : is a 3-wire pot");
@@ -97,9 +100,11 @@ EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
 // ===================
 #define GET      "get"
 #define CLEARALL "clear-all"
+#define CLEAR    "clear"
 #define ENABLE   "enable"
 #define DISABLE  "disable"
 #define RANGE    "range"
+#define RESET    "reset"
 #define CONFIG   "config"
 
 uint16_t GET_DATA[]      = { 0x0A00, 0x0001, 0x0002 };
@@ -118,6 +123,83 @@ uint16_t CLEARALL_DATA[] = {
 uint16_t ENDIS_DATA[]  = { 0x0700, 0x0002, 0xFF04, 0x0000 };
 uint16_t RANGE_DATA[]  = { 0x0F00, 0x0002, 0x0000, 0x0000 };
 uint16_t CONFIG_DATA[] = { 0x0F00, 0x0002, 0x0100, 0x0000 };
+uint16_t RESET_DATA[]  = { 0x0F00, 0x0002, 0x0400, 0x0000 };
+
+uint16_t readPortID(const char *string)
+{
+  if (strncmp(string, "p1t", 3) == 0)
+    return 0;
+  if (strncmp(string, "p1r", 3) == 0)
+    return 1;
+  if (strncmp(string, "p2t", 3) == 0)
+    return 2;
+  if (strncmp(string, "p2r", 3) == 0)
+    return 3;
+  if (strncmp(string, "p3t", 3) == 0)
+    return 4;
+  if (strncmp(string, "p3r", 3) == 0)
+    return 5;
+  if (strncmp(string, "p4t", 3) == 0)
+    return 6;
+  if (strncmp(string, "p4r", 3) == 0)
+    return 7;
+  uint16_t id;
+  if (sscanf(string, "%hu", &id) != 1)
+  {
+    puts("config: argument error (port id expected)");
+    Usage();
+  }
+  if (id == 0 || id > 8)
+  {
+    puts("config: port must be 1...8");
+    Usage();
+  }
+  id--;
+  return id;
+}
+
+uint16_t readHWSID(const char *string)
+{
+  if (strncmp(string, "e1", 2) == 0)
+    return 0;
+  if (strncmp(string, "e2", 2) == 0)
+    return 1;
+  if (strncmp(string, "e3", 2) == 0)
+    return 2;
+  if (strncmp(string, "e4", 2) == 0)
+    return 3;
+  if (strncmp(string, "e5", 2) == 0)
+    return 8;
+  if (strncmp(string, "e6", 2) == 0)
+    return 9;
+  if (strncmp(string, "e7", 2) == 0)
+    return 10;
+  if (strncmp(string, "e8", 2) == 0)
+    return 11;
+  if (strncmp(string, "pb", 2) == 0)
+    return 4;
+  if (strncmp(string, "at", 2) == 0)
+    return 5;
+  if (strncmp(string, "r1", 2) == 0)
+    return 6;
+  if (strncmp(string, "r2", 2) == 0)
+    return 7;
+  uint16_t id;
+  if (sscanf(string, "%hu", &id) != 1)
+  {
+    puts("config: argument error (HWSID expected)");
+    Usage();
+  }
+  if (id == 0 || id > 8)
+  {
+    puts("config: HWSID must be 1...8");
+    Usage();
+  }
+  id--;
+  if (id > 3)
+    id -= 4;
+  return id;
+}
 
 #define DRIVER "/dev/lpc_bb_driver"
 //#define DRIVER "test.bin"
@@ -135,46 +217,44 @@ int main(int argc, char const *argv[])
 
   // get
   if (strncmp(argv[1], GET, sizeof GET) == 0)
+  {
     writeData(driver, sizeof GET_DATA, &GET_DATA[0]);
+    return 0;
+  }
 
   // clear-all
-  else if (strncmp(argv[1], CLEARALL, sizeof CLEARALL) == 0)
+  if (strncmp(argv[1], CLEARALL, sizeof CLEARALL) == 0)
+  {
+  ClearAll:
     writeData(driver, sizeof CLEARALL_DATA, &CLEARALL_DATA[0]);
+    return 0;
+  }
 
   //enable
-  else if (strncmp(argv[1], ENABLE, sizeof ENABLE) == 0)
+  if (strncmp(argv[1], ENABLE, sizeof ENABLE) == 0)
   {
     ENDIS_DATA[3] = 0x0001;
     writeData(driver, sizeof ENDIS_DATA, &ENDIS_DATA[0]);
+    return 0;
   }
 
   // disable
-  else if (strncmp(argv[1], DISABLE, sizeof DISABLE) == 0)
+  if (strncmp(argv[1], DISABLE, sizeof DISABLE) == 0)
   {
     ENDIS_DATA[3] = 0x0000;
     writeData(driver, sizeof ENDIS_DATA, &ENDIS_DATA[0]);
+    return 0;
   }
 
   // range
-  else if (strncmp(argv[1], RANGE, sizeof RANGE) == 0)
+  if (strncmp(argv[1], RANGE, sizeof RANGE) == 0)
   {
     if (argc != 5)
     {
       puts("range: too few arguments!");
       Usage();
     }
-    RANGE_DATA[2] = 0x0000;
-    if (sscanf(argv[2], "%hu", &RANGE_DATA[2]) != 1)
-    {
-      puts("range: argument error (uint16 expected)");
-      Usage();
-    }
-    if (RANGE_DATA[2] == 0 || RANGE_DATA[2] > 8)
-    {
-      puts("range: EHC id must be 1...8");
-      Usage();
-    }
-    RANGE_DATA[2]--;
+    RANGE_DATA[2] = readPortID(argv[2]);
     RANGE_DATA[2] |= 0x0200;
     if (sscanf(argv[3], "%hu", &RANGE_DATA[3]) != 1)
     {
@@ -190,53 +270,55 @@ int main(int argc, char const *argv[])
       Usage();
     }
     writeData(driver, sizeof RANGE_DATA, &RANGE_DATA[0]);
+    return 0;
+  }
+
+  // reset
+  if (strncmp(argv[1], RESET, sizeof RESET) == 0)
+  {
+    if (argc != 3)
+    {
+      puts("range: too few arguments!");
+      Usage();
+    }
+    RESET_DATA[2] = readPortID(argv[2]);
+    RESET_DATA[2] |= 0x0400;
+    RESET_DATA[3] = 0;
+    writeData(driver, sizeof RESET_DATA, &RESET_DATA[0]);
+    return 0;
+  }
+
+  // clear
+  if (strncmp(argv[1], CLEAR, sizeof CLEAR) == 0)
+  {
+    if (argc != 3)
+    {
+      puts("range: too few arguments!");
+      Usage();
+    }
+    if (strncmp(argv[2], "all", 3) == 0)
+      goto ClearAll;
+    else
+    {
+      RESET_DATA[2] = readPortID(argv[2]);
+      RESET_DATA[2] |= 0x0400;
+      RESET_DATA[3] = 1;
+      writeData(driver, sizeof RESET_DATA, &RESET_DATA[0]);
+      return 0;
+    }
   }
 
   // config
-  else if (strncmp(argv[1], CONFIG, sizeof CONFIG) == 0)
+  if (strncmp(argv[1], CONFIG, sizeof CONFIG) == 0)
   {
     if (argc < 4)
     {
       puts("config: too few arguments!");
       Usage();
     }
-    uint16_t id;
-    if (sscanf(argv[2], "%hu", &id) != 1)
-    {
-      puts("config: argument error (uint16 expected)");
-      Usage();
-    }
-    if (id == 0 || id > 8)
-    {
-      puts("config: EHC id must be 1...8");
-      Usage();
-    }
-    id--;
-    if (id > 3)
-      id -= 4;
     EHC_ControllerConfig_T config = uint16ToConfig(0);
-    config.hwId                   = id;
-    if (strncmp(argv[3], "p1t", 3) == 0)
-      config.ctrlId = 0;
-    else if (strncmp(argv[3], "p1r", 3) == 0)
-      config.ctrlId = 1;
-    else if (strncmp(argv[3], "p2t", 3) == 0)
-      config.ctrlId = 2;
-    else if (strncmp(argv[3], "p2r", 3) == 0)
-      config.ctrlId = 3;
-    else if (strncmp(argv[3], "p3t", 3) == 0)
-      config.ctrlId = 4;
-    else if (strncmp(argv[3], "p3r", 3) == 0)
-      config.ctrlId = 5;
-    else if (strncmp(argv[3], "p4t", 3) == 0)
-      config.ctrlId = 6;
-    else if (strncmp(argv[3], "p4r", 3) == 0)
-      config.ctrlId = 7;
-    else
-    {
-      puts("config: invalid port");
-      Usage();
-    }
+    config.ctrlId                 = readPortID(argv[2]);
+    config.hwId                   = readHWSID(argv[3]);
     argc -= 4;
     argv += 4;
     uint16_t ahs = 2;
@@ -286,14 +368,11 @@ int main(int argc, char const *argv[])
       config.autoHoldStrength = ahs;
     CONFIG_DATA[3] = configToUint16(config);
     writeData(driver, sizeof CONFIG_DATA, &CONFIG_DATA[0]);
+    return 0;
   }
 
   // unknown
-  else
-  {
-    puts("unknown command");
-    Usage();
-  }
-  fclose(driver);
+  puts("unknown command");
+  Usage();
   return 0;
 }
