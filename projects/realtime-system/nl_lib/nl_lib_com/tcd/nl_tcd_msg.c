@@ -13,12 +13,11 @@
 
 #include "usb/nl_usb_midi.h"
 #include "drv/nl_dbg.h"
+#include "tcd/nl_tcd_adc_work.h"
 
 /******************************************************************************/
 /*	modul local defines														  */
 /******************************************************************************/
-
-#define IMPLEMENT_ACTIVE_SENSING (0)  // set to != 0 to enable
 
 #define BUFFER_SIZE 512
 
@@ -160,12 +159,12 @@ void MSG_KeyUp(uint32_t vel)
 /*****************************************************************************
 *   @brief	MSG_HWSourceUpdate
 *   Sends the new position, when a hardware source has been moved
-*   @param  source: 0...7  identifies the hardware source
+*   @param  source: 0...11  identifies the hardware source
 *   @param  position: 0...16000
 ******************************************************************************/
 void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
 {
-  if ((source > 7) || (position > 16000))
+  if ((source >= NUM_HW_REAL_SOURCES) || (position > 16000))
   {
     return;  /// assertion
   }
@@ -187,7 +186,7 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
 ******************************************************************************/
 void MSG_SendActiveSensing(void)
 {
-#if IMPLEMENT_ACTIVE_SENSING
+#ifdef IMPLEMENT_ACTIVE_SENSING
   buff[writeBuffer][buf++] = 0xFE;  // MIDI command "active sensing"
   // since all "TCD" type transfers are 4 bytes, just send another 3 copies of it
   buff[writeBuffer][buf++] = 0xFE;
@@ -198,5 +197,9 @@ void MSG_SendActiveSensing(void)
   {
     MSG_SendMidiBuffer();
   }
+#else
+#ifndef no_IMPLEMENT_ACTIVE_SENSING
+#error "either IMPLEMENT_ACTIVE_SENSING or no_IMPLEMENT_ACTIVE_SENSING must be defined"
+#endif
 #endif
 }
