@@ -76,7 +76,7 @@ void POLY_Init(void)
 }
 
 /******************************************************************************
-	@brief		POLY_Process: reading new key events from the ring buffer,
+	@brief		Select a Velocity table
 *******************************************************************************/
 void POLY_Select_VelTable(uint32_t curve)
 {
@@ -96,7 +96,7 @@ void POLY_ForceKey(uint16_t midiKeyNumber, uint16_t timeLow, uint16_t timeHigh)
   IPC_KEY_EVENT_T forcedKeyEvent;
   int             time;
 
-  forcedKeyEvent.key = midiKeyNumber;
+  forcedKeyEvent.key = midiKeyNumber - 36;
   time               = (int) (((uint32_t) timeHigh << 16) + (uint32_t) timeLow);
   if (time < 0)
   {
