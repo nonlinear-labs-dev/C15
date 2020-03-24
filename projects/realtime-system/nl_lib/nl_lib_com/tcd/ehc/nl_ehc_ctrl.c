@@ -493,6 +493,14 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   clearValueBuffer(&this->outBuffer, VALBUF_SIZE);
 }
 
+void resetControllerById(const uint16_t id, const uint16_t wait_time)
+{
+  if (id >= NUMBER_OF_CONTROLLERS)
+    return;
+  Controller_T *this = &ctrl[id];
+  resetController(this, wait_time);
+}
+
 /*************************************************************************/ /**
 * @brief	Clear / Disable a controller
 ******************************************************************************/
@@ -812,14 +820,14 @@ void NL_EHC_InitControllers(void)
   requestGetEHCdata = 0;
   enableEHC         = 1;
   EHC_initSampleBuffers();
-  clearController(&ctrl[0]);
-  clearController(&ctrl[1]);
-  clearController(&ctrl[2]);
-  clearController(&ctrl[3]);
-  clearController(&ctrl[4]);
-  clearController(&ctrl[5]);
-  clearController(&ctrl[6]);
-  clearController(&ctrl[7]);
+  initController(uint16ToConfig(0xF800), 1);
+  initController(uint16ToConfig(0xF900), 1);
+  initController(uint16ToConfig(0xFA00), 1);
+  initController(uint16ToConfig(0xFB00), 1);
+  initController(uint16ToConfig(0xFC00), 1);
+  initController(uint16ToConfig(0xFD00), 1);
+  initController(uint16ToConfig(0xFE00), 1);
+  initController(uint16ToConfig(0xFF00), 1);
 
 #if 0
   // debug ??? enable all 8 controllers as rheostats
@@ -832,7 +840,7 @@ void NL_EHC_InitControllers(void)
   config.polarityInvert = 0;
   config.pullup = 1;
 
-  for (int i = 0; i <= NUMBER_OF_CONTROLLERS; i++)
+  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
   {
 	config.ctrlId = i;
 	switch (i)
@@ -898,6 +906,16 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
       break;
     case 0x0300:  // set ranging max
       setRangeMax(cmd & 0xFF, data);
+      break;
+    case 0x0400:      // reset or full delete controller
+      if (data == 0)  // reset
+        resetControllerById(cmd & 0xFF, 0);
+      else  // full delete
+      {
+        if ((cmd & 0xFF) >= NUMBER_OF_CONTROLLERS)
+          return;
+        initController(uint16ToConfig(0xF800 | (cmd & 0xFF) << 8), 1);
+      }
       break;
   }
 }
