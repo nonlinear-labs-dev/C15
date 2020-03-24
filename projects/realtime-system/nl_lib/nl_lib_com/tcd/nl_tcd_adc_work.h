@@ -28,7 +28,8 @@
 #define HW_SOURCE_ID_PEDAL_8    11
 #define HW_SOURCE_ID_LAST_KEY   12
 
-#define NUM_HW_SOURCES 13
+#define NUM_HW_REAL_SOURCES 12  // all but LAST_KEY
+#define NUM_HW_SOURCES      13
 
 //------- public functions
 
