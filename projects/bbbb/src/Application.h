@@ -6,6 +6,8 @@
 
 class Options;
 class Bridges;
+class WiFiManager;
+class USBManager;
 
 class Application
 {
@@ -30,4 +32,6 @@ class Application
   std::unique_ptr<Options> m_options;
   Glib::ustring m_selfPath;
   std::unique_ptr<Bridges> m_bridges;
+  std::unique_ptr<WiFiManager> m_wifiManager;
+  std::unique_ptr<USBManager> m_usbManager;
 };

@@ -6,11 +6,21 @@ class FourStateLED : public LED
 {
  public:
   FourStateLED();
+  ~FourStateLED() override;
 
-  void setState(char state);
-  char getState() const;
-  void syncBBBB();
+  enum State
+  {
+    Invalid = -1,
+    Off = 0,
+    Dark = 1,
+    Medium = 2,
+    Bright = 3
+  };
+
+  void setState(State state);
+  State getState() const;
+  void syncHWUI();
 
  private:
-  char m_state;
+  State m_state = State::Invalid;
 };

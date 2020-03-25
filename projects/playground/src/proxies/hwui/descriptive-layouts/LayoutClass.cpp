@@ -26,7 +26,7 @@ namespace DescriptiveLayouts
     conditions.push_back(c);
   }
 
-  DFBLayout* LayoutClass::instantiate() const
+  Layout* LayoutClass::instantiate() const
   {
     DebugLevel::gassy("instantiating Layout:", id);
     return new GenericLayout(*this);

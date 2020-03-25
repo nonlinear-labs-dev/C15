@@ -10,7 +10,7 @@ template <class tSetting> class ChangeSettingOverlay : public ArrowIncrementDecr
       : ArrowIncrementDecrementOverlay(r)
   {
     auto labelWidth = r.getWidth() - 20;
-    m_label = addControl(new SettingLabel<tSetting>({ 11, -1, labelWidth, 13 }));
+    m_label = addControl(new SettingLabel<tSetting>({ 11, 0, labelWidth, 12 }));
   }
 
   void onLeft(bool down) override;

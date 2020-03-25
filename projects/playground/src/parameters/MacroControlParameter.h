@@ -59,7 +59,7 @@ class MacroControlParameter : public Parameter
   void toggleUiSelectedHardwareSource(int inc);
   ParameterId getUiSelectedHardwareSource() const;
 
-  DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
 
   size_t getHash() const override;
 

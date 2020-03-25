@@ -1,7 +1,7 @@
 package com.nonlinearlabs.client.world.pointer;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.Timer;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
@@ -11,7 +11,7 @@ class TouchMoveStart extends TouchMove {
 
 	private Timer longPressTimer;
 
-	TouchMoveStart(Gesture predecessor, Position from, JsArray<Touch> touches) {
+	TouchMoveStart(Gesture predecessor, Position from, ArrayList<Touch> touches) {
 		super(predecessor, from, touches);
 
 		NonMaps.theMaps.captureMouse();
@@ -25,7 +25,7 @@ class TouchMoveStart extends TouchMove {
 	}
 
 	@Override
-	public Gesture onTouchMove(JsArray<Touch> touches) {
+	public Gesture onTouchMove(ArrayList<Touch> touches) {
 		return new TouchMove(this, getPosition(), touches);
 	}
 
@@ -34,8 +34,8 @@ class TouchMoveStart extends TouchMove {
 	}
 
 	@Override
-	public Gesture onTouchEnd(JsArray<Touch> touches) {
-		if (touches.length() > 0)
+	public Gesture onTouchEnd(ArrayList<Touch> touches) {
+		if (touches.size() > 0)
 			return onTouchMove(touches);
 
 		return new TouchMoveEnd(this);

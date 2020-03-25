@@ -11,7 +11,7 @@
 #include "ControlParser.h"
 #include "Styles.h"
 #include "StyleParser.h"
-#include "tools/SpawnCommandLine.h"
+#include <nltools/system/SpawnCommandLine.h>
 #include "ConsistencyChecker.h"
 
 #include <tools/json.h>

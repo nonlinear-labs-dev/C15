@@ -9,22 +9,21 @@
 #include "Options.h"
 #include "presets/PresetManager.h"
 #include "profiling/Profiler.h"
-#include "proxies/hwui/debug-oled/DebugOLED.h"
 #include "proxies/hwui/HWUI.h"
 #include "proxies/lpc/LPCProxy.h"
 #include "proxies/audio-engine/AudioEngineProxy.h"
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <tools/WatchDog.h>
 #include <unistd.h>
 #include <clipboard/Clipboard.h>
-#include <assert.h>
+#include <cassert>
 #include <proxies/hwui/debug-oled/DebugLayout.h>
 #include <tools/ExceptionTools.h>
 #include <nltools/messaging/Messaging.h>
-#include <device-settings/LayoutMode.h>
 #include <presets/EditBuffer.h>
 #include <giomm.h>
+#include <proxies/usb/USBChangeListener.h>
+
+using namespace std::chrono_literals;
 
 Application *Application::theApp = nullptr;
 
@@ -32,8 +31,8 @@ void setupMessaging(const Options *options)
 {
   using namespace nltools::msg;
 
-  auto bbbb = options->getBBBB();
-  auto ae = options->getAudioEngineHost();
+  const auto &bbbb = options->getBBBB();
+  const auto &ae = options->getAudioEngineHost();
 
   Configuration conf;
 #ifdef _DEVELOPMENT_PC
@@ -41,11 +40,12 @@ void setupMessaging(const Options *options)
 #else
   conf.offerEndpoints = { EndPoint::Playground };
 #endif
-  conf.useEndpoints = { { EndPoint::Lpc, bbbb },      { EndPoint::Oled, bbbb },
+  conf.useEndpoints = { { EndPoint::Lpc, bbbb },       { EndPoint::Oled, bbbb },
 #ifdef _DEVELOPMENT_PC
                         { EndPoint::TestEndPoint },
 #endif
-                        { EndPoint::PanelLed, bbbb }, { EndPoint::RibbonLed, bbbb }, { EndPoint::AudioEngine, ae } };
+                        { EndPoint::PanelLed, bbbb },  { EndPoint::RibbonLed, bbbb },
+                        { EndPoint::AudioEngine, ae }, { EndPoint::WiFiManager, bbbb } };
   nltools::msg::init(conf);
 }
 
@@ -78,6 +78,7 @@ Application::Application(int numArgs, char **argv)
     , m_clipboard(new Clipboard(m_http->getUpdateDocumentMaster()))
     , m_heartbeatState(false)
     , m_isQuit(false)
+    , m_usbChangeListener(std::make_unique<USBChangeListener>())
 {
 #ifdef _PROFILING
   Profiler::get().enable(true);
@@ -110,6 +111,11 @@ Application::~Application()
   m_hwui.reset();
   m_undoScope.reset();
   m_presetManager.reset();
+
+  nltools::msg::flush(nltools::msg::EndPoint::PanelLed, 1s);
+  nltools::msg::flush(nltools::msg::EndPoint::RibbonLed, 1s);
+  nltools::msg::flush(nltools::msg::EndPoint::Oled, 1s);
+
   DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
 
 #ifdef _PROFILING

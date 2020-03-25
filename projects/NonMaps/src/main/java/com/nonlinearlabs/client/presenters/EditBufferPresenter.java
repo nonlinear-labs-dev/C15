@@ -1,5 +1,6 @@
 package com.nonlinearlabs.client.presenters;
 
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.RGBA;
@@ -19,4 +20,7 @@ public class EditBufferPresenter {
     public RGB voiceGroupII_ForegroundColor = RGBA.transparent();
     public RGB voiceGroupI_BackgroundColor = RGBA.transparent();
     public RGB voiceGroupII_BackgroundColor = RGBA.transparent();
+
+    public String currentPartName;
+    public SoundType soundType;
 }

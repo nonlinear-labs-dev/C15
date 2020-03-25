@@ -1,6 +1,6 @@
 [Unit]
 Description=Nonlinear-Labs Playground
-After=syslog.target network.target systemd-modules-load.service
+After=syslog.target network.target systemd-modules-load.service persistent.mount fix-overlay-order.service
 
 [Service]
 ExecStart=@C15_INSTALL_PATH@/playground/playground --bbbb-host=192.168.10.11 --layouts=@C15_INSTALL_PATH@/playground/resources/templates

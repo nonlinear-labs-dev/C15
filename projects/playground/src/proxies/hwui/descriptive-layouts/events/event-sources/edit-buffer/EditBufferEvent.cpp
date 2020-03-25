@@ -45,3 +45,9 @@ EditBuffer *DescriptiveLayouts::EditBufferEventBase::getEditBuffer()
 {
   return Application::get().getPresetManager()->getEditBuffer();
 }
+
+DescriptiveLayouts::VoiceGroupSelectEventBase::VoiceGroupSelectEventBase()
+{
+  m_vgSelection = Application::get().getHWUI()->onCurrentVoiceGroupChanged(
+      sigc::mem_fun(this, &VoiceGroupSelectEventBase::onChange));
+}

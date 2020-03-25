@@ -31,12 +31,6 @@ namespace conditiondetail
   {
     return dynamic_cast<const ModulateableParameter *>(getCurrentParameter());
   }
-
-  void bruteForceLayouts()
-  {
-    auto hwui = Application::get().getHWUI();
-    hwui->getPanelUnit().getEditPanel().getBoled().bruteForce();
-  }
 }
 
 bool ParameterConditions::IsParameterModulateable::check() const

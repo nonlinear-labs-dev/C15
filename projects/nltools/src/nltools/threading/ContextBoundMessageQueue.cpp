@@ -15,10 +15,18 @@ namespace nltools
 
     void ContextBoundMessageQueue::pushMessage(tMessage &&m)
     {
-      m_context->invoke([m = std::move(m)]() {
+      m_pendingCalls++;
+
+      m_context->invoke([this, m = std::move(m)]() {
+        m_pendingCalls--;
         m();
         return false;
       });
+    }
+
+    bool ContextBoundMessageQueue::isPending() const
+    {
+      return m_pendingCalls > 0;
     }
   }
 }

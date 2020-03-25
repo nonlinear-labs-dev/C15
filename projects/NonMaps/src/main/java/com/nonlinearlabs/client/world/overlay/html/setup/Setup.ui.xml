@@ -158,6 +158,43 @@
 						</div>
 					</div>
 
+
+
+
+
+					<div class="eins-he">
+						<div class="w35p">
+							<p>Transition Time</p>
+						</div>
+						<div class="w20p">
+							<g:Label ui:field="transitionTimeDisplayString"
+								styleName="gui-label-1"></g:Label>
+						</div>
+						<div class="w40p">
+							<input type="range" ui:field="transitionTimeSlider"
+								class="slider-a" min="0" max="1" step="0.001" value="0"></input>
+						</div>
+					</div>
+
+					<div class="eins-he">
+						<div class="w35p">
+							<p>Tune Reference</p>
+						</div>
+						<div class="w20p">
+							<g:Label ui:field="tuneReferenceDisplayString"
+								styleName="gui-label-1"></g:Label>
+						</div>
+						<div class="w40p">
+							<input type="range" ui:field="tuneReferenceSlider"
+								class="slider-a" min="0" max="1" step="0.0001" value="0"></input>
+						</div>
+					</div>
+
+
+
+
+
+
 				</div>
 			</div>
 

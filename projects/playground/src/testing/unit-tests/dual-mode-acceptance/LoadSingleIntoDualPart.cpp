@@ -25,8 +25,8 @@ void LoadSinglePresetWithValueIntoInitDualSound(Preset *preset, tControlPosition
 
     auto editBuffer = TestHelper::getEditBuffer();
 
-    auto presetMasterVolume = preset->findParameterByID({ 247, VoiceGroup::Global });
-    auto presetMasterTune = preset->findParameterByID({ 248, VoiceGroup::Global });
+    auto presetMasterVolume = preset->findParameterByID({ 247, VoiceGroup::Global }, true);
+    auto presetMasterTune = preset->findParameterByID({ 248, VoiceGroup::Global }, true);
 
     auto invert = [](VoiceGroup v) { return v == VoiceGroup::I ? VoiceGroup::II : VoiceGroup::I; };
 
@@ -80,7 +80,7 @@ TEST_CASE("Load Single into Dual Part", "[EditBuffer][Loading]")
   MockPresetStorage presets;
   auto preset = presets.getSinglePreset();
 
-  for(auto val : std::vector<double> { 0.5 })
+  for(auto val : std::vector<double>{ 0.5 })
   {
     WHEN("Test with value: " + std::to_string(val))
     {

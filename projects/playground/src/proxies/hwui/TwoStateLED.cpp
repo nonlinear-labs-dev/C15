@@ -16,6 +16,7 @@ TwoStateLED::TwoStateLED(int id)
 
 TwoStateLED::~TwoStateLED()
 {
+  switchLED(true);
 }
 
 void TwoStateLED::init()

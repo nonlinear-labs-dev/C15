@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(bbbb)
 
+include ( GNUInstallDirs )
+
 set(LIBS giomm-2.4 libsoup-2.4)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
@@ -40,7 +42,24 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/sr
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../nltools/include/)
 
 configure_file(${PROJECT_SOURCE_DIR}/systemd/${PROJECT_NAME}.service.in ${PROJECT_BINARY_DIR}/systemd/${PROJECT_NAME}.service @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/systemd/install-update-from-usb.service.in ${PROJECT_BINARY_DIR}/systemd/install-update-from-usb.service @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/systemd/splash-screen.service.in ${PROJECT_BINARY_DIR}/systemd/splash-screen.service @ONLY)
+
 install(FILES ${PROJECT_BINARY_DIR}/systemd/${PROJECT_NAME}.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
+install(FILES ${PROJECT_BINARY_DIR}/systemd/install-update-from-usb.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
+install(FILES ${PROJECT_BINARY_DIR}/systemd/splash-screen.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
+
+install(DIRECTORY DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants)
+install(DIRECTORY DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants)
+
+install(CODE "execute_process(
+    COMMAND bash -c \"set -e
+    mkdir -p $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants
+    mkdir -p $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants
+    ln -sf ../${PROJECT_NAME}.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/${PROJECT_NAME}.service
+    ln -sf ../install-update-from-usb.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/install-update-from-usb.service
+    ln -sf ../splash-screen.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants/splash-screen.service
+    \")")
+
 install(TARGETS ${PROJECT_NAME} DESTINATION ${C15_INSTALL_PATH}/${PROJECT_NAME})
-ADD_CUSTOM_TARGET(touch-bbb-cmakelists ALL COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_LIST_FILE})
 

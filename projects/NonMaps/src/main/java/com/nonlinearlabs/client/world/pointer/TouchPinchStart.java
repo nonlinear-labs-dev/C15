@@ -1,26 +1,26 @@
 package com.nonlinearlabs.client.world.pointer;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
+import java.util.ArrayList;
+
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.world.Control;
 
 class TouchPinchStart extends TouchPinch {
 
-	TouchPinchStart(Gesture predecessor, JsArray<Touch> touches) {
+	TouchPinchStart(Gesture predecessor, ArrayList<Touch> touches) {
 		super(predecessor, touches);
 		NonMaps.theMaps.captureMouse();
 	}
 
 	@Override
-	public Gesture onTouchMove(JsArray<Touch> touches) {
+	public Gesture onTouchMove(ArrayList<Touch> touches) {
 		return new TouchPinch(this, touches);
 	}
 
 	@Override
-	public Gesture onTouchEnd(JsArray<Touch> touches) {
-		if (touches.length() > 0)
+	public Gesture onTouchEnd(ArrayList<Touch> touches) {
+		if (touches.size() > 0)
 			return onTouchMove(touches);
 
 		return new TouchPinchEnd(this);

@@ -14,5 +14,5 @@ class UnmodulateableUnisonParameter : public Parameter
   {
   }
 
-  DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
 };

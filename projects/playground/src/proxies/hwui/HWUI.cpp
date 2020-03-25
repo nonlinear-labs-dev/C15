@@ -512,9 +512,11 @@ void HWUI::undoableSetFocusAndMode(UNDO::Transaction *transaction, FocusAndMode 
       focusAndMode.mode = UIMode::Select;
 
   auto swapData = UNDO::createSwapData(restrictFocusAndMode(focusAndMode));
+  auto oldSwap = UNDO::createSwapData(m_focusAndMode);
 
   transaction->addSimpleCommand([=](UNDO::Command::State) {
     swapData->swapWith(m_focusAndMode);
+    oldSwap->swapWith(m_oldFocusAndMode);
     setupFocusAndMode();
   });
 }
@@ -522,6 +524,11 @@ void HWUI::undoableSetFocusAndMode(UNDO::Transaction *transaction, FocusAndMode 
 FocusAndMode HWUI::getFocusAndMode() const
 {
   return m_focusAndMode;
+}
+
+FocusAndMode HWUI::getOldFocusAndMode() const
+{
+  return m_oldFocusAndMode;
 }
 
 VoiceGroup HWUI::getCurrentVoiceGroup() const
@@ -592,6 +599,7 @@ void HWUI::setFocusAndMode(FocusAndMode focusAndMode)
     return;
 
   focusAndMode.fixUnchanged(m_focusAndMode);
+  m_oldFocusAndMode = m_focusAndMode;
   m_focusAndMode = restrictFocusAndMode(focusAndMode);
   setupFocusAndMode();
 }

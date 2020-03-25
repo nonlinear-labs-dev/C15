@@ -66,8 +66,6 @@ template <typename tFirst, typename... tArgs> class Signal : public sigc::signal
     SignalBase::deferedSend();
   }
 
-  static void registerTests();
-
  private:
   Signal(const Signal &other);
   Signal &operator=(const Signal &);

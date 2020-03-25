@@ -8,8 +8,6 @@ class Hysteresis
   double applyChange(double v);
   double set(double v);
 
-  static void registerTests();
-
  private:
   double m_value;
   double m_hyst;

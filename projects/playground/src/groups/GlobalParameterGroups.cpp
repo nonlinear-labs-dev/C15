@@ -1,6 +1,6 @@
 #include <parameters/scale-converters/ParabolicGainDbScaleConverter.h>
 #include <parameters/scale-converters/LinearBipolar48StScaleConverter.h>
-#include <parameters/voice-group-master-group/VoiceGroupMasterParameter.h>
+#include <parameters/voice-group-master-group/VoiceGroupMasterModulateableParameter.h>
 #include <parameters/SplitPointParameter.h>
 #include "GlobalParameterGroups.h"
 

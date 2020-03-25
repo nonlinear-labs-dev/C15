@@ -31,4 +31,5 @@ class ScrollMenu : public ControlWithChildren, public ButtonReceiver
   bool handleScrolling(const Buttons &i, bool down);
   bool onButtonOverlay(const Buttons &i, bool down, const ButtonModifiers &mod);
   bool onSelectedItemButtonHandler(const Buttons &i, bool down, const ButtonModifiers &mod);
+  virtual int getDefaultItemHeight() const;
 };

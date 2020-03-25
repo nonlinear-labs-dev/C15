@@ -62,25 +62,28 @@ Options::Options(int &argc, char **&argv)
 
 void Options::setDefaults()
 {
-  Glib::ustring prefered = "/internalstorage/preset-manager/";
+  auto persistencePath = Gio::File::create_for_path("/persistent");
+  auto settingsFile = Gio::File::create_for_path("/persistent/settings.xml");
+  auto pmDirectory = Gio::File::create_for_path("/persistent/preset-manager/");
 
-  auto file = Gio::File::create_for_path(prefered);
-
-  if(file->query_exists() || makePresetManagerDirectory(file))
+  if(persistencePath->query_exists())
   {
-    m_pmPath = prefered;
+    if(pmDirectory->query_exists() || makePresetManagerDirectory(pmDirectory))
+      m_pmPath = pmDirectory->get_path();
+
+    m_settingsFile = settingsFile->get_path();
   }
   else
   {
     m_pmPath = "./preset-manager/";
+    m_settingsFile = ".settings.xml";
   }
 
-  m_settingsFile = "./settings.xml";
   m_kioskModeFile = "./kiosk-mode.stamp";
   m_layoutFolder = getResourcesDir() + std::string("/templates/");
 }
 
-bool Options::makePresetManagerDirectory(Glib::RefPtr<Gio::File> file)
+bool Options::makePresetManagerDirectory(const Glib::RefPtr<Gio::File> &file)
 {
   try
   {

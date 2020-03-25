@@ -10,7 +10,7 @@
 #include <serialization/PresetManagerSerializer.h>
 #include <xml/FileOutStream.h>
 #include <xml/VersionAttribute.h>
-#include <tools/SpawnCommandLine.h>
+#include <nltools/system/SpawnCommandLine.h>
 #include <tools/TimeTools.h>
 #include <algorithm>
 #include <experimental/filesystem>

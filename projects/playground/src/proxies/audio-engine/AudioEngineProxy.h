@@ -15,8 +15,6 @@ class AudioEngineProxy
  public:
   AudioEngineProxy();
 
-  template <typename tMessageType> static tMessageType createMessage();
-
   template <typename tParameter> auto createAndSendParameterMessage(const tParameter* parameter)
   {
     sendParameterMessage(createMessage<tParameter>(parameter));
@@ -51,7 +49,3 @@ class AudioEngineProxy
   static void fillMonoPart(nltools::msg::ParameterGroups::MonoGroup& monoGroup, ParameterGroup* const& g);
   static void fillUnisonPart(nltools::msg::ParameterGroups::UnisonGroup& unisonGroup, ParameterGroup* const& g);
 };
-
-template <> nltools::msg::SinglePresetMessage AudioEngineProxy::createMessage<nltools::msg::SinglePresetMessage>();
-template <> nltools::msg::SplitPresetMessage AudioEngineProxy::createMessage<nltools::msg::SplitPresetMessage>();
-template <> nltools::msg::LayerPresetMessage AudioEngineProxy::createMessage<nltools::msg::LayerPresetMessage>();

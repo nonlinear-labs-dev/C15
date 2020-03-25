@@ -18,5 +18,5 @@ PassphraseView::~PassphraseView()
 void PassphraseView::onSettingChanged(const Setting *s)
 {
   auto v = dynamic_cast<const Passphrase *>(s);
-  setText(v->get());
+  setText(v->save());
 }

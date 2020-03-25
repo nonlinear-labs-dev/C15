@@ -21,7 +21,7 @@ class Options
 
   bool setPMPathName(const Glib::ustring &optionName, const Glib::ustring &path, bool hasValue);
   bool setLayoutFolder(const Glib::ustring &optionName, const Glib::ustring &path, bool hasValue);
-  bool makePresetManagerDirectory(Glib::RefPtr<Gio::File> file);
+  bool makePresetManagerDirectory(const Glib::RefPtr<Gio::File>& file);
 
   Glib::ustring m_pmPath;
   Glib::ustring m_settingsFile;

@@ -1,5 +1,5 @@
 #include "UnmodulateableMonoParameter.h"
-#include <proxies/hwui/panel-unit/boled/parameter-screens/MonoModeParameterLayout.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/MonoModeParameterLayouts.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/UnmodulatebaleParameterLayouts.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterInfoLayout.h>
 
@@ -11,7 +11,7 @@ UnmodulateableMonoParameter::UnmodulateableMonoParameter(ParameterGroup *group, 
 {
 }
 
-DFBLayout *UnmodulateableMonoParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *UnmodulateableMonoParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

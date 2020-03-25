@@ -72,6 +72,7 @@ namespace nltools
 
     static void flush();
     static void print(const std::string &str);
+    static void printNewLine();
 
     template <LogMode mode = LogMode::InsertSpacesAndAppendNewLine, typename... Args>
     static void output(const Args &... args)
@@ -85,7 +86,7 @@ namespace nltools
         print(nltools::string::concat(args...));
 
       if(addNewLine)
-        print("\n");
+        printNewLine();
     }
 
     template <typename... tArgs> static void throwException(const tArgs &... args)

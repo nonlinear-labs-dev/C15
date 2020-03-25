@@ -9,7 +9,7 @@
 #include "PresetManagerLayout.h"
 
 SelectVoiceGroupLayout::SelectVoiceGroupLayout(PresetManagerLayout *parent)
-    : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
+    : Layout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
     , m_parent { parent }
 {
   addControl(new Label("Load Part I or II from Preset?", { 0, 0, 256, 64 }));
@@ -40,7 +40,7 @@ bool SelectVoiceGroupLayout::onButton(Buttons i, bool down, ::ButtonModifiers mo
     }
   }
 
-  return DFBLayout::onButton(i, down, modifiers);
+  return Layout::onButton(i, down, modifiers);
 }
 
 void SelectVoiceGroupLayout::toggleSelection()

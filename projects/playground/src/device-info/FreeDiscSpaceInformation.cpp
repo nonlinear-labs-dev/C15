@@ -1,13 +1,12 @@
 #include <device-info/FreeDiscSpaceInformation.h>
 #include <glibmm/main.h>
 #include <glibmm/ustring.h>
-#include <sigc++/connection.h>
 #include <sigc++/functors/mem_fun.h>
-#include <tools/SpawnCommandLine.h>
+#include <nltools/system/SpawnCommandLine.h>
 #include <xml/Writer.h>
 #include <chrono>
 
-FreeDiscSpaceInformation::FreeDiscSpaceInformation(DeviceInformation *parent)
+FreeDiscSpaceInformation::FreeDiscSpaceInformation(DeviceInformation* parent)
     : DeviceInformationItem(parent)
     , m_value("N/A")
 {
@@ -21,21 +20,24 @@ FreeDiscSpaceInformation::FreeDiscSpaceInformation(DeviceInformation *parent)
 
 bool FreeDiscSpaceInformation::refresh()
 {
-  SpawnCommandLine cmd(
-      "sh -c \"df -h | grep '/dev/root' | sed 's/^\\S*\\s*\\S*\\s*\\S*\\s*\\(\\S*\\)\\s*.*/\\1/' | tr '\\n'  ' ' \" ");
+  SpawnCommandLine cmd("sh -c \"df -h | grep '/persistent' | awk '{print $4}'\"");
 
-  Glib::ustring newValue = cmd.getStdOutputOrFallback("N/A");
+  std::string newValue = cmd.getStdOutputOrFallback("N/A");
 
-  if(m_value != newValue)
+  std::string trimmed {};
+  std::copy_if(newValue.begin(), newValue.end(), std::back_inserter(trimmed),
+               [](const char o) { return std::isalnum(o); });
+
+  if(m_value != trimmed)
   {
-    m_value = newValue;
+    m_value = trimmed;
     onChange();
   }
 
   return true;
 }
 
-void FreeDiscSpaceInformation::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
+void FreeDiscSpaceInformation::writeDocument(Writer& writer, UpdateDocumentContributor::tUpdateID knownRevision) const
 {
   writer.writeTextElement("free-disc-space", m_value);
 }

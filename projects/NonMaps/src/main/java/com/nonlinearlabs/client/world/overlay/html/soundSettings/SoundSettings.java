@@ -23,20 +23,16 @@ public class SoundSettings extends Composite {
 	Button initialize, applyRandomization;
 
 	@UiField
-	Label randomValueDisplayString, transitionTimeDisplayString, tuneReferenceDisplayString;
+	Label randomValueDisplayString;
 
 	@UiField
-	InputElement randomValueSlider, transitionTimeSlider, tuneReferenceSlider;
+	InputElement randomValueSlider;
 
-	Range randomValueSliderRange, transitionTimeSliderRange, tuneReferenceSliderRange;
+	Range randomValueSliderRange;
 
 	public SoundSettings() {
 		initWidget(ourUiBinder.createAndBindUi(this));
-
 		randomValueSliderRange = Range.wrap(randomValueSlider);
-		transitionTimeSliderRange = Range.wrap(transitionTimeSlider);
-		tuneReferenceSliderRange = Range.wrap(tuneReferenceSlider);
-
 		connectEventHandlers();
 		connectUpdate();
 
@@ -47,22 +43,12 @@ public class SoundSettings extends Composite {
 		applyRandomization.addClickHandler(e -> EditBufferUseCases.get().randomizeSound());
 		randomValueSliderRange
 				.addValueChangeHandler(v -> SystemSettings.get().setRandomizeAmount(v.getValue().doubleValue()));
-		transitionTimeSliderRange
-				.addValueChangeHandler(v -> SystemSettings.get().setTransitionTime(v.getValue().doubleValue()));
-		tuneReferenceSliderRange
-				.addValueChangeHandler(v -> SystemSettings.get().setTuneReference(v.getValue().doubleValue()));
 	}
 
 	public void connectUpdate() {
 		DeviceSettingsProvider.get().register(s -> {
 			randomValueDisplayString.setText(s.randomizeAmountDisplayString);
 			randomValueSliderRange.setValue(s.randomizeAmountValue);
-
-			tuneReferenceDisplayString.setText(s.tuneReferenceDisplayString);
-			tuneReferenceSliderRange.setValue(s.tuneReferenceValue);
-
-			transitionTimeDisplayString.setText(s.transitionTimeDisplayString);
-			transitionTimeSliderRange.setValue(s.transitionTimeValue);
 			return true;
 		});
 	}

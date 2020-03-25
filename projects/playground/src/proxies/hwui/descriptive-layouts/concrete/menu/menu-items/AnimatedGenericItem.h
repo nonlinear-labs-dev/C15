@@ -29,13 +29,12 @@ class Animator
 class AnimatedGenericItem : public GenericItem
 {
  public:
-  template <class tCap, class tCB, class tCB2>
-  AnimatedGenericItem(tCap caption, const Rect &r, tCB cb, tCB2 onAnimationFinishedCB = nullptr)
-      : GenericItem(caption, r, cb)
+  template <class tCap, class tCB>
+  AnimatedGenericItem(tCap caption, const Rect &r, tCB cb)
+      : GenericItem(caption, r, [] {})
   {
-    m_animationFinishedCB = onAnimationFinishedCB;
+    m_animationFinishedCB = cb;
   }
-
 
   void startAnimation();
   bool drawAnimationZug(FrameBuffer &buffer);

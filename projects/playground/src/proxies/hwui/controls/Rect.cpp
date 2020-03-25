@@ -1,8 +1,5 @@
 #include "Rect.h"
 #include <proxies/hwui/FrameBuffer.h>
-#include <testing/TestDriver.h>
-
-TestDriver<Rect> tester;
 
 Rect::Rect(int x, int y, int w, int h)
     : m_leftTop(x, y)
@@ -17,9 +14,7 @@ Rect::Rect(const Point &leftTop, const Point &rightBottom)
   setRightBottom(rightBottom);
 }
 
-Rect::~Rect()
-{
-}
+Rect::~Rect() = default;
 
 void Rect::setRightBottom(const Point &p)
 {
@@ -213,38 +208,6 @@ void Rect::addMargin(int left, int top, int right, int bottom)
   m_leftTop.moveBy(left, top);
   m_width -= left + right;
   m_height -= top + bottom;
-}
-
-void Rect::registerTests()
-{
-  g_test_add_func("/rect/basics", []() {
-    Rect a(0, 0, 0, 0);
-    g_assert(a.isEmpty());
-    g_assert(a.getWidth() == 0);
-    g_assert(a.getHeight() == 0);
-    g_assert(a.getLeft() == 0);
-    g_assert(a.getTop() == 0);
-    g_assert(a.getRight() < 0);
-    g_assert(a.getBottom() < 0);
-
-    Rect b(0, 0, 1, 1);
-    g_assert(!b.isEmpty());
-    g_assert(b.getWidth() == 1);
-    g_assert(b.getHeight() == 1);
-    g_assert(b.getLeft() == 0);
-    g_assert(b.getTop() == 0);
-    g_assert(b.getRight() == 0);
-    g_assert(b.getBottom() == 0);
-  });
-
-  g_test_add_func("/rect/intersect", []() {
-    Rect a(0, 0, 10, 10);
-    Rect b(20, 20, 10, 10);
-    Rect i = a.getIntersection(b);
-    g_assert(i.isEmpty());
-    g_assert(i.getWidth() == 0);
-    g_assert(i.getHeight() == 0);
-  });
 }
 
 bool operator==(const Rect &a, const Rect &b)

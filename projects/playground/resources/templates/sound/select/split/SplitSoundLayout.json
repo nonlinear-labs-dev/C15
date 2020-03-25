@@ -78,7 +78,11 @@
         "BUTTON_A": "ToggleVoiceGroup",
         "BUTTON_B": "OpenPartScreen",
         "BUTTON_C": "SwitchToVoicesDetail",
-        "BUTTON_D": "OpenMasterParameter"
+        "BUTTON_D": "OpenMasterParameter",
+        "BUTTON_INC": "IncSplitPoint",
+        "BUTTON_DEC": "DecSplitPoint",
+        "ROTARY_PLUS": "IncSplitPoint",
+        "ROTARY_MINUS": "DecSplitPoint"
       }
     }
   }

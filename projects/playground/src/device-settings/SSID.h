@@ -1,18 +1,23 @@
 #pragma once
 
-#include "HostAPDSetting.h"
+#include <nltools/messaging/Message.h>
+#include "Setting.h"
 
 class Settings;
 
-class SSID : public HostAPDSetting
+class SSID : public Setting
 {
- private:
-  typedef HostAPDSetting super;
-
  public:
   Glib::ustring getDisplayString() const override;
 
- public:
-  SSID(Settings &parent);
-  virtual ~SSID();
+  explicit SSID(Settings& parent);
+  ~SSID() override;
+
+  bool persistent() const override;
+  void load(const Glib::ustring& text) override;
+  Glib::ustring save() const override;
+
+ private:
+  void setSSIDAndNotifyBBB(const Glib::ustring& str);
+  Glib::ustring m_ssid;
 };

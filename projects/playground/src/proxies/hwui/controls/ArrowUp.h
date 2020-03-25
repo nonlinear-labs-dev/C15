@@ -8,11 +8,10 @@ class ArrowUp : public ButtonMenuButton
   typedef ButtonMenuButton super;
 
  public:
-  ArrowUp(const Rect& pos);
-  virtual ~ArrowUp();
+  explicit ArrowUp(const Rect& pos);
+  ~ArrowUp() override;
 
  private:
-  // private methods
   ArrowUp(const ArrowUp& other);
   ArrowUp& operator=(const ArrowUp&);
 

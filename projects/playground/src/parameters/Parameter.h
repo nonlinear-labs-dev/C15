@@ -8,7 +8,7 @@
 #include <ParameterId.h>
 #include <tools/Signal.h>
 
-class DFBLayout;
+class Layout;
 class Writer;
 class ParameterGroup;
 class MessageComposer;
@@ -110,7 +110,7 @@ class Parameter : public UpdateDocumentContributor,
   virtual Glib::ustring getMiniParameterEditorName() const;
   virtual Glib::ustring getGroupAndParameterName() const;
   virtual Glib::ustring getGroupAndParameterNameWithVoiceGroup() const;
-  virtual DFBLayout *createLayout(FocusAndMode focusAndMode) const;
+  virtual Layout *createLayout(FocusAndMode focusAndMode) const;
 
   virtual void onUnselected();
   virtual void onSelected();

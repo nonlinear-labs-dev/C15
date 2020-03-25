@@ -59,7 +59,7 @@ void assertNoIDTwice(const nltools::msg::SinglePresetMessage &msg)
   collectIDs(msg.hwamounts, count);
   collectIDs(msg.hwsources, count);
   collectIDs(msg.macros, count);
-  collectIDs(msg.globalparams, count);
+  collectIDs(msg.scale, count);
   assertMap(count);
 }
 
@@ -73,7 +73,7 @@ template <int vg, typename tMsg> void collectDual(const tMsg &msg)
   collectIDs(msg.hwamounts, count);
   collectIDs(msg.hwsources, count);
   collectIDs(msg.macros, count);
-  collectIDs(msg.globalparams, count);
+  collectIDs(msg.scale, count);
   collectID(msg.splitpoint, count);
   assertMap(count);
 }
@@ -88,7 +88,7 @@ template <int vg> void collectDual(const nltools::msg::LayerPresetMessage &msg)
   collectIDs(msg.hwamounts, count);
   collectIDs(msg.hwsources, count);
   collectIDs(msg.macros, count);
-  collectIDs(msg.globalparams, count);
+  collectIDs(msg.scale, count);
   assertMap(count);
 }
 

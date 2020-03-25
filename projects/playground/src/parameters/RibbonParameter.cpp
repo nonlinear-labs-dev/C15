@@ -274,7 +274,7 @@ void RibbonParameter::undoableStepBehavior(UNDO::Transaction *transaction, int d
   undoableSetRibbonReturnMode(transaction, static_cast<RibbonReturnMode>(v));
 }
 
-DFBLayout *RibbonParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *RibbonParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

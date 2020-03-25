@@ -21,13 +21,18 @@
 #include <parameters/scale-converters/ScaleConverter.h>
 #include <libundo/undo/Scope.h>
 #include <device-settings/Settings.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MuteIndicator.h>
+#include <sigc++/adaptors/hide.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/VoiceGroupIndicator.h>
 
 ParameterLayout2::ParameterLayout2()
     : super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
 {
   addControl(new ParameterNameLabel(Rect(BIG_SLIDER_X, 8, 107, 11)));
+  addControl(new MuteIndicator(Rect(13, 14, 13, 11)));
   addControl(new LockedIndicator(Rect(66, 1, 10, 11)));
-  addControl(new UndoIndicator(Rect(4, 14, 10, 8)));
+  addControl(new VoiceGroupIndicator(Rect(0, 14, 11, 11)));
+  addControl(new UndoIndicator(Rect(1, 26, 10, 8)));
 }
 
 ModuleCaption *ParameterLayout2::createModuleCaption() const
@@ -124,7 +129,10 @@ bool ParameterLayout2::onRotary(int inc, ButtonModifiers modifiers)
 
 void ParameterLayout2::handlePresetValueRecall()
 {
-  if(getCurrentEditParameter()->isChangedFromLoaded())
+  if(getCurrentParameter()->getParentGroup()->getID().getName() == "Part"
+     && Application::get().getPresetManager()->getEditBuffer()->getType() == SoundType::Layer)
+    getOLEDProxy().setOverlay(new PartMasterRecallLayout2());
+  else if(getCurrentEditParameter()->isChangedFromLoaded())
     getOLEDProxy().setOverlay(new ParameterRecallLayout2());
 }
 
@@ -411,4 +419,80 @@ void ParameterRecallLayout2::onParameterSelectionChanged(Parameter *oldParam, Pa
 void ParameterRecallLayout2::onParameterChanged(const Parameter *)
 {
   updateUI(!getCurrentEditParameter()->isChangedFromLoaded());
+}
+
+PartMasterRecallLayout2::PartMasterRecallLayout2()
+    : ParameterRecallLayout2()
+    , m_muteParameter { Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+          { 395, Application::get().getHWUI()->getCurrentVoiceGroup() }) }
+{
+  m_muteParameterConnection
+      = m_muteParameter->onParameterChanged(sigc::hide(sigc::mem_fun(this, &PartMasterRecallLayout2::onMuteChanged)));
+}
+
+PartMasterRecallLayout2::~PartMasterRecallLayout2()
+{
+  m_muteParameterConnection.disconnect();
+}
+
+void PartMasterRecallLayout2::updateUI(bool paramLikeInPreset)
+{
+  ParameterRecallLayout2::updateUI(paramLikeInPreset);
+
+  if(!shouldShowNormalRecallScreen())
+  {
+    m_buttonB->setText("");
+    m_buttonC->setText("");
+    m_leftValue->setText("");
+    m_rightValue->setText("");
+  }
+}
+
+bool PartMasterRecallLayout2::shouldShowNormalRecallScreen() const
+{
+  return getCurrentParameter()->isChangedFromLoaded() || !m_recallString.empty();
+}
+
+bool PartMasterRecallLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
+{
+  if(shouldShowNormalRecallScreen())
+  {
+    if(ParameterRecallLayout2::onButton(i, down, modifiers))
+      return true;
+  }
+  else
+  {
+    if(i == Buttons::BUTTON_SHIFT && !down)
+    {
+      getOLEDProxy().resetOverlay();
+      return true;
+    }
+  }
+
+  if(i == Buttons::BUTTON_A && down)
+  {
+    toggleMute();
+    return true;
+  }
+
+  return false;
+}
+
+void PartMasterRecallLayout2::toggleMute() const
+{
+  auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction(
+      "Toggle Mute " + toString(m_muteParameter->getID().getVoiceGroup()));
+
+  if(m_muteParameter->getControlPositionValue() >= 0.5)
+    m_muteParameter->setCPFromHwui(scope->getTransaction(), 0);
+  else
+    m_muteParameter->setCPFromHwui(scope->getTransaction(), 1);
+}
+
+void PartMasterRecallLayout2::onMuteChanged()
+{
+  if(m_muteParameter->getControlPositionValue() > 0.5)
+    m_buttonA->setText("Unmute");
+  else
+    m_buttonA->setText("Mute");
 }

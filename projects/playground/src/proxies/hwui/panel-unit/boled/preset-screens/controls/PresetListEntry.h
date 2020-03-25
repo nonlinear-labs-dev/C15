@@ -27,6 +27,9 @@ class PresetListEntry : public ControlWithChildren
   bool redraw(FrameBuffer &fb) override;
   void animate(tCallback cb);
 
+ protected:
+  bool isTransparent() const override;
+
  private:
   bool animationProgress();
   void doAnimationCallback();

@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 #include <experimental/filesystem>
-#include "SpawnCommandLine.h"
+#include <nltools/system/SpawnCommandLine.h>
 #include <device-settings/DebugLevel.h>
 #include <fstream>
 #include <giomm/file.h>

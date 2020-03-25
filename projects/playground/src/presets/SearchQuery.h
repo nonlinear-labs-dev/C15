@@ -26,7 +26,8 @@ class SearchQuery
 
   bool iterate(const std::function<bool(const Glib::ustring &, const std::vector<Fields> &fields)> &cb) const;
   std::vector<Fields> getFields() const;
-  static void registerTests();
+
+  static std::list<Glib::ustring> splitQuotes(const Glib::ustring &str);
 
  private:
   std::list<Glib::ustring> m_query;

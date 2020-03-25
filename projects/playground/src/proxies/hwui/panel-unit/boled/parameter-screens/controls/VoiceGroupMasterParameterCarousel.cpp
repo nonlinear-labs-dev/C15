@@ -5,7 +5,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
-#include <parameters/voice-group-master-group/VoiceGroupMasterParameter.h>
+#include <parameters/voice-group-master-group/VoiceGroupMasterModulateableParameter.h>
 #include <sigc++/sigc++.h>
 
 VoiceGroupMasterParameterCarousel::VoiceGroupMasterParameterCarousel(const Rect &r)
@@ -30,19 +30,25 @@ void VoiceGroupMasterParameterCarousel::setup(Parameter *selectedParameter)
 
   auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
 
-  if(Application::get().getPresetManager()->getEditBuffer()->getType() == SoundType::Split)
-    setupMasterParameters({ { 358, vg }, { 360, vg }, { 356, VoiceGroup::Global } });
-  else
-    setupMasterParameters({ { 358, vg }, { 360, vg } });
+  switch(Application::get().getPresetManager()->getEditBuffer()->getType())
+  {
+    default:
+    case SoundType::Single:
+      setupMasterParameters({ { 358, vg }, { 360, vg } });
+      break;
+    case SoundType::Split:
+      setupMasterParameters({ { 358, vg }, { 360, vg }, { 356, VoiceGroup::Global } });
+      break;
+    case SoundType::Layer:
+      setupMasterParameters({ { 358, vg }, { 360, vg }, { 396, vg }, { 397, vg } });
+      break;
+  }
 
   if(getNumChildren() == 0)
-  {
     addControl(new NeverHighlitButton("", Buttons::BUTTON_D));
-  }
   else
-  {
     setHighlight(true);
-  }
+
   setDirty();
 }
 

@@ -26,8 +26,9 @@ void Engine::PolyOutputMixer::init(const float _samplerate, const uint32_t _numO
   m_hp_stateVar_L1 = m_hp_stateVar_L2 = m_hp_stateVar_R1 = m_hp_stateVar_R2 = 0.0f;
 }
 
-void Engine::PolyOutputMixer::combine(PolySignals &_signals, const PolyValue &_sampleA, const PolyValue &_sampleB,
-                                      const PolyValue &_sampleComb, const PolyValue &_sampleSVFilter)
+void Engine::PolyOutputMixer::combine(PolySignals &_signals, const PolyValue &_voiceLevel, const PolyValue &_sampleA,
+                                      const PolyValue &_sampleB, const PolyValue &_sampleComb,
+                                      const PolyValue &_sampleSVFilter)
 {
   // left
   auto mainSample = (_signals.get(C15::Signals::Truepoly_Signals::Out_Mix_A_Left) * _sampleA)
@@ -42,7 +43,7 @@ void Engine::PolyOutputMixer::combine(PolySignals &_signals, const PolyValue &_s
   tmpSampleQuad = tmpSampleQuad - m_hp30hz_stateVar_L;
   m_hp30hz_stateVar_L = tmpSampleQuad * m_hp30hz_b0 + m_hp30hz_stateVar_L + NlToolbox::Constants::DNC_const;
   mainSample = parAsym(mainSample, tmpSampleQuad, _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Asym));
-  m_out_l = sumUp(mainSample);
+  m_out_l = sumUp(mainSample * _voiceLevel);
   // right
   mainSample = (_signals.get(C15::Signals::Truepoly_Signals::Out_Mix_A_Right) * _sampleA)
       + (_signals.get(C15::Signals::Truepoly_Signals::Out_Mix_B_Right) * _sampleB)
@@ -56,7 +57,7 @@ void Engine::PolyOutputMixer::combine(PolySignals &_signals, const PolyValue &_s
   tmpVar = tmpVar - m_hp30hz_stateVar_R;
   m_hp30hz_stateVar_R = tmpVar * m_hp30hz_b0 + m_hp30hz_stateVar_R + NlToolbox::Constants::DNC_const;
   mainSample = parAsym(mainSample, tmpVar, _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Asym));
-  m_out_r = sumUp(mainSample);
+  m_out_r = sumUp(mainSample * _voiceLevel);
 }
 
 void Engine::PolyOutputMixer::filter_level(PolySignals &_signals)

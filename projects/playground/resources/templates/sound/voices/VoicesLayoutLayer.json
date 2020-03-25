@@ -1,6 +1,6 @@
 {
   "layouts": {
-    "Sound-Voices-Layout": {
+    "Sound-Voices-Layout-Layer": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Select",
@@ -13,11 +13,16 @@
         "Header": {
           "Class": "InvertedLabel",
           "Position": "0, 0",
-          "Events": "VoicesParameterHeader => Text[Text]"
+          "Init": {
+            "Text[Text]": "Voices"
+          }
         },
         "ButtonA": {
           "Class": "Button",
-          "Position": "BUTTON_A"
+          "Position": "BUTTON_A",
+          "Init": {
+            "Text[Text]": ""
+          }
         },
         "ButtonB": {
           "Class": "Button",

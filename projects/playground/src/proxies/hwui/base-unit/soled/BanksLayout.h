@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <sigc++/connection.h>
 
 class Label;
@@ -9,10 +9,10 @@ class Setting;
 class DirectLoadIndicator;
 class Uuid;
 
-class BanksLayout : public DFBLayout
+class BanksLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   BanksLayout();

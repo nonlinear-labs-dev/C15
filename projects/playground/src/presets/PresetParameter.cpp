@@ -13,7 +13,7 @@
 #include <xml/Attribute.h>
 
 PresetParameter::PresetParameter(const ParameterId &id)
-    : m_id { id }
+    : m_id{ id }
 {
 }
 
@@ -70,6 +70,20 @@ void PresetParameter::writeDiff(Writer &writer, ParameterId parameterID, const P
 {
   auto ebParam = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(parameterID);
 
+  if(!ebParam)
+  {
+    nltools::Log::warning("Could not create diff for parameter", parameterID,
+                          "- the parameter does not exist anymore.");
+    return;
+  }
+
+  if(!other)
+  {
+    nltools::Log::warning("Could not create diff for parameter", parameterID,
+                          "- the parameter does not exist in the preset.");
+    return;
+  }
+
   writer.writeTag("parameter", Attribute("name", ebParam->getLongName()), [&] {
     auto sc = ebParam->getValue().getScaleConverter();
     auto myString = sc->getDimension().stringize(sc->controlPositionToDisplay(m_value));
@@ -84,7 +98,7 @@ void PresetParameter::writeDiff(Writer &writer, ParameterId parameterID, const P
                               Attribute("b", other->getModulationSource()));
     }
 
-    if(getModulationAmount() != other->getModulationAmount())
+    if(differs(getModulationAmount(), other->getModulationAmount()))
     {
       auto c = ScaleConverter::get<LinearBipolar100PercentScaleConverter>();
       auto currentParameter = c->getDimension().stringize(c->controlPositionToDisplay(getModulationAmount()));
@@ -104,8 +118,8 @@ void PresetParameter::writeDiff(Writer &writer, ParameterId parameterID, const P
 
     if(getRibbonReturnMode() != other->getRibbonReturnMode())
     {
-      writer.writeTextElement("return-mode", "", Attribute("a", (int) getRibbonReturnMode()),
-                              Attribute("b", (int) other->getRibbonReturnMode()));
+      writer.writeTextElement("return-mode", "", Attribute("a", static_cast<int>(getRibbonReturnMode())),
+                              Attribute("b", static_cast<int>(other->getRibbonReturnMode())));
     }
 
     if(getRibbonTouchBehaviour() != other->getRibbonTouchBehaviour())
@@ -116,8 +130,8 @@ void PresetParameter::writeDiff(Writer &writer, ParameterId parameterID, const P
 
     if(getPedalMode() != other->getPedalMode())
     {
-      writer.writeTextElement("return-mode", "", Attribute("a", (int) getPedalMode()),
-                              Attribute("b", (int) other->getPedalMode()));
+      writer.writeTextElement("return-mode", "", Attribute("a", static_cast<int>(getPedalMode())),
+                              Attribute("b", static_cast<int>(other->getPedalMode())));
     }
   });
 }
@@ -202,9 +216,9 @@ enum PedalModes PresetParameter::getPedalMode() const
 void PresetParameter::writeDocument(Writer &writer) const
 {
   writer.writeTag("param",
-                  { Attribute { "id", m_id.toString() }, Attribute { "value", to_string(m_value) },
-                    Attribute { "mod-src", to_string(static_cast<int>(getModulationSource())) },
-                    Attribute { "mod-amt", to_string(getModulationAmount()) } },
+                  { Attribute{ "id", m_id.toString() }, Attribute{ "value", to_string(m_value) },
+                    Attribute{ "mod-src", to_string(static_cast<int>(getModulationSource())) },
+                    Attribute{ "mod-amt", to_string(getModulationAmount()) } },
                   []() {});
 }
 

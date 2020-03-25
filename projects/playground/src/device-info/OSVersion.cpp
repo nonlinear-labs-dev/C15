@@ -1,5 +1,5 @@
 #include <device-info/OSVersion.h>
-#include <tools/SpawnCommandLine.h>
+#include <nltools/system/SpawnCommandLine.h>
 #include <xml/Writer.h>
 
 OSVersion::OSVersion(DeviceInformation *parent)

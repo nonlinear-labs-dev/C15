@@ -1,11 +1,11 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 
-class SplashScreenLayout : public DFBLayout
+class SplashScreenLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   SplashScreenLayout();

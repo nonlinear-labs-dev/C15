@@ -1,7 +1,7 @@
 package com.nonlinearlabs.client.world.pointer;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
+import java.util.ArrayList;
+
 import com.nonlinearlabs.client.world.Control;
 
 final class Identity extends Gesture {
@@ -30,7 +30,7 @@ final class Identity extends Gesture {
 		return new RightDoubleClick();
 	}
 
-	public Gesture onTouchStart(JsArray<Touch> touches) {
+	public Gesture onTouchStart(ArrayList<Touch> touches) {
 		return new TouchDown(touches);
 	}
 

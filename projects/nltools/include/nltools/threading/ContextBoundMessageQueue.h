@@ -4,6 +4,7 @@
 #include <functional>
 #include <sigc++/trackable.h>
 #include <glibmm/refptr.h>
+#include <atomic>
 
 namespace nltools
 {
@@ -17,9 +18,11 @@ namespace nltools
       ~ContextBoundMessageQueue();
 
       void pushMessage(tMessage&& m);
+      bool isPending() const;
 
      private:
       Glib::RefPtr<Glib::MainContext> m_context;
+      std::atomic<uint32_t> m_pendingCalls {};
     };
   }
 }

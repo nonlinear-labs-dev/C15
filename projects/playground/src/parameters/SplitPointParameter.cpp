@@ -13,7 +13,7 @@ SplitPointParameter::SplitPointParameter(ParameterGroup *group, const ParameterI
 {
 }
 
-DFBLayout *SplitPointParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *SplitPointParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

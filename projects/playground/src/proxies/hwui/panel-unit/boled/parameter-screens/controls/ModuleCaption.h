@@ -30,6 +30,4 @@ class ModuleCaption : public Label
   void onParameterSelected(Parameter *newOne);
   void onSelectionChanged(VoiceGroup v);
   void onSoundTypeChanged();
-
-  bool enableVoiceGroupSuffix() const;
 };

@@ -40,7 +40,7 @@ public class EditBufferUseCases {
 			PhysicalControlParameterModel m = (PhysicalControlParameterModel) p;
 			applyPhysicalControlModulation(m, diff);
 
-			if(m.isReturning()) {
+			if (m.isReturning()) {
 				if (setAnimationTimeout)
 					animationManager.startDelayedAnimation(m, 2000);
 				else
@@ -431,6 +431,21 @@ public class EditBufferUseCases {
 
 	public void loadSinglePresetIntoPart(String uuid, VoiceGroup loadTo) {
 		NonMaps.theMaps.getServerProxy().loadPresetIntoPart(uuid, loadTo);
+	}
+
+	public void initializePart() {
+		NonMaps.get().getServerProxy().initPart(EditBufferModel.get().voiceGroup.getValue());
+	}
+
+	public void renamePart(String newName) {
+		NonMaps.get().getServerProxy().renamePart(EditBufferModel.get().voiceGroup.getValue(), newName);
+	}
+
+	public void randomize() {
+		if (EditBufferModel.get().soundType.getValue() == SoundType.Single)
+			NonMaps.get().getServerProxy().randomizeSound();
+		else
+			NonMaps.get().getServerProxy().randomizePart(EditBufferModel.get().voiceGroup.getValue());
 	}
 
 }

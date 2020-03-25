@@ -20,8 +20,6 @@ class ParameterImportConversions
 
   virtual ~ParameterImportConversions();
 
-  static void registerTests();
-
  private:
   ParameterImportConversions(bool registerDefaults);
 
@@ -44,4 +42,5 @@ class ParameterImportConversions
   std::map<tParameterID, ConvertersBySourceFileVersion> m_converters;
   std::map<tParameterID, ConvertersBySourceFileVersion> m_mcAmountConverters;
 
+  friend class TestableImportConversions;
 };

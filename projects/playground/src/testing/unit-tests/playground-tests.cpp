@@ -2,7 +2,6 @@
 
 #include <third-party/include/catch.hpp>
 #include "Application.h"
-#include "testing/TestDriver.h"
 #include "device-settings/DebugLevel.h"
 #include "playground-helpers.h"
 #include <giomm.h>
@@ -19,8 +18,6 @@ int main(int numArgs, char **argv)
   ::signal(SIGILL, Environment::printStackTrace);
   ::signal(SIGBUS, Environment::printStackTrace);
   ::signal(SIGKILL, Environment::printStackTrace);
-
-  TestDriverBase::doTests(numArgs, argv);
 
   Application app(numArgs, argv);
 

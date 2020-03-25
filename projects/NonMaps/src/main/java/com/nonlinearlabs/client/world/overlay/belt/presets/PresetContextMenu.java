@@ -111,8 +111,6 @@ public class PresetContextMenu extends ContextMenu {
 			}
 		});
 
-		/*
-		TODO re-add compare 
 
 		if (hasMultipleSelection && pm.getMultiSelection().getNumSelectedPresets() == 2) {
 			addChild(new PresetContextMenuItem(this, "Compare ...") {
@@ -136,7 +134,6 @@ public class PresetContextMenu extends ContextMenu {
 				}
 			});
 		}
-		*/
 
 		addChild(new TwoPartContextMenuItem(this, "Color Tag", "\uE01A") {
 			@Override

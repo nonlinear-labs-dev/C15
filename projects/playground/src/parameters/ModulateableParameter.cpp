@@ -321,7 +321,7 @@ Glib::ustring ModulateableParameter::stringizeModulationAmount(tControlPositionV
   return converter.getDimension().stringize(converter.controlPositionToDisplay(amount));
 }
 
-DFBLayout *ModulateableParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *ModulateableParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

@@ -21,14 +21,11 @@ void PresetNameLabel::drawBackground(FrameBuffer &fb)
   const Rect &r = getPosition();
 
   if(showsLoadedPreset())
+  {
     fb.setColor(FrameBufferColors::C103);
-  else
-    fb.setColor(FrameBufferColors::C43);
-
-  int xinset = showsSelectedPreset() ? 3 : 1;
-  int yinset = showsSelectedPreset() ? 2 : 1;
-
-  fb.fillRect(r.getX(), r.getY() + yinset, r.getWidth() - xinset, r.getHeight() - 2 * yinset);
+    int yinset = showsSelectedPreset() ? 2 : 1;
+    fb.fillRect(r.getX(), r.getY() + yinset, r.getWidth(), r.getHeight() - 2 * yinset);
+  }
 }
 
 Font::Justification PresetNameLabel::getJustification() const
@@ -45,7 +42,7 @@ PresetNameLabel::StringAndSuffix PresetNameLabel::shortenStringIfNeccessary(std:
 
 int PresetNameLabel::getXOffset() const
 {
-  return 7;
+  return 6;
 }
 
 int PresetNameLabel::getRightMargin() const

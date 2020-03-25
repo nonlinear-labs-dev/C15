@@ -1,0 +1,19 @@
+[Unit]
+Description=Splash
+Documentation=man:systemd-modules-load.service(8) man:modules-load.d(5)
+DefaultDependencies=no
+Conflicts=shutdown.target
+Before=sysinit.target shutdown.target
+ConditionCapability=CAP_SYS_MODULE
+ConditionDirectoryNotEmpty=|/lib/modules-load.d
+ConditionDirectoryNotEmpty=|/usr/lib/modules-load.d
+ConditionDirectoryNotEmpty=|/usr/local/lib/modules-load.d
+ConditionDirectoryNotEmpty=|/etc/modules-load.d
+ConditionDirectoryNotEmpty=|/run/modules-load.d
+ConditionKernelCommandLine=|modules-load
+ConditionKernelCommandLine=|rd.modules-load
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=@C15_INSTALL_PATH@/text2soled/text2soled multitext "Starting C15...@SC1" "Welcome,@BC2" "those who love to play keys!@BC4"

@@ -15,6 +15,7 @@ class PresetInfoContent : public InfoContent
   virtual ~PresetInfoContent();
 
   void fillContents() override;
+  static Glib::ustring createPresetTypeString(const Preset *preset);
 
  private:
   void onBankChanged(const Uuid &selectedBank);

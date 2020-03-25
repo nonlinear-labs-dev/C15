@@ -24,7 +24,7 @@ class PhysicalControlParameter : public Parameter
   virtual Glib::ustring getDisplayString() const override;
 
   virtual ReturnMode getReturnMode() const = 0;
-  virtual DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  virtual Layout *createLayout(FocusAndMode focusAndMode) const override;
   bool lockingEnabled() const override;
   void setUiSelectedModulationRouter(const ParameterId& paramNumber);
   void toggleUiSelectedModulationRouter(int inc);

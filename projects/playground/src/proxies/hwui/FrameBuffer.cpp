@@ -70,7 +70,10 @@ FrameBuffer::FrameBuffer()
   openAndMap();
   clear();
 
-  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::Lpc, sigc::mem_fun(this, &FrameBuffer::swapBuffers));
+  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::Oled, [this] {
+    if(!swapBuffers())
+      nltools::Log::warning("Could not send new framebuffer to BBBB");
+  });
 }
 
 void FrameBuffer::initStacks()
@@ -107,6 +110,12 @@ inline void FrameBuffer::setRawPixel(tCoordinate x, tCoordinate y)
 {
   const long index = getIndex(x, y);
   m_backBuffer[index] = static_cast<tPixel>(m_currentColor);
+
+  if(m_perPixelDebug)
+  {
+    swapBuffers();
+    nltools::msg::flush(nltools::msg::EndPoint::Oled, std::chrono::seconds(1));
+  }
 }
 
 inline long FrameBuffer::getIndex(tCoordinate x, tCoordinate y) const
@@ -121,6 +130,17 @@ void FrameBuffer::unmapAndClose()
 void FrameBuffer::clear()
 {
   std::fill(m_backBuffer.begin(), m_backBuffer.end(), 0);
+
+  if(m_perPixelDebug)
+  {
+    swapBuffers();
+    nltools::msg::flush(nltools::msg::EndPoint::Oled, std::chrono::seconds(1));
+  }
+}
+
+void FrameBuffer::setPerPixelDebug(bool onOff)
+{
+  m_perPixelDebug = onOff;
 }
 
 void FrameBuffer::setColor(const Colors &c)
@@ -189,6 +209,12 @@ inline void FrameBuffer::drawRawHorizontalLine(tCoordinate x, tCoordinate y, tCo
 
     for(long i = 0; i < length; i++)
       data[i] = static_cast<tPixel>(m_currentColor);
+
+    if(m_perPixelDebug)
+    {
+      swapBuffers();
+      nltools::msg::flush(nltools::msg::EndPoint::Oled, std::chrono::seconds(1));
+    }
   }
 }
 
@@ -249,7 +275,7 @@ void FrameBuffer::drawVerticalLine(tCoordinate x, tCoordinate y, tCoordinate len
   }
 }
 
-void FrameBuffer::swapBuffers()
+bool FrameBuffer::swapBuffers()
 {
   using namespace nltools::msg;
 
@@ -259,13 +285,13 @@ void FrameBuffer::swapBuffers()
     msg.m_timestamp
         = Application::get().getHWUI()->getPanelUnit().getEditPanel().getKnob().resetOldestPendingTimestamp();
     memcpy(msg.m_oledMessage.pixels, m_backBuffer.data(), m_backBuffer.size());
-    send(EndPoint::Oled, msg);
+    return send(EndPoint::Oled, msg);
   }
   else
   {
     SetOLEDMessage msg{};
     memcpy(msg.pixels, m_backBuffer.data(), m_backBuffer.size());
-    send(EndPoint::Oled, msg);
+    return send(EndPoint::Oled, msg);
   }
 }
 

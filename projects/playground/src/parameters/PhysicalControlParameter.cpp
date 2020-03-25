@@ -120,7 +120,7 @@ Glib::ustring PhysicalControlParameter::generateName() const
   return target->getTargetParameter()->getLongName();
 }
 
-DFBLayout *PhysicalControlParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *PhysicalControlParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

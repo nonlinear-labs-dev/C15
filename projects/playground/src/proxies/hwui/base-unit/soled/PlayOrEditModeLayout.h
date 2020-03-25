@@ -1,14 +1,14 @@
 #pragma once
 
-#include "proxies/hwui/DFBLayout.h"
+#include "proxies/hwui/Layout.h"
 
 class Label;
 class Setting;
 
-class PlayOrEditModeLayout : public DFBLayout
+class PlayOrEditModeLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   PlayOrEditModeLayout();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/FileListControl.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/InvertedLabel.h>
 #include <tools/FileTools.h>
@@ -9,7 +9,7 @@
 #include <experimental/filesystem>
 #include <tools/BackgroundJobs.h>
 
-class FileDialogLayout : public DFBLayout
+class FileDialogLayout : public Layout
 {
  private:
   typedef std::function<void(std::experimental::filesystem::directory_entry)> tCallBackFunction;

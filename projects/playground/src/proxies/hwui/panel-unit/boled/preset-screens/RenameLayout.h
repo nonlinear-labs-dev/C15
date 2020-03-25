@@ -1,15 +1,15 @@
 #pragma once
 
-#include "proxies/hwui/DFBLayout.h"
+#include "proxies/hwui/Layout.h"
 
 class Label;
 class UsageMode;
 class TextEditUsageMode;
 
-class RenameLayout : public DFBLayout
+class RenameLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   RenameLayout();

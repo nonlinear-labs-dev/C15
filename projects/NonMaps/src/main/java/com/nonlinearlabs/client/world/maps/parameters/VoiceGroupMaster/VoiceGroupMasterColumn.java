@@ -19,10 +19,10 @@ public class VoiceGroupMasterColumn extends ParameterColumn {
         }
     }
 
-    private class Tune extends Parameter {
+    private class UnmodulateablePartMasterParameter extends Parameter {
 
-        private Tune(MapsLayout parent) {
-            super(parent, 360);
+        private UnmodulateablePartMasterParameter(MapsLayout parent, int num) {
+            super(parent, num);
             addChild(new UnModulateableParameterName(this));
             addChild(new NumericalControlSmall(this, getParameterNumber()));
         }
@@ -31,7 +31,9 @@ public class VoiceGroupMasterColumn extends ParameterColumn {
     public VoiceGroupMasterColumn(MapsLayout parent) {
         super(parent);
         addChild(new Level(this));
-        addChild(new Tune(this));
+        addChild(new UnmodulateablePartMasterParameter(this, 360));
+        addChild(new UnmodulateablePartMasterParameter(this, 396));
+        addChild(new UnmodulateablePartMasterParameter(this, 397));
     }
 
 }

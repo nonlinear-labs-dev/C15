@@ -2,12 +2,16 @@
 #include "io/audio/AudioOutput.h"
 #include <nltools/logging/Log.h>
 #include <glibmm.h>
+#include <unistd.h>
 
 CommandlinePerformanceWatch::CommandlinePerformanceWatch(const AudioOutput *device)
     : m_device(device)
 {
-  Glib::MainContext::get_default()->signal_timeout().connect_seconds(
-      sigc::mem_fun(this, &CommandlinePerformanceWatch::printPerformance), 1);
+  if(isatty(fileno(stdout)))
+  {
+    Glib::MainContext::get_default()->signal_timeout().connect_seconds(
+        sigc::mem_fun(this, &CommandlinePerformanceWatch::printPerformance), 1);
+  }
 }
 
 bool CommandlinePerformanceWatch::printPerformance()

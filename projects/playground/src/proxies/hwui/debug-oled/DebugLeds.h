@@ -1,11 +1,11 @@
 #pragma once
 
-#include "proxies/hwui/DFBLayout.h"
+#include "proxies/hwui/Layout.h"
 
-class DebugLeds : public DFBLayout
+class DebugLeds : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   DebugLeds(OLEDProxy& oled);

@@ -1,7 +1,7 @@
 #include <device-settings/DebugLevel.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include <tools/SpawnCommandLine.h>
+#include <nltools/system/SpawnCommandLine.h>
 #include <tools/WatchDog.h>
 #include <unistd.h>
 #include <cstring>

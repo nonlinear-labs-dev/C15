@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <sigc++/connection.h>
 
 class Overlay;
@@ -13,10 +13,10 @@ class Label;
 class Button;
 class ModuleCaption;
 
-class ParameterLayout2 : public DFBLayout
+class ParameterLayout2 : public Layout
 {
  public:
-  typedef DFBLayout super;
+  typedef Layout super;
   typedef ParameterLayout2 virtual_base;
   ParameterLayout2();
 
@@ -92,10 +92,10 @@ class ParameterRecallLayout2 : public virtual ParameterLayout2
   bool onRotary(int inc, ButtonModifiers modifiers) override;
   ButtonMenu *createMenu(const Rect &rect);
 
- private:
+ protected:
   void doRecall();
   void undoRecall();
-  void updateUI(bool paramLikeInPreset);
+  virtual void updateUI(bool paramLikeInPreset);
   void onParameterChanged(const Parameter *);
   void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam);
 
@@ -110,4 +110,23 @@ class ParameterRecallLayout2 : public virtual ParameterLayout2
   Button *m_buttonD;
   Glib::ustring m_recallString;
   sigc::connection m_paramConnection;
+};
+
+class PartMasterRecallLayout2 : public ParameterRecallLayout2
+{
+ public:
+  PartMasterRecallLayout2();
+  ~PartMasterRecallLayout2() override;
+
+ protected:
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  void onMuteChanged();
+  void updateUI(bool paramLikeInPreset) override;
+
+  bool shouldShowNormalRecallScreen() const;
+
+ private:
+  void toggleMute() const;
+  Parameter *const m_muteParameter;
+  sigc::connection m_muteParameterConnection;
 };

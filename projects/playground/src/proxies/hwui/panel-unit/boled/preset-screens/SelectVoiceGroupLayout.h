@@ -1,12 +1,12 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <nltools/Types.h>
 
 class PresetManagerLayout;
 class Button;
 
-class SelectVoiceGroupLayout : public DFBLayout
+class SelectVoiceGroupLayout : public Layout
 {
  public:
   SelectVoiceGroupLayout(PresetManagerLayout* parent);

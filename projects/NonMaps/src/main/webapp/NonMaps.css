@@ -21,7 +21,8 @@ html,body {
   margin: 0px;
   padding: 0px;
   overflow: hidden;
-  user-select: none
+  user-select: none;
+  touch-action: none;
 }
 
 html * {
@@ -1844,3 +1845,10 @@ button {
 	padding: 0.25em;
 }
 
+.dialogcontainer button.randomize-button {
+  min-width: unset;
+}
+
+.voicegroup-menu {
+  min-width: 7em;
+}

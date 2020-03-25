@@ -42,7 +42,10 @@ bool PassphraseEditor::onButton(Buttons i, bool down, ButtonModifiers modifiers)
   {
     if(m_selection == 1)
     {
-      Application::get().getSettings()->getSetting<Passphrase>()->dice();
+      if(modifiers[ButtonModifier::SHIFT])
+        Application::get().getSettings()->getSetting<Passphrase>()->resetToDefault();
+      else
+        Application::get().getSettings()->getSetting<Passphrase>()->dice();
     }
   }
   return false;

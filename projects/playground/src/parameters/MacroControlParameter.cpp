@@ -332,7 +332,7 @@ bool MacroControlParameter::isSourceOf(ParameterId id) const
   return false;
 }
 
-DFBLayout *MacroControlParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *MacroControlParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

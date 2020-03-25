@@ -2,42 +2,39 @@ package com.nonlinearlabs.client.world.pointer;
 
 import java.util.ArrayList;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 
 class TouchDown extends Down {
 
-	private ArrayList<Position> touches;
+	private ArrayList<Touch> touches = new ArrayList<Touch>();
 
-	TouchDown(JsArray<Touch> touches) {
-		this.touches = new ArrayList<Position>();
-
-		for (int i = 0; i < touches.length(); i++) {
-			Touch t = touches.get(i);
-			this.touches.add(new Position(t));
-		}
+	TouchDown(ArrayList<Touch> touches) {
+		touches.forEach(a -> {
+			this.touches.add(new Touch(a.id, a.pos));
+		});
 	}
 
 	@Override
-	public Gesture onTouchEnd(JsArray<Touch> touches) {
-		if (touches.length() > 0)
+	public Gesture onTouchEnd(ArrayList<Touch> touches) {
+		if (touches.size() > 0)
 			return onTouchMove(touches);
 
 		return new TouchUp(this);
 	}
 
 	@Override
-	public Gesture onTouchMove(JsArray<Touch> touches) {
-		if (touches.length() == 1) {
-			if (getDistance(this.touches.get(0), new Position(touches.get(0))) > Millimeter.toPixels(5)) {
-				return new TouchMoveStart(this, this.touches.get(0), touches);
+	public Gesture onTouchMove(ArrayList<Touch> touches) {
+		if (touches.size() == 1) {
+			if (getDistance(this.touches.get(0).pos, touches.get(0).pos) > Millimeter.toPixels(5)) {
+				Position myPos = this.touches.get(0).pos;
+				ArrayList<Touch> newTouches = touches;
+				return new TouchMoveStart(this, myPos, newTouches);
 			}
 
 			return this;
-		} else if (touches.length() == 2) {
+		} else if (touches.size() == 2) {
 			return new TouchPinchStart(this, touches);
 		}
 		return this;

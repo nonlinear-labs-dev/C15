@@ -1,6 +1,4 @@
 #include "Application.h"
-#include "testing/TestDriver.h"
-#include <cstdlib>
 #include "device-settings/DebugLevel.h"
 #include "Options.h"
 #include "playground-helpers.h"
@@ -20,10 +18,6 @@ int main(int numArgs, char **argv)
 
 #ifdef _PROFILING
   Profiler::get().enable(true);
-#endif
-
-#ifdef _TESTS
-  TestDriverBase::doTests(numArgs, argv);
 #endif
 
   {

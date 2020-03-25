@@ -1,13 +1,8 @@
 #include <presets/SearchQuery.h>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
-#include <testing/TestDriver.h>
 #include <xml/XmlReader.h>
 #include <iostream>
-
-TestDriver<SearchQuery> driver;
-
-typedef std::list<Glib::ustring> tStrings;
 
 static SearchQuery::Mode fromString(const Glib::ustring &mode)
 {
@@ -19,9 +14,9 @@ static SearchQuery::Mode fromString(const Glib::ustring &mode)
   return SearchQuery::Mode::Or;
 }
 
-tStrings trimAll(const tStrings &a)
+std::list<Glib::ustring> trimAll(const std::list<Glib::ustring> &a)
 {
-  tStrings r;
+  std::list<Glib::ustring> r;
 
   for(auto &s : a)
   {
@@ -33,9 +28,9 @@ tStrings trimAll(const tStrings &a)
   return r;
 }
 
-tStrings splitQuotes(const Glib::ustring &str)
+std::list<Glib::ustring> SearchQuery::splitQuotes(const Glib::ustring &str)
 {
-  tStrings ret;
+  std::list<Glib::ustring> ret;
 
   auto quotePos = str.find_first_of('"');
 
@@ -97,45 +92,4 @@ bool SearchQuery::iterate(const std::function<bool(const Glib::ustring &, const 
   }
 
   return match;
-}
-
-void assertStrings(const Glib::ustring &query, const tStrings &expected)
-{
-  auto s = splitQuotes(query);
-
-  if(s != expected)
-  {
-    std::cout << "got: ";
-
-    for(const auto &r : s)
-      std::cout << r << std::endl;
-
-    std::cout << "expected: ";
-
-    for(const auto &r : expected)
-      std::cout << r << std::endl;
-
-    g_warn_if_reached();
-  }
-}
-
-void SearchQuery::registerTests()
-{
-  g_test_add_func("/SearchQuery/quoted", []() {
-    assertStrings("", tStrings({}));
-
-    assertStrings("abc \"def\" ghi", tStrings({ "abc", "def", "ghi" }));
-
-    assertStrings("abc \"def ghi", tStrings({ "abc", "\"def", "ghi" }));
-
-    assertStrings("abc    def   ghi", tStrings({ "abc", "def", "ghi" }));
-
-    assertStrings("\"abc    def   ghi\"", tStrings({ "abc    def   ghi" }));
-
-    assertStrings("\"aaa \"\"bbb\"", tStrings({ "aaa", "bbb" }));
-
-    assertStrings("\"aaa \"\"bbb bbb\"", tStrings({ "aaa", "bbb bbb" }));
-
-    assertStrings("\"aaa \"\"bbb ccc", tStrings({ "aaa", "\"bbb", "ccc" }));
-  });
 }

@@ -62,6 +62,15 @@ public class Setup extends Composite {
 			presetDragDropOn, presetDragDropOff, bitmapCacheOn, bitmapCacheOff, developerOptionsOn, developerOptionsOff,
 			highlightChangedOn, highlightChangedOff;
 
+
+	@UiField
+	Label transitionTimeDisplayString, tuneReferenceDisplayString;
+
+	@UiField
+	InputElement transitionTimeSlider, tuneReferenceSlider;
+
+	Range transitionTimeSliderRange, tuneReferenceSliderRange;
+
 	@UiField
 	InputElement editSmoothingTimeSlider;
 
@@ -76,6 +85,9 @@ public class Setup extends Composite {
 
 	public Setup() {
 		initWidget(ourUiBinder.createAndBindUi(this));
+
+		transitionTimeSliderRange = Range.wrap(transitionTimeSlider);
+		tuneReferenceSliderRange = Range.wrap(tuneReferenceSlider);
 
 		pedal1Range = Range.wrap(pedal1Slider);
 		pedal2Range = Range.wrap(pedal2Slider);
@@ -173,6 +185,11 @@ public class Setup extends Composite {
 		highlightChangedOn.addValueChangeHandler(e -> settings.setHighlightChangedParameters(BooleanValues.on));
 		highlightChangedOff.addValueChangeHandler(e -> settings.setHighlightChangedParameters(BooleanValues.off));
 
+		transitionTimeSliderRange
+				.addValueChangeHandler(v -> settings.setTransitionTime(v.getValue().doubleValue()));
+		tuneReferenceSliderRange
+				.addValueChangeHandler(v -> settings.setTuneReference(v.getValue().doubleValue()));
+
 	}
 
 	public void connectUpdate() {
@@ -221,6 +238,12 @@ public class Setup extends Composite {
 
 		highlightChangedOn.setValue(t.highlightChangedParameters.value);
 		highlightChangedOff.setValue(!t.highlightChangedParameters.value);
+
+		tuneReferenceDisplayString.setText(t.tuneReferenceDisplayString);
+		tuneReferenceSliderRange.setValue(t.tuneReferenceValue);
+
+		transitionTimeDisplayString.setText(t.transitionTimeDisplayString);
+		transitionTimeSliderRange.setValue(t.transitionTimeValue);
 	}
 
 	public void applyPedalValues(DeviceSettings.Pedal src, ListBox type, Range slider, Label text) {

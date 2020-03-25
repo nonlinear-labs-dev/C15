@@ -53,7 +53,7 @@ void BaseUnitPresetsMode::onFuncButtonDown()
   auto currentVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
 
 
-#warning "TODO load preset dual/part foo"
+#warning "TODO fix direct load / select only / Load to I/II"
   if(!(app.getSettings()->getSetting<LoadModeSetting>()->get() == LoadMode::DirectLoad))
     eb->undoableLoadSelectedPreset(currentVoiceGroup);
   else if(eb->isModified())

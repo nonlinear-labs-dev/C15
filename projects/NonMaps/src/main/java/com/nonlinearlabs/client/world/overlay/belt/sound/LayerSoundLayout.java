@@ -2,6 +2,7 @@ package com.nonlinearlabs.client.world.overlay.belt.sound;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
+import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -14,6 +15,7 @@ import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.overlay.Label;
+import com.nonlinearlabs.client.world.overlay.SVGImage;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 
 public class LayerSoundLayout extends SoundLayout {
@@ -50,6 +52,7 @@ public class LayerSoundLayout extends SoundLayout {
 			addChild(new PresetName(this));
 			addChild(new Volume(this));
 			addChild(new TuneReference(this));
+			addChild(new PartMute(this));
 		}
 
 		@Override
@@ -67,8 +70,9 @@ public class LayerSoundLayout extends SoundLayout {
 
 			getChildren().get(0).doLayout(margin + 0 * unit + margin, margin, 2 * unit - 2 * margin, h - 2 * margin);
 			getChildren().get(1).doLayout(margin + 2 * unit + margin, margin, 8 * unit - 2 * margin, h - 2 * margin);
-			getChildren().get(2).doLayout(margin + 10 * unit + margin, margin, 5 * unit - 2 * margin, h - 2 * margin);
-			getChildren().get(3).doLayout(margin + 15 * unit + margin, margin, 5 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(2).doLayout(margin + 10 * unit + margin, margin, 4 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(3).doLayout(margin + 14 * unit + margin, margin, 4 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(4).doLayout(margin + 18 * unit + margin, margin, 2 * unit - 2 * margin, h - 2 * margin);
 		}
 
 		@Override
@@ -119,6 +123,46 @@ public class LayerSoundLayout extends SoundLayout {
 
 		}
 
+		private class PartMute extends SVGImage {
+
+			PartMute(VoiceGroupSoundSettings parent) {
+				super(parent, "Mute_Disabled_A.svg", "Mute_Active_A.svg");
+			}
+
+			@Override
+			public int getSelectedPhase() {
+				return isMuted() ? 1 : 0;
+			} 
+
+			boolean isMuted() {
+				BasicParameterModel param = EditBufferModel.get().getParameter(new ParameterId(395, group));
+				return param.value.getQuantizedAndClipped(true) > 0.5;
+			}
+
+			boolean isOtherPartMuted() {
+				VoiceGroup otherGroup = getOtherGroup();
+				BasicParameterModel param = EditBufferModel.get().getParameter(new ParameterId(395, otherGroup));
+				return param.value.getQuantizedAndClipped(true) > 0.5;
+			}
+
+			private VoiceGroup getOtherGroup() {
+				return (group == VoiceGroup.I) ? VoiceGroup.II : VoiceGroup.I;
+			}
+
+			@Override
+			public Control click(Position eventPoint) {
+				if (isMuted())
+					EditBufferUseCases.get().setParameterValue(new ParameterId(395, group), 0, true);
+				else if (isOtherPartMuted()) {
+					EditBufferUseCases.get().setParameterValue(new ParameterId(395, getOtherGroup()), 0, true);
+					EditBufferUseCases.get().setParameterValue(new ParameterId(395, group), 1, true);
+				} else {
+					EditBufferUseCases.get().setParameterValue(new ParameterId(395, group), 1, true);
+				}
+				return this;
+			}
+		}
+
 		private class PresetName extends Label {
 			PresetName(VoiceGroupSoundSettings parent) {
 				super(parent);
@@ -126,7 +170,7 @@ public class LayerSoundLayout extends SoundLayout {
 
 			@Override
 			public String getDrawText(Context2d ctx) {
-				return EditBufferModel.get().getPresetNameOfVoiceGroup(group);
+				return EditBufferModel.get().getPresetNameOfVoiceGroupWithSuffix(group);
 			}
 
 			@Override

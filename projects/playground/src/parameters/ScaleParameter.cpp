@@ -15,7 +15,7 @@ ScaleParameter::ScaleParameter(ParameterGroup *group, ParameterId id, const Scal
 {
 }
 
-DFBLayout *ScaleParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *ScaleParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

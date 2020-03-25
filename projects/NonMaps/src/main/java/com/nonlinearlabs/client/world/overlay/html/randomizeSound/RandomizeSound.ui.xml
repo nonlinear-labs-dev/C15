@@ -1,0 +1,29 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<g:HTMLPanel>
+		<div class="dialogcontainer html-dialog">
+			<div class="forms-container">
+				<div class="mt1"></div>
+				<div class="eins-he">
+					<div class="w20p">
+						<p>Amount</p>
+					</div>
+					<div class="w20p">
+						<g:Label ui:field="randomizeAmountDisplayString" styleName="gui-label-1"></g:Label>
+					</div>
+					<div class="w40p">
+						<input type="range" ui:field="randomizeAmount" class="slider-a" min="0" max="1" step="0.0001" value="0"></input>
+					</div>
+					<div class="w5p">
+
+					</div>
+					<div class="w15p">
+						<g:Button ui:field="apply" styleName="randomize-button">Apply</g:Button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</g:HTMLPanel>
+</ui:UiBinder>

@@ -1,7 +1,7 @@
 package com.nonlinearlabs.client.world.pointer;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
+import java.util.ArrayList;
+
 import com.nonlinearlabs.client.world.Control;
 
 class TouchLongPress extends LongPress {
@@ -11,15 +11,15 @@ class TouchLongPress extends LongPress {
 	}
 
 	@Override
-	public Gesture onTouchEnd(JsArray<Touch> touches) {
-		if (touches.length() > 0)
+	public Gesture onTouchEnd(ArrayList<Touch> touches) {
+		if (touches.size() > 0)
 			return onTouchMove(touches);
 
 		return new TouchMoveEnd(this);
 	}
 
 	@Override
-	public Gesture onTouchMove(JsArray<Touch> touches) {
+	public Gesture onTouchMove(ArrayList<Touch> touches) {
 		if (getDistance(getPosition(), PointerState.get().getPosition()) > getDragHysteresis())
 			return new TouchMoveStart(this, getPosition(), touches);
 

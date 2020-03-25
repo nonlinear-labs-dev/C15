@@ -35,9 +35,9 @@ namespace DescriptiveLayouts
        SelectVGButtonText, SoundEditHeading, DirectLoadStatus, PresetListBankName, PresetListPresetName, CanLeft,
        CanRight, isFineActive, EditBufferMasterVolume, EditBufferMasterTune, VGIMasterTuneText, VGIIMasterTuneText,
        VGIMasterVolumeText, VGIIMasterVolumeText, SplitPointValue, MonoEnabledText, MonoPrioText, MonoLegatoText,
-       MonoGlideText, UnisonVoicesText, UnisonDetuneText, UnisonPhaseText, UnisonPanText, MonoEnabled,
-       VoicesParameterHeader, UnisonEnabled, CurrentVoiceGroupLabel, SoundParamsButtonText, SoundVoicesButtonText,
-       SoundMasterButtonText, MonoButtonText, UnisonButtonText,
+       MonoGlideText, UnisonVoicesText, UnisonDetuneText, UnisonPhaseText, UnisonPanText, MonoEnabled, UnisonEnabled,
+       CurrentVoiceGroupLabel, SoundParamsButtonText, SoundVoicesButtonText, SoundMasterButtonText, MonoButtonText,
+       UnisonButtonText, VGIMuted, VGIIMuted, IsSingleSound, IsLayerSound, IsSplitSound,
 
        // try to use more generic names, the specific meaning is implemented in the EventProvider
        Edit, Fine, Locked, Position, NumItems,
@@ -48,7 +48,7 @@ namespace DescriptiveLayouts
 
        CurrentNumber, CurrentName, CurrentSelected, CurrentLoaded,
 
-       NextNumber, NextName, NextSelected, NextLoaded, PreviousType, NextType, CurrentType);
+       NextNumber, NextName, NextSelected, NextLoaded, PreviousType, NextType, CurrentType, CurrentVoiceGroupText);
 
   ENUM(EventSinks, uint8_t, SwitchToInitDetail, SwitchToEditMode, SwitchToSelectMode, SwitchToSetupFocus,
        SwitchToParameterFocus, SwitchToBankFocus, SwitchToPresetFocus, SwitchToSoundFocus, SwitchToMCSelectDetail,
@@ -58,7 +58,7 @@ namespace DescriptiveLayouts
        ToggleVoiceGroupWithParameterSelection, CommitPresetForButtonMenu, ToggleDirectLoad,
        IncPresetSelectionPresetList, DecPresetSelectionPresetList, IncBankSelectionPresetList,
        DecBankSelectionPresetList, DoPresetListAction, OpenUnisonParameter, OpenMasterParameter, SwitchToVoicesDetail,
-       OpenMonoParameterScreen, OpenPartScreen, InitSound,
+       OpenMonoParameterScreen, OpenPartScreen, InitSound, IncSplitPoint, DecSplitPoint, LayerMuteInc, LayerMuteDec,
 
        // try to use more generic names, the specific meaning is implemented in the EventProvider
        Left, Right, Up, Down, IncParam, DecParam, Commit);

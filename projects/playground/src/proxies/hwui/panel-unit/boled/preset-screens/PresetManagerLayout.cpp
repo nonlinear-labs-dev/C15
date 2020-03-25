@@ -29,9 +29,10 @@
 #include "presets/Preset.h"
 #include "SelectVoiceGroupLayout.h"
 
-PresetManagerLayout::PresetManagerLayout(FocusAndMode focusAndMode)
+PresetManagerLayout::PresetManagerLayout(FocusAndMode focusAndMode, FocusAndMode oldFocusAndMode)
     : super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
     , m_focusAndMode(focusAndMode)
+    , m_oldFocusAndMode(oldFocusAndMode)
 {
   setup();
 }
@@ -271,7 +272,7 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
 
       case Buttons::BUTTON_STORE:
         if(m_focusAndMode.mode == UIMode::Store)
-          hwui->undoableSetFocusAndMode(UIMode::Select);
+          hwui->undoableSetFocusAndMode(m_oldFocusAndMode);
         else
           hwui->undoableSetFocusAndMode({ UIFocus::Presets, UIMode::Store, UIDetail::Init });
         break;
@@ -284,10 +285,10 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
         break;
 
       case Buttons::BUTTON_PRESET:
-        if(m_focusAndMode.focus == UIFocus::Presets && m_focusAndMode.mode == UIMode::Select)
-          hwui->undoableSetFocusAndMode(UIFocus::Parameters);
+        if(m_focusAndMode.mode == UIMode::Store)
+          hwui->undoableSetFocusAndMode({UIMode::Select});
         else
-          hwui->undoableSetFocusAndMode({ UIFocus::Presets, UIMode::Select });
+          hwui->undoableSetFocusAndMode(m_oldFocusAndMode);
         break;
 
       case Buttons::BUTTON_INFO:
@@ -310,7 +311,7 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
 bool PresetManagerLayout::onRotary(int inc, ButtonModifiers modifiers)
 {
   m_presets->onRotary(inc, modifiers);
-  return DFBLayout::onRotary(inc, modifiers);
+  return Layout::onRotary(inc, modifiers);
 }
 
 bool PresetManagerLayout::animateSelectedPreset(std::function<void()> cb)

@@ -2,12 +2,13 @@
 #include "PresetSerializer.h"
 #include "PresetParameterGroupsSerializer.h"
 #include <presets/Preset.h>
+#include <nltools/logging/Log.h>
 
 PresetSerializer::PresetSerializer(Preset *preset, bool ignoreUUIDs)
     : Serializer(getTagName())
     , m_preset(preset)
-    , m_ignoreUUIDs(ignoreUUIDs)
     , m_presetLock(preset)
+    , m_ignoreUUIDs(ignoreUUIDs)
 {
 }
 
@@ -42,14 +43,14 @@ void PresetSerializer::readTagContent(Reader &reader) const
 
   if(!m_ignoreUUIDs)
   {
-    reader.onTextElement("uuid", [&](const Glib::ustring &text, const Attributes &attr) {
+    reader.onTextElement("uuid", [&](const Glib::ustring &text, const Attributes &) {
       m_preset->setUuid(reader.getTransaction(), text);
     });
   }
 
   reader.onTag(AttributesOwnerSerializer::getTagName(),
-               [&](const Attributes &attr) mutable { return new AttributesOwnerSerializer(m_preset); });
+               [&](const Attributes &) mutable { return new AttributesOwnerSerializer(m_preset); });
 
   reader.onTag(PresetParameterGroupsSerializer::getTagName(),
-               [&](const Attributes &attr) mutable { return new PresetParameterGroupsSerializer(m_preset); });
+               [&](const Attributes &) mutable { return new PresetParameterGroupsSerializer(m_preset); });
 }

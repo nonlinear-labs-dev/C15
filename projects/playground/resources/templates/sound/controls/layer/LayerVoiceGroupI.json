@@ -54,6 +54,11 @@
         "Class": "Text",
         "Rect": "90, 0, 80, 15",
         "Tag": "ParamText"
+      },
+      "MuteIndication": {
+        "Class": "Text",
+        "Rect": "80, 2, 15, 11",
+        "Tag": "ParamText"
       }
     }
   },

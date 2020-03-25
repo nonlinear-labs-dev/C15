@@ -13,7 +13,6 @@ void DualSpecialParameterModuleCaption::updateText(Parameter *newOne)
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   auto type = eb->getType();
-  auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
 
   if(type == SoundType::Single)
   {
@@ -21,6 +20,6 @@ void DualSpecialParameterModuleCaption::updateText(Parameter *newOne)
   }
   else
   {
-    setText({ "Part " + toString(vg), 0 });
+    setText({ "Part", 0 });
   }
 }

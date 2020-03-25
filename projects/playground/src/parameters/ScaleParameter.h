@@ -11,7 +11,7 @@ class ScaleParameter : public Parameter
   ScaleParameter(ParameterGroup *group, ParameterId id, const ScaleConverter *scaling, tControlPositionValue def,
                  tControlPositionValue coarseDenominator, tControlPositionValue fineDenominator);
 
-  DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
   Glib::ustring getMiniParameterEditorName() const override;
   void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
   virtual Glib::ustring getLongName() const override;

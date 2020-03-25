@@ -142,11 +142,18 @@ void Settings::load()
 
 void Settings::save()
 {
-  SettingsSerializer serializer(*this);
+  try
+  {
+    std::shared_ptr<OutStream> out(new FileOutStream(Application::get().getOptions()->getSettingsFile(), false));
 
-  std::shared_ptr<OutStream> out(new FileOutStream(Application::get().getOptions()->getSettingsFile(), false));
-  XmlWriter writer(out);
-  serializer.write(writer, VersionAttribute::get());
+    SettingsSerializer serializer(*this);
+    XmlWriter writer(out);
+    serializer.write(writer, VersionAttribute::get());
+  }
+  catch(...)
+  {
+    nltools::Log::error("Could not save Settings to", Application::get().getOptions()->getSettingsFile());
+  }
 }
 
 void Settings::sanitize()

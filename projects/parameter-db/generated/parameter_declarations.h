@@ -2,7 +2,7 @@
 
 /******************************************************************************/
 /**	@file       parameter_declarations.h
-    @date       2020-02-12, 18:42
+    @date       2020-03-16, 14:07
     @version	1.7B-4
     @author     M. Seeber
     @brief      descriptors for all parameter-related details
@@ -171,13 +171,13 @@ namespace C15
     enum class Global_Modulateables
     {
       Split_Split_Point,
+      Master_Volume,
+      Master_Tune,
       _LENGTH_
     };
 
     enum class Global_Unmodulateables
     {
-      Master_Volume,
-      Master_Tune,
       Scale_Base_Key,
       Scale_Offset_0,
       Scale_Offset_1,
@@ -307,6 +307,9 @@ namespace C15
       Unison_Voices,
       Unison_Phase,
       Unison_Pan,
+      Voice_Grp_Mute,
+      Voice_Grp_Fade_From,
+      Voice_Grp_Fade_Range,
       Mono_Grp_Enable,
       Mono_Grp_Prio,
       Mono_Grp_Legato,
@@ -447,6 +450,8 @@ namespace C15
     enum class Poly_Sync
     {
       Split_Split_Point,
+      Voice_Grp_Fade_From,
+      Voice_Grp_Fade_Range,
       Env_A_Lvl_Vel,
       Env_A_Att_Vel,
       Env_A_Dec_1_Vel,
@@ -487,6 +492,7 @@ namespace C15
     {
       Unison_Pan,
       Voice_Grp_Volume,
+      Voice_Grp_Mute,
       Env_A_BP,
       Env_A_Sus,
       Env_A_Gain,

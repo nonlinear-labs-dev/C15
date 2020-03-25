@@ -1,5 +1,4 @@
 #pragma once
-
 #include "playground.h"
 
 class Dimension
@@ -12,8 +11,6 @@ class Dimension
 
   size_t hash() const;
 
-  static void registerTests();
-
  protected:
   static Glib::ustring formatDimensionRounded(tControlPositionValue in, const Glib::ustring &unit,
                                               tControlPositionValue roundTo);
@@ -24,4 +21,6 @@ class Dimension
                                                      int numDigits);
   static Glib::ustring formatPositiveDimensionDigits(tControlPositionValue in, const Glib::ustring &unit,
                                                      int numDigits);
+
+  friend class TestableDimension;
 };

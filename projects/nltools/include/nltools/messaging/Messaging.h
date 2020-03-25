@@ -16,7 +16,7 @@ namespace nltools
     // Types:
     using SerializedMessage = Glib::RefPtr<Glib::Bytes>;
 
-    ENUM(EndPoint, uint16_t, None, Lpc, Oled, PanelLed, RibbonLed, AudioEngine, Playground, TestEndPoint);
+    ENUM(EndPoint, uint16_t, None, Lpc, Oled, PanelLed, RibbonLed, AudioEngine, Playground, WiFiManager, TestEndPoint);
 
     uint getPortFor(EndPoint p);
 
@@ -31,7 +31,11 @@ namespace nltools
 
          NoteShiftSetting, PresetGlitchSetting, TransitionTimeSetting, EditSmoothingTimeSetting, TuneReference,
 
-         NoteDown, NoteUp);
+         NoteDown, NoteUp,
+
+         USBStatusMessage,
+
+         WiFiPasswordChanged, WiFiSSIDChanged, WiFiSetSSID, WiFiSetPassword);
 
     namespace detail
     {
@@ -56,7 +60,7 @@ namespace nltools
       }
 
       // send raw bytes to receiver
-      void send(EndPoint receiver, const SerializedMessage &msg);
+      bool send(EndPoint receiver, const SerializedMessage &msg);
 
       template <typename Msg>
       sigc::connection receive(MessageType type, EndPoint receivingEndPoint, std::function<void(const Msg &)> cb)
@@ -88,7 +92,6 @@ namespace nltools
     };
 
     void init(const Configuration &conf);
-    Configuration swapConfig(const Configuration &conf);
     void deInit();
 
     // wait at most timeOut for the sigc::connection to be established
@@ -96,10 +99,12 @@ namespace nltools
     bool waitForConnection(EndPoint receiver, std::chrono::milliseconds timeOut = std::chrono::seconds(10));
 
     // Send msg to receiver. If there is no receiver, does nothing.
-    template <typename Msg> void send(EndPoint receiver, const Msg &msg)
+    template <typename Msg> bool send(EndPoint receiver, const Msg &msg)
     {
-      detail::send(receiver, detail::serialize<Msg>(msg));
+      return detail::send(receiver, detail::serialize<Msg>(msg));
     }
+
+    void flush(EndPoint receiver, const std::chrono::milliseconds timeout);
 
     template <typename Msg> sigc::connection receive(EndPoint receivingEndPoint, std::function<void(const Msg &)> cb)
     {

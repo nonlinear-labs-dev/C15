@@ -5,14 +5,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.FillStrokeStyle;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.ColorTable;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
-import com.nonlinearlabs.client.presenters.DeviceSettingsProvider;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
@@ -73,14 +74,12 @@ public class Overlay extends OverlayLayout {
 			getPixRect().fill(ctx, c);
 			super.draw(ctx, invalidationMask);
 
-			if(isLoadIntoPartEnabled())
-			{
+			if (isLoadIntoPartEnabled()) {
 				drawLoadToPartIndication(ctx, c, RGBA.black().withAlpha(0.5));
 			}
 		}
 
-		private void drawLoadToPartIndication(Context2d ctx, RGB fillColor, RGB strokeColor)
-		{
+		private void drawLoadToPartIndication(Context2d ctx, RGB fillColor, RGB strokeColor) {
 			Rect px = getPixRect();
 			ctx.beginPath();
 			double width = px.getWidth();
@@ -111,7 +110,31 @@ public class Overlay extends OverlayLayout {
 
 			return super.click(eventPoint);
 		}
+	}
 
+	private class PartMuteDisplay extends Label {
+
+		public PartMuteDisplay(OverlayLayout parent) {
+			super(parent);
+
+			EditBufferModel.get().soundType.onChange(v -> {
+				setVisible(v == SoundType.Layer);
+				return true;
+			});
+		}
+
+		@Override
+		public String getDrawText(Context2d ctx) {
+			VoiceGroup g = EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
+			 BasicParameterModel param = EditBufferModel.get().getParameter(new ParameterId(395, g));
+			boolean muted = param.value.getQuantizedAndClipped(true) > 0.5;
+			return muted ? "\uE0BA" : "";
+		}
+
+		@Override
+		public RGB getColorFont() {
+			return EditBufferPresenterProvider.getPresenter().voiceGroupIndicationColor;
+		}
 	}
 
 	private Belt belt = null;
@@ -124,10 +147,12 @@ public class Overlay extends OverlayLayout {
 	private List<CompareDialog> compareDialogs;
 	private GWTDialog modalDialog;
 	private LayerDisplay layerDisplay;
+	private PartMuteDisplay partMuteDisplay;
 
 	public Overlay(Viewport parent) {
 		super(parent);
 		addChild(layerDisplay = new LayerDisplay(this));
+		addChild(partMuteDisplay = new PartMuteDisplay(this));
 		addChild(belt = new Belt(this, parent.getNonMaps()));
 		addChild(buttons = new GlobalButtons(this, belt));
 		addChild(undoRedo = new UndoRedoButtons(this, belt));
@@ -297,6 +322,9 @@ public class Overlay extends OverlayLayout {
 		double layerDisplayWidth = Millimeter.toPixels(10);
 		double layerDisplayHeight = Millimeter.toPixels(10);
 		layerDisplay.doLayout((w - layerDisplayWidth) / 2, 0, layerDisplayWidth, layerDisplayHeight);
+
+		Rect layerDisplayPos = layerDisplay.getRelativePosition();
+		partMuteDisplay.doLayout(layerDisplayPos.getRight(), layerDisplayPos.getTop() + Millimeter.toPixels(0.5), layerDisplayPos.getWidth(), layerDisplayPos.getHeight());
 
 		double beltHeight = Millimeter.toPixels(40);
 		belt.doLayout(0, h - beltHeight, w, beltHeight);

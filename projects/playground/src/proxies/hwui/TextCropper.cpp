@@ -1,43 +1,4 @@
-#include <proxies/hwui/controls/Control.h>
-#include <utility>
-#include <testing/TestDriver.h>
-#include <proxies/hwui/controls/Label.h>
 #include "TextCropper.h"
-#include "Oleds.h"
-#include <CompileTimeOptions.h>
-
-static TestDriver<TextCropper> tests;
-
-void TextCropper::registerTests()
-{
-  g_test_add_func("/TextCropper/shortenStringIfNeccessary", []() {
-    auto pathToFont = getResourcesDir() + "/Emphase-9-Regular.ttf";
-    auto font = std::make_shared<Font>(pathToFont, 9);
-
-    auto testShortenStringIfNeccessary = [font](std::string in, int len, std::string expected) {
-      auto shortened = TextCropper::shortenStringIfNeccessary(font, in, len);
-      g_assert_cmpstr(shortened.c_str(), ==, expected.c_str());
-    };
-
-    testShortenStringIfNeccessary("", 5, "");
-    testShortenStringIfNeccessary("", 0, "");
-    testShortenStringIfNeccessary("", 100000, "");
-
-    testShortenStringIfNeccessary("Fo", 5, "..");
-    testShortenStringIfNeccessary("Fo", 20, "Fo");
-    testShortenStringIfNeccessary("Fooo", 20, "Fooo");
-    testShortenStringIfNeccessary("Foooo", 20, "F..o");
-    testShortenStringIfNeccessary("Foooo 2", 20, "F..2");
-    testShortenStringIfNeccessary("Foooo2", 20, "F..2");
-    testShortenStringIfNeccessary("ANANAS SANANA", 20, "A..A");
-    testShortenStringIfNeccessary("ANANAS SANANA", 40, "ANA..ANA");
-    testShortenStringIfNeccessary("ANANAS SANANA 4", 40, "ANAN..4");
-    testShortenStringIfNeccessary("ANANAS SANANA 4 5", 40, "ANAN..5");
-    testShortenStringIfNeccessary("ANANASSANANA 2", 60, "ANANASSA..2");
-    testShortenStringIfNeccessary("HALLOHALLOHALLOHALLOHALLO 78", 128, "HALLOHALLOHALLOHAL..78");
-    testShortenStringIfNeccessary("HALLO HALLO HALLO HALLO HALLO 78", 128, "HALLO HALLO HALLO HA..78");
-  });
-};
 
 Glib::ustring TextCropper::shortenStringIfNeccessary(std::shared_ptr<Font> font, const Glib::ustring &text,
                                                      double maxWidth)

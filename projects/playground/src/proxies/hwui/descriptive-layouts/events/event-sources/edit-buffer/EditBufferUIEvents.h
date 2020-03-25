@@ -91,28 +91,6 @@ namespace DescriptiveLayouts
     }
   };
 
-  class VoicesParameterHeader : public EditBufferEvent<DisplayString>
-  {
-   public:
-    void onChange(const EditBuffer *eb) override
-    {
-      auto type = eb->getType();
-      if(type == SoundType::Split)
-      {
-        auto selection = Application::get().getHWUI()->getCurrentVoiceGroup();
-        setValue({ "Voices " + toString(selection), 0 });
-      }
-      else if(type == SoundType::Layer)
-      {
-        setValue({ "Voices I/II", 0 });
-      }
-      else
-      {
-        setValue({ "Voices", 0 });
-      }
-    }
-  };
-
   template <int id, VoiceGroup vg> class ParameterValue : public EditBufferEvent<DisplayString>
   {
    public:

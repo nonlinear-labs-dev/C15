@@ -28,22 +28,22 @@ namespace DescriptiveLayouts
     auto eb = Application::get().getPresetManager()->getEditBuffer();
     auto hwui = Application::get().getHWUI();
 
-    /*
-       * Basic Parameter Events
-       */
     registerEvent(EventSinks::IncParam, [eb, hwui]() {
       if(auto p = eb->getSelected())
-        p->getValue().inc(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
+      {
+        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+        p->stepCPFromHwui(scope->getTransaction(), 1, hwui->getButtonModifiers());
+      }
     });
 
     registerEvent(EventSinks::DecParam, [eb, hwui]() {
       if(auto p = eb->getSelected())
-        p->getValue().dec(Initiator::EXPLICIT_HWUI, hwui->getButtonModifiers());
+      {
+        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+        p->stepCPFromHwui(scope->getTransaction(), -1, hwui->getButtonModifiers());
+      }
     });
 
-    /*
-       * Modulation Events
-       */
     registerEvent(EventSinks::IncMCSel, [eb]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
         modParam->undoableIncrementMCSelect(1);
@@ -95,7 +95,7 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::ToggleVoiceGroupWithParameterSelection,
                   []() { SwitchVoiceGroupButton::toggleVoiceGroup(); });
 
-    registerEvent(EventSinks::ToggleVoiceGroup, [eb]() { Application::get().getHWUI()->toggleCurrentVoiceGroup(); });
+    registerEvent(EventSinks::ToggleVoiceGroup, [hwui]() { hwui->toggleCurrentVoiceGroup(); });
 
     /*
        * UIFocus
@@ -239,21 +239,75 @@ namespace DescriptiveLayouts
       eb->undoableSelectParameter({ 364, vg });
     });
 
-    registerEvent(EventSinks::OpenPartScreen, [hwui, eb]() {
+    registerEvent(EventSinks::OpenPartScreen, [eb]() {
       eb->undoableSelectParameter({ 358, Application::get().getHWUI()->getCurrentVoiceGroup() });
     });
 
     registerEvent(EventSinks::OpenMasterParameter, [eb] { eb->undoableSelectParameter({ 247, VoiceGroup::Global }); });
 
-    registerEvent(EventSinks::InitSound, [eb, hwui] {
+    registerEvent(EventSinks::InitSound, [eb] {
       auto scope = eb->getParent()->getUndoScope().startTransaction("Init Sound");
       eb->undoableInitSound(scope->getTransaction());
       Application::get().getHWUI()->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
     });
 
-    registerEvent(EventSinks::OpenUnisonParameter, [hwui, eb]() {
+    registerEvent(EventSinks::OpenUnisonParameter, [eb]() {
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
       eb->undoableSelectParameter({ 249, vg });
+    });
+
+    registerEvent(EventSinks::IncSplitPoint, [hwui, eb]() {
+      if(auto p = eb->findParameterByID({ 356, VoiceGroup::Global }))
+      {
+        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+        p->stepCPFromHwui(scope->getTransaction(), 1, hwui->getButtonModifiers());
+      }
+    });
+
+    registerEvent(EventSinks::DecSplitPoint, [hwui, eb]() {
+      if(auto p = eb->findParameterByID({ 356, VoiceGroup::Global }))
+      {
+        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+        p->stepCPFromHwui(scope->getTransaction(), -1, hwui->getButtonModifiers());
+      }
+    });
+
+    registerEvent(EventSinks::LayerMuteInc, [eb]() {
+      auto muteI = eb->findParameterByID({ 395, VoiceGroup::I });
+      auto muteII = eb->findParameterByID({ 395, VoiceGroup::II });
+      const auto vgIMuted = muteI->getControlPositionValue() > 0.5;
+      const auto vgIIMuted = muteII->getControlPositionValue() > 0.5;
+
+      if(!vgIMuted && !vgIIMuted)
+      {
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        muteI->setCPFromHwui(scope->getTransaction(), 1);
+      }
+      else if(vgIIMuted)
+      {
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        muteI->setCPFromHwui(scope->getTransaction(), 0);
+        muteII->setCPFromHwui(scope->getTransaction(), 0);
+      }
+    });
+
+    registerEvent(EventSinks::LayerMuteDec, [eb]() {
+      auto muteI = eb->findParameterByID({ 395, VoiceGroup::I });
+      auto muteII = eb->findParameterByID({ 395, VoiceGroup::II });
+      const auto vgIMuted = muteI->getControlPositionValue() > 0.5;
+      const auto vgIIMuted = muteII->getControlPositionValue() > 0.5;
+
+      if(!vgIMuted && !vgIIMuted)
+      {
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        muteII->setCPFromHwui(scope->getTransaction(), 1);
+      }
+      else if(vgIMuted)
+      {
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        muteI->setCPFromHwui(scope->getTransaction(), 0);
+        muteII->setCPFromHwui(scope->getTransaction(), 0);
+      }
     });
   }
 

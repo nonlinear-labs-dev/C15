@@ -93,6 +93,7 @@ class LPCProxy
   void onAssertionMessageReceived(const MessageParser::NLMessage &msg);
   void onNotificationMessageReceived(const MessageParser::NLMessage &msg);
   void onLPCConnected();
+  void onHeartbeatReceived(const MessageParser::NLMessage &msg);
 
   Parameter *findPhysicalControlParameterFromLPCHWSourceID(uint16_t id) const;
 
@@ -111,4 +112,6 @@ class LPCProxy
 
   Throttler m_throttledAbsoluteParameterChange;
   gint32 m_throttledAbsoluteParameterValue = 0;
+
+  uint64_t m_lastReceivedHeartbeat = -1;
 };

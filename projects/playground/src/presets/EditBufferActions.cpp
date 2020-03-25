@@ -130,6 +130,25 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     editBuffer->undoableInitSound(scope->getTransaction());
   });
 
+  addAction("init-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    auto vg = to<VoiceGroup>(request->get("part"));
+    auto scope = editBuffer->getUndoScope().startTransaction("Init Part");
+    editBuffer->undoableInitPart(scope->getTransaction(), vg);
+  });
+
+  addAction("rename-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    auto vg = to<VoiceGroup>(request->get("part"));
+    auto name = request->get("name");
+    auto scope = editBuffer->getUndoScope().startTransaction("Rename Part");
+    editBuffer->setVoiceGroupName(scope->getTransaction(), name, vg);
+  });
+
+  addAction("randomize-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    auto vg = to<VoiceGroup>(request->get("part"));
+    auto scope = editBuffer->getUndoScope().startTransaction("Randomize Part");
+    editBuffer->undoableRandomizePart(scope->getTransaction(), vg, Initiator::EXPLICIT_WEBUI);
+  });
+
   addAction("set-modamount-and-value", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
 

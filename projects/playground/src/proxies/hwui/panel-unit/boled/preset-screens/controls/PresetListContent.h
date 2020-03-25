@@ -20,6 +20,9 @@ class PresetListContent : public ControlWithChildren
   void setup(Bank *bank, size_t focussedPresetPos);
   bool animateSelectedPreset(std::function<void()> cb);
 
+ protected:
+  bool isTransparent() const override;
+
  private:
   void onEditBufferChanged();
   Preset *getPresetAtPosition(Bank *bank, int pos) const;

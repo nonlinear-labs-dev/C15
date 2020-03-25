@@ -3,7 +3,7 @@
 #include <cstring>
 #include <assert.h>
 #include <list>
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/controls/Rect.h>
 #include "GenericLayout.h"
@@ -23,7 +23,7 @@ namespace DescriptiveLayouts
 
     void clear();
 
-    std::shared_ptr<DFBLayout> instantiate(FocusAndMode fam);
+    std::shared_ptr<Layout> instantiate(FocusAndMode fam);
 
     template <typename... Args>
 

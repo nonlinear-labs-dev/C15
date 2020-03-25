@@ -419,7 +419,7 @@ void Parameter::exportReaktorParameter(std::stringstream &target) const
   target << getTcdValue() << std::endl;
 }
 
-DFBLayout *Parameter::createLayout(FocusAndMode focusAndMode) const
+Layout *Parameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

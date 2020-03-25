@@ -52,7 +52,7 @@ public class MonoColumn extends ParameterColumn {
         super(parent);
         addChild(new Enable(this));
         addChild(new Priority(this));
-        addChild(new Legato(this));
         addChild(new ModulateableKnob(this, 367));
+        addChild(new Legato(this));
     }
 }

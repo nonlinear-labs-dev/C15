@@ -38,10 +38,10 @@ void LoadDualPresetPartWithValueIntoInitDualSoundPart(Preset *preset, tControlPo
     editBuffer->undoableLoadPresetPartIntoPart(scope->getTransaction(), preset, tLoadFromPart, tLoadToVoiceGroup);
   }
 
-  auto presetPartVolume = preset->findParameterByID({ 358, tLoadFromPart });
-  auto presetPartTune = preset->findParameterByID({ 360, tLoadFromPart });
-  auto presetGlobalVolume = preset->findParameterByID({ 247, VoiceGroup::Global });
-  auto presetGlobalTune = preset->findParameterByID({ 248, VoiceGroup::Global });
+  auto presetPartVolume = preset->findParameterByID({ 358, tLoadFromPart }, true);
+  auto presetPartTune = preset->findParameterByID({ 360, tLoadFromPart }, true);
+  auto presetGlobalVolume = preset->findParameterByID({ 247, VoiceGroup::Global }, true);
+  auto presetGlobalTune = preset->findParameterByID({ 248, VoiceGroup::Global }, true);
 
   auto partVolume = editBuffer->findParameterByID({ 358, tLoadToVoiceGroup });
   auto partTune = editBuffer->findParameterByID({ 360, tLoadToVoiceGroup });

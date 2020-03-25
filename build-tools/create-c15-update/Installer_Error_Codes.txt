@@ -1,0 +1,109 @@
+Installer  Error Codes / LogFile outputs / cause		2020-02-27 ASCHM
+(document for internal use only)
+
+Most of these error codes are diagnostic and were introduced for debugging and normally never occur in a user's situation,
+unless something is really wrong like a corrupt/wrong install package ("by design") or a severe file system error on the BBB's SD-Card,etc.
+
+List of current Error Messages
+------------
+3. RT (LPC)
+- 31 :: "E31 RT update: no argument" ==> call to lpc_update.sh didn't pass a parameter
+- 32 :: "E32 RT update: no file" ==> parameter passed to lpc_update.sh didn't is not a file
+- 33 :: "E33 RT update: cannot connect to LPC, details:" ==> the "mxli" progging tool could find the chip or failed programming it
+        (can happen occasionally when the LPC doesn't run because the clock oscillator didn't start up for some reason)
+
+4. ePC
+- 45 :: "E45 ePC update: Reboot taking too long... timed out"
+- 46 :: "E46 ePC update: Could not start server on BBB..."
+- 47 :: "E47 ePC update: deploying update failed ..."
+
+5. BBB
+- 54 :: "E54 BBB update: User partition not mounted om ePC ..."
+- 55 :: "E55 BBB update: Moving presets to ePC failed ..."
+- 56 :: "E56 BBB update: Moving Settings to ePC failed ..."
+- 57 :: "E57 BBB update: Moving calibration settings to ePC failed ..."
+- 58 :: "E58 BBB update: Syncing rootfs failed ..."
+
+8. General
+- 81 :: "E81: Usage: $EPC_IP <IP-of-ePC> wrong ..."
+- 82 :: "E82: Can't ping ePC on $EPC_IP ..."
+- 83 :: "E83: Can't logon to ePC OS ..."
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+Historical Error and Warning Messages
+------------
+Errors which may actually occur in a user situation are:
+- 41 :: "E41 audio update: cannot connect to ePC" ==> pinging the ePC failed, ePC is off or network connection broken
+- 33 :: "E33 RT update: cannot connect to LPC, details:" ==> the "mxli" progging tool could find the chip or failed programming it,
+can happen occasionally when the LPC doesn't run because the clock oscillator didn't start up for some reason.
+
+If these errors occur they also indidcate a potentially unstable C15 which needs repair anyway, as both errors make the C15 inoperable,
+no sound (even there is no indication to the user because UI is still running correctly).
+E41 is really prone to happen with older C15-hardware (using Supervisor-uC firmware version older than 3.x) when the power button isn't used
+in a conservative fashion because the older firmware doesn't protect against this.
+
+These errors also cause the display message "update error! please retry." at the end of the install process.
+Often, a reboot and following new install run fixes these problems because those are typically non persistent hardware glitches.
+Because of this (non-fatal errors), they also do not initiate a recovery to the previous system state at the end of the install
+like most other errors do, and there is no backuped data for ePC and LPC anyway.
+
+
+------------
+Warnings which may actually occur in a user situation are:
+- 50 :: "W50 UI update: Warning, this UI has been successfully installed before. Quit without installing." ==> Warning only, not displayed
+- 10 :: "W10 backup/restore: Warning, data for \"$VERSION\" already backed up" ==> Warning only, not displayed.
+        A previous run of an 1811a Installer did already backup the previous (pre-1811a) state
+
+Both of these Warnings will be found in the log file only, they are not displayed on the C15. Both warnings will occur when a user runs
+an 1811a Install more than once.
+
+
+
+------------
+Complete List:
+0. Installer script
+"Fatal system error! Contact Nonlinear Labs." (no code number, and also not written to logfile)
+This error is displayed when the attempt fails to fix very old system where the Playground isn't a Symlink. It indicates
+a severe problem (file system error etc)
+
+In general, there might be errors that will display a number not listed here, typically this are syntax errors in the scripts.
+
+
+1. UI (BBB)
+- 50 :: "W50 UI update: Warning, this UI has been successfully installed before. Quit without installing." ==> Warning only, not displayed
+- 52 :: "E52 UI update: installing new UI failed (missing/corrupted files)" ==> PG and/or BBBB executables missing / corrupted files
+- 53 :: "E53 UI update: installing new UI system services failed" ==> something went wrong while patching "systemd" services
+
+2. Audio Engine (ePC)
+- 41 :: "E41 audio update: cannot connect to ePC" ==> pinging the ePC failed, ePC is off or network connection broken (can happen occasionally)
+- 42 :: "E42 audio update: file write failed" ==> copying the .ens file failed (permission rights of share, etc)
+
+3. Saving/Restoring C15-Presets
+- 60 :: "W60 presets: no data to backup/restore"  ==> Warning only, not displayed
+- 61 :: "E61 presets: no action given" ==> call to presets.sh didn't pass a parameter
+- 62 :: "E62 presets: no version given" ==> call to presets.sh didn't pass a version string (for naming the temporary folder)
+- 63 :: "E63 presets: illegal action given" ==> call to presets.sh didn't pass neither "--backup" nor "--restore"
+- 64 :: "E64 presets: could not backup data for \"$VERSION\"" ==> copying the files failed for some reason
+- 65 :: "E65 presets: restore failed for \"$VERSION\"" ==> copying the files failed for some reason
+
+4. Saving/Restoring System Files and UI
+- 10 :: "W10 backup/restore: Warning, data for \"$VERSION\" already backed up" ==> Warning only, not displayed.
+        A previous run of an 1811a Installer did already backup the previous (pre-1811a) state
+- 11 :: "E11 backup/restore: no action given" ==> call to backup.sh didn't pass a parameter
+- 12 :: "E12 backup/restore: no version given" call to backup.sh didn't pass a version string (for naming the persistent folders)
+- 13 :: "E13 backup/restore: illegal action given" ==> call to backup.sh didn't pass neither "--backup" nor "--restore"
+- 14 :: "E14 backup/restore: No backup \"$VERSION\" present" ==> no data found to restore
+        (most likely trying a restore without previous backup)
+
+6. System Files
+- 21 :: "E21 system update: installing new update installer script failed" ==> most likely a severe file system error, etc
+- 22 :: "E22 system update: installing new system scripts failed" ==> most likely a severe file system error, etc
+- 23 :: "E23 system update: installing new system services failed" ==> most likely a severe file system error, etc
+
+7. u-boot:
+- 71 :: < no message text> ==> the remounting of the newly prepared internal flash failed (severe error)
+- 72 :: < no message text> ==> remounting was succesfull, but the local saving/restoring of preset stored previously on the tha flash failed.
+u-boot update is a special case, if errors occur it writes its own logfiles "uboot.stdout.log" and "uboot.stderr.log" on the USB-stick
+which are only useful for in-house diagnostics (expert knowledge required)

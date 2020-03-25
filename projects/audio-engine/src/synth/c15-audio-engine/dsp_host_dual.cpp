@@ -43,9 +43,19 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
   m_global.update_tone_amplitude(-6.0f);
   m_global.update_tone_frequency(m_reference.m_scaled);
   m_global.update_tone_mode(0);
+
+  // voice fade stuff I (currently explicit)
+  m_poly[0].m_fadeStart = 0;
+  m_poly[0].m_fadeEnd = C15::Config::key_count - 1;
+  m_poly[0].m_fadeIncrement = 1;
   // init poly dsp: exponentiator, feedback pointers
   m_poly[0].init(&m_global.m_signals, &m_convert, &m_time, &m_z_layers[0], &m_reference.m_scaled, m_time.m_millisecond,
                  env_init_gateRelease, samplerate);
+  // voice fade stuff II (currently explicit)
+  m_poly[1].m_fadeStart = C15::Config::key_count - 1;
+  m_poly[1].m_fadeEnd = 0;
+  m_poly[1].m_fadeIncrement = -1;
+  // init poly dsp: exponentiator, feedback pointers
   m_poly[1].init(&m_global.m_signals, &m_convert, &m_time, &m_z_layers[1], &m_reference.m_scaled, m_time.m_millisecond,
                  env_init_gateRelease, samplerate);
   // init mono dsp
@@ -216,11 +226,12 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
     }
   }
   // temporary: load initials in order to have valid osc reset params
-  onSettingInitialSinglePreset();
+  //onSettingInitialSinglePreset();
+
   if(LOG_INIT)
   {
-    nltools::Log::info("dsp_host_dual::init - engine dsp status: global");
-    nltools::Log::info("missing: nltools::msg - reference, initial:", m_reference.m_scaled);
+    //nltools::Log::info("dsp_host_dual::init - engine dsp status: global");
+    //nltools::Log::info("missing: nltools::msg - reference, initial:", m_reference.m_scaled);
   }
 }
 
@@ -546,7 +557,7 @@ void dsp_host_dual::onRawMidiMessage(const uint32_t _status, const uint32_t _dat
   }
 }
 
-void dsp_host_dual::onPresetMessage(const nltools::msg::SinglePresetMessage &_msg)
+void dsp_host_dual::onPresetMessage(const nltools::msg::SinglePresetMessage& _msg)
 {
   m_layer_changed = m_layer_mode != C15::Properties::LayerMode::Single;
   m_preloaded_layer_mode = C15::Properties::LayerMode::Single;
@@ -570,7 +581,7 @@ void dsp_host_dual::onPresetMessage(const nltools::msg::SinglePresetMessage &_ms
   }
 }
 
-void dsp_host_dual::onPresetMessage(const nltools::msg::SplitPresetMessage &_msg)
+void dsp_host_dual::onPresetMessage(const nltools::msg::SplitPresetMessage& _msg)
 {
   m_layer_changed = m_layer_mode != C15::Properties::LayerMode::Split;
   m_preloaded_layer_mode = C15::Properties::LayerMode::Split;
@@ -591,7 +602,7 @@ void dsp_host_dual::onPresetMessage(const nltools::msg::SplitPresetMessage &_msg
   }
 }
 
-void dsp_host_dual::onPresetMessage(const nltools::msg::LayerPresetMessage &_msg)
+void dsp_host_dual::onPresetMessage(const nltools::msg::LayerPresetMessage& _msg)
 {
   m_layer_changed = m_layer_mode != C15::Properties::LayerMode::Layer;
   m_preloaded_layer_mode = C15::Properties::LayerMode::Layer;
@@ -612,7 +623,7 @@ void dsp_host_dual::onPresetMessage(const nltools::msg::LayerPresetMessage &_msg
   }
 }
 
-void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::HWSourceChangedMessage &_msg)
+void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::HWSourceChangedMessage& _msg)
 {
   auto param = m_params.get_hw_src(_id);
   float inc = -param->m_position;
@@ -635,7 +646,7 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::HWSourc
   }
 }
 
-void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::HWAmountChangedMessage &_msg)
+void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::HWAmountChangedMessage& _msg)
 {
   auto param = m_params.get_hw_amt(_id);
   if(param->update_position(static_cast<float>(_msg.controlPosition)))
@@ -647,7 +658,7 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::HWAmoun
   }
 }
 
-void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::MacroControlChangedMessage &_msg)
+void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::MacroControlChangedMessage& _msg)
 {
   auto param = m_params.get_macro(_id);
   if(param->update_position(static_cast<float>(_msg.controlPosition)))
@@ -671,7 +682,7 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::MacroCo
   }
 }
 
-void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::ModulateableParameterChangedMessage &_msg)
+void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::ModulateableParameterChangedMessage& _msg)
 {
   const uint32_t macroId = getMacroId(_msg.sourceMacro);
   auto param = m_params.get_global_target(_id);
@@ -709,7 +720,7 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::Modulat
   }
 }
 
-void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
+void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::UnmodulateableParameterChangedMessage& _msg)
 {
   auto param = m_params.get_global_direct(_id);
   if(param->update_position(static_cast<float>(_msg.controlPosition)))
@@ -730,7 +741,7 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::Unmodul
   }
 }
 
-void dsp_host_dual::globalTimeChg(const uint32_t _id, const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
+void dsp_host_dual::globalTimeChg(const uint32_t _id, const nltools::msg::UnmodulateableParameterChangedMessage& _msg)
 {
   auto param = m_params.get_macro_time(_id);
   if(param->update_position(static_cast<float>(_msg.controlPosition)))
@@ -744,7 +755,7 @@ void dsp_host_dual::globalTimeChg(const uint32_t _id, const nltools::msg::Unmodu
   }
 }
 
-void dsp_host_dual::localParChg(const uint32_t _id, const nltools::msg::ModulateableParameterChangedMessage &_msg)
+void dsp_host_dual::localParChg(const uint32_t _id, const nltools::msg::ModulateableParameterChangedMessage& _msg)
 {
   const uint32_t layerId = getLayerId(_msg.voiceGroup), macroId = getMacroId(_msg.sourceMacro);
   auto param = m_params.get_local_target(layerId, _id);
@@ -797,7 +808,7 @@ void dsp_host_dual::localParChg(const uint32_t _id, const nltools::msg::Modulate
   }
 }
 
-void dsp_host_dual::localParChg(const uint32_t _id, const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
+void dsp_host_dual::localParChg(const uint32_t _id, const nltools::msg::UnmodulateableParameterChangedMessage& _msg)
 {
   const uint32_t layerId = getLayerId(_msg.voiceGroup);
   auto param = m_params.get_local_direct(layerId, _id);
@@ -823,21 +834,24 @@ void dsp_host_dual::localParChg(const uint32_t _id, const nltools::msg::Unmodula
   }
   switch(static_cast<C15::Parameters::Local_Unmodulateables>(_id))
   {
-    case C15::Parameters::Local_Unmodulateables::Mono_Grp_Enable:
-      m_alloc.setMonoEnable(layerId, param->m_scaled);
+    case C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_From:
+      if(m_layer_mode == LayerMode::Layer)
+      {
+        evalVoiceFadeChg(layerId);
+      }
       break;
-    case C15::Parameters::Local_Unmodulateables::Mono_Grp_Prio:
-      m_alloc.setMonoPriority(layerId, param->m_scaled);
-      break;
-    case C15::Parameters::Local_Unmodulateables::Mono_Grp_Legato:
-      m_alloc.setMonoLegato(layerId, param->m_scaled);
+    case C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_Range:
+      if(m_layer_mode == LayerMode::Layer)
+      {
+        evalVoiceFadeChg(layerId);
+      }
       break;
     default:
       break;
   }
 }
 
-void dsp_host_dual::localUnisonVoicesChg(const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
+void dsp_host_dual::localUnisonVoicesChg(const nltools::msg::UnmodulateableParameterChangedMessage& _msg)
 {
   const uint32_t layerId = getLayerId(_msg.voiceGroup);
   auto param = m_params.get_local_unison_voices(getLayer(_msg.voiceGroup));
@@ -855,7 +869,7 @@ void dsp_host_dual::localUnisonVoicesChg(const nltools::msg::UnmodulateableParam
   }
 }
 
-void dsp_host_dual::localMonoEnableChg(const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
+void dsp_host_dual::localMonoEnableChg(const nltools::msg::UnmodulateableParameterChangedMessage& _msg)
 {
   const uint32_t layerId = getLayerId(_msg.voiceGroup);
   auto param = m_params.get_local_mono_enable(getLayer(_msg.voiceGroup));
@@ -873,7 +887,7 @@ void dsp_host_dual::localMonoEnableChg(const nltools::msg::UnmodulateableParamet
     m_output_mute.m_preloaded_position = param->m_scaled;
   }
 }
-void dsp_host_dual::localMonoPriorityChg(const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
+void dsp_host_dual::localMonoPriorityChg(const nltools::msg::UnmodulateableParameterChangedMessage& _msg)
 {
   const uint32_t layerId = getLayerId(_msg.voiceGroup);
   auto param = m_params.get_local_mono_priority(getLayer(_msg.voiceGroup));
@@ -887,7 +901,7 @@ void dsp_host_dual::localMonoPriorityChg(const nltools::msg::UnmodulateableParam
     m_alloc.setMonoPriority(layerId, param->m_scaled);
   }
 }
-void dsp_host_dual::localMonoLegatoChg(const nltools::msg::UnmodulateableParameterChangedMessage &_msg)
+void dsp_host_dual::localMonoLegatoChg(const nltools::msg::UnmodulateableParameterChangedMessage& _msg)
 {
   const uint32_t layerId = getLayerId(_msg.voiceGroup);
   auto param = m_params.get_local_mono_legato(getLayer(_msg.voiceGroup));
@@ -1106,6 +1120,7 @@ void dsp_host_dual::render()
   m_poly[0].render_audio(mute);
   m_poly[1].render_audio(mute);
   // - audio dsp mono - each layer with separate sends - left, right)
+
   m_mono[0].render_audio(m_poly[0].m_send_self_l + m_poly[1].m_send_other_l,
                          m_poly[0].m_send_self_r + m_poly[1].m_send_other_r, m_poly[0].getVoiceGroupVolume());
   m_mono[1].render_audio(m_poly[0].m_send_other_l + m_poly[1].m_send_self_l,
@@ -1332,7 +1347,7 @@ void dsp_host_dual::updateHW(const uint32_t _id, const float _raw)
   hwModChain(source, _id, inc);
 }
 
-void dsp_host_dual::updateTime(Time_Aspect *_param, const float _ms)
+void dsp_host_dual::updateTime(Time_Aspect* _param, const float _ms)
 {
   m_time.update_ms(_ms);
   _param->m_dx_audio = m_time.m_dx_audio;
@@ -1344,7 +1359,7 @@ void dsp_host_dual::updateTime(Time_Aspect *_param, const float _ms)
   }
 }
 
-void dsp_host_dual::hwModChain(HW_Src_Param *_src, const uint32_t _id, const float _inc)
+void dsp_host_dual::hwModChain(HW_Src_Param* _src, const uint32_t _id, const float _inc)
 {
   if(LOG_HW)
   {
@@ -1436,7 +1451,7 @@ void dsp_host_dual::hwModChain(HW_Src_Param *_src, const uint32_t _id, const flo
   }
 }
 
-void dsp_host_dual::globalModChain(Macro_Param *_mc)
+void dsp_host_dual::globalModChain(Macro_Param* _mc)
 {
   for(auto param = m_params.globalChainFirst(_mc->m_id); m_params.globalChainRunning();
       param = m_params.globalChainNext())
@@ -1458,7 +1473,7 @@ void dsp_host_dual::globalModChain(Macro_Param *_mc)
   }
 }
 
-void dsp_host_dual::localModChain(Macro_Param *_mc)
+void dsp_host_dual::localModChain(Macro_Param* _mc)
 {
   for(auto param = m_params.localChainFirst(0, _mc->m_id); m_params.localChainRunning(0);
       param = m_params.localChainNext(0))
@@ -1477,7 +1492,7 @@ void dsp_host_dual::localModChain(Macro_Param *_mc)
   }
 }
 
-void dsp_host_dual::localModChain(const uint32_t _layer, Macro_Param *_mc)
+void dsp_host_dual::localModChain(const uint32_t _layer, Macro_Param* _mc)
 {
   for(auto param = m_params.localChainFirst(_layer, _mc->m_id); m_params.localChainRunning(_layer);
       param = m_params.localChainNext(_layer))
@@ -1495,7 +1510,7 @@ void dsp_host_dual::localModChain(const uint32_t _layer, Macro_Param *_mc)
   }
 }
 
-void dsp_host_dual::globalTransition(const Target_Param *_param, const Time_Aspect _time)
+void dsp_host_dual::globalTransition(const Target_Param* _param, const Time_Aspect _time)
 {
   float dx = 0.0f, dest = _param->m_scaled;
   bool valid = true;
@@ -1538,7 +1553,7 @@ void dsp_host_dual::globalTransition(const Target_Param *_param, const Time_Aspe
   }
 }
 
-void dsp_host_dual::globalTransition(const Direct_Param *_param, const Time_Aspect _time)
+void dsp_host_dual::globalTransition(const Direct_Param* _param, const Time_Aspect _time)
 {
   float dx = 0.0f, dest = _param->m_scaled;
   bool valid = true;
@@ -1581,7 +1596,7 @@ void dsp_host_dual::globalTransition(const Direct_Param *_param, const Time_Aspe
   }
 }
 
-void dsp_host_dual::localTransition(const uint32_t _layer, const Direct_Param *_param, const Time_Aspect _time)
+void dsp_host_dual::localTransition(const uint32_t _layer, const Direct_Param* _param, const Time_Aspect _time)
 {
   float dx = 0.0f, dest = _param->m_scaled;
   bool valid = true;
@@ -1644,7 +1659,7 @@ void dsp_host_dual::localTransition(const uint32_t _layer, const Direct_Param *_
     }
   }
 }
-void dsp_host_dual::localTransition(const uint32_t _layer, const Target_Param *_param, const Time_Aspect _time)
+void dsp_host_dual::localTransition(const uint32_t _layer, const Target_Param* _param, const Time_Aspect _time)
 {
   float dx = 0.0f, dest = _param->m_scaled;
   bool valid = true;
@@ -1797,14 +1812,25 @@ void dsp_host_dual::evalFadePoint()
 }
 
 void dsp_host_dual::evalPolyChg(const C15::Properties::LayerId _layerId,
-                                const nltools::msg::ParameterGroups::UnmodulateableParameter &_unisonVoices,
-                                const nltools::msg::ParameterGroups::UnmodulateableParameter &_monoEnable)
+                                const nltools::msg::ParameterGroups::UnmodulateableParameter& _unisonVoices,
+                                const nltools::msg::ParameterGroups::UnmodulateableParameter& _monoEnable)
 {
   const uint32_t layerId = static_cast<uint32_t>(_layerId);
   auto unison_voices = m_params.get_local_unison_voices(_layerId);
   m_layer_changed |= unison_voices->update_position(static_cast<float>(_unisonVoices.controlPosition));
   auto mono_enable = m_params.get_local_mono_enable(_layerId);
   m_layer_changed |= mono_enable->update_position(static_cast<float>(_monoEnable.controlPosition));
+}
+
+void dsp_host_dual::evalVoiceFadeChg(const uint32_t _layer)
+{
+  m_poly[_layer].evalVoiceFade(
+      m_params
+          .get_local_direct(_layer, static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_From))
+          ->m_scaled,
+      m_params
+          .get_local_direct(_layer, static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_Range))
+          ->m_scaled);
 }
 
 void dsp_host_dual::recallSingle()
@@ -1833,11 +1859,14 @@ void dsp_host_dual::recallSingle()
       m_poly[layerId].m_key_active = 0;
     }
   }
-  // reset macro assignments
+  // reset
   m_params.m_global.m_assignment.reset();
   for(uint32_t layerId = 0; layerId < m_params.m_layer_count; layerId++)
   {
+    // macro assignments
     m_params.m_layer[layerId].m_assignment.reset();
+    // voice fade
+    m_poly[layerId].resetVoiceFade();
   }
   // global updates: hw sources
   if(LOG_RECALL)
@@ -1873,11 +1902,13 @@ void dsp_host_dual::recallSingle()
   // global updates: parameters
   if(LOG_RECALL)
   {
-    nltools::Log::info("recall: global params (unmodulateables):");
+    nltools::Log::info("recall: global params:");
   }
-  for(uint32_t i = 0; i < msg->globalparams.size(); i++)
+  globalParRcl(msg->master.volume);
+  globalParRcl(msg->master.tune);
+  for(uint32_t i = 0; i < msg->scale.size(); i++)
   {
-    globalParRcl(msg->globalparams[i]);
+    globalParRcl(msg->scale[i]);
   }
   // local updates: unison, mono
   localPolyRcl(0, msg->unison, msg->mono);
@@ -1977,6 +2008,8 @@ void dsp_host_dual::recallSplit()
     }
     // reset macro assignments
     m_params.m_layer[layerId].m_assignment.reset();
+    // reset voice fade
+    m_poly[layerId].resetVoiceFade();
   }
   m_params.m_global.m_assignment.reset();
   // global updates: hw sources
@@ -2002,6 +2035,7 @@ void dsp_host_dual::recallSplit()
   {
     nltools::Log::info("recall: macros:");
   }
+
   for(uint32_t i = 0; i < msg->macros.size(); i++)
   {
     globalParRcl(msg->macros[i]);
@@ -2015,14 +2049,16 @@ void dsp_host_dual::recallSplit()
   {
     nltools::Log::info("recall: global params (modulateables):");
   }
+  globalParRcl(msg->master.volume);
+  globalParRcl(msg->master.tune);
   globalParRcl(msg->splitpoint);
   if(LOG_RECALL)
   {
     nltools::Log::info("recall: global params (unmodulateables):");
   }
-  for(uint32_t i = 0; i < msg->globalparams.size(); i++)
+  for(uint32_t i = 0; i < msg->scale.size(); i++)
   {
-    globalParRcl(msg->globalparams[i]);
+    globalParRcl(msg->scale[i]);
   }
   // local updates (each layer)
   for(uint32_t layerId = 0; layerId < m_params.m_layer_count; layerId++)
@@ -2148,6 +2184,7 @@ void dsp_host_dual::recallLayer()
   {
     nltools::Log::info("recall: macros:");
   }
+
   for(uint32_t i = 0; i < msg->macros.size(); i++)
   {
     globalParRcl(msg->macros[i]);
@@ -2159,11 +2196,17 @@ void dsp_host_dual::recallLayer()
   // global updates: parameters
   if(LOG_RECALL)
   {
+    nltools::Log::info("recall: global params (modulateables):");
+  }
+  globalParRcl(msg->master.volume);
+  globalParRcl(msg->master.tune);
+  if(LOG_RECALL)
+  {
     nltools::Log::info("recall: global params (unmodulateables):");
   }
-  for(uint32_t i = 0; i < msg->globalparams.size(); i++)
+  for(uint32_t i = 0; i < msg->scale.size(); i++)
   {
-    globalParRcl(msg->globalparams[i]);
+    globalParRcl(msg->scale[i]);
   }
   // local updates: unison, mono
   localPolyRcl(0, msg->unison, msg->mono);
@@ -2179,6 +2222,7 @@ void dsp_host_dual::recallLayer()
     {
       localParRcl(layerId, msg->unmodulateables[layerId][i]);
     }
+    evalVoiceFadeChg(layerId);
     // local updates: modulateables
     if(LOG_RECALL)
     {
@@ -2234,7 +2278,7 @@ void dsp_host_dual::recallLayer()
   }
 }
 
-void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::HardwareSourceParameter &_param)
+void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::HardwareSourceParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Hardware_Source)
@@ -2248,7 +2292,7 @@ void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::HardwareSo
     nltools::Log::warning("failed to recall HW Source(id:", _param.id, ")");
   }
 }
-void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::HardwareAmountParameter &_param)
+void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::HardwareAmountParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Hardware_Amount)
@@ -2262,7 +2306,7 @@ void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::HardwareAm
   }
 }
 
-void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::MacroParameter &_param)
+void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::MacroParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Macro_Control)
@@ -2276,7 +2320,7 @@ void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::MacroParam
   }
 }
 
-void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::ModulateableParameter &_param)
+void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::ModulateableParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Global_Modulateable)
@@ -2307,7 +2351,7 @@ void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::Modulateab
   }
 }
 
-void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::SplitPoint &_param)
+void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::SplitPoint& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_index == static_cast<uint32_t>(C15::Parameters::Global_Modulateables::Split_Split_Point))
@@ -2334,7 +2378,7 @@ void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::SplitPoint
   }
 }
 
-void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::UnmodulateableParameter &_param)
+void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::UnmodulateableParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Global_Unmodulateable)
@@ -2355,7 +2399,7 @@ void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::Unmodulate
   }
 }
 
-void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::GlobalParameter &_param)
+void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::GlobalParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Global_Unmodulateable)
@@ -2376,7 +2420,7 @@ void dsp_host_dual::globalParRcl(const nltools::msg::ParameterGroups::GlobalPara
   }
 }
 
-void dsp_host_dual::globalTimeRcl(const nltools::msg::ParameterGroups::UnmodulateableParameter &_param)
+void dsp_host_dual::globalTimeRcl(const nltools::msg::ParameterGroups::UnmodulateableParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Macro_Time)
@@ -2391,7 +2435,7 @@ void dsp_host_dual::globalTimeRcl(const nltools::msg::ParameterGroups::Unmodulat
   }
 }
 void dsp_host_dual::localParRcl(const uint32_t _layerId,
-                                const nltools::msg::ParameterGroups::ModulateableParameter &_param)
+                                const nltools::msg::ParameterGroups::ModulateableParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Local_Modulateable)
@@ -2418,7 +2462,7 @@ void dsp_host_dual::localParRcl(const uint32_t _layerId,
 }
 
 void dsp_host_dual::localParRcl(const uint32_t _layerId,
-                                const nltools::msg::ParameterGroups::UnmodulateableParameter &_param)
+                                const nltools::msg::ParameterGroups::UnmodulateableParameter& _param)
 {
   auto element = getParameter(_param.id);
   if(element.m_param.m_type == C15::Descriptors::ParameterType::Local_Unmodulateable)
@@ -2439,8 +2483,8 @@ void dsp_host_dual::localParRcl(const uint32_t _layerId,
   }
 }
 
-void dsp_host_dual::localPolyRcl(const uint32_t _layerId, const nltools::msg::ParameterGroups::UnisonGroup &_unison,
-                                 const nltools::msg::ParameterGroups::MonoGroup &_mono)
+void dsp_host_dual::localPolyRcl(const uint32_t _layerId, const nltools::msg::ParameterGroups::UnisonGroup& _unison,
+                                 const nltools::msg::ParameterGroups::MonoGroup& _mono)
 {
   localParRcl(_layerId, _unison.detune);
   localParRcl(_layerId, _unison.pan);
@@ -2457,7 +2501,7 @@ void dsp_host_dual::debugLevels()
 {
   nltools::Log::info(
       "MasterLevel:",
-      m_params.get_global_direct(static_cast<uint32_t>(C15::Parameters::Global_Unmodulateables::Master_Volume))
+      m_params.get_global_direct(static_cast<uint32_t>(C15::Parameters::Global_Modulateables::Master_Volume))
           ->m_scaled);
   nltools::Log::info(
       "VoiceGroupLevel[I]:",

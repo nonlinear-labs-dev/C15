@@ -39,7 +39,9 @@ class TextEditUsageMode : public UsageMode
 
   Layout getLayout() const;
 
-  static void registerTests();
+  void toggleCapsLock();
+  void toggleSymbol();
+  void handleShiftButton(bool state);
 
  private:
   void replaceCharWith(gunichar newChar);
@@ -50,12 +52,9 @@ class TextEditUsageMode : public UsageMode
   Glib::ustring stringizeSpecialChar(gunichar c) const;
   void installButtonRepeat(std::function<void()> cb);
   gunichar getCharForButton(Buttons buttonID) const;
-  void toggleCapsLock();
-  void toggleSymbol();
 
   void updateLeds();
   void chooseLayout();
-  void handleShiftButton(bool state);
 
   Glib::ustring m_text;
   int m_position;

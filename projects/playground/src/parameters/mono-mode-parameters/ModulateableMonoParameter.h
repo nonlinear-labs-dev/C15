@@ -7,5 +7,5 @@ public:
   ModulateableMonoParameter(ParameterGroup *group, const ParameterId &id, const ScaleConverter *scaling, tControlPositionValue def,
                             tControlPositionValue coarseDenominator, tControlPositionValue fineDenominator);
 
-  DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
 };

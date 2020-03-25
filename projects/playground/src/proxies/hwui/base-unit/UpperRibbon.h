@@ -14,7 +14,7 @@ class UpperRibbon : public Ribbon
 
  public:
   UpperRibbon();
-  static void registerTests();
+  ~UpperRibbon();
 
  private:
   void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne);
@@ -27,4 +27,7 @@ class UpperRibbon : public Ribbon
   int posToLedID(int pos) const;  // 0 -> 32 ... 16 -> 0
 
   sigc::connection m_paramConnection;
+
+  sigc::connection m_parameterSelectionChangedSignal;
+  sigc::connection m_settingChangedSignal;
 };

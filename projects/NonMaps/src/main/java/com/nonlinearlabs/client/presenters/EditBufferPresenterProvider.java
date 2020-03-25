@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.presenters;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.nonlinearlabs.client.dataModel.Notifier;
@@ -22,50 +21,60 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     private int selectedParameterSubscription = 0;
 
     private EditBufferPresenterProvider() {
-        EditBufferModel.get().voiceGroup.onChange(v -> {
+        EditBufferModel model = EditBufferModel.get();
+
+        model.voiceGroup.onChange(v -> {
             monitorSelectedParameter();
 
             presenter.voiceGroupEnum = v;
 
             switch (v) {
-            case Global:
-                presenter.voiceGroup = "";
-                presenter.voiceGroupIndicationColor = RGBA.transparent();
-                presenter.voiceGroupI_ForegroundColor = RGBA.transparent();
-                presenter.voiceGroupII_ForegroundColor = RGBA.transparent();
-                presenter.voiceGroupI_BackgroundColor = RGBA.transparent();
-                presenter.voiceGroupII_BackgroundColor = RGBA.transparent();
-                break;
+                case Global:
+                    presenter.voiceGroup = "";
+                    presenter.voiceGroupIndicationColor = RGBA.transparent();
+                    presenter.voiceGroupI_ForegroundColor = RGBA.transparent();
+                    presenter.voiceGroupII_ForegroundColor = RGBA.transparent();
+                    presenter.voiceGroupI_BackgroundColor = RGBA.transparent();
+                    presenter.voiceGroupII_BackgroundColor = RGBA.transparent();
+                    break;
 
-            case I:
-                presenter.voiceGroup = "\uE071";
-                presenter.voiceGroupIndicationColor = new RGB(0x26, 0xb0, 0xff);
-                presenter.voiceGroupI_ForegroundColor = new RGB(0x26, 0xb0, 0xff);
-                presenter.voiceGroupII_ForegroundColor = new Gray(0x08);
-                presenter.voiceGroupI_BackgroundColor = new Gray(0x66);
-                presenter.voiceGroupII_BackgroundColor = new Gray(0x4c);
-                break;
+                case I:
+                    presenter.voiceGroup = "\uE071";
+                    presenter.voiceGroupIndicationColor = new RGB(0x26, 0xb0, 0xff);
+                    presenter.voiceGroupI_ForegroundColor = new RGB(0x26, 0xb0, 0xff);
+                    presenter.voiceGroupII_ForegroundColor = new Gray(0x08);
+                    presenter.voiceGroupI_BackgroundColor = new Gray(0x66);
+                    presenter.voiceGroupII_BackgroundColor = new Gray(0x4c);
+                    break;
 
-            case II:
-                presenter.voiceGroup = "\uE072";
-                presenter.voiceGroupIndicationColor = new RGB(0xff, 0x99, 0x33);
-                presenter.voiceGroupI_ForegroundColor = new Gray(0x08);
-                presenter.voiceGroupII_ForegroundColor = new RGB(0xff, 0x99, 0x33);
-                presenter.voiceGroupI_BackgroundColor = new Gray(0x4c);
-                presenter.voiceGroupII_BackgroundColor = new Gray(0x66);
-                break;
+                case II:
+                    presenter.voiceGroup = "\uE072";
+                    presenter.voiceGroupIndicationColor = new RGB(0xff, 0x99, 0x33);
+                    presenter.voiceGroupI_ForegroundColor = new Gray(0x08);
+                    presenter.voiceGroupII_ForegroundColor = new RGB(0xff, 0x99, 0x33);
+                    presenter.voiceGroupI_BackgroundColor = new Gray(0x4c);
+                    presenter.voiceGroupII_BackgroundColor = new Gray(0x66);
+                    break;
             }
 
+            presenter.currentPartName = model.getPresetNameOfVoiceGroup(v);
+            notifyChanges();
             return true;
         });
 
-        EditBufferModel.get().onChange(v -> {
+        model.onChange(v -> {
             monitorAllParameters();
             return true;
         });
 
-        EditBufferModel.get().loadedPreset.onChange(v -> {
+        model.loadedPreset.onChange(v -> {
             presenter.loadedPresetUUID = v;
+            notifyChanges();
+            return true;
+        });
+
+        model.soundType.onChange(v -> {
+            presenter.soundType = v;
             notifyChanges();
             return true;
         });
@@ -119,7 +128,7 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     private boolean isAnyParameterChanged() {
         for (VoiceGroup g : VoiceGroup.values()) {
             for (BasicParameterModel param : EditBufferModel.get().byVoiceGroup[g.ordinal()].parameters.values()) {
-                if(ParameterPresenterProvider.isValueChanged(param))
+                if (ParameterPresenterProvider.isValueChanged(param))
                     return true;
             }
         }
@@ -130,7 +139,7 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     private void monitorSelectedParameter() {
         EditBufferModel.get().selectedParameter.onChange(selectedParameterID -> {
             int localSubscription = ++selectedParameterSubscription;
-            
+
             ParameterPresenterProviders.get().registerForCurrentVoiceGroup(selectedParameterID, v -> {
                 if (localSubscription != selectedParameterSubscription)
                     return false;

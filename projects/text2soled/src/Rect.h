@@ -47,8 +47,6 @@ class Rect
 
     void drawRounded(FrameBuffer &fb) const;
 
-    static void registerTests();
-
   private:
     Point m_leftTop;
     int m_width = 0;

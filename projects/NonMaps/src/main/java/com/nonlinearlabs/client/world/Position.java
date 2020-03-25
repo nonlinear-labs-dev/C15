@@ -1,9 +1,10 @@
 package com.nonlinearlabs.client.world;
 
-import com.google.gwt.dom.client.Touch;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.event.shared.EventHandler;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.world.pointer.Touch;
 
 public class Position {
 
@@ -25,9 +26,12 @@ public class Position {
 	}
 
 	public Position(Touch touch) {
-		final double r = NonMaps.devicePixelRatio;
-		this.x = touch.getClientX() * r;
-		this.y = touch.getClientY() * r;
+		this.x = touch.pos.getX();
+		this.y = touch.pos.getY();
+	}
+
+	public Position(NativeEvent e) {
+		this(e.getClientX() * NonMaps.devicePixelRatio, e.getClientY() * NonMaps.devicePixelRatio);
 	}
 
 	public void moveBy(double x, double y) {

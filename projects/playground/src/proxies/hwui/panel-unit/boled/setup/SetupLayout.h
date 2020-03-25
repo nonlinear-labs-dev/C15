@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include "SetupSelectionEntries.h"
 #include "ViewEntries.h"
 
@@ -11,10 +11,10 @@ namespace NavTree
 
 class SetupEditor;
 
-class SetupLayout : public DFBLayout
+class SetupLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   SetupLayout(FocusAndMode focusAndMode);

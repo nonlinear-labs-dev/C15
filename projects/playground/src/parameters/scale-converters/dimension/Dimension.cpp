@@ -1,10 +1,5 @@
 #include "Dimension.h"
-#include "testing/TestDriver.h"
 #include <cmath>
-#include <math.h>
-#include <typeinfo>
-
-static TestDriver<Dimension> tests;
 
 Dimension::Dimension()
 {
@@ -141,91 +136,4 @@ size_t Dimension::hash() const
 {
   auto &foo = typeid(*this);
   return foo.hash_code();
-}
-
-void Dimension::registerTests()
-{
-  class TestDimension : public Dimension
-  {
-   public:
-    Glib::ustring stringize(const tDisplayValue &displayValue) const
-    {
-      return "";
-    }
-  };
-
-  g_test_add_func("/Dimension/formatDimensionDigits", []() {
-    TestDimension d;
-
-    g_assert(d.formatDimensionDigits(0, "foo", 3) == "0.000 foo");
-
-    g_assert(d.formatDimensionDigits(0.000001, "foo", 3) == "0.000 foo");
-    g_assert(d.formatDimensionDigits(0.00001, "foo", 3) == "0.000 foo");
-    g_assert(d.formatDimensionDigits(0.0001, "foo", 3) == "0.000 foo");
-    g_assert(d.formatDimensionDigits(0.001, "foo", 3) == "0.001 foo");
-    g_assert(d.formatDimensionDigits(0.01, "foo", 3) == "0.010 foo");
-    g_assert(d.formatDimensionDigits(0.1, "foo", 3) == "0.100 foo");
-    g_assert(d.formatDimensionDigits(1.000001, "foo", 3) == "1.00 foo");
-    g_assert(d.formatDimensionDigits(1.200001, "foo", 3) == "1.20 foo");
-    g_assert(d.formatDimensionDigits(1.230001, "foo", 3) == "1.23 foo");
-    g_assert(d.formatDimensionDigits(1.234001, "foo", 3) == "1.23 foo");
-    g_assert(d.formatDimensionDigits(10.000001, "foo", 3) == "10.0 foo");
-    g_assert(d.formatDimensionDigits(123.000001, "foo", 3) == "123 foo");
-    g_assert(d.formatDimensionDigits(1234, "foo", 3) == "1230 foo");
-    g_assert(d.formatDimensionDigits(1234567, "foo", 3) == "1230000 foo");
-
-    g_assert(d.formatDimensionDigits(-0.000001, "foo", 3) == "0.000 foo");
-    g_assert(d.formatDimensionDigits(-0.00001, "foo", 3) == "0.000 foo");
-    g_assert(d.formatDimensionDigits(-0.0001, "foo", 3) == "0.000 foo");
-    g_assert(d.formatDimensionDigits(-0.001, "foo", 3) == "-0.001 foo");
-    g_assert(d.formatDimensionDigits(-0.01, "foo", 3) == "-0.010 foo");
-    g_assert(d.formatDimensionDigits(-0.1, "foo", 3) == "-0.100 foo");
-    g_assert(d.formatDimensionDigits(-1.000001, "foo", 3) == "-1.00 foo");
-    g_assert(d.formatDimensionDigits(-1.200001, "foo", 3) == "-1.20 foo");
-    g_assert(d.formatDimensionDigits(-1.230001, "foo", 3) == "-1.23 foo");
-    g_assert(d.formatDimensionDigits(-1.234001, "foo", 3) == "-1.23 foo");
-    g_assert(d.formatDimensionDigits(-10.000001, "foo", 3) == "-10.0 foo");
-    g_assert(d.formatDimensionDigits(-123.000001, "foo", 3) == "-123 foo");
-    g_assert(d.formatDimensionDigits(-1234, "foo", 3) == "-1230 foo");
-    g_assert(d.formatDimensionDigits(-1234567, "foo", 3) == "-1230000 foo");
-  });
-
-  g_test_add_func("/Dimension/formatDimensionRounded", []() {
-    TestDimension d;
-
-    g_assert(d.formatDimensionRounded(0, "foo", 1) == "0 foo");
-    g_assert(d.formatDimensionRounded(0, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(0, "foo", 0.01) == "0.00 foo");
-    g_assert(d.formatDimensionRounded(1.25, "foo", 0.02) == "1.26 foo");
-
-    g_assert(d.formatDimensionRounded(0.000001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(0.00001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(0.0001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(0.001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(0.01, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(0.1, "foo", 0.1) == "0.1 foo");
-    g_assert(d.formatDimensionRounded(1.000001, "foo", 0.1) == "1.0 foo");
-    g_assert(d.formatDimensionRounded(1.200001, "foo", 0.1) == "1.2 foo");
-    g_assert(d.formatDimensionRounded(1.230001, "foo", 0.1) == "1.2 foo");
-    g_assert(d.formatDimensionRounded(1.246001, "foo", 0.1) == "1.2 foo");
-    g_assert(d.formatDimensionRounded(10.000001, "foo", 0.1) == "10.0 foo");
-    g_assert(d.formatDimensionRounded(123.000001, "foo", 0.1) == "123.0 foo");
-    g_assert(d.formatDimensionRounded(1234, "foo", 0.1) == "1234.0 foo");
-    g_assert(d.formatDimensionRounded(1234567, "foo", 0.1) == "1234567.0 foo");
-
-    g_assert(d.formatDimensionRounded(-0.000001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(-0.00001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(-0.0001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(-0.001, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(-0.01, "foo", 0.1) == "0.0 foo");
-    g_assert(d.formatDimensionRounded(-0.1, "foo", 0.1) == "-0.1 foo");
-    g_assert(d.formatDimensionRounded(-1.000001, "foo", 0.1) == "-1.0 foo");
-    g_assert(d.formatDimensionRounded(-1.200001, "foo", 0.1) == "-1.2 foo");
-    g_assert(d.formatDimensionRounded(-1.230001, "foo", 0.1) == "-1.2 foo");
-    g_assert(d.formatDimensionRounded(-1.246001, "foo", 0.1) == "-1.2 foo");
-    g_assert(d.formatDimensionRounded(-10.000001, "foo", 0.1) == "-10.0 foo");
-    g_assert(d.formatDimensionRounded(-123.000001, "foo", 0.1) == "-123.0 foo");
-    g_assert(d.formatDimensionRounded(-1234, "foo", 0.1) == "-1234.0 foo");
-    g_assert(d.formatDimensionRounded(-1234567, "foo", 0.1) == "-1234567.0 foo");
-  });
 }

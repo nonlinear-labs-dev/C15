@@ -13,8 +13,8 @@ template <SoundType tType> void ConvertToDualInitializesPartsFromVoiceGroupI(tCo
 {
   const auto isException = [](const Parameter *p) -> bool {
     auto num = p->getID().getNumber();
-    //toFX, part Volume, part Tune, unison voices
-    return num == 362 || num == 358 || num == 360 || num == 249;
+    //toFX, part Volume, part Tune, unison voices, fade From
+    return num == 362 || num == 358 || num == 360 || num == 249 || num == 396;
   };
 
   WHEN("converted to " + toString(tType))

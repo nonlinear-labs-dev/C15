@@ -1,7 +1,4 @@
 #include <parameters/ParameterImportConversions.h>
-#include <testing/TestDriver.h>
-
-static TestDriver<ParameterImportConversions> tests;
 
 ParameterImportConversions& ParameterImportConversions::get()
 {
@@ -168,32 +165,6 @@ tControlPositionValue
   }
 
   return in;
-}
-
-void ParameterImportConversions::registerTests()
-{
-  g_test_add_func("/ParameterImportConversions/a", []() {
-    ParameterImportConversions a(false);
-
-    a.registerConverter(10, 4, [](tControlPositionValue v) { return v * 2; });
-
-    a.registerConverter(10, 7, [](tControlPositionValue v) { return v * 4; });
-
-    g_assert(a.convert(9, 0.5, 2) == 0.5);
-    g_assert(a.convert(9, 0.5, 4) == 0.5);
-    g_assert(a.convert(9, 0.5, 7) == 0.5);
-
-    g_assert(a.convert(10, 0.5, 0) == 0.5 * 2 * 4);
-    g_assert(a.convert(10, 0.5, 1) == 0.5 * 2 * 4);
-    g_assert(a.convert(10, 0.5, 2) == 0.5 * 2 * 4);
-    g_assert(a.convert(10, 0.5, 3) == 0.5 * 2 * 4);
-    g_assert(a.convert(10, 0.5, 4) == 0.5 * 2 * 4);
-    g_assert(a.convert(10, 0.5, 5) == 0.5 * 4);
-    g_assert(a.convert(10, 0.5, 6) == 0.5 * 4);
-    g_assert(a.convert(10, 0.5, 7) == 0.5 * 4);
-    g_assert(a.convert(10, 0.5, 8) == 0.5);
-    g_assert(a.convert(10, 0.5, 9) == 0.5);
-  });
 }
 
 tControlPositionValue ParameterImportConversions::voicesV5ToV6(tControlPositionValue unisonVoices) const

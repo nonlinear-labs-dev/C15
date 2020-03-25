@@ -1,9 +1,8 @@
 package com.nonlinearlabs.client.world.pointer;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
+import java.util.ArrayList;
+
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 
@@ -66,20 +65,17 @@ public class PointerState {
 		setGesture(currentGesture.onRightDoubleClick());
 	}
 
-	public void onTouchStart(JsArray<Touch> touches) {
-		Tracer.log("Touch Start");
+	public void onTouchStart(ArrayList<Touch> touches) {
 		this.position = new Position(touches.get(0));
 		setGesture(currentGesture.onTouchStart(touches));
 	}
 
-	public void onTouchMove(JsArray<Touch> touches) {
-		Tracer.log("Touch Move");
+	public void onTouchMove(ArrayList<Touch> touches) {
 		this.position = new Position(touches.get(0));
 		setGesture(currentGesture.onTouchMove(touches));
 	}
 
-	public void onTouchEnd(JsArray<Touch> touches) {
-		Tracer.log("Touch End");
+	public void onTouchEnd(ArrayList<Touch> touches) {
 		setGesture(currentGesture.onTouchEnd(touches));
 	}
 

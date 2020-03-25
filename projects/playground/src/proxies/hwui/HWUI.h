@@ -44,6 +44,7 @@ class HWUI
   void setFocusAndMode(const UIDetail &detail);
   void setFocusAndMode(FocusAndMode focusAndMode);
   FocusAndMode getFocusAndMode() const;
+  FocusAndMode getOldFocusAndMode() const;
 
   VoiceGroup getCurrentVoiceGroup() const;
 
@@ -116,6 +117,7 @@ class HWUI
   int m_affengriffState = 0;
 
   FocusAndMode m_focusAndMode;
+  FocusAndMode m_oldFocusAndMode;
 
   int m_blinkCount;
   Expiration m_switchOffBlockingMainThreadIndicator;

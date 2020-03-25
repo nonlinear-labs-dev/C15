@@ -1,6 +1,6 @@
 #include "ModulateableUnisonParameterWithUnusualModUnit.h"
 
-DFBLayout *ModulateableUnisonParameterWithUnusualModUnit::createLayout(FocusAndMode focusAndMode) const
+Layout *ModulateableUnisonParameterWithUnusualModUnit::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

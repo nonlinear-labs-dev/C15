@@ -1,7 +1,4 @@
 #include "Hysteresis.h"
-#include <testing/TestDriver.h>
-
-TestDriver<Hysteresis> tests;
 
 Hysteresis::Hysteresis(double initVal, double hyst)
     : m_value(initVal)
@@ -35,19 +32,4 @@ double Hysteresis::applyChange(double v)
   }
 
   return m_reportedValue;
-}
-
-void Hysteresis::registerTests()
-{
-  g_test_add_func("/Hysteresis/set", []() {
-    Hysteresis h(0.0, 0.1);
-    g_assert(h.set(0.01) == 0.0);
-    g_assert(h.set(-0.01) == 0.0);
-    g_assert(h.set(0.05) == 0.05);
-    g_assert(h.set(-0.04) == 0.05);
-    g_assert(h.set(-0.05) == -0.05);
-    g_assert(h.set(-0.125) == -0.125);
-    g_assert(h.set(-0.15) == -0.15);
-    g_assert(h.set(-0.125) == -0.15);
-  });
 }

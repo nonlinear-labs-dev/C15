@@ -21,7 +21,7 @@ void DescriptiveLayouts::EditBufferName::onChange(const EditBuffer *eb)
 void DescriptiveLayouts::CurrentVoiceGroupLabel::onChange(const EditBuffer *eb)
 {
   auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
-  setValue({ eb->getVoiceGroupName(currentVG), 0 });
+  setValue({ eb->getVoiceGroupNameWithSuffix(currentVG), 0 });
 }
 
 void DescriptiveLayouts::IsCurrentVGI::onChange(const EditBuffer *eb)
@@ -158,4 +158,36 @@ bool DescriptiveLayouts::UnisonButtonText::isChanged(const EditBuffer *eb)
     }
   }
   return false;
+}
+
+void DescriptiveLayouts::CurrentVoiceGroupText::onChange(VoiceGroup newSelection)
+{
+  setValue({ toString(newSelection), 0 });
+}
+
+void DescriptiveLayouts::VGIMuted::onChange(const EditBuffer *eb)
+{
+  auto muteI = eb->findParameterByID({ 395, VoiceGroup::I })->getControlPositionValue() != 0;
+  setValue({ muteI ? "\uE0BA" : "", 0 });
+}
+
+void DescriptiveLayouts::VGIIMuted::onChange(const EditBuffer *eb)
+{
+  auto muteII = eb->findParameterByID({ 395, VoiceGroup::II })->getControlPositionValue() != 0;
+  setValue({ muteII ? "\uE0BA" : "", 0 });
+}
+
+void DescriptiveLayouts::IsSingleSound::onChange(const EditBuffer *eb)
+{
+  setValue(eb->getType() == SoundType::Single);
+}
+
+void DescriptiveLayouts::IsLayerSound::onChange(const EditBuffer *eb)
+{
+  setValue(eb->getType() == SoundType::Layer);
+}
+
+void DescriptiveLayouts::IsSplitSound::onChange(const EditBuffer *eb)
+{
+  setValue(eb->getType() == SoundType::Split);
 }

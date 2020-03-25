@@ -3,7 +3,7 @@
 #include <proxies/hwui/Oleds.h>
 
 ArrowUp::ArrowUp(const Rect &pos)
-    : super(true, false, "q", pos)
+    : super(true, false, "\u25B2", pos)
 {
 }
 
@@ -13,6 +13,5 @@ ArrowUp::~ArrowUp()
 
 std::shared_ptr<Font> ArrowUp::getFont() const
 {
-#warning "Remove Emphase Symbol references"
-  return Oleds::get().getFont("Emphase-8-Symbol", getFontHeight());
+  return Oleds::get().getFont("Emphase-8-Regular", getFontHeight());
 }

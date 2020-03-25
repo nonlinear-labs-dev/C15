@@ -9,5 +9,5 @@ class UnmodulateableMonoParameter : public Parameter
                               tControlPositionValue def, tControlPositionValue coarseDenominator,
                               tControlPositionValue fineDenominator);
 
-  DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
 };

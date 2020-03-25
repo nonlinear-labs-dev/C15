@@ -220,7 +220,7 @@ void PedalParameter::undoableStepBehavior(UNDO::Transaction *transaction, int di
   undoableSetPedalMode(transaction, static_cast<PedalModes>(e));
 }
 
-DFBLayout *PedalParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *PedalParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

@@ -9,7 +9,7 @@ SplitPointLabel::SplitPointLabel(const Rect& r)
     : LabelRegular8(r)
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  if(auto splitPoint = dynamic_cast<SplitPointParameter*>(eb->findParameterByID({ 356, VoiceGroup::I })))
+  if(auto splitPoint = dynamic_cast<SplitPointParameter*>(eb->findParameterByID({ 356, VoiceGroup::Global })))
     m_connection = splitPoint->onParameterChanged(sigc::mem_fun(this, &SplitPointLabel::onParameterChanged));
 }
 

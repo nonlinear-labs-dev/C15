@@ -81,11 +81,22 @@ Here, it gets even more complicated:
   ```
   - *epc-nonlinux-vm-installation*: This target will create a virtual machine on your development PC, install NonlinuxAP into it and boot the machine. It is a testing target, used to proof the functionality of *epc-nonlinux-iso* and for illustration purpose.
   - *epc-create-update*: This target creates a docker'ed NonLinuxAP installation. It then injects the current source tree into it and builds the C15 in that environment. By this, we make sure all needed libraries and system components exist on the target device. After building, the system will create an overlay-filesystem and install the built artifacts there. This overlay will be used to create an update.tar. If the update.tar is offered to the C15-ePC at booting time on a USB stick or via http, the ePC will apply the update.
-
-### BUILD_BBB AND BUILD_EPC
-
-If both, BUILD_BBB and BUILD_EPC are switched On, there will be another target, *c15-update*. This will combine updates for all C15 components and bundle it into a single update file.
   
+### BUILD_LPC
+
+This target will build the realtime-software for our LPC processor. It will generate blobs for both, the M0 and the M4 core.
+
+### BUILD_BBB AND BUILD_EPC AND BUILD_LPC
+
+If BUILD_BBB, BUILD_EPC and BUILD_LPC are switched On, there will be another target, *c15-update*. This will combine updates for all C15 components and bundle it into a single update file.
+
+The "c15-ota-update" target will create a complete c15 update.tar and immediately try to update the device handed in by the environment variables UNIT_NAME and UNIT_PASSWORD like this:
+
+```
+UNIT_NAME=NL-C15-Unit-xxxxx UNIT_PASSWORD=**** make c15-ota-update
+```
+
+
 
 
 

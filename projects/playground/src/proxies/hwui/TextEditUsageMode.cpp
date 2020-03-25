@@ -3,11 +3,8 @@
 #include "ButtonRepeat.h"
 #include <device-settings/DebugLevel.h>
 #include <proxies/hwui/buttons.h>
-#include <testing/TestDriver.h>
 
 #include <memory>
-
-static TestDriver<TextEditUsageMode> tests;
 
 const gunichar c_shift = 0x12;
 const gunichar c_symbol = 0x13;
@@ -346,69 +343,18 @@ void TextEditUsageMode::toggleSymbol()
 
 void TextEditUsageMode::updateLeds()
 {
-  if(!TestDriverBase::isInTestRun())
+  bool realShiftState = m_capsLock ^ m_shiftState;
+  auto symbolState = m_layout == Layout::Symbol || m_layout == Layout::SymbolShift ? TwoStateLED::ON : TwoStateLED::OFF;
+  auto capsState = realShiftState ? TwoStateLED::ON : TwoStateLED::OFF;
+  auto hwui = Application::get().getHWUI();
+
+  for(auto led : { Buttons::BUTTON_3, Buttons::BUTTON_7, Buttons::BUTTON_51, Buttons::BUTTON_55 })
   {
-    bool realShiftState = m_capsLock ^ m_shiftState;
-    auto symbolState
-        = m_layout == Layout::Symbol || m_layout == Layout::SymbolShift ? TwoStateLED::ON : TwoStateLED::OFF;
-    auto capsState = realShiftState ? TwoStateLED::ON : TwoStateLED::OFF;
-    auto hwui = Application::get().getHWUI();
-
-    for(auto led : { Buttons::BUTTON_3, Buttons::BUTTON_7, Buttons::BUTTON_51, Buttons::BUTTON_55 })
-    {
-      hwui->getPanelUnit().getLED(led)->setState(capsState);
-    }
-
-    for(auto led : { Buttons::BUTTON_43, Buttons::BUTTON_47, Buttons::BUTTON_91, Buttons::BUTTON_95 })
-    {
-      hwui->getPanelUnit().getLED(led)->setState(symbolState);
-    }
+    hwui->getPanelUnit().getLED(led)->setState(capsState);
   }
-}
 
-void TextEditUsageMode::registerTests()
-{
-  g_test_add_func("/TextEditUsageMode/modes", []() {
-    TextEditUsageMode mode("");
-    g_assert_true(mode.m_layout == Layout::Normal);
-
-    mode.toggleCapsLock();
-    g_assert_true(mode.m_layout == Layout::Shift);
-
-    mode.toggleCapsLock();
-    g_assert_true(mode.m_layout == Layout::Normal);
-
-    mode.toggleCapsLock();
-    g_assert_true(mode.m_layout == Layout::Shift);
-
-    mode.toggleSymbol();
-    g_assert_true(mode.m_layout == Layout::SymbolShift);
-
-    mode.toggleSymbol();
-    g_assert_true(mode.m_layout == Layout::Shift);
-
-    mode.toggleSymbol();
-    g_assert_true(mode.m_layout == Layout::SymbolShift);
-
-    mode.toggleCapsLock();
-    g_assert_true(mode.m_layout == Layout::Symbol);
-
-    mode.toggleSymbol();
-    g_assert_true(mode.m_layout == Layout::Normal);
-
-    mode.handleShiftButton(true);
-    g_assert_true(mode.m_layout == Layout::Shift);
-
-    mode.handleShiftButton(false);
-    g_assert_true(mode.m_layout == Layout::Normal);
-
-    mode.toggleCapsLock();
-    g_assert_true(mode.m_layout == Layout::Shift);
-
-    mode.handleShiftButton(true);
-    g_assert_true(mode.m_layout == Layout::Normal);
-
-    mode.handleShiftButton(false);
-    g_assert_true(mode.m_layout == Layout::Shift);
-  });
+  for(auto led : { Buttons::BUTTON_43, Buttons::BUTTON_47, Buttons::BUTTON_91, Buttons::BUTTON_95 })
+  {
+    hwui->getPanelUnit().getLED(led)->setState(symbolState);
+  }
 }

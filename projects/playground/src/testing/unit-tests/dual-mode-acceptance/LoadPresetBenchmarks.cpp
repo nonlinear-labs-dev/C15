@@ -29,7 +29,7 @@ class Averager
     auto total = std::accumulate(m_values.begin(), m_values.end(), 0ul);
     std::chrono::milliseconds totalMs
         = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::nanoseconds(total));
-    nltools::Log::error(m_name, " took on avg: ", totalMs.count() / m_values.size(), "ms");
+    nltools::Log::error(m_name, "took on avg:", totalMs.count() / m_values.size(), "ms");
   }
 
   void put(unsigned long val)
@@ -60,11 +60,13 @@ TEST_CASE("Load Presets", "[Benchmark]")
 
   auto eb = TestHelper::getEditBuffer();
 
-  Averager avgSingle("Single", 100);
-  Averager avgLayer("Layer", 100);
-  Averager avgSplit("Split", 100);
+  constexpr auto cNumTests = 10;
 
-  for(auto i = 0; i < 100; i++)
+  Averager avgSingle("Single", cNumTests);
+  Averager avgLayer("Layer", cNumTests);
+  Averager avgSplit("Split", cNumTests);
+
+  for(auto i = 0; i < cNumTests; i++)
   {
 
     avgSingle.put(measure([&]() {

@@ -1,0 +1,28 @@
+{
+  "controls": {
+    "SplitVoiceGroupIndication": {
+      "I": {
+        "Class": "Bar",
+        "Rect": "0, 0, 5, 11",
+        "Tag": "Box"
+      },
+      "II": {
+        "Class": "Bar",
+        "Rect": "6, 0, 5, 11",
+        "Tag": "Box"
+      }
+    }
+  },
+  "styles": {
+    "SplitVoiceGroupIndication-Style": {
+      "selector": {
+        "ControlClasses": "SplitVoiceGroupIndication",
+        "Tag": "Box"
+      },
+      "styles": {
+        "Color": "C128",
+        "HighlightColor": "C255"
+      }
+    }
+  }
+}

@@ -15,9 +15,14 @@
 PresetListBase::PresetListBase(const Rect &pos, bool showBankArrows)
     : super(pos)
 {
-  m_header = addControl(new PresetListHeader(Rect(1, 1, 126, 13), showBankArrows));
-  m_content = addControl(new PresetListContent(Rect(1, 14, 126, 49)));
+  m_header = addControl(new PresetListHeader(Rect(0, 1, 128, 13), showBankArrows));
+  m_content = addControl(new PresetListContent(Rect(0, 14, 128, 49)));
   m_content->setHighlight(true);
+}
+
+bool PresetListBase::isTransparent() const
+{
+  return true;
 }
 
 PresetListBase::~PresetListBase()
@@ -32,12 +37,13 @@ void PresetListBase::setBankFocus()
 
 bool PresetListBase::redraw(FrameBuffer &fb)
 {
-  super::redraw(fb);
+  Control::drawBackground(fb);
 
   const Rect &r = getPosition();
   fb.setColor(FrameBufferColors::C103);
   fb.drawRect(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
 
+  super::redraw(fb);
   return true;
 }
 

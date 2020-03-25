@@ -29,6 +29,7 @@ class PresetListBase : public ControlWithChildren
 
  protected:
   PresetListBase(const Rect &pos, bool showBankArrows);
+  bool isTransparent() const override;
 
   PresetListContent *m_content = nullptr;
   PresetListHeader *m_header = nullptr;

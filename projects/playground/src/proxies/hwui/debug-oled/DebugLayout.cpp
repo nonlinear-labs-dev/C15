@@ -6,7 +6,7 @@
 #include <glibmm/main.h>
 
 DebugLayout::DebugLayout(Glib::ustring e)
-    : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
+    : Layout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
 {
   auto text = addControl(new MultiLineLabel(e + "\nPress Enter to continue!"));
   auto pos = text->getPosition();

@@ -20,19 +20,15 @@ void PresetTypeLabel::update(const SoundType &type, bool selected, bool loaded)
 
 void PresetTypeLabel::drawBackground(FrameBuffer &fb)
 {
-  PresetLabel::drawBackground(fb);
-
   const Rect &r = getPosition();
 
   if(showsLoadedPreset())
+  {
     fb.setColor(FrameBufferColors::C103);
-  else
-    fb.setColor(FrameBufferColors::C43);
-
-  int xinset = showsSelectedPreset() ? 3 : 1;
-  int yinset = showsSelectedPreset() ? 2 : 1;
-
-  fb.fillRect(r.getX(), r.getY() + yinset, r.getWidth() - xinset, r.getHeight() - 2 * yinset);
+    int yinset = showsSelectedPreset() ? 2 : 1;
+    int xinset = 2;
+    fb.fillRect(r.getX(), r.getY() + yinset, r.getWidth() - xinset, r.getHeight() - 2 * yinset);
+  }
 }
 
 std::string PresetTypeLabel::typeToString(const SoundType &type)

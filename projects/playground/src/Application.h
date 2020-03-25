@@ -3,6 +3,7 @@
 #include "playground.h"
 #include <memory>
 #include <glibmm/refptr.h>
+#include <proxies/usb/USBChangeListener.h>
 
 class DeviceInformation;
 class WatchDog;
@@ -72,9 +73,8 @@ class Application
   std::unique_ptr<WatchDog> m_aggroWatchDog;
   std::unique_ptr<DeviceInformation> m_deviceInformation;
   std::unique_ptr<Clipboard> m_clipboard;
+  std::unique_ptr<USBChangeListener> m_usbChangeListener;
 
   bool m_heartbeatState;
   bool m_isQuit;
-
-  friend class AutoSaveInterval;
 };

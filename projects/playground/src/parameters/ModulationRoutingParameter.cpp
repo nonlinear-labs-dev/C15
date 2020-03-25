@@ -127,7 +127,7 @@ tControlPositionValue ModulationRoutingParameter::getControlPositionValue() cons
   return super::getControlPositionValue();
 }
 
-DFBLayout *ModulationRoutingParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *ModulationRoutingParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

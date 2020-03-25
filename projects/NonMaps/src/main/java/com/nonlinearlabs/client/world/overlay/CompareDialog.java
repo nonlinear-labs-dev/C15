@@ -9,6 +9,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
@@ -18,6 +19,9 @@ import com.google.gwt.xml.client.XMLParser;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy;
 import com.nonlinearlabs.client.ServerProxy.DownloadHandler;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.world.maps.parameters.PhysicalControlParameter.ReturnMode;
 import com.nonlinearlabs.client.world.maps.parameters.PlayControls.MacroControls.Macros.MacroControls;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
@@ -36,6 +40,8 @@ public class CompareDialog extends GWTDialog {
 
 	private Preset presetA;
 	private Preset presetB;
+	private ListBox selectVGA;
+	private ListBox selectVGB;
 
 	public static void open(Preset p1) {
 		new CompareDialog(p1);
@@ -73,7 +79,7 @@ public class CompareDialog extends GWTDialog {
 		else
 			addHeader("Compare Two Presets");
 
-		load(p1, p2);
+		load(p1, VoiceGroup.I, p2, VoiceGroup.I);
 	}
 
 	public void downloadPresets(Preset p1, Preset p2) {
@@ -105,8 +111,8 @@ public class CompareDialog extends GWTDialog {
 		});
 	}
 
-	private void load(Preset p1, Preset p2) {
-		NonMaps.theMaps.getServerProxy().getDiff(p1, p2, new DownloadHandler() {
+	private void load(Preset p1, VoiceGroup vgOfPreset1, Preset p2, VoiceGroup vgOfPreset2) {
+		NonMaps.theMaps.getServerProxy().getDiff(p1, vgOfPreset1, p2, vgOfPreset2, new DownloadHandler() {
 			@Override
 			public void onFileDownloaded(String text) {
 				xml = XMLParser.parse(text);
@@ -204,9 +210,11 @@ public class CompareDialog extends GWTDialog {
 		order.add("Echo");
 		order.add("Reverb");
 		order.add("Master");
+		order.add("Mono");
 		order.add("Unison");
 		order.add("Macro Control");
 		order.add("Scale");
+		order.add("Part");
 		return order;
 	}
 
@@ -304,7 +312,7 @@ public class CompareDialog extends GWTDialog {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				load(presetA, presetB);
+				refresh();
 			}
 		});
 
@@ -321,7 +329,16 @@ public class CompareDialog extends GWTDialog {
 		row++;
 		addLoadButtons(row, table);
 		row++;
+		addVoiceGroupMenus(row, table);
+		row++;
+
 		return row;
+	}
+
+	protected void refresh() {
+		VoiceGroup vgA = selectVGA.getSelectedIndex() == 0 ? VoiceGroup.I : VoiceGroup.II;
+		VoiceGroup vgB = selectVGB.getSelectedIndex() == 0 ? VoiceGroup.I : VoiceGroup.II;
+		load(presetA, vgA, presetB, vgB);
 	}
 
 	public void update() {
@@ -369,48 +386,94 @@ public class CompareDialog extends GWTDialog {
 		});
 	}
 
+	public void addVoiceGroupMenus(int row, FlexTable table) {
+		int selA = selectVGA != null ? selectVGA.getSelectedIndex() : 0;
+		int selB = selectVGB != null ? selectVGB.getSelectedIndex() : 0;
+
+		table.setWidget(row, 1, selectVGA = new ListBox());
+		table.setWidget(row, 2, selectVGB = new ListBox());
+
+		selectVGA.getElement().addClassName("voicegroup-menu");
+		selectVGB.getElement().addClassName("voicegroup-menu");
+
+		selectVGA.addItem("Part I");
+		selectVGB.addItem("Part I");
+
+		SoundType ebType = EditBufferPresenterProvider.getPresenter().soundType;
+
+		if (presetA != null && presetA.getType() != SoundType.Single)
+			selectVGA.addItem("Part II");
+		if (presetA == null && ebType != SoundType.Single)
+			selectVGA.addItem("Part II");
+
+		if (presetB != null && presetB.getType() != SoundType.Single)
+			selectVGB.addItem("Part II");
+		if (presetB == null && ebType != SoundType.Single)
+			selectVGB.addItem("Part II");
+
+		if (selectVGA.getItemCount() > selA)
+			selectVGA.setSelectedIndex(selA);
+
+		if (selectVGB.getItemCount() > selB)
+			selectVGB.setSelectedIndex(selB);
+
+		if (selectVGA.getItemCount() < 2)
+			selectVGA.setEnabled(false);
+
+		if (selectVGB.getItemCount() < 2)
+			selectVGB.setEnabled(false);
+
+		selectVGA.addChangeHandler(v -> {
+			refresh();
+		});
+
+		selectVGB.addChangeHandler(v -> {
+			refresh();
+		});
+	}
+
 	private String translateChangeValue(String paramName, String nodeName, String nodeValue) {
 		switch (nodeName) {
-		case "mc-select":
-			return MacroControls.fromInt(Integer.parseInt(nodeValue)).toPrettyString();
+			case "mc-select":
+				return MacroControls.fromInt(Integer.parseInt(nodeValue)).toPrettyString();
 
-		case "return-mode":
-			return ReturnMode.fromInt(Integer.parseInt(nodeValue)).toString();
+			case "return-mode":
+				return ReturnMode.fromInt(Integer.parseInt(nodeValue)).toString();
 
-		case "name":
-			return nodeValue;
+			case "name":
+				return nodeValue;
 
-		case "info":
-			return nodeValue;
+			case "info":
+				return nodeValue;
 
-		case "behaviour":
-			int b = Integer.parseInt(nodeValue);
-			if (b == 0)
-				return "Absolute";
-			return "Relative";
+			case "behaviour":
+				int b = Integer.parseInt(nodeValue);
+				if (b == 0)
+					return "Absolute";
+				return "Relative";
 		}
 		return nodeValue;
 	}
 
 	private String translateChangeName(String nodeName) {
 		switch (nodeName) {
-		case "mc-amount":
-			return "MC Amount";
+			case "mc-amount":
+				return "MC Amount";
 
-		case "mc-select":
-			return "MC Select";
+			case "mc-select":
+				return "MC Select";
 
-		case "return-mode":
-			return "Return Mode";
+			case "return-mode":
+				return "Return Mode";
 
-		case "name":
-			return "Name";
+			case "name":
+				return "Name";
 
-		case "info":
-			return "Info";
+			case "info":
+				return "Info";
 
-		case "behaviour":
-			return "Behaviour";
+			case "behaviour":
+				return "Behaviour";
 		}
 		return nodeName;
 	}

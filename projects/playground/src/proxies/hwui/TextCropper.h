@@ -11,7 +11,6 @@ class TextCropper
  public:
   static Glib::ustring shortenStringIfNeccessary(std::shared_ptr<Font> font, const Glib::ustring &text,
                                                  double maxWidth);
-  static void registerTests();
 
  protected:
   static Glib::ustring preserveEndShorten(const std::shared_ptr<Font> &font, const Glib::ustring &text,

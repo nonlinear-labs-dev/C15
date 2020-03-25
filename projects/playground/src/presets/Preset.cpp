@@ -138,6 +138,13 @@ const Uuid &Preset::getUuid() const
   return m_uuid;
 }
 
+Glib::ustring Preset::getDisplayNameWithSuffixes() const
+{
+  auto mono = isMonoActive();
+  auto unison = isUnisonActive();
+  return getName() + (mono ? "\uE040" : "") + (unison ? "\uE041" : "");
+}
+
 Glib::ustring Preset::getName() const
 {
   return m_name;
@@ -171,13 +178,16 @@ void Preset::guessName(UNDO::Transaction *transaction)
   setName(transaction, Application::get().getPresetManager()->createPresetNameBasedOn(currentName));
 }
 
-PresetParameter *Preset::findParameterByID(ParameterId id) const
+PresetParameter *Preset::findParameterByID(ParameterId id, bool throwIfMissing) const
 {
   for(auto &g : m_parameterGroups[static_cast<size_t>(id.getVoiceGroup())])
     if(auto p = g.second->findParameterByID(id))
       return p;
 
-  throw std::runtime_error("no such parameter in " + toString(id.getVoiceGroup()));
+  if(throwIfMissing)
+    throw std::runtime_error("no such parameter" + id.toString() + " in " + toString(id.getVoiceGroup()));
+
+  return nullptr;
 }
 
 PresetParameterGroup *Preset::findParameterGroup(const GroupId &id) const
@@ -314,7 +324,8 @@ void Preset::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID 
   bool changed = knownRevision < getUpdateIDOfLastChange();
 
   writer.writeTag("preset",
-                  { Attribute("uuid", m_uuid.raw()), Attribute("name", m_name), Attribute("changed", changed),
+                  { Attribute("uuid", m_uuid.raw()), Attribute("name", m_name),
+                    Attribute("name-suffixed", getDisplayNameWithSuffixes()), Attribute("changed", changed),
                     Attribute("type", toString(m_type)) },
                   [&]() {
                     if(changed)
@@ -324,7 +335,7 @@ void Preset::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID 
                   });
 }
 
-void Preset::writeDiff(Writer &writer, const Preset *other) const
+void Preset::writeDiff(Writer &writer, const Preset *other, VoiceGroup vgOfThis, VoiceGroup vgOfOther) const
 {
   auto pm = Application::get().getPresetManager();
 
@@ -373,15 +384,14 @@ void Preset::writeDiff(Writer &writer, const Preset *other) const
 
     super::writeDiff(writer, other);
 
-    writeGroups(writer, other);
+    writeGroups(writer, other, vgOfThis, vgOfOther);
   });
 }
 
-void Preset::writeGroups(Writer &writer, const Preset *other) const
+void Preset::writeGroups(Writer &writer, const Preset *other, VoiceGroup vgOfThis, VoiceGroup vgOfOther) const
 {
-  for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
-    for(auto &g : m_parameterGroups[static_cast<size_t>(vg)])
-      g.second->writeDiff(writer, g.first, other->findParameterGroup(g.first));
+  for(auto &g : m_parameterGroups[static_cast<size_t>(vgOfThis)])
+    g.second->writeDiff(writer, g.first, other->findParameterGroup({ g.first.getName(), vgOfOther }));
 }
 
 PresetParameterGroup *Preset::findOrCreateParameterGroup(const GroupId &id)
@@ -396,4 +406,44 @@ PresetParameterGroup *Preset::findOrCreateParameterGroup(const GroupId &id)
     vgMap[id] = std::make_unique<PresetParameterGroup>(id.getVoiceGroup());
     return findParameterGroup(id);
   }
+}
+
+bool Preset::isMonoActive() const
+{
+  auto monoEnabledI = findParameterByID({ 364, VoiceGroup::I }, false);
+  auto monoEnabledII = findParameterByID({ 364, VoiceGroup::II }, false);
+
+  if(monoEnabledI && monoEnabledII)
+  {
+    if(getType() == SoundType::Split)
+    {
+      return monoEnabledI->getValue() > 0 || monoEnabledII->getValue() > 0;
+    }
+    else
+    {
+      return monoEnabledI->getValue() > 0;
+    }
+  }
+
+  return false;
+}
+
+bool Preset::isUnisonActive() const
+{
+  auto unisonVoicesI = findParameterByID({ 249, VoiceGroup::I }, false);
+  auto unisonVoicesII = findParameterByID({ 249, VoiceGroup::II }, false);
+
+  if(unisonVoicesI && unisonVoicesII)
+  {
+    if(getType() == SoundType::Split)
+    {
+      return unisonVoicesI->getValue() > 0 || unisonVoicesII->getValue() > 0;
+    }
+    else
+    {
+      return unisonVoicesI->getValue() > 0;
+    }
+  }
+
+  return false;
 }

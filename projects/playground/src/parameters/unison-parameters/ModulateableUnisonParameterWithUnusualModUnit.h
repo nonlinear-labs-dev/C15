@@ -14,5 +14,5 @@ class ModulateableUnisonParameterWithUnusualModUnit : public ModulateableParamet
   {
   }
 
-  DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
 };

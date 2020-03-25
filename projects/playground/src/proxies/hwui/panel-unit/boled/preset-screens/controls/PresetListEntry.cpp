@@ -18,9 +18,9 @@ PresetListEntry::PresetListEntry(const Rect &pos)
     : super(pos)
     , m_animationProgress(0)
 {
-  m_number = addControl(new PresetNumberLabel(Rect(0, 0, 21, 16)));
-  m_name = addControl(new PresetNameLabel(Rect(21, 0, 92, 16)));
-  m_type = addControl(new PresetTypeLabel(Rect(110, 0, 16, 16)));
+  m_number = addControl(new PresetNumberLabel(Rect(0, 0, 19, 16)));
+  m_name = addControl(new PresetNameLabel(Rect(19, 0, 98, 16)));
+  m_type = addControl(new PresetTypeLabel(Rect(117, 0, 11, 16)));
 }
 
 PresetListEntry::~PresetListEntry()
@@ -50,7 +50,7 @@ void PresetListEntry::onPresetChanged(const Preset *preset)
     {
       auto num = bank->getPresetPosition(preset->getUuid());
       m_number->update(num, m_selected, isLoaded);
-      m_name->update(preset->getName(), m_selected, isLoaded);
+      m_name->update(preset->getDisplayNameWithSuffixes(), m_selected, isLoaded);
       m_type->update(preset->getType(), m_selected, isLoaded);
       return;
     }
@@ -73,7 +73,7 @@ bool PresetListEntry::redraw(FrameBuffer &fb)
       fb.setColor(FrameBufferColors::C103);
 
     const Rect &r = getPosition();
-    fb.drawRect(r.getLeft() + 1, r.getTop(), r.getWidth() - 2, r.getHeight());
+    fb.drawRect(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
   }
 
   if(m_animationProgress)
@@ -101,6 +101,11 @@ void PresetListEntry::animate(tCallback cb)
   int interval = c_animationLength / c_numAnimationSteps;
   auto animation = sigc::mem_fun(this, &PresetListEntry::animationProgress);
   m_animationConnection = Glib::MainContext::get_default()->signal_timeout().connect(animation, interval);
+}
+
+bool PresetListEntry::isTransparent() const
+{
+  return true;
 }
 
 bool PresetListEntry::animationProgress()

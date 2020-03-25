@@ -1,0 +1,10 @@
+[Unit]
+Description=Monitor Audio and Midi Devices for audio-engine
+
+[Path]
+PathExists=/proc/asound/EMPHASE/id
+PathExists=/proc/asound/PCH/id
+Unit=audio-engine.service
+
+[Install]
+WantedBy=multi-user.target

@@ -13,5 +13,5 @@ class AftertouchParameter : public PhysicalControlParameter
   virtual ReturnMode getReturnMode() const override;
 
  protected:
-  virtual DFBLayout *createLayout(FocusAndMode focusAndMode) const override;
+  virtual Layout *createLayout(FocusAndMode focusAndMode) const override;
 };

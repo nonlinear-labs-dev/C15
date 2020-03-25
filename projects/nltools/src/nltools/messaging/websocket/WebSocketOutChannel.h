@@ -23,7 +23,8 @@ namespace nltools
 
         ~WebSocketOutChannel() override;
 
-        void send(const SerializedMessage &msg) override;
+        bool send(const SerializedMessage &msg) override;
+        void flush(const std::chrono::milliseconds timeout) override;
         bool waitForConnection(std::chrono::milliseconds timeOut) override;
         void onConnectionEstablished(std::function<void()> cb) override;
         bool isConnected() const override;
@@ -56,6 +57,7 @@ namespace nltools
         BackgroundThreadWaiter m_connectionEstablishedWaiter;
         std::function<void()> m_onConnectionEstablished;
         std::thread m_contextThread;
+        bool m_flushing = false;
       };
     }
   }

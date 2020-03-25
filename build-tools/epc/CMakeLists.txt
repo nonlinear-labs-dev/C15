@@ -79,7 +79,7 @@ add_custom_command(
     COMMENT "Create ePC update"
     DEPENDS .nonlinux-local-rootfs
     DEPENDS ${ALL_FILES_IN_PROJECT}
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/epc-update.tar
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/update.tar
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runScriptInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
@@ -97,7 +97,7 @@ add_custom_command(
 )
 
 add_custom_target(epc-install-medium DEPENDS .nonlinux-install-medium)
-add_custom_target(epc-create-update DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/epc-update.tar)
+add_custom_target(epc-create-update DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/update.tar)
 add_custom_target(epc-nonlinux-iso DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/NonLinuxAP.iso)
 add_custom_target(epc-nonlinux-vm-installation DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/disk.raw)
 

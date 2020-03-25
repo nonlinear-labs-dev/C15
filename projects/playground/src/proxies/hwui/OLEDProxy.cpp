@@ -1,10 +1,9 @@
 #include <device-settings/DebugLevel.h>
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/OLEDProxy.h>
 #include <glib.h>
 #include <proxies/hwui/Oleds.h>
-
 
 OLEDProxy::OLEDProxy(const Rect &posInFrameBuffer)
     : m_posInFrameBuffer(posInFrameBuffer)
@@ -21,7 +20,7 @@ const Rect &OLEDProxy::getPosInFrameBuffer() const
 
 void OLEDProxy::invalidate()
 {
-  if(auto l = std::dynamic_pointer_cast<DFBLayout>(getLayout()))
+  if(auto l = std::dynamic_pointer_cast<Layout>(getLayout()))
     l->setDirty();
   else
     DebugLevel::warning("Oled proxy has NO screen set !??");
@@ -45,6 +44,9 @@ void OLEDProxy::reset(tLayoutPtr layout)
 {
   resetOverlay();
 
+  if(m_layout)
+    m_layout->removeButtonRepeat();
+
   m_layout = layout;
 
   if(!layout->isInitialized())
@@ -62,6 +64,9 @@ void OLEDProxy::setOverlay(Layout *layout)
 
 void OLEDProxy::setOverlay(tLayoutPtr layout)
 {
+  if(m_layout)
+    m_layout->removeButtonRepeat();
+
   m_overlay = layout;
 
   if(!layout->isInitialized())

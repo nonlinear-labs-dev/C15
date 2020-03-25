@@ -13,9 +13,8 @@ class SwitchVoiceGroupButton : public Button
   explicit SwitchVoiceGroupButton(Buttons pos);
 
   static bool toggleVoiceGroup();
-
- private:
   static bool allowToggling(const Parameter* selected, const EditBuffer* editBuffer);
+ private:
 
 
   void rebuild();

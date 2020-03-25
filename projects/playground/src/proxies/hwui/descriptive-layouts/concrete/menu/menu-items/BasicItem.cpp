@@ -1,4 +1,5 @@
 #include "BasicItem.h"
+#include "LeftAligned9pxCaptionLabel.h"
 #include <proxies/hwui/controls/LeftAlignedLabel.h>
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/controls/CaptionLabel.h>
 #include <proxies/hwui/FrameBuffer.h>
@@ -29,27 +30,8 @@ bool BasicItem::drawHighlightBorder(FrameBuffer& fb)
 
 void BasicItem::init()
 {
-  class LeftAligned9pxCaptionLabel : public LeftAlignedLabel
-  {
-   public:
-    using LeftAlignedLabel::LeftAlignedLabel;
-
-    std::shared_ptr<Font> getFont() const override
-    {
-      return Oleds::get().getFont("Emphase-9-Regular", 9);
-    }
-
-   protected:
-    void setFontColor(FrameBuffer& fb) const override
-    {
-      if(isHighlight())
-        fb.setColor(FrameBuffer::Colors::C255);
-      else
-        fb.setColor(FrameBuffer::Colors::C179);
-    }
-  };
-
   auto leftHalf = getPosition();
+  leftHalf.setTop(leftHalf.getTop() + 1);
   leftHalf.setLeft(1);
   leftHalf.setWidth((leftHalf.getWidth() / 2) - 1);
 

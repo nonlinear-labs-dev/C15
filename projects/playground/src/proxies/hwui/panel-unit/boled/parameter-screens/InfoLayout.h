@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <proxies/hwui/HWUIEnums.h>
 
 class Rect;
@@ -8,10 +8,10 @@ class Rect;
 class ScrollArea;
 class Scrollable;
 
-class InfoLayout : public DFBLayout
+class InfoLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   InfoLayout();

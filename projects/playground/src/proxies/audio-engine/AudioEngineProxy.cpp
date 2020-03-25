@@ -5,7 +5,6 @@
 #include <presets/EditBuffer.h>
 #include <nltools/messaging/Messaging.h>
 #include <nltools/messaging/Message.h>
-#include <parameters/AftertouchParameter.h>
 #include <parameters/MacroControlParameter.h>
 #include <parameters/ModulateableParameter.h>
 #include <parameters/PedalParameter.h>
@@ -14,7 +13,6 @@
 #include <parameters/ScaleParameter.h>
 #include <parameters/SplitPointParameter.h>
 #include <parameters/PhysicalControlParameter.h>
-#include <parameters/voice-group-master-group/VoiceGroupMasterParameter.h>
 #include <groups/HardwareSourcesGroup.h>
 #include <groups/MacroControlsGroup.h>
 #include <groups/MasterGroup.h>
@@ -48,11 +46,24 @@ template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, EditBuffer 
   size_t mcT = 0;
   size_t modR = 0;
 
+  auto masterParameter = dynamic_cast<const ModulateableParameter*>(editBuffer->findParameterByID({247, VoiceGroup::Global}));
+  auto& master = msg.master.volume;
+  master.id = masterParameter->getID().getNumber();
+  master.controlPosition = masterParameter->getControlPositionValue();
+  master.modulationAmount = masterParameter->getModulationAmount();
+  master.mc = masterParameter->getModulationSource();
+
+  auto tuneParameter = dynamic_cast<const ModulateableParameter*>(editBuffer->findParameterByID({248, VoiceGroup::Global}));
+  auto& tune = msg.master.tune;
+  tune.id = tuneParameter->getID().getNumber();
+  tune.controlPosition = tuneParameter->getControlPositionValue();
+  tune.modulationAmount = tuneParameter->getModulationAmount();
+  tune.mc = tuneParameter->getModulationSource();
+
   for(auto &g : editBuffer->getParameterGroups(VoiceGroup::Global))
   {
     for(auto p : g->getParameters())
     {
-      auto isMaster = dynamic_cast<MasterGroup *>(p->getParentGroup()) != nullptr;
       auto isScale = dynamic_cast<ScaleGroup *>(p->getParentGroup()) != nullptr;
 
       if(auto hwSrcParam = dynamic_cast<PhysicalControlParameter *>(p))
@@ -62,9 +73,9 @@ template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, EditBuffer 
         pItem.controlPosition = p->getControlPositionValue();
         pItem.returnMode = hwSrcParam->getReturnMode();
       }
-      else if(isMaster || isScale)
+      else if(isScale)
       {
-        auto &pItem = msg.globalparams[globalParams++];
+        auto &pItem = msg.scale[globalParams++];
         pItem.id = p->getID().getNumber();
         pItem.controlPosition = p->getControlPositionValue();
       }
@@ -89,7 +100,7 @@ template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, EditBuffer 
     }
   }
 
-  nltools_assertAlways(msg.globalparams.size() == globalParams);
+  nltools_assertAlways(msg.scale.size() == globalParams);
   nltools_assertAlways(msg.hwsources.size() == hwSource);
   nltools_assertAlways(msg.macros.size() == mc);
   nltools_assertAlways(msg.hwamounts.size() == modR);
@@ -342,19 +353,4 @@ void AudioEngineProxy::sendEditBuffer()
   }
 
   Application::get().getSettings()->sendToLPC();
-}
-
-template <> nltools::msg::SinglePresetMessage AudioEngineProxy::createMessage<nltools::msg::SinglePresetMessage>()
-{
-  return AudioEngineProxy::createSingleEditBufferMessage();
-}
-
-template <> nltools::msg::SplitPresetMessage AudioEngineProxy::createMessage<nltools::msg::SplitPresetMessage>()
-{
-  return AudioEngineProxy::createSplitEditBufferMessage();
-}
-
-template <> nltools::msg::LayerPresetMessage AudioEngineProxy::createMessage<nltools::msg::LayerPresetMessage>()
-{
-  return AudioEngineProxy::createLayerEditBufferMessage();
 }

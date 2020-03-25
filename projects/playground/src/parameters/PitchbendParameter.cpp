@@ -8,7 +8,7 @@ ReturnMode PitchbendParameter::getReturnMode() const
   return ReturnMode::Center;
 }
 
-DFBLayout *PitchbendParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *PitchbendParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

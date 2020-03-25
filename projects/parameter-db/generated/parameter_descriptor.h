@@ -2,15 +2,15 @@
 
 /******************************************************************************/
 /**   @file       parameter_descriptor.h
-      @date       2020-02-12, 18:42
-      @version    1.7B-3
+      @date       2020-03-16, 14:07
+      @version    1.7B-4
       @author     M. Seeber
       @brief      provide a flexible descriptor structure
       @todo
 *******************************************************************************/
 
-#include <stdint.h>
 #include "parameter_info.h"
+#include <stdint.h>
 
 namespace C15
 {

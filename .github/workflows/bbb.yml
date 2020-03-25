@@ -53,5 +53,6 @@ jobs:
     - name: Pack build folder
       run: |
         mkdir -p /home/runner/work/cache
+        rm -rf /home/runner/work/cache/nonlinux-squashed.img
         rm -rf /home/runner/work/build/build-tools/bbb/nonlinux/dl/*
         mksquashfs /home/runner/work/build/build-tools/bbb/nonlinux /home/runner/work/cache/nonlinux-squashed.img

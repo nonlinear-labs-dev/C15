@@ -8,7 +8,7 @@
 #include <proxies/hwui/descriptive-layouts/conditions/ConditionBase.h>
 #include <proxies/hwui/descriptive-layouts/TemplateEnums.h>
 
-class DFBLayout;
+class Layout;
 
 namespace DescriptiveLayouts
 {
@@ -52,7 +52,7 @@ namespace DescriptiveLayouts
 
     FocusAndMode getDesiredFocusAndMode() const;
 
-    DFBLayout *instantiate() const;
+    Layout *instantiate() const;
 
    private:
     void addToList(Selector s);

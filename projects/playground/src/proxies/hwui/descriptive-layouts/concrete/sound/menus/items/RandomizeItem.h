@@ -9,3 +9,12 @@ class RandomizeItem : public EditorItem
   ~RandomizeItem() override;
   MenuOverlay* createOverlay() override;
 };
+
+class RandomizePart : public EditorItem
+{
+ public:
+  RandomizePart(const Rect& r);
+  ~RandomizePart() override;
+
+  MenuOverlay* createOverlay() override;
+};

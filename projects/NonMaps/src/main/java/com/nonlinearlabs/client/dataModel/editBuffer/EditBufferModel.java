@@ -57,7 +57,9 @@ public class EditBufferModel extends Notifier<EditBufferModel> {
 	public DateDataModelEntity storeTime = new DateDataModelEntity();
 
 	public StringDataModelEntity loadedPresetInVG1 = new StringDataModelEntity("");
+	public StringDataModelEntity loadedPresetInVG1WithSuffix = new StringDataModelEntity("");
 	public StringDataModelEntity loadedPresetInVG2 = new StringDataModelEntity("");
+	public StringDataModelEntity loadedPresetInVG2WithSuffix = new StringDataModelEntity("");
 
 	private EditBufferModel() {
 		ParameterFactory.assertSorted();
@@ -123,6 +125,17 @@ public class EditBufferModel extends Notifier<EditBufferModel> {
 
 		case II:
 			return loadedPresetInVG2.getValue();
+		}
+		return "";
+	}
+
+	public String getPresetNameOfVoiceGroupWithSuffix(VoiceGroup group) {
+		switch(group) {
+			case I:
+			case Global:
+			return loadedPresetInVG1WithSuffix.getValue();
+			case II:
+			return loadedPresetInVG2WithSuffix.getValue();
 		}
 		return "";
 	}

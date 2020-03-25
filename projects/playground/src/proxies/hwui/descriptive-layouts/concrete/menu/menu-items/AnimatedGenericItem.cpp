@@ -21,7 +21,7 @@ float Animator::getAnimationPosition() const  // 0 ... 1
 {
   auto now = std::chrono::steady_clock::now();
   auto diff = now - m_animationStartedAt;
-  return CLAMP(1.0f * diff / m_animationLength, 0.0f, 1.0f);
+  return std::clamp(1.0f * diff / m_animationLength, 0.0f, 1.0f);
 }
 
 bool Animator::doAnimation()
@@ -84,6 +84,5 @@ bool AnimatedGenericItem::redraw(FrameBuffer &fb)
 
 void AnimatedGenericItem::doAction()
 {
-  GenericItem::doAction();
   startAnimation();
 }

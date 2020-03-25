@@ -1,0 +1,10 @@
+[Unit]
+Description=Copy Update From USB Stick
+After=syslog.target network.target systemd-modules-load.service
+
+[Service]
+ExecStart=@C15_INSTALL_PATH@/scripts/install-update.sh
+
+[Install]
+WantedBy=multi-user.target
+

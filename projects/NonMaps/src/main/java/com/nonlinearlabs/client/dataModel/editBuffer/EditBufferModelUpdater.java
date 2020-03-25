@@ -38,6 +38,12 @@ public class EditBufferModelUpdater extends Updater {
 			String vgIIName = getAttributeValue(root, "vg-II-name");
 			EditBufferModel.get().loadedPresetInVG2.setValue(vgIIName);
 
+			String vgINameSuffixed = getAttributeValue(root, "vg-I-name-with-suffix");
+			EditBufferModel.get().loadedPresetInVG1WithSuffix.setValue(vgINameSuffixed);
+
+			String vgIINameSuffixed = getAttributeValue(root, "vg-II-name-with-suffix");
+			EditBufferModel.get().loadedPresetInVG2WithSuffix.setValue(vgIINameSuffixed);
+
 			processChangedChildrenElements(root, "recall-data", c -> processOriginal(c));
 		}
 

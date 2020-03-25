@@ -1,7 +1,7 @@
 package com.nonlinearlabs.client.world.pointer;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
+import java.util.ArrayList;
+
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
@@ -77,15 +77,15 @@ public abstract class Gesture {
 		return impossible();
 	}
 
-	public Gesture onTouchStart(JsArray<Touch> touches) {
+	public Gesture onTouchStart(ArrayList<Touch> touches) {
 		return impossible();
 	}
 
-	public Gesture onTouchMove(JsArray<Touch> touches) {
+	public Gesture onTouchMove(ArrayList<Touch> touches) {
 		return impossible();
 	}
 
-	public Gesture onTouchEnd(JsArray<Touch> touches) {
+	public Gesture onTouchEnd(ArrayList<Touch> touches) {
 		return impossible();
 	}
 

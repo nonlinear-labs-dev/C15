@@ -17,5 +17,5 @@ SSIDView::~SSIDView()
 void SSIDView::onSettingChanged(const Setting *s)
 {
   auto v = dynamic_cast<const SSID *>(s);
-  setText(v->get());
+  setText(v->save());
 }

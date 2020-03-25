@@ -6,19 +6,23 @@
 
 FourStateLED::FourStateLED()
 {
-  m_state = -1;
 }
 
-void FourStateLED::setState(char state)
+FourStateLED::~FourStateLED()
+{
+  setState(State::Bright);
+}
+
+void FourStateLED::setState(State state)
 {
   if(m_state != state)
   {
     m_state = state;
-    syncBBBB();
+    syncHWUI();
   }
 }
 
-void FourStateLED::syncBBBB()
+void FourStateLED::syncHWUI()
 {
   using namespace nltools::msg;
   SetRibbonLEDMessage msg;
@@ -27,7 +31,7 @@ void FourStateLED::syncBBBB()
   send(EndPoint::RibbonLed, msg);
 }
 
-char FourStateLED::getState() const
+FourStateLED::State FourStateLED::getState() const
 {
   return m_state;
 }

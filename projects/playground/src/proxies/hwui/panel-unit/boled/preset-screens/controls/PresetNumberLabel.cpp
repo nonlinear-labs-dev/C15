@@ -17,17 +17,14 @@ PresetNumberLabel::~PresetNumberLabel()
 
 void PresetNumberLabel::drawBackground(FrameBuffer &fb)
 {
-  super::drawBackground(fb);
-
   if(showsLoadedPreset())
+  {
     fb.setColor(FrameBufferColors::C103);
-  else
-    fb.setColor(FrameBufferColors::C43);
-
-  int xinset = showsSelectedPreset() ? 3 : 1;
-  int yinset = showsSelectedPreset() ? 2 : 1;
-  const Rect &r = getPosition();
-  fb.fillRect(r.getX() + xinset, r.getY() + yinset, r.getWidth() - xinset, r.getHeight() - 2 * yinset);
+    int yinset = showsSelectedPreset() ? 2 : 1;
+    int xinset = 2;
+    const Rect &r = getPosition();
+    fb.fillRect(r.getX() + xinset, r.getY() + yinset, r.getWidth() - xinset, r.getHeight() - 2 * yinset);
+  }
 }
 
 Font::Justification PresetNumberLabel::getJustification() const

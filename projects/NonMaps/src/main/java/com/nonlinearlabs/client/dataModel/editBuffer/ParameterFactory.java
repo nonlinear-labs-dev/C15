@@ -18,8 +18,8 @@ public class ParameterFactory {
 			283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 299, 301, 302, 303, 304, 305,
 			307, 308, 310, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 330,
 			332, 334, 336, 338, 340, 342, 344, 346, 348, 350, 352, 354, 356, 358, 360, 362, 364, 365, 366, 367, 369,
-			370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 391, 
-			393, 394 };
+			370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 391,
+			393, 394, 395, 396, 397 };
 
 	static private int[] globalParameters = { 243, 244, 245, 246, 247, 248, 254, 255, 256, 257, 258, 259, 260, 261, 262,
 			263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283,
@@ -49,7 +49,7 @@ public class ParameterFactory {
 
 	static private String[] parameterGroups = { "CS", "Cab", "Comb", "Echo", "Env A", "Env B", "Env C", "FB", "Flang",
 			"Gap Filt", "MCM", "MCs", "Master", "Mixer", "Mono", "Osc A", "Osc B", "Part", "Reverb", "SVF", "Scale",
-			"Sh A", "Sh B", "Split", "Unison", "VGM" };
+			"Sh A", "Sh B", "Split", "Unison" };
 	static private String[] globalParameterGroups = { "CS", "MCM", "MCs", "Master", "Scale", "Split" };
 
 	static public BasicParameterModel create(ParameterId id) {

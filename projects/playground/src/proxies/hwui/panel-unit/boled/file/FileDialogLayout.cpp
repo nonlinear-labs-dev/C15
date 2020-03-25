@@ -15,7 +15,7 @@
 #include <proxies/hwui/controls/Button.h>
 
 FileDialogLayout::FileDialogLayout(tFilterFunction filter, tCallBackFunction cb, const std::string& header)
-    : DFBLayout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
+    : Layout(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
     , commitFunction(std::move(cb))
     , m_header(header)
     , crawler("/mnt/usb-stick/", std::move(filter), [=]() {

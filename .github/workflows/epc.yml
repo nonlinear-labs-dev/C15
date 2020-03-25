@@ -50,4 +50,12 @@ jobs:
       run: |
         cd /home/runner/work/build
         make epc-create-update
+        mkdir -p /home/runner/work/build/build-tools/epc/final-image
+        cp /home/runner/work/build/build-tools/epc/update.tar /home/runner/work/build/build-tools/epc/final-image/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: epc-build
+        path: /home/runner/work/build/build-tools/epc/final-image
 

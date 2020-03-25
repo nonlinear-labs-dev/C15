@@ -24,6 +24,11 @@ bool PresetListContent::animateSelectedPreset(std::function<void()> cb)
   return false;
 }
 
+bool PresetListContent::isTransparent() const
+{
+  return true;
+}
+
 Preset *PresetListContent::getPresetAtPosition(Bank *bank, int pos) const
 {
   if(pos >= 0 && pos < bank->getNumPresets())
@@ -45,9 +50,9 @@ void PresetListContent::setup(Bank *bank, size_t focussedPresetPos)
       clear();
 
       m_emptyLabel = nullptr;
-      m_firstPreset = addControl(new PresetListEntry(Rect(0, 0, 126, 16)));
-      m_secondPreset = addControl(new PresetListEntry(Rect(0, 16, 126, 16)));
-      m_thirdPreset = addControl(new PresetListEntry(Rect(0, 32, 126, 16)));
+      m_firstPreset = addControl(new PresetListEntry(Rect(0, 0, 128, 16)));
+      m_secondPreset = addControl(new PresetListEntry(Rect(0, 16, 128, 16)));
+      m_thirdPreset = addControl(new PresetListEntry(Rect(0, 32, 128, 16)));
     }
 
     m_firstPreset->setPreset(getPresetAtPosition(bank, static_cast<int>(focussedPresetPos - 1)), false);

@@ -7,10 +7,17 @@
         "UIDetail": "Voices"
       },
       "Controls": {
+        "VoiceGroupIndication": {
+          "Class": "SplitVoiceGroupIndication",
+          "Position": "0, 14",
+          "Events": "IsSplitSound => ANY[Visibility], isCurrentVGI => I[Highlight], isCurrentVGII => II[Highlight]"
+        },
         "Header": {
           "Class": "InvertedLabel",
           "Position": "0, 0",
-          "Events": "VoicesParameterHeader => Text[Text]"
+          "Init": {
+            "Text[Text]": "Voices"
+          }
         },
         "ButtonA": {
           "Class": "Button",

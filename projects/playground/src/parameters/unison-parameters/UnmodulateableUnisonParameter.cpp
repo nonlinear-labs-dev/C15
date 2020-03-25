@@ -2,7 +2,7 @@
 
 
 
-DFBLayout *UnmodulateableUnisonParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *UnmodulateableUnisonParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

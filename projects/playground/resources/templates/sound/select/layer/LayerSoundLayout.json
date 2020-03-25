@@ -52,7 +52,7 @@
           "Init": {
             "VoiceGroupIdentifier[Text]": "I"
           },
-          "Events": "isCurrentVGI => ANY[Highlight], VGIMasterTuneText => Unison[Text], VGIMasterVolumeText => Master[Text]"
+          "Events": "isCurrentVGI => ANY[Highlight], VGIMasterTuneText => Unison[Text], VGIMasterVolumeText => Master[Text], VGIMuted => MuteIndication[Text]"
         },
         "Lower": {
           "Class": "LayerVoiceGroupII",
@@ -62,14 +62,18 @@
             "Unison[Text]": "",
             "Master[Text]": ""
           },
-          "Events": "isCurrentVGII => ANY[Highlight], VGIIMasterTuneText => Unison[Text], VGIIMasterVolumeText => Master[Text]"
+          "Events": "isCurrentVGII => ANY[Highlight], VGIIMasterTuneText => Unison[Text], VGIIMasterVolumeText => Master[Text], VGIIMuted => MuteIndication[Text]"
         }
       },
       "EventSinks": {
         "BUTTON_A": "ToggleVoiceGroup",
         "BUTTON_B": "OpenPartScreen",
         "BUTTON_C": "SwitchToVoicesDetail",
-        "BUTTON_D": "OpenMasterParameter"
+        "BUTTON_D": "OpenMasterParameter",
+        "BUTTON_INC": "LayerMuteInc",
+        "BUTTON_DEC": "LayerMuteDec",
+        "ROTARY_PLUS": "LayerMuteInc",
+        "ROTARY_MINUS": "LayerMuteDec"
       }
     }
   }

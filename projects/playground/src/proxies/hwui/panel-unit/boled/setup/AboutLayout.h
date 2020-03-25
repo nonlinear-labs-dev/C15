@@ -1,12 +1,12 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 
 class ScrollArea;
 
-class AboutLayout : public DFBLayout
+class AboutLayout : public Layout
 {
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   AboutLayout();

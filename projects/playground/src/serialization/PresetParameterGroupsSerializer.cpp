@@ -18,7 +18,7 @@ void PresetParameterGroupsSerializer::writeTagContent(Writer& writer) const
 {
   for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
   {
-    for(auto& paramGroup : m_preset->m_parameterGroups[static_cast<int>(vg)])
+    for(auto& paramGroup : m_preset->m_parameterGroups[static_cast<size_t>(vg)])
     {
       PresetParameterGroupSerializer group(paramGroup.second.get());
       group.write(writer, Attribute("id", paramGroup.first));

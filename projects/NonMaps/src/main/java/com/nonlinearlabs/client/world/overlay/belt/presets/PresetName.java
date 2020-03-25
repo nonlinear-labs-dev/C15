@@ -23,7 +23,7 @@ public class PresetName extends Label {
 		Preset p = getParent().getMapsPreset();
 
 		if (p != null) {
-			return p.getCurrentName();
+			return p.getDisplayNameWithSuffix();
 		}
 
 		return "";

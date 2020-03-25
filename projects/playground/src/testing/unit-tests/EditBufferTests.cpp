@@ -136,7 +136,7 @@ void dualToSingleTestsPolyToGlobalParameterCopy(LoadPresetFunction loadPresetCB,
   //Prepare Split-Preset initialize Values
   {
     auto scope = TestHelper::createTestScope();
-    auto presetParameter = dualPreset->findParameterByID({ polyID, tVoiceGroup });
+    auto presetParameter = dualPreset->findParameterByID({ polyID, tVoiceGroup }, true);
     REQUIRE(presetParameter != nullptr);
 
     presetParameter->setValue(scope->getTransaction(), 0.125);
@@ -377,7 +377,7 @@ TEST_CASE("Load <-> Changed")
 
   SECTION("Recall Poly Parameter (I) in Dual EditBuffer")
   {
-    Parameter *param { nullptr };
+    Parameter *param{ nullptr };
 
     {
       auto scope = TestHelper::createTestScope();
@@ -408,7 +408,7 @@ TEST_CASE("Load <-> Changed")
 
   SECTION("Recall Poly Parameter (II) in Dual EditBuffer")
   {
-    Parameter *param { nullptr };
+    Parameter *param{ nullptr };
 
     {
       auto scope = TestHelper::createTestScope();
@@ -440,7 +440,7 @@ TEST_CASE("Load <-> Changed")
 
   SECTION("Recall Global Parameter in Dual EditBuffer")
   {
-    Parameter *param { nullptr };
+    Parameter *param{ nullptr };
 
     {
       auto scope = TestHelper::createTestScope();

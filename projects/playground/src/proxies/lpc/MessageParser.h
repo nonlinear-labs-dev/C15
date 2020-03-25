@@ -21,6 +21,7 @@ class MessageParser
     NOTIFICATION = 0x0800,
     ASSERTION = 0x0900,
     REQUEST = 0x0A00,
+    HEARTBEAT = 0x0B00
   };
 
   enum NotificationTypes

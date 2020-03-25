@@ -9,7 +9,7 @@
 #include <xml/Attribute.h>
 
 PresetParameterGroup::PresetParameterGroup(VoiceGroup vg)
-    : m_voiceGroup { vg }
+    : m_voiceGroup{ vg }
 {
 }
 
@@ -69,7 +69,7 @@ void PresetParameterGroup::writeDiff(Writer &writer, const GroupId &groupId, con
   writer.writeTag("group", Attribute("name", name), [&] {
     for(auto &parameter : m_parameters)
     {
-      auto otherParameter = other->findParameterByID(parameter.first);
+      auto otherParameter = other->findParameterByID({ parameter.first.getNumber(), other->getVoiceGroup() });
       parameter.second->writeDiff(writer, parameter.first, otherParameter);
     }
   });
@@ -83,4 +83,3 @@ void PresetParameterGroup::writeDocument(Writer &writer) const
     param->writeDocument(writer);
   }
 }
-

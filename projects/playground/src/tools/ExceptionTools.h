@@ -8,7 +8,7 @@
 
 namespace ExceptionTools
 {
-  inline Glib::ustring handle_eptr(std::exception_ptr eptr)
+  inline Glib::ustring handle_eptr(const std::exception_ptr& eptr)
   {
     try
     {

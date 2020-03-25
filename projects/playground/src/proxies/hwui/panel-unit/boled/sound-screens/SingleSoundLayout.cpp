@@ -217,7 +217,7 @@ bool SingleSoundLayout::onRotary(int inc, ButtonModifiers modifiers)
   else if(m_selectedColumn == Column::TranstionTime)
     Application::get().getSettings()->getSetting<TransitionTime>()->incDec(inc, modifiers);
 
-  return DFBLayout::onRotary(inc, modifiers);
+  return Layout::onRotary(inc, modifiers);
 }
 
 void SingleSoundLayout::action()

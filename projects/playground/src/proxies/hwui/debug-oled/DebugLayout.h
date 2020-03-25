@@ -1,11 +1,11 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 
-class DebugLayout : public DFBLayout
+class DebugLayout : public Layout
 {
  protected:
-  using super = DFBLayout;
+  using super = Layout;
 
  public:
   explicit DebugLayout(Glib::ustring e);

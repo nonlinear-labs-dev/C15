@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 
 namespace UNDO
 {
@@ -13,10 +13,10 @@ class Button;
 class Label;
 class PositionInTreeLabel;
 
-class UndoLayout : public DFBLayout
+class UndoLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   UndoLayout();

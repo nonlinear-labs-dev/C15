@@ -19,7 +19,7 @@ void Ribbon::syncBBBB()
 {
   for(int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
   {
-    m_leds[i].syncBBBB();
+    m_leds[i].syncHWUI();
   }
 }
 
@@ -34,7 +34,7 @@ void Ribbon::initLEDs()
   resetLEDs();
 }
 
-void Ribbon::setLEDState(int ledPos, char state)
+void Ribbon::setLEDState(int ledPos, FourStateLED::State state)
 {
   m_leds[ledPos].setState(state);
 }
@@ -64,8 +64,7 @@ void Ribbon::debugTrace()
 void Ribbon::resetLEDs()
 {
   for(int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
-    setLEDState(i, 0);
-
+    setLEDState(i, FourStateLED::State::Off);
   //debugTrace();
 }
 
@@ -96,7 +95,7 @@ void Ribbon::setLEDsUniPolar(int paramValIdx)
     if(i == 0 && incomingParamVal > 0)
       brightness = std::max(brightness, 1);
 
-    setLEDState(i, brightness);
+    setLEDState(i, static_cast<FourStateLED::State>(brightness));
   }
 }
 
@@ -108,18 +107,18 @@ char Ribbon::handleCenter(tDisplayValue v) const
   return 3;
 }
 
-char Ribbon::getLEDStateForBipolarValue(int led, tDisplayValue v) const
+FourStateLED::State Ribbon::getLEDStateForBipolarValue(int led, tDisplayValue v) const
 {
   constexpr auto center = NUM_LEDS_PER_RIBBON / 2;
 
   if(led == center)
-    return 3;
+    return FourStateLED::State::Bright;
 
   bool ledIsOnLeftHalf = led < center;
   bool valueIsOnLeftHalf = v < 0.0;
 
   if(ledIsOnLeftHalf != valueIsOnLeftHalf)
-    return 0;
+    return FourStateLED::State::Off;
 
   constexpr auto valueStepPerLed = 1.0 / center;
   constexpr auto valueStepPerLedBrightnessStep = valueStepPerLed / 3;
@@ -127,15 +126,15 @@ char Ribbon::getLEDStateForBipolarValue(int led, tDisplayValue v) const
   const auto absoluteValue = std::abs(v);
 
   if(relativeAbsoluteDistanceToMiddle <= absoluteValue)
-    return 3;
+    return FourStateLED::State::Bright;
 
   if(relativeAbsoluteDistanceToMiddle <= absoluteValue + valueStepPerLedBrightnessStep)
-    return 2;
+    return FourStateLED::State::Medium;
 
   if(relativeAbsoluteDistanceToMiddle <= absoluteValue + 2 * valueStepPerLedBrightnessStep)
-    return 1;
+    return FourStateLED::State::Dark;
 
-  return 0;
+  return FourStateLED::State::Off;
 }
 
 void Ribbon::setLEDsForValueBiPolar(tDisplayValue paramValue)
@@ -146,4 +145,9 @@ void Ribbon::setLEDsForValueBiPolar(tDisplayValue paramValue)
   }
 
   // debugTrace();
+}
+
+const FourStateLED* Ribbon::getLED(int ledPos) const
+{
+  return &m_leds[ledPos];
 }

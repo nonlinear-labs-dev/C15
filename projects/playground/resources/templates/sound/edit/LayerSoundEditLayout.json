@@ -8,16 +8,28 @@
       },
       "Conditions": "isLayerSound",
       "Controls": {
-        "Header": {
-          "Class": "FullWidthInvertedLabel",
+        "FocusHeader": {
+          "Class": "InvertedLabel",
           "Position": "0, 0",
           "Init": {
-            "Text[Text]": "Layer Edit"
+            "Text[Text]": "Layer Sound"
+          }
+        },
+        "VoiceGroupHeader": {
+          "Class": "WideInvertedLabel",
+          "Position": "64, 0",
+          "Events": "CurrentVoiceGroupText => Text[Text]"
+        },
+        "EditTextHeader": {
+          "Class": "InvertedLabel",
+          "Position": "192, 0",
+          "Init": {
+            "Text[Text]": "Edit"
           }
         },
         "Content": {
           "Class": "DualSoundEditMenu",
-          "Position": "0, 11"
+          "Position": "0, 16"
         }
       }
     }

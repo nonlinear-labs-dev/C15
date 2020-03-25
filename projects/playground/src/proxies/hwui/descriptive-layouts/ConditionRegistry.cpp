@@ -44,5 +44,5 @@ sigc::connection ConditionRegistry::onChange(const std::function<void()>& cb)
 void ConditionRegistry::onConditionChanged()
 {
   if(Application::get().getSettings()->getSetting<LayoutMode>()->get() != LayoutVersionMode::Old)
-    m_signal.send();
+    m_signal.deferedSend();
 }

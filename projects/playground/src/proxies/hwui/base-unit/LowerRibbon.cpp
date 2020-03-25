@@ -67,7 +67,7 @@ void LowerRibbon::indicateBlockingMainThread(bool onOff)
   {
     for(int i = 0; i < NUM_LEDS_PER_RIBBON; i++)
     {
-      setLEDState(i, (i % 2 == 0) ? 3 : 0);
+      setLEDState(i, (i % 2 == 0) ? FourStateLED::State::Bright : FourStateLED::State::Off);
     }
   }
   else

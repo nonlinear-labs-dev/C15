@@ -2,6 +2,7 @@
 #include <nltools/messaging/Message.h>
 #include <nltools/threading/ContextBoundMessageQueue.h>
 #include <nltools/logging/Log.h>
+#include <nltools/StringTools.h>
 #include <netinet/tcp.h>
 #include <glibmm.h>
 #include <utility>
@@ -46,6 +47,20 @@ namespace nltools
 
         if(error)
         {
+          if(error->domain == G_IO_ERROR && error->code == G_IO_ERROR_ADDRESS_IN_USE)
+          {
+            nltools::Log::error("Could not listen to port ", m_port, ", trying to output the current listener:");
+            auto script
+                = string::concat("sh -c \"lsof -i:", m_port, " | grep LISTEN | cut -f 1 -d ' ' | tr '\n' ' '\"");
+            gchar *output = nullptr;
+            g_spawn_command_line_sync(script.c_str(), &output, nullptr, nullptr, nullptr);
+
+            if(output)
+              nltools::throwException("Could not listen to port ", m_port, ", because '", output, "' already owns it.");
+
+            nltools::throwException("Could not listen to port ", m_port);
+          }
+
           nltools::Log::error(error->message);
           g_error_free(error);
         }

@@ -109,19 +109,20 @@ void BankEditButtonMenu::newBank()
   Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
 }
 
-BankEditButtonMenu::FileInfos BankEditButtonMenu::extractFileInfos(std::experimental::filesystem::directory_entry file)
+BankEditButtonMenu::FileInfos
+    BankEditButtonMenu::extractFileInfos(const std::experimental::filesystem::directory_entry& file)
 {
-  return FileInfos{ file };
+  return FileInfos { file };
 }
 
-bool BankEditButtonMenu::applicableBackupFilesFilter(std::experimental::filesystem::directory_entry term)
+bool BankEditButtonMenu::applicableBackupFilesFilter(const std::experimental::filesystem::directory_entry& term)
 {
   auto fileName = term.path().filename().string();
   std::string end = ".xml";
   return !std::equal(end.rbegin(), end.rend(), fileName.rbegin());
 }
 
-void BankEditButtonMenu::importBankFromPath(std::experimental::filesystem::directory_entry file)
+void BankEditButtonMenu::importBankFromPath(const std::experimental::filesystem::directory_entry& file)
 {
   auto hwui = Application::get().getHWUI();
   if(file != std::experimental::filesystem::directory_entry())
@@ -174,7 +175,7 @@ void BankEditButtonMenu::exportBank()
 void BankEditButtonMenu::writeSelectedBankToFile(Bank* selBank, const std::string& outFile)
 {
   SplashLayout::addStatus("Exporting " + selBank->getName(true));
-  auto scope = Application::get().getUndoScope()->startTrashTransaction();
+  auto scope = UNDO::Scope::startTrashTransaction();
   selBank->setAttribute(scope->getTransaction(), "Date of Export File", TimeTools::getAdjustedIso());
   selBank->setAttribute(scope->getTransaction(), "Name of Export File", outFile);
   PresetBankSerializer serializer(selBank, false);

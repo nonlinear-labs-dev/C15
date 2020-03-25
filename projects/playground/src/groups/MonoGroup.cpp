@@ -4,6 +4,7 @@
 #include <parameters/scale-converters/MonoPriorityScaleConverter.h>
 #include <parameters/scale-converters/OnOffScaleConverter.h>
 #include <parameters/mono-mode-parameters/UnmodulateableMonoParameter.h>
+#include <parameters/scale-converters/LegatoScaleConverter.h>
 #include "MonoGroup.h"
 
 MonoGroup::MonoGroup(ParameterDualGroupSet* parent, VoiceGroup vg)
@@ -18,7 +19,7 @@ void MonoGroup::init()
   appendParameter(new UnmodulateableMonoParameter(this, { 365, getVoiceGroup() },
                                                   ScaleConverter::get<MonoPriorityScaleConverter>(), 0.5, 2, 2));
   appendParameter(new UnmodulateableMonoParameter(this, { 366, getVoiceGroup() },
-                                                  ScaleConverter::get<OnOffScaleConverter>(), 0, 1, 1));
+                                                  ScaleConverter::get<LegatoScaleConverter>(), 1, 3, 3));
   appendParameter(new MonoGlideTimeParameter(this, { 367, getVoiceGroup() }));
 }
 

@@ -50,7 +50,9 @@ class Preset : public PresetDualParameterGroups
   // accessors
   const Uuid &getUuid() const;
   Glib::ustring getName() const;
-  PresetParameter *findParameterByID(ParameterId id) const;
+  Glib::ustring getDisplayNameWithSuffixes() const;
+
+  PresetParameter *findParameterByID(ParameterId id, bool throwIfMissing) const;
   PresetParameterGroup *findParameterGroup(const GroupId &id) const;
 
   template <VoiceGroup VG> void forEachParameter(const std::function<void(PresetParameter *)> &cb)
@@ -76,7 +78,7 @@ class Preset : public PresetDualParameterGroups
   Glib::ustring buildUndoTransactionTitle(const Glib::ustring &prefix) const;
   bool matchesQuery(const SearchQuery &query) const;
 
-  void writeDiff(Writer &writer, const Preset *other) const;
+  void writeDiff(Writer &writer, const Preset *other, VoiceGroup vgOfThis, VoiceGroup vgOfOther) const;
 
   // signals
   sigc::connection onChanged(sigc::slot<void> cb);
@@ -89,7 +91,7 @@ class Preset : public PresetDualParameterGroups
   size_t getHash() const = delete;
   void updateBanksLastModifiedTimestamp(UNDO::Transaction *transaction);
 
-  void writeGroups(Writer &w, const Preset *preset) const;
+  void writeGroups(Writer &w, const Preset *preset, VoiceGroup vgOfThis, VoiceGroup vgOfOther) const;
   Uuid m_uuid;
   Glib::ustring m_name;
   std::array<Glib::ustring, 2> m_voiceGroupLabels;
@@ -107,4 +109,6 @@ class Preset : public PresetDualParameterGroups
   friend class RecallParameterGroups;
 
   PresetParameterGroup *findOrCreateParameterGroup(const GroupId &id);
+  bool isMonoActive() const;
+  bool isUnisonActive() const;
 };

@@ -13,7 +13,7 @@
 
 class PresetBank;
 class Parameter;
-class DFBLayout;
+class Layout;
 class Layout;
 class BOLED;
 class MacroControlAssignmentStateMachine;

@@ -9,15 +9,15 @@ shift
 DOCKER_GROUP_ID=$1
 shift
 
-SCRIPT="echo \"Starting script:\""
+TMPSCRIPT=$(mktemp)
+TMPDIRNAME=$(dirname $TMPSCRIPT)
+TMPSCRIPTBASE=$(basename $TMPSCRIPT)
+echo "" > $TMPSCRIPT
 
 for var in "$@"
 do
-    SCRIPT="$SCRIPT && $var"
+    echo $var >> $TMPSCRIPT
 done
 
-SCRIPT="$SCRIPT && echo \"Script done.\""
-
 DOCKERNAME="nl-cross-build-environment-$USER"
-
-docker run --privileged -u $USER_ID:$DOCKER_GROUP_ID --rm -v $BINARY_DIR:/workdir -v $SOURCE_DIR:/sources $DOCKERNAME bash -c "$SCRIPT"
+docker run --privileged -u $USER_ID:$DOCKER_GROUP_ID --rm -v $TMPDIRNAME:/script -v $BINARY_DIR:/workdir -v $SOURCE_DIR:/sources $DOCKERNAME bash /script/$TMPSCRIPTBASE

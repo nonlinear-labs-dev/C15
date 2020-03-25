@@ -8,10 +8,13 @@ class UpdateAvailableView : public SetupLabel
 
  public:
   UpdateAvailableView();
-  virtual ~UpdateAvailableView();
+  ~UpdateAvailableView() override;
 
   static bool updateExists();
 
+  static void setUpdateAvailable(bool updateAvailable);
+
  private:
+  static bool m_updateAvailable;
   bool poll();
 };

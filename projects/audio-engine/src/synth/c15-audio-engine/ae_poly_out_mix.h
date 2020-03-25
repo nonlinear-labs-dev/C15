@@ -21,8 +21,8 @@ namespace Engine
     float m_out_l, m_out_r;
     PolyOutputMixer();
     void init(const float _samplerate, const uint32_t _numOfVoices);
-    void combine(PolySignals &_signals, const PolyValue &_sampleA, const PolyValue &_sampleB,
-                 const PolyValue &_sampleComb, const PolyValue &_sampleSVFilter);
+    void combine(PolySignals &_signals, const PolyValue &_voiceLevel, const PolyValue &_sampleA,
+                 const PolyValue &_sampleB, const PolyValue &_sampleComb, const PolyValue &_sampleSVFilter);
     void filter_level(PolySignals &_signals);
     void resetDSP();
 

@@ -52,8 +52,6 @@ class Rect
 
   friend bool operator==(const Rect &a, const Rect &b);
 
-  static void registerTests();
-
  private:
   Point m_leftTop;
   int m_width = 0;

@@ -3,8 +3,6 @@
 #include <proxies/hwui/controls/Button.h>
 #include <proxies/hwui/HWUI.h>
 #include <parameters/mono-mode-parameters/ModulateableMonoParameter.h>
-#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MCAmountButton.h>
-#include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MonoUnisonModuleCaption.h>
 #include <Application.h>
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
@@ -12,11 +10,6 @@
 Carousel *UnmodulateableUnisonParameterLayout::createCarousel(const Rect &rect)
 {
   return new UnisonParameterCarousel(rect);
-}
-
-ModuleCaption *ModulateableUnisonParameterLayout::createModuleCaption() const
-{
-  return new MonoUnisonModuleCaption(Rect(0, 0, 64, 13));
 }
 
 void UnmodulateableUnisonParameterLayout::init()
@@ -30,11 +23,6 @@ void UnmodulateableUnisonParameterLayout::init()
       c->setText({ "back..", 0 });
     }
   }
-}
-
-ModuleCaption *UnmodulateableUnisonParameterLayout::createModuleCaption() const
-{
-  return new MonoUnisonModuleCaption(Rect(0, 0, 64, 13));
 }
 
 bool UnmodulateableUnisonParameterLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)

@@ -93,3 +93,17 @@ function formatDimension(value, stringizer, withUnit) {
 
   return cachedFn(value, withUnit);
 }
+
+function stringizeLegato(value) {
+  switch(Number(value)) {
+    default:
+    case 0:
+      return "None";
+    case 1:
+      return "Envelopes";
+    case 2:
+      return "Glide";
+    case 3:
+      return "Env & Glide";
+  }
+}

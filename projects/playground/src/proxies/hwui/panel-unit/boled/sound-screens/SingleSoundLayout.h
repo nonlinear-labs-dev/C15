@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proxies/hwui/DFBLayout.h>
+#include <proxies/hwui/Layout.h>
 #include <proxies/hwui/HWUIEnums.h>
 
 class SingleSoundEditMenuLegacy;
@@ -8,10 +8,10 @@ class SingleSoundMenu;
 class Button;
 class AnyParameterLockedIndicator;
 
-class SingleSoundLayout : public DFBLayout
+class SingleSoundLayout : public Layout
 {
  private:
-  typedef DFBLayout super;
+  typedef Layout super;
 
  public:
   SingleSoundLayout(FocusAndMode focusAndMode);

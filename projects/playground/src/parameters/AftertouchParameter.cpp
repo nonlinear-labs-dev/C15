@@ -8,7 +8,7 @@ ReturnMode AftertouchParameter::getReturnMode() const
   return ReturnMode::Zero;
 }
 
-DFBLayout *AftertouchParameter::createLayout(FocusAndMode focusAndMode) const
+Layout *AftertouchParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)
   {

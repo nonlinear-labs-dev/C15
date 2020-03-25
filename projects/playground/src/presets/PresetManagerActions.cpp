@@ -106,13 +106,13 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
     }
   });
 
-  addAction("store-init", [&](std::shared_ptr<NetworkRequest> request) mutable {
+  addAction("store-init", [&](std::shared_ptr<NetworkRequest>) mutable {
     auto scope = presetManager.getUndoScope().startTransaction("Store Init");
     auto transaction = scope->getTransaction();
     presetManager.storeInitSound(transaction);
   });
 
-  addAction("reset-init", [&](std::shared_ptr<NetworkRequest> request) mutable {
+  addAction("reset-init", [&](std::shared_ptr<NetworkRequest>) mutable {
     auto scope = presetManager.getUndoScope().startTransaction("Reset Init");
     auto transaction = scope->getTransaction();
     presetManager.resetInitSound(transaction);
@@ -284,13 +284,15 @@ bool PresetManagerActions::handleRequest(const Glib::ustring &path, std::shared_
       auto ebAsPreset = std::make_unique<Preset>(pm, *eb, true);
       auto aUUID = request->get("p1");
       auto bUUID = request->get("p2");
+      auto voiceGroupOfA = request->get("vg1");
+      auto voiceGroupOfB = request->get("vg2");
       auto a = pm->findPreset(aUUID);
       auto b = pm->findPreset(bUUID);
       a = a ? a : ebAsPreset.get();
       b = b ? b : ebAsPreset.get();
       auto stream = request->createStream("text/xml", false);
       XmlWriter writer(stream);
-      a->writeDiff(writer, b);
+      a->writeDiff(writer, b, to<VoiceGroup>(voiceGroupOfA), to<VoiceGroup>(voiceGroupOfB));
       return true;
     }
   }

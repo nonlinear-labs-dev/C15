@@ -2,8 +2,6 @@ package com.nonlinearlabs.client.world.pointer;
 
 import java.util.ArrayList;
 
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Touch;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.pointer.Gesture.HasPosition;
@@ -12,26 +10,26 @@ public class TouchPinch extends Gesture implements HasPosition {
 
 	private ArrayList<Position> touches;
 
-	TouchPinch(Gesture predecessor, JsArray<Touch> touches) {
+	TouchPinch(Gesture predecessor, ArrayList<Touch> touches) {
 		super(predecessor);
 		this.touches = new ArrayList<Position>();
 
-		for (int i = 0; i < touches.length(); i++) {
+		for (int i = 0; i < touches.size(); i++) {
 			Touch t = touches.get(i);
 			this.touches.add(new Position(t));
 		}
 	}
 
 	@Override
-	public Gesture onTouchStart(JsArray<Touch> touches) {
+	public Gesture onTouchStart(ArrayList<Touch> touches) {
 		return super.onTouchMove(touches);
 	}
 
 	@Override
-	public Gesture onTouchMove(JsArray<Touch> touches) {
-		if (touches.length() == 1) {
+	public Gesture onTouchMove(ArrayList<Touch> touches) {
+		if (touches.size() == 1) {
 			return new TouchMoveStart(this, getPosition(), touches);
-		} else if (touches.length() == 2) {
+		} else if (touches.size() == 2) {
 			return new TouchPinch(this, touches);
 		}
 
@@ -39,8 +37,8 @@ public class TouchPinch extends Gesture implements HasPosition {
 	}
 
 	@Override
-	public Gesture onTouchEnd(JsArray<Touch> touches) {
-		if (touches.length() > 0)
+	public Gesture onTouchEnd(ArrayList<Touch> touches) {
+		if (touches.size() > 0)
 			return onTouchMove(touches);
 
 		return new TouchMoveEnd(this);
