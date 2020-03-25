@@ -199,7 +199,9 @@ void MSG_SendActiveSensing(void)
   }
 #else
 #ifndef no_IMPLEMENT_ACTIVE_SENSING
+#ifdef CORE_M4
 #error "either IMPLEMENT_ACTIVE_SENSING or no_IMPLEMENT_ACTIVE_SENSING must be defined"
+#endif
 #endif
 #endif
 }
