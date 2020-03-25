@@ -3,4 +3,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
-void processReadMsgs(uint16_t cmd, uint16_t len, uint16_t *data);
+#define NO_HEARTBEAT    (0x0001)
+#define NO_MUTESTATUS   (0x0002)
+#define NO_PARAMS       (0x0004)
+#define NO_NOTIFICATION (0x0008)
+#define NO_EHCDATA      (0x0010)
+#define NO_SENSORSRAW   (0x0020)
+
+void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t const* const data, uint16_t const flags);

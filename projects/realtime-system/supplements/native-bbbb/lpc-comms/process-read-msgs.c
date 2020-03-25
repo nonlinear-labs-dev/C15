@@ -68,6 +68,18 @@
 #define HW_SOURCE_ID_LAST_KEY   12
 #define LAST_PARAM_ID           12
 
+// ==================================================================================
+#define SUP_UNMUTE_STATUS_IS_VALID           (0b1000000000000000)  // status has actually been set
+#define SUP_UNMUTE_STATUS_JUMPER_OVERRIDE    (0b0000000010000000)  // hardware jumper overriding everything ...
+#define SUP_UNMUTE_STATUS_JUMPER_VALUE       (0b0000000001000000)  // ... with this value (1:unmuted)
+#define SUP_UNMUTE_STATUS_SOFTWARE_OVERRIDE  (0b0000000000100000)  // software command overriding midi-derived status ...
+#define SUP_UNMUTE_STATUS_SOFTWARE_VALUE     (0b0000000000010000)  // ... with this value (1:unmuted)
+#define SUP_UNMUTE_STATUS_MIDI_DERIVED       (0b0000000000001000)  // midi-derived status ...
+#define SUP_UNMUTE_STATUS_MIDI_DERIVED_VALUE (0b0000000000000100)  // ... with this value (1:unmuted)
+#define SUP_UNMUTE_STATUS_HARDWARE_IS_VALID  (0b0000000000000010)  // hardware status is valid (signal from SUP uC was detected) ...
+#define SUP_UNMUTE_STATUS_HARDWARE_VALUE     (0b0000000000000001)  // ... with this value (1:unmuted)
+
+// ==================================================================================
 char paramNameTable[][LAST_PARAM_ID] = {
   "EHC 1     ",
   "EHC 2     ",
@@ -164,7 +176,7 @@ EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
 }
 
 // ==================================================================================
-void processReadMsgs(uint16_t cmd, uint16_t len, uint16_t *data)
+void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t const *const data, uint16_t const flags)
 {
   int       i;
   uint16_t *p;
@@ -176,30 +188,91 @@ void processReadMsgs(uint16_t cmd, uint16_t len, uint16_t *data)
   switch (cmd)
   {
     case BB_MSG_TYPE_PARAMETER:
+      if (flags & NO_PARAMS)
+        return;
       if (len != 2)
       {
         printf("PARAM : wrong length of %d\n", len);
-        break;
+        return;
       }
       if (data[0] > LAST_PARAM_ID)
-        break;
+        return;
       printf("PARAM %s = %d\n", paramNameTable[data[0]], data[1]);
-      break;
+      return;
+
     case BB_MSG_TYPE_NOTIFICATION:
-      break;
+      if (flags & NO_NOTIFICATION)
+        return;
+      if (len != 2)
+      {
+        printf("NOTIFICATION : wrong length of %d\n", len);
+        return;
+      }
+      switch (data[0])
+      {
+        case NOTIFICATION_ID_SW_VERSION:
+          printf("NOTIFICATION : Software Version: %hu\n", data[1]);
+          return;
+        case NOTIFICATION_ID_EHC_DATA:
+          printf("NOTIFICATION : EHC data sent: %hu\n", data[1]);
+          return;
+        case NOTIFICATION_ID_UNMUTE_STATUS:
+          printf("NOTIFICATION : ");
+          goto ShowMuteStatus;
+      }
+
     case BB_MSG_TYPE_HEARTBEAT:
-      break;
+      if (flags & NO_HEARTBEAT)
+        return;
+      return;
+
     case BB_MSG_TYPE_SENSORS_RAW:
-      break;
+      if (flags & NO_SENSORSRAW)
+        return;
+      return;
+
     case BB_MSG_TYPE_MUTESTATUS:
-      break;
+      if (flags & NO_MUTESTATUS)
+        return;
+      if (len != 1)
+      {
+        printf("MUTESTATUS : wrong length of %d\n", len);
+        return;
+      }
+    ShowMuteStatus:
+      printf("MUTESTATUS: valid:%d", data[0] & SUP_UNMUTE_STATUS_IS_VALID ? 1 : 0);
+      printf(" jumper:");
+      if (data[0] & SUP_UNMUTE_STATUS_JUMPER_OVERRIDE)
+        printf("%d", data[0] & SUP_UNMUTE_STATUS_JUMPER_VALUE ? 1 : 0);
+      else
+        printf("-");
+      printf(" software:");
+      if (data[0] & SUP_UNMUTE_STATUS_SOFTWARE_OVERRIDE)
+        printf("%d", data[0] & SUP_UNMUTE_STATUS_SOFTWARE_VALUE ? 1 : 0);
+      else
+        printf("-");
+      printf(" midi:");
+      if (data[0] & SUP_UNMUTE_STATUS_MIDI_DERIVED)
+        printf("%d", data[0] & SUP_UNMUTE_STATUS_MIDI_DERIVED_VALUE ? 1 : 0);
+      else
+        printf("-");
+      printf(" physical:");
+      if (data[0] & SUP_UNMUTE_STATUS_HARDWARE_IS_VALID)
+        printf("%d", data[0] & SUP_UNMUTE_STATUS_HARDWARE_VALUE ? 1 : 0);
+      else
+        printf("-");
+      printf("\n");
+      return;
+
     case BB_MSG_TYPE_EHC_DATA:
+      if (flags & NO_EHCDATA)
+        return;
       if (len != 8 * 6)
       {
         printf("EHC DATA : wrong length of %d\n", len);
-        break;
+        return;
       }
-      p = data;
+      p = (uint16_t *) data;
       for (i = 0; i < 8; i++)
       {
         config = uint16ToConfig(*p++);
@@ -218,6 +291,6 @@ void processReadMsgs(uint16_t cmd, uint16_t len, uint16_t *data)
                (uint16_t) last, 100 * last / 16000, (uint16_t) min, 100 * min / scale, (uint16_t) max, 100 * max / scale, (uint16_t) scale);
       }
       printf("\n");
-      break;
+      return;
   }
 }
