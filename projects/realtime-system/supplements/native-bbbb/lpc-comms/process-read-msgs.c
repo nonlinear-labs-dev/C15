@@ -133,8 +133,8 @@ EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
   ret.polarityInvert   = (c & 0b0000000000100000) >> 5;
   ret.pullup           = (c & 0b0000000001000000) >> 6;
   ret.is3wire          = (c & 0b0000000010000000) >> 7;
-  ret.ctrlId           = (c & 0b0000111100000000) >> 8;
-  ret.silent           = (c & 0b0001000000000000) >> 11;
+  ret.ctrlId           = (c & 0b0000011100000000) >> 8;
+  ret.silent           = (c & 0b0000100000000000) >> 11;
   ret.hwId             = (c & 0b1111000000000000) >> 12;
   return ret;
 }
@@ -148,6 +148,9 @@ typedef struct
   unsigned isAutoRanged : 1;   // controller has finished auto-ranging (always=1 when disabled)
   unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
   unsigned isRamping : 1;      // controller currently does a ramp to the actual value (pot/rheo) (not valid for bi-stable)
+  unsigned isSaved : 1;        // controller state has been saved to EEPROM
+  unsigned isRestored : 1;     // controller state has been restored from EEPROM
+
 } EHC_ControllerStatus_T;
 
 uint16_t statusToUint16(const EHC_ControllerStatus_T s)
@@ -160,6 +163,8 @@ uint16_t statusToUint16(const EHC_ControllerStatus_T s)
   ret |= s.isAutoRanged << 4;
   ret |= s.isSettled << 5;
   ret |= s.isRamping << 6;
+  ret |= s.isSaved << 7;
+  ret |= s.isRestored << 8;
   return ret;
 }
 EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
@@ -172,7 +177,33 @@ EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
   ret.isAutoRanged  = (s & 0b0000000000010000) >> 4;
   ret.isSettled     = (s & 0b0000000000100000) >> 5;
   ret.isRamping     = (s & 0b0000000001000000) >> 6;
+  ret.isSaved       = (s & 0b0000000010000000) >> 7;
+  ret.isRestored    = (s & 0b0000000100000000) >> 8;
   return ret;
+}
+
+// ==================================================================================
+typedef enum
+{
+  RED,
+  GREEN,
+  DEFAULT
+} color_t;
+
+void setColor(color_t color)
+{
+  switch (color)
+  {
+    case RED:
+      printf("\033[0;31m");
+      break;
+    case GREEN:
+      printf("\033[0;32m");
+      break;
+    case DEFAULT:
+      printf("\033[0m");
+      break;
+  }
 }
 
 // ==================================================================================
@@ -277,10 +308,13 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t const *con
       {
         config = uint16ToConfig(*p++);
         status = uint16ToStatus(*p++);
-        printf("EHC%d config = HWSID:%02d SIL:%d CTRLID:%d POT:%d PUP:%d INV:%d ARAE:%d CONT:%d AHS:%d\n",
-               i + 1, config.hwId, config.silent, config.ctrlId, config.is3wire, config.pullup, config.polarityInvert, config.doAutoRanging, config.continuous, config.autoHoldStrength);
-        printf("     status = INI:%d PLUGD:%d RES:%d VALID:%d RANGD:%d SETLD:%d RAMP:%d\n",
-               status.initialized, status.pluggedIn, status.isReset, status.outputIsValid, status.isAutoRanged, status.isSettled, status.isRamping);
+        setColor(config.hwId == 15 ? RED : GREEN);
+        printf("EHC%d config (0x%04X) = HWSID:%02d SIL:%d CTRLID:%d POT:%d PUP:%d INV:%d ARAE:%d CONT:%d AHS:%d\n",
+               i + 1, configToUint16(config), config.hwId, config.silent, config.ctrlId, config.is3wire, config.pullup, config.polarityInvert, config.doAutoRanging, config.continuous, config.autoHoldStrength);
+        setColor(status.initialized ? GREEN : RED);
+        printf("     status (0x%04X) = INI:%c PLUGD:%d RES:%d VALID:%d RANGD:%d SETLD:%d RAMP:%d EES:%d EER:%d\n",
+               statusToUint16(status), status.initialized ? '1' : '-', status.pluggedIn, status.isReset,
+               status.outputIsValid, status.isAutoRanged, status.isSettled, status.isRamping, status.isSaved, status.isRestored);
         last = *p++;
         if (!status.outputIsValid)
           last = -0.01;
@@ -289,6 +323,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t const *con
         scale = *p++;
         printf("     last / min / max / scale :  %d(%.1lf%%) / %d(%.1lf%%) / %d(%.1lf%%) / %5d\n",
                (uint16_t) last, 100 * last / 16000, (uint16_t) min, 100 * min / scale, (uint16_t) max, 100 * max / scale, (uint16_t) scale);
+        setColor(DEFAULT);
       }
       printf("\n");
       return;
