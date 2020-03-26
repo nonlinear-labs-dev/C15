@@ -30,14 +30,15 @@ void Usage(void)
   puts("Usage:");
   puts(" ehc  <command>");
   puts("  commands:");
-  puts("  get             : sent \"fetch data request\"");
-  puts("                  (display with read-lpc-msgs in another shell");
-  puts("  clear-all       : reset&clear all EHCs");
-  puts("  enable          : enable EHC processing");
-  puts("  disable         : disable EHC processing");
+  puts("  get              : sent \"fetch data request\"");
+  puts("                   (display with read-lpc-msgs in another shell");
+  puts("  clear-all        : clear all EHCs");
+  puts("  enable           : enable EHC processing");
+  puts("  disable          : disable EHC processing");
   puts("  range <port>, <min>, <max>  : set range of controller to min..max (uint16)");
-  puts("  reset <port>    : reset controller at port");
-  puts("  config <params> : configure an EHC");
+  puts("  reset <port>     : reset controller at port");
+  puts("  clear <port>|all : clear controller at port");
+  puts("  config <params>  : configure an EHC");
   puts("    params : <port> <id> [<flag>, ...]");
   puts("      port  : physical port name (p1t, p1r, p2t, ..., p4r),");
   puts("              or equivalent controller ID 1..8");
@@ -91,8 +92,8 @@ EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
   ret.polarityInvert   = (c & 0b0000000000100000) >> 5;
   ret.pullup           = (c & 0b0000000001000000) >> 6;
   ret.is3wire          = (c & 0b0000000010000000) >> 7;
-  ret.ctrlId           = (c & 0b0000111100000000) >> 8;
-  ret.silent           = (c & 0b0001000000000000) >> 11;
+  ret.ctrlId           = (c & 0b0000011100000000) >> 8;
+  ret.silent           = (c & 0b0000100000000000) >> 11;
   ret.hwId             = (c & 0b1111000000000000) >> 12;
   return ret;
 }
