@@ -13,6 +13,8 @@
 #include "spibb/nl_bb_msg.h"
 #include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
+#include "sys/crc.h"
+#include <cr_section_macros.h>
 #include <stdlib.h>
 
 // =============
@@ -52,7 +54,8 @@ static void ShowSettlingDisplay(void)
 #endif
 }
 
-#define WAIT_TIME_AFTER_PLUGIN (120)  // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
+#define WAIT_TIME_AFTER_PLUGIN   (120)  // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
+#define EEPROM_UPDATE_CHECK_TIME (160)  // 2secs time interval to check controller state against saved state
 
 #define NUMBER_OF_CONTROLLERS (8)  // 4 jacks, each with tip and ring ADC channels
 
@@ -187,8 +190,8 @@ EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
   ret.polarityInvert   = (c & 0b0000000000100000) >> 5;
   ret.pullup           = (c & 0b0000000001000000) >> 6;
   ret.is3wire          = (c & 0b0000000010000000) >> 7;
-  ret.ctrlId           = (c & 0b0000111100000000) >> 8;
-  ret.silent           = (c & 0b0001000000000000) >> 11;
+  ret.ctrlId           = (c & 0b0000011100000000) >> 8;
+  ret.silent           = (c & 0b0000100000000000) >> 11;
   ret.hwId             = (c & 0b1111000000000000) >> 12;
   return ret;
 }
@@ -202,6 +205,9 @@ typedef struct
   unsigned isAutoRanged : 1;   // controller has finished auto-ranging (always=1 when disabled)
   unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
   unsigned isRamping : 1;      // controller currently does a ramp to the actual value (pot/rheo) (not valid for bi-stable)
+  unsigned isSaved : 1;        // controller state has been saved to EEPROM
+  unsigned isRestored : 1;     // controller state has been restored from EEPROM
+
 } EHC_ControllerStatus_T;
 
 uint16_t statusToUint16(const EHC_ControllerStatus_T s)
@@ -214,8 +220,25 @@ uint16_t statusToUint16(const EHC_ControllerStatus_T s)
   ret |= s.isAutoRanged << 4;
   ret |= s.isSettled << 5;
   ret |= s.isRamping << 6;
+  ret |= s.isSaved << 7;
+  ret |= s.isRestored << 8;
   return ret;
 }
+EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
+{
+  EHC_ControllerStatus_T ret;
+  ret.initialized   = (s & 0b0000000000000001) >> 0;
+  ret.pluggedIn     = (s & 0b0000000000000010) >> 1;
+  ret.isReset       = (s & 0b0000000000000100) >> 2;
+  ret.outputIsValid = (s & 0b0000000000001000) >> 3;
+  ret.isAutoRanged  = (s & 0b0000000000010000) >> 4;
+  ret.isSettled     = (s & 0b0000000000100000) >> 5;
+  ret.isRamping     = (s & 0b0000000001000000) >> 6;
+  ret.isSaved       = (s & 0b0000000010000000) >> 7;
+  ret.isRestored    = (s & 0b0000000100000000) >> 8;
+  return ret;
+}
+
 // ----------
 
 // ---------------- begin Value Buffer defs
@@ -293,12 +316,32 @@ typedef struct
   uint16_t rampStep;
 } Controller_T;
 
+typedef struct
+{
+  EHC_ControllerConfig_T config;
+  EHC_ControllerStatus_T status;
+  // (auto-)ranging
+  uint16_t min;          // values used to reflect ...
+  uint16_t max;          // ... physical ranges.
+  uint16_t used_min;     // values used for the actual ranging, ...
+  uint16_t used_max;     // ... even with auto-ranging off.
+  uint16_t range_scale;  // scale (100%) value for the actual ranging
+} ControllerSave_T;
+
+typedef struct
+{
+  ControllerSave_T saveData;
+  crc_t            crc;
+} ControllerSaveCRC_T;
+
 // =============
 // ============= local variables
 // =============
 
 // main working variable, array of 8 controllers
 Controller_T ctrl[NUMBER_OF_CONTROLLERS];
+
+__NOINIT_DEF ControllerSaveCRC_T ctrlSaveData[NUMBER_OF_CONTROLLERS];
 
 static int requestGetEHCdata = 0;  // flag for pending send of EHC data
 
@@ -363,18 +406,25 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
     this->status.initialized = 0;
     if (config.silent)
     {  // clear all data fields
-      this->config               = uint16ToConfig(0);
-      this->final                = 8000;
-      this->lastFinal            = ~this->final;
-      this->used_max             = 0;
-      this->used_min             = 65535;
-      this->range_scale          = 0;
-      this->status.isAutoRanged  = 0;
-      this->status.isRamping     = 0;
-      this->status.isReset       = 0;
-      this->status.isSettled     = 0;
-      this->status.outputIsValid = 0;
-      this->status.pluggedIn     = 0;
+      this->config        = uint16ToConfig(0);
+      this->config.hwId   = config.hwId;
+      this->config.silent = config.silent;
+      this->config.ctrlId = config.ctrlId;
+
+      EHC_ControllerStatus_T tmp = this->status;
+      this->status               = uint16ToStatus(0);
+      this->status.isSaved       = tmp.isSaved;
+      this->status.isRestored    = tmp.isRestored;
+
+      this->final       = 8000;
+      this->lastFinal   = ~this->final;
+      this->used_min    = 65535;
+      this->used_max    = 0;
+      this->min         = 65535;
+      this->max         = 0;
+      this->range_scale = 0;
+      this->wait        = 0;
+      this->step        = 0;
     }
     return;
   }
@@ -463,6 +513,52 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   this->status.isReset     = 1;
   this->status.pluggedIn   = 0;
   InitAutoRange(this);
+}
+
+static int initControllerFromSavedState(const ControllerSaveCRC_T *ctrlData)
+{
+  if (crcFast((uint8_t const *) &ctrlData->saveData, sizeof ctrlData->saveData) != ctrlData->crc)
+  {
+    DBG_Led_Error_TimedOn(10);  // ???
+    return 0;
+  }
+  initController(ctrlData->saveData.config, 1);
+  Controller_T *this = &ctrl[ctrlData->saveData.config.ctrlId];
+  // this->status            = ctrlData->saveData.status;
+  this->status.isRestored = 1;
+  this->status.isSaved    = 0;
+  this->min               = ctrlData->saveData.min;
+  this->max               = ctrlData->saveData.max;
+  this->used_min          = ctrlData->saveData.used_min;
+  this->used_max          = ctrlData->saveData.used_max;
+  this->range_scale       = ctrlData->saveData.range_scale;
+  DBG_Led_Warning_TimedOn(10);  // ???
+  return 1;
+}
+
+static void saveControllerState(Controller_T *const this, ControllerSaveCRC_T *ctrlData)
+{
+  ctrlData->saveData.config = this->config;
+  ctrlData->saveData.status = this->status;
+  this->status.isSaved      = 1;
+  // this->status.isRestored        = 0;
+  ctrlData->saveData.min         = this->min;
+  ctrlData->saveData.max         = this->max;
+  ctrlData->saveData.used_min    = this->used_min;
+  ctrlData->saveData.used_max    = this->used_max;
+  ctrlData->saveData.range_scale = this->range_scale;
+  ctrlData->crc                  = crcFast((uint8_t const *) &ctrlData->saveData, sizeof ctrlData->saveData);
+  DBG_Led_Warning_TimedOn(1);  // ???
+}
+
+static int savedControllerStateIsDifferent(Controller_T *const this, ControllerSaveCRC_T *ctrlData)
+{
+  return !((configToUint16(ctrlData->saveData.config) == configToUint16(this->config))
+           && (ctrlData->saveData.min == this->min)
+           && (ctrlData->saveData.max == this->max)
+           && (ctrlData->saveData.used_min == this->used_min)
+           && (ctrlData->saveData.used_max == this->used_max)
+           && (ctrlData->saveData.range_scale == this->range_scale));
 }
 
 /*************************************************************************/ /**
@@ -562,10 +658,12 @@ static int doAutoRange(Controller_T *const this, const int value, int *const out
       if ((this->used_max <= this->used_min) || (100 * (int) this->used_max / (int) this->used_min < AR_SPAN_RHEO))  // not enough autorange span (max/min < limit)?
         return 0;
     }
-    this->status.isAutoRanged = 1;  // a valid auto-range span of values has been detected
+    // a valid auto-range span of values has now been detected
   }
   if (this->used_min >= this->used_max)
     return 0;
+
+  this->status.isAutoRanged = 1;
 
   // scale output value via autorange
   if (value < this->used_min)
@@ -820,14 +918,12 @@ void NL_EHC_InitControllers(void)
   requestGetEHCdata = 0;
   enableEHC         = 1;
   EHC_initSampleBuffers();
-  initController(uint16ToConfig(0xF800), 1);
-  initController(uint16ToConfig(0xF900), 1);
-  initController(uint16ToConfig(0xFA00), 1);
-  initController(uint16ToConfig(0xFB00), 1);
-  initController(uint16ToConfig(0xFC00), 1);
-  initController(uint16ToConfig(0xFD00), 1);
-  initController(uint16ToConfig(0xFE00), 1);
-  initController(uint16ToConfig(0xFF00), 1);
+
+  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+  {
+    if (!initControllerFromSavedState(&ctrlSaveData[i]))
+      initController(uint16ToConfig(0xF800 | (i << 8)), 1);
+  }
 
 #if 0
   // debug ??? enable all 8 controllers as rheostats
@@ -939,6 +1035,8 @@ void NL_EHC_SendEHCdata(void)
   BB_MSG_WriteMessage(BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
   BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_EHC_DATA, 1);
   BB_MSG_SendTheBuffer();
+  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+    ctrl[i].status.isSaved = 0;
 #undef EHC_DATA_MSG_SIZE
 }
 void NL_EHC_RequestToSendEHCdata(void)
@@ -1037,6 +1135,7 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
 ******************************************************************************/
 void NL_EHC_ProcessControllers(void)
 {
+  static uint32_t checkTimer = EEPROM_UPDATE_CHECK_TIME;
   // any processing only after buffers are fully filled initially, also gives some initial power-up settling
   if (!EHC_fillSampleBuffers())
     return;
@@ -1066,6 +1165,24 @@ void NL_EHC_ProcessControllers(void)
   {
     requestGetEHCdata = 0;
     NL_EHC_SendEHCdata();
+  }
+
+  if (!--checkTimer)
+  {
+    checkTimer      = EEPROM_UPDATE_CHECK_TIME;
+    int writeNeeded = 0;
+    for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+    {
+      if (savedControllerStateIsDifferent(&ctrl[i], &ctrlSaveData[i]))
+      {
+        writeNeeded = 1;
+        saveControllerState(&ctrl[i], &ctrlSaveData[i]);
+      }
+      if (writeNeeded)
+      {
+        // initiate write to EEPROM
+      }
+    }
   }
 
 // temp ????? send raw data
