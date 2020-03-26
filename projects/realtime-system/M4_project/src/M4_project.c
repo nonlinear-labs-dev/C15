@@ -31,6 +31,7 @@
 #include "sup/nl_sup.h"
 #include "heartbeat/nl_heartbeat.h"
 #include "sys/nl_eeprom.h"
+#include "sys/crc.h"
 
 #define DBG_CLOCK_MONITOR (0)
 
@@ -62,6 +63,9 @@ void Init(void)
 
   /* EEPROM */
   NL_EEPROM_Init();
+
+  /* crc */
+  crcInit();
 
   /* USB */
   USB_MIDI_Init();
