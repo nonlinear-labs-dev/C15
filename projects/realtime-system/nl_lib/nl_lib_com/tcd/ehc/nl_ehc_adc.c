@@ -41,8 +41,8 @@ EHC_AdcBuffer_T EHC_adc[ADC_CHANNELS] = {
   { IPC_ADC_PEDAL4_RING, IPC_ADC_PEDAL4_DETECT },
 };
 
-static uint16_t sbuf_index;                 // index of current front element for all sample buffers
-static int      sampleBuffersInvalid = 40;  // flag until buffers are full, after init
+static uint16_t sbuf_index;                            // index of current front element for all sample buffers
+static int      sampleBuffersInvalid = SBUF_SIZE * 2;  // flag until buffers are full, after init
 
 /*************************************************************************/ /**
 * @brief	InitSampleBuffers and ADCs
