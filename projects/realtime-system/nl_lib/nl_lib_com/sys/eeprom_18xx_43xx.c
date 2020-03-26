@@ -44,7 +44,7 @@
  ****************************************************************************/
 
 /* Setup EEPROM clock */
-STATIC void setClkDiv(LPC_EEPROM_T *pEEPROM)
+static void setClkDiv(LPC_EEPROM_T *pEEPROM)
 {
   uint32_t clk;
 
@@ -54,7 +54,7 @@ STATIC void setClkDiv(LPC_EEPROM_T *pEEPROM)
 }
 
 /* Setup EEPROM clock */
-STATIC INLINE void setWaitState(LPC_EEPROM_T *pEEPROM)
+static inline void setWaitState(LPC_EEPROM_T *pEEPROM)
 {
   /* Setup EEPROM wait states*/
   Chip_EEPROM_SetReadWaitState(pEEPROM, EEPROM_READ_WAIT_STATE_VAL);
@@ -82,6 +82,12 @@ void Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM_T *pEEPROM)
   Chip_EEPROM_WaitForIntStatus(pEEPROM, EEPROM_INT_ENDOFPROG);
 }
 
+void Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM_T *pEEPROM)
+{
+  Chip_EEPROM_ClearIntStatus(pEEPROM, EEPROM_CMD_ERASE_PRG_PAGE);
+  Chip_EEPROM_SetCmd(pEEPROM, EEPROM_CMD_ERASE_PRG_PAGE);
+}
+
 /* Wait for interrupt */
 void Chip_EEPROM_WaitForIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask)
 {
@@ -95,4 +101,14 @@ void Chip_EEPROM_WaitForIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask)
     }
   }
   Chip_EEPROM_ClearIntStatus(pEEPROM, mask);
+}
+
+int Chip_EEPROM_PollIntStatus(LPC_EEPROM_T *pEEPROM)
+{
+  if ((Chip_EEPROM_GetIntStatus(pEEPROM) & EEPROM_INT_ENDOFPROG) == EEPROM_INT_ENDOFPROG)
+  {
+    Chip_EEPROM_ClearIntStatus(pEEPROM, EEPROM_INT_ENDOFPROG);
+    return 0;
+  }
+  return 1;
 }

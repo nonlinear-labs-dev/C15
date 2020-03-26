@@ -32,14 +32,8 @@
 #ifndef _EEPROM_18XX_43XX_H_
 #define _EEPROM_18XX_43XX_H_
 
-/** @defgroup EEPROM_18XX_43XX CHIP: LPC18xx/43xx EEPROM driver
- * @ingroup CHIP_18XX_43XX_Drivers
- * @{
- */
-
 #include <stdint.h>
 
-/* FIX ME: Move to chip.h */
 /** EEPROM start address */
 #define EEPROM_START (0x20040000)
 /** EEPROM byes per page */
@@ -52,31 +46,25 @@
 #define EEPROM_READ_WAIT_STATE_VAL   0x58
 #define EEPROM_WAIT_STATE_VAL        0x232
 
-#define __IO   volatile
-#define __O    volatile
-#define __I    volatile const
-#define STATIC static
-#define INLINE inline
-
 /**
  * @brief EEPROM register block structure
  */
 typedef struct
-{                    /* EEPROM Structure */
-  __IO uint32_t CMD; /*!< EEPROM command register */
-  uint32_t      RESERVED0;
-  __IO uint32_t RWSTATE;  /*!< EEPROM read wait state register */
-  __IO uint32_t AUTOPROG; /*!< EEPROM auto programming register */
-  __IO uint32_t WSTATE;   /*!< EEPROM wait state register */
-  __IO uint32_t CLKDIV;   /*!< EEPROM clock divider register */
-  __IO uint32_t PWRDWN;   /*!< EEPROM power-down register */
-  uint32_t      RESERVED2[1007];
-  __O uint32_t  INTENCLR;   /*!< EEPROM interrupt enable clear */
-  __O uint32_t  INTENSET;   /*!< EEPROM interrupt enable set */
-  __I uint32_t  INTSTAT;    /*!< EEPROM interrupt status */
-  __I uint32_t  INTEN;      /*!< EEPROM interrupt enable */
-  __O uint32_t  INTSTATCLR; /*!< EEPROM interrupt status clear */
-  __O uint32_t  INTSTATSET; /*!< EEPROM interrupt status set */
+{                              /* EEPROM Structure */
+  volatile uint32_t       CMD; /*!< EEPROM command register */
+  uint32_t                RESERVED0;
+  volatile uint32_t       RWSTATE;  /*!< EEPROM read wait state register */
+  volatile uint32_t       AUTOPROG; /*!< EEPROM auto programming register */
+  volatile uint32_t       WSTATE;   /*!< EEPROM wait state register */
+  volatile uint32_t       CLKDIV;   /*!< EEPROM clock divider register */
+  volatile uint32_t       PWRDWN;   /*!< EEPROM power-down register */
+  uint32_t                RESERVED2[1007];
+  volatile uint32_t       INTENCLR;   /*!< EEPROM interrupt enable clear */
+  volatile uint32_t       INTENSET;   /*!< EEPROM interrupt enable set */
+  volatile const uint32_t INTSTAT;    /*!< EEPROM interrupt status */
+  volatile const uint32_t INTEN;      /*!< EEPROM interrupt enable */
+  volatile uint32_t       INTSTATCLR; /*!< EEPROM interrupt status clear */
+  volatile uint32_t       INTSTATSET; /*!< EEPROM interrupt status set */
 } LPC_EEPROM_T;
 
 #define LPC_EEPROM ((LPC_EEPROM_T *) (0x4000E000))
@@ -92,7 +80,7 @@ typedef struct
 #define EEPROM_AUTOPROG_OFF                 (0) /*!<Auto programming off */
 #define EEPROM_AUTOPROG_AFT_1WORDWRITTEN    (1) /*!< Erase/program cycle is triggered after 1 word is written */
 #define EEPROM_AUTOPROG_AFT_LASTWORDWRITTEN (2) /*!< Erase/program cycle is triggered after a write to AHB
-														   address ending with ......1111100 (last word of a page) */
+												     address ending with ......1111100 (last word of a page) */
 
 /*
  * @brief Macro defines for EEPROM power down register
@@ -109,7 +97,7 @@ typedef struct
  * @param	pEEPROM	: Pointer to EEPROM peripheral block structure
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_EnablePowerDown(LPC_EEPROM_T *pEEPROM)
+static inline void Chip_EEPROM_EnablePowerDown(LPC_EEPROM_T *pEEPROM)
 {
   pEEPROM->PWRDWN = EEPROM_PWRDWN;
 }
@@ -119,7 +107,7 @@ STATIC INLINE void Chip_EEPROM_EnablePowerDown(LPC_EEPROM_T *pEEPROM)
  * @param	pEEPROM	: Pointer to EEPROM peripheral block structure
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_DisablePowerDown(LPC_EEPROM_T *pEEPROM)
+static inline void Chip_EEPROM_DisablePowerDown(LPC_EEPROM_T *pEEPROM)
 {
   pEEPROM->PWRDWN = 0;
 }
@@ -136,7 +124,7 @@ void Chip_EEPROM_Init(LPC_EEPROM_T *pEEPROM);
  * @param	pEEPROM	: Pointer to EEPROM peripheral block structure
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_DeInit(LPC_EEPROM_T *pEEPROM)
+static inline void Chip_EEPROM_DeInit(LPC_EEPROM_T *pEEPROM)
 {
   /* Enable EEPROM power down mode */
   Chip_EEPROM_EnablePowerDown(pEEPROM);
@@ -148,7 +136,7 @@ STATIC INLINE void Chip_EEPROM_DeInit(LPC_EEPROM_T *pEEPROM)
  * @param	mode	: Auto Program Mode (One of EEPROM_AUTOPROG_* value)
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_SetAutoProg(LPC_EEPROM_T *pEEPROM, uint32_t mode)
+static inline void Chip_EEPROM_SetAutoProg(LPC_EEPROM_T *pEEPROM, uint32_t mode)
 {
   pEEPROM->AUTOPROG = mode;
 }
@@ -161,7 +149,7 @@ STATIC INLINE void Chip_EEPROM_SetAutoProg(LPC_EEPROM_T *pEEPROM, uint32_t mode)
  * @note    Bits 7:0 represents wait state for Read Phase 2 and
  *          Bits 15:8 represents wait state for Read Phase1
  */
-STATIC INLINE void Chip_EEPROM_SetReadWaitState(LPC_EEPROM_T *pEEPROM, uint32_t ws)
+static inline void Chip_EEPROM_SetReadWaitState(LPC_EEPROM_T *pEEPROM, uint32_t ws)
 {
   pEEPROM->RWSTATE = ws;
 }
@@ -175,7 +163,7 @@ STATIC INLINE void Chip_EEPROM_SetReadWaitState(LPC_EEPROM_T *pEEPROM, uint32_t 
  *          Bits 15:8 represents wait state for Phase2, and
  *          Bits 23:16 represents wait state for Phase1
  */
-STATIC INLINE void Chip_EEPROM_SetWaitState(LPC_EEPROM_T *pEEPROM, uint32_t ws)
+static inline void Chip_EEPROM_SetWaitState(LPC_EEPROM_T *pEEPROM, uint32_t ws)
 {
   pEEPROM->WSTATE = ws;
 }
@@ -187,7 +175,7 @@ STATIC INLINE void Chip_EEPROM_SetWaitState(LPC_EEPROM_T *pEEPROM, uint32_t ws)
  * @return	Nothing
  * @note	The cmd is OR-ed bits value of  EEPROM_CMD_*
  */
-STATIC INLINE void Chip_EEPROM_SetCmd(LPC_EEPROM_T *pEEPROM, uint32_t cmd)
+static inline void Chip_EEPROM_SetCmd(LPC_EEPROM_T *pEEPROM, uint32_t cmd)
 {
   pEEPROM->CMD = cmd;
 }
@@ -198,6 +186,7 @@ STATIC INLINE void Chip_EEPROM_SetCmd(LPC_EEPROM_T *pEEPROM, uint32_t cmd)
  * @return	Nothing
  */
 void Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM_T *pEEPROM);
+void Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM_T *pEEPROM);
 
 /**
  * @brief	Wait for interrupt occurs
@@ -206,6 +195,7 @@ void Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM_T *pEEPROM);
  * @return	Nothing
  */
 void Chip_EEPROM_WaitForIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask);
+int  Chip_EEPROM_PollIntStatus(LPC_EEPROM_T *pEEPROM);
 
 /**
  * @brief	Enable EEPROM interrupt
@@ -213,7 +203,7 @@ void Chip_EEPROM_WaitForIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask);
  * @param	mask	: Interrupt mask (or-ed bits value of EEPROM_INT_*)
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_EnableInt(LPC_EEPROM_T *pEEPROM, uint32_t mask)
+static inline void Chip_EEPROM_EnableInt(LPC_EEPROM_T *pEEPROM, uint32_t mask)
 {
   pEEPROM->INTENSET = mask;
 }
@@ -224,7 +214,7 @@ STATIC INLINE void Chip_EEPROM_EnableInt(LPC_EEPROM_T *pEEPROM, uint32_t mask)
  * @param	mask	: Interrupt mask (or-ed bits value of EEPROM_INT_*)
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_DisableInt(LPC_EEPROM_T *pEEPROM, uint32_t mask)
+static inline void Chip_EEPROM_DisableInt(LPC_EEPROM_T *pEEPROM, uint32_t mask)
 {
   pEEPROM->INTENCLR = mask;
 }
@@ -234,7 +224,7 @@ STATIC INLINE void Chip_EEPROM_DisableInt(LPC_EEPROM_T *pEEPROM, uint32_t mask)
  * @param	pEEPROM	: Pointer to EEPROM peripheral block structure
  * @return	OR-ed bits value of EEPROM_INT_*
  */
-STATIC INLINE uint32_t Chip_EEPROM_GetIntEnable(LPC_EEPROM_T *pEEPROM)
+static inline uint32_t Chip_EEPROM_GetIntEnable(LPC_EEPROM_T *pEEPROM)
 {
   return pEEPROM->INTEN;
 }
@@ -244,7 +234,7 @@ STATIC INLINE uint32_t Chip_EEPROM_GetIntEnable(LPC_EEPROM_T *pEEPROM)
  * @param	pEEPROM	: Pointer to EEPROM peripheral block structure
  * @return	OR-ed bits value of EEPROM_INT_*
  */
-STATIC INLINE uint32_t Chip_EEPROM_GetIntStatus(LPC_EEPROM_T *pEEPROM)
+static inline uint32_t Chip_EEPROM_GetIntStatus(LPC_EEPROM_T *pEEPROM)
 {
   return pEEPROM->INTSTAT;
 }
@@ -255,7 +245,7 @@ STATIC INLINE uint32_t Chip_EEPROM_GetIntStatus(LPC_EEPROM_T *pEEPROM)
  * @param	mask	: Interrupt mask (or-ed bits value of EEPROM_INT_*)
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_SetIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask)
+static inline void Chip_EEPROM_SetIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask)
 {
   pEEPROM->INTSTATSET = mask;
 }
@@ -266,7 +256,7 @@ STATIC INLINE void Chip_EEPROM_SetIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask
  * @param	mask	: Interrupt mask (or-ed bits value of EEPROM_INT_*)
  * @return	Nothing
  */
-STATIC INLINE void Chip_EEPROM_ClearIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask)
+static inline void Chip_EEPROM_ClearIntStatus(LPC_EEPROM_T *pEEPROM, uint32_t mask)
 {
   pEEPROM->INTSTATCLR = mask;
 }

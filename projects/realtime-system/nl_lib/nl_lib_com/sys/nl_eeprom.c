@@ -17,23 +17,17 @@
 /* Page used for storage */
 #define PAGE_ADDR 0x01 /* Page number */
 
-/* Tag for checking if a string already exists in EEPROM */
-#define CHKTAG      "NlL"
-#define CHKTAG_SIZE 3
-
-/* ASCII ESC character code */
-#define ESC_CHAR 27
-
-/* Read/write buffer (32-bit aligned) */
-uint32_t buffer[EEPROM_PAGE_SIZE / sizeof(uint32_t)];
-
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
 
+/*****************************************************************************
+ * Public functions
+ ****************************************************************************/
+
 /* Read data from EEPROM */
 /* size must be multiple of 4 bytes */
-STATIC void EEPROM_Read(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, uint32_t size)
+static void EEPROM_Read(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, uint32_t size)
 {
   uint32_t  i          = 0;
   uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(pageAddr, pageOffset);
@@ -44,7 +38,7 @@ STATIC void EEPROM_Read(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, u
 }
 
 /* Erase a page in EEPROM */
-STATIC void EEPROM_Erase(uint32_t pageAddr)
+static void EEPROM_Erase(uint32_t pageAddr)
 {
   uint32_t  i          = 0;
   uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(pageAddr, 0);
@@ -57,7 +51,7 @@ STATIC void EEPROM_Erase(uint32_t pageAddr)
 
 /* Write data to a page in EEPROM */
 /* size must be multiple of 4 bytes */
-STATIC void EEPROM_Write(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, uint32_t size)
+static void EEPROM_Write(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, uint32_t size)
 {
   uint32_t  i          = 0;
   uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(pageAddr, pageOffset);
@@ -72,21 +66,14 @@ STATIC void EEPROM_Write(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, 
   Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM);
 }
 
-/*****************************************************************************
- * Private functions
- ****************************************************************************/
-
-/**
- * @brief	Main program body
- * @return	Does not return
- */
+/* Initialize eeprom access */
 void NL_EEPROM_Init(void)
 {
   Chip_EEPROM_Init(LPC_EEPROM);
   Chip_EEPROM_SetAutoProg(LPC_EEPROM, EEPROM_AUTOPROG_OFF);
 
 #if 0  // test code
-  uint32_t buffer[32];
+  uint32_t buffer[EEPROM_PAGE_SIZE / sizeof(uint32_t)];
   EEPROM_Read(0, PAGE_ADDR, buffer, EEPROM_PAGE_SIZE);
   EEPROM_Erase(PAGE_ADDR);
 
