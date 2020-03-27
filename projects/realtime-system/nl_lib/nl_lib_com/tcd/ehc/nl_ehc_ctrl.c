@@ -14,6 +14,7 @@
 #include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
 #include "sys/crc.h"
+#include "sys/nl_eeprom.h"
 #include <cr_section_macros.h>
 #include <stdlib.h>
 
@@ -54,8 +55,8 @@ static void ShowSettlingDisplay(void)
 #endif
 }
 
-#define WAIT_TIME_AFTER_PLUGIN   (120)  // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
-#define EEPROM_UPDATE_CHECK_TIME (160)  // 2secs time interval to check controller state against saved state
+#define WAIT_TIME_AFTER_PLUGIN   (120)     // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
+#define EEPROM_UPDATE_CHECK_TIME (80 * 5)  // 5secs time interval to check controller state against saved state
 
 #define NUMBER_OF_CONTROLLERS (8)  // 4 jacks, each with tip and ring ADC channels
 
@@ -340,8 +341,8 @@ typedef struct
 
 // main working variable, array of 8 controllers
 Controller_T ctrl[NUMBER_OF_CONTROLLERS];
-
-__NOINIT_DEF ControllerSaveCRC_T ctrlSaveData[NUMBER_OF_CONTROLLERS];
+// EEPROM save/restore buffer
+ControllerSaveCRC_T ctrlSaveData[NUMBER_OF_CONTROLLERS];
 
 static int requestGetEHCdata = 0;  // flag for pending send of EHC data
 
@@ -458,14 +459,15 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   }
 
   // check for conflicting controllers and disable them
-  Controller_T *that;
+  uint8_t                thatId      = this->config.ctrlId ^ 0b001;
+  Controller_T *         that        = &ctrl[thatId];
+  EHC_ControllerConfig_T clearConfig = uint16ToConfig(0xF800 | (thatId << 8));
   if (this->config.is3wire)  // controller using both ADCs ?
   {                          // check if there is something on the secondary channel and disable it
-    that = &ctrl[this->config.ctrlId ^ 0b001];
     if (that->status.initialized)
-    {
-      that->status.initialized = 0;  // remove controller from processing
-    }                                // subsequent init will take care of pullups
+    {  // remove controller from processing
+      initController(clearConfig, 0);
+    }  // subsequent init will take care of pullups
   }
   else  // 2-wire now, so check if there is a 3-wire pot on this jack and clear/disable
   {
@@ -474,11 +476,10 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
       this->top->flags.pullup_10k = 0;  // make the former top end input High-Z
     }
 
-    that = &ctrl[this->config.ctrlId ^ 0b001];
     if (that->status.initialized && that->config.is3wire)
     {                                   // found an initialized 3-wire at the adjacent controller ID
       that->top->flags.pullup_10k = 0;  // make the top end input High-Z
-      that->status.initialized    = 0;  // and remove controller from processing
+      initController(clearConfig, 0);   // and remove controller from processing
     }
   }
 
@@ -519,7 +520,7 @@ static int initControllerFromSavedState(const ControllerSaveCRC_T *ctrlData)
 {
   if (crcFast((uint8_t const *) &ctrlData->saveData, sizeof ctrlData->saveData) != ctrlData->crc)
   {
-    DBG_Led_Error_TimedOn(10);  // ???
+    // DBG_Led_Error_TimedOn(10);  // ???
     return 0;
   }
   initController(ctrlData->saveData.config, 1);
@@ -532,7 +533,7 @@ static int initControllerFromSavedState(const ControllerSaveCRC_T *ctrlData)
   this->used_min          = ctrlData->saveData.used_min;
   this->used_max          = ctrlData->saveData.used_max;
   this->range_scale       = ctrlData->saveData.range_scale;
-  DBG_Led_Warning_TimedOn(10);  // ???
+  // DBG_Led_Warning_TimedOn(10);  // ???
   return 1;
 }
 
@@ -548,7 +549,7 @@ static void saveControllerState(Controller_T *const this, ControllerSaveCRC_T *c
   ctrlData->saveData.used_max    = this->used_max;
   ctrlData->saveData.range_scale = this->range_scale;
   ctrlData->crc                  = crcFast((uint8_t const *) &ctrlData->saveData, sizeof ctrlData->saveData);
-  DBG_Led_Warning_TimedOn(1);  // ???
+  // DBG_Led_Warning_TimedOn(1);  // ???
 }
 
 static int savedControllerStateIsDifferent(Controller_T *const this, ControllerSaveCRC_T *ctrlData)
@@ -595,14 +596,6 @@ void resetControllerById(const uint16_t id, const uint16_t wait_time)
     return;
   Controller_T *this = &ctrl[id];
   resetController(this, wait_time);
-}
-
-/*************************************************************************/ /**
-* @brief	Clear / Disable a controller
-******************************************************************************/
-static void clearController(Controller_T *const this)
-{
-  this->status.initialized = 0;
 }
 
 // --------------- get potentiometer or variable resistor value
@@ -919,56 +912,13 @@ void NL_EHC_InitControllers(void)
   enableEHC         = 1;
   EHC_initSampleBuffers();
 
+  NL_EEPROM_Read(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
+
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
   {
     if (!initControllerFromSavedState(&ctrlSaveData[i]))
       initController(uint16ToConfig(0xF800 | (i << 8)), 1);
   }
-
-#if 0
-  // debug ??? enable all 8 controllers as rheostats
-  EHC_ControllerConfig_T config;
-
-  config.autoHoldStrength = 2;
-  config.continuous = 1;
-  config.doAutoRanging = 1;
-  config.is3wire = 0;
-  config.polarityInvert = 0;
-  config.pullup = 1;
-
-  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
-  {
-	config.ctrlId = i;
-	switch (i)
-	{
-	case 0 :
-	  config.hwId = 0;
-	  break;
-	case 1 :
-	  config.hwId = 1;
-	  break;
-	case 2 :
-	  config.hwId = 2;
-	  break;
-	case 3 :
-	  config.hwId = 3;
-	  break;
-	case 4 :
-	  config.hwId = 8;
-	  break;
-	case 5 :
-	  config.hwId = 9;
-	  break;
-	case 6 :
-	  config.hwId = 10;
-	  break;
-	case 7 :
-	  config.hwId = 11;
-	  break;
-	}
-	initController(config, 1);
-  }
-#endif
 }
 
 // set ranging min and max
@@ -1086,18 +1036,6 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
       tmp.polarityInvert   = 0;
       tmp.doAutoRanging    = 1;
       tmp.silent           = 0;
-#if 0  // ??? debug
-      // rheo, tip active
-      tmp.ctrlId           = controller * 2;  // even adc's are tip
-      tmp.hwId             = controller;
-      tmp.is3wire          = 0;
-      tmp.pullup           = 1;
-      tmp.continuous       = 1;
-      tmp.autoHoldStrength = 2;
-      tmp.polarityInvert   = 0;
-      tmp.doAutoRanging    = 1;
-      tmp.silent           = 0;
-#endif
       break;
     case 2:
       // switch, closing, on Tip
@@ -1179,36 +1117,9 @@ void NL_EHC_ProcessControllers(void)
         saveControllerState(&ctrl[i], &ctrlSaveData[i]);
       }
       if (writeNeeded)
-      {
-        // initiate write to EEPROM
-      }
+        NL_EEPROM_StartWrite(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
     }
   }
-
-// temp ????? send raw data
-#if 0
-  {
-    uint16_t data[13];
-    data[0] = adc[0].detect << 0
-        | adc[2].detect << 1
-        | adc[4].detect << 2
-        | adc[6].detect << 3;
-    data[1]  = adc[0].filtered_current;
-    data[2]  = adc[1].filtered_current;
-    data[3]  = ctrl[0].final;
-    data[4]  = 0;
-    data[5]  = 0;
-    data[6]  = 0;
-    data[7]  = adc[6].filtered_current;
-    data[8]  = adc[7].filtered_current;
-    data[9]  = 0;
-    data[10] = 0;
-    data[11] = 0;
-    data[12] = 0;
-    BB_MSG_WriteMessage(BB_MSG_TYPE_SENSORS_RAW, 13, data);
-    BB_MSG_SendTheBuffer();
-  }
-#endif
 }
 
 // EOF
