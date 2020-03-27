@@ -33,7 +33,8 @@
 
 //------- public functions
 
-void ADC_WORK_Init(void);
+void ADC_WORK_Init1(void);
+void ADC_WORK_Init2(void);
 
 void ADC_WORK_Process(void);
 //void ADC_WORK_Suspend(void);

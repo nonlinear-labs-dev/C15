@@ -245,10 +245,8 @@ void ClearHWValuesForBB(void)
 /*****************************************************************************
 * @brief	ADC_WORK_Init -
 ******************************************************************************/
-void ADC_WORK_Init(void)
+void ADC_WORK_Init1(void)
 {
-  uint32_t i;
-
   lastPitchbend = 0;
   pitchbendZero = 2048;
 
@@ -271,7 +269,7 @@ void ADC_WORK_Init(void)
   ADC_WORK_Select_AftertouchTable(1);
 
   // initialize ribbon data
-  for (i = 0; i <= 1; i++)
+  for (int i = 0; i <= 1; i++)
   {
     ribbon[i].last          = 0;
     ribbon[i].touch         = 0;
@@ -286,7 +284,10 @@ void ADC_WORK_Init(void)
     ribbon[i].ipcId         = (i == 0 ? IPC_ADC_RIBBON1 : IPC_ADC_RIBBON2);
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
+}
 
+void ADC_WORK_Init2(void)
+{
   NL_EHC_InitControllers();
 
   ClearHWValuesForBB();
