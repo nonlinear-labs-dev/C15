@@ -1,10 +1,9 @@
-LPC firmware Version 206 (for Milestone 1.7) features:
-
+LPC firmware Version 206 (beta V. 59206) (for Milestone 1.7) features:
 
 
 0) Proccesing changes : 
-The last pressed key on the keybed is now sent to the BBB with update BB message "BB_MSG_TYPE_PARAMETER, 8"
-(8 is the index for this new "HW_SOURCE" #9)
+The last pressed key on the keybed is now sent to the BBB with update BB message "BB_MSG_TYPE_PARAMETER, 12"
+(12 is the index for this new "HW_SOURCE" #13)
 
 For other updates on TCD processing etc, ask SSC ;-)
 
@@ -31,7 +30,8 @@ make at the proper time points later until all pending calls are made.
 	- the buffer to hold message data for BBB -- SPI connection -- overruns (BBB not ready), short flash. 
 	  Note: buffer is thrown away to avoid stalling.
 	- the buffer to hold TCD data for ePC -- USB connection -- overruns, long flash.
-	  Note: USB hardware disconnect/reconnect currently stalls the LPC with only hardware reset fixing it!
+	  USB hardware disconnect/reconnect previously stalled the LPC with only hardware reset as a remedy
+          but this problem has been fixed now.
 
 
 
@@ -45,15 +45,15 @@ See functions "ADC_WORK_SetRibbonCalibration()" and "BB_MSG_ReceiveCallback()" f
 
 
 3) Heartbeat functionality
-Heartbeat signal from the Audio Engine is received, combined with (added to) the local heartbeat counter and then transmitted to the BBB,
-with the new BB message "BB_MSG_TYPE_HEARTBEAT".
+3a)Heartbeat signal from the Audio Engine is received which is used to signal audio muting to the Supervisor.
 The Audio Engine sends its 42bit (unsigned) heartbeat signal every 100ms and it is comprised of a MIDI sequence of three 'Aftertouch' commands,
 which must be strictly in order (no gaps with other data in between) :
 	- 0xA0 0b0lllllll 0b0hhhhhh	: bits 0..6 (l)   and bits 7..13 (h)  of heartbeat counter
 	- 0xA1 0b0lllllll 0b0hhhhhh	: bits 14..20 (l) and bits 21..27 (h) of heartbeat counter
 	- 0xA2 0b0lllllll 0b0hhhhhh	: bits 28..34 (l) and bits 35..41 (h) of heartbeat counter
-The local heartbeat is 64bit unsigned.
-When no incoming heartbeat is received, no outgoing heartbeat will be transmitted.
+3b) A local heartbeat (64bit unsigned upcounter) is generated and transmitted to the Playground every 100ms so that it can detect
+if the LPC was reset or isn't running. This heartbeat is independant to the Audio Engine heartbeat (unlike to the MS1.5 mechanisms).
+
 
 
 
@@ -106,3 +106,7 @@ By default, the function is disabled to avoid unneccessary traffic.
 It can be enabled/disabled by new BB message "BB_MSG_TYPE_SETTING, SETTING_ID_SEND_RAW_SENSOR_DATA"
 
 
+
+
+6) Complete rewrite for External Hardware Controllers (formerly knwon as Pedal).
+See ExternalHardwareControllers_API_V1.0 for details.
