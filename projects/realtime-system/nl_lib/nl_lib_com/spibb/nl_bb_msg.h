@@ -88,6 +88,12 @@
 // #define SETTING_ID_SEND_FORCED_KEY        0xFF03  // unused
 #define SETTING_ID_ENABLE_EHC 0xFF04  // direction: input; arguments(uint16): 1, flag (!= 0)
 
+//----- EHC command Ids:
+#define EHC_COMMAND_SET_CONTROL_REGISTER 0x0100  // configure a controller
+#define EHC_COMMAND_SET_RANGE_MIN        0x0200  // set lower end of ranging
+#define EHC_COMMAND_SET_RANGE_MAX        0x0300  // set upper end of ranging
+#define EHC_COMMAND_RESET_DELETE         0x0400  // reset or delete a controller
+
 //----- Request Ids:
 
 #define REQUEST_ID_SW_VERSION    0x0000
