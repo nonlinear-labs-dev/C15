@@ -26,44 +26,98 @@
  ****************************************************************************/
 
 /* Read data from EEPROM */
-/* size must be multiple of 4 bytes */
-static void EEPROM_Read(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, uint32_t size)
+/* in 32bit word chunks */
+int NL_EEPROM_Read(uint32_t const wordIndex, uint32_t *const ptr, uint32_t const count)
 {
-  uint32_t  i          = 0;
-  uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(pageAddr, pageOffset);
-  for (i = 0; i < size / 4; i++)
-  {
+  if ((count == 0) || (wordIndex + count > 127 * 32))
+    return 0;
+  uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(0, wordIndex * 4);
+  for (uint32_t i = 0; i < count; i++)
     ptr[i] = pEepromMem[i];
-  }
+  return 1;
 }
 
 /* Erase a page in EEPROM */
-static void EEPROM_Erase(uint32_t pageAddr)
+void NL_EEPROM_EraseBlocking(uint32_t const pageAddr)
 {
-  uint32_t  i          = 0;
   uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(pageAddr, 0);
-  for (i = 0; i < EEPROM_PAGE_SIZE / 4; i++)
-  {
+  for (uint32_t i = 0; i < EEPROM_PAGE_SIZE / 4; i++)
     pEepromMem[i] = 0;
-  }
   Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM);
 }
 
 /* Write data to a page in EEPROM */
-/* size must be multiple of 4 bytes */
-static void EEPROM_Write(uint32_t pageOffset, uint32_t pageAddr, uint32_t *ptr, uint32_t size)
+/* in 32bit word chunks */
+int NL_EEPROM_WriteBlocking(uint32_t const wordIndex, uint32_t *ptr, uint32_t count)
 {
-  uint32_t  i          = 0;
-  uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(pageAddr, pageOffset);
+  if ((count == 0) || (wordIndex + count > 127 * 32))
+    return 0;
+  uint32_t *pEepromMem = (uint32_t *) EEPROM_ADDRESS(0, wordIndex * 4);
 
-  if (size > EEPROM_PAGE_SIZE - pageOffset)
-    size = EEPROM_PAGE_SIZE - pageOffset;
-
-  for (i = 0; i < size / 4; i++)
+  while (count--)
   {
-    pEepromMem[i] = ptr[i];
+    *pEepromMem++ = *ptr++;
+    if (((pEepromMem - (uint32_t *) EEPROM_START) & 0x1F) == 0)
+      Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM);
   }
-  Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM);
+  if (((pEepromMem - (uint32_t *) EEPROM_START) & 0x1F) != 0)
+    Chip_EEPROM_EraseAndProgramPage(LPC_EEPROM);
+  return 1;
+}
+
+static int       step    = 0;
+static uint32_t  wcount  = 0;
+static uint32_t *pMem    = NULL;
+static uint32_t *pEeprom = NULL;
+
+int NL_EEPROM_StartWrite(uint32_t const wordIndex, uint32_t const *const ptr, uint32_t const count)
+{
+  if ((step != 0) || (count == 0) || (wordIndex + count > 127 * 32))
+    return 0;
+  pEeprom = (uint32_t *) EEPROM_ADDRESS(0, wordIndex * 4);
+  pMem    = (uint32_t *) ptr;
+  wcount  = count;
+  step    = 1;
+  return 1;
+}
+
+void NL_EEPROM_Process()
+{
+  if (step == 0)
+    return;
+  switch (step)
+  {
+    case 1:
+      while (wcount--)
+      {
+        *pEeprom++ = *pMem++;
+        if (((pEeprom - (uint32_t *) EEPROM_START) & 0x1F) == 0)
+        {  // page is full
+          Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);
+          if (wcount)  // data left ?
+            step = 2;  // then wait for write finished and continue
+          else
+            step = 3;  // then wait for write finished and exit
+          return;
+        }
+      }
+      if (((pEeprom - (uint32_t *) EEPROM_START) & 0x1F) != 0)
+      {  // fractional page left
+        Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);
+        step = 3;  // then wait for write finished and exit
+        return;
+      }
+      step = 0;
+      return;
+    case 2:  // wait for write finished and continue
+      if (Chip_EEPROM_PollIntStatus(LPC_EEPROM))
+        step = 1;
+      return;
+    case 3:  // then wait for write finished and exit
+      if (Chip_EEPROM_PollIntStatus(LPC_EEPROM))
+        step = 0;
+      return;
+  }
 }
 
 /* Initialize eeprom access */
@@ -73,16 +127,17 @@ void NL_EEPROM_Init(void)
   Chip_EEPROM_SetAutoProg(LPC_EEPROM, EEPROM_AUTOPROG_OFF);
 
 #if 0  // test code
-  uint32_t buffer[EEPROM_PAGE_SIZE / sizeof(uint32_t)];
-  EEPROM_Read(0, PAGE_ADDR, buffer, EEPROM_PAGE_SIZE);
-  EEPROM_Erase(PAGE_ADDR);
+  uint32_t buffer[70];
 
-  buffer[0] = 0x12345678;
-  buffer[1] = 0x55AAA55A;
-  EEPROM_Write(0, PAGE_ADDR, buffer, 128);
+  NL_EEPROM_Read(10, buffer, 70);
 
-  buffer[0] = 0;
-  buffer[1] = 0;
-  EEPROM_Read(0, PAGE_ADDR, buffer, EEPROM_PAGE_SIZE);
+  for (int i = 0; i < 70; i++)
+	buffer[i] = i;
+  NL_EEPROM_WriteBlocking(10, buffer, 70);
+
+  for (int i = 0; i < 70; i++)
+	buffer[i] = 0;
+
+  NL_EEPROM_Read(10, buffer, 70);
 #endif
 }

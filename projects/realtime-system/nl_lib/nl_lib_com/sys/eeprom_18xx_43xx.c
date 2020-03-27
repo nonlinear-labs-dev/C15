@@ -108,7 +108,7 @@ int Chip_EEPROM_PollIntStatus(LPC_EEPROM_T *pEEPROM)
   if ((Chip_EEPROM_GetIntStatus(pEEPROM) & EEPROM_INT_ENDOFPROG) == EEPROM_INT_ENDOFPROG)
   {
     Chip_EEPROM_ClearIntStatus(pEEPROM, EEPROM_INT_ENDOFPROG);
-    return 0;
+    return 1;
   }
-  return 1;
+  return 0;
 }
