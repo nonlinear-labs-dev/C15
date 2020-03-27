@@ -403,32 +403,30 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
 {
   Controller_T *this = &ctrl[config.ctrlId];
   if (config.hwId == 15)
-  {  // hardware source ID #15 is special and will de-activate the controller
-    this->status.initialized = 0;
-    if (config.silent)
-    {  // clear all data fields
-      this->config        = uint16ToConfig(0);
-      this->config.hwId   = config.hwId;
-      this->config.silent = config.silent;
-      this->config.ctrlId = config.ctrlId;
+  {  // hardware source ID #15 is special and will delete the controller and clear its data
+    this->config        = uint16ToConfig(0);
+    this->config.hwId   = config.hwId;
+    this->config.silent = config.silent;
+    this->config.ctrlId = config.ctrlId;
 
-      EHC_ControllerStatus_T tmp = this->status;
-      this->status               = uint16ToStatus(0);
-      this->status.isSaved       = tmp.isSaved;
-      this->status.isRestored    = tmp.isRestored;
+    EHC_ControllerStatus_T tmp = this->status;
+    this->status               = uint16ToStatus(0);
+    this->status.isSaved       = tmp.isSaved;
+    this->status.isRestored    = tmp.isRestored;
 
-      this->final       = 8000;
-      this->lastFinal   = ~this->final;
-      this->used_min    = 65535;
-      this->used_max    = 0;
-      this->min         = 65535;
-      this->max         = 0;
-      this->range_scale = 0;
-      this->wait        = 0;
-      this->step        = 0;
-    }
+    this->final       = 8000;
+    this->lastFinal   = ~this->final;
+    this->used_min    = 65535;
+    this->used_max    = 0;
+    this->min         = 65535;
+    this->max         = 0;
+    this->range_scale = 0;
+    this->wait        = 0;
+    this->step        = 0;
     return;
   }
+  if (config.hwId >= NUM_HW_REAL_SOURCES)
+    return;
 
   if (config.continuous && config.autoHoldStrength > 0)  // set paramset only for a valid index 1...4
     this->paramSet = config.autoHoldStrength - 1;
@@ -944,17 +942,17 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
 {
   switch (cmd & 0xFF00)
   {
-    case 0x0100:  // config control register
+    case EHC_COMMAND_SET_CONTROL_REGISTER:  // config control register
       initController(uint16ToConfig(data), 0);
       break;
-    case 0x0200:  // set ranging min
+    case EHC_COMMAND_SET_RANGE_MIN:  // set ranging min
       setRangeMin(cmd & 0xFF, data);
       break;
-    case 0x0300:  // set ranging max
+    case EHC_COMMAND_SET_RANGE_MAX:  // set ranging max
       setRangeMax(cmd & 0xFF, data);
       break;
-    case 0x0400:      // reset or full delete controller
-      if (data == 0)  // reset
+    case EHC_COMMAND_RESET_DELETE:  // reset or full delete controller
+      if (data == 0)                // reset
         resetControllerById(cmd & 0xFF, 0);
       else  // full delete
       {
