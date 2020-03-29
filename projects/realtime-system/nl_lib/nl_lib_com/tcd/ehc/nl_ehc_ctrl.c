@@ -317,10 +317,10 @@ typedef struct
   uint16_t rampStep;
 } Controller_T;
 
-typedef struct
+typedef struct __attribute__((packed))
 {
   EHC_ControllerConfig_T config;
-  EHC_ControllerStatus_T status;
+  // EHC_ControllerStatus_T status;
   // (auto-)ranging
   uint16_t min;          // values used to reflect ...
   uint16_t max;          // ... physical ranges.
@@ -342,11 +342,11 @@ typedef struct
 // main working variable, array of 8 controllers
 Controller_T ctrl[NUMBER_OF_CONTROLLERS];
 // EEPROM save/restore buffer
-ControllerSaveCRC_T ctrlSaveData[NUMBER_OF_CONTROLLERS];
+ControllerSaveCRC_T __attribute__((aligned(4))) ctrlSaveData[NUMBER_OF_CONTROLLERS];
 
-static int requestGetEHCdata = 0;  // flag for pending send of EHC data
-
-static int enableEHC = 1;  // master enable flag for all runtime processing (except init() etc)
+static int      requestGetEHCdata = 0;  // flag for pending send of EHC data
+static int      enableEHC         = 1;  // master enable flag for all runtime processing (except init() etc)
+static uint16_t eepromHandle;           // EEPROM access handle
 
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
@@ -538,8 +538,8 @@ static int initControllerFromSavedState(const ControllerSaveCRC_T *ctrlData)
 static void saveControllerState(Controller_T *const this, ControllerSaveCRC_T *ctrlData)
 {
   ctrlData->saveData.config = this->config;
-  ctrlData->saveData.status = this->status;
-  this->status.isSaved      = 1;
+  // ctrlData->saveData.status = this->status;
+  this->status.isSaved = 1;
   // this->status.isRestored        = 0;
   ctrlData->saveData.min         = this->min;
   ctrlData->saveData.max         = this->max;
@@ -910,7 +910,9 @@ void NL_EHC_InitControllers(void)
   enableEHC         = 1;
   EHC_initSampleBuffers();
 
-  NL_EEPROM_Read(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
+  eepromHandle = NL_EEPROM_RegisterBlock(sizeof ctrlSaveData);
+  NL_EEPROM_ReadBlock(eepromHandle, &ctrlSaveData[0]);
+  // NL_EEPROM_Read(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
 
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
   {
@@ -1115,7 +1117,8 @@ void NL_EHC_ProcessControllers(void)
         saveControllerState(&ctrl[i], &ctrlSaveData[i]);
       }
       if (writeNeeded)
-        NL_EEPROM_StartWrite(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
+        NL_EEPROM_StartWriteBlock(eepromHandle, &ctrlSaveData[0]);
+      // NL_EEPROM_StartWrite(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
     }
   }
 }

@@ -11,10 +11,11 @@
 #include <stdint.h>
 
 void NL_EEPROM_Init(void);
-int  NL_EEPROM_Read(uint32_t const wordIndex, uint32_t *const ptr, uint32_t const count);
-void NL_EEPROM_EraseBlocking(uint32_t const pageAddr);
-int  NL_EEPROM_WriteBlocking(uint32_t const wordIndex, uint32_t *ptr, uint32_t count);
-int  NL_EEPROM_StartWrite(uint32_t const wordIndex, uint32_t const *const ptr, uint32_t const count);
-void NL_EEPROM_Process();
+
+uint16_t NL_EEPROM_RegisterBlock(uint16_t const size);
+uint16_t NL_EEPROM_ReadBlock(uint16_t const handle, void *const data);
+uint16_t NL_EEPROM_StartWriteBlock(uint16_t const handle, void *const data);
+uint16_t NL_EEPROM_Busy(void);
+void     NL_EEPROM_Process();
 
 #endif
