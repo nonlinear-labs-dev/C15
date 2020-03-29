@@ -1084,10 +1084,7 @@ void NL_EHC_ProcessControllers(void)
       }
     }
     if (writeNeeded)
-    {
-      NL_EEPROM_StartWriteBlock(eepromHandle, &ctrlSaveData[0]);
-      forceEepromUpdate = 0;
-    }
+      forceEepromUpdate = (NL_EEPROM_StartWriteBlock(eepromHandle, &ctrlSaveData[0]) == 0);
   }
 }
 
@@ -1102,9 +1099,10 @@ void NL_EHC_InitControllers(void)
 
   eepromHandle = NL_EEPROM_RegisterBlock(sizeof ctrlSaveData, EEPROM_BLOCK_ALIGN_TO_PAGE);
   if (NL_EEPROM_ReadBlock(eepromHandle, &ctrlSaveData[0]))
-  {  // data in EERPOM is valid
+  {  // data in EERPOM is valid (including a restore from a backup when main data was corrupt)
     for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
       initControllerFromSavedState(&ctrlSaveData[i]);
+    forceEepromUpdate = NL_EEPROM_ReadBlockHadToUseBackup();  // force new write when backup had to be used
   }
   else
   {  // else clear all controllers
