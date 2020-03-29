@@ -7,6 +7,7 @@
 *******************************************************************************/
 #include "sys/nl_eeprom.h"
 #include "eeprom_18xx_43xx.h"
+#include "sys/crc.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -20,19 +21,21 @@ typedef struct __attribute__((packed))
   uint16_t size;    // number of bytes in block
 } EEPROM_Block;
 
-#define NUMBER_OF_EEPROM_BLOCKS (16)         // number of blocks we can handle
-#define EEPROM_SIZE             (127 * 128)  // 127 blocks with 128 bytes each
-#define EEPROM_MAX_BLOCKSIZE    (2048)       // 2k max size per block, for local buffer
+#define EEPROM_SIZE             (63 * 128)  // 63 blocks with 128 bytes each, do NOT change
+#define EEPROM_MAX_BLOCKSIZE    (2048)      // 2k max size per block, for local buffer sizing,
+#define NUMBER_OF_EEPROM_BLOCKS (16)        // number of blocks we can handle
 
-#define ALIGN32(X) (((X) + 3) & ~3)  // align to next 4byte boundary
+#define ALIGN32(X) (((X) + 3) & ~3)  // macro to a align a size to next 4byte multiple
 
-static EEPROM_Block blocks[NUMBER_OF_EEPROM_BLOCKS];
+static EEPROM_Block blocks[NUMBER_OF_EEPROM_BLOCKS];        // main blocks
+static EEPROM_Block shadowBlocks[NUMBER_OF_EEPROM_BLOCKS];  // shadow/backup blocks
 static uint32_t     buffer[EEPROM_MAX_BLOCKSIZE / 4];
 static uint16_t     eepromBusy = 0;
 static uint16_t     transfer;
 static uint16_t     remaining;
 static uint32_t *   pDest;
 static uint32_t *   pSrc;
+static uint16_t     forceAlignNext = 0;
 
 /*****************************************************************************
  * Public types/enumerations/variables
@@ -44,24 +47,39 @@ static uint32_t *   pSrc;
 
 /* Register a block of data for EEPROM access */
 /* returns a handle, or 0 in case of failure */
-uint16_t NL_EEPROM_RegisterBlock(uint16_t const size)
+uint16_t NL_EEPROM_RegisterBlock(uint16_t const size, EepromBlockAlign_T align)
 {
   if (size > EEPROM_MAX_BLOCKSIZE)
     return 0;
-  uint16_t returnHandle = 0;
-  uint16_t endOfData    = 0;
+  uint16_t returnHandle   = 0;
+  uint16_t nextFreeOffset = 0;
   for (uint16_t i = 0; i < NUMBER_OF_EEPROM_BLOCKS; i++)
   {
     if (returnHandle == 0 && blocks[i].handle == 0)
     {                            // first free block found, register it
       blocks[i].handle = i + 1;  // avoid 0 as a handle
       blocks[i].size   = size;
-      blocks[i].offset = endOfData;
+      if (align == EEPROM_BLOCK_ALIGN_TO_PAGE)
+      {
+        nextFreeOffset = (nextFreeOffset + 127) & ~127;  // bump offset to next page boundary
+        forceAlignNext = 1;                              // remind to page-align next block also
+      }
+      else
+      {                      // not aligned
+        if (forceAlignNext)  // previous block requested alignment ?
+        {
+          nextFreeOffset = (nextFreeOffset + 127) & ~127;  // bump offset to next page boundary
+          forceAlignNext = 0;                              // next block's alignment can be arbitrary again
+        }
+      }
+      blocks[i].offset = nextFreeOffset;
       returnHandle     = blocks[i].handle;
     }
-    endOfData += ALIGN32(blocks[i].size);  // add up sizes (aligned to next 32bit boundary)
-    if (endOfData > EEPROM_SIZE)           // to much to fit in EEPROM ?
-    {
+    // add up sizes (aligned to next 32bit boundary), include 4 bytes of CRC (regardless of size of crc_t)
+    if (blocks[i].handle)
+      nextFreeOffset = blocks[i].offset + ALIGN32(blocks[i].size) + 4;
+    if (nextFreeOffset > EEPROM_SIZE)
+    {  // too much to fit in EEPROM
       if (returnHandle)
       {  // undo registering
         blocks[returnHandle - 1].handle = 0;
@@ -74,12 +92,19 @@ uint16_t NL_EEPROM_RegisterBlock(uint16_t const size)
   return returnHandle;
 }
 
-/* simple word-wise mem copy */
+/* simple mem copy, allows for non 32bit-aligned amounts */
 static inline void memCopy(uint16_t size, uint32_t *pSrc, uint32_t *pDest)
 {
-  size /= 4;
-  while (size--)
+  uint16_t count = size >> 2;  // number or 32bit words
+  while (count--)
     *pDest++ = *pSrc++;
+  count = size & 3;  // number of bytes left
+  if (!count)
+    return;
+  uint8_t *pSrcB  = (uint8_t *) pSrc;
+  uint8_t *pDestB = (uint8_t *) pDest;
+  while (count--)
+    *pDestB++ = *pSrcB++;
 }
 
 /* Read a block of data from EEPROM */
@@ -90,7 +115,10 @@ uint16_t NL_EEPROM_ReadBlock(uint16_t const handle, void *const data)
   if (handle < 1 || handle > NUMBER_OF_EEPROM_BLOCKS || blocks[index].handle != handle
       || data == NULL || eepromBusy)
     return 0;
-  memCopy(blocks[index].size, (uint32_t *) (EEPROM_START + blocks[index].offset), (uint32_t *) data);
+  uint32_t *startAddr = (uint32_t *) (EEPROM_START + blocks[index].offset);
+  if (crcFast((uint8_t const *) (startAddr + 1), blocks[index].size) != *startAddr)
+    return 0;  // CRC failed
+  memCopy(blocks[index].size, startAddr + 1, (uint32_t *) data);
   return 1;
 }
 
@@ -106,16 +134,30 @@ uint16_t NL_EEPROM_StartWriteBlock(uint16_t const handle, void *const data)
     return 1;  // no data --> done
   if (data == NULL || eepromBusy)
     return 0;
+  remaining += 4;  // account for CRC
   transfer           = remaining;
   uint8_t pageOffset = blocks[index].offset & 0x7F;  // offset modulo 128
   if (pageOffset + transfer > 128)
-    transfer = 128 - pageOffset;  //restrict amount to next 128byte boundary
+    transfer = 128 - pageOffset;  // restrict amount to next 128byte boundary
   // copy
-  pDest          = (uint32_t *) (EEPROM_START + blocks[index].offset);
   pSrc           = (uint32_t *) data;
-  uint16_t count = transfer / 4;
+  pDest          = (uint32_t *) (EEPROM_START + blocks[index].offset);
+  *pDest++       = crcFast((uint8_t const *) data, blocks[index].size);  // poke CRC in first word
+  uint16_t count = (transfer - 4) >> 2;                                  // words remaining data to transfer, without CRC
   while (count--)
     *pDest++ = *pSrc++;
+  count = (transfer - 4) & 3;  // any bytes remaining, 0..3, can happen only at the end of data
+  if (count)
+  {  // we must use 32bit aligned write to write the EEPROM data
+    uint32_t word  = 0;
+    uint8_t *pByte = (uint8_t *) pSrc;
+    while (count--)
+    {  // fill up last word with the source data bytes
+      word <<= 8;
+      word |= *pByte++;
+    }
+    *pDest++ = word;
+  }
   remaining -= transfer;                             // update remaining amount of date, if any
   Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);  // start burning the first chunk
   memCopy(remaining, pSrc, buffer);                  // copy rest of data to local buffer, if any
@@ -136,10 +178,22 @@ void NL_EEPROM_Process()
     return;
   transfer = remaining;
   if (transfer > 128)
-    transfer = 128;  //restrict amount to next 128byte boundary
-  uint16_t count = transfer / 4;
-  while (count--)  // 32bit words
+    transfer = 128;                //restrict amount to next 128byte boundary
+  uint16_t count = transfer >> 2;  // words remaining data to transfer
+  while (count--)                  // 32bit words
     *pDest++ = *pSrc++;
+  count = transfer & 3;  // any bytes remaining, 0..3, can happen only at the end of data
+  if (count)
+  {  // we must use 32bit aligned writes to write the EEPROM data
+    uint32_t word  = 0;
+    uint8_t *pByte = (uint8_t *) pSrc;
+    while (count--)
+    {  // fill up last word with the source data bytes
+      word <<= 8;
+      word |= *pByte++;
+    }
+    *pDest++ = word;
+  }
   remaining -= transfer;
   Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);
   eepromBusy = 1;
@@ -157,4 +211,10 @@ void NL_EEPROM_Init(void)
 {
   Chip_EEPROM_Init(LPC_EEPROM);
   Chip_EEPROM_SetAutoProg(LPC_EEPROM, EEPROM_AUTOPROG_OFF);
+#if 0  // test code
+  NL_EEPROM_RegisterBlock(113, EEPROM_BLOCK_NO_ALIGN);
+  NL_EEPROM_RegisterBlock(12,  EEPROM_BLOCK_ALIGN_TO_PAGE);
+  NL_EEPROM_RegisterBlock(114, EEPROM_BLOCK_NO_ALIGN);
+  NL_EEPROM_RegisterBlock(115, EEPROM_BLOCK_NO_ALIGN);
+#endif
 }
