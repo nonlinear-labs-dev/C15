@@ -3,7 +3,7 @@
  *
  *  Created on: 21.01.2015
  *      Author: ssc
- *	last changed: 2020-01-03  KSTR
+ *	last changed: 2020-03-30  KSTR
  *	- SW_VERSION  203
  * */
 
@@ -99,12 +99,14 @@
 #define REQUEST_ID_SW_VERSION    0x0000
 #define REQUEST_ID_UNMUTE_STATUS 0x0001
 #define REQUEST_ID_EHC_DATA      0x0002
+#define REQUEST_ID_CLEAR_EEPROM  0x0003
 
 //----- Notification Ids:
 
 #define NOTIFICATION_ID_SW_VERSION    0x0000
 #define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
 #define NOTIFICATION_ID_EHC_DATA      0x0002
+#define NOTIFICATION_ID_CLEAR_EEPROM  0x0003
 
 void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t *data);
 void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg);
