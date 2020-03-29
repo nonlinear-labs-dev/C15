@@ -13,7 +13,6 @@
 #include "spibb/nl_bb_msg.h"
 #include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
-#include "sys/crc.h"
 #include "sys/nl_eeprom.h"
 #include <cr_section_macros.h>
 #include <stdlib.h>
@@ -329,12 +328,6 @@ typedef struct __attribute__((packed))
   uint16_t range_scale;  // scale (100%) value for the actual ranging
 } ControllerSave_T;
 
-typedef struct
-{
-  ControllerSave_T saveData;
-  crc_t            crc;
-} ControllerSaveCRC_T;
-
 // =============
 // ============= local variables
 // =============
@@ -342,12 +335,12 @@ typedef struct
 // main working variable, array of 8 controllers
 Controller_T ctrl[NUMBER_OF_CONTROLLERS];
 // EEPROM save/restore buffer
-ControllerSaveCRC_T __attribute__((aligned(4))) ctrlSaveData[NUMBER_OF_CONTROLLERS];
+ControllerSave_T NL_EEPROM_ALIGN ctrlSaveData[NUMBER_OF_CONTROLLERS];
 
-static int      requestGetEHCdata = 0;  // flag for pending send of EHC data
-static int      enableEHC         = 1;  // master enable flag for all runtime processing (except init() etc)
-static uint16_t eepromHandle;           // EEPROM access handle
-
+static int      requestGetEHCdata = 0;                                      // flag for pending send of EHC data
+static int      enableEHC         = 1;                                      // master enable flag for all runtime processing (except init() etc)
+static uint16_t eepromHandle      = 0;                                      // EEPROM access handle
+static uint16_t forceEepromUpdate = 0;                                      // force update EEPROM if contents were initially invalid
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
 ******************************************************************************/
@@ -514,50 +507,43 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   InitAutoRange(this);
 }
 
-static int initControllerFromSavedState(const ControllerSaveCRC_T *ctrlData)
+static void initControllerFromSavedState(const ControllerSave_T *ctrlData)
 {
-  if (crcFast((uint8_t const *) &ctrlData->saveData, sizeof ctrlData->saveData) != ctrlData->crc)
-  {
-    // DBG_Led_Error_TimedOn(10);  // ???
-    return 0;
-  }
-  initController(ctrlData->saveData.config, 1);
-  Controller_T *this = &ctrl[ctrlData->saveData.config.ctrlId];
+  initController(ctrlData->config, 1);
+  Controller_T *this = &ctrl[ctrlData->config.ctrlId];
   // this->status            = ctrlData->saveData.status;
   this->status.isRestored = 1;
   this->status.isSaved    = 0;
-  this->min               = ctrlData->saveData.min;
-  this->max               = ctrlData->saveData.max;
-  this->used_min          = ctrlData->saveData.used_min;
-  this->used_max          = ctrlData->saveData.used_max;
-  this->range_scale       = ctrlData->saveData.range_scale;
+  this->min               = ctrlData->min;
+  this->max               = ctrlData->max;
+  this->used_min          = ctrlData->used_min;
+  this->used_max          = ctrlData->used_max;
+  this->range_scale       = ctrlData->range_scale;
   // DBG_Led_Warning_TimedOn(10);  // ???
-  return 1;
 }
 
-static void saveControllerState(Controller_T *const this, ControllerSaveCRC_T *ctrlData)
+static void saveControllerState(Controller_T *const this, ControllerSave_T *ctrlData)
 {
-  ctrlData->saveData.config = this->config;
+  ctrlData->config = this->config;
   // ctrlData->saveData.status = this->status;
   this->status.isSaved = 1;
   // this->status.isRestored        = 0;
-  ctrlData->saveData.min         = this->min;
-  ctrlData->saveData.max         = this->max;
-  ctrlData->saveData.used_min    = this->used_min;
-  ctrlData->saveData.used_max    = this->used_max;
-  ctrlData->saveData.range_scale = this->range_scale;
-  ctrlData->crc                  = crcFast((uint8_t const *) &ctrlData->saveData, sizeof ctrlData->saveData);
+  ctrlData->min         = this->min;
+  ctrlData->max         = this->max;
+  ctrlData->used_min    = this->used_min;
+  ctrlData->used_max    = this->used_max;
+  ctrlData->range_scale = this->range_scale;
   // DBG_Led_Warning_TimedOn(1);  // ???
 }
 
-static int savedControllerStateIsDifferent(Controller_T *const this, ControllerSaveCRC_T *ctrlData)
+static int savedControllerStateIsDifferent(Controller_T *const this, ControllerSave_T *ctrlData)
 {
-  return !((configToUint16(ctrlData->saveData.config) == configToUint16(this->config))
-           && (ctrlData->saveData.min == this->min)
-           && (ctrlData->saveData.max == this->max)
-           && (ctrlData->saveData.used_min == this->used_min)
-           && (ctrlData->saveData.used_max == this->used_max)
-           && (ctrlData->saveData.range_scale == this->range_scale));
+  return !((configToUint16(ctrlData->config) == configToUint16(this->config))
+           && (ctrlData->min == this->min)
+           && (ctrlData->max == this->max)
+           && (ctrlData->used_min == this->used_min)
+           && (ctrlData->used_max == this->used_max)
+           && (ctrlData->range_scale == this->range_scale));
 }
 
 /*************************************************************************/ /**
@@ -901,26 +887,6 @@ static void readoutBiStable(Controller_T *const this)
   updateAndOutput(this, 16000 - out);  // initial output must be inverted as we've worked on the resistance
 }
 
-/*************************************************************************/ /**
-* @brief	init everything
-******************************************************************************/
-void NL_EHC_InitControllers(void)
-{
-  requestGetEHCdata = 0;
-  enableEHC         = 1;
-  EHC_initSampleBuffers();
-
-  eepromHandle = NL_EEPROM_RegisterBlock(sizeof ctrlSaveData);
-  NL_EEPROM_ReadBlock(eepromHandle, &ctrlSaveData[0]);
-  // NL_EEPROM_Read(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
-
-  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
-  {
-    if (!initControllerFromSavedState(&ctrlSaveData[i]))
-      initController(uint16ToConfig(0xF800 | (i << 8)), 1);
-  }
-}
-
 // set ranging min and max
 void setRangeMin(uint8_t which, uint16_t min)
 {
@@ -1108,18 +1074,43 @@ void NL_EHC_ProcessControllers(void)
   if (!--checkTimer)
   {
     checkTimer      = EEPROM_UPDATE_CHECK_TIME;
-    int writeNeeded = 0;
+    int writeNeeded = forceEepromUpdate;
     for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
     {
-      if (savedControllerStateIsDifferent(&ctrl[i], &ctrlSaveData[i]))
+      if (forceEepromUpdate || savedControllerStateIsDifferent(&ctrl[i], &ctrlSaveData[i]))
       {
         writeNeeded = 1;
         saveControllerState(&ctrl[i], &ctrlSaveData[i]);
       }
-      if (writeNeeded)
-        NL_EEPROM_StartWriteBlock(eepromHandle, &ctrlSaveData[0]);
-      // NL_EEPROM_StartWrite(0, (uint32_t *) (&ctrlSaveData[0]), sizeof ctrlSaveData);
     }
+    if (writeNeeded)
+    {
+      NL_EEPROM_StartWriteBlock(eepromHandle, &ctrlSaveData[0]);
+      forceEepromUpdate = 0;
+    }
+  }
+}
+
+/*************************************************************************/ /**
+* @brief	init everything
+******************************************************************************/
+void NL_EHC_InitControllers(void)
+{
+  requestGetEHCdata = 0;
+  enableEHC         = 1;
+  EHC_initSampleBuffers();
+
+  eepromHandle = NL_EEPROM_RegisterBlock(sizeof ctrlSaveData, EEPROM_BLOCK_ALIGN_TO_PAGE);
+  if (NL_EEPROM_ReadBlock(eepromHandle, &ctrlSaveData[0]))
+  {  // data in EERPOM is valid
+    for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+      initControllerFromSavedState(&ctrlSaveData[i]);
+  }
+  else
+  {  // else clear all controllers
+    for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+      initController(uint16ToConfig(0xF800 | (i << 8)), 1);
+    forceEepromUpdate = 1;
   }
 }
 
