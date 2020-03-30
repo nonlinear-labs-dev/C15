@@ -83,10 +83,11 @@
 // #define BENDER_RAMP_BYPASS                   35  // OFF = 0, ON = 1
 
 // new setting ID's
-#define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // Software Mute Override
+#define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // direction: input; arguments(uint16): 1, mode bit pattern
 #define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
 // #define SETTING_ID_SEND_FORCED_KEY        0xFF03  // unused
-#define SETTING_ID_ENABLE_EHC 0xFF04  // direction: input; arguments(uint16): 1, flag (!= 0)
+#define SETTING_ID_ENABLE_EHC        0xFF04  // direction: input; arguments(uint16): 1, flag (!= 0)
+#define SETTING_ID_AUDIO_ENGINE_CMD  0xFF05  // direction: input; arguments(uint16): 1, command (1:testtone OFF; 2:testtone ON; 3:default sound)
 
 //----- EHC command Ids:
 #define EHC_COMMAND_SET_CONTROL_REGISTER 0x0100  // configure a controller

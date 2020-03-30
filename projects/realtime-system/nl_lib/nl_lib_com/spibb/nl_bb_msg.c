@@ -13,6 +13,7 @@
 
 #include "tcd/nl_tcd_adc_work.h"
 #include "tcd/nl_tcd_poly.h"
+#include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
 #include "sup/nl_sup.h"
 #include "sys/nl_coos.h"
@@ -323,6 +324,9 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;
       case SETTING_ID_ENABLE_EHC:
         NL_EHC_Enable(data[1]);
+        break;
+      case SETTING_ID_AUDIO_ENGINE_CMD:
+        MSG_SendAEDevelopperCmd(data[1]);
         break;
       default:
         // do nothing

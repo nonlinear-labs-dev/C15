@@ -170,9 +170,27 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
   }
 
   buff[writeBuffer][buf++] = 0x0E;             // MIDI status 0xE
-  buff[writeBuffer][buf++] = 0xE0 | source;    // MIDI status 0xE, MIDI channel 0...7
+  buff[writeBuffer][buf++] = 0xE0 | source;    // MIDI status 0xE, MIDI channel 0...11
   buff[writeBuffer][buf++] = position >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = position & 0x7F;  // second 7 bits
+
+  if (buf == BUFFER_SIZE)
+  {
+    MSG_SendMidiBuffer();
+  }
+}
+
+/*****************************************************************************
+*   @brief	MSG_SendAEDeveloperCmd
+*   Sends a special command to audio engine
+*   @param  cmd : command, 14bit (1:testtone OFF; 2:testtone ON; 3:default sound)
+******************************************************************************/
+void MSG_SendAEDevelopperCmd(uint32_t cmd)
+{
+  buff[writeBuffer][buf++] = 0x0E;        // MIDI status 0xE
+  buff[writeBuffer][buf++] = 0xE0 | 12;   // MIDI status 0xE, MIDI channel 12
+  buff[writeBuffer][buf++] = cmd >> 7;    // first 7 bits
+  buff[writeBuffer][buf++] = cmd & 0x7F;  // second 7 bits
 
   if (buf == BUFFER_SIZE)
   {
