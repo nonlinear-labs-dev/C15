@@ -204,7 +204,7 @@ void MSG_SendAEDevelopperCmd(uint32_t cmd)
 ******************************************************************************/
 void MSG_SendActiveSensing(void)
 {
-#ifdef IMPLEMENT_ACTIVE_SENSING
+#ifdef __IMPLEMENT_ACTIVE_SENSING
   buff[writeBuffer][buf++] = 0xFE;  // MIDI command "active sensing"
   // since all "TCD" type transfers are 4 bytes, just send another 3 copies of it
   buff[writeBuffer][buf++] = 0xFE;
@@ -216,9 +216,9 @@ void MSG_SendActiveSensing(void)
     MSG_SendMidiBuffer();
   }
 #else
-#ifndef no_IMPLEMENT_ACTIVE_SENSING
+#ifndef no__IMPLEMENT_ACTIVE_SENSING
 #ifdef CORE_M4
-#error "either IMPLEMENT_ACTIVE_SENSING or no_IMPLEMENT_ACTIVE_SENSING must be defined"
+#error "either __IMPLEMENT_ACTIVE_SENSING or no__IMPLEMENT_ACTIVE_SENSING must be defined"
 #endif
 #endif
 #endif
