@@ -14,7 +14,6 @@ uint16_t data[MAX_DATA_SIZE];
 int      dataIndex;
 uint16_t displayFlags;
 FILE *   driver;
-int      dump;
 
 // ===================
 void makeDriverNonblocking(int const driverFileNo, int const flags)
@@ -75,12 +74,6 @@ int readWord(uint16_t *const data)
   return ret;
 }
 
-void print(uint16_t const data)
-{
-  if (dump)
-    printf("%04X ", data);
-}
-
 // ===================
 void readMessages(void)
 {
@@ -93,7 +86,6 @@ void readMessages(void)
     case 0:  // read ID
       if (readWord(&id))
       {
-        print(id);
         dataIndex = 0;
         step      = 1;
       }
@@ -101,7 +93,6 @@ void readMessages(void)
     case 1:
       if (readWord(&len))
       {
-        print(len);
         count = len;
         if (len)
           step = 2;
@@ -116,7 +107,6 @@ void readMessages(void)
         {
           count--;
           data[dataIndex] = word;
-          print(data[dataIndex]);
           if (++dataIndex >= MAX_DATA_SIZE)
             exit(3);
         }
@@ -125,8 +115,6 @@ void readMessages(void)
         step = 3;
       break;
     case 3:
-      if (dump)
-        printf("\n");
       processReadMsgs(id, len, &data[0], displayFlags);
       step = 0;
       break;
@@ -143,13 +131,18 @@ void Usage(char const *const string, int const exitCode)
   if (string)
     puts(string);
   puts("read-lpc-msgs <options>");
-  puts(" -d   no raw hex dump");
-  puts(" -e   no EHC data");
-  puts(" -h   no heartbeats");
-  puts(" -m   no mute status");
-  puts(" -n   no notificiations");
-  puts(" -p   no parameters");
-  puts(" -s   no sensors raw data");
+  puts("  <options> is a white-space seperated list of letters, preceeded");
+  puts("             by either a + or -, turning the display on or off");
+  puts("  default is +a");
+  puts(" a   all");
+  puts(" d   addtional hex dump");
+  puts(" e   EHC data");
+  puts(" h   heartbeat");
+  puts(" m   mute status");
+  puts(" n   notificiation");
+  puts(" p   parameter");
+  puts(" s   sensors raw data");
+  puts(" u   hexdump of unknown messages");
   exit(exitCode);
 }
 
@@ -164,38 +157,69 @@ int main(int argc, char *argv[])
   driver = fopen("/dev/lpc_bb_driver", "r+");
   if (!driver)
   {
+  Error:
     printf("\nI/O-Error! Aborting.\n");
     return 3;
   }
 
   driverFileNo = fileno(driver);
   if (driverFileNo == -1)
-    exit(3);
+    goto Error;
 
   flags = getDriverFlags(driverFileNo);
   makeDriverBlocking(driverFileNo, flags);
 
   displayFlags = 0;
-  dump         = 1;
 
   while (argc > 1)
   {
-    if (strncmp(argv[1], "-d", 2) == 0)
-      dump = 0;
+    if (strncmp(argv[1], "-a", 2) == 0)
+      displayFlags |= NO_ALL;
+    else if (strncmp(argv[1], "+a", 2) == 0)
+      displayFlags &= ~NO_ALL;
+
+    else if (strncmp(argv[1], "-d", 2) == 0)
+      displayFlags |= NO_HEXDUMP;
+    else if (strncmp(argv[1], "+d", 2) == 0)
+      displayFlags &= ~NO_HEXDUMP;
+
     else if (strncmp(argv[1], "-e", 2) == 0)
       displayFlags |= NO_EHCDATA;
+    else if (strncmp(argv[1], "+e", 2) == 0)
+      displayFlags &= ~NO_EHCDATA;
+
     else if (strncmp(argv[1], "-h", 2) == 0)
       displayFlags |= NO_HEARTBEAT;
+    else if (strncmp(argv[1], "+h", 2) == 0)
+      displayFlags &= ~NO_HEARTBEAT;
+
     else if (strncmp(argv[1], "-m", 2) == 0)
       displayFlags |= NO_MUTESTATUS;
+    else if (strncmp(argv[1], "+m", 2) == 0)
+      displayFlags &= ~NO_MUTESTATUS;
+
     else if (strncmp(argv[1], "-n", 2) == 0)
       displayFlags |= NO_NOTIFICATION;
+    else if (strncmp(argv[1], "+n", 2) == 0)
+      displayFlags &= ~NO_NOTIFICATION;
+
     else if (strncmp(argv[1], "-p", 2) == 0)
       displayFlags |= NO_PARAMS;
+    else if (strncmp(argv[1], "+p", 2) == 0)
+      displayFlags &= ~NO_PARAMS;
+
     else if (strncmp(argv[1], "-s", 2) == 0)
       displayFlags |= NO_SENSORSRAW;
+    else if (strncmp(argv[1], "+s", 2) == 0)
+      displayFlags &= ~NO_SENSORSRAW;
+
+    else if (strncmp(argv[1], "-u", 2) == 0)
+      displayFlags |= NO_UNKNOWN;
+    else if (strncmp(argv[1], "+u", 2) == 0)
+      displayFlags &= ~NO_UNKNOWN;
+
     else
-      Usage(NULL, 3);
+      Usage("unknown option", 3);
     argc--;
     argv++;
   }

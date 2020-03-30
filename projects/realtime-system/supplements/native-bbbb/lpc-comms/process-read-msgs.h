@@ -9,5 +9,8 @@
 #define NO_NOTIFICATION (0x0008)
 #define NO_EHCDATA      (0x0010)
 #define NO_SENSORSRAW   (0x0020)
+#define NO_HEXDUMP      (0x0040)
+#define NO_UNKNOWN      (0x0080)
+#define NO_ALL          (0x00FF)
 
-void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t* const data, uint16_t const flags);
+void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t* const data, uint16_t flags);

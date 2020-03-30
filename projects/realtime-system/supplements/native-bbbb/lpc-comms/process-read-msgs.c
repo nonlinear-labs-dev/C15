@@ -207,7 +207,18 @@ void setColor(color_t color)
 }
 
 // ==================================================================================
-void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const data, uint16_t const flags)
+void dump(uint16_t const cmd, uint16_t const len, uint16_t *const data, uint16_t const flags)
+{
+  if (flags & NO_HEXDUMP)
+    return;
+  printf("cmd:%04X len:%04X: data:", cmd, len);
+  for (int i = 0; i < len; i++)
+    printf("%04X ", data[i]);
+  printf("\n");
+}
+
+// ==================================================================================, uint16_t const flags
+void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const data, uint16_t flags)
 {
   int       i;
   uint16_t *p;
@@ -221,6 +232,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
     case BB_MSG_TYPE_PARAMETER:
       if (flags & NO_PARAMS)
         return;
+      dump(cmd, len, data, flags);
       if (len != 2)
       {
         printf("PARAM : wrong length of %d\n", len);
@@ -234,6 +246,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
     case BB_MSG_TYPE_NOTIFICATION:
       if (flags & NO_NOTIFICATION)
         return;
+      dump(cmd, len, data, flags);
       if (len != 2)
       {
         printf("NOTIFICATION : wrong length of %d\n", len);
@@ -256,16 +269,47 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
     case BB_MSG_TYPE_HEARTBEAT:
       if (flags & NO_HEARTBEAT)
         return;
+      dump(cmd, len, data, flags);
+      if (len != 4)
+      {
+        printf("HEARTBEAT : wrong length of %d\n", len);
+        return;
+      }
+      uint64_t heartbeat = 0;
+      for (int i = 3; i >= 0; i--)
+      {
+        heartbeat <<= 16;
+        heartbeat |= data[i];
+      }
+      printf("HEARTBEAT : %8llu\n", heartbeat);
       return;
 
     case BB_MSG_TYPE_SENSORS_RAW:
       if (flags & NO_SENSORSRAW)
         return;
+      dump(cmd, len, data, flags);
+      if (len != 13)
+      {
+        printf("HEARTBEAT : wrong length of %d\n", len);
+        return;
+      }
+      printf("RAW SENSORS: ");
+      for (int i = 3; i >= 0; i--)
+        printf("%c ", (data[0] & (1 << i)) ? '1' : '0');
+      printf(" ");
+      for (int i = 1; i < 13; i++)
+      {
+        printf("%04hu ", data[i]);
+        if (i == 8 || i == 10)
+          printf("/ ");
+      }
+      printf("\n");
       return;
 
     case BB_MSG_TYPE_MUTESTATUS:
       if (flags & NO_MUTESTATUS)
         return;
+      dump(cmd, len, data, flags);
       if (len != 1)
       {
         printf("MUTESTATUS : wrong length of %d\n", len);
@@ -299,6 +343,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
     case BB_MSG_TYPE_EHC_DATA:
       if (flags & NO_EHCDATA)
         return;
+      dump(cmd, len, data, flags);
       if (len != 8 * 6)
       {
         printf("EHC DATA : wrong length of %d\n", len);
@@ -327,6 +372,13 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         setColor(DEFAULT);
       }
       printf("\n");
+      return;
+    default:
+      if (flags & NO_UNKNOWN)
+        return;
+      printf("UNKNOWN ");
+      flags &= ~NO_HEXDUMP;
+      dump(cmd, len, data, flags);
       return;
   }
 }
