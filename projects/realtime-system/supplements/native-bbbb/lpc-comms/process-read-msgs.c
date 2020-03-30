@@ -207,7 +207,7 @@ void setColor(color_t color)
 }
 
 // ==================================================================================
-void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t const *const data, uint16_t const flags)
+void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const data, uint16_t const flags)
 {
   int       i;
   uint16_t *p;
@@ -249,6 +249,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t const *con
           return;
         case NOTIFICATION_ID_UNMUTE_STATUS:
           printf("NOTIFICATION : ");
+          data[0] = data[1];
           goto ShowMuteStatus;
       }
 

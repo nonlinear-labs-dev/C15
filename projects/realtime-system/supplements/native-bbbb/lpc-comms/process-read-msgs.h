@@ -10,4 +10,4 @@
 #define NO_EHCDATA      (0x0010)
 #define NO_SENSORSRAW   (0x0020)
 
-void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t const* const data, uint16_t const flags);
+void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t* const data, uint16_t const flags);
