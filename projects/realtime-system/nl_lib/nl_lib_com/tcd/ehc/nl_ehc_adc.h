@@ -52,7 +52,8 @@ extern EHC_AdcBuffer_T EHC_adc[ADC_CHANNELS];
 int EHC_getADCStats(const EHC_AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg);
 
 void EHC_initSampleBuffers(void);
-int  EHC_fillSampleBuffers(void);
+void EHC_fillSampleBuffers(void);
+int  EHC_sampleBuffersValid(void);
 
 #endif
 //EOF

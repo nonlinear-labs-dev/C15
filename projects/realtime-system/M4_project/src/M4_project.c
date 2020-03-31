@@ -1,7 +1,7 @@
 /******************************************************************************/
 /** @file	Emphase_M4_Main.c
     @date	2016-03-09 SSC
-		@changes 2020-01-03 KSTR
+		@changes 2020-03-31 KSTR
 *******************************************************************************/
 
 #include <stdint.h>
@@ -35,7 +35,8 @@
 
 #define DBG_CLOCK_MONITOR (0)
 
-volatile uint8_t waitForFirstSysTick = 1;
+static volatile uint16_t waitForFirstSysTick = 1;
+static volatile uint32_t nsTickerHigh        = 0;
 
 void Init(void)
 {
@@ -105,18 +106,21 @@ void Init(void)
   // slower stuff
   //   to avoid potential overrun by any of these falling into the same time slot when their time-slices are integer multiples,
   //   the start offsets are fine-stepped in increments, the max increment being less that the shortest time-slice
-  COOS_Task_Add(ADC_WORK_Process,         60+1, 100);       // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_SendBBMessages,  70+2, 100 * 8);   // every 100 ms, sending the results of the ADC processing to the BBB
-  COOS_Task_Add(DBG_Process,              80+3, 100 * 8);   // every 100 ms
-  COOS_Task_Add(SUP_Process,              90+4, SUP_PROCESS_TIMESLICE * 8);  // supervisor communication every 10ms
-  COOS_Task_Add(HBT_Process,              100+5, HBT_PROCESS_TIMESLICE * 8); // heartbeat communication every 10ms
-  COOS_Task_Add(NL_EEPROM_Process,        110+6, 8);                         // EEPROM write every 1ms
+  COOS_Task_Add(ADC_WORK_Process1,        50+1, 100);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_Process2,        60+2, 100);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_Process3,        70+3, 100);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_Process4,        80+4, 100);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_SendBBMessages,  90+5, 100 * 8);   // every 100 ms, sending the results of the ADC processing to the BBB
+  COOS_Task_Add(DBG_Process,              100+6, 100 * 8);   // every 100 ms
+  COOS_Task_Add(SUP_Process,              110+7, SUP_PROCESS_TIMESLICE * 8);  // supervisor communication every 10ms
+  COOS_Task_Add(HBT_Process,              120+8, HBT_PROCESS_TIMESLICE * 8); // heartbeat communication every 10ms
+  COOS_Task_Add(NL_EEPROM_Process,        130+9, 10);                         // EEPROM write every 1.25ms
 
   // single run stuff
-  COOS_Task_Add(ADC_WORK_Init2,           120, 0);     // preparing the ADC processing (will be executed after the M0 has been initialized)
+  COOS_Task_Add(ADC_WORK_Init2,           140, 0);     // preparing the ADC processing (will be executed after the M0 has been initialized)
   // clang-format on
 
-  /* M0 */
+  /* M0 init, also starting our time-slice interrupt  */
   CPU_M0_Init();
   NVIC_SetPriority(M0CORE_IRQn, M0APP_IRQ_PRIORITY);
   NVIC_EnableIRQ(M0CORE_IRQn);

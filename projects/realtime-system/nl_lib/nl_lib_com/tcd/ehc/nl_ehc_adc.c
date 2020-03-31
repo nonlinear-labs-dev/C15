@@ -80,7 +80,7 @@ static inline int multQ15(const int a, const int b)
 /*************************************************************************/ /**
 * @brief	fill sample buffers and do some pre-processing / denoising
 ******************************************************************************/
-int EHC_fillSampleBuffers(void)
+void EHC_fillSampleBuffers(void)
 {
   sbuf_index = (sbuf_index + SBUF_MOD) & SBUF_MOD;  // pre-decrement ...modulo buffer size
 
@@ -120,9 +120,12 @@ int EHC_fillSampleBuffers(void)
 
   if (sampleBuffersInvalid)
     --sampleBuffersInvalid;
-  return !sampleBuffersInvalid;
 }
 
+int EHC_sampleBuffersValid(void)
+{
+  return sampleBuffersInvalid == 0;
+}
 /*************************************************************************/ /**
 * @brief	Get Statistical Data
 * @param	return != 0 : success

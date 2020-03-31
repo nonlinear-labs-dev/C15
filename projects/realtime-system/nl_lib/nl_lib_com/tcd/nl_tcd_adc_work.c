@@ -284,14 +284,14 @@ void ADC_WORK_Init1(void)
     ribbon[i].ipcId         = (i == 0 ? IPC_ADC_RIBBON1 : IPC_ADC_RIBBON2);
     ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
+
+  NL_EHC_InitControllers();
+
+  ClearHWValuesForBB();
 }
 
 void ADC_WORK_Init2(void)
 {
-  NL_EHC_InitControllers();
-
-  ClearHWValuesForBB();
-
   suspend = 0;
 }
 
@@ -621,7 +621,7 @@ void ADC_WORK_Resume(void)
 /*****************************************************************************
 * @brief  ADC_WORK_Process -
 ******************************************************************************/
-void ADC_WORK_Process(void)
+void ADC_WORK_Process1(void)
 {
   if (suspend)
     return;
@@ -826,9 +826,29 @@ void ADC_WORK_Process(void)
 
   //==================== Ribbons
   ProcessRibbons();
+}
 
+void ADC_WORK_Process2(void)
+{
+  if (suspend)
+    return;
   //==================== External Hardware Controllers
-  NL_EHC_ProcessControllers();
+  NL_EHC_ProcessControllers1();
+}
 
+void ADC_WORK_Process3(void)
+{
+  if (suspend)
+    return;
+  //==================== External Hardware Controllers
+  NL_EHC_ProcessControllers2();
+}
+
+void ADC_WORK_Process4(void)
+{
+  if (suspend)
+    return;
+  //==================== External Hardware Controllers
+  NL_EHC_ProcessControllers3();
   //  DBG_GPIO3_1_Off();
 }

@@ -36,7 +36,10 @@
 void ADC_WORK_Init1(void);
 void ADC_WORK_Init2(void);
 
-void ADC_WORK_Process(void);
+void ADC_WORK_Process1(void);
+void ADC_WORK_Process2(void);
+void ADC_WORK_Process3(void);
+void ADC_WORK_Process4(void);
 //void ADC_WORK_Suspend(void);
 //void ADC_WORK_Resume(void);
 

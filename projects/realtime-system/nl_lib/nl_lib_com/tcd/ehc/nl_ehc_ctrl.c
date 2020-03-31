@@ -54,8 +54,8 @@ static void ShowSettlingDisplay(void)
 #endif
 }
 
-#define WAIT_TIME_AFTER_PLUGIN   (120)     // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
-#define EEPROM_UPDATE_CHECK_TIME (80 * 5)  // 5secs time interval to check controller state against saved state
+#define WAIT_TIME_AFTER_PLUGIN   (120)      // timeout after a plug-in event, in 12.5ms units (120 == 1500 milliseconds)
+#define EEPROM_UPDATE_CHECK_TIME (80 * 10)  // 10secs time interval to check controller state against saved state
 
 #define NUMBER_OF_CONTROLLERS (8)  // 4 jacks, each with tip and ring ADC channels
 
@@ -167,7 +167,7 @@ typedef struct
   unsigned doAutoRanging : 1;     // enable auto-ranging, or assume static (but adjustable) thresholds/levels
 } EHC_ControllerConfig_T;
 
-uint16_t configToUint16(const EHC_ControllerConfig_T c)
+static uint16_t configToUint16(const EHC_ControllerConfig_T c)
 {
   uint16_t ret = 0;
   ret |= c.autoHoldStrength << 0;
@@ -181,7 +181,7 @@ uint16_t configToUint16(const EHC_ControllerConfig_T c)
   ret |= c.hwId << 12;
   return ret;
 }
-EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
+static EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
 {
   EHC_ControllerConfig_T ret;
   ret.autoHoldStrength = (c & 0b0000000000000111) >> 0;
@@ -210,7 +210,7 @@ typedef struct
 
 } EHC_ControllerStatus_T;
 
-uint16_t statusToUint16(const EHC_ControllerStatus_T s)
+static uint16_t statusToUint16(const EHC_ControllerStatus_T s)
 {
   uint16_t ret = 0;
   ret |= s.initialized << 0;
@@ -224,7 +224,7 @@ uint16_t statusToUint16(const EHC_ControllerStatus_T s)
   ret |= s.isRestored << 8;
   return ret;
 }
-EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
+static EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
 {
   EHC_ControllerStatus_T ret;
   ret.initialized   = (s & 0b0000000000000001) >> 0;
@@ -539,8 +539,8 @@ static void saveControllerState(Controller_T *const this, ControllerSave_T *ctrl
 static int savedControllerStateIsDifferent(Controller_T *const this, ControllerSave_T *ctrlData)
 {
   return !((configToUint16(ctrlData->config) == configToUint16(this->config))
-           && (ctrlData->min == this->min)
-           && (ctrlData->max == this->max)
+           // && (ctrlData->min == this->min)
+           // && (ctrlData->max == this->max)
            && (ctrlData->used_min == this->used_min)
            && (ctrlData->used_max == this->used_max)
            && (ctrlData->range_scale == this->range_scale));
@@ -616,10 +616,11 @@ static int doAutoRange(Controller_T *const this, const int value, int *const out
   // basic autorange
   if (this->config.doAutoRanging)
   {  // adapt range to input span only when requested
-    if (value > this->max)
-      this->max = getAvgFromValueBuffer(&this->rawBuffer);
-    if (value < this->min)
-      this->min = getAvgFromValueBuffer(&this->rawBuffer);
+    uint16_t avgVal = getAvgFromValueBuffer(&this->rawBuffer);
+    if (avgVal > this->max)
+      this->max = avgVal;
+    if (avgVal < this->min)
+      this->min = avgVal;
 
     // back off autorange limits
     this->used_min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
@@ -1037,15 +1038,40 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
 * @brief	NL_EHC_ProcessControllers
 * main repetitive process called from ADC_Work_Process every 12.5ms
 ******************************************************************************/
-void NL_EHC_ProcessControllers(void)
+void NL_EHC_ProcessControllers1(void)
 {
-  static uint32_t checkTimer = EEPROM_UPDATE_CHECK_TIME;
   // any processing only after buffers are fully filled initially, also gives some initial power-up settling
-  if (!EHC_fillSampleBuffers())
+  if (!EHC_sampleBuffersValid())
     return;
 
   ResetSettlingDisplay();
-  for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
+  for (int i = 0; i < NUMBER_OF_CONTROLLERS / 2; i++)
+  {
+    if (!ctrl[i].status.initialized)
+      continue;
+    if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?
+    {
+      ctrl[i].status.pluggedIn = 1;
+      if (enableEHC)
+      {
+        if (ctrl[i].config.continuous)
+          readoutContinuous(&ctrl[i]);
+        else
+          readoutBiStable(&ctrl[i]);
+      }
+    }
+    else
+      resetController(&ctrl[i], WAIT_TIME_AFTER_PLUGIN);
+  }
+}
+
+void NL_EHC_ProcessControllers2(void)
+{
+  // any processing only after buffers are fully filled initially, also gives some initial power-up settling
+  if (!EHC_sampleBuffersValid())
+    return;
+
+  for (int i = NUMBER_OF_CONTROLLERS / 2; i < NUMBER_OF_CONTROLLERS; i++)
   {
     if (!ctrl[i].status.initialized)
       continue;
@@ -1064,6 +1090,11 @@ void NL_EHC_ProcessControllers(void)
       resetController(&ctrl[i], WAIT_TIME_AFTER_PLUGIN);
   }
   ShowSettlingDisplay();
+}
+
+void NL_EHC_ProcessControllers3(void)
+{
+  static uint32_t checkTimer = EEPROM_UPDATE_CHECK_TIME;
 
   if (requestGetEHCdata)
   {
@@ -1086,6 +1117,7 @@ void NL_EHC_ProcessControllers(void)
     if (writeNeeded)
       forceEepromUpdate = (NL_EEPROM_StartWriteBlock(eepromHandle, &ctrlSaveData[0]) == 0);
   }
+  EHC_fillSampleBuffers();
 }
 
 /*************************************************************************/ /**
