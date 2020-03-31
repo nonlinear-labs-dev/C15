@@ -215,11 +215,5 @@ void MSG_SendActiveSensing(void)
   {
     MSG_SendMidiBuffer();
   }
-#else
-#ifndef no__IMPLEMENT_ACTIVE_SENSING
-#ifdef CORE_M4
-#error "either __IMPLEMENT_ACTIVE_SENSING or no__IMPLEMENT_ACTIVE_SENSING must be defined"
-#endif
-#endif
 #endif
 }
