@@ -30,6 +30,7 @@
  */
 
 #include "eeprom_18xx_43xx.h"
+#include "drv/nl_cgu.h"
 
 /*****************************************************************************
  * Private types/enumerations/variables
@@ -49,7 +50,7 @@ static void setClkDiv(LPC_EEPROM_T *pEEPROM)
   uint32_t clk;
 
   /* Setup EEPROM timing to 375KHz based on PCLK rate */
-  clk             = 204000000;  // Chip_Clock_GetRate(CLK_MX_EEPROM);	/* Set EEPROM clock divide value*/
+  clk             = NL_LPC_CLK;  // Chip_Clock_GetRate(CLK_MX_EEPROM);	/* Set EEPROM clock divide value*/
   pEEPROM->CLKDIV = clk / EEPROM_CLOCK_DIV - 1;
 }
 
