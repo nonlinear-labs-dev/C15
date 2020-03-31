@@ -3,7 +3,7 @@
  *  last mod: 2016-04-27 DTZ
  *  Created on: 21.01.2015
  *      Author: ssc
- *  changed 2020-03-30 KSTR
+ *  changed 2020-03-31 KSTR
  */
 
 //#define BB_MSG_DBG  // if defined, discards normal BB_MSG_WriteMessage*() messages and enables the *_DBG() variants instead
@@ -19,6 +19,7 @@
 #include "sys/nl_coos.h"
 #include "tcd/ehc/nl_ehc_ctrl.h"
 #include "sys/nl_eeprom.h"
+#include "sys/nl_coos.h"
 
 #define SENDBUFFER_SIZE 510  // 16-bit words, stays below the maximum of 1020 bytes
 
@@ -352,6 +353,15 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case REQUEST_ID_CLEAR_EEPROM:
         NL_EEPROM_RequestFullErase();
         break;
+      case REQUEST_ID_COOS_DATA:
+      {
+        uint16_t buffer[4];
+        COOS_GetData(buffer);
+        BB_MSG_WriteMessage(BB_MSG_TYPE_COOS_DATA, 4, buffer);
+        BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_COOS_DATA, 1);
+        BB_MSG_SendTheBuffer();
+        break;
+      }
       default:
         type = 0;  // to set a breakpoint only
         break;

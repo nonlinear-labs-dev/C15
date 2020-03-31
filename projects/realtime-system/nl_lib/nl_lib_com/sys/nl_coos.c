@@ -6,31 +6,35 @@
 #include "sys/nl_coos.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_ticker.h"
+#include "ipc/emphase_ipc.h"
 
 #define COOS_MAX_TASKS 48  // max number of task the COOS should handle (memory size)
 
 #define LOG_TASK_TIME   (0)
 #define DGB_TIMING_PINS (0)
 
+static uint16_t totalOverruns    = 0;
+static uint16_t maxTasksPerSlice = 0;
+static uint16_t maxTaskTime      = 0;
+static uint16_t maxDispatchTime  = 0;
+
+#if DGB_TIMING_PINS
 static void DispatchTotalTime(int on)
 {
-#if DGB_TIMING_PINS
   if (on)
     DBG_GPIO3_2_On();
   else
     DBG_GPIO3_2_Off();
-#endif
 }
 
 static void DispatchTaskTime(int on)
 {
-#if DGB_TIMING_PINS
   if (on)
     DBG_GPIO3_3_On();
   else
     DBG_GPIO3_3_Off();
-#endif
 }
+#endif
 
 typedef struct
 {
@@ -87,13 +91,13 @@ int32_t COOS_Task_Add(void (*taskName)(), uint32_t phase, uint32_t period)
   }
 
   /* there is a space in the taskArray - add task */
-  COOS_taskArray[index].pTask     = taskName;
   COOS_taskArray[index].countDown = phase + 1;
   COOS_taskArray[index].period    = period;
   COOS_taskArray[index].run       = 0;
 #if LOG_TASK_TIME
   COOS_taskArray[index].max_time = 0;
 #endif
+  COOS_taskArray[index].pTask = taskName;
   return index;  // so task can be deleted
 }
 
@@ -134,33 +138,42 @@ void COOS_Start(void)
     @param[]
     @return
 *******************************************************************************/
-void COOS_Dispatch(void)
+static uint32_t dispatchStart = 0;
+static uint32_t dispatchStop  = 0;
+void            COOS_Dispatch(void)
 {
-  uint8_t index;
+  uint16_t index;
+  uint16_t tasks = 0;
 
-  for (index = 0; index < COOS_MAX_TASKS; index++)  // run the next task (if one is ready)
-    if (COOS_taskArray[index].run > 0)
-    {
-      DispatchTotalTime(1);  // monitor the duration of the dispatch function when at least one task is due
-      break;
-    }
+  dispatchStart = IPC_GetTimer();
 
+#if DGB_TIMING_PINS
+  DispatchTotalTime(1);
+#endif
   for (index = 0; index < COOS_MAX_TASKS; index++)  // run the next task (if one is ready)
   {
     if (COOS_taskArray[index].run > 0)
     {
-#if LOG_TASK_TIME
-      uint32_t time = SYS_ticker;
-#endif
+#if DGB_TIMING_PINS
       DispatchTaskTime(1);
+#endif
+      uint32_t startTime = IPC_GetTimer();
       (*COOS_taskArray[index].pTask)();  // run the task
+      COOS_taskArray[index].run--;       // decrease the run flag, so postponed tasks will also be handled
+      uint32_t stopTime = IPC_GetTimer();
+      if (startTime > stopTime)  // wraparound
+        stopTime += 65536;
+      uint32_t time = stopTime - startTime;
+      if (time > maxTaskTime)
+        maxTaskTime = time;
+#if DGB_TIMING_PINS
       DispatchTaskTime(0);
+#endif
 #if LOG_TASK_TIME
-      time = SYS_ticker - time;
       if (time > COOS_taskArray[index].max_time)
         COOS_taskArray[index].max_time = time;
 #endif
-      COOS_taskArray[index].run--;  // decrease the run flag, so postponed tasks will also be handled
+      tasks++;
 
       if (COOS_taskArray[index].period == 0)  // if one shot task: remove from taskArray
       {
@@ -168,13 +181,23 @@ void COOS_Dispatch(void)
       }
     }
   }
+  if (tasks > maxTasksPerSlice)
+    maxTasksPerSlice = tasks;
+  dispatchStop = IPC_GetTimer();
+  if (dispatchStart > dispatchStop)  // wraparound
+    dispatchStop += 65536;
+  uint32_t time = dispatchStop - dispatchStart;
+  if (time > maxDispatchTime)
+    maxDispatchTime = time;
 
   if (taskOverflow)
   {
     DBG_Led_Warning_TimedOn(3);
     taskOverflow = 0;
   }
+#if DGB_TIMING_PINS
   DispatchTotalTime(0);
+#endif
 }
 
 /******************************************************************************/
@@ -194,7 +217,11 @@ void COOS_Update(void)
       {
         COOS_taskArray[index].run++;        // yes, task is due to run -> increase run-flag
         if (COOS_taskArray[index].run > 1)  // any task pending more than once ?
+        {
           taskOverflow = 1;
+          if (totalOverruns < 0xFFFF)
+            totalOverruns++;
+        }
         if (COOS_taskArray[index].period >= 1)
         {  // schedule periodic task to run again
           COOS_taskArray[index].countDown = COOS_taskArray[index].period;
@@ -202,4 +229,16 @@ void COOS_Update(void)
       }
     }
   }
+}
+
+void COOS_GetData(uint16_t *buffer)
+{
+  buffer[0]        = totalOverruns;
+  buffer[1]        = maxTasksPerSlice;
+  buffer[2]        = maxTaskTime;
+  buffer[3]        = maxDispatchTime;
+  totalOverruns    = 0;
+  maxTasksPerSlice = 0;
+  maxTaskTime      = 0;
+  maxDispatchTime  = 0;
 }

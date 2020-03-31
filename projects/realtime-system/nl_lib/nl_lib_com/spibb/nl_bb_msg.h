@@ -44,6 +44,7 @@
 #define BB_MSG_TYPE_EHC_CONFIG   0x0F00  // direction: input;  arguments (uint16): 2, 1x command, 1x data
 #define BB_MSG_TYPE_EHC_DATA     0x1000  // direction: output;  arguments(uint16): ??, (see nl_ehc_ctrl.c)
 #define BB_MSG_TYPE_KEY_EMUL     0x1100  // direction: input;  arguments (uint16): 3, midi key , time(lo), time(high)
+#define BB_MSG_TYPE_COOS_DATA    0x1200  // direction: output;  arguments (uint16): 4
 
 //----- Setting Ids:
 
@@ -101,6 +102,7 @@
 #define REQUEST_ID_UNMUTE_STATUS 0x0001
 #define REQUEST_ID_EHC_DATA      0x0002
 #define REQUEST_ID_CLEAR_EEPROM  0x0003
+#define REQUEST_ID_COOS_DATA     0x0004
 
 //----- Notification Ids:
 
@@ -108,6 +110,7 @@
 #define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
 #define NOTIFICATION_ID_EHC_DATA      0x0002
 #define NOTIFICATION_ID_CLEAR_EEPROM  0x0003
+#define NOTIFICATION_ID_COOS_DATA     0x0004
 
 void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t *data);
 void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg);
