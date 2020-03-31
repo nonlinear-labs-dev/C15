@@ -14,6 +14,7 @@
 #define BB_MSG_TYPE_SENSORS_RAW  0x0E00  // direction: output; arguments(uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
 #define BB_MSG_TYPE_EHC_CONFIG   0x0F00  // direction: input;  arguments (uint16): 2, 1x command, 1x data
 #define BB_MSG_TYPE_EHC_DATA     0x1000  // direction: output;  arguments(uint16): ??, (see nl_ehc_ctrl.c)
+#define BB_MSG_TYPE_COOS_DATA    0x1200  // direction: output;  arguments (uint16): 4
 
 //----- Setting Ids:
 
@@ -41,16 +42,18 @@
 #define SETTING_ID_ENABLE_EHC             0xFF04  // direction: input; arguments(uint16): 1, flag (!= 0)
 
 //----- Request Ids:
-
 #define REQUEST_ID_SW_VERSION    0x0000
 #define REQUEST_ID_UNMUTE_STATUS 0x0001
 #define REQUEST_ID_EHC_DATA      0x0002
+#define REQUEST_ID_CLEAR_EEPROM  0x0003
+#define REQUEST_ID_COOS_DATA     0x0004
 
 //----- Notification Ids:
-
 #define NOTIFICATION_ID_SW_VERSION    0x0000
 #define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
 #define NOTIFICATION_ID_EHC_DATA      0x0002
+#define NOTIFICATION_ID_CLEAR_EEPROM  0x0003
+#define NOTIFICATION_ID_COOS_DATA     0x0004
 
 // ==================================================================================
 #define HW_SOURCE_ID_PEDAL_1    0
@@ -254,6 +257,12 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       switch (data[0])
       {
+        case NOTIFICATION_ID_CLEAR_EEPROM:
+          printf("NOTIFICATION : EEPROM cleared\n");
+          return;
+        case NOTIFICATION_ID_COOS_DATA:
+          printf("NOTIFICATION : Task Data sent\n");
+          return;
         case NOTIFICATION_ID_SW_VERSION:
           printf("NOTIFICATION : Software Version: %hu\n", data[1]);
           return;
@@ -265,6 +274,19 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
           data[0] = data[1];
           goto ShowMuteStatus;
       }
+
+    case BB_MSG_TYPE_COOS_DATA:
+      if (flags & NO_COOSDATA)
+        return;
+      dump(cmd, len, data, flags);
+      if (len != 4)
+      {
+        printf("TASKS : wrong length of %d\n", len);
+        return;
+      }
+      printf("TASK Scheduler tops: %d overs, %d per slice, task:%dus, scheduler:%dus\n",
+             data[0], data[1], 5 * (int) data[2] / 2, 5 * (int) data[3] / 2);
+      return;
 
     case BB_MSG_TYPE_HEARTBEAT:
       if (flags & NO_HEARTBEAT)

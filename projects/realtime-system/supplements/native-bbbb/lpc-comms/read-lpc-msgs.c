@@ -135,6 +135,7 @@ void Usage(char const *const string, int const exitCode)
   puts("             by either a + or -, turning the display on or off");
   puts("  default is +a");
   puts(" a   all");
+  puts(" c   COOS task data");
   puts(" d   addtional hex dump");
   puts(" e   EHC data");
   puts(" h   heartbeat");
@@ -177,6 +178,11 @@ int main(int argc, char *argv[])
       displayFlags |= NO_ALL;
     else if (strncmp(argv[1], "+a", 2) == 0)
       displayFlags &= ~NO_ALL;
+
+    else if (strncmp(argv[1], "-c", 2) == 0)
+      displayFlags |= NO_COOSDATA;
+    else if (strncmp(argv[1], "+c", 2) == 0)
+      displayFlags &= ~NO_COOSDATA;
 
     else if (strncmp(argv[1], "-d", 2) == 0)
       displayFlags |= NO_HEXDUMP;
