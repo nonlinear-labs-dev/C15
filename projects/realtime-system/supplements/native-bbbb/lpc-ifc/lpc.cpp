@@ -37,6 +37,7 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define BB_MSG_TYPE_EHC_CONFIG   0x0F00  // direction: input;  arguments (uint16): 2, 1x command, 1x data
 #define BB_MSG_TYPE_EHC_DATA     0x1000  // direction: output;  arguments(uint16): ??, (see nl_ehc_ctrl.c)
 #define BB_MSG_TYPE_KEY_EMUL     0x1100  // direction: input;  arguments (uint16): 3, midi key , time(lo), time(high)
+#define BB_MSG_TYPE_COOS_DATA    0x1200  // direction: output;  arguments (uint16): 4
 
 //----- Setting Ids:
 
@@ -79,6 +80,7 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define REQUEST_ID_UNMUTE_STATUS 0x0001
 #define REQUEST_ID_EHC_DATA      0x0002
 #define REQUEST_ID_CLEAR_EEPROM  0x0003
+#define REQUEST_ID_COOS_DATA     0x0004
 
 //----- Notification Ids:
 
@@ -86,7 +88,9 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
 #define NOTIFICATION_ID_EHC_DATA      0x0002
 #define NOTIFICATION_ID_CLEAR_EEPROM  0x0003
+#define NOTIFICATION_ID_COOS_DATA     0x0004
 
+//----- Mute Status
 #define SUP_UNMUTE_STATUS_IS_VALID           (0b1000000000000000)  // status has actually been set
 #define SUP_UNMUTE_STATUS_JUMPER_OVERRIDE    (0b0000000010000000)  // hardware jumper overriding everything ...
 #define SUP_UNMUTE_STATUS_JUMPER_VALUE       (0b0000000001000000)  // ... with this value (1:unmuted)
@@ -102,6 +106,7 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define SW_VERSION   "sw-version"
 #define MUTE_STATUS  "mute-status"
 #define CLEAR_EEPROM "clear-eeprom"
+#define COOS_DATA    "coos-data"
 
 #define SETTING           "set"
 #define MUTE_CTRL         "mute-ctrl"
@@ -128,12 +133,12 @@ void Usage(void)
   puts("Usage:");
   puts(" lpc  <command>");
   puts("  <commands> : req|set|key");
-  puts("  req: sw-version|mute-status|clear-eeprom  : send request");
-  puts("  set: mute-ctrl|sensors|ae-cmd             : send setting");
+  puts("  req[uest] : sw-version|mute-status|clear-eeprom|coos-data");
+  puts("  set[ting] : mute-ctrl|sensors|ae-cmd");
   puts("     mute-ctrl: disable|mute|unmute : disable mute override or set/clear muting");
   puts("     sensors: on|off                : turn raw sensor messages on/off");
   puts("     ae-cmd: tton|ttoff|def-snd     : Audio Engine Special, test-tone on/off, load default sound");
-  puts("  key: <note-nr> <time>                     : send emulated key");
+  puts("  key: <note-nr> <time>         : send emulated key");
   puts("      <note-nr>                     : MIDI key number, 60=\"C3\"");
   puts("      <time>                        : key time (~1/velocity) in ms (2...525), negative means key release");
   exit(3);
@@ -176,6 +181,12 @@ int main(int argc, char const *argv[])
     if (strncmp(argv[2], CLEAR_EEPROM, sizeof CLEAR_EEPROM) == 0)
     {
       REQ_DATA[2] = REQUEST_ID_CLEAR_EEPROM;
+      writeData(driver, sizeof REQ_DATA, &REQ_DATA[0]);
+      return 0;
+    }
+    if (strncmp(argv[2], COOS_DATA, sizeof COOS_DATA) == 0)
+    {
+      REQ_DATA[2] = REQUEST_ID_COOS_DATA;
       writeData(driver, sizeof REQ_DATA, &REQ_DATA[0]);
       return 0;
     }
