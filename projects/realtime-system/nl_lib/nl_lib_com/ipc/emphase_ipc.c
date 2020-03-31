@@ -6,6 +6,7 @@
 *******************************************************************************/
 #include <stdint.h>
 #include "ipc/emphase_ipc.h"
+#include "drv/nl_rit.h"
 
 #define IPC_ADC_DEFAULT (2048)
 
@@ -26,6 +27,7 @@ static volatile ADC_BUFFER_ARRAY_T* adcBufferData;
 static volatile uint32_t*           adcConfigData;
 static volatile int*                adcBufferWriteIndex;
 static volatile int*                adcBufferReadIndex;
+static volatile uint16_t*           timer;
 
 /******************************************************************************
 *	Functions for both the M4 and M0 to interface the PlayBuffers.
@@ -144,6 +146,9 @@ static void Init_Addr(void)
 
   adcBufferReadIndex = (int*) (addr);
   addr += sizeof *adcBufferReadIndex;
+
+  timer = (uint16_t*) (addr);
+  addr += sizeof *timer;
 }
 
 /******************************************************************************/
@@ -172,6 +177,7 @@ void Emphase_IPC_Init(void)
   *adcConfigData       = 0;
   *adcBufferReadIndex  = 0;
   *adcBufferWriteIndex = 0;
+  *timer               = 0;
 }
 
 /******************************************************************************/
@@ -217,4 +223,20 @@ uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* const pKeyEvent, c
 uint32_t Emphase_IPC_KeyBuffer_GetSize()
 {
   return EMPHASE_IPC_KEYBUFFER_SIZE;
+}
+
+/******************************************************************************/
+/** @brief      Return timeslice counter in 1/102MHz units (~10ns)
+*******************************************************************************/
+uint16_t IPC_GetTimer(void)
+{
+  return *timer;
+}
+void IPC_ResetTimer(void)
+{
+  *timer = 0;
+}
+void IPC_IncTimer(void)
+{
+  *timer += 1;
 }

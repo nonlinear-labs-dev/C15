@@ -10,9 +10,24 @@
 #define NL_RIT_H
 
 #include <stdint.h>
+#include "cmsis/LPC43xx.h"
 
 void RIT_Init_IntervalInUs(uint32_t time_us);
 void RIT_Init_IntervalInNs(uint32_t ns);
-void RIT_ClearInt(void);
+
+static inline void RIT_ClearInt(void)
+{
+  LPC_RITIMER->CTRL |= 1;
+};
+
+static inline uint32_t RIT_GetCounter(void)
+{
+  return LPC_RITIMER->COUNTER;
+};
+
+static inline uint32_t RIT_GetCompval(void)
+{
+  return LPC_RITIMER->COMPVAL;
+};
 
 #endif

@@ -30,8 +30,8 @@
 #include "espi/dev/nl_espi_dev_ribbons.h"
 #include "espi/dev/nl_espi_dev_adc.h"
 
-#define M0_SYSTICK_IN_NS      62500  // 62.5us
-#define M0_SYSTICK_MULTIPLIER 2      // 62.5us*2 = 125us --> triggers Timer Interrupt of M4
+#define M0_SYSTICK_IN_NS      2500  // 2.5us
+#define M0_SYSTICK_MULTIPLIER 50    // 2.5s*50 = 125us --> triggers Timer Interrupt of M4
 
 #define PENDING_INTERRUPT 1
 #define SCHED_FINISHED    0
@@ -314,28 +314,26 @@ int main(void)
 }
 
 /******************************************************************************/
-void M0_RIT_OR_WWDT_IRQHandler(void)
+static volatile uint8_t sysTickMultiplier = 0;
+void                    M0_RIT_OR_WWDT_IRQHandler(void)
 {
   RIT_ClearInt();
+  IPC_IncTimer();
 
-  static uint8_t sysTickMultiplier = 0;
   sysTickMultiplier++;
+
+  if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER / 2 || sysTickMultiplier == M0_SYSTICK_MULTIPLIER)
+  {
+    if (stateFlag == SCHED_FINISHED)
+      stateFlag = PENDING_INTERRUPT;
+    // else
+    // DBG_Led_Warning_On();
+  }
 
   if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER)
   {
-    SendInterruptToM4();
-  }
-
-  if (sysTickMultiplier == 2)
     sysTickMultiplier = 0;
-
-  if (stateFlag == SCHED_FINISHED)
-  {
-    stateFlag = PENDING_INTERRUPT;
-  }
-  else
-  {
-    DBG_Led_Warning_On();
+    SendInterruptToM4();
   }
 }
 

@@ -69,5 +69,8 @@ void     IPC_AdcBufferWriteNext(void);
 void     IPC_AdcUpdateReadIndex(void);
 uint32_t IPC_ReadPedalAdcConfig(void);
 void     IPC_WritePedalAdcConfig(const uint32_t config);
+uint16_t IPC_GetTimer(void);
+void     IPC_ResetTimer(void);
+void     IPC_IncTimer(void);
 
 #endif

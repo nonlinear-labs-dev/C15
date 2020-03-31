@@ -57,8 +57,3 @@ void RIT_Init_IntervalInNs(uint32_t ns)
 
   NVIC_EnableIRQ(RITIMER_IRQn);
 }
-
-void RIT_ClearInt(void)
-{
-  LPC_RITIMER->CTRL |= 1;
-}
