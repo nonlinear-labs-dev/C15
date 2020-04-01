@@ -76,19 +76,21 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 
 //----- Request Ids:
 
-#define REQUEST_ID_SW_VERSION    0x0000
-#define REQUEST_ID_UNMUTE_STATUS 0x0001
-#define REQUEST_ID_EHC_DATA      0x0002
-#define REQUEST_ID_CLEAR_EEPROM  0x0003
-#define REQUEST_ID_COOS_DATA     0x0004
+#define REQUEST_ID_SW_VERSION     0x0000
+#define REQUEST_ID_UNMUTE_STATUS  0x0001
+#define REQUEST_ID_EHC_DATA       0x0002
+#define REQUEST_ID_CLEAR_EEPROM   0x0003
+#define REQUEST_ID_COOS_DATA      0x0004
+#define REQUEST_ID_EHC_EEPROMSAVE 0x0005
 
 //----- Notification Ids:
 
-#define NOTIFICATION_ID_SW_VERSION    0x0000
-#define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
-#define NOTIFICATION_ID_EHC_DATA      0x0002
-#define NOTIFICATION_ID_CLEAR_EEPROM  0x0003
-#define NOTIFICATION_ID_COOS_DATA     0x0004
+#define NOTIFICATION_ID_SW_VERSION     0x0000
+#define NOTIFICATION_ID_UNMUTE_STATUS  0x0001
+#define NOTIFICATION_ID_EHC_DATA       0x0002
+#define NOTIFICATION_ID_CLEAR_EEPROM   0x0003
+#define NOTIFICATION_ID_COOS_DATA      0x0004
+#define NOTIFICATION_ID_EHC_EEPROMSAVE 0x0005
 
 //----- Mute Status
 #define SUP_UNMUTE_STATUS_IS_VALID           (0b1000000000000000)  // status has actually been set
@@ -102,11 +104,12 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define SUP_UNMUTE_STATUS_HARDWARE_VALUE     (0b0000000000000001)  // ... with this value (1:unmuted)
 
 // ===================
-#define REQUEST      "req"
-#define SW_VERSION   "sw-version"
-#define MUTE_STATUS  "mute-status"
-#define CLEAR_EEPROM "clear-eeprom"
-#define COOS_DATA    "coos-data"
+#define REQUEST         "req"
+#define SW_VERSION      "sw-version"
+#define MUTE_STATUS     "mute-status"
+#define CLEAR_EEPROM    "clear-eeprom"
+#define COOS_DATA       "coos-data"
+#define EHC_SAVE_EEPROM "save-ehc"
 
 #define SETTING           "set"
 #define MUTE_CTRL         "mute-ctrl"
@@ -133,7 +136,12 @@ void Usage(void)
   puts("Usage:");
   puts(" lpc  <command>");
   puts("  <commands> : req|set|key");
-  puts("  req[uest] : sw-version|mute-status|clear-eeprom|coos-data");
+  puts("  req[uest] : sw-version|mute-status|clear-eeprom|coos-data|save-ehc");
+  puts("     sw-version   : get LPC firware version");
+  puts("     mute-status  : get software&hardware muting status");
+  puts("     clear-eeprom : erase EEPROM");
+  puts("     coos-data    : get task scheduler profiling data");
+  puts("     save-ehc     : save current EHC config data to EEPROM");
   puts("  set[ting] : mute-ctrl|sensors|ae-cmd");
   puts("     mute-ctrl: disable|mute|unmute : disable mute override or set/clear muting");
   puts("     sensors: on|off                : turn raw sensor messages on/off");
@@ -187,6 +195,12 @@ int main(int argc, char const *argv[])
     if (strncmp(argv[2], COOS_DATA, sizeof COOS_DATA) == 0)
     {
       REQ_DATA[2] = REQUEST_ID_COOS_DATA;
+      writeData(driver, sizeof REQ_DATA, &REQ_DATA[0]);
+      return 0;
+    }
+    if (strncmp(argv[2], EHC_SAVE_EEPROM, sizeof EHC_SAVE_EEPROM) == 0)
+    {
+      REQ_DATA[2] = REQUEST_ID_EHC_EEPROMSAVE;
       writeData(driver, sizeof REQ_DATA, &REQ_DATA[0]);
       return 0;
     }
