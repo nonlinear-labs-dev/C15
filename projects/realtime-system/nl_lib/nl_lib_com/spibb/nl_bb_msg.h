@@ -95,22 +95,25 @@
 #define EHC_COMMAND_SET_RANGE_MIN        0x0200  // set lower end of ranging
 #define EHC_COMMAND_SET_RANGE_MAX        0x0300  // set upper end of ranging
 #define EHC_COMMAND_RESET_DELETE         0x0400  // reset or delete a controller
+#define EHC_COMMAND_FORCE_OUTPUT         0x0500  // reset or delete a controller
 
 //----- Request Ids:
 
-#define REQUEST_ID_SW_VERSION    0x0000
-#define REQUEST_ID_UNMUTE_STATUS 0x0001
-#define REQUEST_ID_EHC_DATA      0x0002
-#define REQUEST_ID_CLEAR_EEPROM  0x0003
-#define REQUEST_ID_COOS_DATA     0x0004
+#define REQUEST_ID_SW_VERSION     0x0000
+#define REQUEST_ID_UNMUTE_STATUS  0x0001
+#define REQUEST_ID_EHC_DATA       0x0002
+#define REQUEST_ID_CLEAR_EEPROM   0x0003
+#define REQUEST_ID_COOS_DATA      0x0004
+#define REQUEST_ID_EHC_EEPROMSAVE 0x0005
 
 //----- Notification Ids:
 
-#define NOTIFICATION_ID_SW_VERSION    0x0000
-#define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
-#define NOTIFICATION_ID_EHC_DATA      0x0002
-#define NOTIFICATION_ID_CLEAR_EEPROM  0x0003
-#define NOTIFICATION_ID_COOS_DATA     0x0004
+#define NOTIFICATION_ID_SW_VERSION     0x0000
+#define NOTIFICATION_ID_UNMUTE_STATUS  0x0001
+#define NOTIFICATION_ID_EHC_DATA       0x0002
+#define NOTIFICATION_ID_CLEAR_EEPROM   0x0003
+#define NOTIFICATION_ID_COOS_DATA      0x0004
+#define NOTIFICATION_ID_EHC_EEPROMSAVE 0x0005
 
 void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t *data);
 void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg);

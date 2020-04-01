@@ -362,6 +362,9 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         BB_MSG_SendTheBuffer();
         break;
       }
+      case REQUEST_ID_EHC_EEPROMSAVE:
+        NL_EHC_ForceEepromUpdate();
+        break;
       default:
         type = 0;  // to set a breakpoint only
         break;
