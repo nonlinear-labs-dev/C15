@@ -42,18 +42,20 @@
 #define SETTING_ID_ENABLE_EHC             0xFF04  // direction: input; arguments(uint16): 1, flag (!= 0)
 
 //----- Request Ids:
-#define REQUEST_ID_SW_VERSION    0x0000
-#define REQUEST_ID_UNMUTE_STATUS 0x0001
-#define REQUEST_ID_EHC_DATA      0x0002
-#define REQUEST_ID_CLEAR_EEPROM  0x0003
-#define REQUEST_ID_COOS_DATA     0x0004
+#define REQUEST_ID_SW_VERSION     0x0000
+#define REQUEST_ID_UNMUTE_STATUS  0x0001
+#define REQUEST_ID_EHC_DATA       0x0002
+#define REQUEST_ID_CLEAR_EEPROM   0x0003
+#define REQUEST_ID_COOS_DATA      0x0004
+#define REQUEST_ID_EHC_EEPROMSAVE 0x0005
 
 //----- Notification Ids:
-#define NOTIFICATION_ID_SW_VERSION    0x0000
-#define NOTIFICATION_ID_UNMUTE_STATUS 0x0001
-#define NOTIFICATION_ID_EHC_DATA      0x0002
-#define NOTIFICATION_ID_CLEAR_EEPROM  0x0003
-#define NOTIFICATION_ID_COOS_DATA     0x0004
+#define NOTIFICATION_ID_SW_VERSION     0x0000
+#define NOTIFICATION_ID_UNMUTE_STATUS  0x0001
+#define NOTIFICATION_ID_EHC_DATA       0x0002
+#define NOTIFICATION_ID_CLEAR_EEPROM   0x0003
+#define NOTIFICATION_ID_COOS_DATA      0x0004
+#define NOTIFICATION_ID_EHC_EEPROMSAVE 0x0005
 
 // ==================================================================================
 #define HW_SOURCE_ID_PEDAL_1    0
@@ -97,6 +99,24 @@ char paramNameTable[][LAST_PARAM_ID] = {
   "EHC 7     ",
   "EHC 8     ",
   "LASTKEY",
+};
+char paramShortNameTable[][16] = {
+  "E1",
+  "E2",
+  "E3",
+  "E4",
+  "PB",
+  "AT",
+  "R1",
+  "R2",
+  "E5",
+  "E6",
+  "E7",
+  "E8",
+  "--",
+  "--",
+  "--",
+  "--",
 };
 
 // ==================================================================================
@@ -209,6 +229,12 @@ void setColor(color_t color)
   }
 }
 
+int greenNotRed(int condition)
+{
+  setColor(condition ? GREEN : RED);
+  return condition;
+}
+
 // ==================================================================================
 void dump(uint16_t const cmd, uint16_t const len, uint16_t *const data, uint16_t const flags)
 {
@@ -225,10 +251,10 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
 {
   int       i;
   uint16_t *p;
-  double    last, min, max, scale;
+  double    last[8], min[8], max[8], scale[8];
 
-  EHC_ControllerConfig_T config;
-  EHC_ControllerStatus_T status;
+  EHC_ControllerConfig_T config[8];
+  EHC_ControllerStatus_T status[8];
 
   switch (cmd)
   {
@@ -243,7 +269,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       if (data[0] > LAST_PARAM_ID)
         return;
-      printf("PARAM %s = %d\n", paramNameTable[data[0]], data[1]);
+      printf("PARAM (HWSID %02d) %s = %d\n", data[0], paramNameTable[data[0]], data[1]);
       return;
 
     case BB_MSG_TYPE_NOTIFICATION:
@@ -267,7 +293,10 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
           printf("NOTIFICATION : Software Version: %hu\n", data[1]);
           return;
         case NOTIFICATION_ID_EHC_DATA:
-          printf("NOTIFICATION : EHC data sent: %hu\n", data[1]);
+          printf("NOTIFICATION : EHC data sent: %s\n", data[1] ? "success" : "failed");
+          return;
+        case NOTIFICATION_ID_EHC_EEPROMSAVE:
+          printf("NOTIFICATION : EHC data save to EEPROM: %s\n", data[1] ? "started successfully" : "postponed/failed");
           return;
         case NOTIFICATION_ID_UNMUTE_STATUS:
           printf("NOTIFICATION : ");
@@ -374,13 +403,193 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       p = (uint16_t *) data;
       for (i = 0; i < 8; i++)
       {
+        config[i] = uint16ToConfig(*p++);
+        status[i] = uint16ToStatus(*p++);
+        last[i]   = *p++;
+        min[i]    = *p++;
+        max[i]    = *p++;
+        scale[i]  = *p++;
+      }
+      printf("EHC data\nController    ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("P%d%c(%d)%c", i / 2 + 1, i & 1 ? 'R' : 'T', i, i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // config
+      printf("CONFIG        ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%04Xh %c", configToUint16(config[i]), i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      printf("  HWSID/SIL   ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%s/%c  %c", paramShortNameTable[config[i].hwId], config[i].silent ? 'S' : '-', i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      printf("  Pot/pUl/Con ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%c/%c/%c %c", config[i].is3wire ? 'P' : '-', config[i].pullup ? 'U' : '-', config[i].continuous ? 'C' : '-', i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      printf("  Inv/aRe/AHS ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%c/%c/%d %c", config[i].polarityInvert ? 'I' : '-', config[i].doAutoRanging ? 'R' : '-', config[i].autoHoldStrength, i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // status
+      printf("STATUS        ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%04Xh %c", statusToUint16(status[i]), i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      printf("  Ini/Plg/rEs ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%c/%c/%c %c", status[i].initialized ? 'I' : '-', status[i].pluggedIn ? 'P' : '-', status[i].isReset ? 'E' : '-', i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      printf("  Rng/Val/Stl ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%c/%c/%c %c", status[i].isAutoRanged ? 'R' : '-', status[i].outputIsValid ? 'V' : '-', status[i].isSettled ? 'S' : '-', i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      printf("  rAm/eeS/eeR ");
+      for (i = 0; i < 8; i++)
+      {
+        greenNotRed(status[i].initialized);
+        printf("%c/%c/%c %c", status[i].isRamping ? 'A' : '-', status[i].isSaved ? 'S' : '-', status[i].isRestored ? 'R' : '-', i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // last
+      printf("LAST          ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized && status[i].pluggedIn && status[i].outputIsValid))
+          printf("%5.0lf %c", last[i], i == 7 ? '\n' : ' ');
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // last %
+      printf("LAST %%        ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized && status[i].pluggedIn && status[i].outputIsValid))
+          printf("%5.1lf%%%c", 100 * last[i] / 16000, i == 7 ? '\n' : ' ');
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // min
+      printf("MIN           ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        {
+          if (!(status[i].isAutoRanged))
+            setColor(DEFAULT);
+          printf("%5.0lf %c", min[i], i == 7 ? '\n' : ' ');
+        }
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // max
+      printf("MAX           ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        {
+          if (!(status[i].isAutoRanged))
+            setColor(DEFAULT);
+          printf("%5.0lf %c", max[i], i == 7 ? '\n' : ' ');
+        }
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // min %
+      printf("MIN %%         ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        {
+          if (!(status[i].isAutoRanged))
+            setColor(DEFAULT);
+          printf("%5.1lf%%%c", 100 * min[i] / scale[i], i == 7 ? '\n' : ' ');
+        }
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // max %
+      printf("MAX %%         ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        {
+          if (!(status[i].isAutoRanged))
+            setColor(DEFAULT);
+          printf("%5.1lf%%%c", 100 * max[i] / scale[i], i == 7 ? '\n' : ' ');
+        }
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // scale
+      printf("SCALE         ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        {
+          printf("%5.0lf %c", scale[i], i == 7 ? '\n' : ' ');
+        }
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      /*
+      for (i = 0; i < 8; i++)
+      {
         config = uint16ToConfig(*p++);
         status = uint16ToStatus(*p++);
         setColor(config.hwId == 15 ? RED : GREEN);
-        printf("EHC%d config (0x%04X) = HWSID:%02d SIL:%d CTRLID:%d POT:%d PUP:%d INV:%d ARAE:%d CONT:%d AHS:%d\n",
-               i + 1, configToUint16(config), config.hwId, config.silent, config.ctrlId, config.is3wire, config.pullup, config.polarityInvert, config.doAutoRanging, config.continuous, config.autoHoldStrength);
+        printf("P%d%c(%d) ", i/2+1, i&1 ? 'R' : 'T', i);
+        printf("config (0x%04X) = HWSID:%02d SIL:%d CTRLID:%d POT:%d PUL:%d INV:%d ARAE:%d CONT:%d AHS:%d\n",
+               configToUint16(config), config.hwId, config.silent, config.ctrlId, config.is3wire, config.pullup, config.polarityInvert, config.doAutoRanging, config.continuous, config.autoHoldStrength);
         setColor(status.initialized ? GREEN : RED);
-        printf("     status (0x%04X) = INI:%c PLUGD:%d RES:%d VALID:%d RANGD:%d SETLD:%d RAMP:%d EES:%d EER:%d\n",
+        printf("       status (0x%04X) = INI:%c PLUGD:%d RES:%d VALID:%d RANGD:%d SETLD:%d RAMP:%d EES:%d EER:%d\n",
                statusToUint16(status), status.initialized ? '1' : '-', status.pluggedIn, status.isReset,
                status.outputIsValid, status.isAutoRanged, status.isSettled, status.isRamping, status.isSaved, status.isRestored);
         last = *p++;
@@ -389,11 +598,12 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         min   = *p++;
         max   = *p++;
         scale = *p++;
-        printf("     last / min / max / scale :  %d(%.1lf%%) / %d(%.1lf%%) / %d(%.1lf%%) / %5d\n",
+        printf("       last / min / max / scale :  %d(%.1lf%%) / %d(%.1lf%%) / %d(%.1lf%%) / %5d\n",
                (uint16_t) last, 100 * last / 16000, (uint16_t) min, 100 * min / scale, (uint16_t) max, 100 * max / scale, (uint16_t) scale);
         setColor(DEFAULT);
       }
       printf("\n");
+*/
       return;
     default:
       if (flags & NO_UNKNOWN)
