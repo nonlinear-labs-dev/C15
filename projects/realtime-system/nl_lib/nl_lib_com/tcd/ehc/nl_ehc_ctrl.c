@@ -337,10 +337,12 @@ Controller_T ctrl[NUMBER_OF_CONTROLLERS];
 // EEPROM save/restore buffer
 ControllerSave_T NL_EEPROM_ALIGN ctrlSaveData[NUMBER_OF_CONTROLLERS];
 
-static int      requestGetEHCdata = 0;                                      // flag for pending send of EHC data
-static int      enableEHC         = 1;                                      // master enable flag for all runtime processing (except init() etc)
-static uint16_t eepromHandle      = 0;                                      // EEPROM access handle
-static uint16_t forceEepromUpdate = 0;                                      // force update EEPROM if contents were initially invalid
+static int      requestGetEHCdata         = 0;  // flag for pending send of EHC data
+static int      enableEHC                 = 1;  // master enable flag for all runtime processing (except init() etc)
+static uint16_t eepromHandle              = 0;  // EEPROM access handle
+static uint16_t forceEepromUpdate         = 0;  // internal: force update EEPROM if contents were initially invalid
+static uint16_t forceEepromUpdateExternal = 0;  // external: force update EEPROM if contents were initially invalid
+
 /*************************************************************************/ /**
 * @brief	"changed" event : send value to AudioEngine and UI
 ******************************************************************************/
@@ -902,6 +904,17 @@ void setRangeMax(uint8_t which, uint16_t max)
   ctrl[which].used_max = max;
 }
 
+void forceOutput(uint8_t which)
+{
+  if (which >= NUMBER_OF_CONTROLLERS)
+    return;
+  if (ctrl[which].status.initialized && ctrl[which].status.pluggedIn
+      && ctrl[which].status.isAutoRanged && ctrl[which].status.outputIsValid)
+  {
+    ctrl[which].lastFinal = ~ctrl[which].final;
+  }
+}
+
 /*************************************************************************/ /**
 * @brief	 Configure External Hardware Controller
 * @param[in] command
@@ -929,6 +942,9 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
           return;
         initController(uint16ToConfig(0xF800 | (cmd & 0xFF) << 8), 1);
       }
+      break;
+    case EHC_COMMAND_FORCE_OUTPUT:
+      forceOutput(cmd & 0xFF);
       break;
   }
 }
@@ -1102,9 +1118,10 @@ void NL_EHC_ProcessControllers3(void)
     NL_EHC_SendEHCdata();
   }
 
-  if (!--checkTimer)
+  if (!--checkTimer || forceEepromUpdateExternal)
   {
-    checkTimer      = EEPROM_UPDATE_CHECK_TIME;
+    checkTimer = EEPROM_UPDATE_CHECK_TIME;
+    forceEepromUpdate |= forceEepromUpdateExternal;
     int writeNeeded = forceEepromUpdate;
     for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
     {
@@ -1116,6 +1133,13 @@ void NL_EHC_ProcessControllers3(void)
     }
     if (writeNeeded)
       forceEepromUpdate = (NL_EEPROM_StartWriteBlock(eepromHandle, &ctrlSaveData[0]) == 0);
+    // forceEepromUpdate is cleared now only when StartWrite was successful
+    if (forceEepromUpdateExternal)
+    {
+      forceEepromUpdateExternal = 0;
+      BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_EHC_EEPROMSAVE, 0 == forceEepromUpdate);
+      BB_MSG_SendTheBuffer();
+    }
   }
   EHC_fillSampleBuffers();
 }
@@ -1142,6 +1166,11 @@ void NL_EHC_InitControllers(void)
       initController(uint16ToConfig(0xF800 | (i << 8)), 1);
     forceEepromUpdate = 1;
   }
+}
+
+void NL_EHC_ForceEepromUpdate(void)
+{
+  forceEepromUpdateExternal = 1;
 }
 
 // EOF
