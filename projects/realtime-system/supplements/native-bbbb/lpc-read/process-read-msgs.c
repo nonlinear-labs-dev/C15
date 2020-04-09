@@ -79,7 +79,7 @@ void dump(uint16_t const cmd, uint16_t const len, uint16_t *const data, uint16_t
 {
   if (flags & NO_HEXDUMP)
     return;
-  printf("cmd:%04X len:%04X: data:", cmd, len);
+  printf("hexdump cmd=%04X len=%04X: data=", cmd, len);
   for (int i = 0; i < len; i++)
     printf("%04X ", data[i]);
   printf("\n");
@@ -138,6 +138,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       if (data[0] > NUM_HW_SOURCES)
         return;
+      if (!(flags & NO_OVERLAY) && (lastMessage == (((uint32_t) cmd << 16)) + (uint32_t) data[0]))
+        cursorUp(1);
       printf("PARAM (HWSID %02d) %s = %5d", data[0], paramNameTable[data[0]], data[1]);
       if (data[0] <= HW_SOURCE_ID_PEDAL_8)
         printf(" (%5.1lf%%)", 100.0 * data[1] / 16000.0);
@@ -154,6 +156,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         printf("NOTIFICATION : wrong length of %d\n", len);
         return;
       }
+      if (!(flags & NO_OVERLAY) && (lastMessage == (((uint32_t) cmd << 16)) + (uint32_t) data[0]))
+        cursorUp(1);
       switch (data[0])
       {
         case LPC_NOTIFICATION_ID_CLEAR_EEPROM:
@@ -175,6 +179,9 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
           printf("NOTIFICATION : ");
           data[0] = data[1];
           goto ShowMuteStatus;
+        default:
+          printf("NOTIFICATION : unknown ID=%d, data=%d \n", data[0], data[1]);
+          break;
       }
       lastMessage = (cmd << 16) + data[0];
       return;
@@ -188,6 +195,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         printf("TASKS : wrong length of %d\n", len);
         return;
       }
+      if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
+        cursorUp(1);
       printf("TASK Scheduler tops: %d overs, %d per slice, task:%dus, scheduler:%dus\n",
              data[0], data[1], 5 * (int) data[2] / 2, 5 * (int) data[3] / 2);
       lastMessage = cmd << 16;
@@ -208,6 +217,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         heartbeat <<= 16;
         heartbeat |= data[i];
       }
+      if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
+        cursorUp(1);
       printf("HEARTBEAT : %8llu\n", heartbeat);
       lastMessage = cmd << 16;
       return;
@@ -218,9 +229,11 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       dump(cmd, len, data, flags);
       if (len != 13)
       {
-        printf("HEARTBEAT : wrong length of %d\n", len);
+        printf("RAW SENSORS : wrong length of %d\n", len);
         return;
       }
+      if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
+        cursorUp(1);
       printf("RAW SENSORS: ");
       for (int i = 3; i >= 0; i--)
         printf("%c ", (data[0] & (1 << i)) ? '1' : '0');
@@ -244,6 +257,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         printf("MUTESTATUS : wrong length of %d\n", len);
         return;
       }
+    if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
+      cursorUp(1);
     ShowMuteStatus:
       printf("MUTESTATUS: valid:%d", data[0] & SUP_UNMUTE_STATUS_IS_VALID ? 1 : 0);
       printf(" jumper:");
@@ -292,7 +307,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         adc[i]          = *p++;
       }
 
-      if ((flags & OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
+      if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
         cursorUp(19);
       printf("EHC data ------------------------------------------------------------\n");
       printf("Controller    ");
@@ -399,30 +414,6 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       setColor(DEFAULT);
 
-      // intermediate scaled
-      printf("Raw (scaled)  ");
-      for (i = 0; i < 8; i++)
-      {
-        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
-        {
-          double tmp = intermediate[i] / scale[i];
-          if (!(status[i].isAutoRanged))
-            setColor(DEFAULT);
-          if (config[i].is3wire)  // pot, output is in %
-            printfPercent(tmp);
-          else if (!config[i].is3wire && config[i].pullup)  // rheostat, output is in 00.00k to 130.1k Ohms
-            printfResistance(tmp);
-          else if (!config[i].is3wire && !config[i].pullup)  // control voltage, output is 0.00V to 5.00V Volts
-            printfControlVoltage(tmp);
-          else
-            printf("      ");
-        }
-        else
-          printf("      ");
-        printf("%c", i == 7 ? '\n' : ' ');
-      }
-      setColor(DEFAULT);
-
       // min
       printf("Min           ");
       for (i = 0; i < 8; i++)
@@ -453,11 +444,24 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       setColor(DEFAULT);
 
+      // scale
+      printf("Scale         ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        {
+          printf("%5.0lf %c", scale[i], i == 7 ? '\n' : ' ');
+        }
+        else
+          printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
       // min scaled
       printf("Min (scaled)  ");
       for (i = 0; i < 8; i++)
       {
-        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized && min[i] < max[i]))
         {
           double tmp = min[i] / scale[i];
           if (!(status[i].isAutoRanged))
@@ -481,7 +485,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       printf("Max (scaled)  ");
       for (i = 0; i < 8; i++)
       {
-        if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized && min[i] < max[i]))
         {
           double tmp = max[i] / scale[i];
           if (!(status[i].isAutoRanged))
@@ -501,18 +505,30 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       setColor(DEFAULT);
 
-      // scale
-      printf("Scale         ");
+      // intermediate scaled
+      printf("Cur (scaled)  ");
       for (i = 0; i < 8; i++)
       {
         if (greenNotRed(config[i].hwId != 15 && status[i].initialized))
         {
-          printf("%5.0lf %c", scale[i], i == 7 ? '\n' : ' ');
+          double tmp = intermediate[i] / scale[i];
+          if (!(status[i].isAutoRanged))
+            setColor(DEFAULT);
+          if (config[i].is3wire)  // pot, output is in %
+            printfPercent(tmp);
+          else if (!config[i].is3wire && config[i].pullup)  // rheostat, output is in 00.00k to 130.1k Ohms
+            printfResistance(tmp);
+          else if (!config[i].is3wire && !config[i].pullup)  // control voltage, output is 0.00V to 5.00V Volts
+            printfControlVoltage(tmp);
+          else
+            printf("      ");
         }
         else
-          printf("      %c", i == 7 ? '\n' : ' ');
+          printf("      ");
+        printf("%c", i == 7 ? '\n' : ' ');
       }
       setColor(DEFAULT);
+
       lastMessage = cmd << 16;
       return;
 

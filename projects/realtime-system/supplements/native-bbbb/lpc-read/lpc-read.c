@@ -130,21 +130,21 @@ void Usage(char const *const string, int const exitCode)
 {
   if (string)
     puts(string);
-  puts("read-lpc-msgs [-r] <options>");
-  puts(" -r : print overlayed if same msg type (only with -d");
+  puts("read-lpc-msgs <options>");
   puts("  <options> is a white-space seperated list of letters, preceeded");
   puts("             by either a + or -, turning the display on or off");
-  puts("  default is +a");
-  puts(" a   all");
+  puts("  default is +a -d");
+  puts(" a   All options");
+  puts(" r   oveRlay messages of same type");
   puts(" c   COOS task data");
-  puts(" d   addtional hex dump");
+  puts(" d   addtional hex Dump, forces -r");
   puts(" e   EHC data");
-  puts(" h   heartbeat");
-  puts(" m   mute status");
-  puts(" n   notificiation");
-  puts(" p   parameter");
-  puts(" s   sensors raw data");
-  puts(" u   hexdump of unknown messages");
+  puts(" h   Heartbeat");
+  puts(" m   Mute status");
+  puts(" n   Notificiation");
+  puts(" p   Parameter");
+  puts(" s   Sensors raw data");
+  puts(" u   hexdump of Unknown messages");
   exit(exitCode);
 }
 
@@ -171,18 +171,19 @@ int main(int argc, char *argv[])
   flags = getDriverFlags(driverFileNo);
   makeDriverBlocking(driverFileNo, flags);
 
-  displayFlags = 0;
-  int overlay  = 0;
+  displayFlags = NO_HEXDUMP;
 
   while (argc > 1)
   {
-    if (strncmp(argv[1], "-r", 2) == 0)
-      overlay = 1;
-
-    else if (strncmp(argv[1], "-a", 2) == 0)
+    if (strncmp(argv[1], "-a", 2) == 0)
       displayFlags |= NO_ALL;
     else if (strncmp(argv[1], "+a", 2) == 0)
       displayFlags &= ~NO_ALL;
+
+    else if (strncmp(argv[1], "-r", 2) == 0)
+      displayFlags |= NO_OVERLAY;
+    else if (strncmp(argv[1], "+r", 2) == 0)
+      displayFlags &= ~NO_OVERLAY;
 
     else if (strncmp(argv[1], "-c", 2) == 0)
       displayFlags |= NO_COOSDATA;
@@ -234,8 +235,9 @@ int main(int argc, char *argv[])
     argc--;
     argv++;
   }
-  if (overlay && (displayFlags & NO_HEXDUMP))
-    displayFlags |= OVERLAY;
+  
+  if (!(displayFlags & NO_HEXDUMP))
+    displayFlags |= NO_OVERLAY;
 
   while (1)
   {
