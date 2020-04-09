@@ -40,7 +40,7 @@ void Usage(void)
   puts("  clear-all        : clear all controllers");
   puts("  enable           : enable EHC processing");
   puts("  disable          : disable EHC processing");
-  puts("  range <port>, <min>, <max>  : set range of controller to min..max (uint16)");
+  puts("  range <port> <min> <max>  : set range of controller to min..max (uint16)");
   puts("  reset <port>     : reset controller at port");
   puts("  force <port>     : force output update from controller at port");
   puts("  clear <port>|all : clear controller at port");
