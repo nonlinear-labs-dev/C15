@@ -17,6 +17,9 @@
 #include <cr_section_macros.h>
 #include <stdlib.h>
 
+#include "../../../shared/lpc-defs.h"
+#include "../../../shared/lpc-converters.h"
+
 // =============
 // ============= local constants and types
 // =============
@@ -60,8 +63,10 @@ static void ShowSettlingDisplay(void)
 #define NUMBER_OF_CONTROLLERS (8)  // 4 jacks, each with tip and ring ADC channels
 
 // ============= Pot channels
-#define POT_SCALE_FACTOR  (20000)  // don't change this unless you know what you do
-#define RHEO_SCALE_FACTOR (10000)  // don't change this unless you know what you do
+#define POT_SCALE_FACTOR   (20000)  // don't change this unless you know what you do
+#define REFERENCE_RESISTOR (10000)  // don't change this unless you know what you do
+#define REFERENCE_DIVIDER  (2)      // don't change this unless you know what you do
+#define RHEO_SCALE_FACTOR  (REFERENCE_RESISTOR / REFERENCE_DIVIDER)
 // autoranging
 #define AR_SPAN            (1000)  // 1000/20000 -> 5%
 #define AR_SPAN_RHEO       (115)   // 115 -> 1.15 (max/min minimum factor, must be greater than 1.0, of course)
@@ -153,94 +158,6 @@ const ControllerParameterSet_T CTRL_PARAMS[PARAMETER_SETS] = {
   },
 };
 
-// ----------
-typedef struct
-{
-  unsigned ctrlId : 3;            // controller number 0...7, aka input (main) ADC channel 0...7, 0/1=J1T/R, 2/3=J2T/R, etc,
-  unsigned hwId : 4;              // hardware ID used for messages to AE and PG
-  unsigned silent : 1;            // disable messaging to AudioEngine
-  unsigned is3wire : 1;           // controller connection type, 0=2wire(rheo/sw/cv), 1=3wire(pot)
-  unsigned pullup : 1;            // controller input sensing, 0=unloaded(pot/CV), 1=with pullup(rheo/sw)
-  unsigned continuous : 1;        // controller output type, 0=continuous(all), 1=bi-stable(all)
-  unsigned polarityInvert : 1;    // invert, or don't, the final output(all)
-  unsigned autoHoldStrength : 3;  // controller auto-hold 0..7, 0(off)...4=autoHold-Strength for pot/rheo
-  unsigned doAutoRanging : 1;     // enable auto-ranging, or assume static (but adjustable) thresholds/levels
-} EHC_ControllerConfig_T;
-
-static uint16_t configToUint16(const EHC_ControllerConfig_T c)
-{
-  uint16_t ret = 0;
-  ret |= c.autoHoldStrength << 0;
-  ret |= c.continuous << 3;
-  ret |= c.doAutoRanging << 4;
-  ret |= c.polarityInvert << 5;
-  ret |= c.pullup << 6;
-  ret |= c.is3wire << 7;
-  ret |= c.ctrlId << 8;
-  ret |= c.silent << 11;
-  ret |= c.hwId << 12;
-  return ret;
-}
-static EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
-{
-  EHC_ControllerConfig_T ret;
-  ret.autoHoldStrength = (c & 0b0000000000000111) >> 0;
-  ret.continuous       = (c & 0b0000000000001000) >> 3;
-  ret.doAutoRanging    = (c & 0b0000000000010000) >> 4;
-  ret.polarityInvert   = (c & 0b0000000000100000) >> 5;
-  ret.pullup           = (c & 0b0000000001000000) >> 6;
-  ret.is3wire          = (c & 0b0000000010000000) >> 7;
-  ret.ctrlId           = (c & 0b0000011100000000) >> 8;
-  ret.silent           = (c & 0b0000100000000000) >> 11;
-  ret.hwId             = (c & 0b1111000000000000) >> 12;
-  return ret;
-}
-
-typedef struct
-{
-  unsigned initialized : 1;    // controller is initialized (has valid setup)
-  unsigned pluggedIn : 1;      // controller is plugged in
-  unsigned isReset : 1;        // controller is freshly reset
-  unsigned outputIsValid : 1;  // controller final output value has been set
-  unsigned isAutoRanged : 1;   // controller has finished auto-ranging (always=1 when disabled)
-  unsigned isSettled : 1;      // controller output is within 'stable' bounds and step-freezing (not valid for bi-stable)
-  unsigned isRamping : 1;      // controller currently does a ramp to the actual value (pot/rheo) (not valid for bi-stable)
-  unsigned isSaved : 1;        // controller state has been saved to EEPROM
-  unsigned isRestored : 1;     // controller state has been restored from EEPROM
-
-} EHC_ControllerStatus_T;
-
-static uint16_t statusToUint16(const EHC_ControllerStatus_T s)
-{
-  uint16_t ret = 0;
-  ret |= s.initialized << 0;
-  ret |= s.pluggedIn << 1;
-  ret |= s.isReset << 2;
-  ret |= s.outputIsValid << 3;
-  ret |= s.isAutoRanged << 4;
-  ret |= s.isSettled << 5;
-  ret |= s.isRamping << 6;
-  ret |= s.isSaved << 7;
-  ret |= s.isRestored << 8;
-  return ret;
-}
-static EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
-{
-  EHC_ControllerStatus_T ret;
-  ret.initialized   = (s & 0b0000000000000001) >> 0;
-  ret.pluggedIn     = (s & 0b0000000000000010) >> 1;
-  ret.isReset       = (s & 0b0000000000000100) >> 2;
-  ret.outputIsValid = (s & 0b0000000000001000) >> 3;
-  ret.isAutoRanged  = (s & 0b0000000000010000) >> 4;
-  ret.isSettled     = (s & 0b0000000000100000) >> 5;
-  ret.isRamping     = (s & 0b0000000001000000) >> 6;
-  ret.isSaved       = (s & 0b0000000010000000) >> 7;
-  ret.isRestored    = (s & 0b0000000100000000) >> 8;
-  return ret;
-}
-
-// ----------
-
 // ---------------- begin Value Buffer defs
 typedef struct
 {
@@ -293,6 +210,7 @@ typedef struct
   ValueBuffer_T rawBuffer;  // intermediate value buffer
   ValueBuffer_T outBuffer;  // output buffer
 
+  uint16_t intermediate;
   // (auto-)ranging
   uint16_t min;          // values used to reflect ...
   uint16_t max;          // ... physical ranges.
@@ -409,15 +327,23 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
     this->status.isSaved       = tmp.isSaved;
     this->status.isRestored    = tmp.isRestored;
 
-    this->final       = 8000;
-    this->lastFinal   = ~this->final;
-    this->used_min    = 65535;
-    this->used_max    = 0;
-    this->min         = 65535;
-    this->max         = 0;
-    this->range_scale = 0;
-    this->wait        = 0;
-    this->step        = 0;
+    this->final        = 8000;
+    this->lastFinal    = ~this->final;
+    this->intermediate = 0;
+    this->used_min     = 65535;
+    this->used_max     = 0;
+    this->min          = 65535;
+    this->max          = 0;
+    this->range_scale  = 0;
+    this->wait         = 0;
+    this->step         = 0;
+    // clear pullups of associated ADCs, making the input High-Z
+    if (this->wiper)
+      this->wiper->flags.pullup_10k = 0;
+    if (this->top)
+      this->top->flags.pullup_10k = 0;
+    this->wiper = NULL;
+    this->top   = NULL;
     return;
   }
   if (config.hwId >= NUM_HW_REAL_SOURCES)
@@ -506,6 +432,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   this->status.initialized = 1;
   this->status.isReset     = 1;
   this->status.pluggedIn   = 0;
+  this->intermediate       = 0;
   InitAutoRange(this);
 }
 
@@ -568,6 +495,7 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   this->status.isReset       = 1;
   this->status.pluggedIn     = 0;
   this->step                 = 0;
+  this->intermediate         = 0;
   if (this->config.doAutoRanging)
     InitAutoRange(this);
   else
@@ -602,13 +530,22 @@ static int getIntermediateValue(Controller_T *const this)
     value = this->wiper->filtered_current;  // == output in case for CV
     if (this->config.pullup)                // only rheostat or switch have pullup
     {                                       // get calculate absolute resistance value
-      if (value > 4000 * AVG_DIV)
-        value = 4000 * AVG_DIV;  // avoid excessive values after division
-      value = RHEO_SCALE_FACTOR * value / (ADC_MAX_SCALED - value) / 2;
-      if (value > 60000)  // limit to uint16 range, 100k pot shall be still within
-        value = 60000;
+      if (value > 3800 * AVG_DIV)
+        value = 3800 * AVG_DIV;  // limit input to equiv. 130.943kOhms (ADC value 3800)
+      // value in 0.5kOhm units,  can't be larger than 65467
+      // 4090 is the open-circuit max ADC output
+      int tmp = REFERENCE_RESISTOR * value;
+      tmp /= (4090 * AVG_DIV - value);
+      tmp -= 100;  // subtract the built-in 100R break-out resistor
+      tmp /= REFERENCE_DIVIDER;
+      if (tmp < 0)
+        tmp = 0;
+      if (tmp > 65535)
+        tmp = 65535;
+      value = tmp;
     }
   }
+  this->intermediate = value;
   return value;
 }
 
@@ -924,17 +861,17 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
 {
   switch (cmd & 0xFF00)
   {
-    case EHC_COMMAND_SET_CONTROL_REGISTER:  // config control register
+    case LPC_EHC_COMMAND_SET_CONTROL_REGISTER:  // config control register
       initController(uint16ToConfig(data), 0);
       break;
-    case EHC_COMMAND_SET_RANGE_MIN:  // set ranging min
+    case LPC_EHC_COMMAND_SET_RANGE_MIN:  // set ranging min
       setRangeMin(cmd & 0xFF, data);
       break;
-    case EHC_COMMAND_SET_RANGE_MAX:  // set ranging max
+    case LPC_EHC_COMMAND_SET_RANGE_MAX:  // set ranging max
       setRangeMax(cmd & 0xFF, data);
       break;
-    case EHC_COMMAND_RESET_DELETE:  // reset or full delete controller
-      if (data == 0)                // reset
+    case LPC_EHC_COMMAND_RESET_DELETE:  // reset or full delete controller
+      if (data == 0)                    // reset
         resetControllerById(cmd & 0xFF, 0);
       else  // full delete
       {
@@ -943,7 +880,7 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
         initController(uint16ToConfig(0xF800 | (cmd & 0xFF) << 8), 1);
       }
       break;
-    case EHC_COMMAND_FORCE_OUTPUT:
+    case LPC_EHC_COMMAND_FORCE_OUTPUT:
       forceOutput(cmd & 0xFF);
       break;
   }
@@ -953,7 +890,7 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
 ******************************************************************************/
 void NL_EHC_SendEHCdata(void)
 {
-#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 6)
+#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 8)
   uint16_t  data[EHC_DATA_MSG_SIZE];
   uint16_t *p = data;
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
@@ -961,12 +898,14 @@ void NL_EHC_SendEHCdata(void)
     *p++ = configToUint16(ctrl[i].config);
     *p++ = statusToUint16(ctrl[i].status);
     *p++ = ctrl[i].lastFinal;
+    *p++ = ctrl[i].intermediate;
     *p++ = ctrl[i].used_min;
     *p++ = ctrl[i].used_max;
     *p++ = ctrl[i].range_scale;
+    *p++ = EHC_adc[i].filtered_current;
   }
-  BB_MSG_WriteMessage(BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
-  BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_EHC_DATA, 1);
+  BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
+  BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_EHC_DATA, 1);
   BB_MSG_SendTheBuffer();
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
     ctrl[i].status.isSaved = 0;
@@ -1137,7 +1076,7 @@ void NL_EHC_ProcessControllers3(void)
     if (forceEepromUpdateExternal)
     {
       forceEepromUpdateExternal = 0;
-      BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_EHC_EEPROMSAVE, 0 == forceEepromUpdate);
+      BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_EHC_EEPROMSAVE, 0 == forceEepromUpdate);
       BB_MSG_SendTheBuffer();
     }
   }
