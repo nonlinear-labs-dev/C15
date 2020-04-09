@@ -58,7 +58,7 @@ void EHC_initSampleBuffers(void)
       EHC_adc[i].values[k]          = DEFAULT_ADC_VALUE * AVG_DIV;
       EHC_adc[i].filtered_values[k] = DEFAULT_ADC_VALUE * AVG_DIV;
     }
-    EHC_adc[i].flags.pullup_10k  = 1;  // force pullup on every pin, initially
+    EHC_adc[i].flags.pullup_10k  = 0;
     EHC_adc[i].flags.pullup_5V   = 0;
     EHC_adc[i].flags.useIIR      = 0;
     EHC_adc[i].flags.useStats    = 0;
