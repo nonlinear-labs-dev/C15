@@ -377,8 +377,11 @@ uint32_t USB_ReqGetStatus(void)
     case REQUEST_TO_INTERFACE:
       if ((USB_Configuration != 0) && (SetupPacket.wIndex.WB.L < USB_NumInterfaces))
       {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
         *((__packed uint16_t *) EP0Buf) = 0;
-        EP0Data.pData                   = EP0Buf;
+#pragma GCC diagnostic pop
+        EP0Data.pData = EP0Buf;
       }
       else
       {
@@ -390,8 +393,11 @@ uint32_t USB_ReqGetStatus(void)
       m = (n & 0x80) ? ((1 << 16) << (n & 0x0F)) : (1 << n);
       if (((USB_Configuration != 0) || ((n & 0x0F) == 0)) && (USB_EndPointMask & m))
       {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
         *((__packed uint16_t *) EP0Buf) = (USB_EndPointHalt & m) ? 1 : 0;
-        EP0Data.pData                   = EP0Buf;
+#pragma GCC diagnostic pop
+        EP0Data.pData = EP0Buf;
       }
       else
       {
