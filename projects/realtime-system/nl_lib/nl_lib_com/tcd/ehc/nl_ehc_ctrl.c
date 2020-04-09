@@ -63,15 +63,15 @@ static void ShowSettlingDisplay(void)
 #define NUMBER_OF_CONTROLLERS (8)  // 4 jacks, each with tip and ring ADC channels
 
 // ============= Pot channels
-#define POT_SCALE_FACTOR   (20000)  // don't change this unless you know what you do
-#define REFERENCE_RESISTOR (10000)  // don't change this unless you know what you do
-#define REFERENCE_DIVIDER  (2)      // don't change this unless you know what you do
+#define POT_SCALE_FACTOR   (50000ul)  // don't change this unless you know what you do
+#define REFERENCE_RESISTOR (10000ul)  // don't change this unless you know what you do
+#define REFERENCE_DIVIDER  (2)        // don't change this unless you know what you do
 #define RHEO_SCALE_FACTOR  (REFERENCE_RESISTOR / REFERENCE_DIVIDER)
 // autoranging
-#define AR_SPAN            (1000)  // 1000/20000 -> 5%
-#define AR_SPAN_RHEO       (115)   // 115 -> 1.15 (max/min minimum factor, must be greater than 1.0, of course)
-#define AR_UPPER_DEAD_ZONE (5)     // 5 -> 5%, electrical dead zone
-#define AR_LOWER_DEAD_ZONE (4)     // 4 -> 4%, electrical dead zone
+#define AR_SPAN            (5*POT_SCALE_FACTOR/100)  //  5%
+#define AR_SPAN_RHEO       (115)                     // 115 -> 1.15 (max/min minimum factor, must be greater than 1.0, of course)
+#define AR_UPPER_DEAD_ZONE (5)                       // 5 -> 5%, electrical dead zone
+#define AR_LOWER_DEAD_ZONE (4)                       // 4 -> 4%, electrical dead zone
 
 // settling
 #define VALBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
