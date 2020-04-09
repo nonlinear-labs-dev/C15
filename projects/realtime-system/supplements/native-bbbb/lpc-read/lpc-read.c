@@ -130,7 +130,8 @@ void Usage(char const *const string, int const exitCode)
 {
   if (string)
     puts(string);
-  puts("read-lpc-msgs <options>");
+  puts("read-lpc-msgs [-r] <options>");
+  puts(" -r : print overlayed if same msg type (only with -d");
   puts("  <options> is a white-space seperated list of letters, preceeded");
   puts("             by either a + or -, turning the display on or off");
   puts("  default is +a");
@@ -171,10 +172,14 @@ int main(int argc, char *argv[])
   makeDriverBlocking(driverFileNo, flags);
 
   displayFlags = 0;
+  int overlay  = 0;
 
   while (argc > 1)
   {
-    if (strncmp(argv[1], "-a", 2) == 0)
+    if (strncmp(argv[1], "-r", 2) == 0)
+      overlay = 1;
+
+    else if (strncmp(argv[1], "-a", 2) == 0)
       displayFlags |= NO_ALL;
     else if (strncmp(argv[1], "+a", 2) == 0)
       displayFlags &= ~NO_ALL;
@@ -229,6 +234,8 @@ int main(int argc, char *argv[])
     argc--;
     argv++;
   }
+  if (overlay && (displayFlags & NO_HEXDUMP))
+    displayFlags |= OVERLAY;
 
   while (1)
   {

@@ -13,5 +13,6 @@
 #define NO_UNKNOWN      (0x0080)
 #define NO_COOSDATA     (0x0100)
 #define NO_ALL          (0x01FF)
+#define OVERLAY         (0x8000)
 
 void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t* const data, uint16_t flags);
