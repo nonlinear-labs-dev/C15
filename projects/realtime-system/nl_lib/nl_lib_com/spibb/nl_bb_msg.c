@@ -271,62 +271,62 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
   // data[1]  - first value
   // data[2]  - second value
 
-  if (type == BB_MSG_TYPE_RIBBON_CAL)
+  if (type == LPC_BB_MSG_TYPE_RIBBON_CAL)
   {
     ADC_WORK_SetRibbonCalibration(length, data);
   }
-  else if (type == BB_MSG_TYPE_EHC_CONFIG)
+  else if (type == LPC_BB_MSG_TYPE_EHC_CONFIG)
   {
     NL_EHC_SetEHCconfig(data[0], data[1]);  // Configurate External Hardware Controller
   }
-  else if (type == BB_MSG_TYPE_KEY_EMUL)
+  else if (type == LPC_BB_MSG_TYPE_KEY_EMUL)
   {
     POLY_ForceKey(data[0], data[1], data[2]);
   }
-  else if (type == BB_MSG_TYPE_SETTING)
+  else if (type == LPC_BB_MSG_TYPE_SETTING)
   {
     switch (data[0])
     {
-      case SETTING_ID_PLAY_MODE_UPPER_RIBBON_BEHAVIOUR:  // Play mode ribbon 1 behaviour
-        ADC_WORK_SetRibbon1Behaviour(data[1]);           // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
+      case LPC_SETTING_ID_PLAY_MODE_UPPER_RIBBON_BEHAVIOUR:  // Play mode ribbon 1 behaviour
+        ADC_WORK_SetRibbon1Behaviour(data[1]);               // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
         break;
-      case SETTING_ID_PLAY_MODE_LOWER_RIBBON_BEHAVIOUR:  // Play mode ribbon 2 behaviour
-        ADC_WORK_SetRibbon2Behaviour(data[1]);           // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
+      case LPC_SETTING_ID_PLAY_MODE_LOWER_RIBBON_BEHAVIOUR:  // Play mode ribbon 2 behaviour
+        ADC_WORK_SetRibbon2Behaviour(data[1]);               // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
         break;
-      case SETTING_ID_BASE_UNIT_UI_MODE:       // "Unit Mode" - Ribbon 1 can be switched between Edit and Play mode.
+      case LPC_SETTING_ID_BASE_UNIT_UI_MODE:   // "Unit Mode" - Ribbon 1 can be switched between Edit and Play mode.
         ADC_WORK_SetRibbon1EditMode(data[1]);  // 0: Play, 1: Parameter Edit
         break;
-      case SETTING_ID_EDIT_MODE_RIBBON_BEHAVIOUR:   // Parameter edit mode ribbon behaviour
-        ADC_WORK_SetRibbon1EditBehaviour(data[1]);  // 0: Rel, 1: Abs
+      case LPC_SETTING_ID_EDIT_MODE_RIBBON_BEHAVIOUR:  // Parameter edit mode ribbon behaviour
+        ADC_WORK_SetRibbon1EditBehaviour(data[1]);     // 0: Rel, 1: Abs
         break;
-      case SETTING_ID_UPPER_RIBBON_REL_FACTOR:  // Factor for the increments when a ribbon is in Relative mode
-        ADC_WORK_SetRibbonRelFactor(data[1]);   // factor = data[1] / 256
+      case LPC_SETTING_ID_UPPER_RIBBON_REL_FACTOR:  // Factor for the increments when a ribbon is in Relative mode
+        ADC_WORK_SetRibbonRelFactor(data[1]);       // factor = data[1] / 256
         break;
-      case SETTING_ID_VELOCITY_CURVE:   // Velocity Curve
-        POLY_Select_VelTable(data[1]);  // Parameter: 0 = very soft ... 4 = very hard
+      case LPC_SETTING_ID_VELOCITY_CURVE:  // Velocity Curve
+        POLY_Select_VelTable(data[1]);     // Parameter: 0 = very soft ... 4 = very hard
         break;
-      case SETTING_ID_AFTERTOUCH_CURVE:            // Aftertouch Curve
+      case LPC_SETTING_ID_AFTERTOUCH_CURVE:        // Aftertouch Curve
         ADC_WORK_Select_AftertouchTable(data[1]);  // 0: soft, 1: normal, 2: hard
         break;
-      case SETTING_ID_BENDER_CURVE:            // Bender Curve
+      case LPC_SETTING_ID_BENDER_CURVE:        // Bender Curve
         ADC_WORK_Select_BenderTable(data[1]);  // 0: soft, 1: normal, 2: hard
         break;
-      case SETTING_ID_SOFTWARE_MUTE_OVERRIDE:
+      case LPC_SETTING_ID_SOFTWARE_MUTE_OVERRIDE:
         SUP_SetMuteOverride(data[1]);  // enable/disable Software Mute Override and value
         break;                         // see sup/nl_sup.h for bit patterns
-      case SETTING_ID_SEND_RAW_SENSOR_DATA:
+      case LPC_SETTING_ID_SEND_RAW_SENSOR_DATA:
         ADC_WORK_SetRawSensorMessages(data[1]);
         break;
-      case SETTING_ID_PEDAL_1_TYPE:
-      case SETTING_ID_PEDAL_2_TYPE:
-      case SETTING_ID_PEDAL_3_TYPE:
-      case SETTING_ID_PEDAL_4_TYPE:
-        NL_EHC_SetLegacyPedalType(data[0] - SETTING_ID_PEDAL_1_TYPE, data[1]);
+      case LPC_SETTING_ID_PEDAL_1_TYPE:
+      case LPC_SETTING_ID_PEDAL_2_TYPE:
+      case LPC_SETTING_ID_PEDAL_3_TYPE:
+      case LPC_SETTING_ID_PEDAL_4_TYPE:
+        NL_EHC_SetLegacyPedalType(data[0] - LPC_SETTING_ID_PEDAL_1_TYPE, data[1]);
         break;
-      case SETTING_ID_ENABLE_EHC:
+      case LPC_SETTING_ID_ENABLE_EHC:
         NL_EHC_Enable(data[1]);
         break;
-      case SETTING_ID_AUDIO_ENGINE_CMD:
+      case LPC_SETTING_ID_AUDIO_ENGINE_CMD:
         MSG_SendAEDevelopperCmd(data[1]);
         break;
       default:
@@ -335,34 +335,34 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;
     }
   }
-  else if (type == BB_MSG_TYPE_REQUEST)
+  else if (type == LPC_BB_MSG_TYPE_REQUEST)
   {
     switch (data[0])
     {
-      case REQUEST_ID_SW_VERSION:  // sending the firmware version to the BB
-        BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_SW_VERSION, SW_VERSION);
+      case LPC_REQUEST_ID_SW_VERSION:  // sending the firmware version to the BB
+        BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_SW_VERSION, SW_VERSION);
         BB_MSG_SendTheBuffer();
         break;
-      case REQUEST_ID_UNMUTE_STATUS:  // sending the muting status to the BB
-        BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_UNMUTE_STATUS, SUP_GetUnmuteStatusBits());
+      case LPC_REQUEST_ID_UNMUTE_STATUS:  // sending the muting status to the BB
+        BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_UNMUTE_STATUS, SUP_GetUnmuteStatusBits());
         BB_MSG_SendTheBuffer();
         break;
-      case REQUEST_ID_EHC_DATA:  // send EHC data to BB
+      case LPC_REQUEST_ID_EHC_DATA:  // send EHC data to BB
         NL_EHC_RequestToSendEHCdata();
         break;
-      case REQUEST_ID_CLEAR_EEPROM:
+      case LPC_REQUEST_ID_CLEAR_EEPROM:
         NL_EEPROM_RequestFullErase();
         break;
-      case REQUEST_ID_COOS_DATA:
+      case LPC_REQUEST_ID_COOS_DATA:
       {
         uint16_t buffer[4];
         COOS_GetData(buffer);
-        BB_MSG_WriteMessage(BB_MSG_TYPE_COOS_DATA, 4, buffer);
-        BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_COOS_DATA, 1);
+        BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_COOS_DATA, 4, buffer);
+        BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_COOS_DATA, 1);
         BB_MSG_SendTheBuffer();
         break;
       }
-      case REQUEST_ID_EHC_EEPROMSAVE:
+      case LPC_REQUEST_ID_EHC_EEPROMSAVE:
         NL_EHC_ForceEepromUpdate();
         break;
       default:

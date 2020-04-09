@@ -10,26 +10,11 @@
 
 #include "stdint.h"
 
+#include "../../../shared/lpc-defs.h"
+
 #define NON_RETURN       0
 #define RETURN_TO_ZERO   1
 #define RETURN_TO_CENTER 2
-
-#define HW_SOURCE_ID_PEDAL_1    0
-#define HW_SOURCE_ID_PEDAL_2    1
-#define HW_SOURCE_ID_PEDAL_3    2
-#define HW_SOURCE_ID_PEDAL_4    3
-#define HW_SOURCE_ID_PITCHBEND  4
-#define HW_SOURCE_ID_AFTERTOUCH 5
-#define HW_SOURCE_ID_RIBBON_1   6
-#define HW_SOURCE_ID_RIBBON_2   7
-#define HW_SOURCE_ID_PEDAL_5    8
-#define HW_SOURCE_ID_PEDAL_6    9
-#define HW_SOURCE_ID_PEDAL_7    10
-#define HW_SOURCE_ID_PEDAL_8    11
-#define HW_SOURCE_ID_LAST_KEY   12
-
-#define NUM_HW_REAL_SOURCES 12  // all but LAST_KEY
-#define NUM_HW_SOURCES      13
 
 //------- public functions
 

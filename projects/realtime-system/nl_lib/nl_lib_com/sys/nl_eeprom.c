@@ -274,7 +274,7 @@ void NL_EEPROM_Process(void)
   }
   if (NL_EEPROM_FullEraseFinished())
   {
-    BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_NOTIFICATION, NOTIFICATION_ID_CLEAR_EEPROM, 1);
+    BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_CLEAR_EEPROM, 1);
     BB_MSG_SendTheBuffer();
   }
   if (step == 0)

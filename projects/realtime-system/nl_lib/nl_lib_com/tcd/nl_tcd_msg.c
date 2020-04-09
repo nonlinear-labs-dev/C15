@@ -15,6 +15,8 @@
 #include "drv/nl_dbg.h"
 #include "tcd/nl_tcd_adc_work.h"
 
+#include "../../../shared/lpc-defs.h"
+
 /******************************************************************************/
 /*	modul local defines														  */
 /******************************************************************************/
@@ -109,8 +111,8 @@ void MSG_KeyPosition(uint32_t key)
     return;  /// assertion
   }
 
-  buff[writeBuffer][buf++] = 0x0E;        // MIDI status 0xE
-  buff[writeBuffer][buf++] = 0xED;        // MIDI status 0xE, MIDI channel 13
+  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_KEY_POS;
   buff[writeBuffer][buf++] = key >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = key & 0x7F;  // second 7 bits
 
@@ -127,8 +129,8 @@ void MSG_KeyPosition(uint32_t key)
 ******************************************************************************/
 void MSG_KeyDown(uint32_t vel)
 {
-  buff[writeBuffer][buf++] = 0x0E;        // MIDI status 0xE
-  buff[writeBuffer][buf++] = 0xEE;        // MIDI status 0xE, MIDI channel 14
+  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_KEY_DOWN;
   buff[writeBuffer][buf++] = vel >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = vel & 0x7F;  // second 7 bits
 
@@ -145,8 +147,8 @@ void MSG_KeyDown(uint32_t vel)
 ******************************************************************************/
 void MSG_KeyUp(uint32_t vel)
 {
-  buff[writeBuffer][buf++] = 0x0E;        // MIDI status 0xE
-  buff[writeBuffer][buf++] = 0xEF;        // MIDI status 0xE, MIDI channel 15
+  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_KEY_UP;
   buff[writeBuffer][buf++] = vel >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = vel & 0x7F;  // second 7 bits
 
@@ -169,8 +171,8 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
     return;  /// assertion
   }
 
-  buff[writeBuffer][buf++] = 0x0E;             // MIDI status 0xE
-  buff[writeBuffer][buf++] = 0xE0 | source;    // MIDI status 0xE, MIDI channel 0...11
+  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_HW_POS | source;
   buff[writeBuffer][buf++] = position >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = position & 0x7F;  // second 7 bits
 
@@ -187,8 +189,8 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
 ******************************************************************************/
 void MSG_SendAEDevelopperCmd(uint32_t cmd)
 {
-  buff[writeBuffer][buf++] = 0x0E;        // MIDI status 0xE
-  buff[writeBuffer][buf++] = 0xE0 | 12;   // MIDI status 0xE, MIDI channel 12
+  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_DEVELOPPER_CMD;
   buff[writeBuffer][buf++] = cmd >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = cmd & 0x7F;  // second 7 bits
 

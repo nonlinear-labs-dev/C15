@@ -306,8 +306,8 @@ static void SendEditMessageToBB(uint32_t paramId, uint32_t value, int32_t inc)
 {
   if (ribbon[RIB1].editBehavior)  // 1: the ribbon sends the absolute value
   {
-    BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_EDIT_CONTROL, paramId, value);  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
-    BB_MSG_SendTheBuffer();                                             /// später mit somethingToSend = 1; !!!
+    BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, paramId, value);  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
+    BB_MSG_SendTheBuffer();                                                 /// später mit somethingToSend = 1; !!!
   }
   else  // 0: the ribbon sends the increment
   {
@@ -322,8 +322,8 @@ static void SendEditMessageToBB(uint32_t paramId, uint32_t value, int32_t inc)
 
       inc16 = 0x8000 | (-inc);  // 0x8000 is the sign bit, -inc is the absolute
 
-      BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_EDIT_CONTROL, paramId, inc16);  // sends the increment as an Edit Control message; results being displayed on the upper Ribbon
-      BB_MSG_SendTheBuffer();                                             /// später mit somethingToSend = 1; !!!
+      BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, paramId, inc16);  // sends the increment as an Edit Control message; results being displayed on the upper Ribbon
+      BB_MSG_SendTheBuffer();                                                 /// später mit somethingToSend = 1; !!!
     }
     else if (inc > 0)
     {
@@ -334,8 +334,8 @@ static void SendEditMessageToBB(uint32_t paramId, uint32_t value, int32_t inc)
 
       inc16 = inc;
 
-      BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_EDIT_CONTROL, paramId, inc16);  // sends the increment as an Edit Control message; results being displayed on the upper Ribbon
-      BB_MSG_SendTheBuffer();                                             /// später mit somethingToSend = 1; !!!
+      BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, paramId, inc16);  // sends the increment as an Edit Control message; results being displayed on the upper Ribbon
+      BB_MSG_SendTheBuffer();                                                 /// später mit somethingToSend = 1; !!!
     }
   }
 }
@@ -357,7 +357,7 @@ void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
   {
     if (bbSendValue[i] > 0)  // and by this, the 0x80000 update flag is detected, regardless of parameter value
     {
-      if (BB_MSG_WriteMessage2Arg(BB_MSG_TYPE_PARAMETER, i, (bbSendValue[i] & 0xFFFF)) > -1)
+      if (BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_PARAMETER, i, (bbSendValue[i] & 0xFFFF)) > -1)
       {
         bbSendValue[i] = 0;
         send           = 1;
@@ -650,7 +650,7 @@ void ADC_WORK_Process1(void)
     data[10] = IPC_ReadAdcBufferAveraged(IPC_ADC_AFTERTOUCH);
     data[11] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON1);
     data[12] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON2);
-    BB_MSG_WriteMessage(BB_MSG_TYPE_SENSORS_RAW, 13, data);
+    BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_SENSORS_RAW, 13, data);
     BB_MSG_SendTheBuffer();
   }
 #endif

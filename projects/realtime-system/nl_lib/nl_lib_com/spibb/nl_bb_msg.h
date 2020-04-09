@@ -12,6 +12,8 @@
 
 #include <stdint.h>
 
+#include "../../../shared/lpc-defs.h"
+
 //===========================
 
 // ==== V 205 ====
@@ -24,96 +26,6 @@
 // 58 == release candidate, beta test
 // 59 == release candidate, beta test
 #define SW_VERSION 59206
-
-//===========================
-
-// #define BB_MSG_TYPE_PRESET_DIRECT 0x0100  // direction: input; arguments(uint16): N, Nx data
-// #define BB_MSG_TYPE_MORPH_SET_A   0x0200  // not used
-// #define BB_MSG_TYPE_MORPH_SET_B   0x0300  // not used
-#define BB_MSG_TYPE_PARAMETER    0x0400  // direction: output; arguments(uint16): 2, 1x parameter ID , 1x data
-#define BB_MSG_TYPE_EDIT_CONTROL 0x0500  // not used
-// #define BB_MSG_TYPE_MORPH_POS     0x0600  // not used
-#define BB_MSG_TYPE_SETTING      0x0700  // direction: input;  arguments (uint16): 2, 1x SETTING_ID_*, 1x data
-#define BB_MSG_TYPE_NOTIFICATION 0x0800  // direction: output; arguments(uint16): 2, 1x type, 1x value
-#define BB_MSG_TYPE_ASSERTION    0x0900  // direction: output; arguments(uint16): n (string)
-#define BB_MSG_TYPE_REQUEST      0x0A00  // direction: input;  argument (uint16): 1, 1x REQUEST_ID_*
-#define BB_MSG_TYPE_HEARTBEAT    0x0B00  // direction: output; arguments(uint16): 4, 4x uint16 (==uint64)
-#define BB_MSG_TYPE_MUTESTATUS   0x0C00  // direction: output; argument (uint16): 1, 1x bit pattern
-#define BB_MSG_TYPE_RIBBON_CAL   0x0D00  // direction: input; arguments(uint16): 134, 134x data [2x (33x 34x)]
-#define BB_MSG_TYPE_SENSORS_RAW  0x0E00  // direction: output; arguments(uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
-#define BB_MSG_TYPE_EHC_CONFIG   0x0F00  // direction: input;  arguments (uint16): 2, 1x command, 1x data
-#define BB_MSG_TYPE_EHC_DATA     0x1000  // direction: output;  arguments(uint16): ??, (see nl_ehc_ctrl.c)
-#define BB_MSG_TYPE_KEY_EMUL     0x1100  // direction: input;  arguments (uint16): 3, midi key , time(lo), time(high)
-#define BB_MSG_TYPE_COOS_DATA    0x1200  // direction: output;  arguments (uint16): 4
-
-//----- Setting Ids:
-
-#define SETTING_ID_PLAY_MODE_UPPER_RIBBON_BEHAVIOUR 0  // ==> BIT 0 set if (returnMode == RETURN), ...
-#define SETTING_ID_PLAY_MODE_LOWER_RIBBON_BEHAVIOUR 1  // ... BIT 1 set if (touchBehaviour == RELATIVE)
-
-// #define SETTING_ID_NOTE_SHIFT 2  // ==> tTcdRange (-48, 48)
-
-#define SETTING_ID_BASE_UNIT_UI_MODE 3  // ==> PLAY = 0, PARAMETER_EDIT = 1
-
-#define SETTING_ID_EDIT_MODE_RIBBON_BEHAVIOUR 4  // ==> RELATIVE = 0, ABSOLUTE = 1
-
-// the next four settings were implemented in the parser but never had any effect in pedal code
-//#define SETTING_ID_PEDAL_1_MODE 5  // ==> STAY = 0
-//#define SETTING_ID_PEDAL_2_MODE 6  // ... RETURN_TO_ZERO = 1
-//#define SETTING_ID_PEDAL_3_MODE 7  // ... RETURN_TO_CENTER = 2,
-//#define SETTING_ID_PEDAL_4_MODE 8
-
-#define SETTING_ID_UPPER_RIBBON_REL_FACTOR 9   // ==> tTcdRange(256, 2560)
-#define SETTING_ID_LOWER_RIBBON_REL_FACTOR 10  // ==> tTcdRange(256, 2560)
-
-#define SETTING_ID_VELOCITY_CURVE 11  // ==> VERY_SOFT = 0, SOFT = 1, NORMAL = 2, HARD = 3, VERY_HARD = 4
-
-// #define SETTING_ID_TRANSITION_TIME 12  // ==> tTcdRange(0, 16000)
-
-// SETTING_ID_PEDAL_x_TYPE must be a monotonic rising sequence
-#define SETTING_ID_PEDAL_1_TYPE 26  // ==> PotTipActive  = 0
-#define SETTING_ID_PEDAL_2_TYPE 27  // ... PotRingActive = 1
-#define SETTING_ID_PEDAL_3_TYPE 28  // ... SwitchClosing = 2 // aka momentary switch, normally open
-#define SETTING_ID_PEDAL_4_TYPE 29  // ... SwitchOpening = 3 // aka momentary switch, normally closed
-
-#define SETTING_ID_AFTERTOUCH_CURVE 30  // SOFT = 0, NORMAL = 1, HARD = 2
-#define SETTING_ID_BENDER_CURVE     31  // SOFT = 0, NORMAL = 1, HARD = 2
-// #define SETTING_ID_PITCHBEND_ON_PRESSED_KEYS 32  // OFF = 0, ON = 1
-// #define SETTING_ID_EDIT_SMOOTHING_TIME       33  // ==> tTcdRange(0, 16000)
-// #define SETTING_ID_PRESET_GLITCH_SUPPRESSION 34  // OFF = 0, ON = 1
-// #define BENDER_RAMP_BYPASS                   35  // OFF = 0, ON = 1
-
-// new setting ID's
-#define SETTING_ID_SOFTWARE_MUTE_OVERRIDE 0xFF01  // direction: input; arguments(uint16): 1, mode bit pattern
-#define SETTING_ID_SEND_RAW_SENSOR_DATA   0xFF02  // direction: input; arguments(uint16): 1, flag (!= 0)
-// #define SETTING_ID_SEND_FORCED_KEY        0xFF03  // unused
-#define SETTING_ID_ENABLE_EHC       0xFF04  // direction: input; arguments(uint16): 1, flag (!= 0)
-#define SETTING_ID_AUDIO_ENGINE_CMD 0xFF05  // direction: input; arguments(uint16): 1, command (1:testtone OFF; 2:testtone ON; 3:default sound)
-
-//----- EHC command Ids:
-#define EHC_COMMAND_SET_CONTROL_REGISTER 0x0100  // configure a controller
-#define EHC_COMMAND_SET_RANGE_MIN        0x0200  // set lower end of ranging
-#define EHC_COMMAND_SET_RANGE_MAX        0x0300  // set upper end of ranging
-#define EHC_COMMAND_RESET_DELETE         0x0400  // reset or delete a controller
-#define EHC_COMMAND_FORCE_OUTPUT         0x0500  // reset or delete a controller
-
-//----- Request Ids:
-
-#define REQUEST_ID_SW_VERSION     0x0000
-#define REQUEST_ID_UNMUTE_STATUS  0x0001
-#define REQUEST_ID_EHC_DATA       0x0002
-#define REQUEST_ID_CLEAR_EEPROM   0x0003
-#define REQUEST_ID_COOS_DATA      0x0004
-#define REQUEST_ID_EHC_EEPROMSAVE 0x0005
-
-//----- Notification Ids:
-
-#define NOTIFICATION_ID_SW_VERSION     0x0000
-#define NOTIFICATION_ID_UNMUTE_STATUS  0x0001
-#define NOTIFICATION_ID_EHC_DATA       0x0002
-#define NOTIFICATION_ID_CLEAR_EEPROM   0x0003
-#define NOTIFICATION_ID_COOS_DATA      0x0004
-#define NOTIFICATION_ID_EHC_EEPROMSAVE 0x0005
 
 void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t *data);
 void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg);
