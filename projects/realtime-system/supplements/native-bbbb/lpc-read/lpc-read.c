@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
     argc--;
     argv++;
   }
-  
+
   if (!(displayFlags & NO_HEXDUMP))
     displayFlags |= NO_OVERLAY;
 

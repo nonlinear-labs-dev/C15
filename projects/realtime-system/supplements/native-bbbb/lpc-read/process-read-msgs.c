@@ -101,15 +101,22 @@ void printfResistance(double kOhms)
 void printfPercent(double factor)
 {
   factor *= 100;
-  if (factor <= 999.9)  // no fractions above 999.9%
-    printf("%5.1lf%%", factor);
+  if (factor > 999.9)
+    printf("%5.0lf%%", factor);  // integer value
+  else if (factor > 9.99)
+    printf("%5.1lf%%", factor);  // one fractional digit
   else
-    printf("%5.0lf%%", factor);
+    printf("%5.2lf%%", factor);  // two fractional digits
 }
 
 void printfControlVoltage(double const factor)
 {
   printf("%5.3lfV", factor * 5.0);
+}
+
+void printfDeadZones(uint16_t const deadZones)
+{
+  printf("%2d %2d", deadZones >> 8, deadZones & 0xFF);
 }
 
 // ==================================================================================, uint16_t const flags
@@ -118,7 +125,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
   int       i;
   uint16_t *p;
   double    last[8], intermediate[8], min[8], max[8], scale[8];
-  uint16_t  adc[8];
+  uint16_t  adc[8], deadzone[8];
 
   EHC_ControllerConfig_T config[8];
   EHC_ControllerStatus_T status[8];
@@ -257,8 +264,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         printf("MUTESTATUS : wrong length of %d\n", len);
         return;
       }
-    if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
-      cursorUp(1);
+      if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
+        cursorUp(1);
     ShowMuteStatus:
       printf("MUTESTATUS: valid:%d", data[0] & SUP_UNMUTE_STATUS_IS_VALID ? 1 : 0);
       printf(" jumper:");
@@ -289,7 +296,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       if (flags & NO_EHCDATA)
         return;
       dump(cmd, len, data, flags);
-      if (len != 8 * 8)
+      if (len != 8 * 9)
       {
         printf("EHC DATA : wrong length of %d\n", len);
         return;
@@ -305,10 +312,11 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         max[i]          = *p++;
         scale[i]        = *p++;
         adc[i]          = *p++;
+        deadzone[i]     = *p++;
       }
 
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
-        cursorUp(19);
+        cursorUp(20);
       printf("EHC data ------------------------------------------------------------\n");
       printf("Controller    ");
       for (i = 0; i < 8; i++)
@@ -454,6 +462,22 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         }
         else
           printf("      %c", i == 7 ? '\n' : ' ');
+      }
+      setColor(DEFAULT);
+
+      // dead-zones
+      printf("Dead zones(%%) ");
+      for (i = 0; i < 8; i++)
+      {
+        if (greenNotRed(config[i].hwId != 15 && status[i].initialized && config[i].doAutoRanging))
+        {
+          if (!(status[i].isAutoRanged))
+            setColor(DEFAULT);
+          printfDeadZones(deadzone[i]);
+        }
+        else
+          printf("      ");
+        printf("%c", i == 7 ? '\n' : ' ');
       }
       setColor(DEFAULT);
 
