@@ -41,6 +41,7 @@ void Usage(void)
   puts("  enable           : enable EHC processing");
   puts("  disable          : disable EHC processing");
   puts("  range <port> <min> <max>  : set range of controller to min..max (uint16)");
+  puts("  deadzone <port> <low> <high>  : set dead-zones of controller to low, high % (<= 20)");
   puts("  reset <port>     : reset controller at port");
   puts("  force <port>     : force output update from controller at port");
   puts("  clear <port>|all : clear controller at port");
@@ -68,6 +69,7 @@ void Usage(void)
 #define ENABLE   "enable"
 #define DISABLE  "disable"
 #define RANGE    "range"
+#define DEADZONE "deadzone"
 #define RESET    "reset"
 #define FORCE    "force"
 #define CONFIG   "config"
@@ -231,6 +233,32 @@ int main(int argc, char const *argv[])
       puts("range: argument error (uint16 expected)");
       Usage();
     }
+    writeData(driver, sizeof CMD_DATA, &CMD_DATA[0]);
+    return 0;
+  }
+
+  // dead zones
+  if (strncmp(argv[1], DEADZONE, sizeof DEADZONE) == 0)
+  {
+    if (argc != 5)
+    {
+      puts("deadzone: too few arguments!");
+      Usage();
+    }
+    CMD_DATA[2] = readPortID(argv[2]);
+    CMD_DATA[2] |= LPC_EHC_COMMAND_SET_DEAD_ZONES;
+    uint16_t low = 0, high = 0;
+    if (sscanf(argv[3], "%hu", &low) != 1 || low > 20)
+    {
+      puts("deadzone: argument error (uint16 and <= 20 expected)");
+      Usage();
+    }
+    if (sscanf(argv[4], "%hu", &high) != 1 || high > 20)
+    {
+      puts("deadzone: argument error (uint16 and <= 20 expected)");
+      Usage();
+    }
+    CMD_DATA[3] = ((uint16_t) high << 8) + low;
     writeData(driver, sizeof CMD_DATA, &CMD_DATA[0]);
     return 0;
   }

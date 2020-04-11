@@ -85,6 +85,7 @@ enum LPC_EHC_COMMAND_IDS
   LPC_EHC_COMMAND_SET_RANGE_MAX        = 0x0300,  // set upper end of ranging
   LPC_EHC_COMMAND_RESET_DELETE         = 0x0400,  // reset or delete a controller
   LPC_EHC_COMMAND_FORCE_OUTPUT         = 0x0500,  // reset or delete a controller
+  LPC_EHC_COMMAND_SET_DEAD_ZONES       = 0x0600,  // set dead zones for auto-ranging
 };
 
 enum HW_SOURCE_IDS
