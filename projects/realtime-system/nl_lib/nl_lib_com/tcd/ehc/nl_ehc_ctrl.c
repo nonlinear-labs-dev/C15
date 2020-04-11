@@ -67,11 +67,12 @@ static void ShowSettlingDisplay(void)
 #define REFERENCE_RESISTOR (10000ul)  // don't change this unless you know what you do
 #define REFERENCE_DIVIDER  (2)        // don't change this unless you know what you do
 #define RHEO_SCALE_FACTOR  (REFERENCE_RESISTOR / REFERENCE_DIVIDER)
+#define RHEO_MIN_RES       (300)
 // autoranging
-#define AR_SPAN            (5*POT_SCALE_FACTOR/100)  //  5%
-#define AR_SPAN_RHEO       (115)                     // 115 -> 1.15 (max/min minimum factor, must be greater than 1.0, of course)
-#define AR_UPPER_DEAD_ZONE (5)                       // 5 -> 5%, electrical dead zone
-#define AR_LOWER_DEAD_ZONE (4)                       // 4 -> 4%, electrical dead zone
+#define AR_SPAN            (5 * POT_SCALE_FACTOR / 100)  //  5%
+#define AR_SPAN_RHEO       (115)                         // 115 -> 1.15 (max/min minimum factor, must be greater than 1.0, of course)
+#define AR_UPPER_DEAD_ZONE (5)                           // 5 -> 5%, electrical dead zone
+#define AR_LOWER_DEAD_ZONE (4)                           // 4 -> 4%, electrical dead zone
 
 // settling
 #define VALBUF_SIZE (8)  // 2^N !!! Floating Average is used based on this size
@@ -212,6 +213,7 @@ typedef struct
 
   uint16_t intermediate;
   // (auto-)ranging
+  uint16_t dead_zones;   // high byte: upper dead zone in %, low byte: lower dead zone in %
   uint16_t min;          // values used to reflect ...
   uint16_t max;          // ... physical ranges.
   uint16_t used_min;     // values used for the actual ranging, ...
@@ -244,6 +246,7 @@ typedef struct __attribute__((packed))
   uint16_t used_min;     // values used for the actual ranging, ...
   uint16_t used_max;     // ... even with auto-ranging off.
   uint16_t range_scale;  // scale (100%) value for the actual ranging
+  uint16_t dead_zones;   // dead zones for auto-ranging
 } ControllerSave_T;
 
 // =============
@@ -276,7 +279,6 @@ static void sendControllerData(const EHC_ControllerConfig_T config, const uint32
 // --------------- init autoranging, that is, set reasonable default for fixed ranges
 void InitAutoRange(Controller_T *const this)
 {
-
   this->range_scale = AVG_DIV * 4095;  // assume CV first
   if (this->config.is3wire)
     this->range_scale = POT_SCALE_FACTOR;  // 3-wire means potentiometric readout
@@ -330,6 +332,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
     this->final        = 8000;
     this->lastFinal    = ~this->final;
     this->intermediate = 0;
+    this->dead_zones   = (AR_UPPER_DEAD_ZONE << 8) + AR_LOWER_DEAD_ZONE;
     this->used_min     = 65535;
     this->used_max     = 0;
     this->min          = 65535;
@@ -415,16 +418,16 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   this->status.outputIsValid = 0;
   this->status.pluggedIn     = 0;
 
-  this->wiper->flags.useIIR     = 0;                        // don't low pass filter the raw input
+  this->wiper->flags.useIIR     = this->config.continuous;  // low pass filter the raw input only for continuous
   this->wiper->flags.useStats   = this->config.continuous;  // enable min/max/avg statistics for continuous only
   this->wiper->flags.pullup_10k = this->config.pullup;
 
   if (this->config.is3wire)
-  {                                     // have a 3-wire pot, then initialize top ADC also
-    this->top->flags.pullup_10k   = 1;  // apply pullup to top (input pin)
-    this->top->flags.useIIR       = 0;  // don't low pass filter the raw input
-    this->top->flags.useStats     = 0;  // disable min/max/avg statistics
-    this->wiper->flags.pullup_10k = 0;  // and force wiper readout without pullup;
+  {                                                           // have a 3-wire pot, then initialize top ADC also
+    this->top->flags.pullup_10k   = 1;                        // apply pullup to top (input pin)
+    this->top->flags.useIIR       = this->config.continuous;  // low pass filter the raw input only for continuous
+    this->top->flags.useStats     = 0;                        // disable min/max/avg statistics
+    this->wiper->flags.pullup_10k = 0;                        // and force wiper readout without pullup;
   }
 
   this->final              = 8000;
@@ -433,6 +436,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   this->status.isReset     = 1;
   this->status.pluggedIn   = 0;
   this->intermediate       = 0;
+  this->dead_zones         = (AR_UPPER_DEAD_ZONE << 8) + AR_LOWER_DEAD_ZONE;
   InitAutoRange(this);
 }
 
@@ -448,6 +452,7 @@ static void initControllerFromSavedState(const ControllerSave_T *ctrlData)
   this->used_min          = ctrlData->used_min;
   this->used_max          = ctrlData->used_max;
   this->range_scale       = ctrlData->range_scale;
+  this->dead_zones        = ctrlData->dead_zones;
   // DBG_Led_Warning_TimedOn(10);  // ???
 }
 
@@ -462,6 +467,7 @@ static void saveControllerState(Controller_T *const this, ControllerSave_T *ctrl
   ctrlData->used_min    = this->used_min;
   ctrlData->used_max    = this->used_max;
   ctrlData->range_scale = this->range_scale;
+  ctrlData->dead_zones  = this->dead_zones;
   // DBG_Led_Warning_TimedOn(1);  // ???
 }
 
@@ -472,7 +478,8 @@ static int savedControllerStateIsDifferent(Controller_T *const this, ControllerS
            // && (ctrlData->max == this->max)
            && (ctrlData->used_min == this->used_min)
            && (ctrlData->used_max == this->used_max)
-           && (ctrlData->range_scale == this->range_scale));
+           && (ctrlData->range_scale == this->range_scale)
+           && (ctrlData->dead_zones == this->dead_zones));
 }
 
 /*************************************************************************/ /**
@@ -562,8 +569,8 @@ static int doAutoRange(Controller_T *const this, const int value, int *const out
       this->min = avgVal;
 
     // back off autorange limits
-    this->used_min = this->min + AR_LOWER_DEAD_ZONE * (this->max - this->min) / 100;  // remove lower dead-zone
-    this->used_max = this->max - AR_UPPER_DEAD_ZONE * (this->max - this->min) / 100;  // remove upper dead-zone
+    this->used_min = this->min + (this->dead_zones & 0xFF) * (this->max - this->min) / 100;  // remove lower dead-zone
+    this->used_max = this->max - (this->dead_zones >> 8) * (this->max - this->min) / 100;    // remove upper dead-zone
 
     if (this->config.is3wire)
     {
@@ -572,7 +579,10 @@ static int doAutoRange(Controller_T *const this, const int value, int *const out
     }
     else
     {
-      if ((this->used_max <= this->used_min) || (100 * (int) this->used_max / (int) this->used_min < AR_SPAN_RHEO))  // not enough autorange span (max/min < limit)?
+      int min = this->used_min ? this->used_min : 1;  // avoid min being zero
+      if ((this->used_max <= this->used_min)
+          || (REFERENCE_DIVIDER * (int) (this->used_max - this->used_min) < RHEO_MIN_RES)
+          || (100 * (int) this->used_max / min < AR_SPAN_RHEO))  // not enough autorange span (max/min < limit)?
         return 0;
     }
     // a valid auto-range span of values has now been detected
@@ -629,7 +639,10 @@ uint16_t doRamping(Controller_T *const this, const uint16_t value, const int upd
 static int doAutoHold(Controller_T *const this, int value)
 {
   if (this->config.autoHoldStrength == 0)
+  {
+    this->status.isSettled = 0;
     return value;
+  }
 
   uint16_t min;
   uint16_t max;
@@ -827,13 +840,14 @@ static void readoutBiStable(Controller_T *const this)
   updateAndOutput(this, 16000 - out);  // initial output must be inverted as we've worked on the resistance
 }
 
-// set ranging min and max
+// set ranging min and max, deadzones
 void setRangeMin(uint8_t which, uint16_t min)
 {
   if (which >= NUMBER_OF_CONTROLLERS)
     return;
   ctrl[which].used_min = min;
 }
+
 void setRangeMax(uint8_t which, uint16_t max)
 {
   if (which >= NUMBER_OF_CONTROLLERS)
@@ -841,6 +855,20 @@ void setRangeMax(uint8_t which, uint16_t max)
   ctrl[which].used_max = max;
 }
 
+void setDeadZones(uint8_t which, uint16_t ranges)
+{
+  if (which >= NUMBER_OF_CONTROLLERS)
+    return;
+  uint8_t low  = ranges & 0xFF;
+  uint8_t high = ranges >> 8;
+  if (low > 20)
+    low = 20;
+  if (high > 20)
+    high = 20;
+  ctrl[which].dead_zones = ((uint16_t) high << 8) + low;
+}
+
+// ----------------------------
 void forceOutput(uint8_t which)
 {
   if (which >= NUMBER_OF_CONTROLLERS)
@@ -870,6 +898,9 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
     case LPC_EHC_COMMAND_SET_RANGE_MAX:  // set ranging max
       setRangeMax(cmd & 0xFF, data);
       break;
+    case LPC_EHC_COMMAND_SET_DEAD_ZONES:  // set dead zones for auto-ranging
+      setDeadZones(cmd & 0xFF, data);
+      break;
     case LPC_EHC_COMMAND_RESET_DELETE:  // reset or full delete controller
       if (data == 0)                    // reset
         resetControllerById(cmd & 0xFF, 0);
@@ -886,11 +917,11 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
   }
 }
 /*************************************************************************/ /**
-* @brief	 Send Config, Status, Last value, and Min/Max/Scale to BB (all 8 controllers)
+* @brief	 Send Config, Status, Last value, Min/Max/Scale etc to BB (all 8 controllers)
 ******************************************************************************/
 void NL_EHC_SendEHCdata(void)
 {
-#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 8)
+#define EHC_DATA_MSG_SIZE (NUMBER_OF_CONTROLLERS * 9)
   uint16_t  data[EHC_DATA_MSG_SIZE];
   uint16_t *p = data;
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
@@ -902,7 +933,8 @@ void NL_EHC_SendEHCdata(void)
     *p++ = ctrl[i].used_min;
     *p++ = ctrl[i].used_max;
     *p++ = ctrl[i].range_scale;
-    *p++ = EHC_adc[i].filtered_current;
+    *p++ = ((int) EHC_adc[i].filtered_current + AVG_DIV / 2) / AVG_DIV;
+    *p++ = ctrl[i].dead_zones;
   }
   BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
   BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_EHC_DATA, 1);
