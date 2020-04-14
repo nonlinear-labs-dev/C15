@@ -28,9 +28,9 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 
 #define REQUEST         "req"
 #define SW_VERSION      "sw-version"
-#define MUTE_STATUS     "mute-status"
+#define MUTE_STATUS     "muting"
 #define CLEAR_EEPROM    "clear-eeprom"
-#define COOS_DATA       "coos-data"
+#define STAT_DATA       "status"
 #define EHC_SAVE_EEPROM "save-ehc"
 
 #define SETTING           "set"
@@ -58,11 +58,11 @@ void Usage(void)
   puts("Usage:");
   puts(" lpc  <command>");
   puts("  <commands> : req|set|key");
-  puts("  req[uest] : sw-version|mute-status|clear-eeprom|coos-data|save-ehc");
+  puts("  req[uest] : sw-version|muting|clear-eeprom|status|save-ehc");
   puts("     sw-version   : get LPC firware version");
-  puts("     mute-status  : get software&hardware muting status");
+  puts("     muting       : get software&hardware muting status");
   puts("     clear-eeprom : erase EEPROM");
-  puts("     coos-data    : get task scheduler profiling data");
+  puts("     status       : get diagnostic status data (and clear it)");
   puts("     save-ehc     : save current EHC config data to EEPROM");
   puts("  set[ting] : mute-ctrl|sensors|ae-cmd");
   puts("     mute-ctrl: disable|mute|unmute : disable mute override or set/clear muting");
@@ -114,9 +114,9 @@ int main(int argc, char const *argv[])
       writeData(driver, sizeof REQ_DATA, &REQ_DATA[0]);
       return 0;
     }
-    if (strncmp(argv[2], COOS_DATA, sizeof COOS_DATA) == 0)
+    if (strncmp(argv[2], STAT_DATA, sizeof STAT_DATA) == 0)
     {
-      REQ_DATA[2] = LPC_REQUEST_ID_COOS_DATA;
+      REQ_DATA[2] = LPC_REQUEST_ID_STAT_DATA;
       writeData(driver, sizeof REQ_DATA, &REQ_DATA[0]);
       return 0;
     }

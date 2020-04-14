@@ -136,7 +136,7 @@ void Usage(char const *const string, int const exitCode)
   puts("  default is +a -d");
   puts(" a   All options");
   puts(" r   oveRlay messages of same type");
-  puts(" c   COOS task data");
+  puts(" c   diagnostiC status data");
   puts(" d   addtional hex Dump, forces -r");
   puts(" e   EHC data");
   puts(" h   Heartbeat");
@@ -186,9 +186,9 @@ int main(int argc, char *argv[])
       displayFlags &= ~NO_OVERLAY;
 
     else if (strncmp(argv[1], "-c", 2) == 0)
-      displayFlags |= NO_COOSDATA;
+      displayFlags |= NO_STATDATA;
     else if (strncmp(argv[1], "+c", 2) == 0)
-      displayFlags &= ~NO_COOSDATA;
+      displayFlags &= ~NO_STATDATA;
 
     else if (strncmp(argv[1], "-d", 2) == 0)
       displayFlags |= NO_HEXDUMP;

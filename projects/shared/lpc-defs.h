@@ -22,7 +22,7 @@ enum LPC_BB_MESSAGE_TYPES
   LPC_BB_MSG_TYPE_EHC_CONFIG    = 0x0F00,  // direction: input;  arguments (uint16): 2, 1x command, 1x data
   LPC_BB_MSG_TYPE_EHC_DATA      = 0x1000,  // direction: output; arguments (uint16): 48, (see nl_ehc_ctrl.c)
   LPC_BB_MSG_TYPE_KEY_EMUL      = 0x1100,  // direction: input;  arguments (uint16): 3, midi key , time(lo), time(high)
-  LPC_BB_MSG_TYPE_COOS_DATA     = 0x1200,  // direction: output; arguments (uint16): 4
+  LPC_BB_MSG_TYPE_STAT_DATA     = 0x1200,  // direction: output; arguments (uint16): 4
 };
 
 enum LPC_SETTING_IDS
@@ -64,7 +64,7 @@ enum LPC_REQUEST_IDS
   LPC_REQUEST_ID_UNMUTE_STATUS  = 0x0001,
   LPC_REQUEST_ID_EHC_DATA       = 0x0002,
   LPC_REQUEST_ID_CLEAR_EEPROM   = 0x0003,
-  LPC_REQUEST_ID_COOS_DATA      = 0x0004,
+  LPC_REQUEST_ID_STAT_DATA      = 0x0004,
   LPC_REQUEST_ID_EHC_EEPROMSAVE = 0x0005,
 };
 
@@ -74,7 +74,7 @@ enum LPC_NOTIFICATION_IDS
   LPC_NOTIFICATION_ID_UNMUTE_STATUS  = 0x0001,
   LPC_NOTIFICATION_ID_EHC_DATA       = 0x0002,
   LPC_NOTIFICATION_ID_CLEAR_EEPROM   = 0x0003,
-  LPC_NOTIFICATION_ID_COOS_DATA      = 0x0004,
+  LPC_NOTIFICATION_ID_STAT_DATA      = 0x0004,
   LPC_NOTIFICATION_ID_EHC_EEPROMSAVE = 0x0005,
 };
 
@@ -118,9 +118,9 @@ enum AE_TCD_OVER_MIDI_IDS
 
 enum AE_DEVELOPPER_CMDS
 {
-  AE_CMD_TONE_OFF      = 1,
-  AE_CMD_TONE_ON       = 2,
-  AE_CMD_DEFAULT_SOUND = 3,
+  AE_CMD_TONE_OFF      = 1,  // turn off the test tone
+  AE_CMD_TONE_ON       = 2,  // turn on the test tone
+  AE_CMD_DEFAULT_SOUND = 3,  // set up a simple default sound that is guaranteed to give output
 };
 
 // void     SUP_SetMuteOverride(uint32_t mode);

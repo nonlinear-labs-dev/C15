@@ -170,8 +170,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         case LPC_NOTIFICATION_ID_CLEAR_EEPROM:
           printf("NOTIFICATION : EEPROM cleared\n");
           break;
-        case LPC_NOTIFICATION_ID_COOS_DATA:
-          printf("NOTIFICATION : Task Data sent\n");
+        case LPC_NOTIFICATION_ID_STAT_DATA:
+          printf("NOTIFICATION : Status Data sent\n");
           break;
         case LPC_NOTIFICATION_ID_SW_VERSION:
           printf("NOTIFICATION : Software Version: %hu\n", data[1]);
@@ -193,19 +193,24 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       lastMessage = (cmd << 16) + data[0];
       return;
 
-    case LPC_BB_MSG_TYPE_COOS_DATA:
-      if (flags & NO_COOSDATA)
+    case LPC_BB_MSG_TYPE_STAT_DATA:
+      if (flags & NO_STATDATA)
         return;
       dump(cmd, len, data, flags);
-      if (len != 4)
+      if (len != 6)
       {
-        printf("TASKS : wrong length of %d\n", len);
+        printf("STATUS : wrong length of %d\n", len);
         return;
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
-        cursorUp(1);
-      printf("TASK Scheduler tops: %d overs, %d per slice, task:%dus, scheduler:%dus\n",
-             data[0], data[1], 5 * (int) data[2] / 2, 5 * (int) data[3] / 2);
+        cursorUp(7);
+      printf("SYSTEM STATUS:\n");
+      printf("  Scheduler: %d task overruns\n", data[0]);
+      printf("  Scheduler: %d tasks max. per time-slice\n", data[1]);
+      printf("  Scheduler: %dus max. task runtime\n", 5 * (int) data[2] / 2);
+      printf("  Scheduler: %dus max. time-slice\n", 5 * (int) data[3] / 2);
+      printf("  BBB Msg:   %d buffer overruns / ESPI send fails\n", data[4]);
+      printf("  TCD Msg:   %d buffer overruns / USB send fails\n", data[5]);
       lastMessage = cmd << 16;
       return;
 

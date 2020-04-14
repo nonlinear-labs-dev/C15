@@ -6,17 +6,13 @@
 #include "sys/nl_coos.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_ticker.h"
+#include "sys/nl_status.h"
 #include "ipc/emphase_ipc.h"
 
 #define COOS_MAX_TASKS 48  // max number of task the COOS should handle (memory size)
 
 #define LOG_TASK_TIME   (0)
 #define DGB_TIMING_PINS (0)
-
-static uint16_t totalOverruns    = 0;
-static uint16_t maxTasksPerSlice = 0;
-static uint16_t maxTaskTime      = 0;
-static uint16_t maxDispatchTime  = 0;
 
 #if DGB_TIMING_PINS
 static void DispatchTotalTime(int on)
@@ -164,8 +160,8 @@ void            COOS_Dispatch(void)
       if (startTime > stopTime)  // wraparound
         stopTime += 65536;
       uint32_t time = stopTime - startTime;
-      if (time > maxTaskTime)
-        maxTaskTime = time;
+      if (time > NL_systemStatus.COOS_maxTaskTime)
+        NL_systemStatus.COOS_maxTaskTime = time;
 #if DGB_TIMING_PINS
       DispatchTaskTime(0);
 #endif
@@ -181,14 +177,14 @@ void            COOS_Dispatch(void)
       }
     }
   }
-  if (tasks > maxTasksPerSlice)
-    maxTasksPerSlice = tasks;
+  if (tasks > NL_systemStatus.COOS_maxTasksPerSlice)
+    NL_systemStatus.COOS_maxTasksPerSlice = tasks;
   dispatchStop = IPC_GetTimer();
   if (dispatchStart > dispatchStop)  // wraparound
     dispatchStop += 65536;
   uint32_t time = dispatchStop - dispatchStart;
-  if (time > maxDispatchTime)
-    maxDispatchTime = time;
+  if (time > NL_systemStatus.COOS_maxDispatchTime)
+    NL_systemStatus.COOS_maxDispatchTime = time;
 
   if (taskOverflow)
   {
@@ -219,8 +215,8 @@ void COOS_Update(void)
         if (COOS_taskArray[index].run > 1)  // any task pending more than once ?
         {
           taskOverflow = 1;
-          if (totalOverruns < 0xFFFF)
-            totalOverruns++;
+          if (NL_systemStatus.COOS_totalOverruns < 0xFFFF)
+            NL_systemStatus.COOS_totalOverruns++;
         }
         if (COOS_taskArray[index].period >= 1)
         {  // schedule periodic task to run again
@@ -231,14 +227,4 @@ void COOS_Update(void)
   }
 }
 
-void COOS_GetData(uint16_t *buffer)
-{
-  buffer[0]        = totalOverruns;
-  buffer[1]        = maxTasksPerSlice;
-  buffer[2]        = maxTaskTime;
-  buffer[3]        = maxDispatchTime;
-  totalOverruns    = 0;
-  maxTasksPerSlice = 0;
-  maxTaskTime      = 0;
-  maxDispatchTime  = 0;
-}
+// EOF

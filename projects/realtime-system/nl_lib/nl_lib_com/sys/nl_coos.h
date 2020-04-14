@@ -34,6 +34,5 @@ int32_t COOS_Task_Add(void (*taskName)(), uint32_t phase, uint32_t period);
 int32_t COOS_Task_Delete(const uint8_t taskIndex);
 void    COOS_Dispatch(void);
 void    COOS_Update(void);
-void    COOS_GetData(uint16_t *buffer);
 
 #endif

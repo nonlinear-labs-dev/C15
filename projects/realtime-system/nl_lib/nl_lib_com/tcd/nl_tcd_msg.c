@@ -8,9 +8,7 @@
 *******************************************************************************/
 
 #include "nl_tcd_msg.h"
-
-#include "sys/nl_coos.h"
-
+#include "sys/nl_status.h"
 #include "usb/nl_usb_midi.h"
 #include "drv/nl_dbg.h"
 #include "tcd/nl_tcd_adc_work.h"
@@ -93,6 +91,8 @@ void MSG_SendMidiBuffer(void)
     else  // USB failure or "traffic jam"
     {
       DBG_Led_Error_TimedOn(10);
+      if (NL_systemStatus.TCD_usbJams < 0xFFFF)
+        NL_systemStatus.TCD_usbJams++;
     }
 
     buf = 0;  // this discard the messages in case of error, no re-send attempts

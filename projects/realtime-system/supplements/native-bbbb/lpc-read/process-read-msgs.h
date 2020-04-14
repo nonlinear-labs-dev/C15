@@ -11,7 +11,7 @@
 #define NO_SENSORSRAW   (0x0020)
 #define NO_HEXDUMP      (0x0040)
 #define NO_UNKNOWN      (0x0080)
-#define NO_COOSDATA     (0x0100)
+#define NO_STATDATA     (0x0100)
 #define NO_OVERLAY      (0x0200)
 #define NO_ALL          (0x03FF)
 
