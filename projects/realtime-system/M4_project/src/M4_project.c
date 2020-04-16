@@ -110,8 +110,8 @@ void Init(void)
   COOS_Task_Add(ADC_WORK_Process2,        60+2, 100);       // every 12.5 ms, reading ADC values and applying changes
   COOS_Task_Add(ADC_WORK_Process3,        70+3, 100);       // every 12.5 ms, reading ADC values and applying changes
   COOS_Task_Add(ADC_WORK_Process4,        80+4, 100);       // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_SendBBMessages,  90+5, 100 * 8);   // every 100 ms, sending the results of the ADC processing to the BBB
-  COOS_Task_Add(DBG_Process,              100+6, 100 * 8);   // every 100 ms
+  COOS_Task_Add(ADC_WORK_SendBBMessages,  90+5, 100);       // every 12.5 ms, sending the results of the ADC processing to the BBB
+  COOS_Task_Add(DBG_Process,              100+6, 100 * 8);  // every 100 ms, processes error and warning LEDs
   COOS_Task_Add(SUP_Process,              110+7, SUP_PROCESS_TIMESLICE * 8);  // supervisor communication every 10ms
   COOS_Task_Add(HBT_Process,              120+8, HBT_PROCESS_TIMESLICE * 8); // heartbeat communication every 10ms
   COOS_Task_Add(NL_EEPROM_Process,        130+9, 10);                         // EEPROM write every 1.25ms
