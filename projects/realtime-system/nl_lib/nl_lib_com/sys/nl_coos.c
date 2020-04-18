@@ -11,7 +11,7 @@
 
 #define COOS_MAX_TASKS 48  // max number of task the COOS should handle (memory size)
 
-#define LOG_TASK_TIME   (0)
+#define LOG_TASK_TIME   (1)
 #define DGB_TIMING_PINS (0)
 
 #if DGB_TIMING_PINS
