@@ -187,7 +187,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
           data[0] = data[1];
           goto ShowMuteStatus;
         default:
-          printf("NOTIFICATION : unknown ID=%d, data=%d \n", data[0], data[1]);
+          printf("NOTIFICATION : unknown ID=%d, data=%d     \n", data[0], data[1]);
           break;
       }
       lastMessage = (cmd << 16) + data[0];
@@ -205,12 +205,12 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
         cursorUp(7);
       printf("SYSTEM STATUS:\n");
-      printf("  Scheduler: %d task overruns\n", data[0]);
-      printf("  Scheduler: %d tasks max. per time-slice\n", data[1]);
-      printf("  Scheduler: %dus max. task runtime\n", 5 * (int) data[2] / 2);
-      printf("  Scheduler: %dus max. time-slice\n", 5 * (int) data[3] / 2);
-      printf("  BBB Msg:   %d buffer overruns / ESPI send fails\n", data[4]);
-      printf("  TCD Msg:   %d buffer overruns / USB send fails\n", data[5]);
+      printf("  Scheduler: %d task overruns     \n", data[0]);
+      printf("  Scheduler: %d tasks max. per time-slice     \n", data[1]);
+      printf("  Scheduler: %dus max. task runtime     \n", 5 * (int) data[2] / 2);
+      printf("  Scheduler: %dus max. time-slice     \n", 5 * (int) data[3] / 2);
+      printf("  BBB Msg:   %d buffer overruns / ESPI send fails     \n", data[4]);
+      printf("  TCD Msg:   %d buffer overruns / USB send fails     \n", data[5]);
       lastMessage = cmd << 16;
       return;
 
