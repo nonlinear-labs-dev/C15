@@ -649,14 +649,12 @@ static int doAutoHold(Controller_T *const this, int value)
   uint16_t sum;
   int      settled = 0;
   // determine min, max and average wiper sample values
-  if (EHC_getADCStats(this->wiper, SBUF_SIZE, &min, &max, &sum))
-  {
-    // noise scales with voltage for this ADC chip
-    if (this->status.isSettled)
-      settled = (int) (max - min) < CTRL_PARAMS[this->paramSet].SETTLING_OFFSET + CTRL_PARAMS[this->paramSet].SETTLING_GAIN * (int) sum / ADC_MAX_SCALED;
-    else
-      settled = (int) (max - min) < CTRL_PARAMS[this->paramSet].SETTLING_OFFSET_REDUCED + CTRL_PARAMS[this->paramSet].SETTLING_GAIN_REDUCED * (int) sum / ADC_MAX_SCALED;
-  }
+  EHC_getADCStats(this->wiper, &min, &max, &sum);
+  // noise scales with voltage for this ADC chip
+  if (this->status.isSettled)
+    settled = (int) (max - min) < CTRL_PARAMS[this->paramSet].SETTLING_OFFSET + CTRL_PARAMS[this->paramSet].SETTLING_GAIN * (int) sum / ADC_MAX_SCALED;
+  else
+    settled = (int) (max - min) < CTRL_PARAMS[this->paramSet].SETTLING_OFFSET_REDUCED + CTRL_PARAMS[this->paramSet].SETTLING_GAIN_REDUCED * (int) sum / ADC_MAX_SCALED;
   // note this is a dynamic rate-of-change settling, that is the span of values in the buffer is smaller than some limit,
   // whereas the absolute values are irrelevant. This means very slowly changing values always are considered settled
 
