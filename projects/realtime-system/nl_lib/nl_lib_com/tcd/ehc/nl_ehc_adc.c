@@ -42,6 +42,8 @@ EHC_AdcBuffer_T EHC_adc[ADC_CHANNELS] = {
 };
 
 static uint16_t sbuf_index;                            // index of current front element for all sample buffers
+static uint16_t sbuf_index1;                           // index of second element for all sample buffers
+static uint16_t sbuf_index2;                           // index of third element for all sample buffers
 static int      sampleBuffersInvalid = SBUF_SIZE * 2;  // flag until buffers are full, after init
 
 /*************************************************************************/ /**
@@ -51,6 +53,8 @@ void EHC_initSampleBuffers(void)
 {
   sampleBuffersInvalid = SBUF_SIZE * 2;
   sbuf_index           = 0;
+  sbuf_index1          = sbuf_index + 1;
+  sbuf_index2          = sbuf_index1 + 1;
   for (int i = 0; i < ADC_CHANNELS; i++)
   {
     for (int k = 0; k < SBUF_SIZE; k++)
@@ -58,6 +62,7 @@ void EHC_initSampleBuffers(void)
       EHC_adc[i].values[k]          = DEFAULT_ADC_VALUE * AVG_DIV;
       EHC_adc[i].filtered_values[k] = DEFAULT_ADC_VALUE * AVG_DIV;
     }
+    EHC_adc[i].avg_sum           = DEFAULT_ADC_VALUE * AVG_DIV * SBUF_SIZE;
     EHC_adc[i].flags.pullup_10k  = 0;
     EHC_adc[i].flags.pullup_5V   = 0;
     EHC_adc[i].flags.useIIR      = 0;
@@ -82,7 +87,9 @@ static inline int multQ15(const int a, const int b)
 ******************************************************************************/
 void EHC_fillSampleBuffers(void)
 {
-  sbuf_index = (sbuf_index + SBUF_MOD) & SBUF_MOD;  // pre-decrement ...modulo buffer size
+  sbuf_index2 = sbuf_index1;
+  sbuf_index1 = sbuf_index;
+  sbuf_index  = (sbuf_index + SBUF_MOD) & SBUF_MOD;  // pre-decrement ...modulo buffer size
 
   // read data from current conversion
   for (int i = 0; i < ADC_CHANNELS; i++)
@@ -107,15 +114,19 @@ void EHC_fillSampleBuffers(void)
   {
     if (EHC_adc[i].flags.useIIR)
     {
-      EHC_adc[i].filtered_current = EHC_adc[i].filtered_values[sbuf_index] =       // y[k] =
-          multQ15(B0, EHC_adc[i].values[sbuf_index])                               // + B0*x[k]
-          + multQ15(B1, EHC_adc[i].values[(sbuf_index + 1) & SBUF_MOD])            // + B1*x[k-1]
-          + multQ15(B2, EHC_adc[i].values[(sbuf_index + 2) & SBUF_MOD])            // + B2*x[k-2]
-          + multQ15(A1, EHC_adc[i].filtered_values[(sbuf_index + 1) & SBUF_MOD])   // + A1*y[k-1]
-          + multQ15(A2, EHC_adc[i].filtered_values[(sbuf_index + 2) & SBUF_MOD]);  // + A2*y[k-2]
+      EHC_adc[i].filtered_current =                                // y[k] =
+          multQ15(B0, EHC_adc[i].values[sbuf_index])               // + B0*x[k]
+          + multQ15(B1, EHC_adc[i].values[sbuf_index1])            // + B1*x[k-1]
+          + multQ15(B2, EHC_adc[i].values[sbuf_index2])            // + B2*x[k-2]
+          + multQ15(A1, EHC_adc[i].filtered_values[sbuf_index1])   // + A1*y[k-1]
+          + multQ15(A2, EHC_adc[i].filtered_values[sbuf_index2]);  // + A2*y[k-2]
     }
     else
       EHC_adc[i].filtered_current = EHC_adc[i].current;
+
+    EHC_adc[i].avg_sum -= EHC_adc[i].filtered_values[sbuf_index];  // remove tail value from average sum
+    EHC_adc[i].filtered_values[sbuf_index] = EHC_adc[i].filtered_current;
+    EHC_adc[i].avg_sum += EHC_adc[i].filtered_values[sbuf_index];  // add in new value to average sum
   }
 
   if (sampleBuffersInvalid)
@@ -128,40 +139,45 @@ int EHC_sampleBuffersValid(void)
 }
 /*************************************************************************/ /**
 * @brief	Get Statistical Data
-* @param	return != 0 : success
 ******************************************************************************/
-int EHC_getADCStats(const EHC_AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg)
+void EHC_getADCStats(EHC_AdcBuffer_T const* const this, uint16_t* const pMin, uint16_t* const pMax, uint16_t* const pAvg)
 {
-  if (!this->flags.initialized || !this->flags.useStats)
-    return 0;
+  const uint16_t* const buffer = this->filtered_values;
 
-  if (bufferDepth < 1)
-    bufferDepth = 1;
-  if (bufferDepth > SBUF_SIZE)
-    bufferDepth = SBUF_SIZE;
+  uint16_t max;
+  uint16_t min;
 
-  const register uint16_t *buffer = this->flags.useIIR ? this->filtered_values : this->values;
-  const register uint16_t  index  = sbuf_index;
+  if (buffer[0] > buffer[1])
+    max = buffer[0], min = buffer[1];
+  else
+    min = buffer[0], max = buffer[1];
 
-  register int      avg = 0;
-  register uint16_t max = 0;
-  register uint16_t min = 4095 * AVG_DIV;
-  for (register int i = bufferDepth - 1; i >= 0; i--)
+  register uint16_t a;
+  register uint16_t b;
+
+  for (register int i = 2; i <= SBUF_SIZE - 2; i += 2)
   {
-    register uint16_t sample = buffer[(index + i) & SBUF_MOD];
-    avg += sample;
-    if (sample > max)
-      max = sample;
-    if (sample < min)
-      min = sample;
+    a = buffer[i];
+    b = buffer[i + 1];
+    if (a > b)
+    {
+      if (a > max)
+        max = a;
+      if (b < min)
+        min = b;
+    }
+    else
+    {
+      if (b > max)
+        max = b;
+      if (a < min)
+        min = a;
+    }
   }
-  if (pAvg)
-    *pAvg = avg / bufferDepth;
-  if (pMin)
-    *pMin = min;
-  if (pMax)
-    *pMax = max;
-  return bufferDepth;
+
+  *pAvg = this->avg_sum / SBUF_SIZE;
+  *pMin = min;
+  *pMax = max;
 }
 
 // EOF
