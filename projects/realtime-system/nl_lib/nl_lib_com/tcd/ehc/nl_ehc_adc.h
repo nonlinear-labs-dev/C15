@@ -41,15 +41,15 @@ typedef struct
   uint16_t values[SBUF_SIZE];           // raw values
   uint16_t filtered_values[SBUF_SIZE];  // values after IIR filtering
   // pre-processed data
-  uint16_t current;           // == filtered_values[sbuf_index]
-  uint16_t filtered_current;  // == values[sbuf_index]
+  uint16_t current;           // == values[sbuf_index]
+  uint16_t filtered_current;  // == filtered_values[sbuf_index]
+  uint32_t avg_sum;           // == sum of all values in the (filtered) buffer
   uint16_t detect;
 } EHC_AdcBuffer_T;
 
 extern EHC_AdcBuffer_T EHC_adc[ADC_CHANNELS];
 
-// returns actually used "bufferDepth" (which is != 0) on success
-int EHC_getADCStats(const EHC_AdcBuffer_T *this, int bufferDepth, uint16_t *pMin, uint16_t *pMax, uint16_t *pAvg);
+void EHC_getADCStats(EHC_AdcBuffer_T const* const this, uint16_t* const pMin, uint16_t* const pMax, uint16_t* const pAvg);
 
 void EHC_initSampleBuffers(void);
 void EHC_fillSampleBuffers(void);
