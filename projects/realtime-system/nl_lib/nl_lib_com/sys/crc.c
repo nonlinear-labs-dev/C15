@@ -11,77 +11,38 @@
  **********************************************************************/
 #include "crc.h"
 
-// Derive parameters from the standard-specific parameters in crc.h.
-#define WIDTH  (8 * sizeof(crc_t))
-#define TOPBIT (1 << (WIDTH - 1))
-
-#if (REFLECT_DATA == 1)
-#undef REFLECT_DATA
-#define REFLECT_DATA(X) ((crc_t) reflect((X), 8))
-#else
-#undef REFLECT_DATA
-#define REFLECT_DATA(X) (X)
-#endif
-
-#if (REFLECT_REMAINDER == 1)
-#undef REFLECT_REMAINDER
-#define REFLECT_REMAINDER(X) ((crc_t) reflect((X), WIDTH))
-#else
-#undef REFLECT_REMAINDER
-#define REFLECT_REMAINDER(X) (X)
-#endif
+#define POLYNOMIAL        0x04C11DB7
+#define INITIAL_REMAINDER 0xFFFFFFFF
+#define FINAL_XOR_VALUE   0xFFFFFFFF
+#define WIDTH             (8 * sizeof(crc_t))
+#define TOPBIT            (1 << (WIDTH - 1))
 
 /*********************************************************************
- * Function:    reflect()
+ * Function:    reflect*()
  * Description: Reorder the bits of a binary sequence, by reflecting
  *				them about the middle position.
- * Notes:		No checking is done that nBits <= 32.
  * Returns:		The reflection of the original data.
  *********************************************************************/
-static uint32_t reflect(uint32_t data, uint8_t nBits)
+static inline uint32_t reflect32(uint32_t value)
 {
-  uint32_t reflection = 0x00000000;
-  uint8_t  bit;
-  // Reflect the data about the center bit.
-  for (bit = 0; bit < nBits; ++bit)
-  {
-    // If the LSB bit is set, set the reflection of it.
-    if (data & 0x01)
-      reflection |= (1 << ((nBits - 1) - bit));
-    data = (data >> 1);
-  }
-  return reflection;
+  asm("rbit %0, %0"
+      : "=r"(value)
+      : "0"(value));
+  return value;
 }
 
-/*********************************************************************
- * Function:    crcSlow()
- * Description: Compute the CRC of a given message.
- * Notes:		
- * Returns:		The CRC of the message.
- *********************************************************************/
-crc_t crcSlow(uint8_t const message[], uint16_t const nBytes)
+static inline uint8_t reflect8(uint8_t value)
 {
-  crc_t    remainder = INITIAL_REMAINDER;
-  uint16_t byte;
-  uint8_t  bit;
-  // Perform modulo-2 division, a byte at a time.
-  for (byte = 0; byte < nBytes; ++byte)
-  {
-    // Bring the next byte into the remainder.
-    remainder ^= (REFLECT_DATA(message[byte]) << (WIDTH - 8));
-    // Perform modulo-2 division, a bit at a time.
-    for (bit = 8; bit > 0; --bit)
-    {
-      // Try to divide the current data bit.
-      if (remainder & TOPBIT)
-        remainder = (remainder << 1) ^ POLYNOMIAL;
-      else
-        remainder = (remainder << 1);
-    }
-  }
-  // The final remainder is the CRC result.
-
-  return REFLECT_REMAINDER(remainder) ^ FINAL_XOR_VALUE;
+  asm("mov %0, %0, lsl #12"
+      : "=r"(value)
+      : "0"(value));
+  asm("rbit %0, %0"
+      : "=r"(value)
+      : "0"(value));
+  asm("mov %0, %0, lsr #12"
+      : "=r"(value)
+      : "0"(value));
+  return value;
 }
 
 static crc_t crcTable[256];
@@ -132,9 +93,9 @@ crc_t crcFast(uint8_t const message[], uint16_t const nBytes)
   // Divide the message by the polynomial, a byte at a time.
   for (byte = 0; byte < nBytes; ++byte)
   {
-    data      = REFLECT_DATA(message[byte]) ^ (remainder >> (WIDTH - 8));
+    data      = reflect8(message[byte]) ^ (remainder >> (WIDTH - 8));
     remainder = crcTable[data] ^ (remainder << 8);
   }
   // The final remainder is the CRC.
-  return REFLECT_REMAINDER(remainder) ^ FINAL_XOR_VALUE;
+  return reflect32(remainder) ^ FINAL_XOR_VALUE;
 }
