@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
+#include <errno.h>
 
 #include "process-read-msgs.h"
 
-#define MAX_DATA_SIZE (1000)
+#define MAX_DATA_SIZE (1500)
 uint16_t id;
 uint16_t len;
 uint16_t data[MAX_DATA_SIZE];
@@ -15,24 +17,32 @@ int      dataIndex;
 uint16_t displayFlags;
 FILE *   driver;
 
+
+void Error(const char *msg)
+{
+  printf("\nError : %s \nAborting.\n", msg);
+  exit(3);
+}
+
+
 // ===================
 void makeDriverNonblocking(int const driverFileNo, int const flags)
 {
   if (fcntl(driverFileNo, F_SETFL, flags | O_NONBLOCK) < 0)
-    exit(3);
+    Error("fcntl: can't switch to non-blocking");
 }
 
 void makeDriverBlocking(int const driverFileNo, int const flags)
 {
   if (fcntl(driverFileNo, F_SETFL, flags & (~O_NONBLOCK)) < 0)
-    exit(3);
+    Error("fcntl: can't switch to blocking");
 }
 
 int getDriverFlags(int const driverFileNo)
 {
   int flags;
   if ((flags = fcntl(driverFileNo, F_GETFL, 0)) < 0)
-    exit(3);
+    Error("fcntl: getflags failed");
   return flags;
 }
 
@@ -47,21 +57,23 @@ int readWord(uint16_t *const data)
   switch (step)
   {
     case 0:
+      errno = 0;
       bl = fgetc(driver);
       if (bl == EOF)
       {
-        if (errno != EAGAIN)
-          exit(3);
+        if (errno && errno != EAGAIN)
+          Error(strerror(errno));
       }
       else
         step++;
       break;
     case 1:
+      errno = 0;
       bh = fgetc(driver);
       if (bh == EOF)
       {
-        if (errno != EAGAIN)
-          exit(3);
+        if (errno && errno != EAGAIN)
+          Error(strerror(errno));
       }
       else
       {
@@ -108,7 +120,7 @@ void readMessages(void)
           count--;
           data[dataIndex] = word;
           if (++dataIndex >= MAX_DATA_SIZE)
-            exit(3);
+            Error("LPC Message too long to fit in buffer");
         }
       }
       else
@@ -158,15 +170,11 @@ int main(int argc, char *argv[])
 
   driver = fopen("/dev/lpc_bb_driver", "r+");
   if (!driver)
-  {
-  Error:
-    printf("\nI/O-Error! Aborting.\n");
-    return 3;
-  }
-
+    Error("cannot open /dev/lpc_bb_driver");
+  
   driverFileNo = fileno(driver);
   if (driverFileNo == -1)
-    goto Error;
+    Error("cannot get fileo of driver");
 
   flags = getDriverFlags(driverFileNo);
   makeDriverBlocking(driverFileNo, flags);
