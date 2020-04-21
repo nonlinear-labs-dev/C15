@@ -20,15 +20,10 @@ SECTIONS
         LONG(LOADADDR(.data));
         LONG(    ADDR(.data));
         LONG(  SIZEOF(.data));
-        LONG(LOADADDR(.data_RAM2));
-        LONG(    ADDR(.data_RAM2));
-        LONG(  SIZEOF(.data_RAM2));
         __data_section_table_end = .;
         __bss_section_table = .;
         LONG(    ADDR(.bss));
         LONG(  SIZEOF(.bss));
-        LONG(    ADDR(.bss_RAM2));
-        LONG(  SIZEOF(.bss_RAM2));
         __bss_section_table_end = .;
         __section_table_end = . ;
         /* End of Global Section Table */
@@ -65,19 +60,6 @@ SECTIONS
     _etext = .;
 
 
-    /* DATA section for RamLoc32 */
-    .data_RAM2 : ALIGN(4)
-    {
-       FILL(0xff)
-       PROVIDE(__start_data_RAM2 = .) ;
-       *(.ramfunc.$RAM2)
-       *(.ramfunc.$RamLoc32)
-    	*(.data.$RAM2*)
-    	*(.data.$RamLoc32*)
-       . = ALIGN(4) ;
-       PROVIDE(__end_data_RAM2 = .) ;
-    } > RamLoc32 AT>MFlashA512
-
     /* MAIN DATA SECTION */
 
 
@@ -86,7 +68,7 @@ SECTIONS
         KEEP(*(.bss.$RESERVED*))
         . = ALIGN(4) ;
         _end_uninit_RESERVED = .;
-    } > RamLoc40
+    } > RamLocM4
 
 
 	/* Main DATA section (RamLoc40) */
@@ -99,17 +81,8 @@ SECTIONS
 	   *(.data*)
 	   . = ALIGN(4) ;
 	   _edata = . ;
-	} > RamLoc40 AT>MFlashA512
+	} > RamLocM4 AT>MFlashA512
 
-    /* BSS section for RamLoc32 */
-    .bss_RAM2 : ALIGN(4)
-    {
-       PROVIDE(__start_bss_RAM2 = .) ;
-    	*(.bss.$RAM2*)
-    	*(.bss.$RamLoc32*)
-       . = ALIGN(4) ;
-       PROVIDE(__end_bss_RAM2 = .) ;
-    } > RamLoc32
 
     /* MAIN BSS SECTION */
     .bss : ALIGN(4)
@@ -120,15 +93,8 @@ SECTIONS
         . = ALIGN(4) ;
         _ebss = .;
         PROVIDE(end = .);
-    } > RamLoc40
+    } > RamLocM4
 
-    /* NOINIT section for RamLoc32 */
-    .noinit_RAM2 (NOLOAD) : ALIGN(4)
-    {
-    	*(.noinit.$RAM2*)
-    	*(.noinit.$RamLoc32*)
-       . = ALIGN(4) ;
-    } > RamLoc32
 
     /* DEFAULT NOINIT SECTION */
     .noinit (NOLOAD): ALIGN(4)
@@ -137,8 +103,17 @@ SECTIONS
         *(.noinit*)
          . = ALIGN(4) ;
         _end_noinit = .;
-    } > RamLoc40
+    } > RamLocM4
+    
+    /* SHARED Section */
+    .shared (NOLOAD):  ALIGN(4)
+    {
+        _shared = .;
+        *(.shared*)
+         . = ALIGN(4) ;
+        _end_shared = .;
+    } > RamShared
 
     PROVIDE(_pvHeapStart = DEFINED(__user_heap_base) ? __user_heap_base : .);
-    PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_RamLoc40 - 0);
+    PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_RamLocM4 - 0);
 }

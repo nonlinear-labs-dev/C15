@@ -1,5 +1,6 @@
-GROUP(
-libgcc.a
-libc.a
-libm.a
+GROUP (
+  libgcc.a
+  libc_nano.a
+  libm.a
+  libcr_newlib_nohost.a
 )
