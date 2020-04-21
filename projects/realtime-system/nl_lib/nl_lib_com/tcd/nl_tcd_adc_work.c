@@ -6,7 +6,8 @@
  *  Last change on : 2020-01-03 KSTR
  */
 
-#include "math.h"
+#include <math.h>
+#include <string.h>
 
 #include "nl_tcd_adc_work.h"
 #include "nl_tcd_msg.h"
@@ -19,6 +20,7 @@
 #include "nl_tcd_interpol.h"
 #include "ehc/nl_ehc_ctrl.h"
 #include "drv/nl_dbg.h"
+#include "sys/nl_eeprom.h"
 
 #define GROUND_THRESHOLD     20
 #define CHANGE_FOR_DETECTION 500
@@ -45,74 +47,54 @@ static uint32_t  pbRampMode;
 static int32_t   pbRamp;
 static int32_t   pbRampInc;
 static uint32_t  allBenderTables[3][33] = {};  // contains the bender curves
-static uint32_t* benderTable;
+static uint32_t *benderTable;
 
 static uint32_t  lastAftertouch;
 static uint32_t  allAftertouchTables[3][33] = {};  // contains the chosen aftertouch curve
-static uint32_t* aftertouchTable;
+static uint32_t *aftertouchTable;
 
 //========= ribbons ========
+static uint16_t rib_eepromHandle = 0;  // EEPROM access handle
+static int      rib_updateEeprom = 0;
 
-#if 0
-// default calibration tables (derived from a variety of ribbons)
-static int32_t RIBBON_1_DEFAULT_CALIBRATION_TABLE_X[34] = {
-  151, 173, 283, 412, 535, 657, 773, 888, 1004, 1121, 1238, 1355, 1471, 1586, 1700, 1814, 1927, 2039,
-  2151, 2262, 2374, 2487, 2602, 2717, 2837, 2957, 3083, 3209, 3342, 3475, 3620, 3764, 3916, 4040
-};
-static int32_t RIBBON_2_DEFAULT_CALIBRATION_TABLE_X[34] = {
-  151, 173, 283, 412, 535, 657, 773, 888, 1004, 1121, 1238, 1355, 1471, 1586, 1700, 1814, 1927, 2039,
-  2151, 2262, 2374, 2487, 2602, 2717, 2837, 2957, 3083, 3209, 3342, 3475, 3620, 3764, 3916, 4040
-};
+typedef struct
+{
+  int32_t threshold;
+  int32_t tableX[33];
+  int32_t tableY[33];
+} RibbonCalibrationData_T;
 
-static int32_t RIBBON_DEFAULT_CALIBRATION_TABLE_Y[33] = {
-  0, 712, 1198, 1684, 2170, 2655, 3141, 3627, 4113, 4599, 5085, 5571, 6057, 6542, 7028, 7514, 8000,
-  8500, 8993, 9494, 9994, 10495, 10995, 11496, 11996, 12497, 12997, 13498, 13998, 14499, 14999, 15500, 16000
-};
-#else
-// custom calibration tables (hardcoded, device topcover specific)
-static int32_t RIBBON_1_DEFAULT_CALIBRATION_TABLE_X[34] = {
-  169, 191, 300, 428, 551, 672, 787, 902, 1017, 1133, 1249, 1365, 1480, 1595, 1709, 1822, 1934, 2045,
-  2156, 2267, 2378, 2490, 2604, 2719, 2838, 2957, 3082, 3207, 3340, 3472, 3616, 3759, 3910, 4033
-};
-static int32_t RIBBON_2_DEFAULT_CALIBRATION_TABLE_X[34] = {
-  169, 191, 300, 428, 551, 672, 787, 902, 1017, 1133, 1249, 1365, 1480, 1595, 1709, 1822, 1934, 2045,
-  2156, 2267, 2378, 2490, 2604, 2719, 2838, 2957, 3082, 3207, 3340, 3472, 3616, 3759, 3910, 4033
-};
-
-static int32_t RIBBON_DEFAULT_CALIBRATION_TABLE_Y[33] = {
-  0, 712, 1198, 1684, 2170, 2655, 3141, 3627, 4113, 4599, 5085, 5571, 6057, 6542, 7028, 7514, 8000,
-  8500, 8993, 9494, 9994, 10495, 10995, 11496, 11996, 12497, 12997, 13498, 13998, 14499, 14999, 15500, 16000
-};
-#endif
-
-static LIB_interpol_data_T RIBBON_1_DEFAULT_CALIBRATION_DATA = {
-  sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y) / sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y[0]),
-  &RIBBON_1_DEFAULT_CALIBRATION_TABLE_X[1],
-  RIBBON_DEFAULT_CALIBRATION_TABLE_Y
-};
-static LIB_interpol_data_T RIBBON_2_DEFAULT_CALIBRATION_DATA = {
-  sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y) / sizeof(RIBBON_DEFAULT_CALIBRATION_TABLE_Y[0]),
-  &RIBBON_2_DEFAULT_CALIBRATION_TABLE_X[1],
-  RIBBON_DEFAULT_CALIBRATION_TABLE_Y
+// clang-format off
+static RibbonCalibrationData_T NL_EEPROM_ALIGN ribbonCalibrationData[2] = {
+// initialized with default data derived from a variety of ribbons
+  { .threshold = 151,
+    .tableX    = { 173, 283, 412, 535, 657, 773, 888, 1004, 1121, 1238, 1355, 1471, 1586, 1700, 1814, 1927, 2039,
+                   2151, 2262, 2374, 2487, 2602, 2717, 2837, 2957, 3083, 3209, 3342, 3475, 3620, 3764, 3916, 4040 },
+    .tableY    = { 0, 712, 1198, 1684, 2170, 2655, 3141, 3627, 4113, 4599, 5085, 5571, 6057, 6542, 7028, 7514, 8000,
+                   8500, 8993, 9494, 9994, 10495, 10995, 11496, 11996, 12497, 12997, 13498, 13998, 14499, 14999, 15500, 16000 }
+  },
+  { .threshold = 151,
+    .tableX    = { 173, 283, 412, 535, 657, 773, 888, 1004, 1121, 1238, 1355, 1471, 1586, 1700, 1814, 1927, 2039,
+                   2151, 2262, 2374, 2487, 2602, 2717, 2837, 2957, 3083, 3209, 3342, 3475, 3620, 3764, 3916, 4040 },
+    .tableY    = { 0, 712, 1198, 1684, 2170, 2655, 3141, 3627, 4113, 4599, 5085, 5571, 6057, 6542, 7028, 7514, 8000,
+                   8500, 8993, 9494, 9994, 10495, 10995, 11496, 11996, 12497, 12997, 13498, 13998, 14499, 14999, 15500, 16000 }
+  }
 };
 
-// user calibration tables
-static int32_t ribbon_1_calibration_table_x[34];
-static int32_t ribbon_1_calibration_table_y[33];
-static int32_t ribbon_2_calibration_table_x[34];
-static int32_t ribbon_2_calibration_table_y[33];
-
-static LIB_interpol_data_T ribbon_1_calibration_data = {
-  sizeof(ribbon_1_calibration_table_y) / sizeof(ribbon_1_calibration_table_y[0]),
-  &ribbon_1_calibration_table_x[1],
-  ribbon_1_calibration_table_y
+static const LIB_interpol_data_T ribbonCalibration[2] =
+{
+  {
+	.points   = 33,
+	.x_values = ribbonCalibrationData[0].tableX,
+	.y_values = ribbonCalibrationData[0].tableY
+  },
+  {
+	.points   = 33,
+	.x_values = ribbonCalibrationData[1].tableX,
+	.y_values = ribbonCalibrationData[1].tableY
+  }
 };
-
-static LIB_interpol_data_T ribbon_2_calibration_data = {
-  sizeof(ribbon_2_calibration_table_y) / sizeof(ribbon_2_calibration_table_y[0]),
-  &ribbon_2_calibration_table_x[1],
-  ribbon_2_calibration_table_y
-};
+// clang-format on
 
 // type for working variables
 typedef struct
@@ -125,11 +107,9 @@ typedef struct
   uint32_t             editBehavior;   ///< flag absolute/#relative
   uint32_t             incBase;        ///< base value for relative increment
   int32_t              output;         ///< processed output value (0...16000)
-  int32_t              threshold;      ///< touch threshold
-  LIB_interpol_data_T* calibration;    ///< pointer to calibration data to be used
+  LIB_interpol_data_T *calibration;    ///< pointer to calibration data to be used
   uint8_t              ipcId;          ///< ID to fetch raw data from M0 kernel
   uint32_t             hwSourceId;     ///< ID for BB and TCD message
-
 } Ribbon_Data_T;
 
 // working variables
@@ -146,6 +126,18 @@ static int32_t SetThreshold(int32_t val)
   val *= 8;
   val /= 10;
   return val;
+}
+
+// helper functions
+int memcmp32(void *data1, void *data2, uint16_t count)
+{
+  while (count--)
+  {
+    if (*(int32_t *) (data1++) == *(int32_t *) (data2++))
+      continue;
+    return (*(int32_t *) (data1++) < *(int32_t *) (data2++) ? -1 : 1);
+  }
+  return 0;
 }
 
 /*****************************************************************************
@@ -279,13 +271,21 @@ void ADC_WORK_Init1(void)
     ribbon[i].editBehavior  = 0;
     ribbon[i].incBase       = 0;
     ribbon[i].output        = 0;
-    ribbon[i].calibration   = (i == 0 ? &RIBBON_1_DEFAULT_CALIBRATION_DATA : &RIBBON_2_DEFAULT_CALIBRATION_DATA);  // use default calibration
-    ribbon[i].threshold     = SetThreshold(ribbon[i].calibration->x_values[0]);
-    ribbon[i].ipcId         = (i == 0 ? IPC_ADC_RIBBON1 : IPC_ADC_RIBBON2);
-    ribbon[i].hwSourceId    = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+    ribbon[i].calibration = &ribbonCalibration[i];
+#pragma GCC diagnostic pop
+    ribbon[i].ipcId      = (i == 0 ? IPC_ADC_RIBBON1 : IPC_ADC_RIBBON2);
+    ribbon[i].hwSourceId = (i == 0 ? HW_SOURCE_ID_RIBBON_1 : HW_SOURCE_ID_RIBBON_2);
   }
 
   NL_EHC_InitControllers();
+
+  rib_eepromHandle = NL_EEPROM_RegisterBlock(sizeof ribbonCalibrationData, EEPROM_BLOCK_ALIGN_TO_PAGE);
+
+  RibbonCalibrationData_T tmp[2];
+  if (NL_EEPROM_ReadBlock(rib_eepromHandle, &tmp[0]))
+    memcpy(ribbonCalibrationData, tmp, sizeof(ribbonCalibrationData));
 
   ClearHWValuesForBB();
 }
@@ -302,41 +302,26 @@ void ADC_WORK_Init2(void)
 * @param	value: ribbon position (0 ... 16000)
 * @param	inc: position increment (theoretically -16000 ... 16000)
 ******************************************************************************/
-static void SendEditMessageToBB(uint32_t paramId, uint32_t value, int32_t inc)
+static void SendEditMessageToBB(uint32_t const which, uint32_t const value, int32_t inc)
 {
-  if (ribbon[RIB1].editBehavior)  // 1: the ribbon sends the absolute value
+  if (ribbon[which].editBehavior)  // 1: the ribbon sends the absolute value
   {
-    BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, paramId, value);  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
-    BB_MSG_SendTheBuffer();                                                 /// später mit somethingToSend = 1; !!!
+    BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, ribbon[which].hwSourceId, value);  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
+    BB_MSG_SendTheBuffer();
   }
   else  // 0: the ribbon sends the increment
   {
-    uint16_t inc16;
-
-    if (inc < 0)
-    {
-      if (inc < -8000)  // limiting it to a 14-bit range like with other controls
-      {
-        inc = -8000;
-      }
-
-      inc16 = 0x8000 | (-inc);  // 0x8000 is the sign bit, -inc is the absolute
-
-      BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, paramId, inc16);  // sends the increment as an Edit Control message; results being displayed on the upper Ribbon
-      BB_MSG_SendTheBuffer();                                                 /// später mit somethingToSend = 1; !!!
-    }
-    else if (inc > 0)
-    {
-      if (inc > 8000)  // limiting it to a 14-bit range like with other controls
-      {
-        inc = 8000;
-      }
-
-      inc16 = inc;
-
-      BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, paramId, inc16);  // sends the increment as an Edit Control message; results being displayed on the upper Ribbon
-      BB_MSG_SendTheBuffer();                                                 /// später mit somethingToSend = 1; !!!
-    }
+    if (inc == 0)
+      return;
+    // limiting it to a 14-bit range like with other controls
+    if (inc < -8000)
+      inc = -8000;
+    if (inc > +8000)
+      inc = +8000;
+    // sends the increment as an Edit Control message; results being displayed on the Ribbon
+    BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, ribbon[which].hwSourceId,
+                            inc > 0 ? inc : 0x8000 | -inc);
+    BB_MSG_SendTheBuffer();
   }
 }
 
@@ -454,49 +439,51 @@ void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour)
 * @param	length: # of words in data array
 * @param	data: array containing calibration data sets for the ribbons
 ******************************************************************************/
-void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data)
+void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t *data)
 {
   if (length != (34 + 33 + 34 + 33))  // data must contain X (34 point) and Y (33 points) sets,  for each ribbon
     return;
 
-  int i;
-  for (i = 0; i < 34; i++)
-    ribbon_1_calibration_table_x[i] = (int32_t) *data++;
-  for (i = 0; i < 33; i++)
-    ribbon_1_calibration_table_y[i] = (int32_t) *data++;
-  for (i = 0; i < 34; i++)
-    ribbon_2_calibration_table_x[i] = (int32_t) *data++;
-  for (i = 0; i < 33; i++)
-    ribbon_2_calibration_table_y[i] = (int32_t) *data++;
+  RibbonCalibrationData_T tmp[2];
+  int                     i, j;
 
-  // Integrity checks
-  for (i = 0; i < 34; i++)
-  {
-    if (ribbon_1_calibration_table_x[i] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
-        || ribbon_1_calibration_table_x[i] > 4095
-        || ribbon_2_calibration_table_x[i] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
-        || ribbon_2_calibration_table_x[i] > 4095)
-      return;  // x-values are not in valid range for raw values
-  }
-  for (i = 0; i < 33; i++)
-  {
-    if (ribbon_1_calibration_table_y[i] < 0
-        || ribbon_1_calibration_table_y[i] > 16000
-        || ribbon_2_calibration_table_y[i] < 0
-        || ribbon_2_calibration_table_y[i] > 16000)
-      return;  // y-values are not in valid range for output values
-  }
-  for (i = 1; i < 33; i++)
-  {
-    if (ribbon_1_calibration_table_x[i] <= ribbon_1_calibration_table_x[i - 1]
-        || ribbon_2_calibration_table_x[i] <= ribbon_2_calibration_table_x[i - 1])
-      return;  // x-values are not monotonically rising
+  for (i = 0; i < 2; i++)
+  {  // al ribbons
+    tmp[i].threshold = (int32_t) *data++;
+    for (j = 0; j < 33; j++)
+      tmp[i].tableX[j] = (int32_t) *data++;
+    for (j = 0; j < 33; j++)
+      tmp[i].tableY[j] = (int32_t) *data++;
+
+    // Integrity checks
+    if (tmp[i].threshold < 100
+        || tmp[i].threshold > tmp[i].tableX[0])
+      return;  // threshold typically is > 140, and must be <= first X entry
+    tmp[i].threshold = SetThreshold(tmp[i].threshold);
+
+    for (j = 0; j < 33; j++)
+    {                             // all 33 data points
+      if (tmp[i].tableX[j] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
+          || tmp[i].tableX[j] > 4095
+          || tmp[i].tableX[j] < 100  // lowest raw value on touch is sure > 100 (140 typ.)
+          || tmp[i].tableX[j] > 4095)
+        return;  // x-values are not in valid range for raw values
+      if (tmp[i].tableY[j] < 0
+          || tmp[i].tableY[j] > 16000
+          || tmp[i].tableY[j] < 0
+          || tmp[i].tableY[j] > 16000)
+        return;  // y-values are not in valid range for output values
+      if (j > 0)
+      {
+        if (tmp[i].tableX[j] <= tmp[i].tableX[j - 1]
+            || tmp[i].tableY[j] <= tmp[i].tableY[j - 1])
+          return;  // x- or y-values are not monotonically rising
+      }
+    }
   }
 
-  ribbon[RIB1].calibration = &ribbon_1_calibration_data;
-  ribbon[RIB2].calibration = &ribbon_2_calibration_data;
-  ribbon[RIB1].threshold   = SetThreshold(ribbon[RIB1].calibration->x_values[0]);
-  ribbon[RIB2].threshold   = SetThreshold(ribbon[RIB2].calibration->x_values[0]);
+  memcpy(ribbonCalibrationData, tmp, sizeof(ribbonCalibrationData));
+  rib_updateEeprom = 1;
 }
 
 /*****************************************************************************
@@ -518,7 +505,7 @@ static void ProcessRibbons(void)
 
     if (value > ribbon[i].last + 1)  // rising values (min. +2)
     {
-      if (value > ribbon[i].threshold)  // above the touch threshold
+      if (value > ribbonCalibrationData[i].threshold)  // above the touch threshold
       {
         if (ribbon[i].touch == 0)
         {
@@ -532,7 +519,7 @@ static void ProcessRibbons(void)
     }
     else if (value + 1 < ribbon[i].last)  // falling values (min. -2)
     {
-      if (value > ribbon[i].threshold)  // above the touch threshold; ribbon1Touch is already on, because the last value was higher
+      if (value > ribbonCalibrationData[i].threshold)  // above the touch threshold; ribbon1Touch is already on, because the last value was higher
       {
         // outputs the previous value (one sample delay) to avoid sending samples of the falling edge of a touch release
         valueToSend = LIB_InterpolateValue(ribbon[i].calibration, ribbon[i].last);
@@ -571,7 +558,7 @@ static void ProcessRibbons(void)
       if (ribbon[i].isEditControl)
       {
         inc = (inc * ribbon[i].relFactor) / 256;
-        SendEditMessageToBB(ribbon[i].hwSourceId, valueToSend, inc);
+        SendEditMessageToBB(i, valueToSend, inc);
       }
       else
       {
@@ -601,6 +588,15 @@ static void ProcessRibbons(void)
       }
     }
   }  // for all ribbons
+
+  if (rib_updateEeprom)
+  {
+    if (!NL_EEPROM_Busy())
+    {
+      rib_updateEeprom = 0;
+      NL_EEPROM_StartWriteBlock(rib_eepromHandle, &ribbonCalibrationData[0]);
+    }
+  }
 }
 
 void ADC_WORK_SetRawSensorMessages(uint32_t flag)
