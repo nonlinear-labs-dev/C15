@@ -90,72 +90,74 @@ static void ShowSettlingDisplay(void)
 typedef struct
 {
   const int MAX_DRIFT;
-  const int DRIFT_INDUCED_RAMPING_TIME;
-  const int DRIFT_INDUCED_RAMPING_TIME_REDUCED;
+  const int DRIFT_INDUCED_RAMPING_TIME;          // ramping time for drift-induced change
+  const int DRIFT_INDUCED_RAMPING_TIME_REDUCED;  // // ramping time for drift-induced change when already ramping otherwise
   const int NORMAL_RAMPING_TIME;
   const int SHORT_RAMPING_TIME;
-  const int SHOCK_CHANGE_THRESHOLD;
-  const int SETTLING_OFFSET;
-  const int SETTLING_GAIN;
-  const int SETTLING_OFFSET_REDUCED;
-  const int SETTLING_GAIN_REDUCED;
+  const int SHOCK_CHANGE_THRESHOLD;  // amount of parameter change to trigger shock change, in 16k units
+  // when going out of settling
+  const int SETTLING_OFFSET;  // # of ADC lsb's which are allowed to vary near zero
+  const int SETTLING_GAIN;    // #  of ADC lsb's which are allowed to vary near full scale
+  // when going into settling
+  const int SETTLING_OFFSET_REDUCED;  // # of ADC lsb's which are allowed to vary near zero
+  const int SETTLING_GAIN_REDUCED;    // #  of ADC lsb's which are allowed to vary near full scale
 } ControllerParameterSet_T;
 
 #define PARAMETER_SETS        (4)  // number of different parameter sets
-#define DEFAULT_PARAMETER_SET (1)
+#define DEFAULT_PARAMETER_SET (1)  // index of default set
 
 const ControllerParameterSet_T CTRL_PARAMS[PARAMETER_SETS] = {
   {
       // set 0 : high sensitivity to noise & drifts
-      /* MAX_DRIFT                          */ (160 * 1 / 10),      // 0.1%
-      /* DRIFT_INDUCED_RAMPING_TIME         */ (10),                // 10*12.5ms = 125ms, the larger MAX_DRIFT the longer this should be set
-      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (10 / 2),            //
-      /* NORMAL_RAMPING_TIME                */ (6),                 // 6*12.5ms = 75ms
-      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
-      /* SHOCK_CHANGE_THRESHOLD             */ (1600),              // 1600/16000 : > 10% max change is considered a shock change
-      /* SETTLING_OFFSET                    */ (5 * AVG_DIV),       //
-      /* SETTLING_GAIN                      */ (10 * AVG_DIV),      //
-      /* SETTLING_OFFSET_REDUCED            */ (5 * AVG_DIV / 2),   //
-      /* SETTLING_GAIN_REDUCED              */ (10 * AVG_DIV / 2),  //
+      .MAX_DRIFT                          = (160 * 1 / 10),      // 0.1%
+      .DRIFT_INDUCED_RAMPING_TIME         = (10),                // 10*12.5ms = 125ms, the larger MAX_DRIFT the longer this should be set
+      .DRIFT_INDUCED_RAMPING_TIME_REDUCED = (10 / 2),            //
+      .NORMAL_RAMPING_TIME                = (6),                 // 6*12.5ms = 75ms
+      .SHORT_RAMPING_TIME                 = (3),                 // 3*12.5ms  = 38ms
+      .SHOCK_CHANGE_THRESHOLD             = (1600),              // 1600/16000 : > 10% max change is considered a shock change
+      .SETTLING_OFFSET                    = (5 * AVG_DIV),       //
+      .SETTLING_GAIN                      = (10 * AVG_DIV),      //
+      .SETTLING_OFFSET_REDUCED            = (5 * AVG_DIV / 2),   //
+      .SETTLING_GAIN_REDUCED              = (10 * AVG_DIV / 2),  //
   },
   {
       // set 1 : normal sensitivity to noise & drifts
-      /* MAX_DRIFT                          */ (160 * 3 / 10),      // 0.3%
-      /* DRIFT_INDUCED_RAMPING_TIME         */ (20),                // 20*12.5ms = 250ms, the larger MAX_DRIFT the longer this should be set
-      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (20 / 2),            //
-      /* NORMAL_RAMPING_TIME                */ (10),                // 10*12.5ms = 100ms
-      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
-      /* SHOCK_CHANGE_THRESHOLD             */ (2000),              // 2000/16000 : > 12.5% max change is considered a shock change
-      /* SETTLING_OFFSET                    */ (11 * AVG_DIV),      //
-      /* SETTLING_GAIN                      */ (22 * AVG_DIV),      //
-      /* SETTLING_OFFSET_REDUCED            */ (11 * AVG_DIV / 3),  //
-      /* SETTLING_GAIN_REDUCED              */ (22 * AVG_DIV / 3),  //
+      .MAX_DRIFT                          = (160 * 3 / 10),      // 0.3%
+      .DRIFT_INDUCED_RAMPING_TIME         = (20),                // 20*12.5ms = 250ms, the larger MAX_DRIFT the longer this should be set
+      .DRIFT_INDUCED_RAMPING_TIME_REDUCED = (20 / 2),            //
+      .NORMAL_RAMPING_TIME                = (10),                // 10*12.5ms = 100ms
+      .SHORT_RAMPING_TIME                 = (3),                 // 3*12.5ms  = 38ms
+      .SHOCK_CHANGE_THRESHOLD             = (2000),              // 2000/16000 : > 12.5% max change is considered a shock change
+      .SETTLING_OFFSET                    = (11 * AVG_DIV),      //
+      .SETTLING_GAIN                      = (22 * AVG_DIV),      //
+      .SETTLING_OFFSET_REDUCED            = (11 * AVG_DIV / 3),  //
+      .SETTLING_GAIN_REDUCED              = (22 * AVG_DIV / 3),  //
   },
   {
       // set 2 : medium-low sensitivity to noise & drifts
-      /* MAX_DRIFT                          */ (160 * 10 / 10),     // 1%
-      /* DRIFT_INDUCED_RAMPING_TIME         */ (40),                // 40*12.5ms = 500ms, the larger MAX_DRIFT the longer this should be set
-      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (40 / 2),            //
-      /* NORMAL_RAMPING_TIME                */ (10),                // 10*12.5ms = 100ms
-      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
-      /* SHOCK_CHANGE_THRESHOLD             */ (3000),              // 3000/16000 : > 19% max change is considered a shock change
-      /* SETTLING_OFFSET                    */ (25 * AVG_DIV),      //
-      /* SETTLING_GAIN                      */ (50 * AVG_DIV),      //
-      /* SETTLING_OFFSET_REDUCED            */ (25 * AVG_DIV / 2),  //
-      /* SETTLING_GAIN_REDUCED              */ (50 * AVG_DIV / 2),  //
+      .MAX_DRIFT                          = (160 * 10 / 10),     // 1%
+      .DRIFT_INDUCED_RAMPING_TIME         = (40),                // 40*12.5ms = 500ms, the larger MAX_DRIFT the longer this should be set
+      .DRIFT_INDUCED_RAMPING_TIME_REDUCED = (40 / 2),            //
+      .NORMAL_RAMPING_TIME                = (10),                // 10*12.5ms = 100ms
+      .SHORT_RAMPING_TIME                 = (3),                 // 3*12.5ms  = 38ms
+      .SHOCK_CHANGE_THRESHOLD             = (3000),              // 3000/16000 : > 19% max change is considered a shock change
+      .SETTLING_OFFSET                    = (25 * AVG_DIV),      //
+      .SETTLING_GAIN                      = (50 * AVG_DIV),      //
+      .SETTLING_OFFSET_REDUCED            = (25 * AVG_DIV / 2),  //
+      .SETTLING_GAIN_REDUCED              = (50 * AVG_DIV / 2),  //
   },
   {
       // set 3 : lowest sensitivity to noise & drifts
-      /* MAX_DRIFT                          */ (160 * 15 / 10),     // 1.5%
-      /* DRIFT_INDUCED_RAMPING_TIME         */ (40),                // 50*12.5ms = 625ms, the larger MAX_DRIFT the longer this should be set
-      /* DRIFT_INDUCED_RAMPING_TIME_REDUCED */ (40 / 2),            //
-      /* NORMAL_RAMPING_TIME                */ (10),                // 10*12.5ms = 100ms
-      /* SHORT_RAMPING_TIME                 */ (3),                 // 3*12.5ms  = 38ms
-      /* SHOCK_CHANGE_THRESHOLD             */ (3000),              // 3000/16000 : > 19% max change is considered a shock change
-      /* SETTLING_OFFSET                    */ (35 * AVG_DIV),      //
-      /* SETTLING_GAIN                      */ (70 * AVG_DIV),      //
-      /* SETTLING_OFFSET_REDUCED            */ (35 * AVG_DIV / 2),  //
-      /* SETTLING_GAIN_REDUCED              */ (70 * AVG_DIV / 2),  //
+      .MAX_DRIFT                          = (160 * 15 / 10),     // 1.5%
+      .DRIFT_INDUCED_RAMPING_TIME         = (40),                // 50*12.5ms = 625ms, the larger MAX_DRIFT the longer this should be set
+      .DRIFT_INDUCED_RAMPING_TIME_REDUCED = (40 / 2),            //
+      .NORMAL_RAMPING_TIME                = (10),                // 10*12.5ms = 100ms
+      .SHORT_RAMPING_TIME                 = (3),                 // 3*12.5ms  = 38ms
+      .SHOCK_CHANGE_THRESHOLD             = (3000),              // 3000/16000 : > 19% max change is considered a shock change
+      .SETTLING_OFFSET                    = (35 * AVG_DIV),      //
+      .SETTLING_GAIN                      = (70 * AVG_DIV),      //
+      .SETTLING_OFFSET_REDUCED            = (35 * AVG_DIV / 2),  //
+      .SETTLING_GAIN_REDUCED              = (70 * AVG_DIV / 2),  //
   },
 };
 
