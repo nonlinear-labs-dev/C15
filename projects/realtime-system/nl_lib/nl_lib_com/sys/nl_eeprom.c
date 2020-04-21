@@ -24,24 +24,29 @@ typedef struct __attribute__((packed))
 
 #define EEPROM_SIZE             (63 * 128)  // 63 blocks with 128 bytes each, do NOT change
 #define SHADOW_OFFSET           (64 * 128)  // offset to shadow pages
-#define EEPROM_MAX_BLOCKSIZE    (2048)      // 2k max size per block, for local buffer sizing,
+#define EEPROM_MAX_BLOCKSIZE    (2048)      // 2k
 #define NUMBER_OF_EEPROM_BLOCKS (8)         // number of blocks we can handle
 
-#define ALIGN32(X) (((X) + 3) & ~3)  // macro to a align a size to next 4byte multiple
+static EEPROM_Block             blocks[NUMBER_OF_EEPROM_BLOCKS];
+static uint32_t NL_EEPROM_ALIGN buffer[EEPROM_MAX_BLOCKSIZE / 4];
+static uint8_t *                target;
+static uint16_t                 total;
+static uint16_t                 eepromBusy = 0;
+static uint16_t                 transfer;
+static uint16_t                 remaining;
+static uint32_t *               pDest;
+static uint32_t *               pSrc;
+static uint16_t                 forceAlignNext    = 0;
+static uint16_t                 step              = 0;
+static uint16_t                 hadToUseBackup    = 0;
+static uint16_t                 fullEraseRequest  = 0;
+static uint16_t                 fullEraseFinished = 0;
 
-static EEPROM_Block blocks[NUMBER_OF_EEPROM_BLOCKS];
-static uint32_t     buffer[EEPROM_MAX_BLOCKSIZE / 4];
-static uint16_t     eepromBusy = 0;
-static uint16_t     transfer;
-static uint16_t     remaining;
-static uint32_t *   pDest;
-static uint32_t *   pSrc;
-static uint16_t     forceAlignNext    = 0;
-static uint16_t     step              = 0;
-static uint16_t     savedIndex        = 0;
-static uint16_t     hadToUseBackup    = 0;
-static uint16_t     fullEraseRequest  = 0;
-static uint16_t     fullEraseFinished = 0;
+static inline uint16_t align32(uint16_t size)
+{
+  return (size + 3) & ~3;
+}
+
 /*****************************************************************************
  * Public types/enumerations/variables
  ****************************************************************************/
@@ -82,7 +87,7 @@ uint16_t NL_EEPROM_RegisterBlock(uint16_t const size, EepromBlockAlign_T align)
     }
     // add up sizes (aligned to next 32bit boundary), include 4 bytes of CRC (regardless of size of crc_t)
     if (blocks[i].handle)
-      nextFreeOffset = blocks[i].offset + ALIGN32(blocks[i].size) + 4;
+      nextFreeOffset = blocks[i].offset + align32(blocks[i].size) + 4;
     if (nextFreeOffset > EEPROM_SIZE)
     {  // too much to fit in EEPROM
       if (returnHandle)
@@ -121,10 +126,10 @@ uint16_t NL_EEPROM_ReadBlock(uint16_t const handle, void *const data)
   if (handle < 1 || handle > NUMBER_OF_EEPROM_BLOCKS || blocks[index].handle != handle || data == NULL || fullEraseRequest || NL_EEPROM_Busy())
     return 0;
   uint32_t *startAddr = (uint32_t *) (EEPROM_START + blocks[index].offset);
-  if (crcFast((uint8_t const *) (startAddr + 1), blocks[index].size) != *startAddr)
+  if (crcFast((void const *) (startAddr + 1), blocks[index].size) != *startAddr)
   {  // CRC failed on main block, so try shadow block (which was written before main block)
     startAddr = (uint32_t *) (EEPROM_START + blocks[index].offset + SHADOW_OFFSET);
-    if (crcFast((uint8_t const *) (startAddr + 1), blocks[index].size) != *startAddr)
+    if (crcFast((void const *) (startAddr + 1), blocks[index].size) != *startAddr)
       return 0;          // CRC failed on both, no valid data
     hadToUseBackup = 1;  // mark mismatch
   }
@@ -141,43 +146,23 @@ uint16_t NL_EEPROM_ReadBlockHadToUseBackup(void)
 }
 
 /* Start write a block of data to EEPROM */
-static void StartWriteBlock(uint16_t size, uint32_t *src, uint16_t offset, int raw)
+static void StartWriteBlock(uint16_t offset)
 {
-  remaining = ALIGN32(size);
-  if (!raw)
-    remaining += 4;  // account for CRC
+  pSrc               = buffer;
+  pDest              = (uint32_t *) (target + offset);
+  remaining          = total;
   transfer           = remaining;
-  uint8_t pageOffset = offset & 0x7F;  // offset modulo 128
+  uint8_t pageOffset = (uint32_t) pDest & 0x7F;  // offset modulo 128
   if (pageOffset + transfer > 128)
     transfer = 128 - pageOffset;  // restrict amount to next 128byte boundary
-  // copy
-  pSrc  = src;
-  pDest = (uint32_t *) (EEPROM_START + offset);
-  if (!raw)
-    *pDest++ = crcFast((uint8_t const *) src, size);  // poke CRC in first word
-  uint16_t count = (transfer - (raw ? 0 : 4)) >> 2;   // words remaining data to transfer, without CRC
+  // copy to page register
+  uint16_t count = transfer >> 2;  // words of data to transfer to page register
   while (count--)
     *pDest++ = *pSrc++;
-  count = transfer & 3;  // any bytes remaining, 0..3, can happen only at the end of data
-  if (count)
-  {  // we must use 32bit aligned write to write the EEPROM data
-    uint32_t word  = 0;
-    uint8_t *pByte = (uint8_t *) pSrc;
-    while (count--)
-    {  // fill up last word with the source data bytes
-      word <<= 8;
-      word |= *pByte++;
-    }
-    *pDest++ = word;
-  }
-  remaining -= transfer;                             // update remaining amount of date, if any
+  remaining -= transfer;  // update remaining amount of date, if any
+  // start burning
   eepromBusy = 1;                                    // start multi-page write, if required
   Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);  // start burning the first chunk
-  if (!raw)
-  {
-    memCopy(remaining, pSrc, buffer);  // copy rest of data to local buffer, if any
-    pSrc = buffer;                     // adjust to new read address
-  }
 }
 
 /* multi-page write */
@@ -196,18 +181,6 @@ void Process()
   uint16_t count = transfer >> 2;  // words remaining data to transfer
   while (count--)                  // 32bit words
     *pDest++ = *pSrc++;
-  count = transfer & 3;  // any bytes remaining, 0..3, can happen only at the end of data
-  if (count)
-  {  // we must use 32bit aligned writes to write the EEPROM data
-    uint32_t word  = 0;
-    uint8_t *pByte = (uint8_t *) pSrc;
-    while (count--)
-    {  // fill up last word with the source data bytes
-      word <<= 8;
-      word |= *pByte++;
-    }
-    *pDest++ = word;
-  }
   remaining -= transfer;
   eepromBusy = 1;
   Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);
@@ -218,16 +191,23 @@ void Process()
 uint16_t NL_EEPROM_StartWriteBlock(uint16_t const handle, void *const data)
 {
   uint16_t index = handle - 1;
-  uint8_t  total = ALIGN32(blocks[index].size);
+  total          = align32(blocks[index].size);
   if (handle < 1 || handle > NUMBER_OF_EEPROM_BLOCKS || blocks[index].handle != handle || fullEraseRequest)
     return 0;
   if (total == 0)
     return 1;  // no data --> done
   if (data == NULL || NL_EEPROM_Busy())
     return 0;
-  savedIndex = index;  // keep index for main write later
+
+  // copy user data to local buffer and calculate CRC
+  // we make sure the data starts and ends word aligned, page register write requires this
+  buffer[total / 4] = 0;                                                     // fill last word with zero, because CRC may copy non 4-byte multiple
+  buffer[0]         = crcFastAndCopy(data, &buffer[1], blocks[index].size);  // get CRC and copy all bytes
+  total += 4;                                                                // account for CRC data
+
+  target = (uint8_t *) (EEPROM_START + blocks[index].offset);
   // start write to shadow, with CRC and local buffering
-  StartWriteBlock(total, (uint32_t *) data, blocks[savedIndex].offset + SHADOW_OFFSET, 0);
+  StartWriteBlock(SHADOW_OFFSET);
   step = 1;  // start step chain
   return 1;
 }
@@ -285,10 +265,8 @@ void NL_EEPROM_Process(void)
       Process();
       if (eepromBusy)
         return;  // still writing
-      // now copy shadow block to main block, no CRC and no buffering required
-      StartWriteBlock(ALIGN32(blocks[savedIndex].size),
-                      (uint32_t *) (EEPROM_START + blocks[savedIndex].offset + SHADOW_OFFSET),
-                      blocks[savedIndex].offset, 1);  // start write to main, no buffering
+      // now burn main block
+      StartWriteBlock(0);
       step = 2;
       return;
     case 2:  // wait for main write finished
