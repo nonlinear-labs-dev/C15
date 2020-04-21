@@ -17,13 +17,11 @@ int      dataIndex;
 uint16_t displayFlags;
 FILE *   driver;
 
-
 void Error(const char *msg)
 {
   printf("\nError : %s \nAborting.\n", msg);
   exit(3);
 }
-
 
 // ===================
 void makeDriverNonblocking(int const driverFileNo, int const flags)
@@ -58,7 +56,7 @@ int readWord(uint16_t *const data)
   {
     case 0:
       errno = 0;
-      bl = fgetc(driver);
+      bl    = fgetc(driver);
       if (bl == EOF)
       {
         if (errno && errno != EAGAIN)
@@ -69,7 +67,7 @@ int readWord(uint16_t *const data)
       break;
     case 1:
       errno = 0;
-      bh = fgetc(driver);
+      bh    = fgetc(driver);
       if (bh == EOF)
       {
         if (errno && errno != EAGAIN)
@@ -171,7 +169,7 @@ int main(int argc, char *argv[])
   driver = fopen("/dev/lpc_bb_driver", "r+");
   if (!driver)
     Error("cannot open /dev/lpc_bb_driver");
-  
+
   driverFileNo = fileno(driver);
   if (driverFileNo == -1)
     Error("cannot get fileo of driver");

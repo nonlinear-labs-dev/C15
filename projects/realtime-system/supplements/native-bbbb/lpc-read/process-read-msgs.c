@@ -119,6 +119,12 @@ void printfDeadZones(uint16_t const deadZones)
   printf("%2d %2d", deadZones >> 8, deadZones & 0xFF);
 }
 
+void displayCounter(uint16_t flags)
+{
+  static uint32_t cntr = 0;
+  printf("%010u ", cntr++);
+}
+
 // ==================================================================================, uint16_t const flags
 void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const data, uint16_t flags)
 {
@@ -147,6 +153,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
         return;
       if (!(flags & NO_OVERLAY) && (lastMessage == (((uint32_t) cmd << 16)) + (uint32_t) data[0]))
         cursorUp(1);
+      displayCounter(flags);
       printf("PARAM (HWSID %02d) %s = %5d", data[0], paramNameTable[data[0]], data[1]);
       if (data[0] <= HW_SOURCE_ID_PEDAL_8)
         printf(" (%5.1lf%%)", 100.0 * data[1] / 16000.0);
@@ -165,6 +172,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == (((uint32_t) cmd << 16)) + (uint32_t) data[0]))
         cursorUp(1);
+      displayCounter(flags);
       switch (data[0])
       {
         case LPC_NOTIFICATION_ID_CLEAR_EEPROM:
@@ -204,6 +212,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
         cursorUp(7);
+      displayCounter(flags);
       printf("SYSTEM STATUS:\n");
       printf("  Scheduler: %d task overruns     \n", data[0]);
       printf("  Scheduler: %d tasks max. per time-slice     \n", data[1]);
@@ -231,6 +240,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
         cursorUp(1);
+      displayCounter(flags);
       printf("HEARTBEAT : %8llu\n", heartbeat);
       lastMessage = cmd << 16;
       return;
@@ -246,6 +256,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
         cursorUp(1);
+      displayCounter(flags);
       printf("RAW SENSORS: ");
       for (int i = 3; i >= 0; i--)
         printf("%c ", (data[0] & (1 << i)) ? '1' : '0');
@@ -271,6 +282,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
         cursorUp(1);
+      displayCounter(flags);
     ShowMuteStatus:
       printf("MUTESTATUS: valid:%d", data[0] & SUP_UNMUTE_STATUS_IS_VALID ? 1 : 0);
       printf(" jumper:");
@@ -322,7 +334,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
 
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
         cursorUp(20);
-      printf("EHC data ------------------------------------------------------------\n");
+      displayCounter(flags);
+      printf("EHC data -------------------------------------------------\n");
       printf("Controller    ");
       for (i = 0; i < 8; i++)
       {
