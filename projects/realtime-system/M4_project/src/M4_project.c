@@ -100,8 +100,8 @@ void Init(void)
   // fast and simultaneous processes
   COOS_Task_Add(NL_GPDMA_Poll,            10, 1);     // every 125 us, for all the DMA transfers (SPI devices)
   COOS_Task_Add(USB_MIDI_Poll,            20, 1);     // every 125 us, same time grid as in USB 2.0
-  COOS_Task_Add(POLY_Process,             30, 1);     // every 125 us, reading and applying keybed events
-  COOS_Task_Add(SPI_BB_Polling,           40, 1);     // every 125 us, checking the buffer with messages from the BBB and driving the LPC-BB "heartbeat"
+  COOS_Task_Add(SPI_BB_Polling,           30, 1);     // every 125 us, checking the buffer with messages from the BBB and driving the LPC-BB "heartbeat"
+  COOS_Task_Add(POLY_Process,             40, 1);     // every 125 us, reading and applying keybed events
 
   // slower stuff
   //   to avoid potential overrun by any of these falling into the same time slot when their time-slices are integer multiples,
