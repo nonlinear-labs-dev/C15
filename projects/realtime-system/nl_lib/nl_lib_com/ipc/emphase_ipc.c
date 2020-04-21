@@ -16,18 +16,37 @@ typedef struct
   int32_t sum[IPC_ADC_NUMBER_OF_CHANNELS];
 } ADC_BUFFER_ARRAY_T;
 
-#define EMPHASE_IPC_KEYBUFFER_SIZE (64)
+#define EMPHASE_IPC_KEYBUFFER_SIZE (64)  // number of key events that can be processed in 125us
 #define EMPHASE_IPC_KEYBUFFER_MASK (EMPHASE_IPC_KEYBUFFER_SIZE - 1)
 
-// data in shared memory is accessible via pointers only, can't define variables directly
-static volatile IPC_KEY_EVENT_T*    keyBufferData;
-static volatile uint32_t*           keyBufferWritePos;
-static volatile uint32_t*           keyBufferReadPos;
-static volatile ADC_BUFFER_ARRAY_T* adcBufferData;
-static volatile uint32_t*           adcConfigData;
-static volatile int*                adcBufferWriteIndex;
-static volatile int*                adcBufferReadIndex;
-static volatile uint16_t*           timer;
+typedef struct
+{
+  IPC_KEY_EVENT_T    keyBufferData[EMPHASE_IPC_KEYBUFFER_SIZE];
+  volatile uint32_t  keyBufferWritePos;
+  volatile uint32_t  keyBufferReadPos;
+  ADC_BUFFER_ARRAY_T adcBufferData;
+  uint32_t           adcConfigData;
+  uint32_t           adcBufferWriteIndex;
+  uint32_t           adcBufferReadIndex;
+  volatile uint16_t  timer;
+} SharedData_T;
+
+//
+// Places the variable(s) in the shared memory block.
+// This block must be defined in both LPC4337_M0_MEM.ld and LPC4337_M4_MEM.ld identically.
+// The section ".shared" must be defined in both LPC4337_M0_MEM.ld and LPC4337_M4_MEM.ld identically.
+// When the size of all shared variables is larger than the block the linker will throw an error.
+// To make sure all variable are at the same memory location and have the same layout,
+// use only one struct and embed your variables there.
+// The section is defined as "noinit" so you must clear the data yourself.
+//
+__attribute__((section(".shared"))) SharedData_T s;
+
+// double check the used memory
+void CheckSizeAtCompileTime(void)
+{
+  (void) sizeof(char[-!(sizeof(s) < 4000)]);  // must be less than the 4096 bytes in shared mem
+}
 
 /******************************************************************************
 *	Functions for both the M4 and M0 to interface the PlayBuffers.
@@ -40,7 +59,7 @@ static volatile uint16_t*           timer;
 ******************************************************************************/
 int32_t IPC_ReadAdcBuffer(const uint8_t adc_id)
 {
-  return adcBufferData->values[adc_id][*adcBufferReadIndex];
+  return s.adcBufferData.values[adc_id][s.adcBufferReadIndex];
 }
 
 /******************************************************************************/
@@ -50,14 +69,7 @@ int32_t IPC_ReadAdcBuffer(const uint8_t adc_id)
 ******************************************************************************/
 int32_t IPC_ReadAdcBufferAveraged(const uint8_t adc_id)
 {
-#if 0  // old algo
-  int32_t x = 0;
-  for (int i = 0; i < IPC_ADC_BUFFER_SIZE; i++)
-    x += adcBufferData->values[adc_id][i];
-  return x / IPC_ADC_BUFFER_SIZE;
-#endif
-
-  return adcBufferData->sum[adc_id] / IPC_ADC_BUFFER_SIZE;
+  return s.adcBufferData.sum[adc_id] / IPC_ADC_BUFFER_SIZE;
 }
 
 /******************************************************************************/
@@ -67,7 +79,7 @@ int32_t IPC_ReadAdcBufferAveraged(const uint8_t adc_id)
 ******************************************************************************/
 int32_t IPC_ReadAdcBufferSum(const uint8_t adc_id)
 {
-  return adcBufferData->sum[adc_id];
+  return s.adcBufferData.sum[adc_id];
 }
 
 /******************************************************************************/
@@ -78,9 +90,9 @@ int32_t IPC_ReadAdcBufferSum(const uint8_t adc_id)
 void IPC_WriteAdcBuffer(const uint8_t adc_id, const int32_t value)
 {
   // subtract out the overwritten value and add in new value to sum
-  adcBufferData->sum[adc_id] += -(adcBufferData->values[adc_id][*adcBufferWriteIndex]) + value;
+  s.adcBufferData.sum[adc_id] += -(s.adcBufferData.values[adc_id][s.adcBufferWriteIndex]) + value;
   // write value to ring buffer
-  adcBufferData->values[adc_id][*adcBufferWriteIndex] = value;
+  s.adcBufferData.values[adc_id][s.adcBufferWriteIndex] = value;
 }
 
 /******************************************************************************/
@@ -88,7 +100,7 @@ void IPC_WriteAdcBuffer(const uint8_t adc_id, const int32_t value)
 ******************************************************************************/
 void IPC_AdcBufferWriteNext(void)
 {
-  *adcBufferWriteIndex = (*adcBufferWriteIndex + 1) & IPC_ADC_BUFFER_MASK;
+  s.adcBufferWriteIndex = (s.adcBufferWriteIndex + 1) & IPC_ADC_BUFFER_MASK;
 }
 
 /******************************************************************************/
@@ -96,7 +108,7 @@ void IPC_AdcBufferWriteNext(void)
 ******************************************************************************/
 void IPC_AdcUpdateReadIndex(void)
 {
-  *adcBufferReadIndex = *adcBufferWriteIndex;
+  s.adcBufferReadIndex = s.adcBufferWriteIndex;
 }
 
 /******************************************************************************/
@@ -106,7 +118,7 @@ void IPC_AdcUpdateReadIndex(void)
 ******************************************************************************/
 uint32_t IPC_ReadPedalAdcConfig(void)
 {
-  return *adcConfigData;
+  return s.adcConfigData;
 }
 
 /******************************************************************************/
@@ -116,68 +128,33 @@ uint32_t IPC_ReadPedalAdcConfig(void)
 ******************************************************************************/
 void IPC_WritePedalAdcConfig(const uint32_t config)
 {
-  *adcConfigData = config;
+  s.adcConfigData = config;
 }
-
-/******************************************************************************/
-/**	@brief   Initialize the pointers to the shared memory
-******************************************************************************/
-static void Init_Addr(void)
-{
-  uint32_t addr = SHARED_MEMORY_BASE;
-
-  keyBufferData = (IPC_KEY_EVENT_T*) (addr);
-  addr += EMPHASE_IPC_KEYBUFFER_SIZE * sizeof(IPC_KEY_EVENT_T);
-
-  keyBufferWritePos = (uint32_t*) (addr);
-  addr += sizeof(uint32_t);
-
-  keyBufferReadPos = (uint32_t*) (addr);
-  addr += sizeof(uint32_t);
-
-  adcBufferData = (ADC_BUFFER_ARRAY_T*) (addr);
-  addr += sizeof(ADC_BUFFER_ARRAY_T);
-
-  adcConfigData = (uint32_t*) (addr);
-  addr += sizeof adcConfigData[0];
-
-  adcBufferWriteIndex = (int*) (addr);
-  addr += sizeof *adcBufferWriteIndex;
-
-  adcBufferReadIndex = (int*) (addr);
-  addr += sizeof *adcBufferReadIndex;
-
-  timer = (uint16_t*) (addr);
-  addr += sizeof *timer;
-}
-
 /******************************************************************************/
 /**	@brief  setup and clear data in shared memory
 *******************************************************************************/
 void Emphase_IPC_Init(void)
 {
-  Init_Addr();
-
-  *keyBufferWritePos = 0;
-  *keyBufferReadPos  = 0;
+  s.keyBufferWritePos = 0;
+  s.keyBufferReadPos  = 0;
 
   for (int i = 0; i < EMPHASE_IPC_KEYBUFFER_SIZE; i++)
   {
-    keyBufferData[i].key       = 0;
-    keyBufferData[i].timeInUs  = 0;
-    keyBufferData[i].direction = 0;
+    s.keyBufferData[i].key       = 0;
+    s.keyBufferData[i].timeInUs  = 0;
+    s.keyBufferData[i].direction = 0;
   }
 
   for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
   {
     for (int k = 0; k < IPC_ADC_BUFFER_SIZE; k++)
-      adcBufferData->values[i][k] = IPC_ADC_DEFAULT;
-    adcBufferData->sum[i] = IPC_ADC_DEFAULT * IPC_ADC_BUFFER_SIZE;
+      s.adcBufferData.values[i][k] = IPC_ADC_DEFAULT;
+    s.adcBufferData.sum[i] = IPC_ADC_DEFAULT * IPC_ADC_BUFFER_SIZE;
   }
-  *adcConfigData       = 0;
-  *adcBufferReadIndex  = 0;
-  *adcBufferWriteIndex = 0;
-  *timer               = 0;
+  s.adcConfigData       = 0;
+  s.adcBufferReadIndex  = 0;
+  s.adcBufferWriteIndex = 0;
+  s.timer               = 0;
 }
 
 /******************************************************************************/
@@ -188,9 +165,13 @@ void Emphase_IPC_Init(void)
 *******************************************************************************/
 void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(const IPC_KEY_EVENT_T keyEvent)
 {
-  keyBufferData[*keyBufferWritePos] = keyEvent;
-
-  *keyBufferWritePos = (*keyBufferWritePos + 1) & (EMPHASE_IPC_KEYBUFFER_MASK);
+  // !! this is a potentially critical section !!
+  // Emphase_IPC_M4_KeyBuffer_ReadBuffer() should not be called while we are here
+  // because it uses keyBufferWritePos in a compare
+  // NOTE : No check is done if the write overruns the buffer, we rely
+  // on the buffer being big enough to avoid this
+  s.keyBufferData[s.keyBufferWritePos] = keyEvent;
+  s.keyBufferWritePos                  = (s.keyBufferWritePos + 1) & (EMPHASE_IPC_KEYBUFFER_MASK);
 }
 
 /******************************************************************************/
@@ -203,17 +184,16 @@ void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(const IPC_KEY_EVENT_T keyEvent)
 *******************************************************************************/
 uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* const pKeyEvent, const uint8_t maxNumOfEventsToRead)
 {
+  // !! this is a potentially critical section !!
+  // Emphase_IPC_M0_KeyBuffer_WriteKeyEvent() should not be called while we are here
+  // because it updates keyBufferWritePos
   uint8_t count = 0;
-
-  while ((*keyBufferReadPos != *keyBufferWritePos) && (count < maxNumOfEventsToRead))
+  while ((s.keyBufferReadPos != s.keyBufferWritePos) && (count < maxNumOfEventsToRead))
   {
-    pKeyEvent[count] = keyBufferData[*keyBufferReadPos];
-
-    *keyBufferReadPos = (*keyBufferReadPos + 1) & (EMPHASE_IPC_KEYBUFFER_MASK);
-
+    pKeyEvent[count]   = s.keyBufferData[s.keyBufferReadPos];
+    s.keyBufferReadPos = (s.keyBufferReadPos + 1) & (EMPHASE_IPC_KEYBUFFER_MASK);
     count++;
   }
-
   return count;
 }
 
@@ -230,13 +210,13 @@ uint32_t Emphase_IPC_KeyBuffer_GetSize()
 *******************************************************************************/
 uint16_t IPC_GetTimer(void)
 {
-  return *timer;
+  return s.timer;
 }
 void IPC_ResetTimer(void)
 {
-  *timer = 0;
+  s.timer = 0;
 }
 void IPC_IncTimer(void)
 {
-  *timer += 1;
+  s.timer += 1;
 }

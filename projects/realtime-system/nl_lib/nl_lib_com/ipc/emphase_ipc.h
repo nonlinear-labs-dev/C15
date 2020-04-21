@@ -38,16 +38,6 @@
 #define KEY_DIR_UP 1
 #define KEY_DIR_DN -1
 
-#define SHARED_MEMORY_BASE 0x10088000
-
-#ifndef STACK_SIZE
-#define STACK_SIZE 0x800
-#endif
-
-#ifndef HEAP_SIZE
-#define HEAP_SIZE 0x6000
-#endif
-
 typedef struct
 {
   uint32_t key;
