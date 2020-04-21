@@ -25,14 +25,17 @@
  *********************************************************************/
 static inline uint32_t reflect32(uint32_t value)
 {
+#ifdef CORE_M4
   asm("rbit %0, %0"
       : "=r"(value)
       : "0"(value));
+#endif
   return value;
 }
 
 static inline uint8_t reflect8(uint8_t value)
 {
+#ifdef CORE_M4
   asm("mov %0, %0, lsl #12"
       : "=r"(value)
       : "0"(value));
@@ -42,6 +45,7 @@ static inline uint8_t reflect8(uint8_t value)
   asm("mov %0, %0, lsr #12"
       : "=r"(value)
       : "0"(value));
+#endif
   return value;
 }
 
@@ -85,15 +89,33 @@ void crcInit(void)
  * Notes:		crcInit() must be called first.
  * Returns:		The CRC of the message.
  *********************************************************************/
-crc_t crcFast(uint8_t const message[], uint16_t const nBytes)
+crc_t crcFast(const void *src, uint16_t const nBytes)
 {
   crc_t    remainder = INITIAL_REMAINDER;
   uint8_t  data;
+  uint8_t *s = (uint8_t *) src;
   uint16_t byte;
   // Divide the message by the polynomial, a byte at a time.
   for (byte = 0; byte < nBytes; ++byte)
   {
-    data      = reflect8(message[byte]) ^ (remainder >> (WIDTH - 8));
+    data      = reflect8(*s++) ^ (remainder >> (WIDTH - 8));
+    remainder = crcTable[data] ^ (remainder << 8);
+  }
+  // The final remainder is the CRC.
+  return reflect32(remainder) ^ FINAL_XOR_VALUE;
+}
+
+crc_t crcFastAndCopy(const void *src, void *dest, uint16_t const nBytes)
+{
+  crc_t    remainder = INITIAL_REMAINDER;
+  uint8_t  data;
+  uint8_t *s = (uint8_t *) src;
+  uint8_t *d = (uint8_t *) dest;
+  uint16_t byte;
+  // Divide the message by the polynomial, a byte at a time.
+  for (byte = 0; byte < nBytes; ++byte)
+  {
+    data      = reflect8(*d++ = *s++) ^ (remainder >> (WIDTH - 8));
     remainder = crcTable[data] ^ (remainder << 8);
   }
   // The final remainder is the CRC.

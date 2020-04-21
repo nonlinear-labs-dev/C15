@@ -16,6 +16,7 @@
 typedef uint32_t crc_t;
 
 void  crcInit(void);
-crc_t crcFast(uint8_t const message[], uint16_t const nBytes);
+crc_t crcFast(const void* src, uint16_t const nBytes);
+crc_t crcFastAndCopy(const void* src, void* dest, uint16_t const nBytes);
 
 #endif
