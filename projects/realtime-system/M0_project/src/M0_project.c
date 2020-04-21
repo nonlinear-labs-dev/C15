@@ -33,16 +33,14 @@
 #define M0_SYSTICK_IN_NS      2500  // 2.5us
 #define M0_SYSTICK_MULTIPLIER 50    // 2.5s*50 = 125us --> triggers Timer Interrupt of M4
 
-#define PENDING_INTERRUPT 1
-#define SCHED_FINISHED    0
-
 #define M0_DEBUG 0
 
 #define ESPI_MODE_ADC      LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_ATT_DOUT LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_DIN      LPC_SSP0, ESPI_CPOL_1 | ESPI_CPHA_1
 
-static volatile uint8_t stateFlag = 0;
+static volatile uint8_t scheduler = 0;
+static volatile uint8_t keybed    = 0;
 
 void SendInterruptToM4(void);
 
@@ -66,39 +64,18 @@ P4D3   SET_PULL_R  pedal_audio_board    HC595     W    0/0   1   1    5   5
 --------------------------------------------------------------------------------
                                                                 13      165
 *******************************************************************************/
-
 void Scheduler(void)
 {
-  static uint8_t state = 0;
-
-  int32_t val;
-
+  static uint8_t  state    = 0;
+  static uint32_t hbLedCnt = 0;
+  int32_t         val;
   switch (state)
   {
-    case 1:  // keybed scanner: 51.6 µs best case - 53.7 µs worst case
-    case 3:
-    case 5:
-    case 7:
-    case 9:
-    case 11:
-    case 13:
-    case 15:
-    case 17:
-    case 19:
-    case 21:
-    case 23:
-    {
-      KBS_Process();
-      break;
-    }
-
     case 0:  // switch mode: 13.6 µs
-    {
       SPI_DMA_SwitchMode(ESPI_MODE_ADC);
       NL_GPDMA_Poll();
 
       // do heartbeat LED here, enough time
-      static uint32_t hbLedCnt = 0;
       hbLedCnt++;
       switch (hbLedCnt)
       {
@@ -114,15 +91,11 @@ void Scheduler(void)
         default:
           break;
       }
-
       break;
-    }
 
-    case 2:  // pedal 1 : 57 µs
-    {
+    case 1:  // pedal 1 : 57 µs
       // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
       IPC_AdcBufferWriteNext();
-
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
@@ -139,10 +112,8 @@ void Scheduler(void)
       DBG_GPIO3_2_Off();
 #endif
       break;
-    }
 
-    case 4:  // pedal 2 : 57 µs
-    {
+    case 2:  // pedal 2 : 57 µs
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
@@ -159,10 +130,8 @@ void Scheduler(void)
       DBG_GPIO3_2_Off();
 #endif
       break;
-    }
 
-    case 6:  // pedal 3 : 57 µs
-    {
+    case 3:  // pedal 3 : 57 µs
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
@@ -179,10 +148,8 @@ void Scheduler(void)
       DBG_GPIO3_2_Off();
 #endif
       break;
-    }
 
-    case 8:  // pedal 4 : 57 µs
-    {
+    case 4:  // pedal 4 : 57 µs
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
@@ -199,10 +166,8 @@ void Scheduler(void)
       DBG_GPIO3_2_Off();
 #endif
       break;
-    }
 
-    case 10:  // detect pedals: 32.5 µs
-    {
+    case 5:  // detect pedals: 32.5 µs
       SPI_DMA_SwitchMode(ESPI_MODE_DIN);
       NL_GPDMA_Poll();
 
@@ -216,10 +181,8 @@ void Scheduler(void)
       IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) ? 4095 : 0);
 
       break;
-    }
 
-    case 12:  // set pull resistors: best case: 17.3 µs - worst case: 36 µs
-    {
+    case 6:  // set pull resistors: best case: 17.3 µs - worst case: 36 µs
       SPI_DMA_SwitchMode(ESPI_MODE_ATT_DOUT);
       NL_GPDMA_Poll();
 
@@ -233,10 +196,8 @@ void Scheduler(void)
 
       NL_GPDMA_Poll();
       break;
-    }
 
-    case 14:  // pitchbender: 42 µs
-    {
+    case 7:  // pitchbender: 42 µs
       SPI_DMA_SwitchMode(ESPI_MODE_ADC);
       NL_GPDMA_Poll();
 
@@ -245,19 +206,15 @@ void Scheduler(void)
 
       IPC_WriteAdcBuffer(IPC_ADC_PITCHBENDER, ESPI_DEV_Pitchbender_GetValue());
       break;
-    }
 
-    case 16:  // aftertouch: 29 µs
-    {
+    case 8:  // aftertouch: 29 µs
       ESPI_DEV_Aftertouch_EspiPull();
       NL_GPDMA_Poll();
 
       IPC_WriteAdcBuffer(IPC_ADC_AFTERTOUCH, ESPI_DEV_Aftertouch_GetValue());
       break;
-    }
 
-    case 18:  // 2 ribbons: 57 µs
-    {
+    case 9:  // 2 ribbons: 57 µs
       ESPI_DEV_Ribbons_EspiPull_Upper();
       NL_GPDMA_Poll();
       IPC_WriteAdcBuffer(IPC_ADC_RIBBON1, ESPI_DEV_Ribbons_GetValue(UPPER_RIBBON));
@@ -269,22 +226,17 @@ void Scheduler(void)
       // now, all adc channel & detect values have been read ==> sync read index to write index
       IPC_AdcUpdateReadIndex();
       break;
-    }
 
     default:
       break;
   }
 
   state++;
-
-  if (state == 20)
+  if (state == 10)
     state = 0;
-
-  stateFlag = SCHED_FINISHED;
 }
 
 /******************************************************************************/
-
 int main(void)
 {
   EMPHASE_V5_M0_Init();
@@ -304,9 +256,15 @@ int main(void)
 
   while (1)
   {
-    if (stateFlag == PENDING_INTERRUPT)
+    if (scheduler)
     {
       Scheduler();
+      scheduler = 0;
+    }
+    if (keybed)
+    {
+      KBS_Process();  // keybed scanner: 51.6 µs best case - 53.7 µs worst case
+      keybed = 0;
     }
   }
 
@@ -322,18 +280,25 @@ void                    M0_RIT_OR_WWDT_IRQHandler(void)
 
   sysTickMultiplier++;
 
-  if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER / 2 || sysTickMultiplier == M0_SYSTICK_MULTIPLIER)
-  {
-    if (stateFlag == SCHED_FINISHED)
-      stateFlag = PENDING_INTERRUPT;
+  // We wake up M4 at the beginning of the even state and hope it has the critical
+  // section in POLY_Process (where Emphase_IPC_M4_KeyBuffer_ReadBuffer() is called)
+  // completed before we enter our critical section in Emphase_IPC_M0_KeyBuffer_WriteKeyEvent()
+  if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER / 2 /* 62.5us */)
+  {  // Wake up M4 which soon starts POLY_Process, and do non-critical stuff in the scheduler
+    SendInterruptToM4();
+    if (!scheduler)
+      scheduler = 1;
     // else
     // DBG_Led_Warning_On();
   }
 
-  if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER)
-  {
+  if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER /* 125us */)
+  {  // Procces the keybed, M4 will have completed POLY_Process() by this point in time
     sysTickMultiplier = 0;
-    SendInterruptToM4();
+    if (!keybed)
+      keybed = 1;
+    // else
+    // DBG_Led_Warning_On();
   }
 }
 
