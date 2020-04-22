@@ -205,21 +205,23 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       if (flags & NO_STATDATA)
         return;
       dump(cmd, len, data, flags);
-      if (len != 6)
+      if (len != 8)
       {
         printf("STATUS : wrong length of %d\n", len);
         return;
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
-        cursorUp(7);
+        cursorUp(9);
       displayCounter(flags);
       printf("SYSTEM STATUS:\n");
-      printf("  Scheduler: %d task overruns     \n", data[0]);
-      printf("  Scheduler: %d tasks max. per time-slice     \n", data[1]);
-      printf("  Scheduler: %dus max. task runtime     \n", 5 * (int) data[2] / 2);
-      printf("  Scheduler: %dus max. time-slice     \n", 5 * (int) data[3] / 2);
-      printf("  BBB Msg:   %d buffer overruns / ESPI send fails     \n", data[4]);
-      printf("  TCD Msg:   %d buffer overruns / USB send fails     \n", data[5]);
+      printf("  Scheduler:    %5d task overruns\n", data[0]);
+      printf("  Scheduler:    %5d tasks max. per time-slice\n", data[1]);
+      printf("  Scheduler:    %5dus max. task runtime\n", 5 * (int) data[2] / 2);
+      printf("  Scheduler:    %5dus max. time-slice\n", 5 * (int) data[3] / 2);
+      printf("  BBB Msg:      %5d buffer overruns / ESPI send fails\n", data[4]);
+      printf("  TCD Msg:      %5d buffer overruns / USB send fails\n", data[5]);
+      printf("  M0 KBScanner: %5dus max. runtime\n", 5 * (int) data[6] / 2);
+      printf("  M0 Scheduler: %5dus max. runtime\n", 5 * (int) data[7] / 2);
       lastMessage = cmd << 16;
       return;
 
