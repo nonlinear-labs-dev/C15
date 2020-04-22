@@ -39,6 +39,7 @@ typedef void (*MessageCallback)(uint16_t type, uint16_t length, uint16_t* data);
 void     SPI_BB_Init(MessageCallback msg_cb);
 void     SPI_BB_Reset(void);
 void     SPI_BB_Config(LPC_SSPn_Type* SSPx, SPI_BB_PINS_T* bb_pins);
+void     SPI_BB_ToggleHeartbeat(void);
 void     SPI_BB_Polling(void);
 uint32_t SPI_BB_Send(uint8_t* buff, uint32_t len);  /// ssc: we need an implementation on message level
 void     SPI_BB_TestGpios(uint8_t state);

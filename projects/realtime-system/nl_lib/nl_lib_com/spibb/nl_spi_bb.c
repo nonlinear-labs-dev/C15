@@ -26,6 +26,8 @@ static uint16_t tx_buff_offset = 0;
 static uint8_t  tx_cur_buff    = 0;
 static uint8_t  tx_prq         = 0;
 
+static int enable_heartbeat = 0;
+
 #define PACKAGE_ENCLOSURE 0xFF
 
 typedef struct __attribute__((__packed__))
@@ -255,22 +257,27 @@ void SPI_BB_Reset(void)
 }
 
 /**********************************************************************
+ * @brief		toggle heartbeat
+ **********************************************************************/
+void SPI_BB_ToggleHeartbeat(void)
+{
+  if (!enable_heartbeat)
+    return;
+  if (SPI_BB_CheckGpOUT(pins->heartbeat))
+    NL_GPIO_Clr(pins->heartbeat);
+  else
+    NL_GPIO_Set(pins->heartbeat);
+}
+
+/**********************************************************************
  * @brief		SPI-BB polling routine
  **********************************************************************/
-
 void SPI_BB_Polling(void)
 {
   uint8_t* rcv_buff;
   uint8_t  i;
 
-  if (SPI_BB_CheckGpOUT(pins->heartbeat))
-  {
-    NL_GPIO_Clr(pins->heartbeat);
-  }
-  else
-  {
-    NL_GPIO_Set(pins->heartbeat);
-  }
+  enable_heartbeat = 1;
 
   if ((tx_prq || (tx_buff_offset > sizeof(raw_package_header_t))) && !SPI_BB_CheckGpOUT(pins->prq))
     NL_GPIO_Set(pins->prq);
