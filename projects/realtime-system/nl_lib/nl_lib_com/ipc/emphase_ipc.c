@@ -29,6 +29,8 @@ typedef struct
   uint32_t           adcBufferWriteIndex;
   uint32_t           adcBufferReadIndex;
   volatile uint16_t  timer;
+  volatile uint16_t  KBSTicks;
+  volatile uint16_t  SchedulerTicks;
 } SharedData_T;
 
 //
@@ -155,6 +157,8 @@ void Emphase_IPC_Init(void)
   s.adcBufferReadIndex  = 0;
   s.adcBufferWriteIndex = 0;
   s.timer               = 0;
+  s.KBSTicks            = 0;
+  s.SchedulerTicks      = 0;
 }
 
 /******************************************************************************/
@@ -206,7 +210,7 @@ uint32_t Emphase_IPC_KeyBuffer_GetSize()
 }
 
 /******************************************************************************/
-/** @brief      Return timeslice counter in 1/102MHz units (~10ns)
+/** @brief      Return timeslice counter in 2.5us units
 *******************************************************************************/
 uint16_t IPC_GetTimer(void)
 {
@@ -219,4 +223,30 @@ void IPC_ResetTimer(void)
 void IPC_IncTimer(void)
 {
   s.timer += 1;
+}
+
+void IPC_SetKBSTime(uint16_t ticks)
+{
+  if (ticks > s.KBSTicks)
+    s.KBSTicks = ticks;
+}
+
+uint16_t IPC_GetAndResetKBSTime(void)
+{
+  uint16_t tmp = s.KBSTicks;
+  s.KBSTicks   = 0;
+  return tmp;
+}
+
+void IPC_SetSchedulerTime(uint16_t ticks)
+{
+  if (ticks > s.SchedulerTicks)
+    s.SchedulerTicks = ticks;
+}
+
+uint16_t IPC_GetAndResetSchedulerTime(void)
+{
+  uint16_t tmp     = s.SchedulerTicks;
+  s.SchedulerTicks = 0;
+  return tmp;
 }

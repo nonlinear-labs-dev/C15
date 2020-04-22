@@ -62,5 +62,9 @@ void     IPC_WritePedalAdcConfig(const uint32_t config);
 uint16_t IPC_GetTimer(void);
 void     IPC_ResetTimer(void);
 void     IPC_IncTimer(void);
+void     IPC_SetKBSTime(uint16_t ticks);
+uint16_t IPC_GetAndResetKBSTime(void);
+void     IPC_SetSchedulerTime(uint16_t ticks);
+uint16_t IPC_GetAndResetSchedulerTime(void);
 
 #endif
