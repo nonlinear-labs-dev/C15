@@ -72,6 +72,11 @@ void Scheduler(void)
   switch (state)
   {
     case 0:  // switch mode: 13.6 µs
+             // now, all adc channel & detect values have been read ==> sync read index to write index
+      IPC_AdcUpdateReadIndex();
+      // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
+      IPC_AdcBufferWriteNext();
+
       SPI_DMA_SwitchMode(ESPI_MODE_ADC);
       NL_GPDMA_Poll();
 
@@ -94,8 +99,6 @@ void Scheduler(void)
       break;
 
     case 1:  // pedal 1 : 57 µs
-      // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
-      IPC_AdcBufferWriteNext();
 #if M0_DEBUG
       DBG_GPIO3_2_On();
 #endif
@@ -223,8 +226,6 @@ void Scheduler(void)
       NL_GPDMA_Poll();
       IPC_WriteAdcBuffer(IPC_ADC_RIBBON2, ESPI_DEV_Ribbons_GetValue(LOWER_RIBBON));
 
-      // now, all adc channel & detect values have been read ==> sync read index to write index
-      IPC_AdcUpdateReadIndex();
       break;
 
     default:
@@ -243,9 +244,13 @@ int main(void)
 
   Emphase_IPC_Init();
 
-  NL_GPDMA_Init(0b00000011);  /// inverse to the mask in the M4_Main
+  NL_GPDMA_Init(0b00000011);  // inverse to the mask in the M4_Main
 
-  ESPI_Init(1600000);
+  // 20MHz clock freq... works up to ~50MHz in V7.1 hardware (AT not checked, though).
+  // With 20MHz, max M0 cycle time seems to be just under 50us even worst case, so
+  // overruns (when > 60us) is unlikely, the scheduling always stays in sync, no missed
+  // time slices
+  ESPI_Init(2000000);
 
   ESPI_DEV_Pedals_Init();
   ESPI_DEV_Aftertouch_Init();
@@ -254,16 +259,21 @@ int main(void)
 
   RIT_Init_IntervalInNs(M0_SYSTICK_IN_NS);
 
+  uint16_t ticks;
   while (1)
   {
     if (scheduler)
     {
+      ticks = IPC_GetTimer();
       Scheduler();
+      IPC_SetSchedulerTime((uint16_t)(IPC_GetTimer() - ticks + 1));
       scheduler = 0;
     }
     if (keybed)
     {
+      ticks = IPC_GetTimer();
       KBS_Process();  // keybed scanner: 51.6 µs best case - 53.7 µs worst case
+      IPC_SetKBSTime((uint16_t)(IPC_GetTimer() - ticks + 1));
       keybed = 0;
     }
   }
@@ -288,16 +298,16 @@ void                    M0_RIT_OR_WWDT_IRQHandler(void)
     SendInterruptToM4();
     if (!scheduler)
       scheduler = 1;
-    // else
+    // else  // overrun, not likely to happen
     // DBG_Led_Warning_On();
   }
 
   if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER /* 125us */)
-  {  // Procces the keybed, M4 will have completed POLY_Process() by this point in time
+  {  // Process the keybed, M4 will have completed POLY_Process() by this point in time
     sysTickMultiplier = 0;
     if (!keybed)
       keybed = 1;
-    // else
+    // else  // overrun, not likely to happen
     // DBG_Led_Warning_On();
   }
 }
