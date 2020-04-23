@@ -42,8 +42,6 @@
 static volatile uint8_t scheduler = 0;
 static volatile uint8_t keybed    = 0;
 
-void SendInterruptToM4(void);
-
 /******************************************************************************/
 /** @note	Espi device functions do NOT switch mode themselves!
  	 	 	espi bus speed: 1.6 MHz -> 0.625 µs                    Bytes    t_µs
@@ -282,6 +280,13 @@ int main(void)
 }
 
 /******************************************************************************/
+static inline void SendInterruptToM4(void)
+{
+  __DSB();
+  __SEV();
+}
+
+/******************************************************************************/
 static volatile uint8_t sysTickMultiplier = 0;
 void                    M0_RIT_OR_WWDT_IRQHandler(void)
 {
@@ -310,11 +315,4 @@ void                    M0_RIT_OR_WWDT_IRQHandler(void)
     // else  // overrun, not likely to happen
     // DBG_Led_Warning_On();
   }
-}
-
-/******************************************************************************/
-void SendInterruptToM4(void)
-{
-  __DSB();
-  __SEV();
 }
