@@ -1,5 +1,5 @@
-INCLUDE "LPC4337_M4_LIB.ld"
-INCLUDE "LPC4337_M4_MEM.ld"
+INCLUDE "C15_LPC4337_LIB.ld"
+INCLUDE "C15_LPC4337_MEM.ld"
 
 ENTRY(ResetISR)
 
@@ -104,6 +104,9 @@ SECTIONS
          . = ALIGN(4) ;
         _end_noinit = .;
     } > RamLocM4
+
+    PROVIDE(_pvHeapStart = DEFINED(__user_heap_base) ? __user_heap_base : .);
+    PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_RamLocM4 - 0);
     
     /* SHARED Section */
     .shared (NOLOAD):  ALIGN(4)
@@ -113,7 +116,4 @@ SECTIONS
          . = ALIGN(4) ;
         _end_shared = .;
     } > RamShared
-
-    PROVIDE(_pvHeapStart = DEFINED(__user_heap_base) ? __user_heap_base : .);
-    PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_RamLocM4 - 0);
 }
