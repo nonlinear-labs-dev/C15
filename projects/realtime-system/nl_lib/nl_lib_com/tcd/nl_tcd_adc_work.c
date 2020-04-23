@@ -55,7 +55,7 @@ static uint32_t *aftertouchTable;
 
 //========= ribbons ========
 static uint16_t rib_eepromHandle = 0;  // EEPROM access handle
-static int      rib_updateEeprom = 0;
+static int      rib_updateEeprom = 0;  // flag / step chain variable
 
 typedef struct
 {
@@ -284,7 +284,7 @@ void ADC_WORK_Init1(void)
   rib_eepromHandle = NL_EEPROM_RegisterBlock(sizeof ribbonCalibrationData, EEPROM_BLOCK_ALIGN_TO_PAGE);
 
   RibbonCalibrationData_T tmp[2];
-  if (NL_EEPROM_ReadBlock(rib_eepromHandle, &tmp[0]))
+  if (NL_EEPROM_ReadBlock(rib_eepromHandle, tmp, EEPROM_READ_BOTH))
     memcpy(ribbonCalibrationData, tmp, sizeof(ribbonCalibrationData));
 
   ClearHWValuesForBB();
@@ -483,7 +483,8 @@ void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t *data)
   }
 
   memcpy(ribbonCalibrationData, tmp, sizeof(ribbonCalibrationData));
-  rib_updateEeprom = 1;
+  if (rib_updateEeprom == 0)  // already updating ?
+    rib_updateEeprom = 1;     // no, start step chain
 }
 
 /*****************************************************************************
@@ -589,12 +590,37 @@ static void ProcessRibbons(void)
     }
   }  // for all ribbons
 
-  if (rib_updateEeprom)
+  static RibbonCalibrationData_T tmp[2];
+  if (rib_updateEeprom && !NL_EEPROM_Busy())
   {
-    if (!NL_EEPROM_Busy())
+    switch (rib_updateEeprom)  // read, compare and burn sequencer, to split cpu load
     {
-      rib_updateEeprom = 0;
-      NL_EEPROM_StartWriteBlock(rib_eepromHandle, &ribbonCalibrationData[0]);
+      // read main EEPROM
+      case 1:
+        if (NL_EEPROM_ReadBlock(rib_eepromHandle, tmp, EEPROM_READ_MAIN))  // read OK ?
+          rib_updateEeprom = 3;                                            // then check if equal data
+        else
+          rib_updateEeprom = 2;  // read failed, check shadow
+        break;
+      // read shadow EEPROM
+      case 2:
+        if (NL_EEPROM_ReadBlock(rib_eepromHandle, tmp, EEPROM_READ_SHADOW))  // read OK ?
+          rib_updateEeprom = 3;                                              // then check if equal data
+        else
+          rib_updateEeprom = 4;  // read failed, force write
+        break;
+      // compare data
+      case 3:
+        if (memcmp32(ribbonCalibrationData, tmp, sizeof(tmp) / 4) == 0)  // data is the same ?
+          rib_updateEeprom = 0;                                          // yes, done
+        else
+          rib_updateEeprom = 4;  // no, force write
+        break;
+      // write data
+      case 4:
+        NL_EEPROM_StartWriteBlock(rib_eepromHandle, ribbonCalibrationData);
+        rib_updateEeprom = 0;  // done
+        break;
     }
   }
 }
