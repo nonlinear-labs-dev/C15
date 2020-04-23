@@ -40,7 +40,6 @@
 #define ESPI_MODE_DIN      LPC_SSP0, ESPI_CPOL_1 | ESPI_CPHA_1
 
 static volatile uint8_t scheduler = 0;
-static volatile uint8_t keybed    = 0;
 
 /******************************************************************************/
 /** @note	Espi device functions do NOT switch mode themselves!
@@ -67,6 +66,12 @@ void Scheduler(void)
   static uint8_t  state    = 0;
   static uint32_t hbLedCnt = 0;
   int32_t         val;
+  uint16_t        ticks;
+
+  ticks = IPC_GetTimer();
+  KBS_Process();  // keybed scanner: 51.6 µs best case - 53.7 µs worst case
+  IPC_SetKBSTime((uint16_t)(IPC_GetTimer() - ticks + 1));
+
   switch (state)
   {
     case 0:  // switch mode: 13.6 µs
@@ -245,8 +250,8 @@ int main(void)
   NL_GPDMA_Init(0b00000011);  // inverse to the mask in the M4_Main
 
   // 20MHz clock freq... works up to ~50MHz in V7.1 hardware (AT not checked, though).
-  // With 20MHz, max M0 cycle time seems to be just under 50us even worst case, so
-  // overruns (when > 60us) is unlikely, the scheduling always stays in sync, no missed
+  // With 20MHz, max M0 cycle time seems to be just under 90us even worst case, so
+  // overrun (when > 125us) is unlikely, the scheduling always stays in sync, no missed
   // time slices
   ESPI_Init(2000000);
 
@@ -266,13 +271,6 @@ int main(void)
       Scheduler();
       IPC_SetSchedulerTime((uint16_t)(IPC_GetTimer() - ticks + 1));
       scheduler = 0;
-    }
-    if (keybed)
-    {
-      ticks = IPC_GetTimer();
-      KBS_Process();  // keybed scanner: 51.6 µs best case - 53.7 µs worst case
-      IPC_SetKBSTime((uint16_t)(IPC_GetTimer() - ticks + 1));
-      keybed = 0;
     }
   }
 
@@ -295,12 +293,8 @@ void                    M0_RIT_OR_WWDT_IRQHandler(void)
 
   sysTickMultiplier++;
 
-  // We wake up M4 at the beginning of the even state and hope it has the critical
-  // section in POLY_Process (where Emphase_IPC_M4_KeyBuffer_ReadBuffer() is called)
-  // completed before we enter our critical section in Emphase_IPC_M0_KeyBuffer_WriteKeyEvent()
   if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER / 2 /* 62.5us */)
-  {  // Wake up M4 which soon starts POLY_Process, and do non-critical stuff in the scheduler
-    SendInterruptToM4();
+  {  // Process the keybed first in scheduler, M4 will have completed POLY_Process() by this point in time
     if (!scheduler)
       scheduler = 1;
     // else  // overrun, not likely to happen
@@ -308,11 +302,8 @@ void                    M0_RIT_OR_WWDT_IRQHandler(void)
   }
 
   if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER /* 125us */)
-  {  // Process the keybed, M4 will have completed POLY_Process() by this point in time
+  {  // Wake up M4 which soon starts POLY_Process
+    SendInterruptToM4();
     sysTickMultiplier = 0;
-    if (!keybed)
-      keybed = 1;
-    // else  // overrun, not likely to happen
-    // DBG_Led_Warning_On();
   }
 }
