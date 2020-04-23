@@ -59,9 +59,9 @@ static int      rib_updateEeprom = 0;  // flag / step chain variable
 
 typedef struct
 {
-  int32_t threshold;
-  int32_t tableX[33];
-  int32_t tableY[33];
+  int16_t threshold;
+  int16_t tableX[33];
+  int16_t tableY[33];
 } RibbonCalibrationData_T;
 
 // clang-format off

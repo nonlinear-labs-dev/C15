@@ -10,13 +10,14 @@
 #include "nl_tcd_interpol.h"
 
 // Returns the interpolated y-value. Saturates to y0 or y1 if x outside interval [x0, x1]
-static inline int32_t InterpolateSegment(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x)
+static inline int16_t InterpolateSegment(int16_t const x0, int16_t const y0,
+                                         int16_t const x1, int16_t const y1, int16_t const x)
 {
   if (x <= x0)
     return y0;
   if (x >= x1)
     return y1;
-  return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+  return y0 + (int16_t)((int32_t)(x - x0) * (int32_t)(y1 - y0) / (int32_t)(x1 - x0));
 }
 
 /*****************************************************************************/
@@ -25,7 +26,7 @@ static inline int32_t InterpolateSegment(int32_t x0, int32_t y0, int32_t x1, int
 *   @param  x value for which to calculate
 *   @return interpolated y value
 ******************************************************************************/
-int32_t LIB_InterpolateValue(LIB_interpol_data_T *table, int32_t x)
+int16_t LIB_InterpolateValue(LIB_interpol_data_T *table, int16_t x)
 {
   // Sanity checks
   if (!table)  // no table supplied ?
@@ -57,8 +58,8 @@ int32_t LIB_InterpolateValue(LIB_interpol_data_T *table, int32_t x)
 /* Usage :
 
 // interpolation data arrays, x and y values
-static int32_t table_x[] = {0, 10, 20, 30, 55, 100 };
-static int32_t table_y[] = {0, 20, 40, 60, -80, 100 };
+static int16_t table_x[] = {0, 10, 20, 30, 55, 100 };
+static int16_t table_y[] = {0, 20, 40, 60, -80, 100 };
 
 // variable holding the interpolation table
 static LIB_interpol_table_T myTable =
