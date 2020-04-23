@@ -65,7 +65,7 @@
 								<option id="com.crt.advproject.link.gcc.multicore.master.userobjs.1385981043" name="Slave Objects (not visible)" superClass="com.crt.advproject.link.gcc.multicore.master.userobjs" valueType="userObjs"/>
 								<option id="com.crt.advproject.link.arch.1930823601" name="Architecture" superClass="com.crt.advproject.link.arch" value="com.crt.advproject.link.target.cm0" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.thumb.353372447" name="Thumb mode" superClass="com.crt.advproject.link.thumb" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.script.838636466" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;LPC4337_M0.ld&quot;" valueType="string"/>
+								<option id="com.crt.advproject.link.script.838636466" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;C15_LPC4337_M0.ld&quot;" valueType="string"/>
 								<option id="com.crt.advproject.link.manage.554666827" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="false" valueType="boolean"/>
 								<option id="gnu.c.link.option.nostdlibs.1226068798" name="No startup or default libs (-nostdlib)" superClass="gnu.c.link.option.nostdlibs" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.other.1523146941" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList">
@@ -81,7 +81,7 @@
 								<option id="gnu.c.link.option.libs.335126723" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="nl_lib_m0"/>
 								</option>
-								<option id="com.crt.advproject.link.scriptdir.1072372398" name="Script path" superClass="com.crt.advproject.link.scriptdir" value="&quot;..\LD&quot;" valueType="string"/>
+								<option id="com.crt.advproject.link.scriptdir.1072372398" name="Script path" superClass="com.crt.advproject.link.scriptdir" value="&quot;..\..\ld&quot;" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.2036449428" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -168,7 +168,7 @@
 								<option id="com.crt.advproject.link.gcc.multicore.master.userobjs.1031833944" name="Slave Objects (not visible)" superClass="com.crt.advproject.link.gcc.multicore.master.userobjs" valueType="userObjs"/>
 								<option id="com.crt.advproject.link.arch.1709040217" name="Architecture" superClass="com.crt.advproject.link.arch" value="com.crt.advproject.link.target.cm0" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.thumb.1731182544" name="Thumb mode" superClass="com.crt.advproject.link.thumb" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.script.1737776528" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;LPC4337_M0.ld&quot;" valueType="string"/>
+								<option id="com.crt.advproject.link.script.1737776528" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;C15_LPC4337_M0.ld&quot;" valueType="string"/>
 								<option id="com.crt.advproject.link.manage.2048363489" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="false" valueType="boolean"/>
 								<option id="gnu.c.link.option.nostdlibs.1254201027" name="No startup or default libs (-nostdlib)" superClass="gnu.c.link.option.nostdlibs" value="true" valueType="boolean"/>
 								<option id="gnu.c.link.option.other.682817861" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other" valueType="stringList">
@@ -179,12 +179,12 @@
 								<option id="com.crt.advproject.link.gcc.hdrlib.2047654277" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.1285402177" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave"/>
 								<option id="gnu.c.link.option.paths.244063509" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/Release}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.libs.2050190243" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="nl_lib_m0"/>
 								</option>
-								<option id="com.crt.advproject.link.scriptdir.1685757828" name="Script path" superClass="com.crt.advproject.link.scriptdir" value="&quot;..\LD&quot;" valueType="string"/>
+								<option id="com.crt.advproject.link.scriptdir.1685757828" name="Script path" superClass="com.crt.advproject.link.scriptdir" value="&quot;..\..\ld&quot;" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.612783953" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -305,10 +305,16 @@
 		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.1790478248;com.crt.advproject.config.exe.debug.1790478248.;com.crt.advproject.gas.exe.debug.1317898332;com.crt.advproject.assembler.input.1863725144">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.1790478248.2010700825.2112668411;com.crt.advproject.config.exe.debug.1790478248.2010700825.2112668411.;com.crt.advproject.gas.exe.debug.1565086421;com.crt.advproject.assembler.input.1321831922">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.1790478248.2010700825;com.crt.advproject.config.exe.debug.1790478248.2010700825.;com.crt.advproject.gas.exe.debug.477114457;com.crt.advproject.assembler.input.900075459">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.1790478248;com.crt.advproject.config.exe.debug.1790478248.;com.crt.advproject.gcc.exe.debug.809968632;com.crt.advproject.compiler.input.734833028">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.1790478248.2010700825.2112668411;com.crt.advproject.config.exe.debug.1790478248.2010700825.2112668411.;com.crt.advproject.gcc.exe.debug.2046388631;com.crt.advproject.compiler.input.1329652075">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.crt.advproject.GCCManagedMakePerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.crt.advproject.config.exe.debug.1790478248.2010700825;com.crt.advproject.config.exe.debug.1790478248.2010700825.;com.crt.advproject.gcc.exe.debug.1673856686;com.crt.advproject.compiler.input.831928125">
