@@ -20,6 +20,13 @@ typedef enum
   EEPROM_BLOCK_ALIGN_TO_PAGE
 } EepromBlockAlign_T;
 
+typedef enum
+{
+  EEPROM_READ_MAIN,
+  EEPROM_READ_SHADOW,
+  EEPROM_READ_BOTH
+} EepromRead_T;
+
 void NL_EEPROM_Init(void);  // initialize EEPROM for use
 
 // size can be a non 4-byte multiple
@@ -28,7 +35,7 @@ uint16_t NL_EEPROM_RegisterBlock(uint16_t const size, EepromBlockAlign_T align);
 
 // data start adr must be 4-byte aligned
 // returns 0 if error or busy
-uint16_t NL_EEPROM_ReadBlock(uint16_t const handle, void *const data);
+uint16_t NL_EEPROM_ReadBlock(uint16_t const handle, void *const data, EepromRead_T const type);
 
 // returns 1 if there was a main vs. shadow mismatch at last read
 // flag is cleared by this call, and force-set by ReadBlock()

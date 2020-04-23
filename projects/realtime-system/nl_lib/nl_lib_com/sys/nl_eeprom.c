@@ -117,24 +117,36 @@ static inline void memCopy(uint16_t size, uint32_t *pSrc, uint32_t *pDest)
     *pDestB++ = *pSrcB++;
 }
 
+static int copyAndCRC(void *src, void *dest, uint16_t size, crc_t crc)
+{
+  memCopy(size, src, dest);
+  return (crcFast(dest, size) == crc);
+}
+
 /* Read a block of data from EEPROM */
 /* returns 1 if success, or 0 in case of failure */
-uint16_t NL_EEPROM_ReadBlock(uint16_t const handle, void *const data)
+uint16_t NL_EEPROM_ReadBlock(uint16_t const handle, void *const data, EepromRead_T const type)
 {
   hadToUseBackup = 0;
   uint8_t index  = handle - 1;
   if (handle < 1 || handle > NUMBER_OF_EEPROM_BLOCKS || blocks[index].handle != handle || data == NULL || fullEraseRequest || NL_EEPROM_Busy())
     return 0;
-  uint32_t *startAddr = (uint32_t *) (EEPROM_START + blocks[index].offset);
-  if (crcFast((void const *) (startAddr + 1), blocks[index].size) != *startAddr)
-  {  // CRC failed on main block, so try shadow block (which was written before main block)
-    startAddr = (uint32_t *) (EEPROM_START + blocks[index].offset + SHADOW_OFFSET);
-    if (crcFast((void const *) (startAddr + 1), blocks[index].size) != *startAddr)
-      return 0;          // CRC failed on both, no valid data
-    hadToUseBackup = 1;  // mark mismatch
+  uint32_t *startAddrMain   = (uint32_t *) (EEPROM_START + blocks[index].offset);
+  uint32_t *startAddrShadow = (uint32_t *) (EEPROM_START + blocks[index].offset + SHADOW_OFFSET);
+  uint16_t  size            = blocks[index].size;
+
+  if (type == EEPROM_READ_MAIN)
+    return copyAndCRC(startAddrMain + 1, data, size, *startAddrMain);
+
+  else if (type == EEPROM_READ_SHADOW)
+    return copyAndCRC(startAddrShadow + 1, data, size, *startAddrShadow);
+
+  else
+  {
+    if (!copyAndCRC(startAddrMain + 1, data, size, *startAddrMain))
+      return (hadToUseBackup = copyAndCRC(startAddrShadow + 1, data, size, *startAddrShadow));
+    return 1;
   }
-  memCopy(blocks[index].size, startAddr + 1, (uint32_t *) data);
-  return 1;
 }
 
 /* get any mismatch in last ReadBlock() */
