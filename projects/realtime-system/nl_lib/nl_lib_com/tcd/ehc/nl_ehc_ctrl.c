@@ -1125,7 +1125,7 @@ void NL_EHC_InitControllers(void)
   EHC_initSampleBuffers();
 
   eepromHandle = NL_EEPROM_RegisterBlock(sizeof ctrlSaveData, EEPROM_BLOCK_ALIGN_TO_PAGE);
-  if (NL_EEPROM_ReadBlock(eepromHandle, &ctrlSaveData[0]))
+  if (NL_EEPROM_ReadBlock(eepromHandle, &ctrlSaveData[0], EEPROM_READ_BOTH))
   {  // data in EERPOM is valid (including a restore from a backup when main data was corrupt)
     for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
       initControllerFromSavedState(&ctrlSaveData[i]);
