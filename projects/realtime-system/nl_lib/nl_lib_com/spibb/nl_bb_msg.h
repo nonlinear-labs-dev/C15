@@ -15,18 +15,6 @@
 #include "../../../shared/lpc-defs.h"
 
 //===========================
-
-// ==== V 205 ====
-// fix for max. Velocity und max. HWSource, added keybed press sent to BBBB
-// Velocity-Auflösung 14 Bit statt 12 Bit
-// #define SW_VERSION 205
-
-// ==== V 206 ====
-// complete revised "pedals" (aka external controllers) proccessing
-// 58 == release candidate, beta test
-// 59 == release candidate, beta test
-#define SW_VERSION 59206
-
 void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t *data);
 void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg);
 

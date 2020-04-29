@@ -20,6 +20,7 @@
 #include "tcd/ehc/nl_ehc_ctrl.h"
 #include "sys/nl_eeprom.h"
 #include "sys/nl_coos.h"
+#include "sys/nl_version.h"
 
 #define SENDBUFFER_SIZE 510  // 16-bit words, stays below the maximum of 1020 bytes
 
