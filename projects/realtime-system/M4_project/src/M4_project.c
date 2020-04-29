@@ -35,12 +35,14 @@
 
 #define DBG_CLOCK_MONITOR (0)
 
+#define WATCHDOG_TIMEOUT_MS (10ul)  // timeout in ms
+
+
 static volatile uint16_t waitForFirstSysTick = 1;
 static volatile uint32_t nsTickerHigh        = 0;
 
 void Init(void)
 {
-
   /* board */
   EMPHASE_V5_M4_Init();
 
@@ -53,10 +55,10 @@ void Init(void)
 
   /* debug */
   DBG_Init();
-  DBG_Led_Error_Off();
-  DBG_Led_Cpu_Off();
-  DBG_Led_Warning_Off();
-  DBG_Led_Audio_Off();
+  DBG_Led_Error_On();
+  DBG_Led_Cpu_On();
+  DBG_Led_Warning_On();
+  DBG_Led_Audio_On();
   DBG_GPIO3_1_Off();
   DBG_GPIO3_2_Off();
   DBG_GPIO3_3_Off();
@@ -113,8 +115,9 @@ void Init(void)
   COOS_Task_Add(ADC_WORK_SendBBMessages,  90+5, 100);       // every 12.5 ms, sending the results of the ADC processing to the BBB
   COOS_Task_Add(DBG_Process,              100+6, 100 * 8);  // every 100 ms, processes error and warning LEDs
   COOS_Task_Add(SUP_Process,              110+7, SUP_PROCESS_TIMESLICE * 8);  // supervisor communication every 10ms
-  COOS_Task_Add(HBT_Process,              120+8, HBT_PROCESS_TIMESLICE * 8); // heartbeat communication every 10ms
-  COOS_Task_Add(NL_EEPROM_Process,        130+9, 10);                         // EEPROM write every 1.25ms
+  COOS_Task_Add(HBT_Process,              120+8, HBT_PROCESS_TIMESLICE * 8);  // heartbeat communication every 10ms
+  COOS_Task_Add(NL_EEPROM_Process,        130+9, 11);                         // EEPROM write every 1.375ms
+  COOS_Task_Add(SYS_WatchDogClear,        0+10,  11);                         // every 1.375 ms, clear Watchdog
 
   // single run stuff
   COOS_Task_Add(ADC_WORK_Init2,           140, 0);     // preparing the ADC processing (will be executed after the M0 has been initialized)
@@ -133,6 +136,15 @@ int main(void)
 
   while (waitForFirstSysTick)
     ;
+
+  DBG_Led_Error_Off();
+  DBG_Led_Cpu_Off();
+  DBG_Led_Warning_Off();
+  DBG_Led_Audio_Off();
+
+
+  /* watchdog */
+  SYS_WatchDogInit(WATCHDOG_TIMEOUT_MS);
 
   while (1)
   {
