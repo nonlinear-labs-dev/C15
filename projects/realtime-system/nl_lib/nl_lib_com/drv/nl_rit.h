@@ -20,6 +20,16 @@ static inline void RIT_ClearInt(void)
   LPC_RITIMER->CTRL |= 1;
 };
 
+static inline uint32_t RIT_GetCtrlReg(void)
+{
+  return LPC_RITIMER->CTRL;
+};
+
+static inline uint32_t RIT_GetIntFlag(void)
+{
+  return (LPC_RITIMER->CTRL & 1);
+};
+
 static inline uint32_t RIT_GetCounter(void)
 {
   return LPC_RITIMER->COUNTER;
