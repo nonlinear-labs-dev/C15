@@ -36,16 +36,6 @@
 #define IPC_ADC_BUFFER_MASK (IPC_ADC_BUFFER_SIZE - 1)
 #define IPC_ADC_DEFAULT     (2048)
 
-#define KEY_DIR_UP 1
-#define KEY_DIR_DN -1
-
-typedef struct
-{
-  uint32_t key;
-  uint32_t timeInUs;
-  int32_t  direction;
-} IPC_KEY_EVENT_T;
-
 typedef struct
 {
   int32_t values[IPC_ADC_NUMBER_OF_CHANNELS][IPC_ADC_BUFFER_SIZE];
@@ -54,19 +44,22 @@ typedef struct
 
 #define EMPHASE_IPC_KEYBUFFER_SIZE (64)  // number of key events that can be processed in 125us
 #define EMPHASE_IPC_KEYBUFFER_MASK (EMPHASE_IPC_KEYBUFFER_SIZE - 1)
+#define IPC_KEYBUFFER_KEYMASK      (0x3F)
+#define IPC_KEYBUFFER_NOTEON       (0x40)
+#define IPC_KEYBUFFER_TIME_SHIFT   (7)
 
 typedef struct
 {
-  IPC_KEY_EVENT_T    keyBufferData[EMPHASE_IPC_KEYBUFFER_SIZE];
+  uint32_t           keyBufferData[EMPHASE_IPC_KEYBUFFER_SIZE];
   volatile uint32_t  keyBufferWritePos;
-  volatile uint32_t  keyBufferReadPos;
+  uint32_t           keyBufferReadPos;
   ADC_BUFFER_ARRAY_T adcBufferData;
   uint32_t           adcConfigData;
   uint32_t           adcBufferWriteIndex;
   uint32_t           adcBufferReadIndex;
-  volatile uint16_t  timer;
-  volatile uint16_t  KBSTicks;
-  volatile uint16_t  SchedulerTicks;
+  volatile uint32_t  timer;  // counts in (1 << IPC_KEYBUFFER_TIME_SHIFT) increments !!
+  uint32_t           ADCTicks;
+  uint32_t           RitCrtlReg;
 } SharedData_T;
 
 extern SharedData_T s;
@@ -82,7 +75,7 @@ void Emphase_IPC_Init(void);
      @param[in] keyEvent: A struct containing the index of the key
                 and the direction and travel time of the last key action
 *******************************************************************************/
-static inline void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(const IPC_KEY_EVENT_T keyEvent)
+static inline void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(uint32_t const keyEvent)
 {
   // !! this is a potentially critical section !!
   // Emphase_IPC_M4_KeyBuffer_ReadBuffer() should not be called while we are here
@@ -101,7 +94,7 @@ static inline void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(const IPC_KEY_EVENT_T 
                 maxNumOfEventsToRead: size of the array pointed by pKeyEvent
     @return     Number of new key events (0: nothing to do)
 *******************************************************************************/
-static inline uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(IPC_KEY_EVENT_T* const pKeyEvent, const uint8_t maxNumOfEventsToRead)
+static inline uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(uint32_t* const pKeyEvent, uint8_t const maxNumOfEventsToRead)
 {
   // !! this is a potentially critical section !!
   // Emphase_IPC_M0_KeyBuffer_WriteKeyEvent() should not be called while we are here
@@ -129,7 +122,7 @@ static inline uint32_t Emphase_IPC_KeyBuffer_GetSize()
 *   @param[in]	IPC id of the adc channel 0...15
 *   @return     adc channel value
 ******************************************************************************/
-static inline int32_t IPC_ReadAdcBuffer(const uint8_t adc_id)
+static inline int32_t IPC_ReadAdcBuffer(uint8_t const adc_id)
 {
   return s.adcBufferData.values[adc_id][s.adcBufferReadIndex];
 }
@@ -139,7 +132,7 @@ static inline int32_t IPC_ReadAdcBuffer(const uint8_t adc_id)
 *   @param[in]	IPC id of the adc channel 0...15
 *   @return     adc channel value
 ******************************************************************************/
-static inline int32_t IPC_ReadAdcBufferAveraged(const uint8_t adc_id)
+static inline int32_t IPC_ReadAdcBufferAveraged(uint8_t const adc_id)
 {
   return s.adcBufferData.sum[adc_id] / IPC_ADC_BUFFER_SIZE;
 }
@@ -149,7 +142,7 @@ static inline int32_t IPC_ReadAdcBufferAveraged(const uint8_t adc_id)
 *   @param[in]	IPC id of the adc channel 0...15
 *   @return     adc channel value
 ******************************************************************************/
-static inline int32_t IPC_ReadAdcBufferSum(const uint8_t adc_id)
+static inline int32_t IPC_ReadAdcBufferSum(uint8_t const adc_id)
 {
   return s.adcBufferData.sum[adc_id];
 }
@@ -159,7 +152,7 @@ static inline int32_t IPC_ReadAdcBufferSum(const uint8_t adc_id)
 *   @param[in]	IPC id of the adc channel 0...15
 *   @param[in]  adc channel value
 ******************************************************************************/
-static inline void IPC_WriteAdcBuffer(const uint8_t adc_id, const int32_t value)
+static inline void IPC_WriteAdcBuffer(uint8_t const adc_id, int32_t const value)
 {
   // subtract out the overwritten value and add in new value to sum
   s.adcBufferData.sum[adc_id] += -(s.adcBufferData.values[adc_id][s.adcBufferWriteIndex]) + value;
@@ -198,52 +191,25 @@ static inline uint32_t IPC_ReadPedalAdcConfig(void)
 *   @param{in]  config bits [32 bits, 4 bytes from ADC67(MSB) to ADC12(LSB)]
 *   for bit masks see  espi/dev/nl_espi_dev_pedals.h
 ******************************************************************************/
-static inline void IPC_WritePedalAdcConfig(const uint32_t config)
+static inline void IPC_WritePedalAdcConfig(uint32_t const config)
 {
   s.adcConfigData = config;
 }
 
 /******************************************************************************/
-/** @brief      Timer functions (2.5us units as per M0 IRQ setup)
+/** @brief      Timer functions)
 *******************************************************************************/
-static inline uint16_t IPC_GetTimer(void)
+
+static inline void IPC_SetADCTime(uint32_t const ticks)
 {
-  return s.timer;
+  if (ticks > s.ADCTicks)
+    s.ADCTicks = ticks;
 }
 
-static inline void IPC_ResetTimer(void)
+static inline uint32_t IPC_GetAndResetADCTime(void)
 {
-  s.timer = 0;
-}
-
-static inline void IPC_IncTimer(void)
-{
-  s.timer++;
-}
-
-static inline void IPC_SetKBSTime(uint16_t ticks)
-{
-  if (ticks > s.KBSTicks)
-    s.KBSTicks = ticks;
-}
-
-static inline uint16_t IPC_GetAndResetKBSTime(void)
-{
-  uint16_t tmp = s.KBSTicks;
-  s.KBSTicks   = 0;
-  return tmp;
-}
-
-static inline void IPC_SetSchedulerTime(uint16_t ticks)
-{
-  if (ticks > s.SchedulerTicks)
-    s.SchedulerTicks = ticks;
-}
-
-static inline uint16_t IPC_GetAndResetSchedulerTime(void)
-{
-  uint16_t tmp     = s.SchedulerTicks;
-  s.SchedulerTicks = 0;
+  uint32_t tmp = s.ADCTicks;
+  s.ADCTicks   = 0;
   return tmp;
 }
 

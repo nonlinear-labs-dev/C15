@@ -34,11 +34,7 @@ void Emphase_IPC_Init(void)
   s.keyBufferReadPos  = 0;
 
   for (int i = 0; i < EMPHASE_IPC_KEYBUFFER_SIZE; i++)
-  {
-    s.keyBufferData[i].key       = 0;
-    s.keyBufferData[i].timeInUs  = 0;
-    s.keyBufferData[i].direction = 0;
-  }
+    s.keyBufferData[i] = 0;
 
   for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
   {
@@ -50,6 +46,6 @@ void Emphase_IPC_Init(void)
   s.adcBufferReadIndex  = 0;
   s.adcBufferWriteIndex = 0;
   s.timer               = 0;
-  s.KBSTicks            = 0;
-  s.SchedulerTicks      = 0;
+  s.ADCTicks            = 0;
+  s.RitCrtlReg          = 0;
 }
