@@ -20,9 +20,6 @@ typedef struct
 
 void KBS_Init(void);
 void KBS_Config(KBS_PINS_T* pins);
-void KBS_Process(void);
-
-void KBS_Test_ScanLines(void);
-void KBS_Test_CycleLines(void);
+extern void (*KBS_Process)(void);
 
 #endif
