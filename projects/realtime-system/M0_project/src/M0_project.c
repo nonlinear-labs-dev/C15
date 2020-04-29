@@ -10,36 +10,28 @@
 *******************************************************************************/
 #include <stdint.h>
 #include "cmsis/LPC43xx.h"
-
-#include "sys/delays.h"
-
 #include "boards/emphase_v5.h"
-
 #include "ipc/emphase_ipc.h"
-
 #include "drv/nl_rit.h"
-#include "drv/nl_dbg.h"
+#include "drv/nl_cgu.h"
 #include "drv/nl_gpdma.h"
 #include "drv/nl_kbs.h"
-
+#include "drv/nl_dbg.h"
 #include "espi/nl_espi_core.h"
-
 #include "espi/dev/nl_espi_dev_aftertouch.h"
 #include "espi/dev/nl_espi_dev_pedals.h"
 #include "espi/dev/nl_espi_dev_pitchbender.h"
 #include "espi/dev/nl_espi_dev_ribbons.h"
 #include "espi/dev/nl_espi_dev_adc.h"
 
-#define M0_SYSTICK_IN_NS      2500  // 2.5us
-#define M0_SYSTICK_MULTIPLIER 50    // 2.5s*50 = 125us --> triggers Timer Interrupt of M4
-
-#define M0_DEBUG 0
-
 #define ESPI_MODE_ADC      LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_ATT_DOUT LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_DIN      LPC_SSP0, ESPI_CPOL_1 | ESPI_CPHA_1
 
-static volatile uint8_t scheduler = 0;
+static inline uint32_t M0TicksToUS(uint32_t const ticks)
+{
+  return (M0_SYSTICK_IN_NS * (ticks >> IPC_KEYBUFFER_TIME_SHIFT) + 499) / 1000;  // rounded
+}
 
 /******************************************************************************/
 /** @note	Espi device functions do NOT switch mode themselves!
@@ -61,183 +53,163 @@ P4D3   SET_PULL_R  pedal_audio_board    HC595     W    0/0   1   1    5   5
 --------------------------------------------------------------------------------
                                                                 13      165
 *******************************************************************************/
-void Scheduler(void)
+static void ProcessADCs(void)
 {
-  static uint8_t  state    = 0;
-  static uint32_t hbLedCnt = 0;
+  static uint32_t compensatingTicks = 0;
+  static uint32_t totalTicks        = 0;
+  static uint32_t hbLedCnt          = 0;
+  static uint8_t  first             = 1;
   int32_t         val;
-  uint16_t        ticks;
+  uint32_t        savedTicks;
 
-  ticks = IPC_GetTimer();
-  KBS_Process();  // keybed scanner: 51.6 µs best case - 53.7 µs worst case
-  IPC_SetKBSTime((uint16_t)(IPC_GetTimer() - ticks + 1));
-
-  switch (state)
+  if (first)
   {
-    case 0:  // switch mode: 13.6 µs
-             // now, all adc channel & detect values have been read ==> sync read index to write index
-      IPC_AdcUpdateReadIndex();
-      // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
-      IPC_AdcBufferWriteNext();
+    first      = 0;
+    totalTicks = s.timer;
+  }
+  else
+  {
+    IPC_SetADCTime(savedTicks = (s.timer - totalTicks));
+    totalTicks = s.timer;
+    // Feedback loop to adjust the cycle time to collect all the ADC data 16 times
+    // per 12.5ms ADC cycle (the feedback is slow, only +- 1 tick, ~1us, of adjustment
+    // per run of this process routine).
+    // This is because the ADC readout from M4 side is with 16-fold averaging
+    // which assumes we have 16 values collected during the 12.5ms.
+    // The feedback loop is protected from trying to make the cycle time shorter
+    // than physically possible, determined by interrupt load. This is the standard
+    // case at the moment as ProcessADCs() execution time is just slightly longer
+    // than the 781us required.
+    while (s.timer - totalTicks < compensatingTicks)
+      ;
+    if (M0TicksToUS(savedTicks) < 12500 / 16)  // cycle was faster than 16 rounds per 12.5ms ?
+      compensatingTicks += (1 << IPC_KEYBUFFER_TIME_SHIFT);
+    else
+    {
+      if (compensatingTicks)  // cycle time can be shortened ?
+        compensatingTicks -= (1 << IPC_KEYBUFFER_TIME_SHIFT);
+    }
+  }
 
-      SPI_DMA_SwitchMode(ESPI_MODE_ADC);
-      NL_GPDMA_Poll();
+  // switch mode: 13.6 µs
+  // now, all adc channel & detect values have been read ==> sync read index to write index
+  IPC_AdcUpdateReadIndex();
+  // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
+  IPC_AdcBufferWriteNext();
 
-      // do heartbeat LED here, enough time
-      hbLedCnt++;
-      switch (hbLedCnt)
-      {
-        case 1:
-          DBG_Led_Cpu_On();
-          break;
-        case 201:
-          DBG_Led_Cpu_Off();
-          break;
-        case 400:
-          hbLedCnt = 0;
-          break;
-        default:
-          break;
-      }
+  SPI_DMA_SwitchMode(ESPI_MODE_ADC);
+  NL_GPDMA_Poll();
+
+  // do heartbeat LED here, enough time
+  hbLedCnt++;
+  switch (hbLedCnt)
+  {
+    case 1:
+      DBG_Led_Cpu_On();
       break;
-
-    case 1:  // pedal 1 : 57 µs
-#if M0_DEBUG
-      DBG_GPIO3_2_On();
-#endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_RING);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_RING);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_RING, val);
-
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_TIP);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_TIP);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_TIP, val);
-#if M0_DEBUG
-      DBG_GPIO3_2_Off();
-#endif
+    case 500:
+      DBG_Led_Cpu_Off();
       break;
-
-    case 2:  // pedal 2 : 57 µs
-#if M0_DEBUG
-      DBG_GPIO3_2_On();
-#endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_RING);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_RING);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_RING, val);
-
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_TIP);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_TIP);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_TIP, val);
-#if M0_DEBUG
-      DBG_GPIO3_2_Off();
-#endif
+    case 1000:
+      hbLedCnt = 0;
       break;
-
-    case 3:  // pedal 3 : 57 µs
-#if M0_DEBUG
-      DBG_GPIO3_2_On();
-#endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_RING);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_RING);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_RING, val);
-
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_TIP);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_TIP);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_TIP, val);
-#if M0_DEBUG
-      DBG_GPIO3_2_Off();
-#endif
-      break;
-
-    case 4:  // pedal 4 : 57 µs
-#if M0_DEBUG
-      DBG_GPIO3_2_On();
-#endif
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_RING);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_RING);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_RING, val);
-
-      ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_TIP);
-      NL_GPDMA_Poll();
-      val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_TIP);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_TIP, val);
-#if M0_DEBUG
-      DBG_GPIO3_2_Off();
-#endif
-      break;
-
-    case 5:  // detect pedals: 32.5 µs
-      SPI_DMA_SwitchMode(ESPI_MODE_DIN);
-      NL_GPDMA_Poll();
-
-      ESPI_DEV_Pedals_Detect_EspiPull();
-      NL_GPDMA_Poll();
-
-      uint8_t detect = ESPI_DEV_Pedals_Detect_GetValue();
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_DETECT, ((detect & 0b00010000) >> 4) ? 4095 : 0);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_DETECT, ((detect & 0b00100000) >> 5) ? 4095 : 0);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_DETECT, ((detect & 0b01000000) >> 6) ? 4095 : 0);
-      IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) ? 4095 : 0);
-
-      break;
-
-    case 6:  // set pull resistors: best case: 17.3 µs - worst case: 36 µs
-      SPI_DMA_SwitchMode(ESPI_MODE_ATT_DOUT);
-      NL_GPDMA_Poll();
-
-      uint32_t config = IPC_ReadPedalAdcConfig();
-      ESPI_DEV_Pedals_SetPedalState(1, (uint8_t)((config >> 0) & 0xFF));
-      ESPI_DEV_Pedals_SetPedalState(2, (uint8_t)((config >> 8) & 0xFF));
-      ESPI_DEV_Pedals_SetPedalState(3, (uint8_t)((config >> 16) & 0xFF));
-      ESPI_DEV_Pedals_SetPedalState(4, (uint8_t)((config >> 24) & 0xFF));
-
-      ESPI_DEV_Pedals_PullResistors_EspiSendIfChanged();
-
-      NL_GPDMA_Poll();
-      break;
-
-    case 7:  // pitchbender: 42 µs
-      SPI_DMA_SwitchMode(ESPI_MODE_ADC);
-      NL_GPDMA_Poll();
-
-      ESPI_DEV_Pitchbender_EspiPull();
-      NL_GPDMA_Poll();
-
-      IPC_WriteAdcBuffer(IPC_ADC_PITCHBENDER, ESPI_DEV_Pitchbender_GetValue());
-      break;
-
-    case 8:  // aftertouch: 29 µs
-      ESPI_DEV_Aftertouch_EspiPull();
-      NL_GPDMA_Poll();
-
-      IPC_WriteAdcBuffer(IPC_ADC_AFTERTOUCH, ESPI_DEV_Aftertouch_GetValue());
-      break;
-
-    case 9:  // 2 ribbons: 57 µs
-      ESPI_DEV_Ribbons_EspiPull_Upper();
-      NL_GPDMA_Poll();
-      IPC_WriteAdcBuffer(IPC_ADC_RIBBON1, ESPI_DEV_Ribbons_GetValue(UPPER_RIBBON));
-
-      ESPI_DEV_Ribbons_EspiPull_Lower();
-      NL_GPDMA_Poll();
-      IPC_WriteAdcBuffer(IPC_ADC_RIBBON2, ESPI_DEV_Ribbons_GetValue(LOWER_RIBBON));
-
-      break;
-
     default:
       break;
   }
+  // pedal 1 : 57 µs
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_RING);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_RING);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_RING, val);
 
-  state++;
-  if (state == 10)
-    state = 0;
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_TIP);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_TIP);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_TIP, val);
+
+  // pedal 2 : 57 µs
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_RING);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_RING);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_RING, val);
+
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_TIP);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_TIP);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_TIP, val);
+
+  // pedal 3 : 57 µs
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_RING);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_RING);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_RING, val);
+
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_TIP);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_TIP);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_TIP, val);
+
+  // pedal 4 : 57 µs
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_RING);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_RING);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_RING, val);
+
+  ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_TIP);
+  NL_GPDMA_Poll();
+  val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_TIP);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_TIP, val);
+
+  // detect pedals: 32.5 µs
+  SPI_DMA_SwitchMode(ESPI_MODE_DIN);
+  NL_GPDMA_Poll();
+
+  ESPI_DEV_Pedals_Detect_EspiPull();
+  NL_GPDMA_Poll();
+
+  uint8_t detect = ESPI_DEV_Pedals_Detect_GetValue();
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_DETECT, ((detect & 0b00010000) >> 4) ? 4095 : 0);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_DETECT, ((detect & 0b00100000) >> 5) ? 4095 : 0);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_DETECT, ((detect & 0b01000000) >> 6) ? 4095 : 0);
+  IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) ? 4095 : 0);
+
+  // set pull resistors: best case: 17.3 µs - worst case: 36 µs
+  SPI_DMA_SwitchMode(ESPI_MODE_ATT_DOUT);
+  NL_GPDMA_Poll();
+
+  uint32_t config = IPC_ReadPedalAdcConfig();
+  ESPI_DEV_Pedals_SetPedalState(1, (uint8_t)((config >> 0) & 0xFF));
+  ESPI_DEV_Pedals_SetPedalState(2, (uint8_t)((config >> 8) & 0xFF));
+  ESPI_DEV_Pedals_SetPedalState(3, (uint8_t)((config >> 16) & 0xFF));
+  ESPI_DEV_Pedals_SetPedalState(4, (uint8_t)((config >> 24) & 0xFF));
+
+  ESPI_DEV_Pedals_PullResistors_EspiSendIfChanged();
+
+  NL_GPDMA_Poll();
+
+  // pitchbender: 42 µs
+  SPI_DMA_SwitchMode(ESPI_MODE_ADC);
+  NL_GPDMA_Poll();
+
+  ESPI_DEV_Pitchbender_EspiPull();
+  NL_GPDMA_Poll();
+
+  IPC_WriteAdcBuffer(IPC_ADC_PITCHBENDER, ESPI_DEV_Pitchbender_GetValue());
+
+  // aftertouch: 29 µs
+  ESPI_DEV_Aftertouch_EspiPull();
+  NL_GPDMA_Poll();
+
+  IPC_WriteAdcBuffer(IPC_ADC_AFTERTOUCH, ESPI_DEV_Aftertouch_GetValue());
+
+  // 2 ribbons: 57 µs
+  ESPI_DEV_Ribbons_EspiPull_Upper();
+  NL_GPDMA_Poll();
+  IPC_WriteAdcBuffer(IPC_ADC_RIBBON1, ESPI_DEV_Ribbons_GetValue(UPPER_RIBBON));
+
+  ESPI_DEV_Ribbons_EspiPull_Lower();
+  NL_GPDMA_Poll();
+  IPC_WriteAdcBuffer(IPC_ADC_RIBBON2, ESPI_DEV_Ribbons_GetValue(LOWER_RIBBON));
 }
 
 /******************************************************************************/
@@ -262,17 +234,8 @@ int main(void)
 
   RIT_Init_IntervalInNs(M0_SYSTICK_IN_NS);
 
-  uint16_t ticks;
   while (1)
-  {
-    if (scheduler)
-    {
-      ticks = IPC_GetTimer();
-      Scheduler();
-      IPC_SetSchedulerTime((uint16_t)(IPC_GetTimer() - ticks + 1));
-      scheduler = 0;
-    }
-  }
+    ProcessADCs();
 
   return 0;
 }
@@ -285,25 +248,25 @@ static inline void SendInterruptToM4(void)
 }
 
 /******************************************************************************/
-static volatile uint8_t sysTickMultiplier = 0;
-void                    M0_RIT_OR_WWDT_IRQHandler(void)
+
+void M0_RIT_OR_WWDT_IRQHandler(void)
 {
+  // Clear interrupt flag early, to allow for short, single cycle IRQ overruns,
+  // that is if, the keybed scanner occasionally takes longer than one time slot
+  // (but no more than two), the interrupt routine is invoked again as soon as
+  // it completed the first pass. By this, no IRQ is lost and M4 clocking precision
+  // is guaranteed, albeit with an occasional jitter.
+  // Only when eeprom memory access etc slows down the bus there is a slight
+  // chance of a burst of overruns where the M0 main process hardly gets any execution
+  // time and the clocking of the M4 core may slew for that time.
   RIT_ClearInt();
-  IPC_IncTimer();
 
-  sysTickMultiplier++;
+  s.timer += (1 << IPC_KEYBUFFER_TIME_SHIFT);
 
-  if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER / 2 /* 62.5us */)
-  {  // Process the keybed first in scheduler, M4 will have completed POLY_Process() by this point in time
-    if (!scheduler)
-      scheduler = 1;
-    // else  // overrun, not likely to happen
-    // DBG_Led_Warning_On();
-  }
-
-  if (sysTickMultiplier == M0_SYSTICK_MULTIPLIER /* 125us */)
-  {  // Wake up M4 which soon starts POLY_Process
+  if (!(s.timer & (M0_SYSTICKS_PER_PERIOD_MASK << IPC_KEYBUFFER_TIME_SHIFT)))
     SendInterruptToM4();
-    sysTickMultiplier = 0;
-  }
+
+  (*KBS_Process)();
+
+  // s.RitCrtlReg |= RIT_GetCtrlReg();
 }
