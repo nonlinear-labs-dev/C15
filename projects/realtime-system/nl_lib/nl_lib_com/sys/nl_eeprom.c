@@ -178,7 +178,7 @@ static void StartWriteBlock(uint16_t offset)
 }
 
 /* multi-page write */
-void Process()
+static void Process()
 {
   if (!eepromBusy)
     return;  // nothing to do
@@ -225,7 +225,7 @@ uint16_t NL_EEPROM_StartWriteBlock(uint16_t const handle, void *const data)
 }
 
 /* process full erase cycle */
-void FullEraseProcess(void)
+static void FullEraseProcess(void)
 {
   static uint16_t step     = 0;
   static uint16_t pageAddr = 0;
