@@ -11,10 +11,11 @@
 #include "nl_tcd_adc_work.h"
 #include "nl_tcd_msg.h"
 #include "ipc/emphase_ipc.h"
+#include "drv/nl_cgu.h"
 
 //------- modul local variables
 
-static IPC_KEY_EVENT_T keyEvent[32];  // array for new events read from the ring buffer for keybed events
+static uint32_t keyEvent[32];  // array for new events read from the ring buffer for keybed events
 
 static uint32_t allVelTables[VEL_CURVE_COUNT][65] = {};  // converts time difference (timeInUs) to velocities
                                                          // element  0: shortest timeInUs   (2500 us or lower) -> 16383 = max. velocity
@@ -93,19 +94,16 @@ void POLY_Select_VelTable(uint32_t curve)
 *******************************************************************************/
 void POLY_ForceKey(uint16_t midiKeyNumber, uint16_t timeLow, uint16_t timeHigh)
 {
-  IPC_KEY_EVENT_T forcedKeyEvent;
-  int             time;
+  uint32_t forcedKeyEvent;
+  int      time;
 
-  forcedKeyEvent.key = midiKeyNumber - 36;
-  time               = (int) (((uint32_t) timeHigh << 16) + (uint32_t) timeLow);
+  forcedKeyEvent = midiKeyNumber - 36;
+  time           = (int) (((uint32_t) timeHigh << 16) + (uint32_t) timeLow);
   if (time < 0)
-  {
-    forcedKeyEvent.direction = KEY_DIR_UP;
-    time                     = -time;
-  }
+    time = -time;
   else
-    forcedKeyEvent.direction = KEY_DIR_DN;
-  forcedKeyEvent.timeInUs = time;
+    forcedKeyEvent |= IPC_KEYBUFFER_NOTEON;
+  forcedKeyEvent |= (M0_SYSTICKS_PER_PERIOD * time / M0_PERIOD_US) << IPC_KEYBUFFER_TIME_SHIFT;
   Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(forcedKeyEvent);
 }
 
@@ -122,20 +120,16 @@ void POLY_Process(void)
 
   for (i = 0; i < numKeyEvents; i++)
   {
-    MSG_KeyPosition(keyEvent[i].key + 36);
+    MSG_KeyPosition((keyEvent[i] & IPC_KEYBUFFER_KEYMASK) + 36);
 
-    time = keyEvent[i].timeInUs;
+    time = M0_PERIOD_US * (keyEvent[i] >> IPC_KEYBUFFER_TIME_SHIFT) / M0_SYSTICKS_PER_PERIOD;  // us
 
     //--- Calc On velocity
 
     if (time <= 2500)  // clipping the low end: zero at a times <= 2.5 ms
-    {
       vel = velTable[0];
-    }
     else if (time >= (524288 + 2500))  // clipping at a maximum of 524 ms (2^19 us)
-    {
       vel = velTable[64];
-    }
     else
     {
       time -= 2500;  // shifting the curve to the left to adjust the input to zero for a time of 2.5 ms
@@ -144,14 +138,12 @@ void POLY_Process(void)
       uint32_t index = time >> 13;                                                              // upper 6 bits (0...63) used as index in the table
       vel            = (velTable[index] * (8192 - fract) + velTable[index + 1] * fract) >> 13;  // (0...16393) * 8192 / 8192
     }
-    if (keyEvent[i].direction == KEY_DIR_UP)  //--- releasing a key
-    {
+    if (!(keyEvent[i] & IPC_KEYBUFFER_NOTEON))  //--- releasing a key
       MSG_KeyUp(vel);
-    }
     else  //--- pressing a key
     {
       MSG_KeyDown(vel);
-      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_LAST_KEY, keyEvent[i].key + 36);
+      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_LAST_KEY, (keyEvent[i] & IPC_KEYBUFFER_KEYMASK) + 36);
     }
   }
 
