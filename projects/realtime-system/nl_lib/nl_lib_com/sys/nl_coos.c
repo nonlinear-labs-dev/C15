@@ -134,14 +134,12 @@ void COOS_Start(void)
     @param[]
     @return
 *******************************************************************************/
-static uint32_t dispatchStart = 0;
-static uint32_t dispatchStop  = 0;
-void            COOS_Dispatch(void)
+void COOS_Dispatch(void)
 {
   uint16_t index;
   uint16_t tasks = 0;
 
-  dispatchStart = IPC_GetTimer();
+  uint32_t dispatchTime = s.timer;
 
 #if DGB_TIMING_PINS
   DispatchTotalTime(1);
@@ -153,21 +151,18 @@ void            COOS_Dispatch(void)
 #if DGB_TIMING_PINS
       DispatchTaskTime(1);
 #endif
-      uint32_t startTime = IPC_GetTimer();
+      uint32_t taskTime = s.timer;
       (*COOS_taskArray[index].pTask)();  // run the task
       COOS_taskArray[index].run--;       // decrease the run flag, so postponed tasks will also be handled
-      uint32_t stopTime = IPC_GetTimer();
-      if (startTime > stopTime)  // wraparound
-        stopTime += 65536;
-      uint32_t time = stopTime - startTime;
-      if (time > NL_systemStatus.COOS_maxTaskTime)
-        NL_systemStatus.COOS_maxTaskTime = time;
+      taskTime = s.timer - taskTime;
+      if (taskTime > NL_systemStatus.COOS_maxTaskTime)
+        NL_systemStatus.COOS_maxTaskTime = taskTime;
 #if DGB_TIMING_PINS
       DispatchTaskTime(0);
 #endif
 #if LOG_TASK_TIME
-      if (time > COOS_taskArray[index].max_time)
-        COOS_taskArray[index].max_time = time;
+      if (taskTime > COOS_taskArray[index].max_time)
+        COOS_taskArray[index].max_time = taskTime;
 #endif
       tasks++;
 
@@ -179,12 +174,9 @@ void            COOS_Dispatch(void)
   }
   if (tasks > NL_systemStatus.COOS_maxTasksPerSlice)
     NL_systemStatus.COOS_maxTasksPerSlice = tasks;
-  dispatchStop = IPC_GetTimer();
-  if (dispatchStart > dispatchStop)  // wraparound
-    dispatchStop += 65536;
-  uint32_t time = dispatchStop - dispatchStart;
-  if (time > NL_systemStatus.COOS_maxDispatchTime)
-    NL_systemStatus.COOS_maxDispatchTime = time;
+  dispatchTime = s.timer - dispatchTime;
+  if (dispatchTime > NL_systemStatus.COOS_maxDispatchTime)
+    NL_systemStatus.COOS_maxDispatchTime = dispatchTime;
 
   if (taskOverflow)
   {
