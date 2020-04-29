@@ -18,6 +18,7 @@
 #include "drv/nl_kbs.h"
 #include "spibb/nl_spi_bb.h"
 #include "sup/nl_sup.h"
+#include "sys/nl_version.h"
 
 static void ConfigureClocks(void);
 static void Delay100(void);
@@ -30,20 +31,22 @@ static void InitSupPins(void);
 /*******************************************************************************
 	main init function
 *******************************************************************************/
-void EMPHASE_V5_M4_Init(void)
+void* EMPHASE_V5_M4_Init(void)
 {
   ConfigureClocks();
 
   InitBbbLpcSpiPins();
   InitDebugPins();
   InitSupPins();
+  return GetVersionString();
 }
 
-void EMPHASE_V5_M0_Init(void)
+void* EMPHASE_V5_M0_Init(void)
 {
   InitDebugPins();
   InitEspiPins();
   InitKeybedScannerPins();
+  return GetVersionString();
 }
 
 /******************************************************************************/

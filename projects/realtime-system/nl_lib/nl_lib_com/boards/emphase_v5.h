@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-void EMPHASE_V5_M4_Init(void);
-void EMPHASE_V5_M0_Init(void);
+void* EMPHASE_V5_M4_Init(void);
+void* EMPHASE_V5_M0_Init(void);
 
 #endif
