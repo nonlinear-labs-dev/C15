@@ -77,18 +77,18 @@ void Usage(void)
 uint16_t GET_DATA[]      = { 0x0A00, 0x0001, 0x0002 };
 uint16_t CLEARALL_DATA[] = {
   // clang-format off
-  0x0F00, 0x0002, 0x0100, 0xF800,
-  0x0F00, 0x0002, 0x0100, 0xF900,
-  0x0F00, 0x0002, 0x0100, 0xFA00,
-  0x0F00, 0x0002, 0x0100, 0xFB00,
-  0x0F00, 0x0002, 0x0100, 0xFC00,
-  0x0F00, 0x0002, 0x0100, 0xFD00,
-  0x0F00, 0x0002, 0x0100, 0xFE00,
-  0x0F00, 0x0002, 0x0100, 0xFF00,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xF800,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xF900,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xFA00,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xFB00,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xFC00,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xFD00,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xFE00,
+  LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, LPC_EHC_COMMAND_SET_CONTROL_REGISTER, 0xFF00,
   // clang-format on
 };
-uint16_t ENDIS_DATA[] = { 0x0700, 0x0002, 0xFF04, 0x0000 };
-uint16_t CMD_DATA[]   = { 0x0F00, 0x0002, 0x0400, 0x0000 };
+uint16_t ENDIS_DATA[] = { LPC_BB_MSG_TYPE_SETTING, 0x0002, LPC_SETTING_ID_ENABLE_EHC, 0x0000 };
+uint16_t CMD_DATA[]   = { LPC_BB_MSG_TYPE_EHC_CONFIG, 0x0002, 0x0000, 0x0000 };
 
 uint16_t readPortID(const char *string)
 {
@@ -219,7 +219,7 @@ int main(int argc, char const *argv[])
       Usage();
     }
     CMD_DATA[2] = readPortID(argv[2]);
-    CMD_DATA[2] |= 0x0200;
+    CMD_DATA[2] |= LPC_EHC_COMMAND_SET_RANGE_MIN;
     if (sscanf(argv[3], "%hu", &CMD_DATA[3]) != 1)
     {
       puts("range: argument error (uint16 expected)");
@@ -227,7 +227,7 @@ int main(int argc, char const *argv[])
     }
     writeData(driver, sizeof CMD_DATA, &CMD_DATA[0]);
     CMD_DATA[2] &= 0x00FF;
-    CMD_DATA[2] |= 0x0300;
+    CMD_DATA[2] |= LPC_EHC_COMMAND_SET_RANGE_MAX;
     if (sscanf(argv[4], "%hu", &CMD_DATA[3]) != 1)
     {
       puts("range: argument error (uint16 expected)");
@@ -268,11 +268,11 @@ int main(int argc, char const *argv[])
   {
     if (argc != 3)
     {
-      puts("range: too few arguments!");
+      puts("reset: too few arguments!");
       Usage();
     }
     CMD_DATA[2] = readPortID(argv[2]);
-    CMD_DATA[2] |= 0x0400;
+    CMD_DATA[2] |= LPC_EHC_COMMAND_RESET_DELETE;
     CMD_DATA[3] = 0;
     writeData(driver, sizeof CMD_DATA, &CMD_DATA[0]);
     return 0;
@@ -283,7 +283,7 @@ int main(int argc, char const *argv[])
   {
     if (argc != 3)
     {
-      puts("range: too few arguments!");
+      puts("clear: too few arguments!");
       Usage();
     }
     if (strncmp(argv[2], "all", 3) == 0)
@@ -291,7 +291,7 @@ int main(int argc, char const *argv[])
     else
     {
       CMD_DATA[2] = readPortID(argv[2]);
-      CMD_DATA[2] |= 0x0400;
+      CMD_DATA[2] |= LPC_EHC_COMMAND_RESET_DELETE;
       CMD_DATA[3] = 1;
       writeData(driver, sizeof CMD_DATA, &CMD_DATA[0]);
       return 0;
@@ -307,7 +307,7 @@ int main(int argc, char const *argv[])
       Usage();
     }
     CMD_DATA[2] = readPortID(argv[2]);
-    CMD_DATA[2] |= 0x0500;
+    CMD_DATA[2] |= LPC_EHC_COMMAND_FORCE_OUTPUT;
     CMD_DATA[3] = 0;
     writeData(driver, sizeof CMD_DATA, &CMD_DATA[0]);
     return 0;
