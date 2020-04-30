@@ -20,7 +20,7 @@ enum LPC_BB_MESSAGE_TYPES
   LPC_BB_MSG_TYPE_RIBBON_CAL    = 0x0D00,  // direction: input;  arguments (uint16): 134, 134x data [2x (33x 34x)]
   LPC_BB_MSG_TYPE_SENSORS_RAW   = 0x0E00,  // direction: output; arguments (uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
   LPC_BB_MSG_TYPE_EHC_CONFIG    = 0x0F00,  // direction: input;  arguments (uint16): 2, 1x command, 1x data
-  LPC_BB_MSG_TYPE_EHC_DATA      = 0x1000,  // direction: output; arguments (uint16): 48, (see nl_ehc_ctrl.c)
+  LPC_BB_MSG_TYPE_EHC_DATA      = 0x1000,  // direction: output; arguments (uint16): n, (see nl_ehc_ctrl.c)
   LPC_BB_MSG_TYPE_KEY_EMUL      = 0x1100,  // direction: input;  arguments (uint16): 3, midi key , time(lo), time(high)
   LPC_BB_MSG_TYPE_STAT_DATA     = 0x1200,  // direction: output; arguments (uint16): 4
 };
@@ -84,7 +84,7 @@ enum LPC_EHC_COMMAND_IDS
   LPC_EHC_COMMAND_SET_RANGE_MIN        = 0x0200,  // set lower end of ranging
   LPC_EHC_COMMAND_SET_RANGE_MAX        = 0x0300,  // set upper end of ranging
   LPC_EHC_COMMAND_RESET_DELETE         = 0x0400,  // reset or delete a controller
-  LPC_EHC_COMMAND_FORCE_OUTPUT         = 0x0500,  // reset or delete a controller
+  LPC_EHC_COMMAND_FORCE_OUTPUT         = 0x0500,  // force a controller to send current value (if valid)
   LPC_EHC_COMMAND_SET_DEAD_ZONES       = 0x0600,  // set dead zones for auto-ranging
 };
 
