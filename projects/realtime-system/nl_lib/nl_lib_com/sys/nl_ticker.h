@@ -14,5 +14,6 @@ extern volatile uint32_t SYS_ticker;
 
 void SYS_WatchDogInit(uint32_t timeoutInMs);
 void SYS_WatchDogClear(void);
+void SYS_Reset(void);
 
 #endif
