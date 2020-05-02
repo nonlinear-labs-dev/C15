@@ -9,7 +9,7 @@
 #include "sys/nl_status.h"
 #include "ipc/emphase_ipc.h"
 
-#define COOS_MAX_TASKS 48  // max number of task the COOS should handle (memory size)
+#define COOS_MAX_TASKS 16  // max number of task the COOS should handle (memory size)
 
 #define LOG_TASK_TIME   (1)
 #define DGB_TIMING_PINS (0)
