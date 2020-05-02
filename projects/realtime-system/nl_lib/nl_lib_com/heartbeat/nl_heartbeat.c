@@ -117,4 +117,9 @@ void HBT_Process(void)
 #endif
 }
 
+void HBT_ResetCounter(void)
+{
+  lpc_heartbeat = 0;
+}
+
 // EOF
