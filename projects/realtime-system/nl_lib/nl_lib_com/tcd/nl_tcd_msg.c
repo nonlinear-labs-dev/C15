@@ -111,7 +111,7 @@ void MSG_KeyPosition(uint32_t key)
     return;  /// assertion
   }
 
-  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_WRAPPER;
   buff[writeBuffer][buf++] = AE_TCD_KEY_POS;
   buff[writeBuffer][buf++] = key >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = key & 0x7F;  // second 7 bits
@@ -129,7 +129,7 @@ void MSG_KeyPosition(uint32_t key)
 ******************************************************************************/
 void MSG_KeyDown(uint32_t vel)
 {
-  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_WRAPPER;
   buff[writeBuffer][buf++] = AE_TCD_KEY_DOWN;
   buff[writeBuffer][buf++] = vel >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = vel & 0x7F;  // second 7 bits
@@ -147,7 +147,7 @@ void MSG_KeyDown(uint32_t vel)
 ******************************************************************************/
 void MSG_KeyUp(uint32_t vel)
 {
-  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_WRAPPER;
   buff[writeBuffer][buf++] = AE_TCD_KEY_UP;
   buff[writeBuffer][buf++] = vel >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = vel & 0x7F;  // second 7 bits
@@ -171,7 +171,7 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
     return;  /// assertion
   }
 
-  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_WRAPPER;
   buff[writeBuffer][buf++] = AE_TCD_HW_POS | source;
   buff[writeBuffer][buf++] = position >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = position & 0x7F;  // second 7 bits
@@ -189,7 +189,7 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
 ******************************************************************************/
 void MSG_SendAEDevelopperCmd(uint32_t cmd)
 {
-  buff[writeBuffer][buf++] = 0x0E;  // MIDI status 0xE
+  buff[writeBuffer][buf++] = AE_TCD_WRAPPER;
   buff[writeBuffer][buf++] = AE_TCD_DEVELOPPER_CMD;
   buff[writeBuffer][buf++] = cmd >> 7;    // first 7 bits
   buff[writeBuffer][buf++] = cmd & 0x7F;  // second 7 bits
@@ -207,11 +207,10 @@ void MSG_SendAEDevelopperCmd(uint32_t cmd)
 void MSG_SendActiveSensing(void)
 {
 #ifdef __IMPLEMENT_ACTIVE_SENSING
-  buff[writeBuffer][buf++] = 0xFE;  // MIDI command "active sensing"
-  // since all "TCD" type transfers are 4 bytes, just send another 3 copies of it
-  buff[writeBuffer][buf++] = 0xFE;
-  buff[writeBuffer][buf++] = 0xFE;
-  buff[writeBuffer][buf++] = 0xFE;
+  buff[writeBuffer][buf++] = 0x0F;  // cable 0, packet type "single byte"
+  buff[writeBuffer][buf++] = 0xFE;  // MIDI real-time command "active sensing"
+  buff[writeBuffer][buf++] = 0x00;
+  buff[writeBuffer][buf++] = 0x00;
 
   if (buf == BUFFER_SIZE)
   {
