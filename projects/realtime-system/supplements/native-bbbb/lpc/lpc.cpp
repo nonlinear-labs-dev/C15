@@ -45,6 +45,9 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define AE_CMD_TTON       "tton"
 #define AE_CMD_TTOFF      "ttoff"
 #define AE_CMD_DEFSND     "def-snd"
+#define SSPECIAL          "system"
+#define SSPECIAL_RESET    "sys-reset"
+#define SSPECIAL_RESETHB  "hb-reset"
 
 #define KEY_EMUL "key"
 
@@ -64,10 +67,11 @@ void Usage(void)
   puts("     clear-eeprom : erase EEPROM");
   puts("     status       : get diagnostic status data (and clear it)");
   puts("     save-ehc     : save current EHC config data to EEPROM");
-  puts("  set[ting] : mute-ctrl|sensors|ae-cmd");
+  puts("  set[ting] : mute-ctrl|sensors|ae-cmd|system");
   puts("     mute-ctrl: disable|mute|unmute : disable mute override or set/clear muting");
   puts("     sensors: on|off                : turn raw sensor messages on/off");
   puts("     ae-cmd: tton|ttoff|def-snd     : Audio Engine Special, test-tone on/off, load default sound");
+  puts("     system: sys-reset|hb-reset     : System Special, reset system, reset heartbeat counter");
   puts("  key: <note-nr> <time>         : send emulated key");
   puts("      <note-nr>                     : MIDI key number, 60=\"C3\"");
   puts("      <time>                        : key time (~1/velocity) in ms (2...525), negative means key release");
@@ -207,6 +211,26 @@ int main(int argc, char const *argv[])
         return 0;
       }
       puts("set ae-cmd : illegal parameter");
+      Usage();
+    }
+
+    // system special
+    if (strncmp(argv[2], SSPECIAL, sizeof SSPECIAL) == 0)
+    {
+      SET_DATA[2] = LPC_SETTING_ID_SYSTEM_SPECIAL;
+      if (strncmp(argv[3], SSPECIAL_RESET, sizeof SSPECIAL_RESET) == 0)
+      {
+        SET_DATA[3] = SYS_SPECIAL_RESET_SYSTEM;
+        writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
+        return 0;
+      }
+      if (strncmp(argv[3], SSPECIAL_RESETHB, sizeof SSPECIAL_RESETHB) == 0)
+      {
+        SET_DATA[3] = SYS_SPECIAL_RESET_HEARTBEAT;
+        writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
+        return 0;
+      }
+      puts("set system : illegal parameter");
       Usage();
     }
     puts("set: unknown parameter!");
