@@ -35,11 +35,18 @@
 
 #define DBG_CLOCK_MONITOR (0)
 
-#define WATCHDOG_TIMEOUT_MS (10ul)  // timeout in ms
-
+#define WATCHDOG_TIMEOUT_MS (100ul)  // timeout in ms
 
 static volatile uint16_t waitForFirstSysTick = 1;
-static volatile uint32_t nsTickerHigh        = 0;
+
+void FastProcesses(void)
+{
+  SYS_WatchDogClear();  // every 125 us, clear Watchdog
+  POLY_Process();       // every 125 us, reading and applying keybed events
+  USB_MIDI_Poll();      // every 125 us, same time grid as in USB 2.0, may do callbacks, also from within interrupt ?
+  NL_GPDMA_Poll();      // every 125 us, for all the DMA transfers (SPI devices), may do callbacks ?
+  SPI_BB_Polling();     // every 125 us, checking the buffer with messages from the BBB, may do callbacks ?
+}
 
 void Init(void)
 {
@@ -100,33 +107,34 @@ void Init(void)
 
   // clang-format off
   // fast and simultaneous processes
-  COOS_Task_Add(POLY_Process,             40, 1);     // every 125 us, reading and applying keybed events
-  COOS_Task_Add(NL_GPDMA_Poll,            10, 1);     // every 125 us, for all the DMA transfers (SPI devices)
-  COOS_Task_Add(USB_MIDI_Poll,            20, 1);     // every 125 us, same time grid as in USB 2.0
-  COOS_Task_Add(SPI_BB_Polling,           30, 1);     // every 125 us, checking the buffer with messages from the BBB
+  COOS_Task_Add(FastProcesses,            0, 1);      // every 125 us, combined routines
 
   // slower stuff
-  //   to avoid potential overrun by any of these falling into the same time slot when their time-slices are integer multiples,
-  //   the start offsets are fine-stepped in increments, the max increment being less that the shortest time-slice
-  COOS_Task_Add(ADC_WORK_Process1,        50+1, 100);       // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_Process2,        60+2, 100);       // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_Process3,        70+3, 100);       // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_Process4,        80+4, 100);       // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_SendBBMessages,  90+5, 100);       // every 12.5 ms, sending the results of the ADC processing to the BBB
-  COOS_Task_Add(DBG_Process,              100+6, 100 * 8);  // every 100 ms, processes error and warning LEDs
-  COOS_Task_Add(SUP_Process,              110+7, SUP_PROCESS_TIMESLICE * 8);  // supervisor communication every 10ms
-  COOS_Task_Add(HBT_Process,              120+8, HBT_PROCESS_TIMESLICE * 8);  // heartbeat communication every 10ms
-  COOS_Task_Add(NL_EEPROM_Process,        130+9, 11);                         // EEPROM write every 1.375ms
-  COOS_Task_Add(SYS_WatchDogClear,        0+10,  11);                         // every 1.375 ms, clear Watchdog
+  //   we are using a fixed time granularity here and make sure the tasks are started interleaved in micro-steps
+  //   within that granularity. The repetitive calls are made with multiples of that granularity.
+  //   By this, no more than one of the following task will ever be called at a time.
+#define  TS (10)  // 1.25 ms time slice
+  COOS_Task_Add(ADC_WORK_Process1,        0*TS+0,   10*TS);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_Process2,        1*TS+1,   10*TS);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_Process3,        2*TS+2,   10*TS);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_Process4,        3*TS+3,   10*TS);       // every 12.5 ms, reading ADC values and applying changes
+  COOS_Task_Add(ADC_WORK_SendBBMessages,  4*TS+4,   10*TS);       // every 12.5 ms, sending the results of the ADC processing to the BBB
+  COOS_Task_Add(DBG_Process,              5*TS+5,   80*TS);       // every 100 ms, processes error and warning LEDs
+  COOS_Task_Add(SUP_Process,              6*TS+6,   8 *TS);       // supervisor communication every 10ms
+  COOS_Task_Add(HBT_Process,              80*TS+7,  8 *TS);       // heartbeat communication every 10ms, start after 100ms
+  COOS_Task_Add(NL_EEPROM_Process,        8*TS+8,      TS);       // EEPROM write every 1.25ms
 
   // single run stuff
-  COOS_Task_Add(ADC_WORK_Init2,           140, 0);     // preparing the ADC processing (will be executed after the M0 has been initialized)
+  COOS_Task_Add(ADC_WORK_Init2,           9*TS+9, 0); // preparing the ADC processing (will be executed after the M0 has been initialized)
   // clang-format on
 
   /* M0 init, also starting our time-slice interrupt  */
   CPU_M0_Init();
   NVIC_SetPriority(M0CORE_IRQn, M0APP_IRQ_PRIORITY);
   NVIC_EnableIRQ(M0CORE_IRQn);
+
+  /* watchdog */
+  SYS_WatchDogInit(WATCHDOG_TIMEOUT_MS);
 }
 
 /******************************************************************************/
@@ -141,10 +149,6 @@ int main(void)
   DBG_Led_Cpu_Off();
   DBG_Led_Warning_Off();
   DBG_Led_Audio_Off();
-
-
-  /* watchdog */
-  SYS_WatchDogInit(WATCHDOG_TIMEOUT_MS);
 
   while (1)
   {
