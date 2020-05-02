@@ -55,6 +55,7 @@ enum LPC_SETTING_IDS
   LPC_SETTING_ID_SEND_FORCED_KEY                  = 0xFF03,  // unused
   LPC_SETTING_ID_ENABLE_EHC                       = 0xFF04,  // direction: input; arguments(uint16): 1, flag (!= 0)
   LPC_SETTING_ID_AUDIO_ENGINE_CMD                 = 0xFF05,  // direction: input; arguments(uint16): 1, command (1:testtone OFF; 2:testtone ON; 3:default sound)
+  LPC_SETTING_ID_SYSTEM_SPECIAL                   = 0xFF06,  // direction: input; arguments(uint16): 1, command (1:reset heartbeat: 2: system reset)
 };
 
 enum LPC_REQUEST_IDS
@@ -109,6 +110,7 @@ enum HW_SOURCE_IDS
 
 enum AE_TCD_OVER_MIDI_IDS
 {
+  AE_TCD_WRAPPER        = 0x0E,       // USB MIDI packet header "Cable #0, packet type:PitchBend"
   AE_TCD_HW_POS         = 0xE0,       // MIDI command "Pitch Bender" + MIDI channel=HW_SOURCE_ID
   AE_TCD_DEVELOPPER_CMD = 0xE0 + 12,  // MIDI command "Pitch Bender", MIDI channel 12
   AE_TCD_KEY_POS        = 0xE0 + 13,  // MIDI command "Pitch Bender", MIDI channel 13
@@ -121,6 +123,13 @@ enum AE_DEVELOPPER_CMDS
   AE_CMD_TONE_OFF      = 1,  // turn off the test tone
   AE_CMD_TONE_ON       = 2,  // turn on the test tone
   AE_CMD_DEFAULT_SOUND = 3,  // set up a simple default sound that is guaranteed to give output
+};
+
+
+enum LPC_SYSTEM_SPECIAL_COMMANDS
+{
+  SYS_SPECIAL_RESET_HEARTBEAT = 1,
+  SYS_SPECIAL_RESET_SYSTEM    = 2,
 };
 
 // void     SUP_SetMuteOverride(uint32_t mode);

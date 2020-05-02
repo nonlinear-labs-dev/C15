@@ -21,6 +21,9 @@
 #include "sys/nl_eeprom.h"
 #include "sys/nl_coos.h"
 #include "sys/nl_version.h"
+#include "sys/nl_ticker.h"
+#include "heartbeat/nl_heartbeat.h"
+#include "../../../shared/lpc-defs.h"
 
 #define SENDBUFFER_SIZE 510  // 16-bit words, stays below the maximum of 1020 bytes
 
@@ -241,26 +244,18 @@ int32_t BB_MSG_WriteMessageNoArg(uint16_t type)
 int32_t BB_MSG_SendTheBuffer(void)
 {
   if (sendBufferLen == 0)
-  {
     return 0;  // nothing to send
-  }
 
-  uint8_t* buff = (uint8_t*) sendBuffer;
-
+  uint8_t* buff    = (uint8_t*) sendBuffer;
   uint32_t success = SPI_BB_Send(buff, sendBufferLen * 2);
 
   if (success)
   {
     sendBufferLen = 0;  // position for first messages of next buffer (behind the header)
-
     return success;
   }
   else  // sending failed, try again later
-  {
-    //!!    DBG_Led_Error_On();
-    //!!    COOS_Task_Add(DBG_Led_Error_Off, 400, 0);
     return -1;
-  }
 }
 
 /*****************************************************************************
@@ -331,6 +326,17 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;
       case LPC_SETTING_ID_AUDIO_ENGINE_CMD:
         MSG_SendAEDevelopperCmd(data[1]);
+        break;
+      case LPC_SETTING_ID_SYSTEM_SPECIAL:
+        switch (data[1])
+        {
+          case SYS_SPECIAL_RESET_HEARTBEAT:
+            HBT_ResetCounter();
+            break;
+          case SYS_SPECIAL_RESET_SYSTEM:
+            SYS_Reset();
+            break;
+        }
         break;
       default:
         // do nothing

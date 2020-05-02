@@ -12,8 +12,6 @@
 
 #include <stdint.h>
 
-#include "../../../shared/lpc-defs.h"
-
 //===========================
 void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t *data);
 void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg);
