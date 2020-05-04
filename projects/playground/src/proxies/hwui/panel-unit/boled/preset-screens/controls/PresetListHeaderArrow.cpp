@@ -5,8 +5,9 @@
 #include "proxies/hwui/Oleds.h"
 #include <proxies/hwui/FrameBuffer.h>
 
-PresetListHeaderArrow::PresetListHeaderArrow(const Glib::ustring &text, const Rect &pos)
+PresetListHeaderArrow::PresetListHeaderArrow(const Glib::ustring &text, const Rect &pos, const int xOffset)
     : super(text, pos)
+    , m_xOffset { xOffset }
 {
 }
 
@@ -20,6 +21,16 @@ void PresetListHeaderArrow::setBackgroundColor(FrameBuffer &fb) const
     fb.setColor(FrameBufferColors::C255);
   else
     fb.setColor(FrameBufferColors::C77);
+}
+
+int PresetListHeaderArrow::getYOffset() const
+{
+  return -1;
+}
+
+int PresetListHeaderArrow::getXOffset() const
+{
+  return m_xOffset;
 }
 
 void PresetListHeaderArrow::setFontColor(FrameBuffer &fb) const

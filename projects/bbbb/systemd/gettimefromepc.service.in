@@ -1,0 +1,13 @@
+[Uint]
+Description=ePC Time via sshpass
+After=syslog.target network.target systemd-modules-load.service
+
+[Service]
+ExecStart=@C15_INSTALL_PATH@/scripts/gettimefromepc.sh
+Restart=always
+RestartSec=20
+StartLimitInterval=200
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

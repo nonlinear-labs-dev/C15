@@ -360,7 +360,7 @@ public class Rect extends Object {
 
 		if (withArrows) {
 			ctx.setStrokeStyle(arrowColor.toString());
-			ctx.setLineWidth(1);
+			ctx.setLineWidth(2);
 			ctx.setLineCap(LineCap.SQUARE);
 			ctx.setLineJoin(LineJoin.MITER);
 			double arrowWidth = getHeight() / 4;

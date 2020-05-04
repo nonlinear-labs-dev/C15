@@ -42,7 +42,7 @@ class GlobalSection
                  C15::Smoothers::Global_Slow>
       m_smoothers;
   float m_signal[3] = {};
-  float m_sampleInc = 0.0f, m_tonePhase = 0.0f, m_toneAmp = 0.0f, m_toneFreq = 0.0f;
+  float m_sampleInc = 0.0f, m_tonePhase = 0.0f, m_toneAmp = 0.0f, m_toneFreq = 0.0f, m_baseKeyDiff = 0.0f;
   uint32_t m_combinationMode = 0;
   void postProcess_audio();
   void postProcess_fast();

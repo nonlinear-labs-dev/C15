@@ -20,6 +20,8 @@ class MockPresetStorage
   Preset* createSplitPreset(UNDO::Transaction* transaction);
   Preset* createLayerPreset(UNDO::Transaction* transaction);
 
+  Bank* getBank();
+
  private:
   Preset* m_single;
   Preset* m_split;
@@ -28,4 +30,16 @@ class MockPresetStorage
 
   void removeBankOfPreset(UNDO::Transaction* transaction, Preset* presetToDelete);
   Bank* createBank(UNDO::Transaction* transaction);
+};
+
+class DualPresetBank
+{
+ public:
+  DualPresetBank();
+  ~DualPresetBank();
+
+  Bank* getBank();
+
+ private:
+  Bank* m_bank;
 };

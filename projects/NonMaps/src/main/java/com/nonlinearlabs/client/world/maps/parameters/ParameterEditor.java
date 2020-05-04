@@ -250,6 +250,9 @@ public class ParameterEditor extends LayoutResizingVertical {
 		if (id.getName() == "CS")
 			id = new GroupId("MCM", id.getVoiceGroup());
 
+		if(id.getName() == "Split")
+			id = new GroupId("Part", EditBufferModel.get().voiceGroup.getValue());
+
 		ParameterGroup p = findParameterGroup(id);
 
 		if (!p.isVisible())

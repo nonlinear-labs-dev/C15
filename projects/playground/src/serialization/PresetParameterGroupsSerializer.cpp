@@ -20,7 +20,7 @@ void PresetParameterGroupsSerializer::writeTagContent(Writer& writer) const
   {
     for(auto& paramGroup : m_preset->m_parameterGroups[static_cast<size_t>(vg)])
     {
-      PresetParameterGroupSerializer group(paramGroup.second.get());
+      PresetParameterGroupSerializer group(paramGroup.second.get(), m_preset->getType());
       group.write(writer, Attribute("id", paramGroup.first));
     }
   }
@@ -30,6 +30,6 @@ void PresetParameterGroupsSerializer::readTagContent(Reader& reader) const
 {
   reader.onTag(PresetParameterGroupSerializer::getTagName(), [&](const Attributes& attr) mutable {
     auto groupID = GroupId(attr.get("id"));
-    return new PresetParameterGroupSerializer(m_preset->findOrCreateParameterGroup(groupID));
+    return new PresetParameterGroupSerializer(m_preset->findOrCreateParameterGroup(groupID), m_preset->getType());
   });
 }

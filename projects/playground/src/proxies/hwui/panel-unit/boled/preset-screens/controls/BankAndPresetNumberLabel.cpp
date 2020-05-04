@@ -35,17 +35,12 @@ bool BankAndPresetNumberLabel::redraw(FrameBuffer &fb)
   {
     auto bankPos = pm->getBankPosition(bank->getUuid()) + 1;
     auto presetPos = bank->getPresetPosition(uuid) + 1;
-    auto voiceGroup = hwui->getCurrentVoiceGroup();
 
     std::ostringstream presetPosStr;
     presetPosStr.width(3);
     presetPosStr.fill('0');
     presetPosStr << presetPos;
-
-    if(bank->findPreset(uuid)->getType() != SoundType::Single)
-      text = nltools::string::concat(bankPos, "-", presetPosStr.str(), "-", toString(voiceGroup));
-    else
-      text = nltools::string::concat(bankPos, "-", presetPosStr.str());
+    text = nltools::string::concat(bankPos, "-", presetPosStr.str());
   }
   else if(uuid == Uuid::converted())
   {
@@ -60,7 +55,7 @@ bool BankAndPresetNumberLabel::redraw(FrameBuffer &fb)
     text = "";
   }
 
-  if(pm->getEditBuffer()->isModified() && !text.empty())
+  if(pm->getEditBuffer()->findAnyParameterChanged() && !text.empty())
     text += "*";
 
   setText(text);

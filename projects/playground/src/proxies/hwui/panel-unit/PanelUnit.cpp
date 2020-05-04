@@ -87,8 +87,6 @@ PanelUnit::PanelUnit()
     return true;
   });
 
-  setUsageMode(new PanelUnitParameterEditMode());
-
   nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::PanelLed,
                                         sigc::mem_fun(this, &PanelUnit::onBBBBConnected));
 }
@@ -108,6 +106,8 @@ ParameterId PanelUnit::choseHWBestSourceForMC(const ParameterId &mcParamId) cons
 
 void PanelUnit::init()
 {
+  setUsageMode(new PanelUnitParameterEditMode());
+
   for(auto &led : m_leds)
     led->init();
 

@@ -5,13 +5,10 @@
 #include <parameters/RibbonParameter.h>
 #include <parameters/PedalParameter.h>
 
-#include <Application.h>
-#include <presets/PresetManager.h>
-#include <presets/EditBuffer.h>
-
-PresetParameterSerializer::PresetParameterSerializer(PresetParameter *param)
+PresetParameterSerializer::PresetParameterSerializer(PresetParameter *param, SoundType type)
     : Serializer(getTagName())
     , m_param(param)
+    , m_type(type)
 {
 }
 
@@ -34,12 +31,8 @@ void PresetParameterSerializer::readTagContent(Reader &reader) const
   {
     reader.onTextElement("value", [&](const Glib::ustring &text, const Attributes &attr) mutable {
       auto v = std::stod(text);
-      auto converted = ParameterImportConversions::get().convert(m_param->m_id.getNumber(), v, reader.getFileVersion());
-
-      auto eb = Application::get().getPresetManager()->getEditBuffer();
-      if(auto param = eb->findParameterByID(m_param->m_id))
-        converted = param->getValue().getQuantizedValue(converted, true);
-
+      auto converted
+          = ParameterImportConversions::get().convert(m_param->m_id.getNumber(), v, reader.getFileVersion(), m_type);
       m_param->setValue(reader.getTransaction(), converted);
     });
 

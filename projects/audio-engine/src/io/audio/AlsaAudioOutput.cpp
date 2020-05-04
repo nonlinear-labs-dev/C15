@@ -1,7 +1,6 @@
 #include "AlsaAudioOutput.h"
 #include "AudioWriter.h"
-#include "main.h"
-#include "Options.h"
+#include "AudioEngineOptions.h"
 #include "io/HighPriorityTask.h"
 #include <nltools/logging/Log.h>
 #include <iostream>
@@ -15,8 +14,9 @@ int checkAlsa(int res)
   return res;
 }
 
-AlsaAudioOutput::AlsaAudioOutput(const std::string& deviceName, Callback cb)
+AlsaAudioOutput::AlsaAudioOutput(const AudioEngineOptions* options, const std::string& deviceName, Callback cb)
     : m_cb(cb)
+    , m_options(options)
 {
   open(deviceName);
 }
@@ -34,7 +34,7 @@ void AlsaAudioOutput::close()
 
 void AlsaAudioOutput::open(const std::string& deviceName)
 {
-  unsigned int sampleRate = static_cast<unsigned int>(getOptions()->getSampleRate());
+  unsigned int sampleRate = static_cast<unsigned int>(m_options->getSampleRate());
 
   snd_pcm_open(&m_handle, deviceName.c_str(), SND_PCM_STREAM_PLAYBACK, 0);
 
@@ -57,17 +57,17 @@ void AlsaAudioOutput::open(const std::string& deviceName)
   checkAlsa(snd_pcm_hw_params_set_channels(m_handle, hwparams, 2));
   checkAlsa(snd_pcm_hw_params_set_rate_near(m_handle, hwparams, &sampleRate, nullptr));
 
-  unsigned int periods = static_cast<unsigned int>(getOptions()->getNumPeriods());
+  unsigned int periods = static_cast<unsigned int>(m_options->getNumPeriods());
   checkAlsa(snd_pcm_hw_params_set_periods(m_handle, hwparams, periods, 0));
   checkAlsa(snd_pcm_hw_params_get_periods(hwparams, &periods, nullptr));
 
-  snd_pcm_uframes_t framesPerPeriod = static_cast<snd_pcm_uframes_t>(getOptions()->getFramesPerPeriod());
+  snd_pcm_uframes_t framesPerPeriod = static_cast<snd_pcm_uframes_t>(m_options->getFramesPerPeriod());
   checkAlsa(snd_pcm_hw_params_set_period_size_near(m_handle, hwparams, &framesPerPeriod, nullptr));
 
   unsigned int channels = 0;
   checkAlsa(snd_pcm_hw_params_get_channels(hwparams, &channels));
 
-  snd_pcm_uframes_t ringBufferSize = static_cast<snd_pcm_uframes_t>(getOptions()->getAlsaRingBufferSize());
+  snd_pcm_uframes_t ringBufferSize = static_cast<snd_pcm_uframes_t>(m_options->getAlsaRingBufferSize());
   checkAlsa(snd_pcm_hw_params_set_buffer_size_near(m_handle, hwparams, &ringBufferSize));
   checkAlsa(snd_pcm_hw_params(m_handle, hwparams));
   checkAlsa(snd_pcm_sw_params_current(m_handle, swparams));
@@ -101,15 +101,15 @@ void AlsaAudioOutput::doBackgroundWork()
   snd_pcm_prepare(m_handle);
 
   SampleFrame prefillAudio[framesPerCallback];
-  std::fill(prefillAudio, prefillAudio + framesPerCallback, SampleFrame{});
+  std::fill(prefillAudio, prefillAudio + framesPerCallback, SampleFrame {});
 
   snd_pcm_start(m_handle);
   playback(prefillAudio, framesPerCallback);
 
   SampleFrame audio[framesPerCallback];
-  std::fill(audio, audio + framesPerCallback, SampleFrame{});
+  std::fill(audio, audio + framesPerCallback, SampleFrame {});
 
-  auto microsPerBuffer = std::micro::den * framesPerCallback / getOptions()->getSampleRate();
+  auto microsPerBuffer = std::micro::den * framesPerCallback / m_options->getSampleRate();
 
   while(m_run)
   {
@@ -137,7 +137,7 @@ void AlsaAudioOutput::handleWriteError(snd_pcm_sframes_t result)
 {
   if(result < 0)
   {
-    if(getOptions()->areXRunsFatal())
+    if(m_options->areXRunsFatal())
     {
       throw std::runtime_error("XRun");
     }

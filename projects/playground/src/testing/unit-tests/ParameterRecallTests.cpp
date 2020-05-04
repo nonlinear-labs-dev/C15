@@ -1,7 +1,7 @@
 #include <serialization/RecallEditBufferSerializer.h>
 #include <xml/FileOutStream.h>
 #include <presets/EditBuffer.h>
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "testing/TestHelper.h"
 
 TEST_CASE("Recall write and Read")

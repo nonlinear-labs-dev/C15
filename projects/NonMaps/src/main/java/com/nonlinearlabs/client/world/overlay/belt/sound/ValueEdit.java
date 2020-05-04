@@ -38,9 +38,9 @@ class ValueEdit extends Label {
 	@Override
 	public Control click(Position eventPoint) {
 		Rect leftRect = getPixRect().copy();
-		leftRect.setRight(getPixRect().getLeft() + getPixRect().getWidth() / 2);
+		leftRect.setRight(getPixRect().getLeft() + getPixRect().getWidth() / 4);
 		Rect rightRect = getPixRect().copy();
-		rightRect.setLeft(getPixRect().getRight() - getPixRect().getWidth() / 2);
+		rightRect.setLeft(getPixRect().getRight() - getPixRect().getWidth() / 4);
 		if (leftRect.contains(eventPoint)) {
 			EditBufferUseCases.get().decParameter(parameter, false);
 			return this;
@@ -65,7 +65,7 @@ class ValueEdit extends Label {
 
 	@Override
 	public Control doubleClick() {
-		EditBufferUseCases.get().setToDefault(parameter.getNumber());
+		EditBufferUseCases.get().setToDefault(parameter);
 		return this;
 	}
 
@@ -89,14 +89,14 @@ class ValueEdit extends Label {
 		if (amount > 0)
 			EditBufferUseCases.get().incParameter(parameter, fine);
 		else if (amount < 0)
-			EditBufferUseCases.get().incParameter(parameter, fine);
+			EditBufferUseCases.get().decParameter(parameter, fine);
 
 		return this;
 	}
 
 	@Override
 	public void draw(Context2d ctx, int invalidationMask) {
-		boolean withArrows = getPixRect().getWidth() >= Millimeter.toPixels(50);
+		boolean withArrows = getPixRect().getWidth() >= Millimeter.toPixels(35);
 		getPixRect().drawValueEditSliderBackgound(ctx, withArrows, getColorFont());
 		super.draw(ctx, invalidationMask);
 	}

@@ -47,7 +47,7 @@ namespace Engine
   {
    public:
     MonoReverb();
-    float m_out_L, m_out_R, m_out_dry, m_out_wet;
+    float m_out_L = 0.0f, m_out_R = 0.0f, m_out_dry = 0.0f, m_out_wet = 0.0f;
 
     void init(const float _samplerate, const uint32_t _upsampleFactor);
     void set(MonoSignals &_signals);
@@ -55,33 +55,33 @@ namespace Engine
     void resetDSP();
 
    private:
-    uint32_t m_slow_tick;
-    uint32_t m_slow_thrsh;
+    uint32_t m_slow_tick = 0;
+    uint32_t m_slow_thrsh = 0;
 
     //************************** Reverb Modulation ***************************//
-    float m_mod_1a, m_mod_2a, m_mod_1b, m_mod_2b;
-    float m_lfo_omega_1, m_lfo_omega_2;
-    float m_lfo_stateVar_1, m_lfo_stateVar_2;
+    float m_mod_1a = 0.0f, m_mod_2a = 0.0f, m_mod_1b = 0.0f, m_mod_2b = 0.0f;
+    float m_lfo_omega_1 = 0.0f, m_lfo_omega_2 = 0.0f;
+    float m_lfo_stateVar_1 = 0.0f, m_lfo_stateVar_2 = 0.0f;
 
     //****************************** Loop Filter *****************************//
-    float m_warpConst_PI;
-    float m_omegaClip_max;
+    float m_warpConst_PI = 0.0f;
+    float m_omegaClip_max = 0.0f;
 
-    float m_lp_a0, m_lp_a1, m_lp_omega;
-    float m_hp_a0, m_hp_a1, m_hp_omega;
+    float m_lp_a0 = 0.0f, m_lp_a1 = 0.0f, m_lp_omega = 0.0f;
+    float m_hp_a0 = 0.0f, m_hp_a1 = 0.0f, m_hp_omega = 0.0f;
 
-    float m_lp_stateVar_L, m_lp_stateVar_R;
-    float m_hp_stateVar_L, m_hp_stateVar_R;
+    float m_lp_stateVar_L = 0.0f, m_lp_stateVar_R = 0.0f;
+    float m_hp_stateVar_L = 0.0f, m_hp_stateVar_R = 0.0f;
 
     //***************************** Delay Buffer *****************************//
-    float m_fb_amnt;
-    float m_absorb;
-    float m_bal_half, m_bal_full;
+    float m_fb_amnt = 0.0f;
+    float m_absorb = 0.0f;
+    float m_bal_half = 0.0f, m_bal_full = 0.0f;
 
-    uint32_t m_buffer_indx;
-    uint32_t m_buffer_sz_m1, m_buffer_sz_m2;
+    uint32_t m_buffer_indx = 0;
+    uint32_t m_buffer_sz_m1 = 0, m_buffer_sz_m2 = 0;
 
-    float m_preDel_L, m_preDel_R;
+    float m_preDel_L = 0.0f, m_preDel_R = 0.0f;
 
     std::vector<float> m_buffer_L;
     std::vector<float> m_buffer_R;
@@ -106,55 +106,55 @@ namespace Engine
     std::vector<float> m_buffer_R8;
     std::vector<float> m_buffer_R9;
 
-    float m_stateVar_L1, m_stateVar_R1;
-    float m_stateVar_L2, m_stateVar_R2;
-    float m_stateVar_L3, m_stateVar_R3;
-    float m_stateVar_L4, m_stateVar_R4;
-    float m_stateVar_L5, m_stateVar_R5;
-    float m_stateVar_L6, m_stateVar_R6;
-    float m_stateVar_L7, m_stateVar_R7;
-    float m_stateVar_L8, m_stateVar_R8;
-    float m_stateVar_L9, m_stateVar_R9;
+    float m_stateVar_L1 = 0.0f, m_stateVar_R1 = 0.0f;
+    float m_stateVar_L2 = 0.0f, m_stateVar_R2 = 0.0f;
+    float m_stateVar_L3 = 0.0f, m_stateVar_R3 = 0.0f;
+    float m_stateVar_L4 = 0.0f, m_stateVar_R4 = 0.0f;
+    float m_stateVar_L5 = 0.0f, m_stateVar_R5 = 0.0f;
+    float m_stateVar_L6 = 0.0f, m_stateVar_R6 = 0.0f;
+    float m_stateVar_L7 = 0.0f, m_stateVar_R7 = 0.0f;
+    float m_stateVar_L8 = 0.0f, m_stateVar_R8 = 0.0f;
+    float m_stateVar_L9 = 0.0f, m_stateVar_R9 = 0.0f;
 
     //******************************* Smoothing ******************************//
-    float m_smooth_inc;
+    float m_smooth_inc = 0.0f;
 
-    float m_depth;
-    float m_depth_ramp;
-    float m_depth_target;
-    float m_depth_base;
-    float m_depth_diff;
+    float m_depth = 0.0f;
+    float m_depth_ramp = 0.0f;
+    float m_depth_target = 0.0f;
+    float m_depth_base = 0.0f;
+    float m_depth_diff = 0.0f;
 
-    float m_size;
-    float m_size_ramp;
-    float m_size_target;
-    float m_size_base;
-    float m_size_diff;
+    float m_size = 0.0f;
+    float m_size_ramp = 0.0f;
+    float m_size_target = 0.0f;
+    float m_size_base = 0.0f;
+    float m_size_diff = 0.0f;
 
-    float m_bal;
-    float m_bal_ramp;
-    float m_bal_target;
-    float m_bal_base;
-    float m_bal_diff;
+    float m_bal = 0.0f;
+    float m_bal_ramp = 0.0f;
+    float m_bal_target = 0.0f;
+    float m_bal_base = 0.0f;
+    float m_bal_diff = 0.0f;
 
-    float m_preDel_L_ramp;
-    float m_preDel_L_target;
-    float m_preDel_L_base;
-    float m_preDel_L_diff;
+    float m_preDel_L_ramp = 0.0f;
+    float m_preDel_L_target = 0.0f;
+    float m_preDel_L_base = 0.0f;
+    float m_preDel_L_diff = 0.0f;
 
-    float m_preDel_R_ramp;
-    float m_preDel_R_target;
-    float m_preDel_R_base;
-    float m_preDel_R_diff;
+    float m_preDel_R_ramp = 0.0f;
+    float m_preDel_R_target = 0.0f;
+    float m_preDel_R_base = 0.0f;
+    float m_preDel_R_diff = 0.0f;
 
-    float m_lp_omega_ramp;
-    float m_lp_omega_target;
-    float m_lp_omega_base;
-    float m_lp_omega_diff;
+    float m_lp_omega_ramp = 0.0f;
+    float m_lp_omega_target = 0.0f;
+    float m_lp_omega_base = 0.0f;
+    float m_lp_omega_diff = 0.0f;
 
-    float m_hp_omega_ramp;
-    float m_hp_omega_target;
-    float m_hp_omega_base;
-    float m_hp_omega_diff;
+    float m_hp_omega_ramp = 0.0f;
+    float m_hp_omega_target = 0.0f;
+    float m_hp_omega_base = 0.0f;
+    float m_hp_omega_diff = 0.0f;
   };
 }

@@ -22,10 +22,11 @@ namespace Engine
     {
       uint32_t m_index = 0, m_div_fast = 0, m_div_slow = 0;
       bool m_fast = false, m_slow = false;
-      inline void init(const uint32_t _samplerate)
+      inline void init(const uint32_t _upsampleIndex)
       {
-        m_div_fast = _samplerate / C15::Config::clock_rates[0][1];
-        m_div_slow = _samplerate / C15::Config::clock_rates[0][2];
+        const uint32_t samplerate = C15::Config::clock_rates[_upsampleIndex][0];
+        m_div_fast = samplerate / C15::Config::clock_rates[_upsampleIndex][1];
+        m_div_slow = samplerate / C15::Config::clock_rates[_upsampleIndex][2];
       }
       inline void render()
       {

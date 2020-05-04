@@ -1,4 +1,4 @@
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <testing/TestHelper.h>
 
 #include <presets/EditBuffer.h>
@@ -300,7 +300,7 @@ TEST_CASE("Editbuffer Contents loaded")
   SECTION("Load Single Into I")
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableLoadPresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::I);
+    editBuffer->undoableLoadSinglePresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::I);
 
     REQUIRE(editBuffer->getVoiceGroupName(VoiceGroup::I) == presets.getSinglePreset()->getName());
     REQUIRE(editBuffer->getType() == SoundType::Layer);
@@ -311,7 +311,7 @@ TEST_CASE("Editbuffer Contents loaded")
   SECTION("Load Single Into II")
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableLoadPresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::II);
+    editBuffer->undoableLoadSinglePresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::II);
     editBuffer->TEST_doDeferredJobs();
 
     REQUIRE(editBuffer->getVoiceGroupName(VoiceGroup::II) == presets.getSinglePreset()->getName());
@@ -501,7 +501,7 @@ TEST_CASE("Part Label")
   {
     auto scope = TestHelper::createTestScope();
     REQUIRE(eb->getVoiceGroupName(VoiceGroup::I) == "\uE071");
-    eb->undoableLoadPresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::I);
+    eb->undoableLoadSinglePresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::I);
     REQUIRE(eb->getVoiceGroupName(VoiceGroup::I) == presets.getSinglePreset()->getName());
   }
 

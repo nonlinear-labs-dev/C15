@@ -27,10 +27,17 @@ namespace DETAIL
   };
 }
 
-MultiLineLabel::MultiLineLabel(const Glib::ustring &text)
+MultiLineLabel::MultiLineLabel(Glib::ustring text)
     : super(Rect(0, 0, 0, 0))
-    , m_text(text)
+    , m_text(std::move(text))
 {
+}
+
+MultiLineLabel::MultiLineLabel(const Rect &r, Glib::ustring text)
+    : ControlWithChildren(r)
+    , m_text(std::move(text))
+{
+  setText(m_text, FrameBufferColors::C255);
 }
 
 void MultiLineLabel::setColor(FrameBufferColors c)
@@ -91,7 +98,10 @@ void MultiLineLabel::updateLines()
 void MultiLineLabel::drawBackground(FrameBuffer &fb)
 {
   const Rect &r = getPosition();
-  setBackgroundColor(fb);
+  if(isVisible())
+    setBackgroundColor(fb);
+  else
+    fb.setColor(FrameBufferColors::Transparent);
   fb.fillRect(r);
 }
 

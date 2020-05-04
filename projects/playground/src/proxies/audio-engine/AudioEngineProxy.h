@@ -10,6 +10,8 @@ namespace UNDO
   class Transaction;
 }
 
+class EditBuffer;
+
 class AudioEngineProxy
 {
  public:
@@ -17,7 +19,8 @@ class AudioEngineProxy
 
   template <typename tParameter> auto createAndSendParameterMessage(const tParameter* parameter)
   {
-    sendParameterMessage(createMessage<tParameter>(parameter));
+    if(!m_suppressParamChanges)
+      sendParameterMessage(createMessage<tParameter>(parameter));
   }
 
   template <typename tParameter> auto createMessage(const tParameter* parameter)
@@ -27,7 +30,8 @@ class AudioEngineProxy
 
   template <class tMessage> void sendParameterMessage(const tMessage& msg)
   {
-    send(nltools::msg::EndPoint::AudioEngine, msg);
+    if(!m_suppressParamChanges)
+      send(nltools::msg::EndPoint::AudioEngine, msg);
   }
 
   template <typename tSettingMessage> void sendSettingMessage(const tSettingMessage& msg)
@@ -39,9 +43,9 @@ class AudioEngineProxy
 
   void toggleSuppressParameterChanges(UNDO::Transaction* transaction);
 
-  static nltools::msg::LayerPresetMessage createLayerEditBufferMessage();
-  static nltools::msg::SplitPresetMessage createSplitEditBufferMessage();
-  static nltools::msg::SinglePresetMessage createSingleEditBufferMessage();
+  static nltools::msg::LayerPresetMessage createLayerEditBufferMessage(const EditBuffer& eb);
+  static nltools::msg::SplitPresetMessage createSplitEditBufferMessage(const EditBuffer& eb);
+  static nltools::msg::SinglePresetMessage createSingleEditBufferMessage(const EditBuffer& eb);
 
  private:
   bool m_suppressParamChanges = false;

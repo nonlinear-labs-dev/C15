@@ -25,17 +25,23 @@ executeAsRoot() {
 }
 
 check_preconditions(){
-    [ -z "$EPC_IP" ] && report_and_quit "E81: Usage: $EPC_IP <IP-of-ePC> wrong ..." "81"
-    ping -c1 $EPC_IP 1>&2 > /dev/null || report_and_quit "E82: Can't ping ePC on $EPC_IP ..." "82"
-    executeAsRoot "exit" || report_and_quit "E83: Can't logon to ePC OS ..." "83"
-    executeAsRoot "mountpoint -q /persistent" || report_and_quit "E54 BBB update: User partition not mounted om ePC ..." "54"
-
-    # check if we need to move any files and set boolean for move files??
-#    executeAsRoot "ls -A /persistent/preset-manager/"
-#    executeAsRoot "[ -e /settings.xml ]"
+    if [ -e /settings.xml ] &&
+        [ ! -z "$EPC_IP" ] &&
+        ping -c1 $EPC_IP 1>&2 > /dev/null &&
+        executeAsRoot "exit" &&
+        executeAsRoot "mountpoint -q /persistent"; then
+        return 0
+     fi
+     return 1
 }
 
 move_files(){
+    if ! check_preconditions; then
+        return 1
+    fi
+
+    executeAsRoot "systemctl stop playground"
+
     if [ -d /internalstorage/preset-manager ] && [ "$(ls -A /internalstorage/preset-manager/)" ]; then
         executeAsRoot "scp -r root@$BBB_IP:/internalstorage/preset-manager/ /persistent" \
         && rm -rf /internalstorage/preset-manager/* \
@@ -55,6 +61,8 @@ move_files(){
         && rm -rf /internalstorage/calibration
         if [ $? -ne 0 ]; then report_and_quit "E57 BBB update: Moving calibration settings to ePC failed ..." "57"; fi
     fi
+
+    return 0
 }
 
 update(){
@@ -68,7 +76,6 @@ update(){
 }
 
 main() {
-    check_preconditions
     move_files
     update
 

@@ -2,6 +2,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/PresetManagerLayout.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/RenamePresetLayout.h>
 #include <proxies/hwui/HWUI.h>
+#include <proxies/hwui/panel-unit/boled/BOLED.h>
+#include <proxies/hwui/panel-unit/PanelUnit.h>
 #include "Application.h"
 #include "device-settings/Settings.h"
 #include <presets/PresetManager.h>
@@ -54,8 +56,19 @@ size_t AppendOverwriteInsertButtonMenu::enumToIndex(PresetStoreModeSettings i) c
 
 bool AppendOverwriteInsertButtonMenu::animate()
 {
-  return m_parent.animateSelectedPreset(
-      []() { Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Select); });
+  auto currentLayout = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getBaseLayout();
+
+  if(auto presetManagerLayout = dynamic_cast<PresetManagerLayout*>(currentLayout.get()))
+  {
+    return presetManagerLayout->animateSelectedPreset(
+        [] { Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select)); });
+  }
+  else
+  {
+    Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Select));
+  }
+
+  return false;
 }
 
 void AppendOverwriteInsertButtonMenu::executeAction()

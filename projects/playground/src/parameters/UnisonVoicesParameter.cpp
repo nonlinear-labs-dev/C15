@@ -3,8 +3,9 @@
 #include <parameters/scale-converters/dimension/VoicesDimension.h>
 #include <presets/EditBuffer.h>
 #include <presets/PresetManager.h>
+#include <presets/PresetParameter.h>
 
-UnisonVoicesParameter::UnisonVoicesParameter(ParameterGroup* group, VoiceGroup vg)
+UnisonVoicesParameter::UnisonVoicesParameter(ParameterGroup *group, VoiceGroup vg)
     : UnmodulateableUnisonParameter(group, ParameterId { 249, vg },
                                     ScaleConverter::get<LinearCountScaleConverter<24, VoicesDimension>>(), 0, 23, 23)
 {
@@ -20,7 +21,7 @@ bool UnisonVoicesParameter::shouldWriteDocProperties(UpdateDocumentContributor::
   return ret;
 }
 
-void UnisonVoicesParameter::updateScaling(UNDO::Transaction* transaction, SoundType type)
+void UnisonVoicesParameter::updateScaling(UNDO::Transaction *transaction, SoundType type)
 {
   auto oldVoices = getDisplayValue();
 
@@ -55,4 +56,35 @@ void UnisonVoicesParameter::updateScaling(UNDO::Transaction* transaction, SoundT
 bool UnisonVoicesParameter::didScalingChange() const
 {
   return m_scalingChanged;
+}
+
+void UnisonVoicesParameter::copyFrom(UNDO::Transaction *transaction, const PresetParameter *other)
+{
+  if(!isLocked())
+  {
+    if(static_cast<EditBuffer *>(getParentGroup()->getParent())->isDual())
+    {
+      auto numVoicesIn = other->getValue() * 23.0;
+      auto res = std::clamp(numVoicesIn / 11.0, 0.0, 1.0);
+      loadFromPreset(transaction, res);
+    }
+    else
+    {
+      UnmodulateableUnisonParameter::copyFrom(transaction, other);
+    }
+  }
+}
+
+void UnisonVoicesParameter::copyTo(UNDO::Transaction *transaction, PresetParameter *other) const
+{
+  if(static_cast<EditBuffer *>(getParentGroup()->getParent())->isDual())
+  {
+    auto numVoicesIn = getControlPositionValue() * 11.0;
+    auto res = numVoicesIn / 23.0;
+    other->setValue(transaction, res);
+  }
+  else
+  {
+    UnmodulateableUnisonParameter::copyTo(transaction, other);
+  }
 }

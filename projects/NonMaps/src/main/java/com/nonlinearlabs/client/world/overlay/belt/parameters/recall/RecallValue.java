@@ -23,7 +23,7 @@ public abstract class RecallValue extends Label {
 	public double calculateTextWidth() {
 		Context2d ctx = NonMaps.get().getCanvas().getContext2d();
 		String text = getDrawText(ctx);
-		ctx.setFont(getFontSizeInPixel() + "px 'Source Sans Pro LW25'");
+		ctx.setFont(getFontSizeInPixel() + "px 'SSP-LW25'");
 		return ctx.measureText(text).getWidth();
 	}
 

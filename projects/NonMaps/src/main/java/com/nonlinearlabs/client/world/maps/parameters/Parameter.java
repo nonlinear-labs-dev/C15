@@ -5,6 +5,9 @@ import com.nonlinearlabs.client.Checksum;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Tracer;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.EditParameter;
@@ -20,6 +23,7 @@ import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.client.world.maps.MapsControl;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
+import com.nonlinearlabs.client.world.maps.NonDimension;
 import com.nonlinearlabs.client.world.overlay.ContextMenu;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.belt.parameters.ParameterContextMenu;
@@ -40,7 +44,7 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	private boolean onPresenterUpdated(ParameterPresenter p) {
 		presenter = p;
-		invalidate(INVALIDATION_FLAG_UI_CHANGED);
+		invalidate(INVALIDATION_FLAG_SCROLLED);
 		return true;
 	}
 
@@ -77,6 +81,10 @@ public abstract class Parameter extends LayoutResizingVertical {
 		RGB c = getRoundingColor();
 		if (c != null) {
 			getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), toXPixels(1), null, c);
+		}
+
+		if(presenter != null && presenter.disabled) {
+			getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), toXPixels(1), RGB.black().withAlpha(0.5), RGB.black().withAlpha(0.2));
 		}
 	}
 
@@ -126,7 +134,8 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	@Override
 	public Control doubleClick() {
-		setDefault();
+		if(!presenter.disabled && !presenter.hidden)
+			setDefault();
 		return this;
 	}
 
@@ -137,17 +146,17 @@ public abstract class Parameter extends LayoutResizingVertical {
 		case always:
 			select();
 
-			if (isBoolean())
+			if (isBoolean() && !presenter.disabled)
 				toggleBoolean();
-			else
+			else if(!presenter.disabled)
 				startMouseEdit();
 			return this;
 
 		case if_selected:
 			if (isSelected()) {
-				if (isBoolean())
+				if (isBoolean() && !presenter.disabled)
 					toggleBoolean();
-				else
+				else if(!presenter.disabled)
 					startMouseEdit();
 				return this;
 			}
@@ -188,7 +197,7 @@ public abstract class Parameter extends LayoutResizingVertical {
 		boolean noDrag = (SetupModel.get().localSettings.editParameter.getValue() == EditParameter.never)
 				|| getWorld().isSpaceDown();
 
-		if (isSelected() && !noDrag) {
+		if (isSelected() && !noDrag && !presenter.disabled && !presenter.hidden) {
 
 			double xPix = newPoint.getX() - oldPoint.getX();
 			double yPix = oldPoint.getY() - newPoint.getY();
@@ -203,6 +212,8 @@ public abstract class Parameter extends LayoutResizingVertical {
 			return this;
 		} else if (noDrag) {
 			return getWorld().mouseDrag(oldPoint, newPoint, fine);
+		} else if(presenter.disabled || presenter.hidden) {
+			return this;
 		}
 
 		return null;
@@ -305,6 +316,36 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	public boolean isLocked() {
 		return presenter.locked;
+	}
+
+	@Override
+	public double getBottomMargin() {
+		if(presenter.hidden)
+			return 0;
+		return super.getBottomMargin();
+	}
+
+	@Override
+	public double getTopMargin() {
+		if(presenter.hidden)
+			return 0;
+		return super.getTopMargin();
+	}
+
+	@Override
+	public double getHeightMargin() {
+		if(presenter.hidden)
+			return 0;
+		return super.getHeightMargin();
+	}
+
+	@Override
+	public void doFirstLayoutPass(double levelOfDetail) {
+		if (presenter.hidden) {
+			setNonSize(new NonDimension(0, 0));
+		} else {
+			super.doFirstLayoutPass(levelOfDetail);
+		}
 	}
 
 }

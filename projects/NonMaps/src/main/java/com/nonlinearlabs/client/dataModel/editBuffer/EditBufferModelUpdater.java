@@ -44,6 +44,20 @@ public class EditBufferModelUpdater extends Updater {
 			String vgIINameSuffixed = getAttributeValue(root, "vg-II-name-with-suffix");
 			EditBufferModel.get().loadedPresetInVG2WithSuffix.setValue(vgIINameSuffixed);
 
+			String srcUUIDI = getAttributeValue(root, "origin-I");
+			EditBufferModel.get().sourceUUIDI.setValue(srcUUIDI);
+			
+			String srcUUIDII = getAttributeValue(root, "origin-II");
+			EditBufferModel.get().sourceUUIDII.setValue(srcUUIDII);
+
+			String srcVGI = getAttributeValue(root, "origin-I-vg");
+			if(!srcVGI.isEmpty())
+				EditBufferModel.get().sourceVGI.setValue(VoiceGroup.valueOf(srcVGI));
+			
+				String srcVGII = getAttributeValue(root, "origin-II-vg");
+			if(!srcVGII.isEmpty())
+				EditBufferModel.get().sourceVGII.setValue(VoiceGroup.valueOf(srcVGII));
+			
 			processChangedChildrenElements(root, "recall-data", c -> processOriginal(c));
 		}
 

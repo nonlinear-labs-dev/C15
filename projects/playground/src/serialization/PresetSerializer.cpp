@@ -26,6 +26,8 @@ void PresetSerializer::writeTagContent(Writer &writer) const
   writer.writeTextElement("name", m_preset->getName());
   writer.writeTextElement("uuid", m_preset->getUuid().raw());
   writer.writeTextElement("type", toString(m_preset->getType()));
+  writer.writeTextElement("vg-I-name", m_preset->getVoiceGroupName(VoiceGroup::I));
+  writer.writeTextElement("vg-II-name", m_preset->getVoiceGroupName(VoiceGroup::II));
 
   AttributesOwnerSerializer attributesWriter(m_preset);
   attributesWriter.write(writer);
@@ -40,6 +42,14 @@ void PresetSerializer::readTagContent(Reader &reader) const
 
   reader.onTextElement("type",
                        [&](auto &text, auto) { m_preset->setType(reader.getTransaction(), to<SoundType>(text)); });
+
+  reader.onTextElement("vg-I-name", [&](auto &text, auto) {
+    m_preset->undoableSetVoiceGroupName(reader.getTransaction(), VoiceGroup::I, text);
+  });
+  
+  reader.onTextElement("vg-II-name", [&](auto &text, auto) {
+    m_preset->undoableSetVoiceGroupName(reader.getTransaction(), VoiceGroup::II, text);
+  });
 
   if(!m_ignoreUUIDs)
   {

@@ -9,6 +9,8 @@
 #include <parameters/PedalParameter.h>
 #include "ParameterSerializer.h"
 #include "parameters/ParameterImportConversions.h"
+#include <groups/ParameterGroup.h>
+#include <presets/EditBuffer.h>
 
 ParameterSerializer::ParameterSerializer(Parameter *param)
     : Serializer(getTagName())
@@ -76,8 +78,9 @@ void ParameterSerializer::readTagContent(Reader &reader) const
   {
     reader.onTextElement("value", [&](const Glib::ustring &text, const Attributes &) mutable {
       auto v = std::stod(text);
+      auto type = static_cast<EditBuffer *>(m_param->getParentGroup()->getParent())->getType();
       auto converted
-          = ParameterImportConversions::get().convert(m_param->getID().getNumber(), v, reader.getFileVersion());
+          = ParameterImportConversions::get().convert(m_param->getID().getNumber(), v, reader.getFileVersion(), type);
       m_param->loadFromPreset(reader.getTransaction(), converted);
     });
 

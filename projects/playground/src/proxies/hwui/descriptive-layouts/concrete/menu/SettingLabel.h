@@ -5,11 +5,11 @@
 #include <device-settings/Settings.h>
 #include <device-settings/Setting.h>
 
-template <class tSetting> class SettingLabel : public LabelRegular8
+template <class tSetting> class SettingLabel : public Label
 {
  public:
   explicit SettingLabel(const Rect& r)
-      : LabelRegular8(r)
+      : Label(r)
   {
     m_setting = Application::get().getSettings()->getSetting<tSetting>();
     if(m_setting)

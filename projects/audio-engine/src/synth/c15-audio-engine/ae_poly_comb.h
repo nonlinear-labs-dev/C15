@@ -20,7 +20,7 @@ namespace Engine
   class PolyCombFilter
   {
    public:
-    PolyValue m_out;
+    PolyValue m_out = {};
     PolyCombFilter();
     void init(const float _samplerate, const uint32_t _upsampleFactor);
     void apply(PolySignals &_signals, const PolyValue &_sampleA, const PolyValue &_sampleB);
@@ -31,12 +31,14 @@ namespace Engine
 
    private:
     std::vector<PolyValue> m_buffer;
-    PolyValue m_hpCoeff_b0, m_hpCoeff_b1, m_hpCoeff_a1, m_hpInStateVar, m_hpOutStateVar;
-    PolyValue m_lpCoeff, m_lpStateVar;
-    PolyValue m_apCoeff_1, m_apCoeff_2, m_apStateVar_1, m_apStateVar_2, m_apStateVar_3, m_apStateVar_4;
-    PolyValue m_decayStateVar, m_delaySamples, m_delayStateVar;
-    float m_sampleRate, m_sampleInterval, m_warpConst_PI, m_warpConst_2PI, m_freqClip_2, m_freqClip_4, m_freqClip_24576;
-    float m_delayFreqClip, m_delayConst;
-    int32_t m_buffer_indx, m_buffer_sz_m1;
+    PolyValue m_hpCoeff_b0 = {}, m_hpCoeff_b1 = {}, m_hpCoeff_a1 = {}, m_hpInStateVar = {}, m_hpOutStateVar = {};
+    PolyValue m_lpCoeff = {}, m_lpStateVar = {};
+    PolyValue m_apCoeff_1 = {}, m_apCoeff_2 = {}, m_apStateVar_1 = {}, m_apStateVar_2 = {}, m_apStateVar_3 = {},
+              m_apStateVar_4 = {};
+    PolyValue m_decayStateVar = {}, m_delaySamples = {}, m_delayStateVar = {};
+    float m_sampleRate = 0.0f, m_sampleInterval = 0.0f, m_warpConst_PI = 0.0f, m_warpConst_2PI = 0.0f,
+          m_freqClip_2 = 0.0f, m_freqClip_4 = 0.0f, m_freqClip_24576 = 0.0f;
+    float m_delayFreqClip = 0.0f, m_delayConst = 0.0f;
+    int32_t m_buffer_indx = 0, m_buffer_sz_m1 = 0;
   };
 }  // namespace Engine

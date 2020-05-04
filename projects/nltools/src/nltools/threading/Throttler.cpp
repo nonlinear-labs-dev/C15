@@ -30,3 +30,8 @@ void Throttler::delayedCallback()
     m_expiration.refresh(m_maxDelay);
   }
 }
+
+void Throttler::doActionSync()
+{
+  delayedCallback();
+}

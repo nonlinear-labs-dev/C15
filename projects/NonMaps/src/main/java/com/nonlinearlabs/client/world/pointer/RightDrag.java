@@ -2,7 +2,7 @@ package com.nonlinearlabs.client.world.pointer;
 
 import com.nonlinearlabs.client.world.Position;
 
-class RightDrag extends Drag implements Gesture.NeedsFocus, Gesture.HasPosition {
+class RightDrag extends Drag {
 
 	RightDrag(Gesture predecessor, Position from, Position to, boolean fine) {
 		super(predecessor, from, to, fine);

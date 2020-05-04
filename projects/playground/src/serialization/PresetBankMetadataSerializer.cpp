@@ -41,7 +41,7 @@ void PresetBankMetadataSerializer::readTagContent(Reader &reader) const
   reader.onTextElement("name", [&](const Glib::ustring &text, const Attributes &) {
     m_bank->setName(reader.getTransaction(), text);
 
-    if(text.find("<untitled bank>") == Glib::ustring::npos)
+    if(!text.empty())
       SplashLayout::addStatus("Reading bank " + text);
   });
 

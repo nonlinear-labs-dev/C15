@@ -1,6 +1,6 @@
 #include "SplitPointParameter.h"
 #include <parameters/scale-converters/SplitPointScaleConverter.h>
-#include <proxies/hwui/panel-unit/boled/parameter-screens/DualVoiceGroupMasterAndSplitPointLayout.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/ModulateableDualVoiceGroupMasterAndSplitPointLayout.h>
 #include "groups/ParameterGroup.h"
 #include "proxies/hwui/HWUI.h"
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterInfoLayout.h>
@@ -23,7 +23,7 @@ Layout *SplitPointParameter::createLayout(FocusAndMode focusAndMode) const
       return new ModulateableParameterEditLayout2();
     case UIMode::Select:
     default:
-      return new DualVoiceGroupMasterAndSplitPointLayout();
+      return new ModulateableDualVoiceGroupMasterAndSplitPointLayout();
   }
 }
 

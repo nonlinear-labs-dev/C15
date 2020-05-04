@@ -18,7 +18,7 @@ public class SetupUpdater extends Updater {
 	private HashMap<String, DataModelEntityBase> createSettingMap() {
 		HashMap<String, DataModelEntityBase> m = new HashMap<String, DataModelEntityBase>();
 		m.put("AftertouchCurve", SetupModel.get().systemSettings.aftertouchCurve);
-		m.put("LoadMode", SetupModel.get().systemSettings.loadMode);
+		m.put("DirectLoad", SetupModel.get().systemSettings.directLoad);
 		m.put("BaseUnitUIMode", SetupModel.get().systemSettings.baseUnitUIMode);
 		m.put("BenderCurve", SetupModel.get().systemSettings.benderCurve);
 		m.put("DateTimeAdjustment", SetupModel.get().systemSettings.datetimeAdjustment);

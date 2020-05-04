@@ -90,7 +90,7 @@ public class ContextMenuItem extends OverlayControl {
 			c = new RGBA(c, 0.5);
 		}
 		ctx.setFillStyle(c.toString());
-		ctx.setFont(fontHeightInPixels + "px 'Source Sans Pro LW25'");
+		ctx.setFont(fontHeightInPixels + "px 'SSP-LW25'");
 		ctx.setTextBaseline(TextBaseline.MIDDLE);
 		ctx.fillText(text, r.getLeft(), r.getCenterPoint().getY());
 	}

@@ -23,7 +23,7 @@ class PlayControlParameterLayout2 : public virtual ParameterLayout2
     Select = 1,
   };
 
-  void toggleMode(uint8_t desiredMode);
+  virtual void toggleMode(uint8_t desiredMode);
 
   virtual bool isModeSupported(uint8_t desiredMode) const;
 
@@ -31,7 +31,7 @@ class PlayControlParameterLayout2 : public virtual ParameterLayout2
 
   uint8_t getMode() const;
 
- private:
+ protected:
   static uint8_t s_mode;
   static int s_instanceCount;
 };
@@ -53,6 +53,12 @@ class PedalParameterLayout2 : public virtual PlayControlParameterLayout2
   PedalParameterLayout2();
 
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+
+ protected:
+  enum Mode : uint8_t
+  {
+    Behaviour = 2
+  };
 };
 
 class AftertouchParameterLayout2 : public virtual PlayControlParameterLayout2
@@ -108,15 +114,7 @@ class PlayControlWithBehaviourEditLayout2 : public PlayControlParameterEditLayou
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   bool onRotary(int inc, ButtonModifiers modifiers) override;
 
-  bool isModeSupported(uint8_t desiredMode) const override;
-
   void setMode(uint8_t desiredMode) override;
-
- private:
-  enum Mode : uint8_t
-  {
-    Behaviour = 2,
-  };
 };
 
 class RibbonParameterSelectLayout2 : public PlayControlParameterSelectLayout2, public RibbonParameterLayout2
@@ -128,6 +126,17 @@ class RibbonParameterSelectLayout2 : public PlayControlParameterSelectLayout2, p
   RibbonParameterSelectLayout2();
 
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
+
+ protected:
+  bool isModeSupported(uint8_t desiredMode) const override;
+  void setMode(uint8_t desiredMode) override;
+
+ private:
+  enum Mode : uint8_t
+  {
+    Behaviour = 2,
+  };
 };
 
 class PedalParameterSelectLayout2 : public PlayControlParameterSelectLayout2, public PedalParameterLayout2
@@ -139,6 +148,17 @@ class PedalParameterSelectLayout2 : public PlayControlParameterSelectLayout2, pu
   PedalParameterSelectLayout2();
 
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
+
+ protected:
+  bool isModeSupported(uint8_t desiredMode) const override;
+  void setMode(uint8_t desiredMode) override;
+
+ private:
+  enum Mode : uint8_t
+  {
+    Behaviour = 2,
+  };
 };
 
 class AftertouchParameterSelectLayout2 : public PlayControlParameterSelectLayout2, public AftertouchParameterLayout2

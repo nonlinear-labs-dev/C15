@@ -3,6 +3,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/PhysicalControlParameter.h>
+#include <proxies/hwui/FrameBuffer.h>
 #include <sigc++/sigc++.h>
 
 PhysicalControlBehaviorLabel::PhysicalControlBehaviorLabel(const Rect &pos)
@@ -31,4 +32,11 @@ void PhysicalControlBehaviorLabel::onParamValueChanged(const Parameter *param)
       setText(p->getCurrentBehavior());
     }
   }
+}
+void PhysicalControlBehaviorLabel::setBackgroundColor(FrameBuffer &fb) const
+{
+  if(isVisible())
+    Control::setBackgroundColor(fb);
+  else
+    fb.setColor(FrameBufferColors::Transparent);
 }

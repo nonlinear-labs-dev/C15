@@ -3,7 +3,6 @@ package com.nonlinearlabs.client;
 import java.util.Date;
 import java.util.LinkedList;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;

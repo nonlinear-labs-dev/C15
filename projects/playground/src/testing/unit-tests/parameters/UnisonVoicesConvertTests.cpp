@@ -1,4 +1,4 @@
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <parameters/UnisonVoicesParameter.h>
 #include "testing/TestHelper.h"
 

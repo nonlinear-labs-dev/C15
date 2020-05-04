@@ -30,20 +30,21 @@
 #include <serialization/EditBufferSerializer.h>
 #include <iostream>
 #include <giomm.h>
+#include "UsageMode.h"
 
 HWUI::HWUI()
-    : m_readersCancel(Gio::Cancellable::create())
+    : m_voiceGoupSignal {}
+    , m_currentVoiceGroup { VoiceGroup::I }
+    , m_readersCancel(Gio::Cancellable::create())
     , m_buttonStates { false }
     , m_focusAndMode(UIFocus::Parameters, UIMode::Select)
     , m_blinkCount(0)
 {
-#ifdef _DEVELOPMENT_PC
   if(isatty(fileno(stdin)))
   {
     m_keyboardInput = Gio::DataInputStream::create(Gio::UnixInputStream::create(0, true));
     m_keyboardInput->read_line_async(mem_fun(this, &HWUI::onKeyboardLineRead), m_readersCancel);
   }
-#endif
 
   nltools::msg::receive<nltools::msg::ButtonChangedMessage>(nltools::msg::EndPoint::Playground,
                                                             sigc::mem_fun(this, &HWUI::onButtonMessage));
@@ -334,6 +335,9 @@ BaseUnit &HWUI::getBaseUnit()
 
 void HWUI::onButtonPressed(Buttons buttonID, bool state)
 {
+  if(buttonID == Buttons::BUTTON_ENCODER)
+    buttonID = Buttons::BUTTON_ENTER;
+
   m_buttonStates[(int) buttonID] = state;
 
   setModifiers(buttonID, state);
@@ -348,7 +352,7 @@ void HWUI::onButtonPressed(Buttons buttonID, bool state)
         {
           if(m_focusAndMode.focus == UIFocus::Setup)
           {
-            undoableSetFocusAndMode(UIFocus::Parameters);
+            undoableSetFocusAndMode(getOldFocusAndMode());
           }
           else
           {
@@ -671,14 +675,13 @@ FocusAndMode HWUI::removeEditOnFocusChange(FocusAndMode in) const
   const bool switchFromPresetManagerToParameter = (isCurrentPresetManager && isDesiredParameter);
   const bool switchFromPresetManagerToSound = (isCurrentPresetManager && isDesiredSound);
 
-  const bool switchFromParameterToPresetManager = (isCurrentParameter && isDesiredPresetManager);
   const bool switchFromParameterToSound = (isCurrentParameter && isDesiredSound);
 
   const bool switchFromSoundToPresetManager = (isCurrentSound && isDesiredPresetManager);
   const bool switchFromSoundToParameter = (isCurrentSound && isDesiredParameter);
 
-  if(switchFromPresetManagerToParameter || switchFromParameterToPresetManager || switchFromSoundToPresetManager
-     || switchFromSoundToParameter || switchFromPresetManagerToSound || switchFromParameterToSound)
+  if(switchFromPresetManagerToParameter || switchFromSoundToPresetManager || switchFromSoundToParameter
+     || switchFromPresetManagerToSound || switchFromParameterToSound)
   {
     if(m_focusAndMode.mode == UIMode::Edit)
     {

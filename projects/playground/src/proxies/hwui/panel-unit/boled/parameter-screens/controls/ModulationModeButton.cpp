@@ -9,6 +9,9 @@ ModulationModeButton::ModulationModeButton(const Glib::ustring &caption, Buttons
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
       sigc::mem_fun(this, &ModulationModeButton::onParameterSelectionChanged));
+
+  Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
+      sigc::mem_fun(this, &ModulationModeButton::onSoundTypeChanged), false);
 }
 
 ModulationModeButton::~ModulationModeButton()
@@ -19,7 +22,13 @@ void ModulationModeButton::onParameterSelectionChanged(Parameter *oldParameter, 
 {
   if(newParameter)
   {
+    m_param = newParameter;
     m_paramValueConnection.disconnect();
     m_paramValueConnection = newParameter->onParameterChanged(sigc::mem_fun(this, &ModulationModeButton::update));
   }
+}
+
+void ModulationModeButton::onSoundTypeChanged()
+{
+  update(m_param);
 }

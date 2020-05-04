@@ -18,10 +18,17 @@ MiniParameter::MiniParameter(Parameter *param, const Rect &pos)
   }
   else
   {
-    if(param->getVisualizationStyle() == Parameter::VisualizationStyle::Dot)
-      addControl(new MiniParameterDotSlider(param, Rect(0, 10, 56, 2)));
-    else
-      addControl(new MiniParameterBarSlider(param, Rect(0, 10, 56, 2)));
+    switch(param->getVisualizationStyle())
+    {
+
+      case Parameter::VisualizationStyle::Bar:
+      case Parameter::VisualizationStyle::BarFromRight:
+        addControl(new MiniParameterBarSlider(param, Rect(0, 10, 56, 2)));
+        break;
+      case Parameter::VisualizationStyle::Dot:
+        addControl(new MiniParameterDotSlider(param, Rect(0, 10, 56, 2)));
+        break;
+    }
   }
 }
 

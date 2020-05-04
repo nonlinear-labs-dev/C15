@@ -200,14 +200,16 @@ void PanelUnitSoundMode::setup()
   setupButtonConnection(Buttons::BUTTON_SOUND, [&](Buttons button, ButtonModifiers modifiers, bool state) {
     if(state)
     {
+      auto hwui = Application::get().getHWUI();
+
       auto focusAndMode = Application::get().getHWUI()->getFocusAndMode();
       if(focusAndMode.focus == UIFocus::Sound)
         if(focusAndMode.mode == UIMode::Edit || focusAndMode.detail == UIDetail::Voices)
-          Application::get().getHWUI()->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
+          hwui->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
         else
-          Application::get().getHWUI()->setFocusAndMode({ UIFocus::Parameters, UIMode::Select });
+          hwui->setFocusAndMode(hwui->getOldFocusAndMode());
       else
-        Application::get().getHWUI()->undoableSetFocusAndMode(UIFocus::Sound);
+        hwui->undoableSetFocusAndMode(UIFocus::Sound);
     }
 
     return true;

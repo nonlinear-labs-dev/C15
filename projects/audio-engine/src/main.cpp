@@ -1,6 +1,7 @@
-#include "Options.h"
+#include "AudioEngineOptions.h"
 #include "synth/SimpleSynth.h"
 #include "synth/C15Synth.h"
+#include "synth/CPUBurningSynth.h"
 #include "ui/CommandlinePerformanceWatch.h"
 
 #include <nltools/logging/Log.h>
@@ -14,7 +15,7 @@
 #include "ui/C15_CLI.h"
 
 static Glib::RefPtr<Glib::MainLoop> theMainLoop;
-static std::unique_ptr<Options> theOptions;
+static std::unique_ptr<AudioEngineOptions> theOptions;
 
 void quit(int)
 {
@@ -29,7 +30,7 @@ void connectSignals()
   signal(SIGTERM, quit);
 }
 
-const Options *getOptions()
+const AudioEngineOptions *getOptions()
 {
   return theOptions.get();
 }
@@ -40,7 +41,7 @@ void runMainLoop()
   theMainLoop->run();
 }
 
-void setupMessaging(const Options *o)
+void setupMessaging(const AudioEngineOptions *o)
 {
   using namespace nltools::msg;
   Configuration conf;
@@ -49,25 +50,41 @@ void setupMessaging(const Options *o)
   nltools::msg::init(conf);
 }
 
+std::unique_ptr<Synth> createSynth(const AudioEngineOptions *options)
+{
+  if(options->getNumCpuBurningSines())
+    return std::make_unique<CPUBurningSynth>(options);
+
+  return std::make_unique<C15Synth>(options);
+}
+
+std::unique_ptr<C15_CLI> createCLI(Synth *synth)
+{
+  if(auto c15 = dynamic_cast<C15Synth *>(synth))
+    return std::make_unique<C15_CLI>(c15);
+
+  return nullptr;
+}
+
 int main(int args, char *argv[])
 {
   Glib::init();
   connectSignals();
-  theOptions = std::make_unique<Options>(args, argv);
+  theOptions = std::make_unique<AudioEngineOptions>(args, argv);
   setupMessaging(theOptions.get());
 
   if(theOptions->doMeasurePerformance())
   {
-    auto synth = std::make_unique<C15Synth>();
+    auto synth = std::make_unique<C15Synth>(theOptions.get());
     synth->measurePerformance(std::chrono::seconds(5));  // warm up
-    auto result = synth->measurePerformance(std::chrono::seconds(5));
+    auto result = std::get<1>(synth->measurePerformance(std::chrono::seconds(5)));
     nltools::Log::info("Audio engine performs at", result, "x realtime.");
     return EXIT_SUCCESS;
   }
 
-  //auto synth = std::make_unique<SimpleSynth>();
-  auto synth = std::make_unique<C15Synth>();
-  C15_CLI commandLineInterface(synth.get());
+  auto synth = createSynth(theOptions.get());
+  auto cli = createCLI(synth.get());
+
   CommandlinePerformanceWatch watch(synth->getAudioOut());
   synth->start();
   MidiHeartBeat heartbeat(theOptions->getHeartBeatDeviceName());

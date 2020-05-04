@@ -41,6 +41,11 @@ public class UnisonAndMonoModuleHeader extends LabelSmall {
 	}
 
 	@Override
+	protected double getFontHeight() {
+		return 16;
+	}
+
+	@Override
 	protected boolean shouldShowTextForLevelOfDetail(double levelOfDetail) {
 		return true;
 	}
@@ -63,8 +68,4 @@ public class UnisonAndMonoModuleHeader extends LabelSmall {
 		return (float) 1;
 	}
 
-	@Override
-	protected double getFontHeight() {
-		return 16;
-	}
 }

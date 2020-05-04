@@ -6,8 +6,15 @@ BasicItemWithValueText::BasicItemWithValueText(const Glib::ustring &label, const
     : BasicItem(label, r)
 {
   auto rightHalf = r;
+  const auto totalWidth = rightHalf.getWidth() / 2;
+  const auto indicationWidth = 10;
+  const auto labelWidth = totalWidth - indicationWidth;
+
   rightHalf.setTop(r.getTop() + 1);
-  rightHalf.setWidth(rightHalf.getWidth() / 2);
-  rightHalf.setLeft(r.getLeft() + rightHalf.getWidth());
+  rightHalf.setWidth(labelWidth);
+  rightHalf.setLeft(r.getLeft() + labelWidth + indicationWidth);
   addControl(new CaptionLabel<LeftAligned9pxCaptionLabel>(value, rightHalf, true, false));
+
+  auto indicationPos = Rect { rightHalf.getRight(), rightHalf.getTop(), indicationWidth, rightHalf.getHeight() - 1 };
+  addControl(new Label("...", indicationPos));
 }

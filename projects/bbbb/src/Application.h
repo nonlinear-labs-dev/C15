@@ -4,7 +4,7 @@
 #include <memory>
 #include <glibmm/ustring.h>
 
-class Options;
+class AudioEngineOptions;
 class Bridges;
 class WiFiManager;
 class USBManager;
@@ -21,7 +21,7 @@ class Application
 
   void run();
 
-  Options *getOptions();
+  AudioEngineOptions *getOptions();
   Bridges *getBridges();
 
  private:
@@ -29,7 +29,7 @@ class Application
 
   static Application *theApp;
 
-  std::unique_ptr<Options> m_options;
+  std::unique_ptr<AudioEngineOptions> m_options;
   Glib::ustring m_selfPath;
   std::unique_ptr<Bridges> m_bridges;
   std::unique_ptr<WiFiManager> m_wifiManager;

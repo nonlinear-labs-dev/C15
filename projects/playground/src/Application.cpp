@@ -129,6 +129,11 @@ Application &Application::get()
   return *theApp;
 }
 
+bool Application::exists()
+{
+  return theApp != nullptr;
+}
+
 void Application::run()
 {
   while(!m_isQuit)

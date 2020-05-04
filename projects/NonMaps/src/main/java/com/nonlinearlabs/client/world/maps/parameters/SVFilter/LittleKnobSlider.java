@@ -16,11 +16,10 @@ public class LittleKnobSlider extends SliderHorizontal {
 
 	protected void drawHandle(Context2d ctx, double indicatorAreaWidth, double indicatorStartX) {
 		Rect pixRect = getPixRect();
-
 		ctx.setFillStyle(getColorIndicator().toString());
 
 		double handleWidth = toXPixels(3);
-		double width = toXPixels(getBasicWidth() - 41 + 1) - handleWidth;
+		double width = toXPixels(getBasicWidth() - 41 + 1);
 
 		ctx.fillRect(indicatorStartX + getValue() * width - toXPixels(0.5), pixRect.getTop() + toYPixels(0.5),
 				handleWidth, pixRect.getHeight() - toYPixels(1));
@@ -29,6 +28,7 @@ public class LittleKnobSlider extends SliderHorizontal {
 		ctx.fillRect(indicatorStartX + getValue() * width - toXPixels(1) + handleWidth / 2,
 				pixRect.getTop() + toYPixels(0.5), toXPixels(1), pixRect.getHeight() - toYPixels(1));
 
-	}
+	
+		}
 
 }

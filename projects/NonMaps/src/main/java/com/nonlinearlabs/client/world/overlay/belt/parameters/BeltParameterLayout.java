@@ -10,6 +10,8 @@ import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.useCases.IncrementalChanger;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
+import com.nonlinearlabs.client.world.Rect;
+import com.nonlinearlabs.client.world.overlay.Label;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.belt.Belt;
@@ -81,11 +83,30 @@ public class BeltParameterLayout extends OverlayLayout {
 
 	}
 
+	private final class ThisParameterIsDisabledInfoText extends Label {
+
+		public ThisParameterIsDisabledInfoText(OverlayLayout parent) {
+			super(parent);
+		}
+
+		@Override
+		public String getDrawText(Context2d ctx) {
+			return "Only available with Layer Sounds";
+		}
+
+		@Override
+		protected double getFontHeight(Rect pixRect) {
+			return Millimeter.toPixels(8);
+		}
+
+	}
+
 	private Mode mode = Mode.modulateableParameter;
 	private IncrementalChanger currentIncrementalChanger;
 
 	private OverlayControl modulationButtons;
 	private Sliders slider;
+	private OverlayControl thisParameterIsDisabled;
 	private OverlayControl mcSourceDisplay;
 	private OverlayControl editorMode;
 	private OverlayControl valueDisplay;
@@ -122,6 +143,8 @@ public class BeltParameterLayout extends OverlayLayout {
 		addChild(mcLowerBoundRadioButton = new MCLowerBoundButton(this));
 		addChild(mcUpperBoundRadioButton = new MCUpperBoundButton(this));
 
+		addChild(thisParameterIsDisabled = new ThisParameterIsDisabledInfoText(this));
+
 		addChild(mcUpperClip = new ParameterClippingLabel(this, Mode.mcUpper));
 		addChild(mcLowerClip = new ParameterClippingLabel(this, Mode.mcLower));
 		addChild(currentRecall = new ParameterRecallArea(this));
@@ -157,6 +180,12 @@ public class BeltParameterLayout extends OverlayLayout {
 	}
 
 	private void fixMode() {
+
+		if(isParameterDisabled() != thisParameterIsDisabled.isVisible())
+		{
+			showAndHideChildren();
+		}
+
 		if (!isModulateable()) {
 			setMode(Mode.unmodulateableParameter);
 			return;
@@ -244,6 +273,8 @@ public class BeltParameterLayout extends OverlayLayout {
 			walkerX += r.width;
 		}
 
+		thisParameterIsDisabled.doLayout(sliderLeft, third - upperElementsY, slider.getRelativePosition().getWidth(), third);
+
 		parameterName.doLayout(sliderLeft, 2 * third - upperElementsY, slider.getRelativePosition().getWidth(), third);
 
 		final double dottedLineInset = 5;
@@ -259,28 +290,31 @@ public class BeltParameterLayout extends OverlayLayout {
 	protected void showAndHideChildren() {
 		instantiateRecall();
 
+		final boolean isEnabled = !isParameterDisabled();
+
 		modulationButtons.setVisible(
-				isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue));
-		mcSourceDisplay.setVisible(isOneOf(Mode.modulateableParameter));
-		editorMode.setVisible(true);
-		slider.setVisible(true);
+				isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
+		mcSourceDisplay.setVisible(isOneOf(Mode.modulateableParameter) && isEnabled);
+		editorMode.setVisible(isEnabled);
+		slider.setVisible(isEnabled);
+		thisParameterIsDisabled.setVisible(!isEnabled);
 		parameterName.setVisible(true);
 
 		final boolean modAssigned = isModulationAssigned();
 
 		mcPositionRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue));
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
 		mcAmountRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue));
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
 		mcLowerBoundRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue));
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
 		mcUpperBoundRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue));
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
 
 		valueDisplay.setVisible(isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper,
-				Mode.paramValue, Mode.modulateableParameter, Mode.unmodulateableParameter));
+				Mode.paramValue, Mode.modulateableParameter, Mode.unmodulateableParameter) && isEnabled);
 
-		dottedLine.setVisible(isOneOf(Mode.modulateableParameter));
+		dottedLine.setVisible(isOneOf(Mode.modulateableParameter) && isEnabled);
 		infoButton.setVisible(isOneOf(Mode.modulateableParameter, Mode.unmodulateableParameter));
 
 		final ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
@@ -344,6 +378,16 @@ public class BeltParameterLayout extends OverlayLayout {
 		return p.modulation.isModulated;
 	}
 
+	public boolean isParameterDisabled() {
+		final ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
+		return p.disabled;
+	}
+
+	public boolean isParameterHidden() {
+		final ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
+		return p.disabled;
+	}
+
 	public boolean isModulateable() {
 		final ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
 		return p.modulation.isModulateable;
@@ -403,6 +447,9 @@ public class BeltParameterLayout extends OverlayLayout {
 
 	public IncrementalChanger startEdit(final double width) {
 		final ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
+		if(isParameterDisabled() || isParameterHidden())
+			return null;
+
 		switch (mode) {
 		case mcAmount:
 			currentIncrementalChanger = EditBufferUseCases.get().startEditMCAmount(p.id, width);

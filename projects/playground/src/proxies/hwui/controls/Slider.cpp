@@ -5,12 +5,15 @@
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
 
 Slider::Slider(Parameter *param, const Rect &rect)
     : super(rect)
     , m_value(0)
     , m_bipolar(false)
 {
+  Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
+      sigc::mem_fun(this, &Slider::onSoundTypeChanged), false);
   setParameter(param);
 }
 
@@ -32,6 +35,8 @@ void Slider::setParameter(Parameter *param)
     else
       setValue(0, false);
 
+    auto visible = ParameterSelectLayout2::isParameterAvailableInSoundType(m_param);
+    setVisible(visible);
     setDirty();
   }
 }
@@ -44,6 +49,11 @@ Parameter *Slider::getParameter() const
 void Slider::onParamValueChanged(const Parameter *param)
 {
   setValue(param->getControlPositionValue(), param->isBiPolar());
+}
+
+void Slider::onSoundTypeChanged()
+{
+  setVisible(ParameterLayout2::isParameterAvailableInSoundType(m_param));
 }
 
 void Slider::setValue(tDisplayValue v, bool bipolar)
@@ -77,4 +87,10 @@ bool Slider::hasBorder() const
 bool Slider::isBiPolar() const
 {
   return m_bipolar;
+}
+
+void Slider::drawBackground(FrameBuffer &fb)
+{
+  if(isVisible())
+    Control::drawBackground(fb);
 }

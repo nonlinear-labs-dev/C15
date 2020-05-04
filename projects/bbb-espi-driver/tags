@@ -1,0 +1,221 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BUTTON_BUFFER_SIZE	espi_buttons.c	12;"	d	file:
+BUTTON_BYTES_CENTRAL_PANEL	espi_buttons.c	7;"	d	file:
+BUTTON_BYTES_GENERAL_PANELS	espi_buttons.c	6;"	d	file:
+BUTTON_BYTES_SOLED_PANEL	espi_buttons.c	8;"	d	file:
+BUTTON_STATES_SIZE	espi_buttons.c	9;"	d	file:
+ESPI_BUTTON_DEV_MAJOR	espi_buttons.c	5;"	d	file:
+ESPI_EDIT_BOLED_DEVICE	espi_driver.h	11;"	d
+ESPI_EDIT_BUTTONS_DEVICE	espi_driver.h	10;"	d
+ESPI_EDIT_ENCODER_DEVICE	espi_driver.h	12;"	d
+ESPI_EDIT_PANEL_PORT	espi_driver.h	9;"	d
+ESPI_ENCODER_DEV_MAJOR	espi_lpc8xx.c	6;"	d	file:
+ESPI_EPC_CONTROL_DEVICE	espi_driver.h	24;"	d
+ESPI_EPC_CTRL_DEV_MAJOR	espi_epc_ctrl.c	6;"	d	file:
+ESPI_EPC_CTRL_STATE_PORT	espi_driver.h	23;"	d
+ESPI_EPC_STATE_DEVICE	espi_driver.h	25;"	d
+ESPI_LED_DEV_MAJOR	espi_leds.c	6;"	d	file:
+ESPI_LPC_CTRL_DEVICE	espi_driver.h	30;"	d
+ESPI_LPC_CTRL_PORT	espi_driver.h	31;"	d
+ESPI_MAIN_CONTROL_DEVICE	espi_driver.h	28;"	d
+ESPI_MAIN_CONTROL_PORT	espi_driver.h	27;"	d
+ESPI_MAIN_CTRL_DEV_MAJOR	espi_lpc_ctrl.c	5;"	d	file:
+ESPI_PLAY_PANEL_PORT	espi_driver.h	20;"	d
+ESPI_PLAY_SOLED_DEVICE	espi_driver.h	21;"	d
+ESPI_RIBBON_LEDS_PORT	espi_driver.h	18;"	d
+ESPI_RIBBON_LED_DEV_MAJOR	espi_ribbon_leds.c	6;"	d	file:
+ESPI_SCS_NUM	espi_driver.h	7;"	d
+ESPI_SELECTION_BUTTONS_DEVICE	espi_driver.h	15;"	d
+ESPI_SELECTION_LEDS_DEVICE	espi_driver.h	16;"	d
+ESPI_SELECTION_PANEL_PORT	espi_driver.h	14;"	d
+ESPI_SSD1322_SPEED	espi_ssd1322.c	7;"	d	file:
+LED_STATES_SIZE	espi_leds.c	7;"	d	file:
+RIBBON_LED_STATES_SIZE	espi_ribbon_leds.c	7;"	d	file:
+SRC	Makefile	/^SRC := $(shell pwd)$/;"	m
+SSD1305_BUFF_SIZE	espi_ssd1305.c	27;"	d	file:
+SSD1305_DISP_NOR	espi_ssd1305.c	20;"	d	file:
+SSD1305_DISP_OFF	espi_ssd1305.c	8;"	d	file:
+SSD1305_DISP_ON	espi_ssd1305.c	9;"	d	file:
+SSD1305_EON_OFF	espi_ssd1305.c	19;"	d	file:
+SSD1305_FB_OFFSET	espi_ssd1305.c	6;"	d	file:
+SSD1305_MEM_ADDRESSING	espi_ssd1305.c	21;"	d	file:
+SSD1305_SET_AREA_COLOR	espi_ssd1305.c	12;"	d	file:
+SSD1305_SET_CHARGE	espi_ssd1305.c	17;"	d	file:
+SSD1305_SET_COL_ADDR	espi_ssd1305.c	11;"	d	file:
+SSD1305_SET_COL_HI	espi_ssd1305.c	23;"	d	file:
+SSD1305_SET_COL_LO	espi_ssd1305.c	24;"	d	file:
+SSD1305_SET_CONTRAST	espi_ssd1305.c	16;"	d	file:
+SSD1305_SET_OFFSET	espi_ssd1305.c	15;"	d	file:
+SSD1305_SET_PAGE	espi_ssd1305.c	22;"	d	file:
+SSD1305_SET_PAGE_ADDR	espi_ssd1305.c	25;"	d	file:
+SSD1305_SET_RATIO_OSC	espi_ssd1305.c	10;"	d	file:
+SSD1305_SET_SCAN_NOR	espi_ssd1305.c	14;"	d	file:
+SSD1305_SET_SEG_REMAP1	espi_ssd1305.c	13;"	d	file:
+SSD1305_SET_VCOM	espi_ssd1305.c	18;"	d	file:
+SSD1305_WIDTH	espi_ssd1305.c	26;"	d	file:
+SSD1322_BUFF_HEIGHT	espi_ssd1322.c	36;"	d	file:
+SSD1322_BUFF_SIZE	espi_ssd1322.c	34;"	d	file:
+SSD1322_BUFF_WIDTH	espi_ssd1322.c	35;"	d	file:
+SSD1322_SET_CMD_LOCK	espi_ssd1322.c	9;"	d	file:
+SSD1322_SET_COL_ADDR	espi_ssd1322.c	12;"	d	file:
+SSD1322_SET_CONTRAST_CUR	espi_ssd1322.c	23;"	d	file:
+SSD1322_SET_DISP_CLK	espi_ssd1322.c	14;"	d	file:
+SSD1322_SET_DISP_ENH_A	espi_ssd1322.c	21;"	d	file:
+SSD1322_SET_DISP_ENH_B	espi_ssd1322.c	22;"	d	file:
+SSD1322_SET_DISP_MODE	espi_ssd1322.c	30;"	d	file:
+SSD1322_SET_DISP_OFF	espi_ssd1322.c	10;"	d	file:
+SSD1322_SET_DISP_OFFSET	espi_ssd1322.c	16;"	d	file:
+SSD1322_SET_DISP_ON	espi_ssd1322.c	11;"	d	file:
+SSD1322_SET_FUNC_SEL	espi_ssd1322.c	20;"	d	file:
+SSD1322_SET_GPIO	espi_ssd1322.c	19;"	d	file:
+SSD1322_SET_LINEAR_GST	espi_ssd1322.c	25;"	d	file:
+SSD1322_SET_MASTER_CUR	espi_ssd1322.c	24;"	d	file:
+SSD1322_SET_MUX_RATIO	espi_ssd1322.c	15;"	d	file:
+SSD1322_SET_PARTIAL_DISP	espi_ssd1322.c	31;"	d	file:
+SSD1322_SET_PHASE_LEN	espi_ssd1322.c	26;"	d	file:
+SSD1322_SET_PRECH_PER	espi_ssd1322.c	28;"	d	file:
+SSD1322_SET_PRECH_VOL	espi_ssd1322.c	27;"	d	file:
+SSD1322_SET_REMAP	espi_ssd1322.c	18;"	d	file:
+SSD1322_SET_ROW_ADDR	espi_ssd1322.c	13;"	d	file:
+SSD1322_SET_START_LINE	espi_ssd1322.c	17;"	d	file:
+SSD1322_SET_VCOMH	espi_ssd1322.c	29;"	d	file:
+SSD1322_WRITE_RAM	espi_ssd1322.c	32;"	d	file:
+_ESPI_DRIVER_H_	espi_driver.h	2;"	d
+_ESPI_FB_H_	espi_fb.h	2;"	d
+__this_module	espi_driver.mod.c	/^__visible struct module __this_module$/;"	v	typeref:struct:module
+__used	espi_driver.mod.c	/^__used$/;"	v	file:
+__used	espi_driver.mod.c	/^__used$/;"	v	typeref:struct:____versions	file:
+btn_buff_head	espi_buttons.c	/^static u32 btn_buff_head, btn_buff_tail;$/;"	v	file:
+btn_buff_tail	espi_buttons.c	/^static u32 btn_buff_head, btn_buff_tail;$/;"	v	file:
+btn_sm1	espi_buttons.c	/^static u8 *btn_sm1;$/;"	v	file:
+btn_st	espi_buttons.c	/^static u8 *btn_st;$/;"	v	file:
+button_buff	espi_buttons.c	/^static u8 *button_buff;$/;"	v	file:
+buttons_class	espi_buttons.c	/^static struct class *buttons_class;$/;"	v	typeref:struct:class	file:
+buttons_fops	espi_buttons.c	/^static const struct file_operations buttons_fops = {$/;"	v	typeref:struct:file_operations	file:
+buttons_fops_poll	espi_buttons.c	/^static unsigned int buttons_fops_poll(struct file *filp, poll_table *wait)$/;"	f	file:
+buttons_fops_read	espi_buttons.c	/^static ssize_t buttons_fops_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos)$/;"	f	file:
+dev	espi_driver.h	/^	struct device *dev;$/;"	m	struct:espi_driver	typeref:struct:espi_driver::device
+encoder_class	espi_lpc8xx.c	/^static struct class *encoder_class;$/;"	v	typeref:struct:class	file:
+encoder_delta	espi_lpc8xx.c	/^static s8 encoder_delta;$/;"	v	file:
+encoder_fops	espi_lpc8xx.c	/^static const struct file_operations encoder_fops = {$/;"	v	typeref:struct:file_operations	file:
+encoder_fops_open	espi_lpc8xx.c	/^static s32 encoder_fops_open(struct inode *inode, struct file *filp)$/;"	f	file:
+encoder_fops_poll	espi_lpc8xx.c	/^static unsigned int encoder_fops_poll(struct file *filp, poll_table *wait)$/;"	f	file:
+encoder_fops_read	espi_lpc8xx.c	/^static ssize_t encoder_fops_read(    struct file *filp,$/;"	f	file:
+encoder_fops_release	espi_lpc8xx.c	/^static s32 encoder_fops_release(struct inode *inode, struct file *filp)$/;"	f	file:
+encoder_fops_write	espi_lpc8xx.c	/^static ssize_t encoder_fops_write(   struct file *filp,$/;"	f	file:
+epc_ctrl	espi_epc_ctrl.c	/^static u8 epc_ctrl, epc_new_ctrl, epc_stat;$/;"	v	file:
+epc_ctrl_class	espi_epc_ctrl.c	/^static struct class *epc_ctrl_class;$/;"	v	typeref:struct:class	file:
+epc_ctrl_fops	espi_epc_ctrl.c	/^static const struct file_operations epc_ctrl_fops = {$/;"	v	typeref:struct:file_operations	file:
+epc_ctrl_fops_read	espi_epc_ctrl.c	/^static ssize_t epc_ctrl_fops_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos)$/;"	f	file:
+epc_ctrl_fops_release	espi_epc_ctrl.c	/^static s32 epc_ctrl_fops_release(struct inode *inode, struct file *filp)$/;"	f	file:
+epc_ctrl_fops_write	espi_epc_ctrl.c	/^static ssize_t epc_ctrl_fops_write(struct file *filp, const char __user *buf, size_t count, loff_t *f_pos)$/;"	f	file:
+epc_new_ctrl	espi_epc_ctrl.c	/^static u8 epc_ctrl, epc_new_ctrl, epc_stat;$/;"	v	file:
+epc_stat	espi_epc_ctrl.c	/^static u8 epc_ctrl, epc_new_ctrl, epc_stat;$/;"	v	file:
+espi	espi_driver.h	/^	struct espi_driver *espi;$/;"	m	struct:oleds_fb_par	typeref:struct:oleds_fb_par::espi_driver
+espi_driver	espi_driver.h	/^struct espi_driver {$/;"	s
+espi_driver-y	Makefile	/^espi_driver-y := espi_driver_core.o espi_fb.o espi_lpc8xx.o espi_ssd1322.o espi_ssd1305.o espi_buttons.o espi_ribbon_leds.o espi_leds.o espi_epc_ctrl.o espi_lpc_ctrl.o$/;"	m
+espi_driver_buttons_cleanup	espi_buttons.c	/^s32 espi_driver_buttons_cleanup(struct espi_driver *sb)$/;"	f
+espi_driver_buttons_setup	espi_buttons.c	/^s32 espi_driver_buttons_setup(struct espi_driver *sb)$/;"	f
+espi_driver_driver	espi_driver_core.c	/^static struct spi_driver espi_driver_driver = {$/;"	v	typeref:struct:spi_driver	file:
+espi_driver_encoder_cleanup	espi_lpc8xx.c	/^s32 espi_driver_encoder_cleanup(struct espi_driver *sb)$/;"	f
+espi_driver_encoder_poll	espi_lpc8xx.c	/^void espi_driver_encoder_poll(struct espi_driver *p)$/;"	f
+espi_driver_encoder_setup	espi_lpc8xx.c	/^s32 espi_driver_encoder_setup(struct espi_driver *sb)$/;"	f
+espi_driver_epc_control_poll	espi_epc_ctrl.c	/^void espi_driver_epc_control_poll(struct espi_driver *p)$/;"	f
+espi_driver_epc_ctrl_cleanup	espi_epc_ctrl.c	/^s32 espi_driver_epc_ctrl_cleanup(struct espi_driver *sb)$/;"	f
+espi_driver_epc_ctrl_setup	espi_epc_ctrl.c	/^s32 espi_driver_epc_ctrl_setup(struct espi_driver *sb)$/;"	f
+espi_driver_epc_status_poll	espi_epc_ctrl.c	/^void espi_driver_epc_status_poll(struct espi_driver *p)$/;"	f
+espi_driver_exit	espi_driver_core.c	/^module_exit(espi_driver_exit);$/;"	v
+espi_driver_exit	espi_driver_core.c	/^static void __exit espi_driver_exit( void )$/;"	f	file:
+espi_driver_init	espi_driver_core.c	/^module_init(espi_driver_init);$/;"	v
+espi_driver_init	espi_driver_core.c	/^static s32 __init espi_driver_init( void )$/;"	f	file:
+espi_driver_leds_cleanup	espi_leds.c	/^s32 espi_driver_leds_cleanup(struct espi_driver *sb)$/;"	f
+espi_driver_leds_poll	espi_leds.c	/^void espi_driver_leds_poll(struct espi_driver *p)$/;"	f
+espi_driver_leds_setup	espi_leds.c	/^s32 espi_driver_leds_setup(struct espi_driver *sb)$/;"	f
+espi_driver_lpc_ctrl_cleanup	espi_lpc_ctrl.c	/^s32 espi_driver_lpc_ctrl_cleanup(struct espi_driver *sb)$/;"	f
+espi_driver_lpc_ctrl_poll	espi_lpc_ctrl.c	/^void espi_driver_lpc_ctrl_poll(struct espi_driver *p)$/;"	f
+espi_driver_lpc_ctrl_setup	espi_lpc_ctrl.c	/^s32 espi_driver_lpc_ctrl_setup(struct espi_driver *sb)$/;"	f
+espi_driver_oleds_fb_cleanup	espi_fb.c	/^s32 espi_driver_oleds_fb_cleanup(struct espi_driver *sb)$/;"	f
+espi_driver_oleds_fb_setup	espi_fb.c	/^s32 espi_driver_oleds_fb_setup(struct espi_driver *sb)$/;"	f
+espi_driver_poll	espi_driver_core.c	/^static void espi_driver_poll(struct delayed_work *p)$/;"	f	file:
+espi_driver_pollbuttons	espi_buttons.c	/^void espi_driver_pollbuttons(struct espi_driver *p)$/;"	f
+espi_driver_probe	espi_driver_core.c	/^static s32 espi_driver_probe(struct spi_device *dev)$/;"	f	file:
+espi_driver_rb_leds_cleanup	espi_ribbon_leds.c	/^s32 espi_driver_rb_leds_cleanup(struct espi_driver *sb)$/;"	f
+espi_driver_rb_leds_poll	espi_ribbon_leds.c	/^void espi_driver_rb_leds_poll(struct espi_driver *p)$/;"	f
+espi_driver_rb_leds_setup	espi_ribbon_leds.c	/^s32 espi_driver_rb_leds_setup(struct espi_driver *sb)$/;"	f
+espi_driver_remove	espi_driver_core.c	/^static s32 espi_driver_remove(struct spi_device *spi)$/;"	f	file:
+espi_driver_scs_select	espi_driver_core.c	/^void espi_driver_scs_select(struct espi_driver *spi, s32 port, s32 device)$/;"	f
+espi_driver_set_mode	espi_driver_core.c	/^s32 espi_driver_set_mode(struct spi_device *dev, u16 mode)$/;"	f
+espi_driver_ssd1305_poll	espi_ssd1305.c	/^void espi_driver_ssd1305_poll(struct espi_driver *p)$/;"	f
+espi_driver_ssd1322_poll	espi_ssd1322.c	/^void espi_driver_ssd1322_poll(struct espi_driver *p)$/;"	f
+espi_driver_transfer	espi_driver_core.c	/^s32 espi_driver_transfer(struct spi_device *dev, struct spi_transfer *xfer)$/;"	f
+espi_gpio_dmx_default	espi_driver.h	/^	u8 espi_gpio_dmx_default;$/;"	m	struct:espi_driver
+gpio_dmx	espi_driver.h	/^	s32 gpio_dmx;$/;"	m	struct:espi_driver
+gpio_sap	espi_driver.h	/^	s32 gpio_sap;$/;"	m	struct:espi_driver
+gpio_scs	espi_driver.h	/^	s32 gpio_scs[ESPI_SCS_NUM];$/;"	m	struct:espi_driver
+height	espi_driver.h	/^	u32 height;$/;"	m	struct:oleds_fb_par
+hw_rev_str	espi_driver.h	/^	s8 hw_rev_str[3];$/;"	m	struct:espi_driver
+info	espi_driver.h	/^	struct fb_info *info;$/;"	m	struct:oleds_fb_par	typeref:struct:oleds_fb_par::fb_info
+lastUpdate	espi_leds.c	/^static u64 lastUpdate = 0;$/;"	v	file:
+lastUpdate	espi_ribbon_leds.c	/^static u64 lastUpdate = 0;$/;"	v	file:
+led_class	espi_leds.c	/^static struct class *led_class;$/;"	v	typeref:struct:class	file:
+led_fops	espi_leds.c	/^static const struct file_operations led_fops = {$/;"	v	typeref:struct:file_operations	file:
+led_fops_write	espi_leds.c	/^static ssize_t led_fops_write(struct file *filp, const char __user *buf, size_t count, loff_t *f_pos)$/;"	f	file:
+led_new_st	espi_leds.c	/^static u8 *led_new_st;$/;"	v	file:
+led_st	espi_leds.c	/^static u8 *led_st;$/;"	v	file:
+lpc8xx_boled_12v	espi_lpc8xx.c	/^void lpc8xx_boled_12v(struct espi_driver *p)$/;"	f
+lpc8xx_boled_reset	espi_lpc8xx.c	/^void lpc8xx_boled_reset(struct espi_driver *p)$/;"	f
+lpc_ctrl	espi_lpc_ctrl.c	/^static u8 lpc_ctrl;$/;"	v	file:
+lpc_ctrl_class	espi_lpc_ctrl.c	/^static struct class *lpc_ctrl_class;$/;"	v	typeref:struct:class	file:
+lpc_ctrl_fops	espi_lpc_ctrl.c	/^static const struct file_operations lpc_ctrl_fops = {$/;"	v	typeref:struct:file_operations	file:
+lpc_ctrl_fops_release	espi_lpc_ctrl.c	/^static s32 lpc_ctrl_fops_release(struct inode *inode, struct file *filp)$/;"	f	file:
+lpc_ctrl_fops_write	espi_lpc_ctrl.c	/^static ssize_t lpc_ctrl_fops_write(struct file *filp, const char __user *buf, size_t count, loff_t *f_pos)$/;"	f	file:
+oleds	espi_driver.h	/^	struct oleds_fb_par* oleds;$/;"	m	struct:espi_driver	typeref:struct:espi_driver::oleds_fb_par
+oleds_fb_blank	espi_fb.c	/^static int oleds_fb_blank(int blank, struct fb_info *info)$/;"	f	file:
+oleds_fb_copyarea	espi_fb.c	/^static void oleds_fb_copyarea(struct fb_info *info, const struct fb_copyarea *area)$/;"	f	file:
+oleds_fb_fillrect	espi_fb.c	/^static void oleds_fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)$/;"	f	file:
+oleds_fb_fix	espi_fb.c	/^static struct fb_fix_screeninfo oleds_fb_fix = {$/;"	v	typeref:struct:fb_fix_screeninfo	file:
+oleds_fb_imageblit	espi_fb.c	/^static void oleds_fb_imageblit(struct fb_info *info, const struct fb_image *image)$/;"	f	file:
+oleds_fb_mmap	espi_fb.c	/^static int oleds_fb_mmap(struct fb_info *info, struct vm_area_struct *vma)$/;"	f	file:
+oleds_fb_ops	espi_fb.c	/^static struct fb_ops oleds_fb_ops = {$/;"	v	typeref:struct:fb_ops	file:
+oleds_fb_par	espi_driver.h	/^struct oleds_fb_par {$/;"	s
+oleds_fb_setcmap	espi_fb.c	/^static int oleds_fb_setcmap(struct fb_cmap *cmap, struct fb_info *info)$/;"	f	file:
+oleds_fb_setcolreg	espi_fb.c	/^static int oleds_fb_setcolreg (unsigned regno, unsigned red, unsigned green, unsigned blue, unsigned transp, struct fb_info *info)$/;"	f	file:
+oleds_fb_update_display	espi_fb.c	/^static void oleds_fb_update_display(struct oleds_fb_par *par)$/;"	f	file:
+oleds_fb_var	espi_fb.c	/^static struct fb_var_screeninfo oleds_fb_var = {$/;"	v	typeref:struct:fb_var_screeninfo	file:
+oleds_fb_write	espi_fb.c	/^static ssize_t oleds_fb_write(struct fb_info *info, const char __user *buf, size_t count, loff_t *ppos)$/;"	f	file:
+play_buttons_device	espi_driver.h	/^	u8 play_buttons_device;$/;"	m	struct:espi_driver
+poll_stage	espi_driver.h	/^	u8 poll_stage;$/;"	m	struct:espi_driver
+rb_led_new_st	espi_ribbon_leds.c	/^static u8 *rb_led_new_st;$/;"	v	file:
+rb_led_st	espi_ribbon_leds.c	/^static u8 *rb_led_st;$/;"	v	file:
+rbled_class	espi_ribbon_leds.c	/^static struct class *rbled_class;$/;"	v	typeref:struct:class	file:
+rbled_fops	espi_ribbon_leds.c	/^static const struct file_operations rbled_fops = {$/;"	v	typeref:struct:file_operations	file:
+rbled_open	espi_ribbon_leds.c	/^static s32 rbled_open(struct inode *inode, struct file *filp)$/;"	f	file:
+rbled_read	espi_ribbon_leds.c	/^static ssize_t rbled_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos)$/;"	f	file:
+rbled_release	espi_ribbon_leds.c	/^static s32 rbled_release(struct inode *inode, struct file *filp)$/;"	f	file:
+rbled_write	espi_ribbon_leds.c	/^static ssize_t rbled_write( struct file *filp,$/;"	f	file:
+ribbon_leds_device	espi_driver.h	/^	u8 ribbon_leds_device;$/;"	m	struct:espi_driver
+sck_hz	espi_driver_core.c	/^int sck_hz = 1000000;$/;"	v
+spidev	espi_driver.h	/^	struct spi_device *spidev;$/;"	m	struct:espi_driver	typeref:struct:espi_driver::spi_device
+ssd1305_buff	espi_ssd1305.c	/^static u8 *ssd1305_buff;$/;"	v	file:
+ssd1305_fb_deinit	espi_ssd1305.c	/^void ssd1305_fb_deinit(struct espi_driver *p)$/;"	f
+ssd1305_fb_init	espi_ssd1305.c	/^s32 ssd1305_fb_init(struct oleds_fb_par *par)$/;"	f
+ssd1305_tmp_buff	espi_ssd1305.c	/^static u8 *ssd1305_tmp_buff;$/;"	v	file:
+ssd1305_update_display	espi_ssd1305.c	/^void ssd1305_update_display(struct oleds_fb_par *par)$/;"	f
+ssd1322_buff	espi_ssd1322.c	/^static u8 *ssd1322_buff;$/;"	v	file:
+ssd1322_command	espi_ssd1322.c	/^static void ssd1322_command(struct espi_driver* sb, u8 cmd, u8* data, u16 len)$/;"	f	file:
+ssd1322_data	espi_ssd1322.c	/^static void ssd1322_data(struct espi_driver* sb, u8* data, u32 len)$/;"	f	file:
+ssd1322_fb_deinit	espi_ssd1322.c	/^void ssd1322_fb_deinit(struct espi_driver *p)$/;"	f
+ssd1322_fb_init	espi_ssd1322.c	/^s32 ssd1322_fb_init(struct oleds_fb_par *par)$/;"	f
+ssd1322_tmp_buff	espi_ssd1322.c	/^static u8 *ssd1322_tmp_buff;$/;"	v	file:
+ssd1322_update_display	espi_ssd1322.c	/^void ssd1322_update_display(struct oleds_fb_par *par)$/;"	f
+tmp_boled_12v	espi_lpc8xx.c	/^static u8 tmp_boled_12v = 0;$/;"	v	file:
+tmp_boled_reset	espi_lpc8xx.c	/^static u8 tmp_boled_reset = 0;$/;"	v	file:
+update	espi_lpc_ctrl.c	/^static u8 update = 0;$/;"	v	file:
+width	espi_driver.h	/^	u32 width;$/;"	m	struct:oleds_fb_par
+work	espi_driver.h	/^	struct delayed_work work; \/\/ This must be the top entry!$/;"	m	struct:espi_driver	typeref:struct:espi_driver::delayed_work
+workqueue	espi_driver_core.c	/^static struct workqueue_struct *workqueue;$/;"	v	typeref:struct:workqueue_struct	file:

@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.world.overlay;
 
-import com.google.gwt.event.dom.client.HasAllTouchHandlers;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -31,7 +30,7 @@ public abstract class GWTDialog extends DialogBox implements ScreenResizeListene
 	private Label headLabel;
 	private Button close;
 
-	public static class CaptionImpl extends HTML implements Caption, HasAllTouchHandlers {
+	public static class CaptionImpl extends HTML implements Caption {
 
 		public CaptionImpl() {
 			super();

@@ -17,7 +17,7 @@ class EditBufferSnapshotMaker : public sigc::trackable
  public:
   static EditBufferSnapshotMaker &get();
 
-  void addSnapshotIfRequired(UNDO::Transaction *transaction);
+  void addSnapshotIfRequired(UNDO::Transaction *transaction, EditBuffer *eb);
 
  private:
   EditBufferSnapshotMaker();

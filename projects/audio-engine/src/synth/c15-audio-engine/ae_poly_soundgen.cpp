@@ -51,20 +51,20 @@ void Engine::PolySoundGenerator::generate(PolySignals &_signals, const PolyValue
   oscSampleA *= m_chiA_a0;
   auto tmpVarA = oscSampleA;
   oscSampleA = (oscSampleA + m_chiA_stateVar) * m_chiA_omega;  // chirp FIR
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+  m_chiA_stateVar = tmpVarA;
+#else
   m_chiA_stateVar = tmpVarA + NlToolbox::Constants::DNC_const;
+#endif
   oscSampleA += m_oscA_phase;
   oscSampleA += _signals.get(C15::Signals::Quasipoly_Signals::Osc_A_Phase)
       + _signals.get(C15::Signals::Truepoly_Signals::Unison_PolyPhase);
   oscSampleA += (-0.25f);  // wrap
   oscSampleA = keepFractional(oscSampleA);
-  for(size_t i = 0; i < m_voices; i++)
-  {
-    if(std::abs(m_oscA_phase_stateVar[i] - oscSampleA[i]) > 0.5f)  // check edge
-    {
-      m_OscA_randVal_int[i] = m_OscA_randVal_int[i] * 1103515245 + 12345;
-      m_OscA_randVal_float[i] = static_cast<float>(m_OscA_randVal_int[i]) * 4.5657e-10f;
-    }
-  }
+  // edge detection, fluctuation a
+  const PolyInt edgeA((std::abs(m_oscA_phase_stateVar - oscSampleA) > 0.5f));  // contains 0 or -1 (instead of +1) ...
+  m_OscA_randVal_int -= edgeA * ((m_OscA_randVal_int * 1103515244) + 12345);   // ... so: subtract instead of add
+  m_OscA_randVal_float = static_cast<PolyValue>(m_OscA_randVal_int) * 4.5657e-10f;
   auto osc_freq = _signals.get(C15::Signals::Truepoly_Signals::Osc_A_Freq);
   m_oscA_phaseInc
       = ((m_OscA_randVal_float * _signals.get(C15::Signals::Truepoly_Signals::Osc_A_Fluct_Env_C) * osc_freq) + osc_freq)
@@ -82,20 +82,20 @@ void Engine::PolySoundGenerator::generate(PolySignals &_signals, const PolyValue
   oscSampleB *= m_chiB_a0;
   auto tmpVarB = oscSampleB;
   oscSampleB = (oscSampleB + m_chiB_stateVar) * m_chiB_omega;  // chirp FIR
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+  m_chiB_stateVar = tmpVarB;
+#else
   m_chiB_stateVar = tmpVarB + NlToolbox::Constants::DNC_const;
+#endif
   oscSampleB += m_oscB_phase;
   oscSampleB += _signals.get(C15::Signals::Quasipoly_Signals::Osc_B_Phase)
       + _signals.get(C15::Signals::Truepoly_Signals::Unison_PolyPhase);
   oscSampleB += (-0.25f);  // wrap
   oscSampleB = keepFractional(oscSampleB);
-  for(size_t i = 0; i < m_voices; i++)
-  {
-    if(std::abs(m_oscB_phase_stateVar[i] - oscSampleB[i]) > 0.5f)  // check edge
-    {
-      m_OscB_randVal_int[i] = m_OscB_randVal_int[i] * 1103515245 + 12345;
-      m_OscB_randVal_float[i] = static_cast<float>(m_OscB_randVal_int[i]) * 4.5657e-10f;
-    }
-  }
+  // edge detection, fluctuation b
+  const PolyInt edgeB((std::abs(m_oscB_phase_stateVar - oscSampleB) > 0.5f));  // contains 0 or -1 (instead of +1) ...
+  m_OscB_randVal_int -= edgeB * ((m_OscB_randVal_int * 1103515244) + 12345);   // ... so: subtract instead of add
+  m_OscB_randVal_float = static_cast<PolyValue>(m_OscB_randVal_int) * 4.5657e-10f;
   osc_freq = _signals.get(C15::Signals::Truepoly_Signals::Osc_B_Freq);
   m_oscB_phaseInc
       = ((m_OscB_randVal_float * _signals.get(C15::Signals::Truepoly_Signals::Osc_B_Fluct_Env_C) * osc_freq) + osc_freq)

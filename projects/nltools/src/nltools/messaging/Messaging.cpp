@@ -31,7 +31,9 @@ namespace nltools
         gsize numBytes = 0;
         auto data = reinterpret_cast<const uint16_t *>(s->get_data(numBytes));
         auto type = static_cast<MessageType>(data[0]);
-        signals.at(std::make_pair(type, endPoint))(s);
+        auto it = signals.find(std::make_pair(type, endPoint));
+        if(it != signals.end())
+          it->second(s);
       }
 
       static void createInChannels(const Configuration &conf)

@@ -51,8 +51,8 @@ void EnvelopeAGroup::init()
       this, { 12, getVoiceGroup() }, ScaleConverter::get<LinearBipolar24DbScaleConverter>(),
       ScaleConverter::get<LinearBipolar48DbScaleConverter>(), 0, 48, 480));
 
-  appendParameter(
-      new Parameter(this, { 14, getVoiceGroup() }, ScaleConverter::get<Linear60DbScaleConverter>(), 0.5, 60, 600));
+  appendParameter(new Parameter(this, { 14, getVoiceGroup() }, ScaleConverter::get<LinearBipolar60DbScaleConverter>(),
+                                0.5, 60, 600));
 
   appendParameter(
       new Parameter(this, { 15, getVoiceGroup() }, ScaleConverter::get<Linear60DbtScaleConverter>(), 0, 60, 600));

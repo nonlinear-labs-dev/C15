@@ -67,17 +67,17 @@
           "Class": "ParameterPair",
           "Position": "67, 25",
           "Init": {
-            "Label[Text]": "Legato"
+            "Label[Text]": "Glide"
           },
-          "Events": "MonoLegatoText => Value[Text], MonoEnabled => ANY[Highlight]"
+          "Events": "MonoGlideText => Value[Text], MonoEnabled => ANY[Highlight]"
         },
         "Glide": {
           "Class": "ParameterPairBottom",
           "Position": "67, 37",
           "Init": {
-            "Label[Text]": "Glide"
+            "Label[Text]": "Legato"
           },
-          "Events": "MonoGlideText => Value[Text], MonoEnabled => ANY[Highlight]"
+          "Events": "MonoLegatoText => Value[Text], MonoEnabled => ANY[Highlight]"
         },
         "Voices": {
           "Class": "ParameterPairTop",
@@ -115,7 +115,8 @@
       "EventSinks": {
         "BUTTON_B": "OpenMonoParameterScreen",
         "BUTTON_C": "SwitchToInitDetail",
-        "BUTTON_D": "OpenUnisonParameter"
+        "BUTTON_D": "OpenUnisonParameter",
+        "BUTTON_INFO": "Swallow"
       }
     }
   }

@@ -11,7 +11,7 @@
 #include "presets/PresetManagerCursor.h"
 #include "http/UndoScope.h"
 #include "device-settings/Settings.h"
-#include "device-settings/LoadModeSetting.h"
+#include "device-settings/DirectLoadSetting.h"
 
 namespace DescriptiveLayouts
 {
@@ -46,7 +46,7 @@ namespace DescriptiveLayouts
       case EventSinks::ToggleDirectLoad:
       {
         auto eb = Application::get().getPresetManager()->getEditBuffer();
-        Application::get().getSettings()->getSetting<LoadModeSetting>()->cycleForSoundType(eb->getType());
+        Application::get().getSettings()->getSetting<DirectLoadSetting>()->toggle();
       }
       break;
 
@@ -161,7 +161,7 @@ namespace DescriptiveLayouts
         connections.push_back(pm->onBankSelection(sigc::hide(bruteForce)));
         connections.push_back(pm->onRestoreHappened(bruteForce));
         connections.push_back(pm->getEditBuffer()->onPresetLoaded(bruteForce));
-        connections.push_back(Application::get().getSettings()->getSetting<LoadModeSetting>()->onChange(
+        connections.push_back(Application::get().getSettings()->getSetting<DirectLoadSetting>()->onChange(
             sigc::hide(sigc::mem_fun(this, &PresetManagerEvents::updateDirectLoad))));
       }
     });
@@ -169,8 +169,7 @@ namespace DescriptiveLayouts
 
   void PresetManagerEvents::updateDirectLoad()
   {
-    setBool(EventSources::DirectLoadStatus,
-            Application::get().getSettings()->getSetting<LoadModeSetting>()->get() == LoadMode::DirectLoad);
+    setBool(EventSources::DirectLoadStatus, Application::get().getSettings()->getSetting<DirectLoadSetting>()->get());
   }
 
   void PresetManagerEvents::setString(EventSources e, const std::string &str)

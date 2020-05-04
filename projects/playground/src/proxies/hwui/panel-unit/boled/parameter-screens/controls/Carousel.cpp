@@ -9,6 +9,9 @@ Carousel::Carousel(const Rect &pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
       sigc::hide<0>(sigc::mem_fun(this, &Carousel::setup)));
+
+  Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
+      sigc::mem_fun(this, &Carousel::setupSelected), false);
 }
 
 Carousel::~Carousel() = default;
@@ -16,4 +19,10 @@ Carousel::~Carousel() = default;
 void Carousel::antiTurn()
 {
   turn();
+}
+
+void Carousel::setupSelected()
+{
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  setup(eb->getSelected());
 }

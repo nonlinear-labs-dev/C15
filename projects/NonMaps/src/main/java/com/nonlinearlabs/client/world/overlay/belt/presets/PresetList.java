@@ -5,7 +5,9 @@ import java.util.Iterator;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Animator;
 import com.nonlinearlabs.client.Animator.DoubleClientData.Client;
+import com.nonlinearlabs.client.LoadToPartMode;
 import com.nonlinearlabs.client.Millimeter;
+import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
@@ -32,7 +34,6 @@ public class PresetList extends OverlayLayout {
 	private double scrollPosition = 0;
 	private Animator animation;
 	private ScrollRequest scrollRequest = ScrollRequest.None;
-	private BeltPreset currentScrollPreset;
 	private Bank currentBank;
 
 	protected PresetList(BankControl parent) {
@@ -210,10 +211,9 @@ public class PresetList extends OverlayLayout {
 	}
 
 	private void scrollTo(BeltPreset p) {
-		if (currentScrollPreset == p || scrollRequest == ScrollRequest.None)
+		if (scrollRequest == ScrollRequest.None)
 			return;
 
-		currentScrollPreset = p;
 
 		double target = getChildren().get(0).getRelativePosition().getTop() - p.getRelativePosition().getTop()
 				+ getChildHeight();
@@ -256,7 +256,6 @@ public class PresetList extends OverlayLayout {
 					scrollPosition = v;
 
 					if (v == target) {
-						currentScrollPreset = null;
 						scrollRequest = ScrollRequest.None;
 					}
 					requestLayout();
@@ -272,11 +271,25 @@ public class PresetList extends OverlayLayout {
 		scrollRequest = ScrollRequest.None;
 	}
 
+	private boolean isInLoadToPartMode() {
+		return NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
+	}
+
+	private LoadToPartMode getLoadToPartMode() {
+		return NonMaps.get().getNonLinearWorld().getPresetManager().getLoadToPartMode();
+	}
+
 	private BeltPreset findSelectedPreset() {
 		for (OverlayControl c : getChildren()) {
 			BeltPreset p = (BeltPreset) c;
-			if (p.getMapsPreset().isSelected())
-				return p;
+
+			if(isInLoadToPartMode()) {
+				if(getLoadToPartMode().getSelectedPreset() == p.getMapsPreset())
+					return p;
+			} else {
+				if (p.getMapsPreset().isSelected())
+					return p;
+			}
 		}
 		return null;
 	}
@@ -306,6 +319,7 @@ public class PresetList extends OverlayLayout {
 				Preset sourcePreset = (Preset) sourceCtrl;
 				BeltPreset targetPreset = (BeltPreset) target.next();
 				targetPreset.setOrigin(sourcePreset);
+				targetPreset.invalidate(INVALIDATION_FLAG_UI_CHANGED);
 			}
 		}
 	}

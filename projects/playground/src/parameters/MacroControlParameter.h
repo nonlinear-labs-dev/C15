@@ -12,7 +12,7 @@ class MacroControlParameter : public Parameter
   typedef Parameter super;
 
  public:
-  MacroControlParameter(ParameterGroup *group, const ParameterId& id);
+  MacroControlParameter(ParameterGroup *group, const ParameterId &id);
   ~MacroControlParameter() override;
 
   typedef std::set<ModulateableParameter *> tTargets;
@@ -50,6 +50,8 @@ class MacroControlParameter : public Parameter
   void onUnselected() override;
 
   static ParameterId getLastSelectedMacroControl();
+  static ParameterId getMCSmoothingParameterForMC(const ParameterId &mcId);
+  ParameterId getSmoothingParameter();
 
   void applyAbsoluteLpcPhysicalControl(tControlPositionValue v);
   void applyLpcPhysicalControl(tControlPositionValue diff);

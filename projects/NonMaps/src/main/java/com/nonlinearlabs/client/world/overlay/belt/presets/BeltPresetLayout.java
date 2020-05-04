@@ -6,7 +6,6 @@ import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
-import com.nonlinearlabs.client.world.overlay.SVGImage;
 import com.nonlinearlabs.client.world.overlay.belt.Belt;
 import com.nonlinearlabs.client.world.overlay.belt.LockSymbol;
 
@@ -16,7 +15,7 @@ public class BeltPresetLayout extends OverlayLayout {
 	BankControlArea bank;
 	LoadButtonArea load;
 	CurrentPresetNumber currentPreset;
-	SVGImage autoLoad;
+	LoadModeMenu autoLoad;
 	LockSymbol lock;
 	PresetManagerPresenter presenter;
 	boolean showLoadModeMenu = false;
@@ -31,9 +30,8 @@ public class BeltPresetLayout extends OverlayLayout {
 		addChild(bank = new BankControlArea(this));
 		addChild(load = new LoadButtonArea(this));
 		addChild(currentPreset = new CurrentPresetNumber(this));
-		addChild(autoLoad = new LoadModeButton(this));
-		addChild(lock = new LockSymbol(this));
 		addChild(autoLoad = new LoadModeMenu(this));
+		addChild(lock = new LockSymbol(this));
 
 		layouters.add(new PresetBeltLayouterXXL(this));
 		layouters.add(new PresetBeltLayouterXL(this));

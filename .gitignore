@@ -43,6 +43,7 @@ projects/NonMaps/CMakeFiles
 projects/NonMaps/cmake_install.cmake
 projects/NonMaps/target
 cmake-build-debug
+cmake-build-release
 projects/playground/CMakeCache.txt
 projects/playground/CMakeFiles
 projects/playground/.idea

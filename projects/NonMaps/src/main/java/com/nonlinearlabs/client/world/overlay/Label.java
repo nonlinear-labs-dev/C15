@@ -109,7 +109,7 @@ public abstract class Label extends OverlayControl {
 	}
 
 	protected void setFont(Context2d ctx, double fontHeightInPixels) {
-		ctx.setFont(fontHeightInPixels + "px 'Source Sans Pro LW25'");
+		ctx.setFont(fontHeightInPixels + "px 'SSP-LW25'");
 	}
 
 	protected TextAlign getAlignment() {

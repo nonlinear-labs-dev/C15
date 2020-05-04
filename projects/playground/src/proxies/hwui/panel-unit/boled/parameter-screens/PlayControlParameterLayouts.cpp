@@ -28,7 +28,6 @@ PlayControlParameterLayout2::PlayControlParameterLayout2()
     : super()
 {
   addControl(new PhysicalControlSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
-  addControl(new Button("Select", Buttons::BUTTON_A));
 
   if(s_instanceCount == 0)
   {
@@ -264,7 +263,7 @@ PlayControlParameterSelectLayout2::PlayControlParameterSelectLayout2()
     : virtual_base()
     , super()
 {
-  addControl(new Button("MC..", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_B));
   addControl(new Button("HW Amt..", Buttons::BUTTON_C));
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));
 }
@@ -282,26 +281,6 @@ bool PlayControlParameterSelectLayout2::onButton(Buttons i, bool down, ButtonMod
 
     switch(i)
     {
-      case Buttons::BUTTON_B:
-        if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
-        {
-          auto group = Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID(
-              { "MCM", VoiceGroup::Global });
-          auto csGroup = dynamic_cast<MacroControlMappingGroup *>(group);
-          auto routingParams = csGroup->getModulationRoutingParametersFor(p);
-
-          for(auto routingParam : routingParams)
-          {
-            if(routingParam->getID() == p->getUiSelectedModulationRouter())
-            {
-              editBuffer->undoableSelectParameter(routingParam->getTargetParameter()->getID());
-              return true;
-            }
-          }
-        }
-
-        return true;
-
       case Buttons::BUTTON_C:
         if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
           editBuffer->undoableSelectParameter(p->getUiSelectedModulationRouter());
@@ -333,10 +312,9 @@ PlayControlWithBehaviourEditLayout2::PlayControlWithBehaviourEditLayout2()
     , super1()
     , super2()
 {
-  addControl(new Button("Behavior", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_B));
   addControl(new Button("", Buttons::BUTTON_C));
   addControl(new Button("", Buttons::BUTTON_D));
-  addControl(new PhysicalControlBehaviorLabel(Rect(64, BUTTON_VALUE_Y_POSITION, 64, 12)));
 }
 
 ButtonMenu *PedalParameterEditLayout2::createMenu(const Rect &rect)
@@ -346,12 +324,6 @@ ButtonMenu *PedalParameterEditLayout2::createMenu(const Rect &rect)
 
 bool PlayControlWithBehaviourEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
-  if(down && Buttons::BUTTON_B == i)
-  {
-    toggleMode(Mode::Behaviour);
-    return true;
-  }
-
   if(super1::onButton(i, down, modifiers))
     return true;
 
@@ -360,42 +332,15 @@ bool PlayControlWithBehaviourEditLayout2::onButton(Buttons i, bool down, ButtonM
 
 bool PlayControlWithBehaviourEditLayout2::onRotary(int inc, ButtonModifiers modifiers)
 {
-  if(getMode() == Mode::Behaviour)
-  {
-    if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
-    {
-      auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
-
-      int step = inc > 0 ? 1 : -1;
-
-      for(int j = 0; j < std::abs(inc); j++)
-      {
-        p->undoableStepBehavior(scope->getTransaction(), step);
-      }
-
-      return true;
-    }
-  }
-
   if(super2::onRotary(inc, modifiers))
     return true;
 
   return super1::onRotary(inc, modifiers);
 }
 
-bool PlayControlWithBehaviourEditLayout2::isModeSupported(uint8_t desiredMode) const
-{
-  return desiredMode == Mode::Behaviour || super2::isModeSupported(desiredMode);
-}
-
 void PlayControlWithBehaviourEditLayout2::setMode(uint8_t desiredMode)
 {
   super2::setMode(desiredMode);
-
-  if(desiredMode == Mode::Behaviour)
-  {
-    highlightButtonWithCaption("Behavior");
-  }
 }
 
 PedalParameterSelectLayout2::PedalParameterSelectLayout2()
@@ -404,10 +349,18 @@ PedalParameterSelectLayout2::PedalParameterSelectLayout2()
     , super1()
     , super2()
 {
+  addControl(new Button("Behaviour", Buttons::BUTTON_B));
+  addControl(new PhysicalControlBehaviorLabel(Rect(64, BUTTON_VALUE_Y_POSITION, 64, 12)))->setVisible(false);
 }
 
 bool PedalParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
+  if(down && i == Buttons::BUTTON_B)
+  {
+    toggleMode(Behaviour);
+    return true;
+  }
+
   if(down && i == Buttons::BUTTON_A)
   {
     toggleMode(Select);
@@ -483,13 +436,21 @@ RibbonParameterSelectLayout2::RibbonParameterSelectLayout2()
     , super1()
     , super2()
 {
+  addControl(new Button("Behaviour", Buttons::BUTTON_B));
+  addControl(new PhysicalControlBehaviorLabel(Rect(64, BUTTON_VALUE_Y_POSITION, 64, 12)))->setVisible(false);
 }
 
 bool RibbonParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
+  if(down && i == Buttons::BUTTON_B)
+  {
+    toggleMode(Behaviour);
+    return true;
+  }
+
   if(down && i == Buttons::BUTTON_A)
   {
-    toggleMode(Mode::Select);
+    toggleMode(Select);
     return true;
   }
 
@@ -497,4 +458,106 @@ bool RibbonParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifier
     return true;
 
   return super2::onButton(i, down, modifiers);
+}
+
+bool RibbonParameterSelectLayout2::onRotary(int inc, ButtonModifiers modifiers)
+{
+  if(getMode() == Mode::Behaviour)
+  {
+    if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
+    {
+      auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+
+      int step = inc > 0 ? 1 : -1;
+
+      for(int j = 0; j < std::abs(inc); j++)
+      {
+        p->undoableStepBehavior(scope->getTransaction(), step);
+      }
+
+      return true;
+    }
+  }
+
+  return PlayControlParameterLayout2::onRotary(inc, modifiers);
+}
+
+void RibbonParameterSelectLayout2::setMode(uint8_t desiredMode)
+{
+  s_mode = desiredMode;
+
+  noHighlight();
+  setDirty();
+
+  switch(desiredMode)
+  {
+    case Behaviour:
+      highlightButtonWithCaption("Behaviour");
+      findControlOfType<SelectedParameterValue>()->setVisible(false);
+      findControlOfType<PhysicalControlBehaviorLabel>()->setVisible(true);
+      break;
+    default:
+
+      findControlOfType<PhysicalControlBehaviorLabel>()->setVisible(false);
+      findControlOfType<SelectedParameterValue>()->setVisible(true);
+      super2::setMode(desiredMode);
+  }
+
+  setDirty();
+}
+
+bool RibbonParameterSelectLayout2::isModeSupported(uint8_t desiredMode) const
+{
+  return desiredMode == Behaviour || PlayControlParameterLayout2::isModeSupported(desiredMode);
+}
+
+bool PedalParameterSelectLayout2::onRotary(int inc, ButtonModifiers modifiers)
+{
+  if(getMode() == Mode::Behaviour)
+  {
+    if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
+    {
+      auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+
+      int step = inc > 0 ? 1 : -1;
+
+      for(int j = 0; j < std::abs(inc); j++)
+      {
+        p->undoableStepBehavior(scope->getTransaction(), step);
+      }
+
+      return true;
+    }
+  }
+
+  return PlayControlParameterLayout2::onRotary(inc, modifiers);
+}
+
+void PedalParameterSelectLayout2::setMode(uint8_t desiredMode)
+{
+  s_mode = desiredMode;
+
+  noHighlight();
+  setDirty();
+
+  switch(desiredMode)
+  {
+    case Behaviour:
+      highlightButtonWithCaption("Behaviour");
+      findControlOfType<SelectedParameterValue>()->setVisible(false);
+      findControlOfType<PhysicalControlBehaviorLabel>()->setVisible(true);
+      break;
+    default:
+
+      findControlOfType<PhysicalControlBehaviorLabel>()->setVisible(false);
+      findControlOfType<SelectedParameterValue>()->setVisible(true);
+      super2::setMode(desiredMode);
+  }
+
+  setDirty();
+}
+
+bool PedalParameterSelectLayout2::isModeSupported(uint8_t desiredMode) const
+{
+  return desiredMode == Behaviour || PlayControlParameterLayout2::isModeSupported(desiredMode);
 }

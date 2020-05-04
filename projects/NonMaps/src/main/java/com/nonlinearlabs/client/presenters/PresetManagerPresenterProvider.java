@@ -4,12 +4,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank;
-import com.nonlinearlabs.client.dataModel.setup.SetupModel;
-import com.nonlinearlabs.client.dataModel.setup.SetupModel.LoadMode;
 
 public class PresetManagerPresenterProvider {
 	public static PresetManagerPresenterProvider theInstance = new PresetManagerPresenterProvider();
@@ -26,41 +21,6 @@ public class PresetManagerPresenterProvider {
 		clients = new LinkedList<Function<PresetManagerPresenter, Boolean>>();
 		com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.get().getBanks()
 				.onChange(b -> onBanksChanged(b));
-
-		SetupModel.get().systemSettings.loadMode.onChange(m -> {
-			updateLoadMode();
-			return true;
-		});
-
-		EditBufferModel.get().soundType.onChange(m -> {
-			updateLoadMode();
-			return true;
-		});
-
-		EditBufferModel.get().voiceGroup.onChange(m -> {
-			updateLoadMode();
-			return true;
-		});
-	}
-
-	private void updateLoadMode() {
-		LoadMode l = SetupModel.get().systemSettings.loadMode.getValue();
-		SoundType s = EditBufferModel.get().soundType.getValue();
-		VoiceGroup v = EditBufferModel.get().voiceGroup.getValue();
-
-		pm.loadToPartEnabled = s != SoundType.Single;
-
-		if(pm.loadToPartEnabled)
-			pm.loadModeMenuEntries = new String[] { "Load to " + v.toString(), "Select Only", "Direct Load" };
-		else
-			pm.loadModeMenuEntries = new String[] { "", "Select Only", "Direct Load"};
-
-
-		pm.loadModeButtonState = l == LoadMode.directload;
-		pm.directLoadActive = l == LoadMode.directload;
-		pm.loadToPartActive = l == LoadMode.loadtopart;
-
-		notifyClients();
 	}
 
 	private Boolean onBanksChanged(Map<String, Bank> dmBanks) {

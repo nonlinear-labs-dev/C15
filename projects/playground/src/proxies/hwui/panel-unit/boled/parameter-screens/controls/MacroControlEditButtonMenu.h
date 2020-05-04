@@ -21,8 +21,6 @@ class MacroControlEditButtonMenu : public ButtonMenu
 
   void editInfo();
   void rename();
-  void reset();
-  void smoothing();
 
   void unlockGroup();
   void lockGroup();

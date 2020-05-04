@@ -8,6 +8,7 @@
 #include <math.h>
 #include <sigc++/sigc++.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
 
 SelectedParameterModAmount::SelectedParameterModAmount(const Rect &rect)
     : super(rect)
@@ -25,6 +26,10 @@ void SelectedParameterModAmount::setParameter(Parameter *param)
     m_paramValueConnection.disconnect();
     m_paramValueConnection
         = param->onParameterChanged(sigc::mem_fun(this, &SelectedParameterModAmount::onParamValueChanged));
+
+    auto eb = Application::get().getPresetManager()->getEditBuffer();
+    auto available = ParameterLayout2::isParameterAvailableInSoundType(param, eb);
+    setVisible(available);
   }
 }
 
@@ -51,6 +56,9 @@ void SelectedParameterModAmount::setRangeOrdered(float from, float to)
 
 bool SelectedParameterModAmount::redraw(FrameBuffer &fb)
 {
+  if(!isVisible())
+    return true;
+
   if(m_from != 0 || m_to != 0)
   {
     Rect r = getPosition();

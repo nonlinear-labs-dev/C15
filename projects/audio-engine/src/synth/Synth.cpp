@@ -4,23 +4,22 @@
 #include "io/midi/AlsaMidiInput.h"
 #include "io/midi/MidiInputMock.h"
 #include <nltools/logging/Log.h>
-#include "Options.h"
-#include "main.h"
-
+#include "AudioEngineOptions.h"
 #include <iostream>
 #include <chrono>
 #include <cmath>
 
-Synth::Synth()
+Synth::Synth(const AudioEngineOptions *options)
+    : m_options(options)
 {
-  auto options = getOptions();
   auto inDeviceName = options->getMidiInputDeviceName();
   auto outDeviceName = options->getAudioOutputDeviceName();
 
   if(outDeviceName.empty())
     m_out = std::make_unique<AudioOutputMock>();
   else
-    m_out = std::make_unique<AlsaAudioOutput>(outDeviceName, [=](auto buf, auto length) { process(buf, length); });
+    m_out = std::make_unique<AlsaAudioOutput>(options, outDeviceName,
+                                              [=](auto buf, auto length) { process(buf, length); });
 
   if(inDeviceName.empty())
     m_in = std::make_unique<MidiInputMock>([=](auto) {});
@@ -42,19 +41,20 @@ void Synth::stop()
   m_out->stop();
 }
 
-const AudioOutput *Synth::getAudioOut() const
+AudioOutput *Synth::getAudioOut() const
 {
   return m_out.get();
 }
 
-double Synth::measurePerformance(std::chrono::seconds time)
+std::tuple<Synth::AudioBlock, Synth::RealtimeFactor> Synth::measurePerformance(std::chrono::nanoseconds time)
 {
   auto start = std::chrono::high_resolution_clock::now();
-  auto numSamples = static_cast<size_t>(time.count() * getOptions()->getSampleRate());
-  std::vector<SampleFrame> samples(numSamples);
-  doAudio(samples.data(), numSamples);
+  auto todo = static_cast<size_t>(time.count() * getOptions()->getSampleRate() / std::nano::den);
+  std::vector<SampleFrame> samples(todo);
+  doAudio(samples.data(), todo);
+
   auto timeUsed = std::chrono::high_resolution_clock::now() - start;
-  return 1.0 * time / timeUsed;
+  return { std::move(samples), 1.0 * time / timeUsed };
 }
 
 void Synth::resetPerformance()
@@ -92,6 +92,11 @@ void Synth::checkFiniteness(SampleFrame *target, size_t numFrames)
       resetDSP();
     }
   }
+}
+
+const AudioEngineOptions *Synth::getOptions() const
+{
+  return m_options;
 }
 
 void Synth::processAudioWithoutTimestampedMidi(SampleFrame *target, size_t numFrames)

@@ -26,9 +26,9 @@ void PresetBankSerializer::writeTagContent(Writer &writer) const
 
 void PresetBankSerializer::readTagContent(Reader &reader) const
 {
-  const auto bankName = m_bank->getName(true);
+  const auto bankName = m_bank->getName(false);
 
-  if(bankName.find("<untitled bank>") == Glib::ustring::npos)
+  if(!bankName.empty())
     SplashLayout::addStatus("Reading bank " + bankName);
 
   super::readTagContent(reader);

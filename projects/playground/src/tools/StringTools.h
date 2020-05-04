@@ -10,6 +10,8 @@ namespace StringTools
   Glib::ustring replaceAll(const Glib::ustring& in, const Glib::ustring& pattern, const Glib::ustring& replace);
   Glib::ustring removeSpaces(const Glib::ustring& in);
 
+  bool hasEnding(std::string const& in, std::string const& test);
+
   template <typename... tParts> Glib::ustring formatString(const Glib::ustring& format, const tParts&... parts)
   {
     return UNDO::StringTools::formatString(format, parts...);

@@ -9,10 +9,21 @@
 #include <parameters/scale-converters/LinearBipolar96StScaleConverterFine.h>
 #include "VoiceGroupMasterGroup.h"
 
-VoiceGroupMasterGroup::VoiceGroupMasterGroup(ParameterDualGroupSet *parent, VoiceGroup vg)
+VoiceGroupMasterGroup::VoiceGroupMasterGroup(ParameterDualGroupSet* parent, VoiceGroup vg)
     : ParameterGroup(parent, { "Part", vg }, "Part", "Part", "Part")
 {
 }
+
+class FadeFrom : public VoiceGroupMasterUnmodulateableParameter
+{
+ public:
+  FadeFrom(ParameterGroup* parent, const ParameterId& id, double initial)
+      : VoiceGroupMasterUnmodulateableParameter(parent, id, ScaleConverter::get<Linear60KeyScaleConverter>(), initial,
+                                                60, 60)
+  {
+  }
+
+  };
 
 void VoiceGroupMasterGroup::init()
 {
@@ -28,9 +39,8 @@ void VoiceGroupMasterGroup::init()
 
   auto fadeFromInitial = getVoiceGroup() == VoiceGroup::I ? 1 : 0;
 
-  appendParameter(new VoiceGroupMasterUnmodulateableParameter(
-      this, { 396, getVoiceGroup() }, ScaleConverter::get<Linear60KeyScaleConverter>(), fadeFromInitial, 60, 60));
+  appendParameter(new FadeFrom(this, { 396, getVoiceGroup() }, fadeFromInitial));
 
   appendParameter(new VoiceGroupMasterUnmodulateableParameter(
-      this, { 397, getVoiceGroup() }, ScaleConverter::get<Linear60StScaleConverter>(), 0.0, 60, 60));
+      this, { 397, getVoiceGroup() }, ScaleConverter::get<Linear60StScaleConverter>(), 0.0, 60, 600));
 }

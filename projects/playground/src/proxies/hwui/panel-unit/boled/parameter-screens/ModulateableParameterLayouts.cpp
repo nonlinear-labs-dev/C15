@@ -208,24 +208,26 @@ bool ModulateableParameterSelectLayout2::onButton(Buttons i, bool down, ButtonMo
     switch(i)
     {
       case Buttons::BUTTON_A:
-        if(m_mode == Mode::ParameterValue)
+        if(m_mode == Mode::ParameterValue && !isCurrentParameterDisabled())
         {
           auto eb = Application::get().getPresetManager()->getEditBuffer();
 
           return SwitchVoiceGroupButton::toggleVoiceGroup();
         }
-        else
+        else if(!isCurrentParameterDisabled())
         {
           setMode(Mode::MacroControlPosition);
           return true;
         }
+        break;
 
       case Buttons::BUTTON_B:
-        toggleMode(Mode::MacroControlSelection);
+        if(!isCurrentParameterDisabled())
+          toggleMode(Mode::MacroControlSelection);
         return true;
 
       case Buttons::BUTTON_C:
-        if(hasModulationSource())
+        if(hasModulationSource() && !isCurrentParameterDisabled())
           toggleMode(Mode::MacroControlAmount);
         return true;
 
@@ -381,6 +383,13 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
     indication->setVisible(desiredMode == Mode::ParameterValue);
   }
 
+  if(isCurrentParameterDisabled())
+  {
+    m_mcPosButton->setText("");
+    m_mcAmtButton->setText("");
+    m_mcSelButton->setText("");
+  }
+
   handleSelectPartButton();
 
   m_mcPosButton->setVisible(true);
@@ -390,10 +399,16 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
 
   if(auto p = getCurrentParameter())
   {
-    if(p->getVisualizationStyle() == Parameter::VisualizationStyle::Dot)
-      m_modeOverlay->addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
-    else
-      m_modeOverlay->addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+    switch(p->getVisualizationStyle())
+    {
+      case Parameter::VisualizationStyle::Bar:
+      case Parameter::VisualizationStyle::BarFromRight:
+        m_modeOverlay->addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+      case Parameter::VisualizationStyle::Dot:
+        m_modeOverlay->addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+    }
   }
 
   switch(m_mode)
@@ -527,6 +542,11 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
       break;
   }
 }
+bool ModulateableParameterSelectLayout2::isCurrentParameterDisabled() const
+{
+  return !isParameterAvailableInSoundType(getCurrentParameter(),
+                                          Application::get().getPresetManager()->getEditBuffer());
+}
 
 bool ModulateableParameterSelectLayout2::handleMCRecall(Buttons i, bool down)
 {
@@ -604,10 +624,16 @@ ModulateableParameterEditLayout2::ModulateableParameterEditLayout2()
 
   if(auto p = getCurrentParameter())
   {
-    if(p->getVisualizationStyle() == Parameter::VisualizationStyle::Dot)
-      addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
-    else
-      addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+    switch(p->getVisualizationStyle())
+    {
+      case Parameter::VisualizationStyle::Bar:
+      case Parameter::VisualizationStyle::BarFromRight:
+        addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+      case Parameter::VisualizationStyle::Dot:
+        addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+    }
   }
 
   addModAmountSliders(this);

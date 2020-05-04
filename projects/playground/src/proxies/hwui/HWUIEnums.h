@@ -5,8 +5,8 @@
 
 ENUM(UIFocus, uint8_t, Any, Sound, Parameters, Presets, Banks, Setup, Unchanged);
 ENUM(UIMode, uint8_t, Any, Select, Store, Edit, Info, Unchanged);
-ENUM(UIDetail, uint8_t, Any, Init, ButtonA, ButtonB, ButtonC, ButtonD, MCSelect, MCAmount, MCPosition, MCModRange,
-     Voices, SoundParameters);
+ENUM(UIDetail, uint8_t, Any, Unchanged, Init, ButtonA, ButtonB, ButtonC, ButtonD, MCSelect, MCAmount, MCPosition,
+     MCModRange, Voices, SoundParameters, LoadToPart);
 ENUM(LayoutVersionMode, uint8_t, Old, Mixed, New);
 
 enum ButtonModifier
@@ -95,6 +95,9 @@ struct FocusAndMode
 
     if(mode == UIMode::Unchanged)
       mode = other.mode;
+
+    if(detail == UIDetail::Unchanged)
+      detail = other.detail;
   }
 
   UIFocus focus;

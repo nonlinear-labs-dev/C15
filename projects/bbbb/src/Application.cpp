@@ -31,7 +31,7 @@ char *Application::initStatic(Application *app, char *argv)
 }
 
 Application::Application(int numArgs, char **argv)
-    : m_options(std::make_unique<Options>(numArgs, argv))
+    : m_options(std::make_unique<AudioEngineOptions>(numArgs, argv))
     , m_selfPath(initStatic(this, argv[0]))
     , m_bridges(std::make_unique<Bridges>())
     , m_wifiManager(std::make_unique<WiFiManager>())
@@ -72,7 +72,7 @@ void Application::run()
 
 #endif
 
-Options *Application::getOptions()
+AudioEngineOptions *Application::getOptions()
 {
   return m_options.get();
 }

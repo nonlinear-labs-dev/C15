@@ -117,7 +117,7 @@ public class BankControl extends OverlayLayout implements IBank {
 
 	public void update(Node pmNode) {
 		if (pmNode != null) {
-			if (ServerProxy.didChange(pmNode)) {
+			if (ServerProxy.didChange(pmNode) || NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode()) {
 				Bank b = getBankInCharge();
 				if (b != null)
 					showEmptyLabel(b.getPresetList().getPresetCount() == 0);
@@ -149,7 +149,7 @@ public class BankControl extends OverlayLayout implements IBank {
 	public Control wheel(Position eventPoint, double amount, boolean fine) {
 		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
 
-		if (pm.isInStoreSelectMode())
+		if (pm.hasCustomPresetSelection())
 			return this;
 
 		if (amount > 0)
@@ -161,7 +161,8 @@ public class BankControl extends OverlayLayout implements IBank {
 	}
 
 	public boolean isInStoreSelectMode() {
-		return getBankInCharge().isInStoreSelectMode();
+		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
+		return pm.isInStoreSelectMode();
 	}
 
 	public void renameCurrentPreset() {

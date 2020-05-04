@@ -1,8 +1,6 @@
 #pragma once
-#include "BooleanSetting.h"
 
-#include <thread>
-#include <condition_variable>
+#include "BooleanSetting.h"
 
 class WifiSetting : public BooleanSetting
 {

@@ -1,4 +1,4 @@
-#include <proxies/hwui/panel-unit/boled/parameter-screens/DualVoiceGroupMasterAndSplitPointLayout.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/ModulateableDualVoiceGroupMasterAndSplitPointLayout.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterInfoLayout.h>
 #include <utility>
 #include "VoiceGroupMasterModulateableParameter.h"
@@ -21,7 +21,7 @@ Layout *VoiceGroupMasterModulateableParameter::createLayout(FocusAndMode focusAn
       return new ModulateableParameterEditLayout2();
     case UIMode::Select:
     default:
-      return new DualVoiceGroupMasterAndSplitPointLayout();
+      return new ModulateableDualVoiceGroupMasterAndSplitPointLayout();
   }
 }
 
@@ -35,6 +35,6 @@ Layout *VoiceGroupMasterUnmodulateableParameter::createLayout(FocusAndMode focus
       return new UnmodulateableParameterEditLayout2();
     case UIMode::Select:
     default:
-      return new DualVoiceGroupMasterAndSplitPointLayout();
+      return new UnmodulateableDualVoiceGroupMasterAndSplitPointLayout();
   }
 }

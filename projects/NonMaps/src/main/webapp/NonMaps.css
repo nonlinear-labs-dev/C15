@@ -1,17 +1,15 @@
 
 @font-face {
-  font-family: 'nonlinearfont';
-  src: url('./SSP-LW25-Regular.otf');
-}
-
-@font-face {
-  font-family: 'regularfont';
+  font-family: 'SSP-LW25';
   src: url('./SSP-LW25-Regular.otf');
 }
 
 html,body {
   background-color: #000000;
-  font-family: nonlinearfont;
+  font-family: "SSP-LW25";
+  font-size: 16px;
+  line-height: 1.3;
+  color: #eee;
   -webkit-font-smoothing: antialiased;
   position: absolute;
   width: 100%;
@@ -48,8 +46,10 @@ h1 {
 
 
 body,table td,select,button {
-  font-family: regularfont, Arial Unicode MS, Arial, sans-serif;
+/*
+  font-family: SSP-LW25, Arial Unicode MS, Arial, sans-serif;
   font-size: 14px;
+*/
 }
 
 pre {
@@ -58,11 +58,11 @@ pre {
 }
 
 body {
-  color: black;
+/*   color: black; */
   margin: 0px;
   border: 0px;
   padding: 0px;
-  background: #fff;
+/*   background: #fff; */
   direction: ltr;
 }
 
@@ -200,10 +200,10 @@ select {
   background: transparent;
   padding-bottom: 5px;
   cursor: default;
-  font-family: regularfont, Arial Unicode MS, Arial, sans-serif;
-  color: #bbb;
+  font-family: SSP-LW25, Arial Unicode MS, Arial, sans-serif;
+  color: #9eb8e4;
   text-align: center;
-  font-size: 120%;
+  font-size: 110%;
 }
 
 .gwt-DialogBox .dialogContent {
@@ -219,8 +219,8 @@ select {
 }
 
 .gwt-DialogBox {
-  background-color: #16161e;
-  border: 0.25mm solid #76829a;
+  background-color: #000;
+  border: .7mm solid #76829a;
   border-radius: 2mm;
   padding: 4px;
   box-shadow: black 0 0 0 0.5mm;
@@ -288,7 +288,7 @@ select {
 
 .gwt-Label {
   padding: 7px 5px;
-  color: #bbb;
+/*   color: #bbb; */
 }
 
 .gwt-MenuBar {
@@ -982,7 +982,7 @@ select {
   padding: 5px 7px;
   margin: 3px;
   font-size: 100%;
-  font-family: regularfont, Arial Unicode MS, Arial, sans-serif;
+  font-family: SSP-LW25, Arial Unicode MS, Arial, sans-serif;
 }
 
 .gwt-TextArea-readonly {
@@ -995,7 +995,7 @@ select {
   border-top: 1px solid #575757;
   /*   font-size: small; */
   font-size: 14px;
-  font-family: regularfont, Arial Unicode MS, Arial, sans-serif;
+  font-family: SSP-LW25, Arial Unicode MS, Arial, sans-serif;
   color: #c2c2c2;
   background: #141414;
   border-radius: 3px;
@@ -1299,7 +1299,7 @@ input[type="checkbox"]+label {
   background: url("checkbox-unchecked.png") left center no-repeat;
   background-origin: padding-box;
   cursor: pointer;
-  color: #bbb;
+/*   color: #eee; */
 }
 
 input[type="checkbox"]:checked+label {
@@ -1314,7 +1314,7 @@ input[type="radio"]+label {
   display: inline-block;
   vertical-align: middle;
   cursor: pointer;
-  color: #bbb;
+/*   color: #bbb; */
 }
 
 .serverResponseLabelError {
@@ -1367,8 +1367,8 @@ canvas {
 	background-position: right 26px;
 	cursor: pointer;
 	position: absolute;
-	top: 0.4em;
-	right: 0.4em;
+	top: 4px;
+	right: 4px;
 }
 
 .dialog-header>button:active {
@@ -1381,12 +1381,13 @@ canvas {
 	background: url(close.png);
 	cursor: pointer;
 	position: absolute;
-	top: 0.4em;
-	right: 0.4em;
+	top: 4px;
+	right: 4px;
 }
 
 .dialog-header>.headline {
-  width: 24em;
+	padding: 5px 5px;
+	width: 24em;
 }
 
 .dialog-caption>button:active {
@@ -1403,7 +1404,7 @@ textarea {
   border: 1px solid #575757;
   border-top: 1px solid #575757;
   font-size: 14px;
-  font-family: regularfont, Arial Unicode MS, Arial, sans-serif;
+  font-family: SSP-LW25, Arial Unicode MS, Arial, sans-serif;
   color: #c2c2c2;
   background: #141414;
   border-radius: 3px;
@@ -1607,7 +1608,7 @@ input.param-name-edit {
 .gwt-DialogBox .dialogContent {
   max-height: 80vh;
   overflow-y: auto;
-  border: solid 1px rgb(99, 99, 99);
+/*   border: solid 1px rgb(99, 99, 99); */
   border-radius: 6px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -1618,8 +1619,13 @@ input.param-name-edit {
   padding: 0px 0px;
   height: 15px;
   width: 15px;
-  border-radius: 0;
-  border: 0.25mm solid #202020;
+  border: 2px solid #202020;
+  margin-right: 10px;
+  box-sizing: content-box;
+}
+
+.colortaggingfield-template:hover {
+  border: 2px solid #7a87b0;
 }
 
 .colortaggingfield-green {
@@ -1647,12 +1653,18 @@ input.param-name-edit {
 }
 
 .colortaggingfield-none {
+/*
   background-color: #414141;
   line-height: 15px;
   color: #838383;
+*/
+  background: url(close.png);
+    background-size: cover;
+
 }
 
 .colortag-current {
+/*
   vertical-align: middle;
   outline-color: #bbb;
   outline-offset: 3px;
@@ -1662,6 +1674,11 @@ input.param-name-edit {
   font-size: initial;
   line-height: 17px;
   color: #838383;
+*/
+  height: 15px;
+  width: 15px;
+  border: 2px solid #cad8e4;
+  border-radius: 2px;
 }
 
 .tag-div {
@@ -1802,7 +1819,7 @@ button {
 .preset-info-dialog .tag-div {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: start;
 }
 
 .bank-info-dialog td:nth-of-type(2) {

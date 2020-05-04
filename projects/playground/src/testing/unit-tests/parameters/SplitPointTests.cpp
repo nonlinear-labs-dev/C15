@@ -4,7 +4,7 @@
 #include "testing/TestRootDocument.h"
 #include "parameters/SplitPointParameter.h"
 #include "testing/TestHelper.h"
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 
 TEST_CASE("Split Point Display Value")
 {

@@ -15,37 +15,55 @@ public class SoundTypeMenu extends SVGImage {
 
 	public class SoundTypeMenuContextMenu extends ContextMenu {
 
+		private void addSingleChild() {
+			addChild(new ContextMenuItem(this, "Single") {
+				@Override
+				public Control click(Position eventPoint) {
+					EditBufferUseCases.get().convertToSingleSound();
+					return super.click(eventPoint);
+				}
+			});
+		} 
+
+		private void addLayerChild() {
+			addChild(new ContextMenuItem(this, "Layer") {
+				@Override
+				public Control click(Position eventPoint) {
+					EditBufferUseCases.get().convertToLayerSound();
+					return super.click(eventPoint);
+				}
+			});
+		}
+
+		private void addSplitChild() {
+			addChild(new ContextMenuItem(this, "Split") {
+				@Override
+				public Control click(Position eventPoint) {
+					EditBufferUseCases.get().convertToSplitSound();
+					return super.click(eventPoint);
+				}
+			});
+		}
+
 		public SoundTypeMenuContextMenu(OverlayLayout parent) {
 			super(parent);
 
 			EditBufferModel.SoundType currentSetting = EditBufferModel.get().soundType.getValue();
 
-			if (currentSetting != EditBufferModel.SoundType.Single) {
-				addChild(new ContextMenuItem(this, "Single") {
-					@Override
-					public Control click(Position eventPoint) {
-						EditBufferUseCases.get().convertToSingleSound();
-						return super.click(eventPoint);
-					}
-				});
-			}
 
 			if (currentSetting == EditBufferModel.SoundType.Single) {
-				addChild(new ContextMenuItem(this, "Split") {
-					@Override
-					public Control click(Position eventPoint) {
-						EditBufferUseCases.get().convertToSplitSound();
-						return super.click(eventPoint);
-					}
-				});
+				addLayerChild();
+				addSplitChild();
+			}
 
-				addChild(new ContextMenuItem(this, "Layer") {
-					@Override
-					public Control click(Position eventPoint) {
-						EditBufferUseCases.get().convertToLayerSound();
-						return super.click(eventPoint);
-					}
-				});
+			if (currentSetting == EditBufferModel.SoundType.Layer) {
+				addSingleChild();
+				addSplitChild();
+			}
+
+			if (currentSetting == EditBufferModel.SoundType.Split) {
+				addSingleChild();
+				addLayerChild();
 			}
 		}
 	}

@@ -5,10 +5,10 @@ class AudioOutput;
 class CommandlinePerformanceWatch
 {
  public:
-  CommandlinePerformanceWatch(const AudioOutput *device);
+  CommandlinePerformanceWatch(AudioOutput *device);
 
  private:
   bool printPerformance();
 
-  const AudioOutput *m_device;
+  AudioOutput *m_device;
 };

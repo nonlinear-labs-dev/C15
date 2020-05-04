@@ -13,6 +13,7 @@
 #include <tools/RecursionGuard.h>
 #include <http/ContentSection.h>
 #include <tools/Signal.h>
+#include <nltools/Types.h>
 
 class Bank;
 class Preset;
@@ -27,7 +28,7 @@ class PresetManager : public ContentSection
   using SaveSubTask = std::function<SaveResult()>;
 
  public:
-  PresetManager(UpdateDocumentContributor *parent);
+  PresetManager(UpdateDocumentContributor *parent, bool readOnly = false);
   ~PresetManager() override;
 
   void init();
@@ -113,6 +114,15 @@ class PresetManager : public ContentSection
   sigc::connection onRestoreHappened(sigc::slot<void> cb);
 
   const Preset *getSelectedPreset() const;
+  Preset *getSelectedPreset();
+
+  //Test Helper
+  void TEST_forceScheduledAutoLoad();
+  bool isAutoLoadScheduled() const;
+
+  bool currentLoadedPartIsBeforePresetToLoad() const;
+
+  void scheduleLoadToPart(const Preset *preset, VoiceGroup loadFrom, VoiceGroup loadTo);
 
  private:
   void loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder);
@@ -150,6 +160,8 @@ class PresetManager : public ContentSection
   SignalWithCache<void, size_t> m_sigNumBanksChanged;
   Signal<void> m_sigRestoreHappened;
 
+  std::atomic_bool m_autoLoadScheduled { false };
+
   Throttler m_autoLoadThrottler;
 
   Expiration m_saveJob;
@@ -158,6 +170,7 @@ class PresetManager : public ContentSection
 
   std::list<SaveSubTask> m_saveTasks;
   bool m_saveRequestDuringSave = false;
+  bool m_readOnly = false;
 
   friend class PresetManagerSerializer;
 };

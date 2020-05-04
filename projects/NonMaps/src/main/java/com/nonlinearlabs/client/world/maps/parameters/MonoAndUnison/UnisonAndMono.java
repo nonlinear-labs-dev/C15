@@ -3,11 +3,14 @@ package com.nonlinearlabs.client.world.maps.parameters.MonoAndUnison;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.ColorTable;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
+import com.nonlinearlabs.client.world.maps.NonDimension;
 import com.nonlinearlabs.client.world.maps.NonRect;
 
 public class UnisonAndMono extends LayoutResizingVertical {

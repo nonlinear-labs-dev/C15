@@ -19,6 +19,8 @@ class BankActions : public RPCActionManager
   bool handleRequest(const Glib::ustring &path, std::shared_ptr<NetworkRequest> request) override;
 
   Bank *importBank(InStream &stream, Glib::ustring x = "", Glib::ustring y = "", const Glib::ustring &fileName = "");
+  Bank *importBank(UNDO::Transaction *transaction, InStream &stream, Glib::ustring x = "", Glib::ustring y = "",
+                   const Glib::ustring &fileName = "");
 
  private:
   typedef Preset *tPresetPtr;

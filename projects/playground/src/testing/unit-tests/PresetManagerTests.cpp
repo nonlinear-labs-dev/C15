@@ -1,4 +1,4 @@
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "testing/TestHelper.h"
 #include "mock/MockPresetStorage.h"
 #include <presets/Bank.h>

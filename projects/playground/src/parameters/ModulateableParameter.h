@@ -68,6 +68,7 @@ class ModulateableParameter : public Parameter
   void undoableRecallMCPos();
   void undoableRecallMCSource();
   void undoableRecallMCAmount();
+  bool isDefaultLoaded() const override;
 
  protected:
   void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;

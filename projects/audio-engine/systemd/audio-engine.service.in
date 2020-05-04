@@ -7,7 +7,7 @@ StartLimitInterval=0
 [Service]
 WorkingDirectory=@C15_INSTALL_PATH@/audio-engine
 ExecStartPre=amixer -D hw:PCH set Master 100%
-ExecStart=@C15_INSTALL_PATH@/audio-engine/audio-engine -m hw:EMPHASE -a hw:PCH -n 3 -s 49 --playground-host=localhost --heartbeat=hw:EMPHASE
+ExecStart=@C15_INSTALL_PATH@/audio-engine/audio-engine -m hw:EMPHASE -a hw:PCH -n 3 -s 49 -r 48000 --playground-host=localhost --heartbeat=hw:EMPHASE
 Restart=on-failure
 RestartSec=1
 

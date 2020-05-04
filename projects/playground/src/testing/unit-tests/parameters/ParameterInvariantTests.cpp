@@ -5,7 +5,7 @@
 #include <groups/MasterGroup.h>
 #include <groups/MonoGroup.h>
 #include <groups/UnisonGroup.h>
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "testing/TestHelper.h"
 #include "presets/EditBuffer.h"
 

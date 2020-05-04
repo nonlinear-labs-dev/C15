@@ -223,3 +223,9 @@ void ParameterGroup::copyFrom(UNDO::Transaction *transaction, const ParameterGro
     }
   }
 }
+
+void ParameterGroup::undoableLoadDefault(UNDO::Transaction *transaction)
+{
+  for(auto &p : getParameters())
+    p->loadDefault(transaction);
+}

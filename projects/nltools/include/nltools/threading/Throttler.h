@@ -12,6 +12,7 @@ class Throttler
   void doTask(Task&& task);
   bool isPending() const;
 
+  void doActionSync();
  private:
   void delayedCallback();
 

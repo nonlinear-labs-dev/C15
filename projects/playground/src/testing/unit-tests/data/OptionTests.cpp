@@ -1,4 +1,4 @@
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <device-settings/EditSmoothingTime.h>
 #include <testing/settings/TestSettings.h>
 #include <testing/TestHelper.h>

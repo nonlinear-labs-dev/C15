@@ -1,4 +1,4 @@
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include <parameters/ModulateableParameter.h>
 #include <testing/TestHelper.h>
 #include <testing/parameter/TestGroup.h>

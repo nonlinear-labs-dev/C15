@@ -103,6 +103,20 @@ void ParameterDualGroupSet::copyFrom(UNDO::Transaction *transaction, const Prese
 {
   super::copyFrom(transaction, other);
 
+  setAttribute(transaction, "origin-I", other->getUuid().raw());
+  setAttribute(transaction, "origin-II", other->getUuid().raw());
+
+  if(other->isDual())
+  {
+    setAttribute(transaction, "origin-I-vg", toString(VoiceGroup::I));
+    setAttribute(transaction, "origin-II-vg", toString(VoiceGroup::II));
+  }
+  else
+  {
+    setAttribute(transaction, "origin-I-vg", toString(VoiceGroup::I));
+    setAttribute(transaction, "origin-II-vg", toString(VoiceGroup::I));
+  }
+
   for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
     for(auto &g : getParameterGroups(vg))
       if(auto c = other->findParameterGroup(g->getID()))
@@ -186,6 +200,10 @@ const IntrusiveList<ParameterDualGroupSet::tParameterGroupPtr> &
 void ParameterDualGroupSet::copyFrom(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup from,
                                      VoiceGroup to)
 {
+
+  setAttribute(transaction, to == VoiceGroup::I ? "origin-I" : "origin-II", preset->getUuid().raw());
+  setAttribute(transaction, to == VoiceGroup::I ? "origin-I-vg" : "origin-II-vg", toString(from));
+  
   for(auto myGroup : getParameterGroups(to))
   {
     if(auto other = preset->findParameterGroup({ myGroup->getID().getName(), from }))
@@ -201,11 +219,23 @@ void ParameterDualGroupSet::copyVoiceGroup(UNDO::Transaction *transaction, Voice
     group->copyFrom(transaction, getParameterGroupByID({ group->getID().getName(), from }));
 }
 
-void ParameterDualGroupSet::loadIntoVoiceGroup(UNDO::Transaction *transaction, Preset *p, VoiceGroup target)
+void ParameterDualGroupSet::loadSinglePresetIntoVoiceGroup(UNDO::Transaction *transaction, const Preset *p,
+                                                           VoiceGroup target)
 {
   nltools_assertOnDevPC(p->getType() == SoundType::Single);
 
   for(auto &g : getParameterGroups(target))
     if(auto c = p->findParameterGroup({ g->getID().getName(), VoiceGroup::I }))
       g->copyFrom(transaction, c);
+
+  if(target == VoiceGroup::I)
+  {
+    setAttribute(transaction, "origin-I", p->getUuid().raw());
+    setAttribute(transaction, "origin-I-vg", toString(VoiceGroup::I));
+  }
+  else if(target == VoiceGroup::II)
+  {
+    setAttribute(transaction, "origin-II", p->getUuid().raw());
+    setAttribute(transaction, "origin-I-vg", toString(VoiceGroup::II));
+  }
 }

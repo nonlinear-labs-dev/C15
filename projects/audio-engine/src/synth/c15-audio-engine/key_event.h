@@ -16,7 +16,7 @@ struct PolyKeyEvent
 {
   uint32_t m_localIndex = 0, m_voiceId = 0, m_unisonIndex = 0, m_position = 0;
   float m_velocity = 0.0f, m_tune = 0.0f;
-  bool m_active = false, m_stolen = false, m_trigger_env = false, m_trigger_glide = false;
+  bool m_active = false, m_stolen = false, m_trigger_env = false, m_trigger_glide = false, m_allow_glide = false;
 };
 
 template <uint32_t Voices> class PolyKeyPacket
@@ -58,7 +58,7 @@ template <uint32_t Voices> class PolyKeyPacket
     m_index = 0;
   }
   inline void add(const uint32_t _localIndex, const uint32_t _voiceId, const uint32_t _unisonIndex, const bool _active,
-                  const bool _stolen)
+                  const bool _stolen, const bool _allow_glide)
   {
     // adding unison info to common settings
     m_data[m_length].m_localIndex = _localIndex;
@@ -66,6 +66,7 @@ template <uint32_t Voices> class PolyKeyPacket
     m_data[m_length].m_unisonIndex = _unisonIndex;
     m_data[m_length].m_active = _active;
     m_data[m_length].m_stolen = _stolen;
+    m_data[m_length].m_allow_glide = _allow_glide;
     // common settings are propagated
     propagateEvent();
   }
@@ -77,6 +78,7 @@ template <uint32_t Voices> class PolyKeyPacket
     m_data[m_length].m_velocity = m_data[0].m_velocity;
     m_data[m_length].m_tune = m_data[0].m_tune;
     m_data[m_length].m_trigger_env = m_data[0].m_trigger_env;
+    m_data[m_length].m_trigger_glide = m_data[0].m_trigger_glide;
     m_length++;
   }
   PolyKeyEvent m_data[Voices];

@@ -14,11 +14,12 @@ namespace nltools
 }
 
 class dsp_host_dual;
+class AudioEngineOptions;
 
 class C15Synth : public Synth, public sigc::trackable
 {
  public:
-  C15Synth();
+  C15Synth(const AudioEngineOptions* options);
   ~C15Synth() override;
 
   void doMidi(const MidiEvent& event) override;
@@ -32,9 +33,6 @@ class C15Synth : public Synth, public sigc::trackable
   void increase();
   void decrease();
 
-  double measurePerformance(std::chrono::seconds time) override;
-
- private:
   void changeSelectedValueBy(int i);
   void onLayerPresetMessage(const nltools::msg::LayerPresetMessage& msg);
   void onSplitPresetMessage(const nltools::msg::SplitPresetMessage& msg);
@@ -52,5 +50,13 @@ class C15Synth : public Synth, public sigc::trackable
   void onEditSmoothingTimeMessage(const nltools::msg::Setting::EditSmoothingTimeMessage& msg);
   void onTuneReferenceMessage(const nltools::msg::Setting::TuneReference& msg);
 
+  void simulateKeyDown(int key);
+  void simulateKeyUp(int key);
+  unsigned int getRenderedSamples();
+
+  dsp_host_dual* getDsp();
+
+ private:
   std::unique_ptr<dsp_host_dual> m_dsp;
+  const AudioEngineOptions* m_options;
 };

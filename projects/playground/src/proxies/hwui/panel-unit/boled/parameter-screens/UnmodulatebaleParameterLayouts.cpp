@@ -40,10 +40,16 @@ void UnmodulateableParameterSelectLayout2::init()
 
   if(auto p = getCurrentParameter())
   {
-    if(p->getVisualizationStyle() == Parameter::VisualizationStyle::Dot)
-      addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
-    else
-      addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+    switch(p->getVisualizationStyle())
+    {
+      case Parameter::VisualizationStyle::Bar:
+      case Parameter::VisualizationStyle::BarFromRight:
+        addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+      case Parameter::VisualizationStyle::Dot:
+        addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+    }
   }
 
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));
@@ -67,10 +73,16 @@ void UnmodulateableParameterEditLayout2::init()
 
   if(auto p = getCurrentParameter())
   {
-    if(p->getVisualizationStyle() == Parameter::VisualizationStyle::Dot)
-      addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
-    else
-      addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+    switch(p->getVisualizationStyle())
+    {
+      case Parameter::VisualizationStyle::Dot:
+        addControl(new SelectedParameterKnubbelSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+      case Parameter::VisualizationStyle::Bar:
+      case Parameter::VisualizationStyle::BarFromRight:
+        addControl(new SelectedParameterBarSlider(Rect(BIG_SLIDER_X, 24, BIG_SLIDER_WIDTH, 6)));
+        break;
+    }
   }
 
   addControl(new SelectedParameterValue(Rect(90, 33, 76, 12)));

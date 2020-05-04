@@ -67,7 +67,7 @@ This option will enable a cross compiling build system. Here, it becomes really 
 
 #### bbb-rootfs
 
-The BUILD_BBB option enables the *bbb-rootfs* target. When reqested, it will make the file `~/builds/C15/build-tools/bbb/nonlinux/output/images/rootfs.tar.gz` containing the whole root fdile system for the BeagleBone.
+The BUILD_BBB option enables the *bbb-rootfs* target. When reqested, it will make the file `~/builds/C15/build-tools/bbb/rootfs.tar.gz` containing the whole root fdile system for the BeagleBone.
 
 ### BUILD_EPC
 

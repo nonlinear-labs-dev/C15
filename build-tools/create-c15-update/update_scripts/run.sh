@@ -9,13 +9,12 @@
 #               Where to save the update log, if update is not from USB-Stick?
 #               -> under /persistent/ ?? or is bbb journalctl enough?
 
-# ePC IP
 EPC_IP=192.168.10.10
 BBB_IP=192.168.10.11
 
 # general Messages
 MSG_DO_NOT_SWITCH_OFF="DO NOT SWITCH OFF C15!"
-MSG_UPDATING_C15="updateing C15..."
+MSG_UPDATING_C15="updating C15..."
 MSG_UPDATING_RT_FIRMWARE_1="updating RT-System 1..."
 MSG_UPDATING_RT_FIRMWARE_2="updating RT-System 2..."
 MSG_UPDATING_EPC="updating ePC..."
@@ -24,14 +23,29 @@ MSG_DONE="DONE"
 MSG_FAILED="FAILED"
 MSG_FAILED_WITH_ERROR_CODE="FAILED! Error Code: "
 
-# OBSOLETE??
-MSG_DONE_WITH_WARNING_CODE="OK. Warning: "
-#MSG_REBOOT="PLEASE RESTART C15 NOW"
-#MSG_UPDATING_SYSTEM_FILES="updating system files..."
-#MSG_CREATING_BACKUP="creating backup "
-#MSG_UNINSTALLING="uninstalling "
-#MSG_SAVING_PRESETS="saving presets..."
-#MSG_RESTORING_PRESETS="restoring presets..."
+ASPECTS="TO_BE_REPLACED_BY_CREATE_C15_UPDATE"
+
+UPDATE_BBB=0
+UPDATE_LPC=0
+UPDATE_EPC=0
+
+if [[ $ASPECTS = *epc* ]]
+then
+    UPDATE_EPC=1
+    echo "will update epc"
+fi
+
+if [[ $ASPECTS = *lpc* ]]
+then
+    UPDATE_LPC=1
+    echo "will update lpc"
+fi
+
+if [[ $ASPECTS = *bbb* ]]
+then
+    UPDATE_BBB=1
+    echo "will update bbb"
+fi
 
 t2s() {
     /update/utilities/text2soled multitext "$1" "$2" "$3" "$4" "$5" "$6"
@@ -82,6 +96,13 @@ epc_update() {
     return 0
 }
 
+configure_ssh() {
+    echo "Host 192.168.10.10
+            StrictHostKeyChecking no
+            UserKnownHostsFile=/dev/null
+            " > ~/.ssh/config
+    chmod 400 ~/.ssh/config
+}
 
 bbb_update() {
     pretty "" "$MSG_UPDATING_BBB" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_UPDATING_BBB" "$MSG_DO_NOT_SWITCH_OFF"
@@ -96,7 +117,9 @@ bbb_update() {
         return 1;
     fi
 
+    configure_ssh
     pretty "" "$MSG_UPDATING_BBB" "$MSG_DONE" "$MSG_UPDATING_BBB" "$MSG_DONE"
+
     sleep 2
     return 0
 }
@@ -135,25 +158,20 @@ lpc_update() {
     return 0
 }
 
-configure_ssh() {
-    echo "Host 192.168.10.10
-            StrictHostKeyChecking no
-            UserKnownHostsFile=/dev/null
-            " > ~/.ssh/config
-    chmod 400 ~/.ssh/config
-}
-
 stop_services() {
     systemctl stop playground > /dev/null
     systemctl stop bbbb > /dev/null
+    return 0
 }
 
 rebootEPC() {
     echo "sscl" | /update/utilities/sshpass -p 'sscl' ssh -o ConnectionAttempts=1 -o ConnectTimeout=1 -o StrictHostKeyChecking=no sscl@$EPC_IP "sudo reboot"
+    return 0
 }
 
 rebootBBB() {
     reboot
+    return 0
 }
 
 main() {
@@ -161,11 +179,11 @@ main() {
     touch /update/errors.log
 
     configure_ssh
-    stop_services
 
-    epc_update
-    bbb_update
-    lpc_update
+    [ $UPDATE_BBB == 1 ] && stop_services
+    [ $UPDATE_EPC == 1 ] && epc_update
+    [ $UPDATE_BBB == 1 ] && bbb_update
+    [ $UPDATE_LPC == 1 ] && lpc_update
 
     if [ $(wc -c /update/errors.log | awk '{print $1}') -ne 0 ]; then
         cp /update/errors.log /mnt/usb-stick/nonlinear-c15-update.log.txt
@@ -178,11 +196,13 @@ main() {
         sleep 2
     fi
 
-    pretty "" "Rebooting System..." "" "Rebooting System..." ""
-    sleep 2
+    if [ $UPDATE_EPC == 1 -o $UPDATE_BBB == 1 ]; then
+        pretty "" "Rebooting System..." "" "Rebooting System..." ""
+        sleep 2
+    fi
 
-    rebootEPC
-    rebootBBB
+    [ $UPDATE_EPC == 1 -a $UPDATE_BBB == 1 ] && rebootEPC
+    [ $UPDATE_BBB == 1 ] && rebootBBB
 }
 
 main

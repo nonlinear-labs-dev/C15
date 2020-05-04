@@ -1,4 +1,4 @@
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "proxies/hwui/panel-unit/ButtonParameterMapping.h"
 #include <set>
 

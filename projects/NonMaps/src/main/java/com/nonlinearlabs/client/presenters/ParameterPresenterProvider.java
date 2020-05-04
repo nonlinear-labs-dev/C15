@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.gwt.dev.util.collect.HashSet;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.AftertouchParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
@@ -13,11 +14,14 @@ import com.nonlinearlabs.client.dataModel.editBuffer.MacroControlParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel.ModSource;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulationRouterParameterModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.ParameterFactory;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.dataModel.editBuffer.PedalParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.PedalParameterModel.Modes;
 import com.nonlinearlabs.client.dataModel.editBuffer.PhysicalControlParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.RibbonParameterModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.RibbonParameterModel.ReturnModes;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
@@ -44,9 +48,15 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 			boolean isSelected = presenter.id.getNumber() == id;
 			if (isSelected != presenter.selected) {
 				presenter.selected = isSelected;
-				presenter.updateHash();
-				notifyChanges();
+				if(presenter.updateHash()) {
+					notifyChanges();
+					return true;
+				}
 			}
+
+			if(presenter.updateHash())
+				notifyChanges();
+
 			return true;
 		});
 
@@ -56,8 +66,48 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 				return true;
 			});
 		}
+
+		EditBufferModel.get().soundType.onChange(type -> {
+			updatePresenter(p);
+			return true;
+		});
 	}
 
+	private boolean isFillFromRightParameter(BasicParameterModel e) {
+		if(e.group != null) {
+			boolean isSplit = e.group.longName.getValue() == "Split";
+			boolean isFadeFrom = e.id.getNumber() == 396 && e.id.getVoiceGroup() == VoiceGroup.II;
+			return isSplit || isFadeFrom;
+		}
+		return false;
+	}
+
+	private boolean isParameterDisabled(BasicParameterModel e) {
+		return isParameterDisabled(e.id.getNumber());
+	}
+
+	private boolean isParameterHidden(BasicParameterModel e) {
+		return isParameterHidden(e.id.getNumber());
+	}
+
+	private boolean containsElement(int e, int[] arr) {
+		for (int i : arr) {
+			if(i == e)
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isParameterHidden(int num) {
+		SoundType type = EditBufferModel.get().soundType.getValue();
+		return containsElement(num, ParameterFactory.hiddenParametersBySoundType.get(type));
+	}
+
+	private boolean isParameterDisabled(int num) {
+		SoundType type = EditBufferModel.get().soundType.getValue();
+		return containsElement(num, ParameterFactory.disabledParametersBySoundType.get(type));
+	}
+	
 	private void updatePresenter(BasicParameterModel e) {
 		presenter.parameterInfo = e.info.getValue();
 		presenter.isBoolean = e.value.metaData.isBoolean.getBool();
@@ -71,6 +121,9 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 		presenter.modulation.upperClipping = false;
 		presenter.controlPosition = e.value.getQuantizedAndClipped(true);
 		presenter.bipolar = e.value.metaData.bipolar.getValue() == BooleanValues.on;
+		presenter.fillFromRightEnabled = isFillFromRightParameter(e);
+		presenter.disabled = isParameterDisabled(e);
+		presenter.hidden = isParameterHidden(e);
 
 		if (e.id.getNumber() == 356 && EditBufferModel.get().voiceGroup.getValue() == EditBufferModel.VoiceGroup.II) {
 			double nextValue = e.value.getIncDecValue(false, 1);

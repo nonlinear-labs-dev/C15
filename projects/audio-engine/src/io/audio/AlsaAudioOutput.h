@@ -9,13 +9,14 @@
 
 class AudioWriterBase;
 class HighPriorityTask;
+class AudioEngineOptions;
 
 class AlsaAudioOutput : public AudioOutput
 {
  public:
   using Callback = std::function<void(SampleFrame *target, size_t numFrames)>;
 
-  AlsaAudioOutput(const std::string &deviceName, Callback cb);
+  AlsaAudioOutput(const AudioEngineOptions *options, const std::string &deviceName, Callback cb);
   ~AlsaAudioOutput();
 
   void start() override;
@@ -41,4 +42,5 @@ class AlsaAudioOutput : public AudioOutput
   snd_pcm_uframes_t m_numFramesPerPeriod = 0;
 
   std::unique_ptr<AudioWriterBase> m_writer;
+  const AudioEngineOptions *m_options;
 };

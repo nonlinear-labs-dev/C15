@@ -16,4 +16,6 @@ class BarSlider : public Slider
 
  protected:
   virtual bool drawCenterMark() const;
+  virtual void drawParameterSlider(FrameBuffer &fb, double v, const Rect &smaller);
+  virtual void drawParameterSliderFromRight(FrameBuffer &fb, double v, const Rect &smaller);
 };

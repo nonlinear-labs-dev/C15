@@ -32,8 +32,8 @@ MacroControlParameter::MacroControlParameter(ParameterGroup *group, const Parame
     : Parameter(group, id, ScaleConverter::get<MacroControlScaleConverter>(), 0.5, 100, 1000)
     , m_UiSelectedHardwareSourceParameterID(HardwareSourcesGroup::getPedal1ParameterID().getNumber(),
                                             id.getVoiceGroup())
-    , m_lastMCViewUuid{ "NONE" }
-    , mcviewThrottler{ Expiration::Duration(5) }
+    , m_lastMCViewUuid { "NONE" }
+    , mcviewThrottler { Expiration::Duration(5) }
 {
 }
 
@@ -367,6 +367,32 @@ void MacroControlParameter::onUnselected()
 ParameterId MacroControlParameter::getLastSelectedMacroControl()
 {
   return lastSelectedMacroControl;
+}
+
+ParameterId MacroControlParameter::getMCSmoothingParameterForMC(const ParameterId &mcId)
+{
+  switch(mcId.getNumber())
+  {
+    case 243:
+      return { 324, VoiceGroup::Global };
+    case 244:
+      return { 325, VoiceGroup::Global };
+    case 245:
+      return { 326, VoiceGroup::Global };
+    case 246:
+      return { 327, VoiceGroup::Global };
+    case 369:
+      return { 370, VoiceGroup::Global };
+    case 371:
+      return { 372, VoiceGroup::Global };
+    default:
+      return ParameterId::invalid();
+  }
+}
+
+ParameterId MacroControlParameter::getSmoothingParameter()
+{
+  return MacroControlParameter::getMCSmoothingParameterForMC(getID());
 }
 
 void MacroControlParameter::undoableRandomize(UNDO::Transaction *, Initiator, double)

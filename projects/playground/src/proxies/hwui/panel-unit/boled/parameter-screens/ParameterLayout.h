@@ -2,6 +2,7 @@
 
 #include <proxies/hwui/Layout.h>
 #include <sigc++/connection.h>
+#include <nltools/threading/Throttler.h>
 
 class Overlay;
 class Carousel;
@@ -12,6 +13,7 @@ class Slider;
 class Label;
 class Button;
 class ModuleCaption;
+class EditBuffer;
 
 class ParameterLayout2 : public Layout
 {
@@ -20,13 +22,15 @@ class ParameterLayout2 : public Layout
   typedef ParameterLayout2 virtual_base;
   ParameterLayout2();
 
+  static bool isParameterAvailableInSoundType(const Parameter *p, const EditBuffer *eb);
+  static bool isParameterAvailableInSoundType(const Parameter *p);
+
  protected:
   void init() override;
   constexpr static int BUTTON_VALUE_Y_POSITION = 34;
   constexpr static int BIG_SLIDER_X = 77;
   constexpr static int BIG_SLIDER_WIDTH = 102;
 
- protected:
   virtual Parameter *getCurrentParameter() const;
   virtual Parameter *getCurrentEditParameter() const;
   virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
@@ -35,10 +39,12 @@ class ParameterLayout2 : public Layout
   void handlePresetValueRecall();
   void copyFrom(Layout *src) override;
 
- protected:
+  void onSoundTypeChanged();
+
   virtual ModuleCaption *createModuleCaption() const;
 
  private:
+  Throttler m_soundTypeRedrawThrottler;
   void showRecallScreenIfAppropriate();
 };
 

@@ -1,34 +1,17 @@
 package com.nonlinearlabs.client.world.maps.parameters.MonoAndUnison;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.LayoutResizingHorizontal;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
-import com.nonlinearlabs.client.world.maps.NonRect;
 import com.nonlinearlabs.client.world.maps.parameters.Spacer;
 
 class UnisonAndMonoControls extends LayoutResizingHorizontal {
 
-    private class Fill extends Spacer {
-
-        public Fill(MapsLayout parent) {
-            super(parent);
-        }
-
-        @Override
-        public void draw(Context2d ctx, int invalidationMask) {
-            Rect pix = getPixRect();
-            pix.fill(ctx, getParent().getColorModuleBackground());
-        }
-    }
-
-    private NonRect m_viewportPosAtClick;;
-
-	UnisonAndMonoControls(MapsLayout parent) {
+   	UnisonAndMonoControls(MapsLayout parent) {
         super(parent);
         addChild(new Spacer(this, 2, 2));
         addChild(new MonoControls(this));

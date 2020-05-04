@@ -1,4 +1,5 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
+import com.nonlinearlabs.client.Millimeter;
 
 public class PresetBeltLayouterS extends PresetBeltLayouter {
 
@@ -14,7 +15,7 @@ public class PresetBeltLayouterS extends PresetBeltLayouter {
 		double margin = getDefaultMargin();
 		double left = margin;
 		double right = w - margin;
-		double autoLoadWidth = layout.autoLoad.getSelectedImage().getImgWidth();
+		double autoLoadWidth = Millimeter.toPixels(25);
 
 		layout.store.doLayout(left, 0, h);
 		left += layout.store.getRelativePosition().getWidth();

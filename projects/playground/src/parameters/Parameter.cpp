@@ -23,6 +23,7 @@
 #include <presets/recall/RecallParameter.h>
 #include <xml/Attribute.h>
 #include <http/UndoScope.h>
+#include <proxies/hwui/HWUI.h>
 
 static const auto c_invalidSnapshotValue = std::numeric_limits<tControlPositionValue>::max();
 
@@ -32,7 +33,7 @@ Parameter::Parameter(ParameterGroup *group, ParameterId id, const ScaleConverter
     , m_id(id)
     , m_value(this, scaling, def, coarseDenominator, fineDenominator)
     , m_lastSnapshotedValue(c_invalidSnapshotValue)
-    , m_voiceGroup{ group->getVoiceGroup() }
+    , m_voiceGroup { group->getVoiceGroup() }
 {
 }
 
@@ -129,8 +130,9 @@ void Parameter::setCPFromWebUI(UNDO::Transaction *transaction, const tControlPos
 
 void Parameter::loadFromPreset(UNDO::Transaction *transaction, const tControlPositionValue &value)
 {
-  setIndirect(transaction, value);
-  m_lastSnapshotedValue = value;
+  auto q = getValue().getQuantizedValue(value, true);
+  setIndirect(transaction, q);
+  m_lastSnapshotedValue = q;
 }
 
 void Parameter::setIndirect(UNDO::Transaction *transaction, const tControlPositionValue &value)
@@ -150,6 +152,11 @@ void Parameter::setIndirect(UNDO::Transaction *transaction, const tControlPositi
 void Parameter::loadDefault(UNDO::Transaction *transaction)
 {
   loadFromPreset(transaction, getDefaultValue());
+}
+
+bool Parameter::isDefaultLoaded() const
+{
+  return !isValueDifferentFrom(getDefaultValue());
 }
 
 void Parameter::reset(UNDO::Transaction *transaction, Initiator initiator)
@@ -351,11 +358,12 @@ void Parameter::writeDocProperties(Writer &writer, tUpdateID knownRevision) cons
 {
   writer.writeTextElement("value", to_string(m_value.getRawValue()));
   writer.writeTextElement("default", to_string(m_value.getDefaultValue()));
+  writer.writeTextElement("boolean", to_string(m_value.isBoolean()));
 
   if(shouldWriteDocProperties(knownRevision))
   {
-    writer.writeTextElement("scaling", m_value.getScaleConverter()->controlPositionToDisplayJS());
     writer.writeTextElement("bipolar", to_string(m_value.isBiPolar()));
+    writer.writeTextElement("scaling", m_value.getScaleConverter()->controlPositionToDisplayJS());
     writer.writeTextElement("long-name", getLongName());
     writer.writeTextElement("short-name", getShortName());
     writer.writeTextElement("info-text", getInfoText());
@@ -465,6 +473,16 @@ Parameter::VisualizationStyle Parameter::getVisualizationStyle() const
     case 354:
     case 362:
       return VisualizationStyle::Dot;
+    case 396:  //Fade From II
+      if(getID().getVoiceGroup() == VoiceGroup::II)
+        return VisualizationStyle::BarFromRight;
+      else  //Fade From I
+        return VisualizationStyle::Bar;
+    case 356:  //Split Point
+      if(Application::get().getHWUI()->getCurrentVoiceGroup() == VoiceGroup::II)
+        return VisualizationStyle::BarFromRight;
+      else
+        return VisualizationStyle::Bar;
   }
   return VisualizationStyle::Bar;
 }
@@ -558,9 +576,10 @@ void Parameter::undoableRecallFromPreset(UNDO::Transaction *transaction)
 
 void Parameter::copyFrom(UNDO::Transaction *transaction, const Parameter *other)
 {
-  nltools_assertOnDevPC(other->getVoiceGroup() != getVoiceGroup());
-
-  setCpValue(transaction, Initiator::INDIRECT, other->getControlPositionValue(), false);
+  if(!isLocked())
+  {
+    setCpValue(transaction, Initiator::INDIRECT, other->getControlPositionValue(), false);
+  }
 }
 
 void Parameter::sendParameterMessage() const
@@ -570,5 +589,5 @@ void Parameter::sendParameterMessage() const
 
 bool Parameter::isValueDifferentFrom(double d) const
 {
-  return m_value.differs(d);
+  return m_value.differs(getValue().getQuantizedValue(d, true));
 }

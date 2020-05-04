@@ -13,9 +13,11 @@ void AudioOutput::stop()
 {
 }
 
-const AudioOutput::Performance &AudioOutput::getPerformance() const
+AudioOutput::Performance AudioOutput::exhaustPerformance()
 {
-  return m_performance;
+  auto ret = m_performance;
+  m_exhaustPerformance = true;
+  return ret;
 }
 
 void AudioOutput::resetPerformance()
@@ -25,14 +27,30 @@ void AudioOutput::resetPerformance()
 
 void AudioOutput::reportPerformanceRatio(double ratio)
 {
-  if(m_resetPerformance.exchange(false) == true)
-    m_performance = {};
-
-  if(m_performance.min == 0)
+  if(m_exhaustPerformance.exchange(false) == true)
+  {
+    m_performance.max = ratio;
     m_performance.min = ratio;
+    m_performance.sum = 0;
+    m_performance.num = 0;
+  }
+
+  if(m_resetPerformance.exchange(false) == true)
+  {
+    m_performance.overallMax = ratio;
+    m_performance.overallMin = ratio;
+    m_performance.max = ratio;
+    m_performance.min = ratio;
+    m_performance.sum = 0;
+    m_performance.num = 0;
+  }
+
+  m_performance.sum += ratio;
+  m_performance.num++;
 
   m_performance.min = std::min(m_performance.min, ratio);
-  m_performance.avg = std::max(m_performance.avg, m_performance.min);
-  m_performance.avg = m_performance.avg * 0.98 + 0.02 * ratio;
   m_performance.max = std::max(m_performance.max, ratio);
+
+  m_performance.overallMin = std::min(m_performance.overallMin, ratio);
+  m_performance.overallMax = std::max(m_performance.overallMax, ratio);
 }

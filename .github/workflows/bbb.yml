@@ -15,44 +15,19 @@ jobs:
     - name: Install Packages
       run: sudo apt-get install squashfs-tools squashfuse
 
-    - name: Cache nonlinux
-      uses: actions/cache@v1
-      id: cache-nonlinux
-      with:
-        path: /home/runner/work/cache
-        key: cache-nonlinux
-
     - name: Configure
       run: |
         mkdir -p /home/runner/work/build
         cd /home/runner/work/build
         cmake /home/runner/work/C15/C15 -DBUILD_BBB=On -DBUILD_BBBB=Off -DBUILD_EPC=Off -DBUILD_AUDIOENGINE=Off -DBUILD_PLAYGROUND=Off -DBUILD_ONLINEHELP=Off -DBUILD_TESTING=Off
 
-    - name: Prepare build directory
-      run: cd /home/runner/work/build && make bbb-prepare-build-dir
-
-    - name: Unpack nonlinux cache
-      if: steps.cache-nonlinux.outputs.cache-hit == 'true'
-      run: |
-        mkdir -p /home/runner/work/build/build-tools/bbb/nonlinux
-        mkdir /home/runner/work/mnt-cache
-        squashfuse /home/runner/work/cache/nonlinux-squashed.img /home/runner/work/mnt-cache
-        rsync -a --delete /home/runner/work/mnt-cache/ /home/runner/work/build/build-tools/bbb/nonlinux
-
     - name: Build BBB
       run: |
         make -C /home/runner/work/build bbb-rootfs
-        rm /home/runner/work/build/build-tools/bbb/nonlinux/output/images/rootfs.tar.gz
+        rm /home/runner/work/build/build-tools/bbb/rootfs.tar.gz
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
       with:
         name: bbb-build
         path: /home/runner/work/build/build-tools/bbb/nonlinux/output/images
-
-    - name: Pack build folder
-      run: |
-        mkdir -p /home/runner/work/cache
-        rm -rf /home/runner/work/cache/nonlinux-squashed.img
-        rm -rf /home/runner/work/build/build-tools/bbb/nonlinux/dl/*
-        mksquashfs /home/runner/work/build/build-tools/bbb/nonlinux /home/runner/work/cache/nonlinux-squashed.img

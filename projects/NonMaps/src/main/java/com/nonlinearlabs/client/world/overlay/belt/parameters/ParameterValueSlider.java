@@ -1,5 +1,4 @@
 package com.nonlinearlabs.client.world.overlay.belt.parameters;
-
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
@@ -34,7 +33,11 @@ public class ParameterValueSlider extends OverlayControl {
 			if (isBiPolar)
 				drawCenterMark(ctx);
 
-			drawIndicator(ctx, value, isBiPolar);
+			if(parameter.fillFromRightEnabled)
+				drawIndicatorFromRight(ctx, value);
+			else
+				drawIndicator(ctx, value, isBiPolar);
+
 			drawHandle(ctx, value, isBiPolar);
 		} else {
 
@@ -49,6 +52,20 @@ public class ParameterValueSlider extends OverlayControl {
 			drawReturnIndicators(ctx, parameter);
 
 		}
+	}
+
+	protected void drawIndicatorFromRight(Context2d ctx, double value) {
+	
+		Rect indicatorRect = getPixRect().copy();
+
+		double width = indicatorRect.getWidth() - indicatorRect.getWidth() * value; 
+
+		indicatorRect.setLeft(indicatorRect.getRight() - width);
+		indicatorRect.setWidth(width);
+		indicatorRect.reduceHeightBy(2);
+		indicatorRect.reduceWidthBy(2);
+		indicatorRect.fill(ctx, getIndicatorColor());
+		
 	}
 
 	protected void drawReturnIndicators(Context2d ctx, ParameterPresenter parameter) {

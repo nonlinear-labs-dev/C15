@@ -1,13 +1,14 @@
 #pragma once
 
 #include <serialization/Serializer.h>
+#include <nltools/Types.h>
 
 class PresetParameter;
 
 class PresetParameterSerializer : public Serializer
 {
  public:
-  PresetParameterSerializer(PresetParameter* param);
+  PresetParameterSerializer(PresetParameter* param, SoundType type);
 
   static Glib::ustring getTagName();
 
@@ -25,4 +26,5 @@ class PresetParameterSerializer : public Serializer
   void tryWriteHardwareSourceParameter(Writer& writer) const;
 
   PresetParameter* m_param = nullptr;
+  SoundType m_type;
 };

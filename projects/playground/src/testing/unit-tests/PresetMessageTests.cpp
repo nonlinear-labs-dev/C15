@@ -1,4 +1,4 @@
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "proxies/audio-engine/AudioEngineProxy.h"
 #include "presets/EditBuffer.h"
 #include "testing/TestHelper.h"
@@ -113,7 +113,7 @@ TEST_CASE("Single Preset Message")
   {
     auto scope = TestHelper::createTestScope();
     editBuffer->undoableLoad(scope->getTransaction(), presets.getSinglePreset());
-    auto message = AudioEngineProxy::createSingleEditBufferMessage();
+    auto message = AudioEngineProxy::createSingleEditBufferMessage(*editBuffer);
     assertNoIDTwice(message);
   }
 
@@ -121,7 +121,7 @@ TEST_CASE("Single Preset Message")
   {
     auto scope = TestHelper::createTestScope();
     editBuffer->undoableLoad(scope->getTransaction(), presets.getSplitPreset());
-    auto message = AudioEngineProxy::createSplitEditBufferMessage();
+    auto message = AudioEngineProxy::createSplitEditBufferMessage(*editBuffer);
     assertNoIDTwice(message);
   }
 
@@ -129,7 +129,7 @@ TEST_CASE("Single Preset Message")
   {
     auto scope = TestHelper::createTestScope();
     editBuffer->undoableLoad(scope->getTransaction(), presets.getLayerPreset());
-    auto message = AudioEngineProxy::createLayerEditBufferMessage();
+    auto message = AudioEngineProxy::createLayerEditBufferMessage(*editBuffer);
     assertNoIDTwice(message);
   }
 }

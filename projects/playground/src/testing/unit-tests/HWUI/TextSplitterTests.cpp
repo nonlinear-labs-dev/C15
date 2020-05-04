@@ -1,4 +1,4 @@
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "tools/TextSplitter.h"
 #include <glib.h>
 #include <sstream>

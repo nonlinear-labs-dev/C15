@@ -1,15 +1,20 @@
+#include <sigc++/adaptors/hide.h>
 #include "UsageMode.h"
 #include "Application.h"
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
 #include "device-settings/DebugLevel.h"
+#include "proxies/hwui/HWUI.h"
 
 UsageMode::UsageMode()
 {
+  m_voiceGroupChangedSignal = Application::get().getHWUI()->onCurrentVoiceGroupChanged(
+      sigc::hide<0>(sigc::mem_fun(this, &UsageMode::bruteForceUpdateLeds)));
 }
 
 UsageMode::~UsageMode()
 {
+  m_voiceGroupChangedSignal.disconnect();
 }
 
 bool UsageMode::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)

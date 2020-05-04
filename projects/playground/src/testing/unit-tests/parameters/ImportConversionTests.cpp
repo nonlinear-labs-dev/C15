@@ -1,6 +1,7 @@
 #include <testing/TestHelper.h>
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <parameters/scale-converters/Linear70DbScaleConverter.h>
+#include <parameters/scale-converters/ParabolicGainDbScaleConverter.h>
 #include "parameters/ParameterImportConversions.h"
 
 TEST_CASE("FB Drive 50db to 70db", "[Parameter][Convert]")
@@ -13,7 +14,15 @@ TEST_CASE("FB Drive 50db to 70db", "[Parameter][Convert]")
   {
     auto oldCP = testPair.first;
     auto expectedDV = testPair.second;
-    auto newCP = converter.convert(164, oldCP, 5);
+    auto newCP = converter.convert(164, oldCP, 5, SoundType::Invalid);
     CHECK(newDimension->controlPositionToDisplay(newCP) == Approx(expectedDV));
   }
+}
+
+TEST_CASE("Volume Scaleconverter Display <-> CP")
+{
+  ParabolicGainDbScaleConverter converter;
+
+  for(auto v = 0; v <= 1000; v += 1)
+    CHECK(Approx(v / 1000.0) == converter.displayToControlPosition(converter.controlPositionToDisplay(v / 1000.0)));
 }

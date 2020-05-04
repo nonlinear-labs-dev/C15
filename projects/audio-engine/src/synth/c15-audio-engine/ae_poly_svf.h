@@ -17,7 +17,7 @@ namespace Engine
   class PolyStateVariableFilter
   {
    public:
-    PolyValue m_out;
+    PolyValue m_out = {};
     PolyStateVariableFilter();
     void init(const float _samplerate);
     void apply(PolySignals &_signals, const PolyValue &_sampleA, const PolyValue &_sampleB,
@@ -25,8 +25,8 @@ namespace Engine
     void resetDSP();
 
    private:
-    PolyValue m_first_int1_stateVar, m_first_int2_stateVar, m_second_int1_stateVar, m_second_int2_stateVar,
-        m_first_sat_stateVar, m_second_sat_stateVar;
-    float m_warpConst_2PI;
+    PolyValue m_first_int1_stateVar = {}, m_first_int2_stateVar = {}, m_second_int1_stateVar = {},
+              m_second_int2_stateVar = {}, m_first_sat_stateVar = {}, m_second_sat_stateVar = {};
+    float m_warpConst_2PI = 0.0f;
   };
 }  // namespace Engine

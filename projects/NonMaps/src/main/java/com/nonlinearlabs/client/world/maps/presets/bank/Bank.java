@@ -85,14 +85,14 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 
 	public boolean isDockedInDirection(Orientation orientation) {
 		switch (orientation) {
-		case North:
-			return getMasterTop() != null;
-		case South:
-			return getBottomSlave() != null;
-		case East:
-			return getRightSlave() != null;
-		case West:
-			return getMasterLeft() != null;
+			case North:
+				return getMasterTop() != null;
+			case South:
+				return getBottomSlave() != null;
+			case East:
+				return getRightSlave() != null;
+			case West:
+				return getMasterLeft() != null;
 		}
 		return false;
 	}
@@ -106,9 +106,6 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		return tapes[o.ordinal()];
 	}
 
-	public boolean isInStoreSelectMode() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().isInStoreSelectMode();
-	}
 
 	@Override
 	public void doFirstLayoutPass(double levelOfDetail) {
@@ -187,17 +184,17 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		ctx.setFillStyle("rgba(255, 0, 0, 0.5)");
 
 		switch (getDropPosition(presetRect, dragPosition)) {
-		case ABOVE:
-			drawDropIndicator(ctx, presetRect, -0.1, 0.2);
-			break;
+			case ABOVE:
+				drawDropIndicator(ctx, presetRect, -0.1, 0.2);
+				break;
 
-		case BELOW:
-			drawDropIndicator(ctx, presetRect, 0.9, 0.2);
-			break;
+			case BELOW:
+				drawDropIndicator(ctx, presetRect, 0.9, 0.2);
+				break;
 
-		case COVERING:
-			drawDropIndicator(ctx, presetRect, 0.1, 0.8);
-			break;
+			case COVERING:
+				drawDropIndicator(ctx, presetRect, 0.1, 0.8);
+				break;
 		}
 	}
 
@@ -258,28 +255,28 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 
 	private void doDropAction(DropAction action, DropPosition pos, IPreset preset, DragProxy dragProxy) {
 		switch (action) {
-		case COPY_PRESET:
-			doCopyPreset(pos, preset, dragProxy);
-			break;
+			case COPY_PRESET:
+				doCopyPreset(pos, preset, dragProxy);
+				break;
 
-		case INSERT_EDITBUFFER:
-			doInsertEditbuffer(pos, preset, dragProxy);
-			break;
+			case INSERT_EDITBUFFER:
+				doInsertEditbuffer(pos, preset, dragProxy);
+				break;
 
-		case MOVE_PRESET:
-			doMovePreset(pos, preset, dragProxy);
-			break;
+			case MOVE_PRESET:
+				doMovePreset(pos, preset, dragProxy);
+				break;
 
-		case INSERT_BANK:
-			doInsertBank(pos, preset, dragProxy);
-			break;
+			case INSERT_BANK:
+				doInsertBank(pos, preset, dragProxy);
+				break;
 
-		case DROP_PRESETS:
-			doDropPresets(pos, preset);
+			case DROP_PRESETS:
+				doDropPresets(pos, preset);
 
-		case NONE:
-		default:
-			break;
+			case NONE:
+			default:
+				break;
 		}
 	}
 
@@ -289,17 +286,17 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		String csv = sel.getCSV();
 
 		switch (pos) {
-		case ABOVE:
-			getNonMaps().getServerProxy().dropPresetsAbove(csv, preset);
-			break;
+			case ABOVE:
+				getNonMaps().getServerProxy().dropPresetsAbove(csv, preset);
+				break;
 
-		case BELOW:
-			getNonMaps().getServerProxy().dropPresetsBelow(csv, preset);
-			break;
+			case BELOW:
+				getNonMaps().getServerProxy().dropPresetsBelow(csv, preset);
+				break;
 
-		case COVERING:
-			getNonMaps().getServerProxy().dropPresetsTo(csv, preset);
-			break;
+			case COVERING:
+				getNonMaps().getServerProxy().dropPresetsTo(csv, preset);
+				break;
 		}
 	}
 
@@ -307,33 +304,33 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		IPreset p = (IPreset) dragProxy.getOrigin();
 
 		switch (pos) {
-		case ABOVE:
-			getNonMaps().getServerProxy().movePresetAbove(p, preset);
-			break;
+			case ABOVE:
+				getNonMaps().getServerProxy().movePresetAbove(p, preset);
+				break;
 
-		case BELOW:
-			getNonMaps().getServerProxy().movePresetBelow(p, preset);
-			break;
+			case BELOW:
+				getNonMaps().getServerProxy().movePresetBelow(p, preset);
+				break;
 
-		case COVERING:
-			getNonMaps().getServerProxy().movePresetTo(p, preset);
-			break;
+			case COVERING:
+				getNonMaps().getServerProxy().movePresetTo(p, preset);
+				break;
 		}
 	}
 
 	private void doInsertEditbuffer(DropPosition pos, IPreset preset, DragProxy dragProxy) {
 		switch (pos) {
-		case ABOVE:
-			getNonMaps().getServerProxy().insertEditBufferAbove(preset);
-			break;
+			case ABOVE:
+				getNonMaps().getServerProxy().insertEditBufferAbove(preset);
+				break;
 
-		case BELOW:
-			getNonMaps().getServerProxy().insertEditBufferBelow(preset);
-			break;
+			case BELOW:
+				getNonMaps().getServerProxy().insertEditBufferBelow(preset);
+				break;
 
-		case COVERING:
-			getNonMaps().getServerProxy().overwritePresetWithEditBuffer(preset);
-			break;
+			case COVERING:
+				getNonMaps().getServerProxy().overwritePresetWithEditBuffer(preset);
+				break;
 		}
 	}
 
@@ -345,17 +342,17 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 			return;
 
 		switch (pos) {
-		case ABOVE:
-			getNonMaps().getServerProxy().insertBankAbove(bank, preset);
-			break;
+			case ABOVE:
+				getNonMaps().getServerProxy().insertBankAbove(bank, preset);
+				break;
 
-		case BELOW:
-			getNonMaps().getServerProxy().insertBankBelow(bank, preset);
-			break;
+			case BELOW:
+				getNonMaps().getServerProxy().insertBankBelow(bank, preset);
+				break;
 
-		case COVERING:
-			getNonMaps().getServerProxy().overwritePresetWithBank(bank, preset);
-			break;
+			case COVERING:
+				getNonMaps().getServerProxy().overwritePresetWithBank(bank, preset);
+				break;
 		}
 	}
 
@@ -363,17 +360,17 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		IPreset p = (IPreset) dragProxy.getOrigin();
 
 		switch (pos) {
-		case ABOVE:
-			getNonMaps().getServerProxy().insertPresetCopyAbove(p, preset);
-			break;
+			case ABOVE:
+				getNonMaps().getServerProxy().insertPresetCopyAbove(p, preset);
+				break;
 
-		case BELOW:
-			getNonMaps().getServerProxy().insertPresetCopyBelow(p, preset);
-			break;
+			case BELOW:
+				getNonMaps().getServerProxy().insertPresetCopyBelow(p, preset);
+				break;
 
-		case COVERING:
-			getNonMaps().getServerProxy().overwritePresetWith(p, preset);
-			break;
+			case COVERING:
+				getNonMaps().getServerProxy().overwritePresetWith(p, preset);
+				break;
 		}
 	}
 
@@ -480,9 +477,9 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	}
 
 	public boolean isSelected() {
-		if (isInStoreSelectMode()) {
-			return getParent().getStoreSelectMode().getSelectedBank() == this;
-		}
+		if (getParent().hasCustomPresetSelection())
+			return getParent().getCustomPresetSelection().getSelectedBank() == this;
+
 		return uuid.equals(getParent().getSelectedBank());
 	}
 
@@ -808,24 +805,24 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		boolean hasMaster = masterLeft != null || masterTop != null;
 
 		switch (orientation) {
-		case North:
-			return !hasMaster;
+			case North:
+				return !hasMaster;
 
-		case South:
-			return slaveBottom == null;
+			case South:
+				return slaveBottom == null;
 
-		case East: {
-			Bank walker = this;
-			while (walker != null) {
-				if (walker.slaveRight != null)
-					return false;
-				walker = walker.masterTop;
+			case East: {
+				Bank walker = this;
+				while (walker != null) {
+					if (walker.slaveRight != null)
+						return false;
+					walker = walker.masterTop;
+				}
+				return true;
 			}
-			return true;
-		}
 
-		case West:
-			return !hasMaster;
+			case West:
+				return !hasMaster;
 		}
 		return false;
 	}
@@ -887,24 +884,24 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		Bank masterLeft = getMasterLeft();
 
 		switch (orientation) {
-		case East:
-			if (rightSlave != null)
-				return rightSlave.getTape(Orientation.West);
-			break;
-		case North:
-			if (masterTop != null)
-				return masterTop.getTape(Orientation.South);
-			break;
-		case South:
-			if (bottomSlave != null)
-				return bottomSlave.getTape(Orientation.North);
-			break;
-		case West:
-			if (masterLeft != null)
-				return masterLeft.getTape(Orientation.East);
-			break;
-		default:
-			break;
+			case East:
+				if (rightSlave != null)
+					return rightSlave.getTape(Orientation.West);
+				break;
+			case North:
+				if (masterTop != null)
+					return masterTop.getTape(Orientation.South);
+				break;
+			case South:
+				if (bottomSlave != null)
+					return bottomSlave.getTape(Orientation.North);
+				break;
+			case West:
+				if (masterLeft != null)
+					return masterLeft.getTape(Orientation.East);
+				break;
+			default:
+				break;
 
 		}
 

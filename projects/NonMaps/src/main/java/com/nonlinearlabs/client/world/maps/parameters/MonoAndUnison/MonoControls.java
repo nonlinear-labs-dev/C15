@@ -28,6 +28,16 @@ class MonoControls extends ParameterGroup {
 			public double getBottomMargin() {
 				return -2;
 			}
+
+			@Override
+			protected double getFontHeight() {
+				return 13;
+			}
+
+			@Override
+			protected double getBasicHeight() {
+				return 22;
+			}
 		});
 		addChild(new MonoColumn(this));
 	}

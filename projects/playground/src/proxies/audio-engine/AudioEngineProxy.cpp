@@ -38,7 +38,7 @@ void AudioEngineProxy::toggleSuppressParameterChanges(UNDO::Transaction *transac
 constexpr auto cUnisonVoicesParameterNumber = 249;
 constexpr auto cMonoEnableParameterNumber = 364;
 
-template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, EditBuffer *editBuffer)
+template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, const EditBuffer &editBuffer)
 {
   size_t hwSource = 0;
   size_t globalParams = 0;
@@ -46,21 +46,23 @@ template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, EditBuffer 
   size_t mcT = 0;
   size_t modR = 0;
 
-  auto masterParameter = dynamic_cast<const ModulateableParameter*>(editBuffer->findParameterByID({247, VoiceGroup::Global}));
-  auto& master = msg.master.volume;
+  auto masterParameter
+      = dynamic_cast<const ModulateableParameter *>(editBuffer.findParameterByID({ 247, VoiceGroup::Global }));
+  auto &master = msg.master.volume;
   master.id = masterParameter->getID().getNumber();
   master.controlPosition = masterParameter->getControlPositionValue();
   master.modulationAmount = masterParameter->getModulationAmount();
   master.mc = masterParameter->getModulationSource();
 
-  auto tuneParameter = dynamic_cast<const ModulateableParameter*>(editBuffer->findParameterByID({248, VoiceGroup::Global}));
-  auto& tune = msg.master.tune;
+  auto tuneParameter
+      = dynamic_cast<const ModulateableParameter *>(editBuffer.findParameterByID({ 248, VoiceGroup::Global }));
+  auto &tune = msg.master.tune;
   tune.id = tuneParameter->getID().getNumber();
   tune.controlPosition = tuneParameter->getControlPositionValue();
   tune.modulationAmount = tuneParameter->getModulationAmount();
   tune.mc = tuneParameter->getModulationSource();
 
-  for(auto &g : editBuffer->getParameterGroups(VoiceGroup::Global))
+  for(auto &g : editBuffer.getParameterGroups(VoiceGroup::Global))
   {
     for(auto p : g->getParameters())
     {
@@ -108,7 +110,7 @@ template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, EditBuffer 
 }
 
 template <typename tParameterType, typename tParameterArray>
-void forEachParameterInGroup(EditBuffer *eb, const GroupId &group, tParameterArray &array, size_t &index)
+void forEachParameterInGroup(const EditBuffer *eb, const GroupId &group, tParameterArray &array, size_t &index)
 {
   for(auto &p : eb->getParameterGroupByID(group)->getParameters())
   {
@@ -121,21 +123,20 @@ void forEachParameterInGroup(EditBuffer *eb, const GroupId &group, tParameterArr
   }
 }
 
-nltools::msg::SinglePresetMessage AudioEngineProxy::createSingleEditBufferMessage()
+nltools::msg::SinglePresetMessage AudioEngineProxy::createSingleEditBufferMessage(const EditBuffer &eb)
 {
   nltools::msg::SinglePresetMessage msg {};
-  auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-  fillMessageWithGlobalParams(msg, editBuffer);
+  fillMessageWithGlobalParams(msg, eb);
 
   size_t mc = 0;
   size_t modR = 0;
   size_t modP = 0;
   size_t unMod = 0;
 
-  forEachParameterInGroup<MacroControlParameter>(editBuffer, { "MCs", VoiceGroup::Global }, msg.macros, mc);
-  forEachParameterInGroup<ModulationRoutingParameter>(editBuffer, { "MCM", VoiceGroup::Global }, msg.hwamounts, modR);
+  forEachParameterInGroup<MacroControlParameter>(&eb, { "MCs", VoiceGroup::Global }, msg.macros, mc);
+  forEachParameterInGroup<ModulationRoutingParameter>(&eb, { "MCM", VoiceGroup::Global }, msg.hwamounts, modR);
 
-  for(auto &g : editBuffer->getParameterGroups(VoiceGroup::I))
+  for(auto &g : eb.getParameterGroups(VoiceGroup::I))
   {
     if(auto unisonGroup = dynamic_cast<UnisonGroup *>(g))
     {
@@ -244,7 +245,7 @@ void AudioEngineProxy::fillUnisonPart(nltools::msg::ParameterGroups::UnisonGroup
   }
 }
 
-template <typename tMsg> void fillDualMessage(tMsg &msg, EditBuffer *editBuffer)
+template <typename tMsg> void fillDualMessage(tMsg &msg, const EditBuffer &editBuffer)
 {
   for(auto vg : { VoiceGroup::I, VoiceGroup::II })
   {
@@ -252,7 +253,7 @@ template <typename tMsg> void fillDualMessage(tMsg &msg, EditBuffer *editBuffer)
     size_t unMod = 0;
 
     auto arrayIndex = static_cast<int>(vg);
-    for(auto &g : editBuffer->getParameterGroups(vg))
+    for(auto &g : editBuffer.getParameterGroups(vg))
     {
       if(dynamic_cast<UnisonGroup *>(g) || dynamic_cast<MonoGroup *>(g))
         continue;
@@ -285,15 +286,13 @@ template <typename tMsg> void fillDualMessage(tMsg &msg, EditBuffer *editBuffer)
   }
 }
 
-nltools::msg::SplitPresetMessage AudioEngineProxy::createSplitEditBufferMessage()
+nltools::msg::SplitPresetMessage AudioEngineProxy::createSplitEditBufferMessage(const EditBuffer &eb)
 {
   nltools::msg::SplitPresetMessage msg {};
-  auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-  fillMessageWithGlobalParams(msg, editBuffer);
+  fillMessageWithGlobalParams(msg, eb);
+  fillDualMessage(msg, eb);
 
-  fillDualMessage(msg, editBuffer);
-
-  if(auto sp = editBuffer->getSplitPoint())
+  if(auto sp = eb.getSplitPoint())
   {
     auto &t = msg.splitpoint;
     t.id = sp->getID().getNumber();
@@ -306,12 +305,12 @@ nltools::msg::SplitPresetMessage AudioEngineProxy::createSplitEditBufferMessage(
   {
     auto vgIndex = static_cast<int>(vg);
 
-    if(auto monoGroup = editBuffer->getParameterGroupByID({ "Mono", vg }))
+    if(auto monoGroup = eb.getParameterGroupByID({ "Mono", vg }))
     {
       fillMonoPart(msg.mono[vgIndex], monoGroup);
     }
 
-    if(auto unisonGroup = editBuffer->getParameterGroupByID({ "Unison", vg }))
+    if(auto unisonGroup = eb.getParameterGroupByID({ "Unison", vg }))
     {
       fillUnisonPart(msg.unison[vgIndex], unisonGroup);
     }
@@ -320,17 +319,16 @@ nltools::msg::SplitPresetMessage AudioEngineProxy::createSplitEditBufferMessage(
   return msg;
 }
 
-nltools::msg::LayerPresetMessage AudioEngineProxy::createLayerEditBufferMessage()
+nltools::msg::LayerPresetMessage AudioEngineProxy::createLayerEditBufferMessage(const EditBuffer &eb)
 {
   nltools::msg::LayerPresetMessage msg {};
-  auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-  fillMessageWithGlobalParams(msg, editBuffer);
-  fillDualMessage(msg, editBuffer);
+  fillMessageWithGlobalParams(msg, eb);
+  fillDualMessage(msg, eb);
 
-  if(auto unisonGroup = editBuffer->getParameterGroupByID({ "Unison", VoiceGroup::I }))
+  if(auto unisonGroup = eb.getParameterGroupByID({ "Unison", VoiceGroup::I }))
     fillUnisonPart(msg.unison, unisonGroup);
 
-  if(auto monoGroup = editBuffer->getParameterGroupByID({ "Mono", VoiceGroup::I }))
+  if(auto monoGroup = eb.getParameterGroupByID({ "Mono", VoiceGroup::I }))
     fillMonoPart(msg.mono, monoGroup);
 
   return msg;
@@ -342,13 +340,13 @@ void AudioEngineProxy::sendEditBuffer()
   switch(eb->getType())
   {
     case SoundType::Single:
-      nltools::msg::send(nltools::msg::EndPoint::AudioEngine, createSingleEditBufferMessage());
+      nltools::msg::send(nltools::msg::EndPoint::AudioEngine, createSingleEditBufferMessage(*eb));
       break;
     case SoundType::Split:
-      nltools::msg::send(nltools::msg::EndPoint::AudioEngine, createSplitEditBufferMessage());
+      nltools::msg::send(nltools::msg::EndPoint::AudioEngine, createSplitEditBufferMessage(*eb));
       break;
     case SoundType::Layer:
-      nltools::msg::send(nltools::msg::EndPoint::AudioEngine, createLayerEditBufferMessage());
+      nltools::msg::send(nltools::msg::EndPoint::AudioEngine, createLayerEditBufferMessage(*eb));
       break;
   }
 

@@ -69,6 +69,12 @@ public class SourcesAndAmounts extends ParameterGroup {
 				return super.onContextMenu(pos);
 			}
 
+
+			@Override
+			protected String getDisplayText() {
+				return "Hardware Sources and Amounts";
+			}
+
 			@Override
 			protected boolean isLocked() {
 				return super.isLocked();

@@ -5,6 +5,7 @@
 #include <functional>
 #include <presets/StoreModeData.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/LoadModeMenu.h>
+#include <presets/PresetPartSelection.h>
 
 class BankAndPresetNumberLabel;
 
@@ -13,9 +14,10 @@ class NumPresetsInBankLabel;
 class PresetManager;
 class PresetListBase;
 class Setting;
-class LoadModeSetting;
+class DirectLoadSetting;
 class ButtonMenu;
 class Button;
+class BankButton;
 
 class PresetManagerLayout : public Layout
 {
@@ -36,6 +38,7 @@ class PresetManagerLayout : public Layout
 
   std::pair<size_t, size_t> getSelectedPosition() const;
   std::unique_ptr<StoreModeData> &getStoreModePtr();
+  PresetPartSelection *getPresetPartSelection(VoiceGroup vg);
 
  private:
   void setup();
@@ -51,14 +54,16 @@ class PresetManagerLayout : public Layout
   void setupBankStore();
 
   LoadModeMenu *m_loadMode = nullptr;
+  BankButton *m_bankButton = nullptr;
   ButtonMenu *m_menu = nullptr;
   PresetListBase *m_presets = nullptr;
   FocusAndMode m_focusAndMode;
   FocusAndMode m_oldFocusAndMode;
   StoreModeData *getStoreModeData();
+
+  sigc::connection m_dlSettingConnection;
+
   void setStoreModeData(std::unique_ptr<StoreModeData> ptr);
 
   void loadSelectedPresetAccordingToLoadType();
-
-  void openPartChooser();
 };

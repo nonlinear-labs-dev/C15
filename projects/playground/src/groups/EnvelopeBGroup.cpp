@@ -53,7 +53,7 @@ void EnvelopeBGroup::init()
       ScaleConverter::get<LinearBipolar48DbScaleConverter>(), 0, 48, 480));
 
   appendParameter(
-      new Parameter(this, { 33, getVoiceGroup() }, ScaleConverter::get<Linear60DbScaleConverter>(), 0.5, 60, 600));
+      new Parameter(this, { 33, getVoiceGroup() }, ScaleConverter::get<LinearBipolar60DbScaleConverter>(), 0.5, 60, 600));
 
   appendParameter(
       new Parameter(this, { 34, getVoiceGroup() }, ScaleConverter::get<Linear60DbtScaleConverter>(), 0, 60, 600));

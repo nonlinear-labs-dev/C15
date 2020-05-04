@@ -17,5 +17,13 @@ VersionAttribute &VersionAttribute::get()
 
 int VersionAttribute::getCurrentFileVersion()
 {
-  return 7;
+  enum class History
+  {
+    Reaktor = 5,
+    Version1_5 = 6,
+    NAMM_2020 = 7,
+    FIX_UNISON_VOICES = 8
+  };
+
+  return static_cast<int>(History::FIX_UNISON_VOICES);
 }

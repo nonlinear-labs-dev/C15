@@ -6,11 +6,17 @@
 #include <parameters/Parameter.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/Oleds.h>
+#include <proxies/hwui/controls/SwitchVoiceGroupButton.h>
 
 MuteIndicator::MuteIndicator(const Rect& r)
     : Label(r)
 {
+  m_soundTypeConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged([&] { setup(); });
+  m_vgConnection = Application::get().getHWUI()->onCurrentVoiceGroupChanged([&](auto) { setup(); });
+}
 
+void MuteIndicator::setup()
+{
   auto isInLayerMode = Application::get().getPresetManager()->getEditBuffer()->getType() == SoundType::Layer;
 
   if(isInLayerMode)
@@ -26,17 +32,17 @@ MuteIndicator::MuteIndicator(const Rect& r)
 
 MuteIndicator::~MuteIndicator()
 {
-  if(m_parameterConnection)
-    m_parameterConnection.disconnect();
+  m_soundTypeConnection.disconnect();
+  m_vgConnection.disconnect();
+  m_parameterConnection.disconnect();
 }
 
 void MuteIndicator::onParameterChanged(const Parameter* p)
 {
   const auto muteActive = p->getControlPositionValue() != 0;
   const auto currentFocusIsNotGlobal
-      = Application::get().getPresetManager()->getEditBuffer()->getSelected()->getID().getVoiceGroup()
-      != VoiceGroup::Global;
-  
+      = SwitchVoiceGroupButton::allowToggling(p, Application::get().getPresetManager()->getEditBuffer());
+
   if(muteActive && currentFocusIsNotGlobal)
     setText({ "\uE0BA", 0 });
   else

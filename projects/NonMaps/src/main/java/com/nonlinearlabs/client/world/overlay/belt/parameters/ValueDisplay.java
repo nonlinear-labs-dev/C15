@@ -22,7 +22,7 @@ public class ValueDisplay extends Label {
 	public double calculateTextWidth() {
 		Context2d ctx = NonMaps.get().getCanvas().getContext2d();
 		String text = getDrawText(ctx);
-		ctx.setFont(getFontHeight(getPixRect()) + "px 'Source Sans Pro LW25'");
+		ctx.setFont(getFontHeight(getPixRect()) + "px 'SSP-LW25'");
 		return ctx.measureText(text).getWidth();
 	}
 

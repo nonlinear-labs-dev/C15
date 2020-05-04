@@ -18,8 +18,10 @@ class ModulationModeButton : public Button
  protected:
   virtual void update(const Parameter *parameter) = 0;
 
+  void onSoundTypeChanged();
+
  private:
   void onParameterSelectionChanged(Parameter *oldParameter, Parameter *newParameter);
-
+  Parameter *m_param = nullptr;
   sigc::connection m_paramValueConnection;
 };

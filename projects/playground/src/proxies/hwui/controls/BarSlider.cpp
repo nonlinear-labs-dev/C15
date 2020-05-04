@@ -1,6 +1,9 @@
 #include "BarSlider.h"
 #include <proxies/hwui/FrameBuffer.h>
+#include <groups/ParameterGroup.h>
 #include <math.h>
+#include <Application.h>
+#include <proxies/hwui/HWUI.h>
 
 BarSlider::BarSlider(Parameter *param, const Rect &rect)
     : super(param, rect)
@@ -51,12 +54,16 @@ bool BarSlider::redraw(FrameBuffer &fb)
       fb.fillRect(right - width, smaller.getTop(), width, smaller.getHeight());
     }
   }
+  else if(auto param = getParameter())
+  {
+    if(param->getVisualizationStyle() == Parameter::VisualizationStyle::Bar)
+      drawParameterSlider(fb, v, smaller);
+    else if(param->getVisualizationStyle() == Parameter::VisualizationStyle::BarFromRight)
+      drawParameterSliderFromRight(fb, v, smaller);
+  }
   else
   {
-    v = std::max(std::min(v, 1.0f), 0.0f);
-    int width = ceil(smaller.getWidth() * v);
-    setSliderColor(fb);
-    fb.fillRect(smaller.getLeft(), smaller.getTop(), width, smaller.getHeight());
+    drawParameterSlider(fb, v, smaller);
   }
 
   if(hasBorder())
@@ -71,4 +78,21 @@ bool BarSlider::redraw(FrameBuffer &fb)
 bool BarSlider::drawCenterMark() const
 {
   return true;
+}
+
+void BarSlider::drawParameterSlider(FrameBuffer &fb, double v, const Rect &smaller)
+{
+  v = std::max(std::min(v, 1.0), 0.0);
+  int width = ceil(smaller.getWidth() * v);
+  setSliderColor(fb);
+  fb.fillRect(smaller.getLeft(), smaller.getTop(), width, smaller.getHeight());
+}
+
+void BarSlider::drawParameterSliderFromRight(FrameBuffer &fb, double v, const Rect &smaller)
+{
+  v = std::max(std::min(v, 1.0), 0.0);
+  auto width = std::ceil(smaller.getWidth() * v);
+  auto realWidth = smaller.getWidth() - width;
+  setSliderColor(fb);
+  fb.fillRect(smaller.getRight() - realWidth, smaller.getTop(), realWidth + 1, smaller.getHeight());
 }

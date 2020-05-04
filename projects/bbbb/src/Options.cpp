@@ -17,7 +17,7 @@ namespace OptionDetail
   }
 }
 
-Options::Options(int& argc, char**& argv)
+AudioEngineOptions::AudioEngineOptions(int& argc, char**& argv)
 {
   Glib::OptionGroup mainGroup("common", "common options");
   Glib::OptionContext ctx;
@@ -46,27 +46,27 @@ Options::Options(int& argc, char**& argv)
   }
 }
 
-Glib::ustring Options::getPlaygroundHost() const
+Glib::ustring AudioEngineOptions::getPlaygroundHost() const
 {
   return m_playgroundHost;
 }
 
-Glib::ustring Options::getAudioEngineHost() const
+Glib::ustring AudioEngineOptions::getAudioEngineHost() const
 {
   return m_audioengineHost;
 }
 
-bool Options::doTimeStamps() const
+bool AudioEngineOptions::doTimeStamps() const
 {
   return m_doTimeStamps;
 }
 
-bool Options::logLPCRaw() const
+bool AudioEngineOptions::logLPCRaw() const
 {
   return m_logLpcRaw;
 }
 
-bool Options::logHeartBeat() const
+bool AudioEngineOptions::logHeartBeat() const
 {
   return m_logHeartBeat;
 }

@@ -1,5 +1,5 @@
 #include <testing/TestHelper.h>
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 
 TEST_CASE("ParameterId hashes")
 {

@@ -32,9 +32,8 @@ void MacroControlEditButtonMenu::setup()
 
   clear();
 
-  addButton("Smoothing", std::bind(&MacroControlEditButtonMenu::smoothing, this));
   addButton("Rename", std::bind(&MacroControlEditButtonMenu::rename, this));
-  addButton("Mod Reset", std::bind(&MacroControlEditButtonMenu::reset, this));
+  addButton("Edit Info", std::bind(&MacroControlEditButtonMenu::editInfo, this));
 
   if(eb->getSelected()->getParentGroup()->areAllParametersLocked())
     addButton("Unlock Group", std::bind(&MacroControlEditButtonMenu::unlockGroup, this));
@@ -71,27 +70,9 @@ void MacroControlEditButtonMenu::rename()
   Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(new RenameMCLayout());
 }
 
-void MacroControlEditButtonMenu::smoothing()
-{
-  auto eb = Application::get().getPresetManager()->getEditBuffer();
-  const auto currentID = eb->getSelected()->getID();
-  const auto mc = MacroControlsGroup::paramIDToModSrc(currentID);
-  const auto smoothingID = MacroControlsGroup::modSrcToSmoothingId(mc);
-  eb->undoableSelectParameter(smoothingID);
-}
-
 void MacroControlEditButtonMenu::editInfo()
 {
   Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(new EditMCInfoLayout());
-}
-
-void MacroControlEditButtonMenu::reset()
-{
-  if(auto p
-     = dynamic_cast<MacroControlParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
-  {
-    p->undoableResetConnectionsToTargets();
-  }
 }
 
 void MacroControlEditButtonMenu::unlockGroup()

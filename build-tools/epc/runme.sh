@@ -12,7 +12,7 @@ while fdisk -l ${SSD} | grep "${SSD}[0-9]"; do
  echo "Here you have a shell for fixing the issue. Once you close the shell (Ctrl+D), a new attempt will be made."
  /bin/bash
 done
- 
+
 echo "Partitioning ${SSD}:"
 cat /Audiophile2NonLinux/sda.sfdisk | sfdisk ${SSD}
 echo ";" | sfdisk -a ${SSD}
@@ -43,6 +43,7 @@ sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/' /etc/default/grub
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT.*$/GRUB_CMDLINE_LINUX_DEFAULT="quiet ip=192.168.10.10:::::eth0:none"/' /etc/default/grub
 sed -i 's/^HOOKS=.*$/HOOKS=\"base udev oroot block filesystems autodetect modconf keyboard net nlhook\"/' /etc/mkinitcpio.conf
 sed -i 's/^BINARIES=.*$/BINARIES=\"tar rsync gzip lsblk udevadm\"/' /etc/mkinitcpio.conf
+sed -i 's/^MODULES=.*$/MODULES=\"e1000e\"/' /etc/mkinitcpio.conf
 
 echo "Copy initial system:"
 cp -ax / /mnt

@@ -1,6 +1,5 @@
 #define CATCH_CONFIG_RUNNER
-
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include "Application.h"
 #include "device-settings/DebugLevel.h"
 #include "playground-helpers.h"
@@ -26,9 +25,9 @@ int main(int numArgs, char **argv)
   app.stopWatchDog();
 
   std::vector<const char *> args;
-  args.emplace_back(argv[0]);
-  //args.emplace_back("-s");  //this line enables showing of passed tests
+  for(auto i = 0; i < numArgs; i++)
+    if(argv[i] && std::string(argv[i]).find('=') == std::string::npos)
+      args.emplace_back(argv[i]);
 
-  int result = Catch::Session().run(args.size(), args.data());
-  return result;
+  return Catch::Session().run(args.size(), args.data());
 }

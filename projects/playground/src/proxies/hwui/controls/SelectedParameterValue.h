@@ -23,10 +23,10 @@ class SelectedParameterValue : public Label
   virtual void onModifiersChanged(ButtonModifiers mods);
 
   void onVoiceGroupSelectionChanged(VoiceGroup v);
+  void onSoundTypeChanged();
 
   bool redraw(FrameBuffer &fb) override;
 
  private:
   sigc::connection m_paramValueConnection;
-  sigc::connection m_voiceGroupSelectionConnection;
 };

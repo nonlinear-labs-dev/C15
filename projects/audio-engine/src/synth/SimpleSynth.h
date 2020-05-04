@@ -7,6 +7,8 @@ class SimpleSynth : public Synth
  public:
   static constexpr int c_numVoices = 1024;
 
+  SimpleSynth(const AudioEngineOptions *options);
+
   void doMidi(const MidiEvent &event) override;
   void doAudio(SampleFrame *target, size_t numFrames) override;
 

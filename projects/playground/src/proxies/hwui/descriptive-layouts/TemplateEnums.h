@@ -50,7 +50,7 @@ namespace DescriptiveLayouts
 
        NextNumber, NextName, NextSelected, NextLoaded, PreviousType, NextType, CurrentType, CurrentVoiceGroupText);
 
-  ENUM(EventSinks, uint8_t, SwitchToInitDetail, SwitchToEditMode, SwitchToSelectMode, SwitchToSetupFocus,
+  ENUM(EventSinks, uint8_t, Swallow, SwitchToInitDetail, SwitchToEditMode, SwitchToSelectMode, SwitchToSetupFocus,
        SwitchToParameterFocus, SwitchToBankFocus, SwitchToPresetFocus, SwitchToSoundFocus, SwitchToMCSelectDetail,
        SwitchToButtonADetail, SwitchToButtonBDetail, SwitchToButtonCDetail, SwitchToButtonDDetail,
        SwitchToMCModRangeDetail, SwitchToMCAmtDetail, IncMCSel, DecMCSel, IncMCAmt, DecMCAmt, IncMCPos, DecMCPos,

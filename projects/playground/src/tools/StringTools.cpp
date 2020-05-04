@@ -55,4 +55,16 @@ namespace StringTools
     ret.erase(std::remove_if(ret.begin(), ret.end(), [&](char c) { return std::isspace(c); }), ret.end());
     return ret;
   }
+  
+  bool hasEnding(std::string const &in, std::string const &test)
+  {
+    if(in.length() >= test.length())
+    {
+      return (0 == in.compare(in.length() - test.length(), test.length(), test));
+    }
+    else
+    {
+      return false;
+    }
+  }
 }

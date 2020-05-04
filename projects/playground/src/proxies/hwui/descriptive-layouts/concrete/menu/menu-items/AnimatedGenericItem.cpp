@@ -3,6 +3,8 @@
 #include <Application.h>
 #include <nltools/logging/Log.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <proxies/hwui/controls/Label.h>
+#include <proxies/hwui/Oleds.h>
 
 Animator::Animator(std::chrono::milliseconds length, ProgressCB pcb, FinishedCB fcb)
     : m_animationCB(pcb)
@@ -48,16 +50,15 @@ bool Animator::finishAnimation()
 void AnimatedGenericItem::startAnimation()
 {
   if(!m_animator)
-    m_animator = std::make_unique<Animator>(
-        std::chrono::milliseconds(500), [this] { this->setDirty(); },
-        [this] {
-          this->setDirty();
+    m_animator = std::make_unique<Animator>(std::chrono::milliseconds(500), [this] { this->setDirty(); },
+                                            [this] {
+                                              this->setDirty();
 
-          m_animator.reset();
+                                              m_animator.reset();
 
-          if(m_animationFinishedCB)
-            m_animationFinishedCB();
-        });
+                                              if(m_animationFinishedCB)
+                                                m_animationFinishedCB();
+                                            });
 }
 
 bool AnimatedGenericItem::drawAnimationZug(FrameBuffer &buffer)
@@ -77,6 +78,7 @@ bool AnimatedGenericItem::drawAnimationZug(FrameBuffer &buffer)
 bool AnimatedGenericItem::redraw(FrameBuffer &fb)
 {
   auto ret = ControlWithChildren::redraw(fb);
+  ret |= drawEnterIndication(fb);
   ret |= drawAnimationZug(fb);
   ret |= drawHighlightBorder(fb);
   return ret;
@@ -85,4 +87,16 @@ bool AnimatedGenericItem::redraw(FrameBuffer &fb)
 void AnimatedGenericItem::doAction()
 {
   startAnimation();
+}
+
+bool AnimatedGenericItem::drawEnterIndication(FrameBuffer &buffer)
+{
+  auto pos = getPosition();
+  pos.setWidth(12);
+  pos.setLeft(getPosition().getRight() - 12);
+  pos.setHeight(pos.getHeight() - 1);
+  auto f = Oleds::get().getFont("Emphase-9-Regular", 9);
+  buffer.setColor(isHighlight() ? FrameBufferColors::C255 : FrameBufferColors::C128);
+  f->draw("\u23CE", pos.getCenter().getX() - 4, pos.getBottom() - 1);
+  return true;
 }

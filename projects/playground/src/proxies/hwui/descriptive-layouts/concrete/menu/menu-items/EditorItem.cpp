@@ -1,6 +1,7 @@
 #include <proxies/hwui/controls/ArrowLeft.h>
 #include "EditorItem.h"
 #include <proxies/hwui/FrameBuffer.h>
+#include <proxies/hwui/Oleds.h>
 
 bool EditorItem::canEnter()
 {
@@ -43,7 +44,8 @@ bool EditorItem::redrawEnterIndication(FrameBuffer &buffer)
   auto leftRect = getPosition();
   leftRect.setWidth(12);
   leftRect.setLeft(getPosition().getRight() - 12);
-  SubmenuIndicator s(leftRect);
-  s.setHighlight(isHighlight());
-  return s.redraw(buffer);
+  auto f = Oleds::get().getFont("Emphase-9-Regular", 9);
+  buffer.setColor(isHighlight() ? FrameBufferColors::C255 : FrameBufferColors::C128);
+  f->draw("...", leftRect.getCenter().getX() - 4, leftRect.getBottom() - 1);
+  return true;
 }

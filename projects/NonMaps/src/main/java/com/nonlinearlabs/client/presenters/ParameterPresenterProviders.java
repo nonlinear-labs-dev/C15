@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterFactory;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -27,7 +28,18 @@ public class ParameterPresenterProviders {
 			});
 		}
 
+		private boolean containsElement(int e, int[] arr) {
+			for (int i : arr) {
+				if(i == e)
+					return true;
+			}
+			return false;
+		}
+
 		public ParameterPresenter getValue() {
+			if(EditBufferModel.get().soundType.getValue() == SoundType.Layer && containsElement(parameterNumber, ParameterFactory.voicesParameters)) {
+				return findMap(VoiceGroup.I).get(parameterNumber).getValue();
+			}
 			return findMap(EditBufferModel.get().voiceGroup.getValue()).get(parameterNumber).getValue();
 		}
 
@@ -65,6 +77,10 @@ public class ParameterPresenterProviders {
 
 	public void register(ParameterId id, Function<ParameterPresenter, Boolean> cb) {
 		findMap(id.getVoiceGroup()).get(id.getNumber()).onChange(cb);
+	}
+
+	public ParameterPresenter getParameterPresenter(VoiceGroup vg, int num) {
+		return findMap(vg).get(num).getValue();
 	}
 
 	private HashMap<Integer, ParameterPresenterProvider> findMap(VoiceGroup vg) {

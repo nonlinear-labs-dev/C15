@@ -3,10 +3,10 @@
 #include "bbbb.h"
 #include <glibmm/ustring.h>
 
-class Options
+class AudioEngineOptions
 {
  public:
-  Options(int &argc, char **&argv);
+  AudioEngineOptions(int &argc, char **&argv);
 
   Glib::ustring getPlaygroundHost() const;
   Glib::ustring getAudioEngineHost() const;

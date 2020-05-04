@@ -5,6 +5,7 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <sigc++/sigc++.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
 
 SelectedParameterValue::SelectedParameterValue(const Rect &rect)
     : super(rect)
@@ -14,13 +15,15 @@ SelectedParameterValue::SelectedParameterValue(const Rect &rect)
 
   Application::get().getHWUI()->onModifiersChanged(sigc::mem_fun(this, &SelectedParameterValue::onModifiersChanged));
 
-  m_voiceGroupSelectionConnection = Application::get().getHWUI()->onCurrentVoiceGroupChanged(
+  Application::get().getHWUI()->onCurrentVoiceGroupChanged(
       sigc::mem_fun(this, &SelectedParameterValue::onVoiceGroupSelectionChanged));
+
+  Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
+      sigc::mem_fun(this, &SelectedParameterValue::onSoundTypeChanged), false);
 }
 
 SelectedParameterValue::~SelectedParameterValue()
 {
-  m_voiceGroupSelectionConnection.disconnect();
 }
 
 void SelectedParameterValue::onModifiersChanged(ButtonModifiers mods)
@@ -33,8 +36,12 @@ void SelectedParameterValue::onParameterSelected(Parameter *parameter)
   m_paramValueConnection.disconnect();
 
   if(parameter)
+  {
     m_paramValueConnection
         = parameter->onParameterChanged(sigc::mem_fun(this, &SelectedParameterValue::onParamValueChanged));
+
+    setVisible(ParameterLayout2::isParameterAvailableInSoundType(parameter));
+  }
 }
 
 void SelectedParameterValue::onParamValueChanged(const Parameter *param)
@@ -66,4 +73,11 @@ void SelectedParameterValue::setSuffixFontColor(FrameBuffer &fb) const
 void SelectedParameterValue::onVoiceGroupSelectionChanged(VoiceGroup v)
 {
   setDirty();
+}
+
+void SelectedParameterValue::onSoundTypeChanged()
+{
+  auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  auto visible = ParameterSelectLayout2::isParameterAvailableInSoundType(selected);
+  setVisible(visible);
 }

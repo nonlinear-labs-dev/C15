@@ -61,6 +61,12 @@ public class EditBufferModel extends Notifier<EditBufferModel> {
 	public StringDataModelEntity loadedPresetInVG2 = new StringDataModelEntity("");
 	public StringDataModelEntity loadedPresetInVG2WithSuffix = new StringDataModelEntity("");
 
+	public StringDataModelEntity sourceUUIDI = new StringDataModelEntity("");
+	public StringDataModelEntity sourceUUIDII = new StringDataModelEntity("");
+
+	public EnumDataModelEntity<VoiceGroup> sourceVGI = new EnumDataModelEntity<EditBufferModel.VoiceGroup>(EditBufferModel.VoiceGroup.class, VoiceGroup.I);
+	public EnumDataModelEntity<VoiceGroup> sourceVGII = new EnumDataModelEntity<EditBufferModel.VoiceGroup>(EditBufferModel.VoiceGroup.class, VoiceGroup.I);
+
 	private EditBufferModel() {
 		ParameterFactory.assertSorted();
 

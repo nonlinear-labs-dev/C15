@@ -102,6 +102,11 @@ Glib::ustring QuantizedValue::getDisplayString() const
   return getScaleConverter()->getDimension().stringize(getDisplayValue());
 }
 
+Glib::ustring QuantizedValue::getDisplayString(tControlPositionValue cp) const
+{
+  return getScaleConverter()->getDimension().stringize(getScaleConverter()->controlPositionToDisplay(cp));
+}
+
 tControlPositionValue QuantizedValue::getNextStepValue(int incs, ButtonModifiers modifiers) const
 {
   bool fine = modifiers[ButtonModifier::FINE];

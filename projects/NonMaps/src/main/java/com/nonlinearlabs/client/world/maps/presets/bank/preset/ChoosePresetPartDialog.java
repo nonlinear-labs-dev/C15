@@ -2,11 +2,14 @@ package com.nonlinearlabs.client.world.maps.presets.bank.preset;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.overlay.GWTDialog;
 
@@ -14,11 +17,14 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
     static int modalPopupLeft = 0;
     static int modalPopupTop = 0;
+    Preset preset = null;
 
-    public ChoosePresetPartDialog() {
+    public ChoosePresetPartDialog(Preset p) {
         setModal(true);
         setWidth("20em");
         addHeader("Part of Dual Preset?");
+
+        preset = p;
 
         HTMLPanel panel = new HTMLPanel("");
         HTMLPanel buttons = new HTMLPanel("");
@@ -30,7 +36,7 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                EditBufferUseCases.get().loadPresetPart(VoiceGroup.I);
+                EditBufferUseCases.get().loadPresetPart(preset.getUUID(), VoiceGroup.I);
                 commit();
             }
         }));
@@ -39,7 +45,7 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                EditBufferUseCases.get().loadPresetPart(VoiceGroup.II);
+                EditBufferUseCases.get().loadPresetPart(preset.getUUID(), VoiceGroup.II);
                 commit();
             }
         }));
@@ -58,6 +64,10 @@ public class ChoosePresetPartDialog extends GWTDialog {
         buttons.getElement().addClassName("modal-button-div");
         panel.add(buttons);
         add(panel);
+
+
+        setPopupPosition(Window.getClientWidth() / 2 - panel.getOffsetWidth(), Window.getClientHeight() / 2 - panel.getOffsetHeight());
+        show();
     }
 
     @Override
@@ -79,9 +89,11 @@ public class ChoosePresetPartDialog extends GWTDialog {
     @Override
     protected void commit() {
         hide();
-        NonMaps.get().getNonLinearWorld().getViewport().getOverlay().removeModal(this);
         NonMaps.theMaps.captureFocus();
         NonMaps.theMaps.getNonLinearWorld().requestLayout();
+
+        modalPopupLeft = getAbsoluteLeft();
+        modalPopupTop = getAbsoluteTop();
     }
 
 }

@@ -1,0 +1,8 @@
+[Unit]
+Description=Handle "MMC Device appeared twice"-bug
+After=bbbb.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=@C15_INSTALL_PATH@/scripts/handle-mmc-device-appeared-twice.sh

@@ -11,6 +11,7 @@
 
 #include "signal_storage_dual.h"
 #include <parameter_info.h>
+#include "ae_potential_improvements.h"
 
 using GlobalSignals = MonoSignalStorage<C15::Signals::Global_Signals>;
 using PolySignals = PolySignalStorage<C15::Signals::Truepoly_Signals, C15::Signals::Quasipoly_Signals>;

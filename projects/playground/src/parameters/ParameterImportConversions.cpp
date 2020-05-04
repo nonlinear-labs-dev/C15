@@ -1,3 +1,5 @@
+#include "ValueRange.h"
+
 #include <parameters/ParameterImportConversions.h>
 
 ParameterImportConversions& ParameterImportConversions::get()
@@ -10,67 +12,68 @@ ParameterImportConversions::ParameterImportConversions(bool registerDefaults)
 {
   if(registerDefaults)
   {
-    registerConverter(71, 2, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerConverter(71, 2, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerConverter(101, 2, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerConverter(101, 2, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerConverter(181, 2, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerConverter(181, 2, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerConverter(164, 3, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerConverter(164, 3, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerMCAmountConverter(71, 2, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerMCAmountConverter(71, 2, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerMCAmountConverter(101, 2, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerMCAmountConverter(101, 2, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerMCAmountConverter(181, 2, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerMCAmountConverter(181, 2, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerMCAmountConverter(164, 3, [=](tControlPositionValue v) { return driveV2ToV3(v); });
+    registerMCAmountConverter(164, 3, [=](auto v, auto) { return driveV2ToV3(v); });
 
-    registerConverter(0, 2, [=](tControlPositionValue v) { return attackV2ToV3(v); });
+    registerConverter(0, 2, [=](auto v, auto) { return attackV2ToV3(v); });
 
-    registerConverter(19, 2, [=](tControlPositionValue v) { return attackV2ToV3(v); });
+    registerConverter(19, 2, [=](auto v, auto) { return attackV2ToV3(v); });
 
-    registerConverter(38, 2, [=](tControlPositionValue v) { return attackV2ToV3(v); });
+    registerConverter(38, 2, [=](auto v, auto) { return attackV2ToV3(v); });
 
-    registerConverter(2, 2, [=](tControlPositionValue v) { return decayV2ToV3(v); });
+    registerConverter(2, 2, [=](auto v, auto) { return decayV2ToV3(v); });
 
-    registerConverter(6, 2, [=](tControlPositionValue v) { return decayV2ToV3(v); });
+    registerConverter(6, 2, [=](auto v, auto) { return decayV2ToV3(v); });
 
-    registerConverter(21, 2, [=](tControlPositionValue v) { return decayV2ToV3(v); });
+    registerConverter(21, 2, [=](auto v, auto) { return decayV2ToV3(v); });
 
-    registerConverter(25, 2, [=](tControlPositionValue v) { return decayV2ToV3(v); });
+    registerConverter(25, 2, [=](auto v, auto) { return decayV2ToV3(v); });
 
-    registerConverter(40, 2, [=](tControlPositionValue v) { return decayV2ToV3(v); });
+    registerConverter(40, 2, [=](auto v, auto) { return decayV2ToV3(v); });
 
-    registerConverter(44, 2, [=](tControlPositionValue v) { return decayV2ToV3(v); });
+    registerConverter(44, 2, [=](auto v, auto) { return decayV2ToV3(v); });
 
-    registerConverter(10, 2, [=](tControlPositionValue v) { return releaseV2ToV3(v); });
+    registerConverter(10, 2, [=](auto v, auto) { return releaseV2ToV3(v); });
 
-    registerConverter(29, 2, [=](tControlPositionValue v) { return releaseV2ToV3(v); });
+    registerConverter(29, 2, [=](auto v, auto) { return releaseV2ToV3(v); });
 
-    registerConverter(46, 2, [=](tControlPositionValue v) { return releaseV2ToV3(v); });
+    registerConverter(46, 2, [=](auto v, auto) { return releaseV2ToV3(v); });
 
-    registerConverter(127, 4, [=](tControlPositionValue v) {
+    registerConverter(127, 4, [=](auto v, auto) {
       if(v > 0.995)
         return 1.0;
 
       return 0.5 + v / 1.99;
     });
 
-    registerMCAmountConverter(127, 4, [=](tControlPositionValue v) { return v / 2.0; });
+    registerMCAmountConverter(127, 4, [=](auto v, auto) { return v / 2.0; });
 
-    registerConverter(238, 4, [=](tControlPositionValue v) {
+    registerConverter(238, 4, [=](auto v, auto) {
       if(v > 0.5)
         return v;
 
       return v * v * v * 4.0;
     });
 
-    registerConverter(240, 4, [=](tControlPositionValue v) { return 0.25 + v * 0.75; });
+    registerConverter(240, 4, [=](auto v, auto) { return 0.25 + v * 0.75; });
 
-    registerConverter(249, 5, [=](tControlPositionValue v) { return voicesV5ToV6(v); });
+    registerConverter(249, 5, [=](auto v, auto) { return voicesV5ToV6(v); });
+    registerConverter(249, 7, [=](auto v, auto soundType) { return voicesV7ToV8(v, soundType); });
 
-    registerConverter(164, 5, [=](tControlPositionValue v) { return driveV5ToV6(v); });
+    registerConverter(164, 5, [=](auto v, auto) { return driveV5ToV6(v); });
   }
 }
 
@@ -125,14 +128,14 @@ void ParameterImportConversions::registerMCAmountConverter(const tParameterID pa
 }
 
 tControlPositionValue ParameterImportConversions::convert(const tParameterID parameterID,
-                                                          const tControlPositionValue in,
-                                                          const tFileVersion inVersion) const
+                                                          const tControlPositionValue in, const tFileVersion inVersion,
+                                                          SoundType type) const
 {
   auto it = m_converters.find(parameterID);
 
   if(it != m_converters.end())
   {
-    return it->second.convert(in, inVersion);
+    return it->second.convert(in, inVersion, type);
   }
 
   return in;
@@ -146,30 +149,38 @@ tControlPositionValue ParameterImportConversions::convertMCAmount(const tParamet
 
   if(it != m_mcAmountConverters.end())
   {
-    return it->second.convert(in, inVersion);
+    return it->second.convert(in, inVersion, SoundType::Invalid);
   }
 
   return in;
 }
 
-tControlPositionValue
-    ParameterImportConversions::ConvertersBySourceFileVersion::convert(const tControlPositionValue in,
-                                                                       const tFileVersion inVersion) const
+tControlPositionValue ParameterImportConversions::ConvertersBySourceFileVersion::convert(const tControlPositionValue in,
+                                                                                         const tFileVersion inVersion,
+                                                                                         SoundType type) const
 {
   auto it = from.lower_bound(inVersion);
 
   if(it != from.end())
   {
-    const tControlPositionValue convertedValue = it->second(in);
-    return convert(convertedValue, it->first + 1);
+    const tControlPositionValue convertedValue = it->second(in, type);
+    return convert(convertedValue, it->first + 1, type);
   }
 
   return in;
 }
 
-tControlPositionValue ParameterImportConversions::voicesV5ToV6(tControlPositionValue unisonVoices) const
+tControlPositionValue ParameterImportConversions::voicesV5ToV6(tControlPositionValue in) const
 {
-  if(unisonVoices == 1.0)
-    return 0.5 - (1.0 / 24.0);
-  return unisonVoices * 0.5;
+  auto numVoicesIn = in * 11.0;
+  auto res = numVoicesIn / 23.0;
+  return res;
+}
+
+tControlPositionValue ParameterImportConversions::voicesV7ToV8(tControlPositionValue v, SoundType type) const
+{
+  if(type != SoundType::Single)
+    return voicesV5ToV6(v);
+
+  return v;
 }

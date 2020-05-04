@@ -14,7 +14,7 @@ MonoSection::MonoSection()
 }
 
 void MonoSection::init(exponentiator *_convert, LayerSignalCollection *_z_self, const float _ms,
-                       const float _samplerate)
+                       const float _samplerate, const uint32_t _upsampleFactor)
 {
   // pointer linking
   m_convert = _convert;
@@ -30,11 +30,11 @@ void MonoSection::init(exponentiator *_convert, LayerSignalCollection *_z_self, 
   m_reverb_color_curve_1.setCurve(66.0f, 137.0f, 130.0f);
   m_reverb_color_curve_2.setCurve(29.0f, 29.0f, 85.0f);
   // init dsp components
-  m_flanger.init(_samplerate, 1);  // todo: upsample factor currently not dynamic ...
+  m_flanger.init(_samplerate, _upsampleFactor);
   m_cabinet.init(_samplerate);
   m_gapfilter.init(_samplerate);
-  m_echo.init(_samplerate, 1);    // todo: upsample factor currently not dynamic ...
-  m_reverb.init(_samplerate, 1);  // todo: upsample factor currently not dynamic ...
+  m_echo.init(_samplerate, _upsampleFactor);
+  m_reverb.init(_samplerate, _upsampleFactor);
 }
 
 void MonoSection::add_copy_sync_id(const uint32_t _smootherId, const uint32_t _signalId)

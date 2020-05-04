@@ -6,6 +6,8 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
+import com.nonlinearlabs.client.CustomPresetSelector;
+import com.nonlinearlabs.client.LoadToPartMode;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Renameable;
 import com.nonlinearlabs.client.ServerProxy;
@@ -16,7 +18,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetSearch;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
-import com.nonlinearlabs.client.dataModel.setup.SetupModel.LoadMode;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
@@ -38,6 +39,7 @@ import com.nonlinearlabs.client.world.overlay.PresetInfoDialog;
 import com.nonlinearlabs.client.world.overlay.belt.presets.PresetContextMenu;
 import com.nonlinearlabs.client.world.overlay.belt.presets.PresetDeleter;
 import com.nonlinearlabs.client.world.overlay.html.presetSearch.PresetSearchDialog;
+import com.nonlinearlabs.client.world.maps.presets.bank.preset.ChoosePresetPartDialog;
 
 public class Preset extends LayoutResizingHorizontal implements Renameable, IPreset {
 	private String uuid = null;
@@ -125,6 +127,10 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		}
 	}
 
+	public boolean isDual() {
+		return getType() != SoundType.Single;
+	}
+
 	@Override
 	public RGB getColorFont() {
 		boolean selected = isSelected();
@@ -150,6 +156,10 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 			return new RGB(179, 179, 179);
 
 		return super.getColorFont();
+	}
+
+	public boolean isInStoreSelectMode() {
+		return getParent().getParent().isInStoreSelectMode();
 	}
 
 	public void update(int i, Node preset) {
@@ -279,8 +289,8 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	public boolean isSelected() {
-		StoreSelectMode sm = NonMaps.get().getNonLinearWorld().getPresetManager().getStoreSelectMode();
-		if (sm != null)
+		CustomPresetSelector sm = NonMaps.get().getNonLinearWorld().getPresetManager().getCustomPresetSelection();
+		if (sm instanceof StoreSelectMode)
 			return sm.getSelectedPreset() == this;
 
 		if (PresetDeleter.instance != null)
@@ -303,18 +313,35 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	public boolean isLoaded() {
-		if (getParent().isInStoreSelectMode()) {
-			return this == getParent().getParent().getStoreSelectMode().getOriginalPreset();
-		}
+		PresetManager pm = getParent().getParent();
+		CustomPresetSelector sel = pm.getCustomPresetSelection();
+		if (sel instanceof StoreSelectMode)
+			return this == sel.getOriginalPreset();
 
 		return uuid.equals(getNonMaps().getNonLinearWorld().getParameterEditor().getLoadedPresetUUID());
 	}
 
-	public boolean isInStoreSelectMode() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().isInStoreSelectMode();
+	public boolean hasCustomPresetSelection() {
+		return NonMaps.get().getNonLinearWorld().getPresetManager().hasCustomPresetSelection();
+	}
+
+	public CustomPresetSelector getCustomPresetSelection() {
+		return NonMaps.get().getNonLinearWorld().getPresetManager().getCustomPresetSelection();
 	}
 
 	private boolean wasJustSelected = false;
+
+	private static ChoosePresetPartDialog choosePresetPart = null;
+
+	private Control loadToPartClickBehaviour(LoadToPartMode mode) {
+		if(isDual()) {
+			choosePresetPart = new ChoosePresetPartDialog(this);
+		} else {
+			mode.setSelectedPreset(this);
+		}
+		
+		return this;
+	}
 
 	@Override
 	public Control mouseDown(Position eventPoint) {
@@ -331,10 +358,16 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		return clickBehaviour();
 	}
 
+	private boolean isInLoadToPartMode() {
+		return (LoadToPartMode)getCustomPresetSelection() != null;
+	}
+
 	private Control clickBehaviour() {
 		if (isInMultiplePresetSelectionMode()) {
 			getParent().getParent().getMultiSelection().toggle(this);
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
+		} else if(isInLoadToPartMode()) {
+			loadToPartClickBehaviour((LoadToPartMode)getCustomPresetSelection());
 		} else if (NonMaps.get().getNonLinearWorld().isShiftDown() && !isInMultiplePresetSelectionMode()) {
 			getParent().getParent().startMultiSelection(this, true);
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
@@ -366,9 +399,10 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	public void selectPreset() {
-		StoreSelectMode storeMode = getNonMaps().getNonLinearWorld().getPresetManager().getStoreSelectMode();
-		if (storeMode != null) {
-			storeMode.setSelectedPreset(this);
+		CustomPresetSelector selector = getNonMaps().getNonLinearWorld().getPresetManager().getCustomPresetSelection();
+
+		if (selector != null) {
+			selector.setSelectedPreset(this);
 		} else {
 			getParent().getPresetList().selectPreset(getUUID(), true);
 
@@ -475,15 +509,10 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	public void load() {
-		LoadMode loadMode = SetupModel.get().systemSettings.loadMode.getValue();
-		if (loadMode == LoadMode.loadtopart) {
-			if (type != SoundType.Single) {
-				ChoosePresetPartDialog d = new ChoosePresetPartDialog();
-				d.show();
-			} else {
-				VoiceGroup vg = EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
-				EditBufferUseCases.get().loadSinglePresetIntoPart(getUUID(), vg);
-			}
+		VoiceGroup vg = EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
+		LoadToPartMode loadToPart = getParent().getParent().getLoadToPartMode();
+		if (loadToPart != null) {
+			EditBufferUseCases.get().loadPresetPartIntoPart(loadToPart.getSelectedPreset().getUUID(), type != SoundType.Single ? loadToPart.getSelectedPart() : VoiceGroup.I, vg);
 		} else {
 			EditBufferUseCases.get().loadPreset(getUUID());
 		}

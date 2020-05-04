@@ -31,6 +31,7 @@ class Application
   virtual ~Application();
 
   static Application &get();
+  static bool exists();
 
   void run();
   Glib::RefPtr<Glib::MainContext> getMainContext();

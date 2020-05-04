@@ -30,7 +30,7 @@ tControlPositionValue ParabolicGainDbScaleConverter::displayToControlPosition(co
   if(displayValue == -128)
     return 0;
 
-  auto cp = std::sqrt( std::pow(10, (displayValue / 20)) / 4);
+  auto cp = std::sqrt(std::pow(10, (displayValue / 20)) / 4);
   return getControlPositionRange().clip(cp);
 }
 

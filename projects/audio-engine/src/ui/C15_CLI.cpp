@@ -1,5 +1,4 @@
 #include "C15_CLI.h"
-#include "main.h"
 #include "synth/C15Synth.h"
 #include <nltools/logging/Log.h>
 #include <iostream>
@@ -17,7 +16,7 @@ C15_CLI::C15_CLI(C15Synth *synth)
 
   m_commands['q'] = [=] {
     nltools::Log::info("Quitting application...");
-    quit(0);
+    exit(0);
   };
 }
 

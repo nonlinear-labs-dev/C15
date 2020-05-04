@@ -1,6 +1,7 @@
 #include <proxies/hwui/panel-unit/PanelUnitParameterEditMode.h>
 #include <groups/ScaleGroup.h>
 #include <parameters/ScaleParameter.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
 #include "ParameterCarousel.h"
 #include "Application.h"
 #include "proxies/hwui/HWUI.h"
@@ -28,7 +29,9 @@ void ParameterCarousel::setup(Parameter* selectedParameter)
 
   if(std::shared_ptr<PanelUnitParameterEditMode> edit = std::dynamic_pointer_cast<PanelUnitParameterEditMode>(um))
   {
-    if(selectedParameter)
+    if(selectedParameter
+       && ParameterSelectLayout2::isParameterAvailableInSoundType(
+           selectedParameter, Application::get().getPresetManager()->getEditBuffer()))
     {
       auto button = edit->findButtonForParameter(selectedParameter);
 
@@ -58,7 +61,8 @@ void ParameterCarousel::setup(Parameter* selectedParameter)
 void ParameterCarousel::setupChildControls(const std::shared_ptr<PanelUnitParameterEditMode>& edit,
                                            Parameter* selectedParameter, Buttons button)
 {
-  std::list<int> buttonAssignments = edit->getButtonAssignments(button);
+  std::list<int> buttonAssignments
+      = edit->getButtonAssignments(button, Application::get().getPresetManager()->getEditBuffer()->getType());
 
   if(buttonAssignments.size() > 1)
   {
@@ -85,6 +89,9 @@ void ParameterCarousel::setupChildControls(Parameter* selectedParameter, const s
 
     if(!param)
       param = eb->findParameterByID({ i, VoiceGroup::Global });
+
+    if(!param)
+      continue;
 
     auto miniParam = new MiniParameter(param, Rect(0, yPos, miniParamWidth, miniParamHeight));
 
@@ -149,19 +156,6 @@ void ParameterCarousel::turn()
   if(!handled)
     if(auto p = std::dynamic_pointer_cast<MiniParameter>(first()))
       Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(p->getParameter()->getID());
-}
-
-bool ParameterCarousel::containsSelectedParameter() const
-{
-  for(auto& p : getControls())
-  {
-    if(auto mp = dynamic_cast<MiniParameter*>(p.get()))
-    {
-      if(mp->getParameter() == Application::get().getPresetManager()->getEditBuffer()->getSelected())
-        return true;
-    }
-  }
-  return false;
 }
 
 void ParameterCarousel::setupChildControlsForParameterWithoutButtonMapping(Parameter* selectedParameter)

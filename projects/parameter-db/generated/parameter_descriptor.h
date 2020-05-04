@@ -2,8 +2,8 @@
 
 /******************************************************************************/
 /**   @file       parameter_descriptor.h
-      @date       2020-03-16, 14:07
-      @version    1.7B-4
+      @date       2020-04-29, 13:13
+      @version    1.7B-5
       @author     M. Seeber
       @brief      provide a flexible descriptor structure
       @todo
@@ -229,7 +229,7 @@ namespace C15
   struct ParameterDescriptor
   {
     Descriptors::TypeDescriptor m_param;
-    int m_param_id = -1;
+    PID::ParameterID m_param_id = PID::None;
     float m_initial = 0.0f;
     Descriptors::AudioEngineParamDescriptor m_ae;
     Descriptors::PlaygroundParamDescriptor m_pg;

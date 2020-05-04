@@ -208,9 +208,11 @@ void RibbonParameter::sendModeToLpc() const
   if(getRibbonTouchBehaviour() == RibbonTouchBehaviour::RELATIVE)
     v += 2;
 
-  Application::get().getLPCProxy()->sendSetting(id, v);
-
-  sendToLpc();
+  if(Application::exists())
+  {
+    Application::get().getLPCProxy()->sendSetting(id, v);
+    sendToLpc();
+  }
 }
 
 void RibbonParameter::copyFrom(UNDO::Transaction *transaction, const PresetParameter *other)

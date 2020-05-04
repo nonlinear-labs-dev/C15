@@ -17,21 +17,25 @@
 #include <xml/VersionAttribute.h>
 #include <proxies/hwui/HWUI.h>
 #include <serialization/PresetSerializer.h>
-#include <device-settings/LoadModeSetting.h>
+#include <device-settings/DirectLoadSetting.h>
 #include <device-settings/Settings.h>
 #include <groups/ParameterGroup.h>
 #include <glibmm.h>
 #include <giomm/file.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/SelectVoiceGroupLayout.h>
+#include <proxies/hwui/HWUIHelper.h>
+#include <tools/StringTools.h>
 
 constexpr static auto s_saveInterval = std::chrono::seconds(5);
 
-PresetManager::PresetManager(UpdateDocumentContributor *parent)
+PresetManager::PresetManager(UpdateDocumentContributor *parent, bool readOnly)
     : ContentSection(parent)
     , m_banks(*this, nullptr)
     , m_editBuffer(std::make_unique<EditBuffer>(this))
     , m_initSound(std::make_unique<Preset>(this))
     , m_autoLoadThrottler(std::chrono::milliseconds(200))
     , m_saveJob(std::bind(&PresetManager::doSaveTask, this))
+    , m_readOnly(readOnly)
 {
   m_actionManagers.emplace_back(new PresetManagerActions(*this));
   m_actionManagers.emplace_back(new BankActions(*this));
@@ -40,11 +44,14 @@ PresetManager::PresetManager(UpdateDocumentContributor *parent)
 
 PresetManager::~PresetManager()
 {
-  auto tasks = createListOfSaveSubTasks();
-  for(auto &task : tasks)
+  if(!m_readOnly)
   {
-    while(task() == SaveResult::Again)
-      ;
+    auto tasks = createListOfSaveSubTasks();
+    for(auto &task : tasks)
+    {
+      while(task() == SaveResult::Again)
+        ;
+    }
   }
 }
 
@@ -190,7 +197,7 @@ void PresetManager::recurseSaveAsynchronously()
 
 void PresetManager::scheduleSave()
 {
-  if(!m_saveJob.isPending())
+  if(!m_saveJob.isPending() && !m_readOnly)
   {
     m_saveTasks = createListOfSaveSubTasks();
     m_saveJob.refresh(s_saveInterval, Glib::PRIORITY_LOW);
@@ -243,10 +250,13 @@ void PresetManager::doAutoLoadSelectedPreset()
 
 void PresetManager::scheduleAutoLoadSelectedPreset()
 {
+  m_autoLoadScheduled = true;
   m_autoLoadThrottler.doTask([=]() {
+    m_autoLoadScheduled = false;
+
     if(auto b = getSelectedBank())
     {
-      auto presetUUID = b->getSelectedPresetUuid();
+      const auto &presetUUID = b->getSelectedPresetUuid();
       auto eb = getEditBuffer();
       bool shouldLoad = eb->getUUIDOfLastLoadedPreset() != presetUUID || eb->isModified();
 
@@ -275,6 +285,16 @@ void PresetManager::scheduleAutoLoadSelectedPreset()
       }
     }
   });
+}
+
+void PresetManager::TEST_forceScheduledAutoLoad()
+{
+  m_autoLoadThrottler.doActionSync();
+}
+
+bool PresetManager::isAutoLoadScheduled() const
+{
+  return m_autoLoadScheduled;
 }
 
 bool PresetManager::isLoading() const
@@ -533,7 +553,7 @@ void PresetManager::selectBank(UNDO::Transaction *transaction, const Uuid &uuid)
 
 void PresetManager::onPresetSelectionChanged()
 {
-  if(Application::get().getSettings()->getSetting<LoadModeSetting>()->get() == LoadMode::DirectLoad)
+  if(Application::get().getSettings()->getSetting<DirectLoadSetting>()->get())
     doAutoLoadSelectedPreset();
 }
 
@@ -594,6 +614,11 @@ Glib::ustring PresetManager::createPresetNameBasedOn(const Glib::ustring &basedO
 
   if(base.empty())
     return "New preset";
+
+  if(StringTools::hasEnding(base, "conv."))
+  {
+    return basedOn;
+  }
 
   int highestPostfix = 0;
   m_banks.forEach([&](auto b) { highestPostfix = std::max(highestPostfix, b->getHighestIncrementForBaseName(base)); });
@@ -752,7 +777,7 @@ void PresetManager::stressParam(UNDO::Transaction *trans, Parameter *param)
   {
     m_editBuffer->undoableSelectParameter(trans, param);
   }
-  param->stepCPFromHwui(trans, g_random_boolean() ? -1 : 1, ButtonModifiers{});
+  param->stepCPFromHwui(trans, g_random_boolean() ? -1 : 1, ButtonModifiers {});
 }
 
 void PresetManager::stressAllParams(int numParamChangedForEachParameter)
@@ -831,7 +856,7 @@ void PresetManager::incAllParamsFine()
         for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
           for(auto &group : m_editBuffer->getParameterGroups(vg))
             for(auto &param : group->getParameters())
-              param->stepCPFromHwui(trans, 1, ButtonModifiers{ ButtonModifier::FINE });
+              param->stepCPFromHwui(trans, 1, ButtonModifiers { ButtonModifier::FINE });
       },
       20);
 }
@@ -842,6 +867,74 @@ const Preset *PresetManager::getSelectedPreset() const
   {
     return bank->getSelectedPreset();
   }
-
   return nullptr;
+}
+
+Preset *PresetManager::getSelectedPreset()
+{
+  if(auto bank = getSelectedBank())
+  {
+    return bank->getSelectedPreset();
+  }
+  return nullptr;
+}
+
+bool PresetManager::currentLoadedPartIsBeforePresetToLoad() const
+{
+  auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+  auto og = getEditBuffer()->getPartOrigin(currentVG);
+
+  if(auto selectedBank = getSelectedBank())
+  {
+    if(auto selectedPreset = selectedBank->getSelectedPreset())
+    {
+      if(auto currentOGBank = findBankWithPreset(og.presetUUID))
+      {
+        if(currentOGBank == selectedBank)
+        {
+          if(auto currentOGPreset = currentOGBank->findPreset(og.presetUUID))
+          {
+            return currentOGBank->getPresetPosition(currentOGPreset) < currentOGBank->getPresetPosition(selectedPreset);
+          }
+        }
+        else
+        {
+          return getBankPosition(currentOGBank->getUuid()) < getBankPosition(selectedBank->getUuid());
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+void PresetManager::scheduleLoadToPart(const Preset *preset, VoiceGroup loadFrom, VoiceGroup loadTo)
+{
+  auto eb = getEditBuffer();
+  m_autoLoadScheduled = true;
+  m_autoLoadThrottler.doTask([=]() {
+    if(preset)
+    {
+      if(auto currentUndo = getUndoScope().getUndoTransaction())
+      {
+        if(!currentUndo->isClosed())
+        {
+          eb->undoableLoadPresetPartIntoPart(currentUndo, preset, loadFrom, loadTo);
+          m_autoLoadScheduled = false;
+        }
+        else
+        {
+          currentUndo->reopen();
+          eb->undoableLoadPresetPartIntoPart(currentUndo, preset, loadFrom, loadTo);
+          m_autoLoadScheduled = false;
+          currentUndo->close();
+        }
+        return;
+      }
+
+      auto scope = getUndoScope().startContinuousTransaction(this, std::chrono::milliseconds(500), "Load Preset Part");
+      eb->undoableLoadPresetPartIntoPart(scope->getTransaction(), preset, loadFrom, loadTo);
+      m_autoLoadScheduled = false;
+    }
+  });
 }

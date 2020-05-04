@@ -287,7 +287,7 @@ public class Header extends Label {
 
 	@Override
 	protected String getFontName() {
-		return "'Source Sans Pro LW25'";
+		return "'SSP-LW25'";
 	}
 
 	@Override
@@ -336,7 +336,7 @@ public class Header extends Label {
 	public Control onContextMenu(Position pos) {
 		Bank bank = getParent();
 
-		if (bank.isInStoreSelectMode())
+		if (bank.getParent().isInStoreSelectMode())
 			return null;
 
 		bank.getParent().pushBankOntoTop(bank);

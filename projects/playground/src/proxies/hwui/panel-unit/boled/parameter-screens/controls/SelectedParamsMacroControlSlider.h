@@ -15,6 +15,7 @@ class SelectedParamsMacroControlSlider : public DotSlider
   virtual ~SelectedParamsMacroControlSlider();
 
   bool isVisible() const override;
+void setParameter(Parameter* param) override;
 
  private:
   // private methods

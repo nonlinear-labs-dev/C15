@@ -1,7 +1,6 @@
 #include "EditBufferSnapshotMaker.h"
 #include <presets/PresetManager.h>
 #include "EditBuffer.h"
-#include <Application.h>
 #include <http/UndoScope.h>
 #include <device-settings/DebugLevel.h>
 #include <parameters/PhysicalControlParameter.h>
@@ -20,9 +19,8 @@ EditBufferSnapshotMaker::EditBufferSnapshotMaker()
 {
 }
 
-void EditBufferSnapshotMaker::addSnapshotIfRequired(UNDO::Transaction *transaction)
+void EditBufferSnapshotMaker::addSnapshotIfRequired(UNDO::Transaction *transaction, EditBuffer *editBuffer)
 {
-  auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
   auto hardwareSources = editBuffer->getParameterGroupByID({ "CS", VoiceGroup::Global });
   auto updateID = hardwareSources->getUpdateIDOfLastChange();
 

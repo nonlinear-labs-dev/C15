@@ -6,16 +6,16 @@ file(GLOB_RECURSE NONMAPS_TARGET_FILES ${CMAKE_SOURCE_DIR}/projects/NonMaps/targ
 list(REMOVE_ITEM ALL_FILES_IN_PROJECT EXCLUDE REGEX ${NONMAPS_TARGET_FILES})
 list(REMOVE_ITEM ALL_FILES_IN_PROJECT EXCLUDE REGEX CMakeLists.txt)
 
-EXECUTE_PROCESS(OUTPUT_VARIABLE DOCKER_GROUP_ID COMMAND sh -c "getent group docker | cut -d: -f3")
+EXECUTE_PROCESS(OUTPUT_VARIABLE GROUP_ID COMMAND sh -c "id -g $USER")
 EXECUTE_PROCESS(OUTPUT_VARIABLE USER_ID COMMAND sh -c "id -u $USER")
-string(STRIP ${DOCKER_GROUP_ID} DOCKER_GROUP_ID)
+string(STRIP ${GROUP_ID} GROUP_ID)
 string(STRIP ${USER_ID} USER_ID)
 file(GLOB_RECURSE EPC_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
 add_custom_command(
     COMMENT "Create Docker Container for the current User ${USER}"
     OUTPUT .docker-container-created
-    COMMAND docker build --build-arg user=${USER} --build-arg user_id=${USER_ID} --build-arg docker_group_id=${DOCKER_GROUP_ID} -t ${DOCKERNAME} ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND docker build --build-arg user=${USER} --build-arg user_id=${USER_ID} --build-arg group_id=${GROUP_ID} -t ${DOCKERNAME} ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile
     COMMAND touch .docker-container-created
 )
@@ -75,6 +75,7 @@ add_custom_command(
     COMMAND touch .nonlinux-local-rootfs
 )
 
+
 add_custom_command(
     COMMENT "Create ePC update"
     DEPENDS .nonlinux-local-rootfs
@@ -95,6 +96,34 @@ add_custom_command(
         \${EPC_INSTALL_MEDIUM}
         ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+IF(BUILD_BBB) # we need the BBB utilities
+    add_custom_command(
+        COMMENT "Build ePC update"
+        OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+        DEPENDS epc-create-update
+        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
+        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+        DEPENDS ${SOURCE_FILES}
+        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
+            ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
+            ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+            "unused-lpc-m0"
+            "unused-lpc-m4"
+            ${CMAKE_BINARY_DIR}
+            ${CMAKE_SOURCE_DIR}
+            nonlinear-epc-update
+            epc
+    )
+
+    add_custom_target(epc-ota-update
+        DEPENDS ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/c15-ota-update.sh
+            ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+            \${UNIT_NAME}
+            \${UNIT_PASSWORD}
+        )
+ENDIF()
 
 add_custom_target(epc-install-medium DEPENDS .nonlinux-install-medium)
 add_custom_target(epc-create-update DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/update.tar)

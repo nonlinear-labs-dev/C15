@@ -34,6 +34,11 @@ OLEDProxy::tLayoutPtr OLEDProxy::getLayout() const
   return m_layout;
 }
 
+OLEDProxy::tLayoutPtr OLEDProxy::getBaseLayout() const
+{
+  return m_layout;
+}
+
 void OLEDProxy::reset(Layout *layout)
 {
   tLayoutPtr s(layout);

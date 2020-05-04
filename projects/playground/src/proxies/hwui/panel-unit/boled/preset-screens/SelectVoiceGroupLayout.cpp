@@ -61,7 +61,7 @@ void SelectVoiceGroupLayout::load()
   auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
   auto from = m_loadFrom;
 
-  eb->undoableLoadSelectedPresetPartIntoPart(from, currentVG);
+  eb->undoableLoadSelectedToPart(from, currentVG);
 
   m_parent->animateSelectedPresetIfInLoadPartMode([hwui]() {
     hwui->setFocusAndMode({ UIFocus::Presets, UIMode::Select, UIDetail::Init });

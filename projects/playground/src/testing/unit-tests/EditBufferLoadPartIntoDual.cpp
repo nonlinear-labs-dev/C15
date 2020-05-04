@@ -1,6 +1,6 @@
 #include <testing/unit-tests/mock/MockPresetStorage.h>
 #include "testing/TestHelper.h"
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include <presets/Preset.h>
 #include <presets/PresetParameter.h>
 
@@ -35,32 +35,28 @@ TEST_CASE("Load Dual Part into Part")
 
     THEN("Load Split Part I into I")
     {
-      auto scope = TestHelper::createTestScope();
-      editBuffer->undoableLoadPresetPartIntoPart(scope->getTransaction(), splitPreset, VoiceGroup::I, VoiceGroup::I);
+      editBuffer->undoableLoadToPart(splitPreset, VoiceGroup::I, VoiceGroup::I);
       REQUIRE(editBuffer->findParameterByID({ parameterNumber, VoiceGroup::I })->getControlPositionValue()
               == presetValue);
     }
 
     THEN("Load Split Part I into II")
     {
-      auto scope = TestHelper::createTestScope();
-      editBuffer->undoableLoadPresetPartIntoPart(scope->getTransaction(), splitPreset, VoiceGroup::I, VoiceGroup::II);
+      editBuffer->undoableLoadToPart(splitPreset, VoiceGroup::I, VoiceGroup::II);
       REQUIRE(editBuffer->findParameterByID({ parameterNumber, VoiceGroup::II })->getControlPositionValue()
               == presetValue);
     }
 
     THEN("Load Split Part II into I")
     {
-      auto scope = TestHelper::createTestScope();
-      editBuffer->undoableLoadPresetPartIntoPart(scope->getTransaction(), splitPreset, VoiceGroup::II, VoiceGroup::I);
+      editBuffer->undoableLoadToPart(splitPreset, VoiceGroup::II, VoiceGroup::I);
       REQUIRE(editBuffer->findParameterByID({ parameterNumber, VoiceGroup::I })->getControlPositionValue()
               == presetValue);
     }
 
     THEN("Load Split Part II into II")
     {
-      auto scope = TestHelper::createTestScope();
-      editBuffer->undoableLoadPresetPartIntoPart(scope->getTransaction(), splitPreset, VoiceGroup::II, VoiceGroup::II);
+      editBuffer->undoableLoadToPart(splitPreset, VoiceGroup::II, VoiceGroup::II);
       REQUIRE(editBuffer->findParameterByID({ parameterNumber, VoiceGroup::II })->getControlPositionValue()
               == presetValue);
     }

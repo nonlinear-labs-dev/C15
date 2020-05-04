@@ -65,6 +65,7 @@ class ModulateableParameterSelectLayout2 : public ParameterSelectLayout2, public
   bool handleMCRecall(Buttons i, bool down);
 
   void installModulationCarousel(const Mode &mode);
+  bool isCurrentParameterDisabled() const;
 };
 
 class ModulateableParameterEditLayout2 : public ParameterEditLayout2, public ModulateableParameterLayout2

@@ -18,6 +18,7 @@ class OLEDProxy : public Uncopyable
   typedef std::shared_ptr<Layout> tLayoutPtr;
 
   tLayoutPtr getLayout() const;
+  tLayoutPtr getBaseLayout() const;
 
   virtual void reset(Layout *layout);
 

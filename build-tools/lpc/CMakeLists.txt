@@ -31,6 +31,34 @@ add_custom_command(
         "make c15_lpc_m4.bin"
 )
 
+IF(BUILD_BBB) # we need the BBB utilities
+    add_custom_command(
+        COMMENT "Build LPC update"
+        OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-lpc-update.tar
+        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/M0_project/c15_lpc_m0.bin
+        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/M4_project/c15_lpc_m4.bin
+        DEPENDS ${SOURCE_FILES}
+        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
+            "unused-epc"
+            ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+            ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/M0_project/c15_lpc_m0.bin
+            ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/M4_project/c15_lpc_m4.bin
+            ${CMAKE_BINARY_DIR}
+            ${CMAKE_SOURCE_DIR}
+            nonlinear-lpc-update
+            lpc
+    )
+
+    add_custom_target(lpc-ota-update
+        DEPENDS ${CMAKE_BINARY_DIR}/nonlinear-lpc-update.tar
+        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/c15-ota-update.sh
+            ${CMAKE_BINARY_DIR}/nonlinear-lpc-update.tar
+            \${UNIT_NAME}
+            \${UNIT_PASSWORD}
+        )
+ENDIF()
+
 add_custom_target(lpc-blobs
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/projects/realtime-system/M0_project/c15_lpc_m0.bin
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/projects/realtime-system/M4_project/c15_lpc_m4.bin

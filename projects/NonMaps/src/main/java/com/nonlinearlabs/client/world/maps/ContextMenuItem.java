@@ -27,7 +27,7 @@ public class ContextMenuItem extends MapsControl {
 		double heightInPixels = Millimeter.toPixels(8);
 		double fontHeightInPixels = heightInPixels / 2;
 
-		context.setFont(fontHeightInPixels + "px 'Source Sans Pro LW25'");
+		context.setFont(fontHeightInPixels + "px 'SSP-LW25'");
 		double width = context.measureText(text).getWidth();
 		width /= getCurrentZoom();
 
@@ -71,7 +71,7 @@ public class ContextMenuItem extends MapsControl {
 		ctx.setTextAlign(TextAlign.LEFT);
 		ctx.setFillStyle(getColorFont().toString());
 		ctx.setTextBaseline(TextBaseline.MIDDLE);
-		ctx.setFont(fontHeightInPixels + "px 'Source Sans Pro LW25'");
+		ctx.setFont(fontHeightInPixels + "px 'SSP-LW25'");
 
 		ctx.fillText(text, r.getLeft() + toXPixels(2), r.getCenterPoint().getY());
 		super.draw(ctx, invalidationMask);

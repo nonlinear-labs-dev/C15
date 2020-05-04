@@ -2,6 +2,7 @@
 
 #include <proxies/hwui/buttons.h>
 #include "Carousel.h"
+#include <nltools/Types.h>
 
 class Application;
 class Parameter;
@@ -18,8 +19,6 @@ class ParameterCarousel : public Carousel
 
   virtual void turn() override;
   virtual void antiTurn() override;
-
-  bool containsSelectedParameter() const;
 
   void requestTurn();
 

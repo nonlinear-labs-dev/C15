@@ -1,11 +1,14 @@
 #!/bin/sh
 
-BINARY_DIR=$1
-SOURCE_DIR=$2
-SCRIPT=$3
+BINARY_DIR=$(realpath $1)
+SOURCE_DIR=$(realpath $2)
+SCRIPT=$(realpath $3)
+
 TMPSCRIPT=$(mktemp)
-TMPDIRNAME=$(dirname $TMPSCRIPT)
 TMPSCRIPTBASE=$(basename $TMPSCRIPT)
+TMPDIRNAME="$BINARY_DIR/tmp"
+TMPSCRIPT="$TMPDIRNAME/$TMPSCRIPTBASE"
+mkdir -p $TMPDIRNAME
 
 USER_ID=$(id -u $USER)
 DOCKERNAME="nl-epc-build-environment-$USER"

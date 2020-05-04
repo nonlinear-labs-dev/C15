@@ -1,5 +1,5 @@
 #include <Application.h>
-#include <device-settings/LoadModeSetting.h>
+#include <device-settings/DirectLoadSetting.h>
 #include <device-settings/Settings.h>
 #include <presets/Preset.h>
 #include <presets/PresetManager.h>

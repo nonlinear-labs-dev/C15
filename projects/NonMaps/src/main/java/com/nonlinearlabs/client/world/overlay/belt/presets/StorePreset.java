@@ -112,36 +112,37 @@ class StorePreset extends SVGImage {
 
 	public void storeToBank() {
 		switch (action) {
-		case APPEND:
-			if (getPresetManager().isInStoreSelectMode()) {
-				getNonMaps().getServerProxy()
-						.appendEditBuffer(getPresetManager().getStoreSelectMode().getSelectedBank());
-			} else {
-				getNonMaps().getServerProxy().appendPreset();
-			}
-			break;
+			case APPEND:
+				if (getPresetManager().isInStoreSelectMode()) {
+					getNonMaps().getServerProxy()
+							.appendEditBuffer(getPresetManager().getStoreSelectMode().getSelectedBank());
+				} else {
+					getNonMaps().getServerProxy().appendPreset();
+				}
+				break;
 
-		case INSERT:
-			if (getPresetManager().isInStoreSelectMode()) {
-				getNonMaps().getServerProxy().insertPreset(getPresetManager().getStoreSelectMode().getSelectedPreset());
-			} else {
-				getNonMaps().getServerProxy().insertPreset(getPresetManager().getSelectedPreset());
-			}
-			break;
+			case INSERT:
+				if (getPresetManager().isInStoreSelectMode()) {
+					getNonMaps().getServerProxy()
+							.insertPreset(getPresetManager().getStoreSelectMode().getSelectedPreset());
+				} else {
+					getNonMaps().getServerProxy().insertPreset(getPresetManager().getSelectedPreset());
+				}
+				break;
 
-		case OVERWRITE:
-			if (getPresetManager().isInStoreSelectMode()
-					&& getPresetManager().getStoreSelectMode().getSelectedPreset() != null) {
-				getNonMaps().getServerProxy()
-						.overwritePresetWithEditBuffer(getPresetManager().getStoreSelectMode().getSelectedPreset());
-			} else if (getPresetManager().getSelectedPreset() != null) {
-				getNonMaps().getServerProxy().overwritePresetWithEditBuffer(getPresetManager().getSelectedPreset());
-			} else {
-				getNonMaps().getServerProxy().overwritePreset();
-			}
-			break;
-		default:
-			break;
+			case OVERWRITE:
+				if (getPresetManager().isInStoreSelectMode()
+						&& getPresetManager().getStoreSelectMode().getSelectedPreset() != null) {
+					getNonMaps().getServerProxy()
+							.overwritePresetWithEditBuffer(getPresetManager().getStoreSelectMode().getSelectedPreset());
+				} else if (getPresetManager().getSelectedPreset() != null) {
+					getNonMaps().getServerProxy().overwritePresetWithEditBuffer(getPresetManager().getSelectedPreset());
+				} else {
+					getNonMaps().getServerProxy().overwritePreset();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -181,17 +182,17 @@ class StorePreset extends SVGImage {
 			String str = ServerProxy.getChildText(settingsNode, "PresetStoreModeSetting", "value");
 			if (str != null && !str.isEmpty()) {
 				switch (str.toLowerCase()) {
-				case "append":
-					action = Action.APPEND;
-					break;
+					case "append":
+						action = Action.APPEND;
+						break;
 
-				case "insert":
-					action = Action.INSERT;
-					break;
+					case "insert":
+						action = Action.INSERT;
+						break;
 
-				case "overwrite":
-					action = Action.OVERWRITE;
-					break;
+					case "overwrite":
+						action = Action.OVERWRITE;
+						break;
 				}
 
 				invalidate(INVALIDATION_FLAG_UI_CHANGED);

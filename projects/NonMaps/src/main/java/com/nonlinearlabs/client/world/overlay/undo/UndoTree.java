@@ -346,7 +346,7 @@ public class UndoTree extends OverlayLayout implements TransitionDamper.Client {
 		ctx.setTextAlign(TextAlign.CENTER);
 		ctx.setFillStyle(getColorFont().toString());
 		ctx.setTextBaseline(TextBaseline.MIDDLE);
-		ctx.setFont(getFontHeightInPixels() + "px 'Source Sans Pro LW25'");
+		ctx.setFont(getFontHeightInPixels() + "px 'SSP-LW25'");
 	}
 
 	public void drawTransactions(Context2d ctx) {

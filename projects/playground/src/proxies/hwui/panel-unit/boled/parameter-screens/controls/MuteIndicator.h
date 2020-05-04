@@ -13,7 +13,11 @@ class MuteIndicator : public Label
   std::shared_ptr<Font> getFont() const override;
 
   int getFontHeight() const override;
+
  private:
   void onParameterChanged(const Parameter* p);
   sigc::connection m_parameterConnection;
+  sigc::connection m_vgConnection;
+  sigc::connection m_soundTypeConnection;
+  void setup();
 };

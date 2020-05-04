@@ -1,4 +1,4 @@
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <proxies/lpc/MessageParser.h>
 
 TEST_CASE("Message Parser")

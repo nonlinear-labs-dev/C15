@@ -1,4 +1,4 @@
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "testing/TestHelper.h"
 #include "groups/MacroControlMappingGroup.h"
 #include "parameters/ModulationRoutingParameter.h"

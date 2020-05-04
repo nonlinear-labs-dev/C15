@@ -212,7 +212,7 @@ namespace DescriptiveLayouts
     auto *hwui = Application::get().getHWUI();
     auto current = hwui->getFocusAndMode();
     if(current.focus == UIFocus::Presets)
-      hwui->setFocusAndMode({ UIFocus::Parameters, UIMode::Select, UIDetail::Init });
+      hwui->setFocusAndMode(hwui->getOldFocusAndMode());
     else
       hwui->setFocusAndMode({ UIFocus::Presets, UIMode::Select, UIDetail::Init });
   }
@@ -228,7 +228,7 @@ namespace DescriptiveLayouts
       }
       else
       {
-        hwui->setFocusAndMode({ UIFocus::Parameters, UIMode::Select, UIDetail::Init });
+        hwui->setFocusAndMode(hwui->getOldFocusAndMode());
       }
     else
       hwui->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
@@ -239,7 +239,7 @@ namespace DescriptiveLayouts
     auto *hwui = Application::get().getHWUI();
     auto current = hwui->getFocusAndMode();
     if(current.focus == UIFocus::Setup)
-      hwui->setFocusAndMode({ UIFocus::Parameters, UIMode::Select, UIDetail::Init });
+      hwui->setFocusAndMode(hwui->getOldFocusAndMode());
     else
       hwui->setFocusAndMode({ UIFocus::Setup, UIMode::Select, UIDetail::Init });
   }

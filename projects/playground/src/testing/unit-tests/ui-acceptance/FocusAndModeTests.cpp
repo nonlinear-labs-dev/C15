@@ -1,4 +1,4 @@
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <proxies/hwui/debug-oled/DebugLayout.h>
 #include "testing/TestHelper.h"
 #include "proxies/hwui/HWUI.h"

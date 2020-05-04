@@ -21,31 +21,31 @@ namespace Engine
     {
       const uint32_t SegmentType_ADBDSR[4][4] = { { 4, 2, 0, 0 }, { 1, 3, 0, 0 }, { 2, 0, 0, 0 }, { 3, 0, 0, 0 } },
                      SegmentType_Gate[4][4] = { { 1, 0, 1, 1 }, { 2, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } },
-                     SegmentType_Decay[4][4] = { { 1, 2, 1, 1 }, { 2, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } },
-                     SegSize = 5;
-      const float renderMin = 1e-9;
+                     SegmentType_Decay[4][4] = { { 1, 2, 1, 1 }, { 2, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+      constexpr uint32_t SegSize = 5;
+      constexpr float renderMin = 1e-9f;
 
       template <uint32_t Size> struct SingleSegment
       {
-        float m_dx[Size] = {}, m_dest_magnitude[Size] = {}, m_curve = 0.f;
+        float m_dx[Size] = {}, m_dest_magnitude[Size] = {}, m_curve = 0.0f;
         uint32_t m_state = 0, m_next = 0;
       };
 
       template <uint32_t Size> struct SplitSegment
       {
-        float m_dx[Size] = {}, m_dest_magnitude[Size] = {}, m_dest_timbre[Size] = {}, m_curve = 0.f;
+        float m_dx[Size] = {}, m_dest_magnitude[Size] = {}, m_dest_timbre[Size] = {}, m_curve = 0.0f;
         uint32_t m_state = 0, m_next = 0;
       };
 
       struct EnvBody_Single
       {
-        float m_x = 0.f, m_y = 0.f, m_start_magnitude = 0.f, m_signal_magnitude = 0.f;
+        float m_x = 0.0f, m_y = 0.0f, m_start_magnitude = 0.0f, m_signal_magnitude = 0.0f;
         uint32_t m_state = 0, m_next = 0, m_index = 0;
       };
 
       struct EnvBody_Split : EnvBody_Single
       {
-        float m_start_timbre = 0.f, m_signal_timbre = 0.f;
+        float m_start_timbre = 0.0f, m_signal_timbre = 0.0f;
       };
     }  // namespace Engine::Envelopes::Proto
 
@@ -76,7 +76,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[m_startIndex].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[m_startIndex].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[m_startIndex].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_start_timbre = body->m_signal_timbre;
         body->m_state = m_segment[m_startIndex].m_state;
@@ -87,7 +87,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[m_stopIndex].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[m_stopIndex].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[m_stopIndex].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_start_timbre = body->m_signal_timbre;
         body->m_state = m_segment[m_stopIndex].m_state;
@@ -105,7 +105,7 @@ namespace Engine
           case 0:
             break;
           case 1:
-            if(body->m_x < 1.f)
+            if(body->m_x < 1.0f)
             {
 
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * body->m_x);
@@ -122,9 +122,9 @@ namespace Engine
           case 2:
             if(body->m_y > Proto::renderMin)
             {
-              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_signal_timbre = body->m_start_timbre + (diff_timbre * (1.f - body->m_y));
-              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
+              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.0f - body->m_y));
+              body->m_signal_timbre = body->m_start_timbre + (diff_timbre * (1.0f - body->m_y));
+              body->m_y *= 1.0f - m_segment[segment].m_dx[_voiceId];
             }
             else
             {
@@ -136,9 +136,9 @@ namespace Engine
           case 3:
             if(body->m_y > Proto::renderMin)
             {
-              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_signal_timbre = body->m_start_timbre + (diff_timbre * (1.f - body->m_y));
-              body->m_y *= _mute * (1.f - m_segment[segment].m_dx[_voiceId]);
+              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.0f - body->m_y));
+              body->m_signal_timbre = body->m_start_timbre + (diff_timbre * (1.0f - body->m_y));
+              body->m_y *= _mute * (1.0f - m_segment[segment].m_dx[_voiceId]);
             }
             else
             {
@@ -148,7 +148,7 @@ namespace Engine
             }
             break;
           case 4:
-            if(body->m_x < 1.f)
+            if(body->m_x < 1.0f)
             {
               float x = NlToolbox::Curves::SquaredCurvature(body->m_x, m_segment[segment].m_curve);
               x = NlToolbox::Curves::SquaredCurvature(x, m_segment[segment].m_curve);
@@ -171,7 +171,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[body->m_next].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[body->m_next].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[body->m_next].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_start_timbre = body->m_signal_timbre;
         body->m_state = m_segment[body->m_next].m_state;
@@ -200,8 +200,8 @@ namespace Engine
       }
       inline void setSplitValue(const float _value)
       {
-        m_splitValues[0] = std::max(0.f, _value);
-        m_splitValues[1] = std::max(0.f, -_value);
+        m_splitValues[0] = std::max(0.0f, _value);
+        m_splitValues[1] = std::max(0.0f, -_value);
       }
       inline void setAttackCurve(const float _value)
       {
@@ -216,11 +216,11 @@ namespace Engine
         for(uint32_t v = 0; v < Size; v++)
         {
           m_body[v].m_index = 0;
-          m_body[v].m_x = 0.f;
-          m_body[v].m_signal_timbre = 0.f;
-          m_body[v].m_start_timbre = 0.f;
-          m_body[v].m_signal_magnitude = 0.f;
-          m_body[v].m_start_magnitude = 0.f;
+          m_body[v].m_x = 0.0f;
+          m_body[v].m_signal_timbre = 0.0f;
+          m_body[v].m_start_timbre = 0.0f;
+          m_body[v].m_signal_magnitude = 0.0f;
+          m_body[v].m_start_magnitude = 0.0f;
         }
       }
     };
@@ -231,7 +231,7 @@ namespace Engine
       Proto::SingleSegment<Size> m_segment[Proto::SegSize];
       float m_timeFactor[Size][Proto::SegSize - 1] = {}, m_levelFactor[Size] = {}, m_clipFactor[Size] = {};
       const uint32_t m_startIndex = 1, m_stopIndex = 4;
-      float m_retriggerHardness = 0.f;
+      float m_retriggerHardness = 0.0f;
       inline RetriggerEnvelope()
       {
         for(uint32_t s = 1; s < Proto::SegSize; s++)
@@ -253,8 +253,8 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[m_startIndex].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[m_startIndex].m_dx[_voiceId];
-        body->m_start_magnitude = (1.f - m_retriggerHardness) * body->m_signal_magnitude;
+        body->m_y = 1.0f - m_segment[m_startIndex].m_dx[_voiceId];
+        body->m_start_magnitude = (1.0f - m_retriggerHardness) * body->m_signal_magnitude;
         body->m_state = m_segment[m_startIndex].m_state;
         body->m_index = m_startIndex;
         body->m_next = m_segment[m_startIndex].m_next;
@@ -263,7 +263,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[m_stopIndex].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[m_stopIndex].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[m_stopIndex].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_state = m_segment[m_stopIndex].m_state;
         body->m_index = m_stopIndex;
@@ -279,7 +279,7 @@ namespace Engine
           case 0:
             break;
           case 1:
-            if(body->m_x < 1.f)
+            if(body->m_x < 1.0f)
             {
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * body->m_x);
               body->m_x += m_segment[segment].m_dx[_voiceId];
@@ -293,8 +293,8 @@ namespace Engine
           case 2:
             if(body->m_y > Proto::renderMin)
             {
-              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
+              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.0f - body->m_y));
+              body->m_y *= 1.0f - m_segment[segment].m_dx[_voiceId];
             }
             else
             {
@@ -304,8 +304,8 @@ namespace Engine
           case 3:
             if(body->m_y > Proto::renderMin)
             {
-              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_y *= _mute * (1.f - m_segment[segment].m_dx[_voiceId]);
+              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.0f - body->m_y));
+              body->m_y *= _mute * (1.0f - m_segment[segment].m_dx[_voiceId]);
             }
             else
             {
@@ -314,7 +314,7 @@ namespace Engine
             }
             break;
           case 4:
-            if(body->m_x < 1.f)
+            if(body->m_x < 1.0f)
             {
               float x = NlToolbox::Curves::SquaredCurvature(body->m_x, m_segment[segment].m_curve);
               x = NlToolbox::Curves::SquaredCurvature(x, m_segment[segment].m_curve);
@@ -335,7 +335,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[body->m_next].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[body->m_next].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[body->m_next].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_state = m_segment[body->m_next].m_state;
         body->m_index = body->m_next;
@@ -362,9 +362,9 @@ namespace Engine
         for(uint32_t v = 0; v < Size; v++)
         {
           m_body[v].m_index = 0;
-          m_body[v].m_x = 0.f;
-          m_body[v].m_signal_magnitude = 0.f;
-          m_body[v].m_start_magnitude = 0.f;
+          m_body[v].m_x = 0.0f;
+          m_body[v].m_signal_magnitude = 0.0f;
+          m_body[v].m_start_magnitude = 0.0f;
         }
       }
     };
@@ -399,7 +399,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[m_startIndex].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[m_startIndex].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[m_startIndex].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_state = m_segment[m_startIndex].m_state;
         body->m_index = m_startIndex;
@@ -409,7 +409,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[m_stopIndex].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[m_stopIndex].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[m_stopIndex].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_state = m_segment[m_stopIndex].m_state;
         body->m_index = m_stopIndex;
@@ -425,7 +425,7 @@ namespace Engine
           case 0:
             break;
           case 1:
-            if(body->m_x < 1.f)
+            if(body->m_x < 1.0f)
             {
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * body->m_x);
               body->m_x += m_segment[segment].m_dx[_voiceId];
@@ -439,8 +439,8 @@ namespace Engine
           case 2:
             if(body->m_y > Proto::renderMin)
             {
-              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
+              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.0f - body->m_y));
+              body->m_y *= 1.0f - m_segment[segment].m_dx[_voiceId];
             }
             else
             {
@@ -454,7 +454,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[body->m_next].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[body->m_next].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[body->m_next].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_state = m_segment[body->m_next].m_state;
         body->m_index = body->m_next;
@@ -473,9 +473,9 @@ namespace Engine
         for(uint32_t v = 0; v < Size; v++)
         {
           m_body[v].m_index = 0;
-          m_body[v].m_x = 0.f;
-          m_body[v].m_signal_magnitude = 0.f;
-          m_body[v].m_start_magnitude = 0.f;
+          m_body[v].m_x = 0.0f;
+          m_body[v].m_signal_magnitude = 0.0f;
+          m_body[v].m_start_magnitude = 0.0f;
         }
       }
     };
@@ -503,7 +503,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[m_startIndex].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[m_startIndex].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[m_startIndex].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_state = m_segment[m_startIndex].m_state;
         body->m_index = m_startIndex;
@@ -519,7 +519,7 @@ namespace Engine
           case 0:
             break;
           case 1:
-            if(body->m_x < 1.f)
+            if(body->m_x < 1.0f)
             {
               body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * body->m_x);
               body->m_x += m_segment[segment].m_dx[_voiceId];
@@ -533,8 +533,8 @@ namespace Engine
           case 2: /* exponential, quasi-finite rendering (release phase) */
             if(body->m_y > Proto::renderMin)
             {
-              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.f - body->m_y));
-              body->m_y *= 1.f - m_segment[segment].m_dx[_voiceId];
+              body->m_signal_magnitude = body->m_start_magnitude + (diff_magnitude * (1.0f - body->m_y));
+              body->m_y *= 1.0f - m_segment[segment].m_dx[_voiceId];
             }
             else
             {
@@ -548,7 +548,7 @@ namespace Engine
       {
         auto body = &m_body[_voiceId];
         body->m_x = m_segment[body->m_next].m_dx[_voiceId];
-        body->m_y = 1.f - m_segment[body->m_next].m_dx[_voiceId];
+        body->m_y = 1.0f - m_segment[body->m_next].m_dx[_voiceId];
         body->m_start_magnitude = body->m_signal_magnitude;
         body->m_state = m_segment[body->m_next].m_state;
         body->m_index = body->m_next;
@@ -567,9 +567,9 @@ namespace Engine
         for(uint32_t v = 0; v < Size; v++)
         {
           m_body[v].m_index = 0;
-          m_body[v].m_x = 0.f;
-          m_body[v].m_signal_magnitude = 0.f;
-          m_body[v].m_start_magnitude = 0.f;
+          m_body[v].m_x = 0.0f;
+          m_body[v].m_signal_magnitude = 0.0f;
+          m_body[v].m_start_magnitude = 0.0f;
         }
       }
     };

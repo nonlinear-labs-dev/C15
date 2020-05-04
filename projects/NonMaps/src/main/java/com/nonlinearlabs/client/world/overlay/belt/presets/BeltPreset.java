@@ -1,9 +1,10 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.nonlinearlabs.client.CustomPresetSelector;
+import com.nonlinearlabs.client.LoadToPartMode;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.StoreSelectMode;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
 import com.nonlinearlabs.client.world.IPreset;
@@ -32,7 +33,6 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 
 	protected BeltPreset(PresetList parent, Preset mapsPreset) {
 		super(parent);
-		setOrigin(mapsPreset);
 
 		color = addChild(new PresetColorTag(this));
 		number = addChild(new PresetNumber(this));
@@ -40,6 +40,8 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		type = addChild(new TypeLabel(this));
 		name.setFontHeightInMM(4.5);
 		number.setFontHeightInMM(4.5);
+
+		setOrigin(mapsPreset);
 	}
 
 	@Override
@@ -55,6 +57,20 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		if (this.mapsPreset != mapsPreset) {
 			this.mapsPreset = mapsPreset;
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
+			if (type != null)
+				type.bruteForce();
+
+			requestLayout();
+		}
+
+		if(hasCustomPresetSelection()) {
+
+			invalidate(INVALIDATION_FLAG_UI_CHANGED);
+
+			if (type != null) {
+				type.bruteForce();
+				type.invalidate(INVALIDATION_FLAG_UI_CHANGED);
+			}
 		}
 	}
 
@@ -74,30 +90,49 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		type.doLayout(numberWidth + xSpace + nameWidth, 0, typeWidth, h);
 	}
 
-	private boolean isInStoreMode() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().isInStoreSelectMode();
+	private boolean hasCustomPresetSelection() {
+		return NonMaps.get().getNonLinearWorld().getPresetManager().hasCustomPresetSelection();
 	}
 
-	private StoreSelectMode getStoreMode() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().getStoreSelectMode();
+	private CustomPresetSelector getCustomPresetSelection() {
+		return NonMaps.get().getNonLinearWorld().getPresetManager().getCustomPresetSelection();
+	}
+
+	private boolean isSelected() {
+		if (isInLoadPartMode())
+			return getLoadPartMode().getSelectedPreset() == mapsPreset;
+		return mapsPreset.isSelected();
+	}
+
+	private CustomPresetSelector getLoadPartMode() {
+		return (LoadToPartMode)getCustomPresetSelection();
+	}
+
+	private boolean isInLoadPartMode() {
+		return getCustomPresetSelection() instanceof LoadToPartMode;
+	}
+
+	private boolean isLoaded() {
+		if (isInLoadPartMode())
+			return false;
+		return mapsPreset.isLoaded();
 	}
 
 	@Override
 	public void draw(Context2d ctx, int invalidationMask) {
-		boolean loaded = mapsPreset.isLoaded() && !mapsPreset.isInStoreSelectMode();
-		boolean selected = mapsPreset.isSelected() || mapsPreset.isContextMenuActiveOnMe();
-		boolean isOrignalPreset = false;
+		boolean loaded = isLoaded() && !mapsPreset.isInStoreSelectMode();
+		boolean selected = isSelected() || mapsPreset.isContextMenuActiveOnMe();
+		boolean isOriginalPreset = false;
 
-		if (isInStoreMode()) {
-			isOrignalPreset = getStoreMode().isOriginalPreset(mapsPreset);
-		}
+		if (hasCustomPresetSelection())
+			isOriginalPreset = getCustomPresetSelection().isOriginalPreset(mapsPreset);
 
 		RGB colorFill = new RGB(25, 25, 25);
 
-		if (selected && !isOrignalPreset)
+		if (selected && !isOriginalPreset)
 			colorFill = new RGB(77, 77, 77);
 
-		if (loaded || isOrignalPreset)
+		if (loaded || isOriginalPreset)
 			colorFill = RGB.blue();
 
 		getPixRect().fill(ctx, colorFill);
@@ -112,9 +147,13 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 
 	@Override
 	public Control mouseUp(Position eventPoint) {
-		StoreSelectMode storeMode = getNonMaps().getNonLinearWorld().getPresetManager().getStoreSelectMode();
-		if (storeMode != null) {
-			storeMode.setSelectedPreset(mapsPreset);
+
+		if (hasCustomPresetSelection()) {
+			if(getCustomPresetSelection().getSelectedPreset() == mapsPreset) {
+				mapsPreset.load();
+			} else {
+				getCustomPresetSelection().setSelectedPreset(mapsPreset);
+			}
 			return this;
 		}
 
@@ -199,20 +238,20 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		Preset p = mapsPreset;
 
 		switch (dropPosition) {
-		case TOP:
-			getNonMaps().getServerProxy().insertBankAbove(bank, p);
-			break;
+			case TOP:
+				getNonMaps().getServerProxy().insertBankAbove(bank, p);
+				break;
 
-		case MIDDLE:
-			getNonMaps().getServerProxy().overwritePresetWithBank(bank, p);
-			break;
+			case MIDDLE:
+				getNonMaps().getServerProxy().overwritePresetWithBank(bank, p);
+				break;
 
-		case BOTTOM:
-			getNonMaps().getServerProxy().insertBankBelow(bank, p);
-			break;
+			case BOTTOM:
+				getNonMaps().getServerProxy().insertBankBelow(bank, p);
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 
@@ -220,58 +259,58 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		Preset p = mapsPreset;
 
 		switch (dropPosition) {
-		case TOP:
-			getNonMaps().getServerProxy().insertEditBufferAbove(p);
-			break;
+			case TOP:
+				getNonMaps().getServerProxy().insertEditBufferAbove(p);
+				break;
 
-		case MIDDLE:
-			getNonMaps().getServerProxy().overwritePresetWithEditBuffer(p);
-			break;
+			case MIDDLE:
+				getNonMaps().getServerProxy().overwritePresetWithEditBuffer(p);
+				break;
 
-		case BOTTOM:
-			getNonMaps().getServerProxy().insertEditBufferBelow(p);
-			break;
+			case BOTTOM:
+				getNonMaps().getServerProxy().insertEditBufferBelow(p);
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 
 	protected void copyPreset(Preset p, IPreset newPreset) {
 		switch (dropPosition) {
-		case TOP:
-			getNonMaps().getServerProxy().insertPresetCopyAbove(newPreset, p);
-			break;
+			case TOP:
+				getNonMaps().getServerProxy().insertPresetCopyAbove(newPreset, p);
+				break;
 
-		case MIDDLE:
-			getNonMaps().getServerProxy().overwritePresetWith(newPreset, p);
-			break;
+			case MIDDLE:
+				getNonMaps().getServerProxy().overwritePresetWith(newPreset, p);
+				break;
 
-		case BOTTOM:
-			getNonMaps().getServerProxy().insertPresetCopyBelow(newPreset, p);
-			break;
+			case BOTTOM:
+				getNonMaps().getServerProxy().insertPresetCopyBelow(newPreset, p);
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 
 	protected void movePreset(Preset p, IPreset newPreset) {
 		switch (dropPosition) {
-		case TOP:
-			getNonMaps().getServerProxy().movePresetAbove(newPreset, p);
-			break;
+			case TOP:
+				getNonMaps().getServerProxy().movePresetAbove(newPreset, p);
+				break;
 
-		case MIDDLE:
-			getNonMaps().getServerProxy().movePresetTo(newPreset, p);
-			break;
+			case MIDDLE:
+				getNonMaps().getServerProxy().movePresetTo(newPreset, p);
+				break;
 
-		case BOTTOM:
-			getNonMaps().getServerProxy().movePresetBelow(newPreset, p);
-			break;
+			case BOTTOM:
+				getNonMaps().getServerProxy().movePresetBelow(newPreset, p);
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 

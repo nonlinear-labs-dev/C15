@@ -19,14 +19,15 @@ void Engine::MonoEcho::init(const float _samplerate, const uint32_t _upsampleFac
   m_out_L = 0.0f;
   m_out_R = 0.0f;
   // prewarp
-  m_warpConst_PI = NlToolbox::Constants::pi / static_cast<float>(_samplerate);
-  m_freqClip_min = static_cast<float>(_samplerate) / 24576.0f;
-  m_freqClip_max = static_cast<float>(_samplerate) / 2.125f;
+  m_warpConst_PI = NlToolbox::Constants::pi / _samplerate;
+  m_freqClip_min = _samplerate / 24576.0f;
+  m_freqClip_max = _samplerate / 2.125f;
   // 1p hp
   float omega = NlToolbox::Math::tan(50.0f * m_warpConst_PI);
-  m_hp_a1 = (1.0f - omega) / (1.0f + omega);
-  m_hp_b0 = 1.0f / (1.0f + omega);
-  m_hp_b1 = (1.0f / (1.0f + omega)) * -1.0f;
+  float denom = 1.0f / (1.0f + omega);
+  m_hp_a1 = (1.0f - omega) * denom;
+  m_hp_b0 = denom;
+  m_hp_b1 = -denom;
   m_hp_stateVar_L1 = 0.0f;
   m_hp_stateVar_L2 = 0.0f;
   m_hp_stateVar_R1 = 0.0f;
@@ -40,7 +41,7 @@ void Engine::MonoEcho::init(const float _samplerate, const uint32_t _upsampleFac
   m_lp_stateVar_R1 = 0.0f;
   m_lp_stateVar_R2 = 0.0f;
   // 2 Hz lp
-  m_lp2hz_b0 = 2.0f * (NlToolbox::Constants::twopi / static_cast<float>(_samplerate));
+  m_lp2hz_b0 = 2.0f * (NlToolbox::Constants::twopi / _samplerate);
   m_lp2hz_b0 = std::min(m_lp2hz_b0, 1.9f);
   m_lp2hz_stateVar_L = 0.0f;
   m_lp2hz_stateVar_R = 0.0f;
@@ -59,9 +60,9 @@ void Engine::MonoEcho::set(MonoSignals &_signals)
 {
   float omega = std::clamp(_signals.get(C15::Signals::Mono_Signals::Echo_LPF), m_freqClip_min, m_freqClip_max);
   omega = NlToolbox::Math::tan(omega * m_warpConst_PI);
-  m_lp_a1 = (1.0f - omega) / (1.0f + omega);
-  m_lp_b0 = omega / (1.0f + omega);
-  m_lp_b1 = omega / (1.0f + omega);
+  float denom = 1.0f / (1.0f + omega);
+  m_lp_a1 = (1.0f - omega) * denom;
+  m_lp_b0 = m_lp_b1 = omega * denom;
 }
 
 void Engine::MonoEcho::apply(MonoSignals &_signals, const float _rawSample_L, const float _rawSample_R)
@@ -75,7 +76,11 @@ void Engine::MonoEcho::apply(MonoSignals &_signals, const float _rawSample_L, co
   // 2 Hz lp
   tmpVar = _signals.get(C15::Signals::Mono_Signals::Echo_Time_L) - m_lp2hz_stateVar_L;
   tmpVar = tmpVar * m_lp2hz_b0 + m_lp2hz_stateVar_L;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
+  m_lp2hz_stateVar_L = tmpVar;
+#else
   m_lp2hz_stateVar_L = tmpVar + NlToolbox::Constants::DNC_const;
+#endif
   int32_t ind_t0 = static_cast<int32_t>(std::round(tmpVar - 0.5f));
   tmpVar = tmpVar - static_cast<float>(ind_t0);
   int32_t ind_tm1 = std::max(ind_t0 - 1, 0);
@@ -95,15 +100,25 @@ void Engine::MonoEcho::apply(MonoSignals &_signals, const float _rawSample_L, co
   m_out_L = m_lp_b0 * tmpVar;
   m_out_L += m_lp_b1 * m_lp_stateVar_L1;
   m_out_L += m_lp_a1 * m_lp_stateVar_L2;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
+  m_lp_stateVar_L1 = tmpVar;
+  m_lp_stateVar_L2 = m_out_L;
+#else
   m_lp_stateVar_L1 = tmpVar + NlToolbox::Constants::DNC_const;
   m_lp_stateVar_L2 = m_out_L + NlToolbox::Constants::DNC_const;
+#endif
   // hp
   m_stateVar_L = m_hp_b0 * m_out_L;
   m_stateVar_L += m_hp_b1 * m_hp_stateVar_L1;
   m_stateVar_L += m_hp_a1 * m_hp_stateVar_L2;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
+  m_hp_stateVar_L1 = m_out_L;
+  m_hp_stateVar_L2 = m_stateVar_L;
+#else
   m_hp_stateVar_L1 = m_out_L + NlToolbox::Constants::DNC_const;
   m_hp_stateVar_L2 = m_stateVar_L + NlToolbox::Constants::DNC_const;
   m_stateVar_L += NlToolbox::Constants::DNC_const;
+#endif
   m_out_L = NlToolbox::Crossfades::crossFade(_rawSample_L, m_out_L, _signals.get(C15::Signals::Mono_Signals::Echo_Dry),
                                              _signals.get(C15::Signals::Mono_Signals::Echo_Wet));
   // right channel
@@ -114,7 +129,11 @@ void Engine::MonoEcho::apply(MonoSignals &_signals, const float _rawSample_L, co
   // 2 Hz lp
   tmpVar = _signals.get(C15::Signals::Mono_Signals::Echo_Time_R) - m_lp2hz_stateVar_R;
   tmpVar = tmpVar * m_lp2hz_b0 + m_lp2hz_stateVar_R;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
+  m_lp2hz_stateVar_R = tmpVar;
+#else
   m_lp2hz_stateVar_R = tmpVar + NlToolbox::Constants::DNC_const;
+#endif
   ind_t0 = static_cast<int32_t>(std::round(tmpVar - 0.5f));
   tmpVar = tmpVar - static_cast<float>(ind_t0);
   ind_tm1 = std::max(ind_t0 - 1, 0);
@@ -134,15 +153,25 @@ void Engine::MonoEcho::apply(MonoSignals &_signals, const float _rawSample_L, co
   m_out_R = m_lp_b0 * tmpVar;
   m_out_R += m_lp_b1 * m_lp_stateVar_R1;
   m_out_R += m_lp_a1 * m_lp_stateVar_R2;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
+  m_lp_stateVar_R1 = tmpVar;
+  m_lp_stateVar_R2 = m_out_R;
+#else
   m_lp_stateVar_R1 = tmpVar + NlToolbox::Constants::DNC_const;
   m_lp_stateVar_R2 = m_out_R + NlToolbox::Constants::DNC_const;
+#endif
   // hp
   m_stateVar_R = m_hp_b0 * m_out_R;
   m_stateVar_R += m_hp_b1 * m_hp_stateVar_R1;
   m_stateVar_R += m_hp_a1 * m_hp_stateVar_R2;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
+  m_hp_stateVar_R1 = m_out_R;
+  m_hp_stateVar_R2 = m_stateVar_R;
+#else
   m_hp_stateVar_R1 = m_out_R + NlToolbox::Constants::DNC_const;
   m_hp_stateVar_R2 = m_stateVar_R + NlToolbox::Constants::DNC_const;
   m_stateVar_R += NlToolbox::Constants::DNC_const;  /// Brauchen wir das wirklich?
+#endif
   m_out_R = NlToolbox::Crossfades::crossFade(_rawSample_R, m_out_R, _signals.get(C15::Signals::Mono_Signals::Echo_Dry),
                                              _signals.get(C15::Signals::Mono_Signals::Echo_Wet));
   // ringbuffer update

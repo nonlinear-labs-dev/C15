@@ -12,7 +12,7 @@
 #include <proxies/hwui/controls/LeftAlignedLabel.h>
 #include "presets/Preset.h"
 
-PresetList::PresetList(const Rect &pos, bool showBankArrows)
+PresetList::PresetList(const Rect& pos, bool showBankArrows)
     : super(pos, showBankArrows)
 {
   Application::get().getPresetManager()->onBankSelection(mem_fun(this, &PresetList::onBankSelectionChanged));
@@ -23,7 +23,7 @@ PresetList::PresetList(const Rect &pos, bool showBankArrows)
 
 PresetList::~PresetList() = default;
 
-void PresetList::onBankSelectionChanged(const Uuid &selectedBank)
+void PresetList::onBankSelectionChanged(const Uuid& selectedBank)
 {
   m_bankChangedConnection.disconnect();
 
@@ -113,45 +113,65 @@ void PresetList::onRotary(int inc, ButtonModifiers modifiers)
 
   if(focusAndMode.focus == UIFocus::Banks)
   {
-    auto scope = pm->getUndoScope().startTransaction("Select Bank");
-
-    if(modifiers[SHIFT] && pm->getNumBanks() > 0)
-    {
-      if(inc < 0)
-        pm->selectBank(scope->getTransaction(), pm->getBanks().front()->getUuid());
-      else
-        pm->selectBank(scope->getTransaction(), pm->getBanks().back()->getUuid());
-    }
-    else
-    {
-      while(inc < 0)
-      {
-        pm->selectPreviousBank(scope->getTransaction());
-        inc++;
-      }
-
-      while(inc > 0)
-      {
-        pm->selectNextBank(scope->getTransaction());
-        inc--;
-      }
-    }
+    stepBankSelection(inc, modifiers, pm);
   }
   else if(auto bank = pm->getSelectedBank())
   {
-    auto scope = pm->getUndoScope().startTransaction("Select Preset");
-    while(inc < 0)
-    {
-      bank->selectPreviousPreset(scope->getTransaction());
-      inc++;
-    }
-
-    while(inc > 0)
-    {
-      bank->selectNextPreset(scope->getTransaction());
-      inc--;
-    }
+    stepPresetSelection(inc, pm, bank);
   }
+}
+
+void PresetList::stepBankSelection(int inc, const ButtonModifiers& modifiers, PresetManager* pm) const
+{
+  auto scope = pm->getUndoScope().startTransaction("Select Bank");
+
+  if(modifiers[SHIFT] && pm->getNumBanks() > 0)
+  {
+    selectFirstOrLastBank(inc, pm, scope);
+  }
+  else
+  {
+    stepBankSelection(inc, pm, scope);
+  }
+}
+
+void PresetList::stepPresetSelection(int inc, PresetManager* pm, Bank* bank) const
+{
+  auto scope = pm->getUndoScope().startTransaction("Select Preset");
+  while(inc < 0)
+  {
+    bank->selectPreviousPreset(scope->getTransaction());
+    inc++;
+  }
+
+  while(inc > 0)
+  {
+    bank->selectNextPreset(scope->getTransaction());
+    inc--;
+  }
+}
+
+void PresetList::stepBankSelection(int inc, PresetManager* pm, const UNDO::Scope::tTransactionScopePtr& scope) const
+{
+  while(inc < 0)
+  {
+    pm->selectPreviousBank(scope->getTransaction());
+    inc++;
+  }
+
+  while(inc > 0)
+  {
+    pm->selectNextBank(scope->getTransaction());
+    inc--;
+  }
+}
+
+void PresetList::selectFirstOrLastBank(int inc, PresetManager* pm, const UNDO::Scope::tTransactionScopePtr& scope) const
+{
+  if(inc < 0)
+    pm->selectBank(scope->getTransaction(), pm->getBanks().front()->getUuid());
+  else
+    pm->selectBank(scope->getTransaction(), pm->getBanks().back()->getUuid());
 }
 
 std::pair<size_t, size_t> PresetList::getSelectedPosition() const

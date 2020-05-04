@@ -1,6 +1,7 @@
 #pragma once
 
 #include "playground.h"
+#include <nltools/Types.h>
 #include <functional>
 #include <map>
 
@@ -9,12 +10,12 @@ class ParameterImportConversions
  public:
   static ParameterImportConversions &get();
 
-  typedef std::function<tControlPositionValue(tControlPositionValue)> tConverter;
+  typedef std::function<tControlPositionValue(tControlPositionValue, SoundType)> tConverter;
   typedef int tFileVersion;
   typedef uint16_t tParameterID;
 
   tControlPositionValue convert(const tParameterID parameterID, const tControlPositionValue in,
-                                const tFileVersion inVersion) const;
+                                const tFileVersion inVersion, SoundType type) const;
   tControlPositionValue convertMCAmount(const tParameterID parameterID, const tControlPositionValue in,
                                         const tFileVersion inVersion) const;
 
@@ -32,10 +33,11 @@ class ParameterImportConversions
   tControlPositionValue driveV2ToV3(tControlPositionValue in) const;
   tControlPositionValue driveV5ToV6(tControlPositionValue in) const;
   tControlPositionValue voicesV5ToV6(tControlPositionValue unisonVoices) const;
+  tControlPositionValue voicesV7ToV8(tControlPositionValue unisonVoices, SoundType type) const;
 
   struct ConvertersBySourceFileVersion
   {
-    tControlPositionValue convert(const tControlPositionValue in, const tFileVersion inVersion) const;
+    tControlPositionValue convert(const tControlPositionValue in, const tFileVersion inVersion, SoundType type) const;
     std::map<tFileVersion, tConverter> from;
   };
 

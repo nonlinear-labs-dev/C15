@@ -96,6 +96,9 @@ class HWUI
   FocusAndMode restrictFocusAndMode(FocusAndMode in) const;
   FocusAndMode removeEditOnFocusChange(FocusAndMode in) const;
 
+  Signal<void, VoiceGroup> m_voiceGoupSignal;
+  VoiceGroup m_currentVoiceGroup = VoiceGroup::I;
+
   PanelUnit m_panelUnit;
   BaseUnit m_baseUnit;
 
@@ -109,9 +112,6 @@ class HWUI
   Signal<void, ButtonModifiers> m_modifersChanged;
   Signal<void, int> m_blinkTimer;
 
-  Signal<void, VoiceGroup> m_voiceGoupSignal;
-  Signal<void, UNDO::Transaction *, VoiceGroup> m_voiceGroupWithTransactionSignal;
-
   std::array<bool, (size_t) Buttons::NUM_BUTTONS> m_buttonStates;
 
   int m_affengriffState = 0;
@@ -121,8 +121,6 @@ class HWUI
 
   int m_blinkCount;
   Expiration m_switchOffBlockingMainThreadIndicator;
-
-  VoiceGroup m_currentVoiceGroup = VoiceGroup::I;
 
   bool m_focusAndModeFrozen = false;
 };

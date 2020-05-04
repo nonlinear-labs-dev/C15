@@ -120,7 +120,7 @@ public class LabelSmall extends ZoomReactingControl {
 	}
 
 	protected String getFontName() {
-		return "'Source Sans Pro LW25'";
+		return "'SSP-LW25'";
 	}
 
 	protected TextAlign getTextAlignment() {

@@ -10,7 +10,7 @@
 #include <presets/Bank.h>
 #include <presets/Preset.h>
 #include <tools/EditBufferNotifier.h>
-#include <device-settings/LoadModeSetting.h>
+#include <device-settings/DirectLoadSetting.h>
 #include <proxies/hwui/descriptive-layouts/concrete/preset/GenericPresetList.h>
 #include <proxies/hwui/descriptive-layouts/events/event-sources/hwui/HWUIEvents.h>
 
@@ -93,14 +93,14 @@ namespace DescriptiveLayouts
     m_map[EventSources::MonoEnabledText] = std::make_unique<MonoEnabledText>();
     m_map[EventSources::MonoEnabled] = std::make_unique<MonoEnabledBool>();
 
-    m_map[EventSources::MonoPrioText] = std::make_unique<ParameterValueCurrentVG<365>>();
-    m_map[EventSources::MonoLegatoText] = std::make_unique<ParameterValueCurrentVG<366>>();
-    m_map[EventSources::MonoGlideText] = std::make_unique<ParameterValueCurrentVG<367>>();
+    m_map[EventSources::MonoPrioText] = std::make_unique<VoicesParameterValue<365>>();
+    m_map[EventSources::MonoLegatoText] = std::make_unique<VoicesParameterValue<366>>();
+    m_map[EventSources::MonoGlideText] = std::make_unique<VoicesParameterValue<367>>();
 
     m_map[EventSources::UnisonVoicesText] = std::make_unique<UnisonVoicesText>();
-    m_map[EventSources::UnisonDetuneText] = std::make_unique<ParameterValueCurrentVG<250>>();
-    m_map[EventSources::UnisonPhaseText] = std::make_unique<ParameterValueCurrentVG<252>>();
-    m_map[EventSources::UnisonPanText] = std::make_unique<ParameterValueCurrentVG<253>>();
+    m_map[EventSources::UnisonDetuneText] = std::make_unique<VoicesParameterValue<250>>();
+    m_map[EventSources::UnisonPhaseText] = std::make_unique<VoicesParameterValue<252>>();
+    m_map[EventSources::UnisonPanText] = std::make_unique<VoicesParameterValue<253>>();
 
     m_map[EventSources::UnisonEnabled] = std::make_unique<UnisonEnabledBool>();
 

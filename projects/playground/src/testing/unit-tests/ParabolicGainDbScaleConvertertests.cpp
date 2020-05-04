@@ -1,5 +1,5 @@
 #include "testing/TestHelper.h"
-#include "third-party/include/catch.hpp"
+#include <catch.hpp>
 #include "parameters/scale-converters/ParabolicGainDbScaleConverter.h"
 
 TEST_CASE("to display value and back")

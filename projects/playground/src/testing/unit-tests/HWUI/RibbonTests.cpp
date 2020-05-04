@@ -1,4 +1,4 @@
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <testing/TestHelper.h>
 #include <proxies/hwui/base-unit/Ribbon.h>
 #include <proxies/hwui/base-unit/UpperRibbon.h>

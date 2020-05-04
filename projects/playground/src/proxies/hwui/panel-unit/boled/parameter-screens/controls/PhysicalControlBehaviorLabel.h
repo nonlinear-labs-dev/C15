@@ -14,6 +14,9 @@ class PhysicalControlBehaviorLabel : public Label
  public:
   PhysicalControlBehaviorLabel(const Rect &pos);
 
+ protected:
+  void setBackgroundColor(FrameBuffer &fb) const override;
+
  private:
   void setParameter(Parameter *param);
   void onParamValueChanged(const Parameter *param);

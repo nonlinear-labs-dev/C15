@@ -4,7 +4,7 @@
 #include <presets/EditBuffer.h>
 #include <device-settings/BaseUnitUIMode.h>
 #include <device-settings/Settings.h>
-#include <device-settings/LoadModeSetting.h>
+#include <device-settings/DirectLoadSetting.h>
 #include <playground.h>
 #include <proxies/hwui/base-unit/BaseUnitPresetsAndBanksMode.h>
 #include <proxies/hwui/buttons.h>
@@ -13,11 +13,7 @@
 BaseUnitPresetsAndBanksMode::BaseUnitPresetsAndBanksMode()
     : m_modeButtonHandler(std::bind(&BaseUnitPresetsAndBanksMode::modeButtonShortPress, this),
                           std::bind(&BaseUnitPresetsAndBanksMode::modeButtonLongPress, this))
-    , m_funcButtonHandler([] {},
-                          [] {
-                            auto type = Application::get().getPresetManager()->getEditBuffer()->getType();
-                            Application::get().getSettings()->getSetting<LoadModeSetting>()->cycleForSoundType(type);
-                          })
+    , m_funcButtonHandler([] {}, [] { Application::get().getSettings()->getSetting<DirectLoadSetting>()->toggle(); })
 {
 }
 

@@ -1,8 +1,9 @@
 #pragma once
 #include "MenuOverlay.h"
 
-class LeftRightUpDownCommitOverlay : public MenuOverlay {
-public:
+class LeftRightUpDownCommitOverlay : public MenuOverlay
+{
+ public:
   LeftRightUpDownCommitOverlay(const Rect& r);
   bool onButton(Buttons i, bool down, ButtonModifiers mod) override;
 

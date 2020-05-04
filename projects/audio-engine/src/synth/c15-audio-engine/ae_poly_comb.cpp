@@ -47,14 +47,22 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   auto tmpHP = m_hpCoeff_b0 * m_out;
   tmpHP += (m_hpCoeff_b1 * m_hpInStateVar);
   tmpHP += (m_hpCoeff_a1 * m_hpOutStateVar);
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+  m_hpInStateVar = m_out;
+  m_hpOutStateVar = tmpHP;
+#else
   m_hpInStateVar = m_out + NlToolbox::Constants::DNC_const;
   m_hpOutStateVar = tmpHP + NlToolbox::Constants::DNC_const;
+#endif
   m_out = tmpHP;
   m_out += m_decayStateVar;
   // 1-pole lp
   m_out *= (1.0f - m_lpCoeff);
   m_out += (m_lpCoeff * m_lpStateVar);
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+#else
   m_out += NlToolbox::Constants::DNC_const;
+#endif
   m_lpStateVar = m_out;
   // allpass
   auto tmpOut = m_out;
@@ -63,12 +71,30 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   m_out += m_apStateVar_2;
   m_out -= (m_apStateVar_3 * m_apCoeff_1);
   m_out -= (m_apStateVar_4 * m_apCoeff_2);
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+#else
   m_out += NlToolbox::Constants::DNC_const;
+#endif
   m_apStateVar_2 = m_apStateVar_1;
   m_apStateVar_1 = tmpOut;
   m_apStateVar_4 = m_apStateVar_3;
   m_apStateVar_3 = m_out;
-  // para d
+#if POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1
+  // POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1: provide a parallel implementation for "para d"
+  auto para_d = std::abs(m_out);
+  const PolyInt para_d_sign_condition((m_out > 0.0f)),  // contains -1 (true) or 0 (false)
+      para_d_sat_condition((para_d > 0.501187f));       // contains -1 (true) or 0 (false)
+  para_d -= 0.501187f;
+  auto tmpVar = para_d * 0.2512f;
+  para_d = std::min(para_d, 2.98815f);
+  para_d *= 0.7488f * (1.0f - (para_d * 0.167328f));
+  para_d += tmpVar + 0.501187f;
+  para_d *= static_cast<PolyValue>((-2 * para_d_sign_condition) - 1);  // restore sign
+  tmpVar = para_d - m_out;                                             // detect difference to unsaturated signal
+  m_out -= static_cast<PolyValue>(para_d_sat_condition) * tmpVar;      // restore signal
+  // this approach seems to work and produce similar results
+#else
+  // para d --- unfortunately still scalar, via voice loop (1 / 3)
   for(uint32_t v = 0; v < C15::Config::local_polyphony; v++)
   {
     if(std::abs(m_out[v]) > 0.501187f)
@@ -95,6 +121,7 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
       }
     }
   }
+#endif
   // smooth b
   auto tmpSmooth = m_delaySamples - m_delayStateVar;
   tmpSmooth *= m_delayConst;
@@ -104,10 +131,17 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   tmpSmooth += (phaseMod * tmpSmooth);
   // delay
   auto holdsample = m_out;  // for Bypass
+#if POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_2
+  // POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_2: the polyphonic "sample" at the current index can be set in parallel
+  m_buffer[m_buffer_indx] = m_out;
+  // seems appropriate, doesn't seem to affect sound at all
+#else
+  // delay buffer "write" --- unfortunately still scalar, via voice loop (2 / 3)
   for(uint32_t v = 0; v < C15::Config::local_polyphony; v++)
   {
     m_buffer[m_buffer_indx][v] = m_out[v];
   }
+#endif
   /// hier kommt voicestealing hin!!
   tmpSmooth -= 1.0f;
   tmpSmooth = std::clamp(tmpSmooth, 1.0f, 8189.f);
@@ -124,8 +158,17 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   ind_t0 &= m_buffer_sz_m1;
   ind_tp1 &= m_buffer_sz_m1;
   ind_tp2 &= m_buffer_sz_m1;
-  PolyValue fract, sample_tm1, sample_t0, sample_tp1, sample_tp2;
-  fract = tmpSmooth;
+  PolyValue sample_tm1, sample_t0, sample_tp1, sample_tp2;
+#if POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_3
+  // POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_3: provided by parallel template
+  sample_tm1 = polyVectorIndex(m_buffer, ind_tm1);
+  sample_t0 = polyVectorIndex(m_buffer, ind_t0);
+  sample_tp1 = polyVectorIndex(m_buffer, ind_tp1);
+  sample_tp2 = polyVectorIndex(m_buffer, ind_tp2);
+  // seems to work as well, although I'm not sure if passing the whole buffer (even as reference) is a good idea..?
+  // (instead of reference, maybe a pointer is a better idea, i.d.k.)
+#else
+  //  delay buffer "read" --- unfortunately still scalar, via voice loop (3 / 3)
   for(uint32_t i = 0; i < C15::Config::local_polyphony; i++)
   {
     sample_tm1[i] = m_buffer[ind_tm1[i]][i];
@@ -133,6 +176,7 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
     sample_tp1[i] = m_buffer[ind_tp1[i]][i];
     sample_tp2[i] = m_buffer[ind_tp2[i]][i];
   }
+#endif
   m_out = interpolRT(tmpSmooth, sample_tm1, sample_t0, sample_tp1, sample_tp2);
   /// Envelope for voicestealingtmpVar
   m_buffer_indx = (m_buffer_indx + 1) & m_buffer_sz_m1;
@@ -150,8 +194,9 @@ void Engine::PolyCombFilter::set(PolySignals &_signals, const float _samplerate,
   frequency = std::clamp(frequency, m_freqClip_24576, m_freqClip_2);
   frequency *= m_warpConst_PI;
   frequency = NlToolbox::Math::tan(frequency);
-  m_hpCoeff_a1[_voiceId] = (1.0f - frequency) / (1.0f + frequency);
-  m_hpCoeff_b0[_voiceId] = 1.0f / (1.0f + frequency);
+  float denom = 1.0f / (1.0f + frequency);  // divide once for better performance, then multiply
+  m_hpCoeff_a1[_voiceId] = (1.0f - frequency) * denom;
+  m_hpCoeff_b0[_voiceId] = denom;
   m_hpCoeff_b1[_voiceId] = m_hpCoeff_b0[_voiceId] * -1.0f;
   // lp coeff
   frequency = _signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_LP_Freq)[_voiceId];
@@ -192,8 +237,9 @@ void Engine::PolyCombFilter::set(PolySignals &_signals, const float _samplerate,
   // ap influence
   stateVar_i = NlToolbox::Math::sinP3_wrap(frequency) * -1.0f * m_apCoeff_1[_voiceId];
   stateVar_r = NlToolbox::Math::sinP3_wrap(frequency + 0.25f) * m_apCoeff_1[_voiceId];
-  float stateVar2_i = NlToolbox::Math::sinP3_wrap(frequency + frequency);
-  float stateVar2_r = NlToolbox::Math::sinP3_wrap(frequency + frequency + 0.25f);
+  frequency += frequency;
+  float stateVar2_i = NlToolbox::Math::sinP3_wrap(frequency);
+  float stateVar2_r = NlToolbox::Math::sinP3_wrap(frequency + 0.25f);
   float var1_i = stateVar_i - stateVar2_i;
   float var2_i = (stateVar_i - (m_apCoeff_2[_voiceId] * stateVar2_i)) * -1.0f;
   float var1_r = stateVar_r + stateVar2_r + m_apCoeff_2[_voiceId];
@@ -246,7 +292,13 @@ float Engine::PolyCombFilter::calcDecayGain(const float _decay, const float _fre
 {
   // previously in slow set function, now public for evaluation in PolySection postProcessing
   float frequency = _frequency * std::abs(_decay);
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+  frequency = std::max(frequency, 1.e-18f);
+#elif POTENTIAL_IMPROVEMENT_DNC_CONST_OF_ZERO
+  frequency = std::max(frequency, 1.e-18f);
+#else
   frequency = std::max(frequency, NlToolbox::Constants::DNC_const);
+#endif
   frequency = (1.0f / frequency) * -6.28318f;
   if(frequency > 0.0f)  // Exp Clipped
   {

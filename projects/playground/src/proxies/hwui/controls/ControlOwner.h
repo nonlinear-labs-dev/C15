@@ -89,6 +89,7 @@ class ControlOwner : public Uncopyable
   void highlight(const std::shared_ptr<Control> &c);
   void noHighlight();
   void highlightButtonWithCaption(const Glib::ustring &caption);
+  void highlightButtonWithCaption(const Glib::ustring &caption, bool desiredHighlight);
 
   template <typename T> T *addControl(T *ctrl)
   {

@@ -101,6 +101,22 @@ namespace DescriptiveLayouts
     }
   };
 
+  template <int id> class VoicesParameterValue : public EditBufferEvent<DisplayString>
+  {
+   public:
+    void onChange(const EditBuffer *eb) override
+    {
+      auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
+      if(eb->getType() != SoundType::Split)
+      {
+        vg = VoiceGroup::I;
+      }
+
+      if(auto param = eb->findParameterByID({ id, vg }))
+        setValue({ param->getDisplayString(), 0 });
+    }
+  };
+
   template <int id> class ParameterValueCurrentVG : public EditBufferEvent<DisplayString>
   {
    public:

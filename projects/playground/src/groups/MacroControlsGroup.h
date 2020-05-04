@@ -13,7 +13,8 @@ class MacroControlsGroup : public ParameterGroup
 
   static ParameterId modSrcToSmoothingId(MacroControls src);
   static ParameterId modSrcToParamId(MacroControls src);
-  static MacroControls paramIDToModSrc(ParameterId pid);
+  static MacroControls paramIDToModSrc(const ParameterId& pid);
   static bool isMacroTime(const ParameterId &id);
   static bool isMacroControl(int paramNumber);
+static ParameterId smoothingIdToMCId(const ParameterId& smoothingId);
 };

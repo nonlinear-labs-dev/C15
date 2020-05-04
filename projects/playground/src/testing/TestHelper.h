@@ -1,13 +1,13 @@
 #pragma once
-
 #include <libundo/undo/TransactionCreationScope.h>
 #include <memory>
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/Parameter.h>
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <libundo/undo/Scope.h>
 #include <Application.h>
+#include <parameters/ModulateableParameter.h>
 
 namespace TestHelper
 {
@@ -40,13 +40,18 @@ namespace TestHelper
     return std::move(getPresetManager()->getUndoScope().startTestTransaction());
   }
 
+  template <SoundType tType> inline void initDualEditBuffer(UNDO::Transaction* transaction)
+  {
+    auto eb = getEditBuffer();
+    eb->undoableUnlockAllGroups(transaction);
+    eb->undoableConvertToDual(transaction, tType);
+    eb->undoableInitSound(transaction);
+  }
+
   template <SoundType tType> inline void initDualEditBuffer()
   {
     auto scope = UNDO::Scope::startTrashTransaction();
-    auto eb = getEditBuffer();
-    eb->undoableUnlockAllGroups(scope->getTransaction());
-    eb->undoableConvertToDual(scope->getTransaction(), tType);
-    eb->undoableInitSound(scope->getTransaction());
+    initDualEditBuffer<tType>(scope->getTransaction());
   }
 
   inline void initSingleEditBuffer(UNDO::Transaction* transaction)
@@ -79,6 +84,16 @@ namespace TestHelper
         for(auto& p : g->getParameters())
           cb(p);
   }
+
+  inline void changeAllParameters(UNDO::Transaction* transaction)
+  {
+    auto eb = TestHelper::getEditBuffer();
+    eb->forEachParameter([&](Parameter* param) { TestHelper::forceParameterChange(transaction, param); });
+  };
+
+  void randomizeCrossFBAndToFX(UNDO::Transaction* transaction);
+
+  void randomizeFadeParams(UNDO::Transaction* transaction);
 }
 
 inline std::pair<double, double> getNextStepValuesFromValue(Parameter* p, double v)
@@ -105,4 +120,19 @@ inline std::pair<double, double> getNextStepValuesFromValue(Parameter* p, double
     }                                                                                                                  \
     CHECK(p->getControlPositionValue() >= range.first);                                                                \
     CHECK(p->getControlPositionValue() <= range.second);                                                               \
+  }
+
+#define CHECK_PARAMETER_CP_UNEQUALS_FICTION(p, v)                                                                      \
+  {                                                                                                                    \
+    auto range = getNextStepValuesFromValue(p, v);                                                                     \
+    auto inRange = p->getControlPositionValue() >= range.first && p->getControlPositionValue() <= range.second;        \
+    if(inRange)                                                                                                        \
+    {                                                                                                                  \
+      nltools::Log::error(p->getLongName(), '(', p->getID().toString(), ") got", p->getControlPositionValue(),         \
+                          "expected unequals ~", v);                                                                   \
+      CHECK(false);                                                                                                    \
+      return;                                                                                                          \
+    }                                                                                                                  \
+    CHECK_FALSE(p->getControlPositionValue() >= range.first);                                                          \
+    CHECK_FALSE(p->getControlPositionValue() <= range.second);                                                         \
   }

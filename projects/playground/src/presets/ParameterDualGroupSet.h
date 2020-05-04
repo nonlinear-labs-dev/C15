@@ -44,7 +44,7 @@ class ParameterDualGroupSet : public AttributesOwner
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
  protected:
-  void loadIntoVoiceGroup(UNDO::Transaction *transaction, Preset *p, VoiceGroup target);
+  void loadSinglePresetIntoVoiceGroup(UNDO::Transaction *transaction, const Preset *p, VoiceGroup target);
   virtual ParameterDualGroupSet::tParameterGroupPtr appendParameterGroup(ParameterGroup *p);
   virtual void copyFrom(UNDO::Transaction *transaction, const Preset *other);
   virtual void copyFrom(UNDO::Transaction *transaction, const Preset *other, VoiceGroup from, VoiceGroup to);

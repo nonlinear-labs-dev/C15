@@ -27,11 +27,8 @@ public class PresetManagerPresenter {
 	}
 
 	public ArrayList<Bank> banks;
-	public boolean showLoadModeMenu = false;
-	public boolean showLoadModeButton = true;
 	public String[] loadModeMenuEntries = { "", "", "" };
 	public boolean loadModeButtonState = false;
-	public boolean loadToPartEnabled = false;
 	public boolean directLoadActive = false;
 	public boolean loadToPartActive = false;
 

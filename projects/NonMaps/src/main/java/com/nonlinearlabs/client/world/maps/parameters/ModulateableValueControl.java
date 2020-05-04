@@ -39,7 +39,7 @@ abstract class ModulateableValueControl extends ValueControl {
 	protected abstract void drawCorona(Context2d ctx, double left, double right);
 
 	protected String getFontName() {
-		return "'Source Sans Pro LW25'";
+		return "'SSP-LW25'";
 	}
 
 	protected double getFontHeight() {

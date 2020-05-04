@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><bank version="5">
+ <bank-serialize-date>2019-05-29T17:15:23Z</bank-serialize-date>
+ <name>Fuxi Swarms</name>
+ <uuid>72e49adf-e127-4744-99f3-c9f09529c81f</uuid>
+ <x>3045</x>
+ <y>-165</y>
+ <selected-preset>458f7d97-4067-4b43-90c8-010561de1b73</selected-preset>
+ <attached-to-bank>3cde186d-d0f8-4180-a4f1-ed2acdb8b016</attached-to-bank>
+ <attach-direction>left</attach-direction>
+ <preset-order>
+  <uuid>bcfd2342-fba3-426f-9835-0b178105e8d3</uuid>
+ </preset-order>
+ <attributes>
+  <attribute name="Comment">Sound design: Matthias Fuchs</attribute>
+  <attribute name="Date of Import File">2019-05-29T12:28:19Z</attribute>
+  <attribute name="Name of Import File">Fuxis Swarms.xml</attribute>
+ </attributes>
+ <last-changed-timestamp>1559133539</last-changed-timestamp>
+ <preset pos="0">
+  <name>Nostromo passing.</name>
+  <uuid>bcfd2342-fba3-426f-9835-0b178105e8d3</uuid>
+  <attributes>
+   <attribute name="DeviceName">Unit-00033</attribute>
+   <attribute name="SoftwareVersion">2019-05-08 12:24</attribute>
+   <attribute name="StoreCounter">334</attribute>
+   <attribute name="StoreTime">2019-05-20T10:01:52Z</attribute>
+  </attributes>
+  <parameter-groups>
+   <parameter-group id="Scale">
+    <parameter id="323">
+     <value>0</value>
+    </parameter>
+    <parameter id="322">
+     <value>0</value>
+    </parameter>
+    <parameter id="315">
+     <value>0</value>
+    </parameter>
+    <parameter id="314">
+     <value>0</value>
+    </parameter>
+    <parameter id="313">
+     <value>0</value>
+    </parameter>
+    <parameter id="312">
+     <value>0</value>
+    </parameter>
+    <parameter id="316">
+     <value>0</value>
+    </parameter>
+    <parameter id="317">
+     <value>0</value>
+    </parameter>
+    <parameter id="318">
+     <value>0</value>
+    </parameter>
+    <parameter id="319">
+     <value>0</value>
+    </parameter>
+    <parameter id="320">
+     <value>0</value>
+    </parameter>
+    <parameter id="321">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="MCs">
+    <parameter id="327">
+     <value>0.40000000000000002</value>
+    </parameter>
+    <parameter id="326">
+     <value>0.40000000000000002</value>
+    </parameter>
+    <parameter id="325">
+     <value>0.40000000000000002</value>
+    </parameter>
+    <parameter id="324">
+     <value>0.40000000000000002</value>
+    </parameter>
+    <parameter id="243">
+     <value>0.5</value>
+     <info></info>
+     <givenName>Pitch</givenName>
+    </parameter>
+    <parameter id="244">
+     <value>0</value>
+     <info></info>
+     <givenName>Swarm</givenName>
+    </parameter>
+    <parameter id="245">
+     <value>0.245</value>
+     <info></info>
+     <givenName>Noise</givenName>
+    </parameter>
+    <parameter id="246">
+     <value>0</value>
+     <info></info>
+     <givenName>Sustain</givenName>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Master">
+    <parameter id="248">
+     <value>0</value>
+    </parameter>
+    <parameter id="247">
+     <value>0.5</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Reverb">
+    <parameter id="241">
+     <value>0.59999999999999998</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="235">
+     <value>0.40000000000000002</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="240">
+     <value>0.94999999999999996</value>
+    </parameter>
+    <parameter id="237">
+     <value>0.33000000000000002</value>
+    </parameter>
+    <parameter id="238">
+     <value>0.29999999999999999</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Echo">
+    <parameter id="233">
+     <value>0.66000000000000003</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="232">
+     <value>0.75</value>
+    </parameter>
+    <parameter id="225">
+     <value>0.433</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="227">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="229">
+     <value>0.59999999999999998</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="231">
+     <value>0.5</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Gap Filt">
+    <parameter id="209">
+     <value>0.45000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="207">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="201">
+     <value>0.21875</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="206">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="203">
+     <value>-0.1388888888888889</value>
+    </parameter>
+    <parameter id="204">
+     <value>0.21875</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Flang">
+    <parameter id="214">
+     <value>0.23000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="213">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="308">
+     <value>0.29999999999999999</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="216">
+     <value>0.31680000000000003</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="211">
+     <value>0.39000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="222">
+     <value>0.75</value>
+    </parameter>
+    <parameter id="310">
+     <value>0.42857142857142855</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="218">
+     <value>0.40000000000000002</value>
+    </parameter>
+    <parameter id="219">
+     <value>0.5</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="307">
+     <value>0</value>
+    </parameter>
+    <parameter id="221">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="223">
+     <value>0.40000000000000002</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Mixer">
+    <parameter id="187">
+     <value>0</value>
+    </parameter>
+    <parameter id="185">
+     <value>0.14999999999999999</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="184">
+     <value>0</value>
+    </parameter>
+    <parameter id="172">
+     <value>0.20000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="183">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="171">
+     <value>-0.20000000000000001</value>
+    </parameter>
+    <parameter id="174">
+     <value>0.20000000000000001</value>
+    </parameter>
+    <parameter id="169">
+     <value>0.20000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="180">
+     <value>0</value>
+    </parameter>
+    <parameter id="175">
+     <value>0.13</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="177">
+     <value>0</value>
+    </parameter>
+    <parameter id="178">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="181">
+     <value>0.059999999999999998</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="MCM">
+    <parameter id="293">
+     <value>0</value>
+    </parameter>
+    <parameter id="292">
+     <value>0</value>
+    </parameter>
+    <parameter id="291">
+     <value>1</value>
+    </parameter>
+    <parameter id="290">
+     <value>0</value>
+    </parameter>
+    <parameter id="288">
+     <value>0</value>
+    </parameter>
+    <parameter id="287">
+     <value>0</value>
+    </parameter>
+    <parameter id="286">
+     <value>0</value>
+    </parameter>
+    <parameter id="285">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="283">
+     <value>0</value>
+    </parameter>
+    <parameter id="282">
+     <value>0</value>
+    </parameter>
+    <parameter id="265">
+     <value>0</value>
+    </parameter>
+    <parameter id="263">
+     <value>0</value>
+    </parameter>
+    <parameter id="262">
+     <value>0</value>
+    </parameter>
+    <parameter id="261">
+     <value>1</value>
+    </parameter>
+    <parameter id="260">
+     <value>0</value>
+    </parameter>
+    <parameter id="266">
+     <value>0</value>
+    </parameter>
+    <parameter id="255">
+     <value>0</value>
+    </parameter>
+    <parameter id="278">
+     <value>0</value>
+    </parameter>
+    <parameter id="256">
+     <value>0</value>
+    </parameter>
+    <parameter id="257">
+     <value>1</value>
+    </parameter>
+    <parameter id="280">
+     <value>0</value>
+    </parameter>
+    <parameter id="258">
+     <value>0</value>
+    </parameter>
+    <parameter id="281">
+     <value>0</value>
+    </parameter>
+    <parameter id="267">
+     <value>0</value>
+    </parameter>
+    <parameter id="268">
+     <value>0</value>
+    </parameter>
+    <parameter id="270">
+     <value>0</value>
+    </parameter>
+    <parameter id="271">
+     <value>0</value>
+    </parameter>
+    <parameter id="272">
+     <value>0</value>
+    </parameter>
+    <parameter id="273">
+     <value>1</value>
+    </parameter>
+    <parameter id="275">
+     <value>0</value>
+    </parameter>
+    <parameter id="276">
+     <value>0</value>
+    </parameter>
+    <parameter id="277">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="CS">
+    <parameter id="289">
+     <value>0</value>
+     <ribbon-return-mode>0</ribbon-return-mode>
+     <ribbon-touch-behaviour>0</ribbon-touch-behaviour>
+    </parameter>
+    <parameter id="284">
+     <value>0</value>
+     <ribbon-return-mode>1</ribbon-return-mode>
+     <ribbon-touch-behaviour>0</ribbon-touch-behaviour>
+    </parameter>
+    <parameter id="279">
+     <value>0</value>
+    </parameter>
+    <parameter id="274">
+     <value>0</value>
+    </parameter>
+    <parameter id="254">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+    <parameter id="259">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+    <parameter id="264">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+    <parameter id="269">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Osc A">
+    <parameter id="303">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="301">
+     <value>0</value>
+    </parameter>
+    <parameter id="70">
+     <value>0</value>
+    </parameter>
+    <parameter id="68">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="67">
+     <value>0</value>
+    </parameter>
+    <parameter id="57">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="56">
+     <value>0</value>
+    </parameter>
+    <parameter id="55">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="66">
+     <value>0</value>
+    </parameter>
+    <parameter id="53">
+     <value>0.45333333333333331</value>
+     <modSrc>1</modSrc>
+     <modAmount>0.32000000000000001</modAmount>
+    </parameter>
+    <parameter id="64">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="59">
+     <value>0</value>
+    </parameter>
+    <parameter id="60">
+     <value>-0.010999999999999999</value>
+     <modSrc>2</modSrc>
+     <modAmount>0.34999999999999998</modAmount>
+    </parameter>
+    <parameter id="62">
+     <value>0</value>
+    </parameter>
+    <parameter id="63">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Cab">
+    <parameter id="197">
+     <value>0.71999999999999997</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="196">
+     <value>0.125</value>
+    </parameter>
+    <parameter id="194">
+     <value>0.625</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="199">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="188">
+     <value>0.40000000000000002</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="190">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="191">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="192">
+     <value>-0.20000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Env C">
+    <parameter id="52">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="51">
+     <value>0</value>
+    </parameter>
+    <parameter id="42">
+     <value>0.5</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="40">
+     <value>0.58999999999999997</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="296">
+     <value>0</value>
+    </parameter>
+    <parameter id="38">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="49">
+     <value>0</value>
+    </parameter>
+    <parameter id="44">
+     <value>0.79000000000000004</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="297">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="46">
+     <value>0.52970297029702973</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="48">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="50">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Osc B">
+    <parameter id="302">
+     <value>0</value>
+    </parameter>
+    <parameter id="100">
+     <value>0</value>
+    </parameter>
+    <parameter id="98">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="304">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="97">
+     <value>0</value>
+    </parameter>
+    <parameter id="87">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="86">
+     <value>0</value>
+    </parameter>
+    <parameter id="85">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="96">
+     <value>0</value>
+    </parameter>
+    <parameter id="83">
+     <value>0.4078</value>
+     <modSrc>1</modSrc>
+     <modAmount>0.32000000000000001</modAmount>
+    </parameter>
+    <parameter id="94">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="89">
+     <value>0</value>
+    </parameter>
+    <parameter id="90">
+     <value>0</value>
+     <modSrc>2</modSrc>
+     <modAmount>0.495</modAmount>
+    </parameter>
+    <parameter id="92">
+     <value>0</value>
+    </parameter>
+    <parameter id="93">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Env B">
+    <parameter id="37">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="36">
+     <value>-0.20000000000000001</value>
+    </parameter>
+    <parameter id="35">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="23">
+     <value>1</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="34">
+     <value>0.59999999999999998</value>
+    </parameter>
+    <parameter id="21">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="31">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="295">
+     <value>0.29999999999999999</value>
+    </parameter>
+    <parameter id="19">
+     <value>0.92000000000000004</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="25">
+     <value>0.79000000000000004</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="27">
+     <value>1</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="29">
+     <value>0.82178217821782173</value>
+     <modSrc>4</modSrc>
+     <modAmount>0.17821799999999999</modAmount>
+    </parameter>
+    <parameter id="33">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Env A">
+    <parameter id="17">
+     <value>-0.20000000000000001</value>
+    </parameter>
+    <parameter id="16">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="2">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="4">
+     <value>1</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="15">
+     <value>0.59999999999999998</value>
+    </parameter>
+    <parameter id="18">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="294">
+     <value>0.29999999999999999</value>
+    </parameter>
+    <parameter id="8">
+     <value>1</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="0">
+     <value>0.92000000000000004</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="6">
+     <value>0.79000000000000004</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="10">
+     <value>0.82178217821782173</value>
+     <modSrc>4</modSrc>
+     <modAmount>0.17821799999999999</modAmount>
+    </parameter>
+    <parameter id="12">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="14">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Sh A">
+    <parameter id="81">
+     <value>0.20799999999999999</value>
+     <modSrc>3</modSrc>
+     <modAmount>0.84999999999999998</modAmount>
+    </parameter>
+    <parameter id="80">
+     <value>0</value>
+    </parameter>
+    <parameter id="78">
+     <value>0.499</value>
+     <modSrc>3</modSrc>
+     <modAmount>0.20000000000000001</modAmount>
+    </parameter>
+    <parameter id="76">
+     <value>0.122</value>
+     <modSrc>3</modSrc>
+     <modAmount>0.25</modAmount>
+    </parameter>
+    <parameter id="71">
+     <value>0.71999999999999997</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="73">
+     <value>0</value>
+    </parameter>
+    <parameter id="74">
+     <value>0.59999999999999998</value>
+    </parameter>
+    <parameter id="75">
+     <value>0.38</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Sh B">
+    <parameter id="111">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="110">
+     <value>0</value>
+    </parameter>
+    <parameter id="108">
+     <value>0.69999999999999996</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="106">
+     <value>0.13400000000000001</value>
+     <modSrc>3</modSrc>
+     <modAmount>0.27500000000000002</modAmount>
+    </parameter>
+    <parameter id="101">
+     <value>0.66000000000000003</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="103">
+     <value>0</value>
+    </parameter>
+    <parameter id="104">
+     <value>0.65000000000000002</value>
+    </parameter>
+    <parameter id="105">
+     <value>0.44</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="FB">
+    <parameter id="168">
+     <value>0</value>
+    </parameter>
+    <parameter id="166">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="164">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="299">
+     <value>0.38</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="167">
+     <value>0</value>
+    </parameter>
+    <parameter id="156">
+     <value>0.26000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="158">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="160">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="162">
+     <value>0.5</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Comb">
+    <parameter id="135">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="133">
+     <value>-0.045999999999999999</value>
+     <modSrc>2</modSrc>
+     <modAmount>0.20000000000000001</modAmount>
+    </parameter>
+    <parameter id="132">
+     <value>0</value>
+    </parameter>
+    <parameter id="131">
+     <value>1</value>
+    </parameter>
+    <parameter id="129">
+     <value>1</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="127">
+     <value>0.91900000000000004</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="126">
+     <value>0</value>
+    </parameter>
+    <parameter id="117">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="115">
+     <value>0.53633333333333333</value>
+     <modSrc>1</modSrc>
+     <modAmount>0.40000000000000002</modAmount>
+    </parameter>
+    <parameter id="118">
+     <value>0</value>
+    </parameter>
+    <parameter id="113">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="119">
+     <value>-0.65000000000000002</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="305">
+     <value>0.80000000000000004</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="121">
+     <value>0.33000000000000002</value>
+    </parameter>
+    <parameter id="122">
+     <value>0</value>
+    </parameter>
+    <parameter id="123">
+     <value>0.55714285714285716</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="125">
+     <value>1</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Unison">
+    <parameter id="253">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="252">
+     <value>0</value>
+    </parameter>
+    <parameter id="250">
+     <value>0.00016666666666666666</value>
+     <modSrc>2</modSrc>
+     <modAmount>0.33333299999999999</modAmount>
+    </parameter>
+    <parameter id="249">
+     <value>0.63636363636363635</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="SVF">
+    <parameter id="155">
+     <value>0</value>
+    </parameter>
+    <parameter id="153">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="152">
+     <value>0</value>
+    </parameter>
+    <parameter id="142">
+     <value>1</value>
+    </parameter>
+    <parameter id="140">
+     <value>0.5</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="138">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="136">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="147">
+     <value>0</value>
+    </parameter>
+    <parameter id="143">
+     <value>0</value>
+    </parameter>
+    <parameter id="144">
+     <value>0.5</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="146">
+     <value>0</value>
+    </parameter>
+    <parameter id="148">
+     <value>0.20000000000000001</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+    <parameter id="150">
+     <value>0</value>
+     <modSrc>0</modSrc>
+     <modAmount>0</modAmount>
+    </parameter>
+   </parameter-group>
+  </parameter-groups>
+ </preset>
+</bank>

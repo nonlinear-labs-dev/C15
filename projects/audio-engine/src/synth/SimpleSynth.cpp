@@ -1,8 +1,12 @@
 #include "SimpleSynth.h"
-#include "Options.h"
-#include "main.h"
+#include "AudioEngineOptions.h"
 #include <iostream>
 #include <math.h>
+
+SimpleSynth::SimpleSynth(const AudioEngineOptions *options)
+    : Synth(options)
+{
+}
 
 void SimpleSynth::doMidi(const MidiEvent &event)
 {

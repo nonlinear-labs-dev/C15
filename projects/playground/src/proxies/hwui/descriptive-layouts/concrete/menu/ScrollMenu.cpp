@@ -40,7 +40,6 @@ bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const 
         {
           if(auto editor = enter->createOverlay())
           {
-
             m_overlay = addControl(editor);
             doLayout();
             return true;

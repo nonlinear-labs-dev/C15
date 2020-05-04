@@ -14,7 +14,6 @@
 #include <Application.h>
 #include <presets/EditBuffer.h>
 #include <presets/Preset.h>
-#include <third-party/include/catch.hpp>
 #include <testing/TestRootDocument.h>
 #include <proxies/audio-engine/AudioEngineProxy.h>
 #include <parameters/messaging/ParameterMessageFactory.h>
@@ -97,7 +96,8 @@ void ModulateableParameter::setModulationAmount(UNDO::Transaction *transaction, 
 
 void ModulateableParameter::sendParameterMessage() const
 {
-  Application::get().getAudioEngineProxy()->createAndSendParameterMessage<ModulateableParameter>(this);
+  if(Application::exists())
+    Application::get().getAudioEngineProxy()->createAndSendParameterMessage<ModulateableParameter>(this);
 }
 
 MacroControls ModulateableParameter::getModulationSource() const
@@ -503,9 +503,20 @@ void ModulateableParameter::copyFrom(UNDO::Transaction *transaction, const Param
 {
   Parameter::copyFrom(transaction, other);
 
-  if(auto otherMod = dynamic_cast<const ModulateableParameter *>(other))
+  if(!isLocked())
   {
-    setModulationSource(transaction, otherMod->getModulationSource());
-    setModulationAmount(transaction, otherMod->getModulationAmount());
+    if(auto otherMod = dynamic_cast<const ModulateableParameter *>(other))
+    {
+      setModulationSource(transaction, otherMod->getModulationSource());
+      setModulationAmount(transaction, otherMod->getModulationAmount());
+    }
   }
+}
+
+bool ModulateableParameter::isDefaultLoaded() const
+{
+  auto valSame = Parameter::isDefaultLoaded();
+  auto modSrcSame = getModulationSource() == MacroControls::NONE;
+  auto modAmtSame = getModulationAmount() == 0;
+  return valSame && modSrcSame && modAmtSame;
 }

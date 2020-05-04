@@ -15,8 +15,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
@@ -34,7 +32,7 @@ import com.nonlinearlabs.client.world.pointer.Gesture;
 
 public class Overlay extends OverlayLayout {
 
-	private class LayerDisplay extends Label {
+	private class LayerDisplay extends OverlayControl {
 
 		public LayerDisplay(OverlayLayout parent) {
 			super(parent);
@@ -43,49 +41,134 @@ public class Overlay extends OverlayLayout {
 				setVisible(v != SoundType.Single);
 				return true;
 			});
-		}
 
-		@Override
-		public String getDrawText(Context2d ctx) {
-			return EditBufferPresenterProvider.getPresenter().voiceGroup;
+			NonMaps.get().getNonLinearWorld().getPresetManager().onLoadToPartModeToggled((x) -> {
+				invalidate(INVALIDATION_FLAG_UI_CHANGED);
+				return true;
+			});
 		}
 
 		public boolean isLoadIntoPartEnabled() {
-			PresetManagerPresenter p = PresetManagerPresenterProvider.get().getPresenter();
-			return p.loadToPartActive;
-		}
-
-		@Override
-		protected void drawText(Context2d ctx, String text, Position left) {
-			ctx.setStrokeStyle(RGB.black().toString());
-			ctx.strokeText(text, left.getX(), left.getY() + getVerticalFontDisplacement());
-			ctx.setFillStyle(EditBufferPresenterProvider.getPresenter().voiceGroupIndicationColor.toString());
-			ctx.fillText(text, left.getX(), left.getY() + getVerticalFontDisplacement());
-		}
-
-		@Override
-		protected double getFontHeight(Rect pixRect) {
-			return super.getFontHeight(pixRect) * 2;
+			return NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
 		}
 
 		@Override
 		public void draw(Context2d ctx, int invalidationMask) {
 			RGB c = new RGBA(EditBufferPresenterProvider.getPresenter().voiceGroupIndicationColor, 0.25);
+			RGB stroke = RGBA.black().withAlpha(0.5);
 			getPixRect().fill(ctx, c);
-			super.draw(ctx, invalidationMask);
 
-			if (isLoadIntoPartEnabled()) {
-				drawLoadToPartIndication(ctx, c, RGBA.black().withAlpha(0.5));
+			switch(EditBufferPresenterProvider.getPresenter().soundType) {
+				case Split:
+					drawSplitIndication(ctx, c, stroke);
+				break;
+				case Layer:
+					drawLayerIndication(ctx, c, stroke);
+				break;
+				default:
+				break;
 			}
 		}
 
-		private void drawLoadToPartIndication(Context2d ctx, RGB fillColor, RGB strokeColor) {
-			Rect px = getPixRect();
+		private VoiceGroup getSelectedVoiceGroup() {
+			return EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
+		}
+
+		private void drawSplitIndication(Context2d ctx, RGB fill, RGB stroke) {
+			VoiceGroup selected = getSelectedVoiceGroup();
+			Rect pix = getPixRect().copy();
+
+			final double margin = Millimeter.toPixels(1);
+			final double partWidth = Millimeter.toPixels(2);
+			final double partHeight = Millimeter.toPixels(5);
+			final double yMargin = Millimeter.toPixels(2.5);
+
+			final RGB ogFill = fill;
+			final RGB lighterFill = ogFill.brighter(96);
+
+			if(selected == VoiceGroup.I)
+				fill = lighterFill;
+
+			Rect box = new Rect(0, pix.getTop() + yMargin, partWidth, partHeight);
+
+			box.setLeft(pix.getCenterPoint().getX() - margin / 2 - partWidth);
+			box.fillAndStroke(ctx, fill, 2, stroke);
+
+			fill = ogFill;
+			
+			if(selected == VoiceGroup.II)
+				fill = lighterFill;
+
+			box.setLeft(pix.getCenterPoint().getX() + margin / 2);
+			box.fillAndStroke(ctx, fill, 2, stroke);
+
+			if(isLoadIntoPartEnabled()) {
+				if(selected == VoiceGroup.I) {
+					drawTriangleUpwards(ctx, lighterFill, stroke, new Position(pix.getCenterPoint().getX() - margin / 2 - partWidth / 2, pix.getBottom()), partWidth, Math.abs(pix.getBottom() - box.getBottom()));
+				}
+				else {
+					drawTriangleUpwards(ctx, lighterFill, stroke, new Position(pix.getCenterPoint().getX() + margin / 2 + partWidth / 2, pix.getBottom()), partWidth, Math.abs(pix.getBottom() - box.getBottom()));
+				}
+			}
+		}
+
+		private void drawLayerIndication(Context2d ctx, RGB fill, RGB stroke) {
+			VoiceGroup selected = getSelectedVoiceGroup();
+			Rect pix = getPixRect().copy();
+
+			final double margin = Millimeter.toPixels(1);
+			final double partWidth = Millimeter.toPixels(5);
+			final double partHeight = Millimeter.toPixels(2);
+
+			final RGB ogFill = fill;
+			final RGB lighterFill = ogFill.brighter(96);
+
+			if(selected == VoiceGroup.I)
+				fill = lighterFill;
+
+			Rect box = new Rect(pix.getCenterPoint().getX() - partWidth / 2, 0, partWidth, partHeight);
+			
+			final double boxIY = pix.getCenterPoint().getY() - margin / 2 - partHeight;
+			box.setTop(boxIY);
+			box.fillAndStroke(ctx, fill, 2, stroke);
+
+			fill = ogFill;
+			
+			if(selected == VoiceGroup.II)
+				fill = lighterFill;
+
+			final double boxIIY = pix.getCenterPoint().getY() + margin / 2;
+			box.setTop(boxIIY);
+			box.fillAndStroke(ctx, fill, 2, stroke);
+
+			if(isLoadIntoPartEnabled()) {
+				if(selected == VoiceGroup.I) {
+					drawTriangleSideways(ctx, lighterFill, stroke, new Position(pix.getLeft(), boxIY + partHeight / 2), partHeight * 1.2, partHeight * 1.2);
+				}
+				else {
+					drawTriangleSideways(ctx, lighterFill, stroke, new Position(pix.getLeft(), boxIIY + partHeight / 2), partHeight * 1.2, partHeight * 1.2);
+				}
+			}
+		}
+
+		private void drawTriangleSideways(Context2d ctx, RGB fill, RGB stroke, Position pos, double width, double height) {
 			ctx.beginPath();
-			double width = px.getWidth();
-			ctx.moveTo(px.getLeft() + width / 4, px.getBottom() - 1);
-			ctx.lineTo(px.getRight() - width / 4, px.getBottom() - 1);
-			ctx.lineTo(px.getCenterPoint().getX(), px.getBottom() - px.getHeight() / 4);
+			ctx.moveTo(pos.getX(), pos.getY() - width);
+			ctx.lineTo(pos.getX(), pos.getY() + width);
+			ctx.lineTo(pos.getX() + height, pos.getY());
+			ctx.closePath();
+			ctx.setFillStyle(fill.toString());
+			ctx.setLineWidth(1);
+			ctx.setStrokeStyle(stroke.toString());
+			ctx.fill();
+			ctx.stroke();
+		}
+
+		private void drawTriangleUpwards(Context2d ctx, RGB fillColor, RGB strokeColor, Position pos, double width, double height) {
+			ctx.beginPath();
+			ctx.moveTo(pos.getX() + width, pos.getY());
+			ctx.lineTo(pos.getX() - width, pos.getY());
+			ctx.lineTo(pos.getX(), pos.getY() - height);
 			ctx.closePath();
 			ctx.setFillStyle(fillColor.toString());
 			ctx.setLineWidth(1);
@@ -126,7 +209,7 @@ public class Overlay extends OverlayLayout {
 		@Override
 		public String getDrawText(Context2d ctx) {
 			VoiceGroup g = EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
-			 BasicParameterModel param = EditBufferModel.get().getParameter(new ParameterId(395, g));
+			BasicParameterModel param = EditBufferModel.get().getParameter(new ParameterId(395, g));
 			boolean muted = param.value.getQuantizedAndClipped(true) > 0.5;
 			return muted ? "\uE0BA" : "";
 		}
@@ -145,7 +228,7 @@ public class Overlay extends OverlayLayout {
 	private GlobalMenu globalMenu;
 	private UndoTreeWindow undo;
 	private List<CompareDialog> compareDialogs;
-	private GWTDialog modalDialog;
+	private ModalDialog modalDialog;
 	private LayerDisplay layerDisplay;
 	private PartMuteDisplay partMuteDisplay;
 
@@ -215,8 +298,11 @@ public class Overlay extends OverlayLayout {
 
 	private void drawDualSoundIndication(Context2d ctx) {
 		Rect r = getPixRect().copy();
-		r.setBottom(belt.getPixRect().getTop());
-
+		if(belt.isHidden())
+			r.setBottom(belt.getPixRect().getTop() - 1);
+		else
+			r.setBottom(belt.getPixRect().getTop());
+		
 		Rect gbr = buttons.getPixRect();
 		Rect ldr = layerDisplay.getPixRect().copy();
 		ldr.setTop(ldr.getTop() + 1);
@@ -616,7 +702,7 @@ public class Overlay extends OverlayLayout {
 		return compareDialogs;
 	}
 
-	public void removeModal(GWTDialog modal) {
+	public void removeModal(ModalDialog modal) {
 		if (modal == modalDialog)
 			modalDialog = null;
 	}

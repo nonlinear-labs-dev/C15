@@ -1,4 +1,4 @@
-#include <third-party/include/catch.hpp>
+#include <catch.hpp>
 #include <testing/TestHelper.h>
 
 template <typename tData> class Item : public IntrusiveListItem<Item<tData> *>

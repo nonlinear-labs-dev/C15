@@ -5,6 +5,7 @@
 #include "parameters/ModulateableParameter.h"
 #include "groups/MacroControlsGroup.h"
 #include <sigc++/sigc++.h>
+#include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
 
 SelectedParamsMacroControlSlider::SelectedParamsMacroControlSlider(const Rect &rect)
     : super(rect)
@@ -47,6 +48,16 @@ void SelectedParamsMacroControlSlider::onTargetParamValueChanged(const Parameter
   else
   {
     setParameter(nullptr);
+  }
+}
+
+void SelectedParamsMacroControlSlider::setParameter(Parameter *param)
+{
+  Slider::setParameter(param);
+  if(param)
+  {
+    auto eb = Application::get().getPresetManager()->getEditBuffer();
+    setVisible(ParameterLayout2::isParameterAvailableInSoundType(param, eb));
   }
 }
 

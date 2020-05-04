@@ -40,6 +40,7 @@ class Parameter : public UpdateDocumentContributor,
   enum class VisualizationStyle
   {
     Bar,
+    BarFromRight,
     Dot
   };
 
@@ -74,6 +75,8 @@ class Parameter : public UpdateDocumentContributor,
   virtual void copyFrom(UNDO::Transaction *transaction, const PresetParameter *other);
   virtual void copyFrom(UNDO::Transaction *transaction, const Parameter *other);
   virtual void copyTo(UNDO::Transaction *transaction, PresetParameter *other) const;
+
+  virtual bool isDefaultLoaded() const;
 
   virtual void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount);
 

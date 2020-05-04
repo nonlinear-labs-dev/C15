@@ -92,7 +92,7 @@ void ScaleParameterSelectLayout::selectParameter(int inc)
   auto id = selectedID.getNumber();
 
   auto idIt = std::find(ids.begin(), ids.end(), id);
-  if(idIt == ids.end())
+  if(idIt == ids.end() || (*idIt == 323 && inc > 0))
   {
     id = 312;
   }
