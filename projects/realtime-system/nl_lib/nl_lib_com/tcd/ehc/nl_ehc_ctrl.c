@@ -332,7 +332,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
     this->status.isRestored    = tmp.isRestored;
 
     this->final        = 8000;
-    this->lastFinal    = ~this->final;
+    this->lastFinal    = 0xFFFF;
     this->intermediate = 0;
     this->dead_zones   = (AR_UPPER_DEAD_ZONE << 8) + AR_LOWER_DEAD_ZONE;
     this->used_min     = 65535;
@@ -433,7 +433,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   }
 
   this->final              = 8000;
-  this->lastFinal          = ~this->final;
+  this->lastFinal          = 0xFFFF;
   this->status.initialized = 1;
   this->status.isReset     = 1;
   this->status.pluggedIn   = 0;
@@ -499,7 +499,7 @@ static void resetController(Controller_T *const this, const uint16_t wait_time)
   this->status.isSettled     = 0;
   this->status.outputIsValid = 0;
   this->final                = 8000;
-  this->lastFinal            = ~this->final;
+  this->lastFinal            = 0xFFFF;
   this->status.initialized   = 1;
   this->status.isReset       = 1;
   this->status.pluggedIn     = 0;
@@ -717,11 +717,11 @@ static int doAutoHold(Controller_T *const this, int value)
 // --------------- update and output final value
 void updateAndOutput(Controller_T *const this, const uint16_t value)
 {
-  this->final = value;
+  this->final = (this->config.polarityInvert) ? 16000 - value : value;
   if (this->final != this->lastFinal)
   {
     this->lastFinal = this->final;
-    sendControllerData(this->config, (this->config.polarityInvert) ? 16000 - value : value);
+    sendControllerData(this->config, this->final);
     this->status.outputIsValid = 1;
   }
 }
@@ -876,7 +876,7 @@ void forceOutput(uint8_t which)
   if (ctrl[which].status.initialized && ctrl[which].status.pluggedIn
       && ctrl[which].status.isAutoRanged && ctrl[which].status.outputIsValid)
   {
-    ctrl[which].lastFinal = ~ctrl[which].final;
+    ctrl[which].lastFinal = 0xFFFF;
   }
 }
 
