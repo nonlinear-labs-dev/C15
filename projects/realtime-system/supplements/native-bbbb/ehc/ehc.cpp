@@ -321,7 +321,7 @@ int main(int argc, char const *argv[])
       puts("config: too few arguments!");
       Usage();
     }
-    EHC_ControllerConfig_T config = uint16ToConfig(0);
+    EHC_ControllerConfig_T config = EHC_uint16ToConfig(0);
     config.ctrlId                 = readPortID(argv[2]);
     config.hwId                   = readHWSID(argv[3]);
     argc -= 4;
@@ -372,7 +372,7 @@ int main(int argc, char const *argv[])
     if (config.continuous)
       config.autoHoldStrength = ahs;
     CMD_DATA[2] = 0x0100;
-    CMD_DATA[3] = configToUint16(config);
+    CMD_DATA[3] = EHC_configToUint16(config);
     writeData(driver, sizeof CMD_DATA, &CMD_DATA[0]);
     return 0;
   }
