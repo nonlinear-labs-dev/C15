@@ -23,5 +23,5 @@ class MenuEditor : public ControlWithChildren, public SetupEditor
   virtual const std::vector<Glib::ustring> &getDisplayStrings() const = 0;
   virtual int getSelectedIndex() const = 0;
   void onSettingChanged(const Setting *s);
-  void updateOnSettingChanged();
+  virtual void updateOnSettingChanged();
 };

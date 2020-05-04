@@ -18,7 +18,16 @@ class PedalEditor : public MenuEditor
   virtual void incSetting(int inc) override;
   virtual const std::vector<Glib::ustring> &getDisplayStrings() const override;
   virtual int getSelectedIndex() const override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
  private:
+  void load();
+
+ protected:
+  void updateOnSettingChanged() override;
+ private:
+  int m_selected;
   std::shared_ptr<PedalType> m_mode;
+
+  friend class PedalMenuEditorEntry;
 };
