@@ -1,4 +1,4 @@
-static inline uint16_t configToUint16(const EHC_ControllerConfig_T c)
+static inline uint16_t EHC_configToUint16(const EHC_ControllerConfig_T c)
 {
   uint16_t ret = 0;
   ret |= c.autoHoldStrength << 0;
@@ -13,7 +13,7 @@ static inline uint16_t configToUint16(const EHC_ControllerConfig_T c)
   return ret;
 }
 
-static inline EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
+static inline EHC_ControllerConfig_T EHC_uint16ToConfig(const uint16_t c)
 {
   EHC_ControllerConfig_T ret;
   ret.autoHoldStrength = (c & 0b0000000000000111) >> 0;
@@ -28,7 +28,7 @@ static inline EHC_ControllerConfig_T uint16ToConfig(const uint16_t c)
   return ret;
 }
 
-static inline uint16_t statusToUint16(const EHC_ControllerStatus_T s)
+static inline uint16_t EHC_statusToUint16(const EHC_ControllerStatus_T s)
 {
   uint16_t ret = 0;
   ret |= s.initialized << 0;
@@ -43,7 +43,7 @@ static inline uint16_t statusToUint16(const EHC_ControllerStatus_T s)
   return ret;
 }
 
-static inline EHC_ControllerStatus_T uint16ToStatus(const uint16_t s)
+static inline EHC_ControllerStatus_T EHC_uint16ToStatus(const uint16_t s)
 {
   EHC_ControllerStatus_T ret;
   ret.initialized   = (s & 0b0000000000000001) >> 0;
