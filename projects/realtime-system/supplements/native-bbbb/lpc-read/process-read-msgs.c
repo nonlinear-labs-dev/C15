@@ -116,7 +116,7 @@ void printfControlVoltage(double const factor)
 
 void printfDeadZones(uint16_t const deadZones)
 {
-  printf("%2d %2d", deadZones >> 8, deadZones & 0xFF);
+  printf("%2d %2d", deadZones & 0xFF, deadZones >> 8);
 }
 
 void displayCounter(uint16_t flags)
@@ -324,8 +324,8 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       p = (uint16_t *) data;
       for (i = 0; i < 8; i++)
       {
-        config[i]       = uint16ToConfig(*p++);
-        status[i]       = uint16ToStatus(*p++);
+        config[i]       = EHC_uint16ToConfig(*p++);
+        status[i]       = EHC_uint16ToStatus(*p++);
         last[i]         = *p++;
         intermediate[i] = *p++;
         min[i]          = *p++;
@@ -359,7 +359,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       for (i = 0; i < 8; i++)
       {
         greenNotRed(status[i].initialized);
-        printf("%04Xh %c", configToUint16(config[i]), i == 7 ? '\n' : ' ');
+        printf("%04Xh %c", EHC_configToUint16(config[i]), i == 7 ? '\n' : ' ');
       }
       setColor(DEFAULT);
 
@@ -392,7 +392,7 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       for (i = 0; i < 8; i++)
       {
         greenNotRed(status[i].initialized);
-        printf("%04Xh %c", statusToUint16(status[i]), i == 7 ? '\n' : ' ');
+        printf("%04Xh %c", EHC_statusToUint16(status[i]), i == 7 ? '\n' : ' ');
       }
       setColor(DEFAULT);
 
