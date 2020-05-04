@@ -321,13 +321,13 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   Controller_T *this = &ctrl[config.ctrlId];
   if (config.hwId == 15)
   {  // hardware source ID #15 is special and will delete the controller and clear its data
-    this->config        = uint16ToConfig(0);
+    this->config        = EHC_uint16ToConfig(0);
     this->config.hwId   = config.hwId;
     this->config.silent = config.silent;
     this->config.ctrlId = config.ctrlId;
 
     EHC_ControllerStatus_T tmp = this->status;
-    this->status               = uint16ToStatus(0);
+    this->status               = EHC_uint16ToStatus(0);
     this->status.isSaved       = tmp.isSaved;
     this->status.isRestored    = tmp.isRestored;
 
@@ -385,7 +385,7 @@ static void initController(const EHC_ControllerConfig_T config, const int forced
   // check for conflicting controllers and disable them
   uint8_t                thatId      = this->config.ctrlId ^ 0b001;
   Controller_T *         that        = &ctrl[thatId];
-  EHC_ControllerConfig_T clearConfig = uint16ToConfig(0xF800 | (thatId << 8));
+  EHC_ControllerConfig_T clearConfig = EHC_uint16ToConfig(0xF800 | (thatId << 8));
   if (this->config.is3wire)  // controller using both ADCs ?
   {                          // check if there is something on the secondary channel and disable it
     if (that->status.initialized)
@@ -475,7 +475,7 @@ static void saveControllerState(Controller_T *const this, ControllerSave_T *ctrl
 
 static int savedControllerStateIsDifferent(Controller_T *const this, ControllerSave_T *ctrlData)
 {
-  return !((configToUint16(ctrlData->config) == configToUint16(this->config))
+  return !((EHC_configToUint16(ctrlData->config) == EHC_configToUint16(this->config))
            // && (ctrlData->min == this->min)
            // && (ctrlData->max == this->max)
            && (ctrlData->used_min == this->used_min)
@@ -890,7 +890,7 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
   switch (cmd & 0xFF00)
   {
     case LPC_EHC_COMMAND_SET_CONTROL_REGISTER:  // config control register
-      initController(uint16ToConfig(data), 0);
+      initController(EHC_uint16ToConfig(data), 0);
       break;
     case LPC_EHC_COMMAND_SET_RANGE_MIN:  // set ranging min
       setRangeMin(cmd & 0xFF, data);
@@ -908,7 +908,7 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data)
       {
         if ((cmd & 0xFF) >= NUMBER_OF_CONTROLLERS)
           return;
-        initController(uint16ToConfig(0xF800 | (cmd & 0xFF) << 8), 1);
+        initController(EHC_uint16ToConfig(0xF800 | (cmd & 0xFF) << 8), 1);
       }
       break;
     case LPC_EHC_COMMAND_FORCE_OUTPUT:
@@ -926,8 +926,8 @@ void NL_EHC_SendEHCdata(void)
   uint16_t *p = data;
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
   {
-    *p++ = configToUint16(ctrl[i].config);
-    *p++ = statusToUint16(ctrl[i].status);
+    *p++ = EHC_configToUint16(ctrl[i].config);
+    *p++ = EHC_statusToUint16(ctrl[i].status);
     *p++ = ctrl[i].lastFinal;
     *p++ = ctrl[i].intermediate;
     *p++ = ctrl[i].used_min;
@@ -1134,7 +1134,7 @@ void NL_EHC_InitControllers(void)
   else
   {  // else clear all controllers
     for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
-      initController(uint16ToConfig(0xF800 | (i << 8)), 1);
+      initController(EHC_uint16ToConfig(0xF800 | (i << 8)), 1);
     forceEepromUpdate = 1;
   }
 }
