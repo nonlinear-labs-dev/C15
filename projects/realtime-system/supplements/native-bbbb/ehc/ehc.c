@@ -5,8 +5,8 @@
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-#include "../../../../shared/lpc-defs.h"
-#include "../../../../shared/lpc-converters.h"
+#include "lpc-defs.h"
+#include "lpc-converters.h"
 
 void IOerror(int ret)
 {
