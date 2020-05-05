@@ -13,6 +13,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
