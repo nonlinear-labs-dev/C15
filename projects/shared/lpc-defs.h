@@ -1,4 +1,3 @@
-// #pragma message "using shared definitions : lpc"
 #pragma once
 
 #include <stdint.h>
@@ -124,7 +123,6 @@ enum AE_DEVELOPPER_CMDS
   AE_CMD_TONE_ON       = 2,  // turn on the test tone
   AE_CMD_DEFAULT_SOUND = 3,  // set up a simple default sound that is guaranteed to give output
 };
-
 
 enum LPC_SYSTEM_SPECIAL_COMMANDS
 {

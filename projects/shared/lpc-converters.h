@@ -1,3 +1,5 @@
+#pragma once
+
 static inline uint16_t EHC_configToUint16(const EHC_ControllerConfig_T c)
 {
   uint16_t ret = 0;
