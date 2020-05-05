@@ -33,21 +33,22 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define STAT_DATA       "status"
 #define EHC_SAVE_EEPROM "save-ehc"
 
-#define SETTING           "set"
-#define MUTE_CTRL         "mute-ctrl"
-#define MUTE_CTRL_DISABLE "disable"
-#define MUTE_CTRL_MUTE    "mute"
-#define MUTE_CTRL_UNMUTE  "unmute"
-#define RAW_SENSORS       "sensors"
-#define RAW_SENSORS_ON    "on"
-#define RAW_SENSORS_OFF   "off"
-#define AE_CMD            "ae-cmd"
-#define AE_CMD_TTON       "tton"
-#define AE_CMD_TTOFF      "ttoff"
-#define AE_CMD_DEFSND     "def-snd"
-#define SSPECIAL          "system"
-#define SSPECIAL_RESET    "sys-reset"
-#define SSPECIAL_RESETHB  "hb-reset"
+#define SETTING             "set"
+#define MUTE_CTRL           "mute-ctrl"
+#define MUTE_CTRL_DISABLE   "disable"
+#define MUTE_CTRL_MUTE      "mute"
+#define MUTE_CTRL_UNMUTE    "unmute"
+#define RAW_SENSORS         "sensors"
+#define RAW_SENSORS_ON      "on"
+#define RAW_SENSORS_OFF     "off"
+#define AE_CMD              "ae-cmd"
+#define AE_CMD_TTON         "tton"
+#define AE_CMD_TTOFF        "ttoff"
+#define AE_CMD_DEFSND       "def-snd"
+#define SSPECIAL            "system"
+#define SSPECIAL_RESET      "reboot"
+#define SSPECIAL_RESETHB    "hb-reset"
+#define SSPECIAL_ENABLEMIDI "enable-midi"
 
 #define KEY_EMUL "key"
 
@@ -71,10 +72,11 @@ void Usage(void)
   puts("     mute-ctrl: disable|mute|unmute : disable mute override or set/clear muting");
   puts("     sensors: on|off                : turn raw sensor messages on/off");
   puts("     ae-cmd: tton|ttoff|def-snd     : Audio Engine Special, test-tone on/off, load default sound");
-  puts("     system: sys-reset|hb-reset     : System Special, reset system, reset heartbeat counter");
-  puts("  key: <note-nr> <time>         : send emulated key");
-  puts("      <note-nr>                     : MIDI key number, 60=\"C3\"");
-  puts("      <time>                        : key time (~1/velocity) in ms (2...525), negative means key release");
+  puts("     system: reboot|hb-reset|enable-midi");
+  puts("                  : System Special; reboot system, reset heartbeat counter, enable midi");
+  puts("  key : <note-nr> <time>  : send emulated key");
+  puts("     <note-nr>              : MIDI key number, 60=\"C3\"");
+  puts("     <time>                 : key time (~1/velocity) in ms (2...525), negative means key release");
   exit(3);
 }
 
@@ -227,6 +229,12 @@ int main(int argc, char const *argv[])
       if (strncmp(argv[3], SSPECIAL_RESETHB, sizeof SSPECIAL_RESETHB) == 0)
       {
         SET_DATA[3] = SYS_SPECIAL_RESET_HEARTBEAT;
+        writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
+        return 0;
+      }
+      if (strncmp(argv[3], SSPECIAL_ENABLEMIDI, sizeof SSPECIAL_ENABLEMIDI) == 0)
+      {
+        SET_DATA[3] = SYS_SPECIAL_ENABLE_MIDI;
         writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
         return 0;
       }
