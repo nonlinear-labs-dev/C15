@@ -17,7 +17,8 @@
 // complete revised "pedals" (aka external controllers) proccessing
 // 58 == release candidate, beta test
 // 59 == release candidate, beta test
-#define SW_VERSION 59206
+// 60 == release candidate, beta test, lots of improvements (Keybed Scanner)
+#define SW_VERSION 60206
 
 void* GetVersionString();
 
