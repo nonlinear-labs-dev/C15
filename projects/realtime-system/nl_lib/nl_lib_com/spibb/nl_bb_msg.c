@@ -1,5 +1,4 @@
 /*
- * nl_bb_msg.c
  *  last mod: 2016-04-27 DTZ
  *  Created on: 21.01.2015
  *      Author: ssc
@@ -23,7 +22,7 @@
 #include "sys/nl_version.h"
 #include "sys/nl_ticker.h"
 #include "heartbeat/nl_heartbeat.h"
-#include "../../../shared/lpc-defs.h"
+#include "shared/lpc-defs.h"
 
 #define SENDBUFFER_SIZE 510  // 16-bit words, stays below the maximum of 1020 bytes
 
@@ -335,6 +334,9 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
             break;
           case SYS_SPECIAL_RESET_SYSTEM:
             SYS_Reset();
+            break;
+          case SYS_SPECIAL_ENABLE_MIDI:
+            MSG_DropMidiMessages(0);
             break;
         }
         break;

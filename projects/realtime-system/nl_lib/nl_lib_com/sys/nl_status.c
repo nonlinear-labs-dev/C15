@@ -10,6 +10,8 @@
 #include "drv/nl_cgu.h"
 #include "sys/nl_ticker.h"
 
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 NL_systemStatus_T NL_systemStatus = {
   .M4_ticker             = 0,
   .COOS_totalOverruns    = 0,

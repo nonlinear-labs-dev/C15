@@ -1,4 +1,3 @@
-// #pragma message "using shared definitions : lpc"
 #pragma once
 
 #include <stdint.h>
@@ -55,7 +54,7 @@ enum LPC_SETTING_IDS
   LPC_SETTING_ID_SEND_FORCED_KEY                  = 0xFF03,  // unused
   LPC_SETTING_ID_ENABLE_EHC                       = 0xFF04,  // direction: input; arguments(uint16): 1, flag (!= 0)
   LPC_SETTING_ID_AUDIO_ENGINE_CMD                 = 0xFF05,  // direction: input; arguments(uint16): 1, command (1:testtone OFF; 2:testtone ON; 3:default sound)
-  LPC_SETTING_ID_SYSTEM_SPECIAL                   = 0xFF06,  // direction: input; arguments(uint16): 1, command (1:reset heartbeat: 2: system reset)
+  LPC_SETTING_ID_SYSTEM_SPECIAL                   = 0xFF06,  // direction: input; arguments(uint16): 1, command (1:reset heartbeat: 2: system reset: 3:Enable MIDI)
 };
 
 enum LPC_REQUEST_IDS
@@ -125,11 +124,11 @@ enum AE_DEVELOPPER_CMDS
   AE_CMD_DEFAULT_SOUND = 3,  // set up a simple default sound that is guaranteed to give output
 };
 
-
 enum LPC_SYSTEM_SPECIAL_COMMANDS
 {
   SYS_SPECIAL_RESET_HEARTBEAT = 1,
   SYS_SPECIAL_RESET_SYSTEM    = 2,
+  SYS_SPECIAL_ENABLE_MIDI     = 3,
 };
 
 // void     SUP_SetMuteOverride(uint32_t mode);

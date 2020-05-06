@@ -649,7 +649,7 @@ TEST_CASE("Convert Dual To Single Label Naming")
     eb->undoableLoad(scope->getTransaction(), layerPreset);
 
     eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::I);
-    REQUIRE(eb->getName() == "Eins");
+    REQUIRE(eb->getName() == "Eins conv.");
   }
 
   SECTION("Convert Layer II to Single")
@@ -658,7 +658,7 @@ TEST_CASE("Convert Dual To Single Label Naming")
     eb->undoableLoad(scope->getTransaction(), layerPreset);
 
     eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-    REQUIRE(eb->getName() == "Zwo");
+    REQUIRE(eb->getName() == "Zwo conv.");
   }
 
   SECTION("Convert Split I to Single")
@@ -667,7 +667,7 @@ TEST_CASE("Convert Dual To Single Label Naming")
     eb->undoableLoad(scope->getTransaction(), splitPreset);
 
     eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::I);
-    REQUIRE(eb->getName() == "Eins");
+    REQUIRE(eb->getName() == "Eins conv.");
   }
 
   SECTION("Convert Split II to Single")
@@ -676,7 +676,7 @@ TEST_CASE("Convert Dual To Single Label Naming")
     eb->undoableLoad(scope->getTransaction(), splitPreset);
 
     eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-    REQUIRE(eb->getName() == "Zwo");
+    REQUIRE(eb->getName() == "Zwo conv.");
   }
 
   SECTION("Convert Single to Layer")

@@ -643,6 +643,11 @@ ModulateableParameterEditLayout2::ModulateableParameterEditLayout2()
   highlight<SelectedParameterBarSlider>();
   highlight<SelectedParameterKnubbelSlider>();
   highlight<ParameterNameLabel>();
+
+  if(auto switchVG = findControlOfType<SwitchVoiceGroupButton>())
+  {
+    remove(switchVG.get());
+  }
 }
 
 ButtonMenu *ModulateableParameterEditLayout2::createMenu(const Rect &rect)

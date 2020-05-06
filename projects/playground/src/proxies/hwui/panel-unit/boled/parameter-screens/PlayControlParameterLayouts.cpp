@@ -300,10 +300,20 @@ ModuleCaption *PlayControlParameterSelectLayout2::createModuleCaption() const
 PlayControlParameterEditLayout2::PlayControlParameterEditLayout2()
     : super()
 {
+  for(auto &b : getControls<Button>())
+  {
+    if(b->getText().text == "Select")
+    {
+      b->setText({ "", 0 });
+      break;
+    }
+  }
 }
 
 bool PlayControlParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
+  if(down && i == Buttons::BUTTON_A)
+    return true;
   return super::onButton(i, down, modifiers);
 }
 

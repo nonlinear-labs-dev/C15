@@ -775,9 +775,9 @@ void EditBuffer::undoableConvertLayerToSingle(UNDO::Transaction *transaction, Vo
   if(copyFrom != VoiceGroup::I)
     copyVoiceGroup(transaction, copyFrom, VoiceGroup::I);
 
-  if(!StringTools::hasEnding(getName(), "conv."))
+  if(!StringTools::hasEnding(getVoiceGroupName(copyFrom), "conv."))
   {
-    setName(transaction, getName() + " conv.");
+    setName(transaction, getVoiceGroupName(copyFrom) + " conv.");
   }
 }
 
@@ -787,9 +787,9 @@ void EditBuffer::undoableConvertSplitToSingle(UNDO::Transaction *transaction, Vo
   if(copyFrom != VoiceGroup::I)
     copyVoiceGroup(transaction, copyFrom, VoiceGroup::I);
 
-  if(!StringTools::hasEnding(getName(), "conv."))
+  if(!StringTools::hasEnding(getVoiceGroupName(copyFrom), "conv."))
   {
-    setName(transaction, getName() + " conv.");
+    setName(transaction, getVoiceGroupName(copyFrom) + " conv.");
   }
 }
 
@@ -1323,6 +1323,7 @@ void EditBuffer::loadSinglePresetIntoSplitPart(UNDO::Transaction *transaction, c
   }
 
   copySinglePresetMasterToPartMaster(transaction, preset, loadInto);
+  setVoiceGroupName(transaction, preset->getName(), loadInto);
   initCrossFB(transaction);
   initFadeFrom(transaction, loadInto);
   initRecallValues(transaction);
@@ -1358,6 +1359,8 @@ void EditBuffer::loadSinglePresetIntoLayerPart(UNDO::Transaction *transaction, c
 
   getParameterGroupByID({ "Unison", VoiceGroup::II })->undoableLoadDefault(transaction);
   getParameterGroupByID({ "Mono", VoiceGroup::II })->undoableLoadDefault(transaction);
+
+  setVoiceGroupName(transaction, preset->getName(), loadTo);
 
   initRecallValues(transaction);
 }
@@ -1404,6 +1407,11 @@ void EditBuffer::undoableLoadPresetPartIntoSplitSound(UNDO::Transaction *transac
     getParameterGroupByID(monoTo)->copyFrom(transaction, preset->findParameterGroup(monoI));
   }
 
+  if(preset->isDual())
+    setVoiceGroupName(transaction, preset->getVoiceGroupName(from), copyTo);
+  else
+    setVoiceGroupName(transaction, preset->getName(), copyTo);
+
   initRecallValues(transaction);
 
   ae->toggleSuppressParameterChanges(transaction);
@@ -1448,6 +1456,11 @@ void EditBuffer::undoableLoadPresetPartIntoLayerSound(UNDO::Transaction *transac
   getParameterGroupByID({ "Unison", VoiceGroup::II })->undoableLoadDefault(transaction);
   getParameterGroupByID({ "Mono", VoiceGroup::II })->undoableLoadDefault(transaction);
 
+  if(preset->isDual())
+    setVoiceGroupName(transaction, preset->getVoiceGroupName(copyFrom), copyTo);
+  else
+    setVoiceGroupName(transaction, preset->getName(), copyTo);
+
   initRecallValues(transaction);
 
   ae->toggleSuppressParameterChanges(transaction);
@@ -1469,6 +1482,11 @@ void EditBuffer::undoableLoadPresetPartIntoSingleSound(UNDO::Transaction *transa
     copySumOfMasterGroupToVoiceGroupMasterGroup(transaction, preset, copyFrom, copyTo);
   else
     copySinglePresetMasterToPartMaster(transaction, preset, copyTo);
+
+  if(preset->isDual())
+    setVoiceGroupName(transaction, preset->getVoiceGroupName(copyFrom), copyTo);
+  else
+    setVoiceGroupName(transaction, preset->getName(), copyTo);
 
   initFadeParameters(transaction, copyTo);
   initRecallValues(transaction);

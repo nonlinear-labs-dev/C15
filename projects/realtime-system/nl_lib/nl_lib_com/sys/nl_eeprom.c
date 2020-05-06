@@ -9,9 +9,11 @@
 #include "eeprom_18xx_43xx.h"
 #include "sys/crc.h"
 #include "spibb/nl_bb_msg.h"
-#include "../../../shared/lpc-defs.h"
+#include "shared/lpc-defs.h"
 #include <string.h>
 #include <stdio.h>
+
+#pragma GCC diagnostic ignored "-Wunused-function"
 
 /*****************************************************************************
  * Private types/enumerations/variables

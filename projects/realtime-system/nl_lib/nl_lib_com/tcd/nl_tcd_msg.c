@@ -13,7 +13,7 @@
 #include "drv/nl_dbg.h"
 #include "tcd/nl_tcd_adc_work.h"
 
-#include "../../../shared/lpc-defs.h"
+#include "shared/lpc-defs.h"
 
 /******************************************************************************/
 /*	modul local defines														  */

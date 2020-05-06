@@ -36,6 +36,8 @@ TEST_CASE("Load Single into Layer Part I")
     auto unisonVoices = preset->findParameterByID({ 249, VoiceGroup::I }, true);
     unisonVoices->setValue(transaction, 1);  // <- setting cp in range 0..23
 
+    preset->setName(transaction, "Hello Single");
+
     TestHelper::changeAllParameters(transaction);
   }
 
@@ -60,6 +62,11 @@ TEST_CASE("Load Single into Layer Part I")
     THEN("Type is Same")
     {
       CHECK(eb->getType() == SoundType::Layer);
+    }
+
+    THEN("Voice Group Label was loaded")
+    {
+      CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "Hello Single");
     }
 
     THEN("Local Special I/II unchanged")
@@ -160,6 +167,8 @@ TEST_CASE("Load Single into Layer Part II")
     auto unisonVoices = preset->findParameterByID({ 249, VoiceGroup::I }, true);
     unisonVoices->setValue(transaction, 1);  // <- setting cp in range 0..23
 
+    preset->setName(transaction, "Hello Single");
+
     TestHelper::changeAllParameters(transaction);
   }
 
@@ -180,6 +189,11 @@ TEST_CASE("Load Single into Layer Part II")
     const auto oldVoicesIHash = EBL::createHashOfVector(EBL::getVoices<VoiceGroup::I>());
 
     eb->undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::II);
+
+    THEN("Voice Group Label was loaded")
+    {
+      CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "Hello Single");
+    }
 
     THEN("Type is Same")
     {

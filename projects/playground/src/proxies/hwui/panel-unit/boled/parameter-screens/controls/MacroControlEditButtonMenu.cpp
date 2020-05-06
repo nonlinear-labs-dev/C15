@@ -56,7 +56,7 @@ void MacroControlEditButtonMenu::onGroupChanged()
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   auto mcGroup = eb->getParameterGroupByID({ "MCs", VoiceGroup::Global });
   auto allParametersLocked = mcGroup->areAllParametersLocked();
-  setItemTitle(3, allParametersLocked ? "Unlock Group" : "Lock Group");
+  setItemTitle(2, allParametersLocked ? "Unlock Group" : "Lock Group");
 }
 
 void MacroControlEditButtonMenu::selectButton(size_t i)

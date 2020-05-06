@@ -255,6 +255,7 @@ ParameterEditLayout2::ParameterEditLayout2()
     : super()
 {
   addControl(new InvertedLabel("Edit", Rect(8, 26, 48, 12)))->setHighlight(true);
+  remove(findControlOfType<VoiceGroupIndicator>().get());
 }
 
 ParameterEditLayout2::~ParameterEditLayout2() = default;

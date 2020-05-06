@@ -15,7 +15,7 @@
 #define CORE "M0"
 #endif
 
-const char VERSION_STRING[] = "\nC15 RT-SYS, LPC4337 Core " CORE ", FIRMWARE VERSION: " STR(SW_VERSION) " \n\0\0\0";
+const char VERSION_STRING[] = "\n\nC15 RT-SYS, LPC4337 Core " CORE ", FIRMWARE VERSION: " STR(SW_VERSION) " \n\n\0\0\0";
 
 void* GetVersionString()
 {
