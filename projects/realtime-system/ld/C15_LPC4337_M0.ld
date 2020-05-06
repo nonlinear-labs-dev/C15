@@ -102,6 +102,7 @@ SECTIONS
         _end_noinit = .;
     } > RamLocM0
 
+    /*  Export StackTop and HeapBase, must be done BEFORE the shared section declaration */
     PROVIDE(_pvHeapStart = DEFINED(__user_heap_base) ? __user_heap_base : .);
     PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_RamLocM0 - 0);
     
