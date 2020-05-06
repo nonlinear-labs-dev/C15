@@ -1,4 +1,4 @@
-LPC firmware Version 206 (beta V. 59206) (for Milestone 1.7) features:
+LPC firmware Version 206 (beta V. 60206) (for Milestone 1.7) features:
 
 
 0) Proccesing changes : 
@@ -110,3 +110,13 @@ It can be enabled/disabled by new BB message "BB_MSG_TYPE_SETTING, SETTING_ID_SE
 
 6) Complete rewrite for External Hardware Controllers (formerly knwon as Pedal).
 See ExternalHardwareControllers_API_V1.0 for details.
+
+
+
+
+7) Complete rewrite of the M0 core stuff, notably the keybed scanner, which now works with 16us cycle
+time --> 16us (vs. 150us) velocity resolution.
+
+
+
+8) Added service and profiling features
