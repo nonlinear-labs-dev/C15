@@ -5,9 +5,9 @@
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-#include "lpc-defs.h"
-#include "lpc-converters.h"
-#include "EHC-pedal-presets.h"
+#include "shared/lpc-defs.h"
+#include "shared/lpc-converters.h"
+#include "shared/EHC-pedal-presets.h"
 
 // ===================
 void IOerror(int ret)

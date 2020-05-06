@@ -22,7 +22,7 @@
 #include "sys/nl_version.h"
 #include "sys/nl_ticker.h"
 #include "heartbeat/nl_heartbeat.h"
-#include "../../../shared/lpc-defs.h"
+#include "shared/lpc-defs.h"
 
 #define SENDBUFFER_SIZE 510  // 16-bit words, stays below the maximum of 1020 bytes
 

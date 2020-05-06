@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../../../shared/lpc-defs.h"
+#include "shared/lpc-defs.h"
 
 void IOerror(int ret)
 {

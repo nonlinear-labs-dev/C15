@@ -1,6 +1,6 @@
 #include "process-read-msgs.h"
-#include "lpc-defs.h"
-#include "lpc-converters.h"
+#include "shared/lpc-defs.h"
+#include "shared/lpc-converters.h"
 
 char paramNameTable[][NUM_HW_SOURCES] = {
   "EHC 1     ",

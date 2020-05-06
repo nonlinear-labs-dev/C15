@@ -14,11 +14,10 @@
 #include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_eeprom.h"
-#include <cr_section_macros.h>
 #include <stdlib.h>
 
-#include "../../../shared/lpc-defs.h"
-#include "../../../shared/lpc-converters.h"
+#include "shared/lpc-defs.h"
+#include "shared/lpc-converters.h"
 
 // =============
 // ============= local constants and types
