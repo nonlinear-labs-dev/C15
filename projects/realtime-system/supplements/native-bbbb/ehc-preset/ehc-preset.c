@@ -7,7 +7,7 @@
 
 #include "lpc-defs.h"
 #include "lpc-converters.h"
-#include "EHC_pedal_presets.h"
+#include "EHC-pedal-presets.h"
 
 // ===================
 void IOerror(int ret)
