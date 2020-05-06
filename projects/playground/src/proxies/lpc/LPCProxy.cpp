@@ -21,6 +21,8 @@
 #include <memory.h>
 #include <nltools/messaging/Message.h>
 #include <proxies/audio-engine/AudioEngineProxy.h>
+#include <lpc-converters.h>
+#include <EHC-pedal-presets.h>
 
 LPCProxy::LPCProxy()
     : m_lastTouchedRibbon(HardwareSourcesGroup::getUpperRibbonParameterID().getNumber())
@@ -323,6 +325,23 @@ void LPCProxy::sendSetting(uint16_t key, uint16_t value)
   queueToLPC(cmp);
 
   DebugLevel::info("sending setting", key, "=", value);
+}
+
+void LPCProxy::sendPedalSetting(uint16_t pedal, uint16_t pedalType)
+{
+#warning continue here
+  auto config = EHC_presets[pedalType];
+
+  tMessageComposerPtr cmp(new MessageComposer(MessageParser::EHC_CONFIG));  //0x0F00
+  *cmp << (uint16_t) 0x0100;                                                //LPC_EHC_COMMAND_SET_CONTROL_REGISTER;
+
+  auto data = EHC_configToUint16(config.config);
+  //add pedal as ctrlId;
+  data |= pedal << 12;
+  *cmp << data;
+
+  queueToLPC(cmp);
+  DebugLevel::info("EHC: send pedal setting", pedal, "=", pedalType);
 }
 
 void LPCProxy::sendSetting(uint16_t key, gint16 value)

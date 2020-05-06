@@ -27,6 +27,11 @@ class PedalMenuEditorEntry : public MenuEditorEntry
     return ret;
   }
 
+  int getIndex() const
+  {
+    return m_index;
+  }
+
  protected:
   void setFontColor(FrameBuffer& fb) const override
   {
@@ -52,8 +57,15 @@ class PedalMenuEditorEntry : public MenuEditorEntry
     }
   }
 
+ public:
+  void assign(const std::vector<Glib::ustring>& vector, int idx, bool selected) override
+  {
+    MenuEditorEntry::assign(vector, idx, selected);
+    m_index = idx;
+  }
+
  private:
-  const int m_index;
+  int m_index;
   PedalEditor* m_parent;
 };
 
@@ -67,6 +79,23 @@ PedalEditor::PedalEditor(std::shared_ptr<PedalType> m)
   for(int i = 0; i < 4; i++)
   {
     addControl(new PedalMenuEditorEntry(this, i));
+  }
+}
+
+void PedalEditor::setPosition(const Rect& r)
+{
+  static const Rect menuEditorPosition(129, 16, 126, 48);
+  Control::setPosition(menuEditorPosition);
+
+  int y = 0;
+  int h = 12;
+  int w = menuEditorPosition.getWidth();
+  int x = (menuEditorPosition.getWidth() - w) / 2;
+
+  for(auto& c : getControls())
+  {
+    c->setPosition(Rect(x, y, w, h));
+    y += h;
   }
 }
 
@@ -99,7 +128,7 @@ void PedalEditor::incSetting(int inc)
 {
   m_selected += inc;
 
-  if(m_selected >= m_mode->enumToDisplayString().size())
+  if(m_selected > 0 && m_selected >= m_mode->enumToDisplayString().size())
     m_selected = 0;
   if(m_selected < 0)
     m_selected = m_mode->enumToDisplayString().size() - 1;
@@ -116,11 +145,11 @@ void PedalEditor::updateOnSettingChanged()
 {
   auto& entries = getDisplayStrings();
   const auto selectedIndex = getSelectedIndex();
-  auto assignIndex = 0;
+  auto assignIndex = selectedIndex - 1;
 
   for(auto& c : getControls())
   {
-    if(auto e = std::dynamic_pointer_cast<MenuEditorEntry>(c))
+    if(auto e = std::dynamic_pointer_cast<PedalMenuEditorEntry>(c))
     {
       e->assign(entries, assignIndex, assignIndex == selectedIndex);
       assignIndex++;

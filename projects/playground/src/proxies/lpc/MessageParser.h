@@ -18,6 +18,7 @@ class MessageParser
     EDIT_CONTROL = 0x0500,
     MORPH_POS = 0x0600,
     SETTING = 0x0700,
+    EHC_CONFIG = 0x0F00,
     NOTIFICATION = 0x0800,
     ASSERTION = 0x0900,
     REQUEST = 0x0A00,

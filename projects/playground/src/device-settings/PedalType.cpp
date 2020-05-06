@@ -1,6 +1,7 @@
 #include <device-settings/PedalType.h>
 #include <proxies/lpc/LPCProxy.h>
 #include <http/UpdateDocumentMaster.h>
+#include <EHC-pedal-presets.h>
 #include "Application.h"
 #include "proxies/lpc/LPCProxy.h"
 
@@ -21,15 +22,30 @@ void PedalType::sendToLPC() const
 
 const std::vector<Glib::ustring> &PedalType::enumToString() const
 {
-  static std::vector<Glib::ustring> s_modeNames
+  static std::vector<Glib::ustring> s_modeNames;
 
-      = { "pot-tip-active", "pot-ring-active", "switch-closing", "switch-opening" };
+  if(s_modeNames.empty())
+  {
+    for(auto n : getAllStrings<PedalTypes>())
+    {
+      s_modeNames.emplace_back(n);
+    }
+  }
+
   return s_modeNames;
 }
 
 const std::vector<Glib::ustring> &PedalType::enumToDisplayString() const
 {
-  static std::vector<Glib::ustring> s_modeNames
-      = { "Pot Tip Active", "Pot Ring Active", "Switch Closing", "Switch Opening" };
+  static std::vector<Glib::ustring> s_modeNames;
+
+  if(s_modeNames.empty())
+  {
+    forEachValue<PedalTypes>([&](PedalTypes e) {
+      auto index = static_cast<int>(e);
+      s_modeNames.emplace_back(EHC_presets[index].name);
+    });
+  }
+
   return s_modeNames;
 }

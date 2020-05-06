@@ -11,7 +11,7 @@ class MenuEditorEntry : public SetupLabel
   MenuEditorEntry();
   virtual ~MenuEditorEntry();
 
-  void assign(const std::vector<Glib::ustring> &, int idx, bool selected);
+  virtual void assign(const std::vector<Glib::ustring> &, int idx, bool selected);
 
  private:
   void setFontColor(FrameBuffer &fb) const override;

@@ -73,13 +73,14 @@ ENDIF()
 list(REMOVE_ITEM SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/playground.cpp)
 list(REMOVE_ITEM SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/testing/unit-tests/playground-tests.cpp)
 file(GLOB_RECURSE UNIT_TEST_FILES src/testing/*.cpp)
+file(GLOB_RECURSE SHARED_LPC_FILES ${CMAKE_SOURCE_DIR}/projects/shared/*.c)
 list(REMOVE_ITEM SOURCE_FILES EXCLUDE REGEX ${UNIT_TEST_FILES})
 set(${BINARY_NAME}_SOURCES "src/playground.cpp")
 set(${TEST_BINARY_NAME}_SOURCES ${UNIT_TEST_FILES})
 
 # TARGETS
 ## LIB
-add_library(${LIB_NAME} STATIC ${SOURCE_FILES} ${GENERATED_SOURCES})
+add_library(${LIB_NAME} STATIC ${SOURCE_FILES} ${GENERATED_SOURCES} ${SHARED_LPC_FILES})
 
 foreach(lib ${LIBS})
   pkg_check_modules(${lib} REQUIRED ${lib})
@@ -92,6 +93,7 @@ target_include_directories(${LIB_NAME} PUBLIC src)
 target_include_directories(${LIB_NAME} PUBLIC ${PROJECT_BINARY_DIR}/src)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/nltools/include/)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/parameter-db/generated/)
+target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/shared/)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/playground/src)
 target_link_libraries(${LIB_NAME} PUBLIC pthread stdc++fs nltools)
 

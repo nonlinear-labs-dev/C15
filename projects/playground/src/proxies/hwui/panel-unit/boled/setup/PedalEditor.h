@@ -19,12 +19,14 @@ class PedalEditor : public MenuEditor
   virtual const std::vector<Glib::ustring> &getDisplayStrings() const override;
   virtual int getSelectedIndex() const override;
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  void setPosition(const Rect& r) override;
 
  private:
   void load();
 
  protected:
   void updateOnSettingChanged() override;
+
  private:
   int m_selected;
   std::shared_ptr<PedalType> m_mode;
