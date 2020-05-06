@@ -56,7 +56,7 @@ uint16_t readPortNumber(const char *string)
   uint16_t id;
   if (sscanf(string, "%hu", &id) != 1)
   {
-    puts("config: argument error (controller id expected)");
+    puts("argument error (port number expected)");
     Usage();
   }
   if (id < 1 || id > 4)
