@@ -932,7 +932,7 @@ void NL_EHC_SendEHCdata(void)
     *p++ = ctrl[i].used_min;
     *p++ = ctrl[i].used_max;
     *p++ = ctrl[i].range_scale;
-    *p++ = ((int) EHC_adc[i].filtered_current + AVG_DIV / 2) / AVG_DIV;
+    *p++ = ((int) EHC_adc[i].filtered_current + AVG_DIV / 2) / AVG_DIV;  // rounded scaling from 0..16*4095 to 0..4095
     *p++ = ctrl[i].dead_zones;
   }
   BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
