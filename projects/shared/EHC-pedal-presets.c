@@ -1,4 +1,4 @@
-#include "EHC_pedal_presets.h"
+#include "EHC-pedal-presets.h"
 
 #define EHC_ADC_MAX (65520ul)
 
@@ -291,7 +291,7 @@ const EHC_PresetT EHC_presets[] = {
   {
       .name = "E:Korg EXP-2",
       .help = "Korg EXP-2 3-Wire Expression Pedal, Ring-Active.\n"
-              "Use output \"2\"",
+              "Use output \"2\".",
       .config = {
           .ctrlId           = 1,  // ring active
           .is3wire          = 1,
@@ -303,7 +303,7 @@ const EHC_PresetT EHC_presets[] = {
       },
       .rangeMin      = -1,
       .rangeMax      = -1,
-      .deadZoneLower = 6,  // 5% dead zone
+      .deadZoneLower = 6,  // 6% dead zone
       .deadZoneUpper = 2,  // 2% dead zone
   },
   {
