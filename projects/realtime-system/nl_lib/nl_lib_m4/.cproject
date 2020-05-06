@@ -43,6 +43,7 @@
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.2116916296" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fsingle-precision-constant" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.1925830102" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../..&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../nl_lib_com&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/src&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../nl_lib_com&quot;"/>
