@@ -41,6 +41,8 @@ TEST_CASE("Load Single into Split Part I")
     auto unisonVoices = preset->findParameterByID({ 249, VoiceGroup::I }, true);
     unisonVoices->setValue(transaction, 1);  // <- setting cp in range 0..23
 
+    preset->setName(transaction, "Hi");
+
     TestHelper::changeAllParameters(transaction);
   }
 
@@ -62,6 +64,11 @@ TEST_CASE("Load Single into Split Part I")
     THEN("Type is Same")
     {
       CHECK(eb->getType() == SoundType::Split);
+    }
+
+    THEN("Voice Group Label was loaded")
+    {
+      CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "Hi");
     }
 
     THEN("toFX unchanged")
@@ -166,6 +173,8 @@ TEST_CASE("Load Single into Split Part II")
     auto unisonVoices = preset->findParameterByID({ 249, VoiceGroup::I }, true);
     unisonVoices->setValue(transaction, 1);  // <- setting cp in range 0..23
 
+    preset->setName(transaction, "Ho");
+    
     TestHelper::changeAllParameters(transaction);
   }
 
@@ -187,6 +196,11 @@ TEST_CASE("Load Single into Split Part II")
     THEN("Type is Same")
     {
       CHECK(eb->getType() == SoundType::Split);
+    }
+
+    THEN("Voice Group Label was loaded")
+    {
+      CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "Ho");
     }
 
     THEN("Local Special unchanged")

@@ -364,9 +364,6 @@ MacroControlParameterEditLayout2::MacroControlParameterEditLayout2()
     , super1()
     , super2()
 {
-  addControl(new Button("", Buttons::BUTTON_A));
-  addControl(new Button("", Buttons::BUTTON_B));
-  addControl(new Button("", Buttons::BUTTON_C));
 }
 
 ButtonMenu *MacroControlParameterEditLayout2::createMenu(const Rect &rect)
@@ -378,6 +375,18 @@ void MacroControlParameterEditLayout2::setMode(Mode desiredMode)
 {
   super2::setMode(desiredMode);
   getMenu()->highlightSelectedButton();
+
+  for(auto &button : getControls<Button>())
+  {
+    remove(button.get());
+  }
+
+  addControl(new Button("", Buttons::BUTTON_A));
+  addControl(new Button("", Buttons::BUTTON_B));
+  addControl(new Button("", Buttons::BUTTON_C));
+
+  if(auto vgIndi = findControlOfType<VoiceGroupIndicator>())
+    remove(vgIndi.get());
 }
 
 bool MacroControlParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)

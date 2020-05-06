@@ -90,6 +90,12 @@ void UnmodulateableParameterEditLayout2::init()
   highlight<SelectedParameterBarSlider>();
   highlight<SelectedParameterValue>();
   highlight<ParameterNameLabel>();
+
+  if(auto vgButton = findControlOfType<SwitchVoiceGroupButton>())
+  {
+    remove(vgButton.get());
+    addControl(new Button("", Buttons::BUTTON_A));
+  }
 }
 
 ButtonMenu *UnmodulateableParameterEditLayout2::createMenu(const Rect &rect)
