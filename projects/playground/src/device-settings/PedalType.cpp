@@ -17,7 +17,7 @@ PedalType::~PedalType()
 
 void PedalType::sendToLPC() const
 {
-  Application::get().getLPCProxy()->sendSetting(m_lpcKey, (uint16_t)(get()));
+  Application::get().getLPCProxy()->sendPedalSetting(m_lpcKey, (uint16_t)(get()));
 }
 
 const std::vector<Glib::ustring> &PedalType::enumToString() const

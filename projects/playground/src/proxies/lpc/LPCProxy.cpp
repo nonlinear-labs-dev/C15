@@ -335,7 +335,7 @@ void LPCProxy::sendPedalSetting(uint16_t pedal, uint16_t pedalType)
   tMessageComposerPtr cmp(new MessageComposer(MessageParser::EHC_CONFIG));  //0x0F00
   *cmp << (uint16_t) 0x0100;                                                //LPC_EHC_COMMAND_SET_CONTROL_REGISTER;
 
-  auto data = EHC_configToUint16(config.config);
+  uint16_t data = EHC_configToUint16(config.config);
   //add pedal as ctrlId;
   data |= pedal << 12;
   *cmp << data;
