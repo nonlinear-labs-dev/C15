@@ -7,25 +7,16 @@
  */
 
 #include <math.h>
-#include <string.h>
-
 #include "nl_tcd_adc_work.h"
 #include "nl_tcd_msg.h"
 #include "ipc/emphase_ipc.h"
-
 #include "ipc/emphase_ipc.h"
 #include "spibb/nl_bb_msg.h"
-
-#include "nl_tcd_test.h"
 #include "nl_tcd_interpol.h"
 #include "ehc/nl_ehc_ctrl.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_eeprom.h"
-
-#define GROUND_THRESHOLD     20
-#define CHANGE_FOR_DETECTION 500
-
-#define DELTA 40  // hysteresis for pedals
+#include "sys/nl_stdlib.h"
 
 #define BENDER_DEADRANGE    20    // +/-1 % of +/-2047
 #define BENDER_SMALL_THRESH 200   // +/-10 % of +/-2047, test range
@@ -57,7 +48,7 @@ static uint32_t *aftertouchTable;
 static uint16_t rib_eepromHandle = 0;  // EEPROM access handle
 static int      rib_updateEeprom = 0;  // flag / step chain variable
 
-typedef struct
+typedef struct __attribute__((packed))
 {
   int16_t threshold;
   int16_t tableX[33];
