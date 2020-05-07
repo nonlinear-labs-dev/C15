@@ -7,6 +7,7 @@
     @ingroup	nl_tcd_modules
 *******************************************************************************/
 
+#include <stddef.h>
 #include "nl_ehc_ctrl.h"
 #include "nl_ehc_adc.h"
 #include "tcd/nl_tcd_adc_work.h"
@@ -14,14 +15,20 @@
 #include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_eeprom.h"
-#include <stdlib.h>
-
 #include "shared/lpc-defs.h"
 #include "shared/lpc-converters.h"
 
 // =============
 // ============= local constants and types
 // =============
+
+static inline uint16_t diff(uint16_t const a, uint16_t const b)
+{
+  if (a >= b)
+    return a - b;
+  else
+    return b - a;
+}
 
 #define SHOW_SETTLING (0)
 
@@ -86,20 +93,20 @@ static void ShowSettlingDisplay(void)
 
 #define ADC_MAX_SCALED (4096 * AVG_DIV)
 
-typedef struct
+typedef struct __attribute__((packed))
 {
-  const int MAX_DRIFT;
-  const int DRIFT_INDUCED_RAMPING_TIME;          // ramping time for drift-induced change
-  const int DRIFT_INDUCED_RAMPING_TIME_REDUCED;  // // ramping time for drift-induced change when already ramping otherwise
-  const int NORMAL_RAMPING_TIME;
-  const int SHORT_RAMPING_TIME;
-  const int SHOCK_CHANGE_THRESHOLD;  // amount of parameter change to trigger shock change, in 16k units
+  const uint16_t MAX_DRIFT;
+  const uint16_t DRIFT_INDUCED_RAMPING_TIME;          // ramping time for drift-induced change
+  const uint16_t DRIFT_INDUCED_RAMPING_TIME_REDUCED;  // // ramping time for drift-induced change when already ramping otherwise
+  const uint16_t NORMAL_RAMPING_TIME;
+  const uint16_t SHORT_RAMPING_TIME;
+  const uint16_t SHOCK_CHANGE_THRESHOLD;  // amount of parameter change to trigger shock change, in 16k units
   // when going out of settling
-  const int SETTLING_OFFSET;  // # of ADC lsb's which are allowed to vary near zero
-  const int SETTLING_GAIN;    // #  of ADC lsb's which are allowed to vary near full scale
+  const uint16_t SETTLING_OFFSET;  // # of ADC lsb's which are allowed to vary near zero
+  const uint16_t SETTLING_GAIN;    // #  of ADC lsb's which are allowed to vary near full scale
   // when going into settling
-  const int SETTLING_OFFSET_REDUCED;  // # of ADC lsb's which are allowed to vary near zero
-  const int SETTLING_GAIN_REDUCED;    // #  of ADC lsb's which are allowed to vary near full scale
+  const uint16_t SETTLING_OFFSET_REDUCED;  // # of ADC lsb's which are allowed to vary near zero
+  const uint16_t SETTLING_GAIN_REDUCED;    // #  of ADC lsb's which are allowed to vary near full scale
 } ControllerParameterSet_T;
 
 #define PARAMETER_SETS        (4)  // number of different parameter sets
@@ -673,7 +680,7 @@ static int doAutoHold(Controller_T *const this, int value)
     }
     else  // already settled
     {
-      if (saturated || (abs(avg - this->settledValue) > CTRL_PARAMS[this->paramSet].MAX_DRIFT))
+      if (saturated || (diff(avg, this->settledValue) > CTRL_PARAMS[this->paramSet].MAX_DRIFT))
       {  // value drifted away too far, or reached end points?
         int alreadyRamping = this->status.isRamping;
         this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
@@ -700,7 +707,7 @@ static int doAutoHold(Controller_T *const this, int value)
     this->status.isSettled = 0;
   }
   int new = doRamping(this, value, 0);                                        // get next output candidate value
-  if (abs(new - value) > CTRL_PARAMS[this->paramSet].SHOCK_CHANGE_THRESHOLD)  // fast "shock" change present ?
+  if (diff(new, value) > CTRL_PARAMS[this->paramSet].SHOCK_CHANGE_THRESHOLD)  // fast "shock" change present ?
   {
     initRamping(this, (new + value) / 2, CTRL_PARAMS[this->paramSet].SHORT_RAMPING_TIME);  //   then init a short "shock" ramp from half-way there
     // DBG_Led_Error_TimedOn(3);
