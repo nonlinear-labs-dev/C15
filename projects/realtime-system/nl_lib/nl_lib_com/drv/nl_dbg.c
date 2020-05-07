@@ -10,14 +10,6 @@
 
 #include "drv/nl_dbg.h"
 #include "drv/nl_gpio.h"
-#include "drv/nl_uart_dma.h"
-#include <stdlib.h>
-#include <string.h>
-
-static uint8_t* to_send = NULL;
-
-static LPC_USARTn_Type* dbg_uart;
-static uint32_t         dbg_uart_baudrate;
 
 static DBG_PINS_T* pins;
 
@@ -35,12 +27,6 @@ void (*const DBG_Pod_Off[4])(void) = {
   DBG_GPIO3_4_On,
 };
 
-static void DBG_Callback(uint32_t status)
-{
-  free(to_send);
-  to_send = NULL;
-}
-
 /******************************************************************************/
 /** @brief    	Function for the module configuration
 	@param		UARTx	Pointer to selected UART peripheral, should be:
@@ -50,11 +36,9 @@ static void DBG_Callback(uint32_t status)
 	@param		speed	UART baudrate (115200)
 	@param		pins	pin structure pointer
 *******************************************************************************/
-void DBG_Config(LPC_USARTn_Type* UARTx, uint32_t speed, DBG_PINS_T* dbgpins)
+void DBG_Config(DBG_PINS_T* dbgpins)
 {
-  dbg_uart          = UARTx;
-  dbg_uart_baudrate = speed;
-  pins              = dbgpins;
+  pins = dbgpins;
 }
 
 /******************************************************************************/
@@ -62,27 +46,6 @@ void DBG_Config(LPC_USARTn_Type* UARTx, uint32_t speed, DBG_PINS_T* dbgpins)
 *******************************************************************************/
 void DBG_Init(void)
 {
-  UART_DMA_Init(dbg_uart, dbg_uart_baudrate);
-}
-
-/******************************************************************************/
-/** @brief    	Write string to the UART output
- *  @param		str		String to write
- *  @return		Number of bytes written if success; 0 if failure
-*******************************************************************************/
-uint32_t DBG_Write(char* str)
-{
-  uint32_t i;
-  uint32_t len = strlen(str);
-
-  if (to_send != NULL)
-    return 0;
-
-  to_send = (uint8_t*) malloc(len * sizeof(uint8_t));
-  for (i = 0; i < len; i++)
-    to_send[i] = (uint8_t) str[i];
-
-  return UART_DMA_Send(dbg_uart, to_send, len, DBG_Callback);
 }
 
 /******************************************************************************/

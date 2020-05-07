@@ -771,7 +771,7 @@ static void InitDebugPins(void)
   PIN_Config(&lpc_dbg_pod[2]);
   PIN_Config(&lpc_dbg_pod[3]);
 
-  DBG_Config(LPC_USART2, 115200, &debug_pins);
+  DBG_Config(&debug_pins);
 }
 
 /*******************************************************************************
