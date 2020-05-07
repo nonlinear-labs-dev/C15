@@ -108,7 +108,7 @@ It can be enabled/disabled by new BB message "BB_MSG_TYPE_SETTING, SETTING_ID_SE
 
 
 
-6) Complete rewrite for External Hardware Controllers (formerly knwon as Pedal).
+6) Complete rewrite for External Hardware Controllers (formerly known as Pedal).
 See ExternalHardwareControllers_API_V1.0 for details.
 
 
