@@ -42,10 +42,10 @@ add_custom_command(
         ${CMAKE_SOURCE_DIR}
         "mkdir -p /fs"
         "mount -o loop /workdir/fs.ext4 /fs"
-        "git clone -b nonlinear_2020.04 --single-branch https://github.com/nonlinear-labs-dev/nonlinux.git /fs/nonlinux"
+        "git clone -b nonlinear_2020.05 --single-branch https://github.com/nonlinear-labs-dev/nonlinux.git /fs/nonlinux"
         "cd /fs/nonlinux"
         "git status"
-        "git pull origin nonlinear_2020.04"
+        "git pull origin nonlinear_2020.05"
         "git remote add rw git@github.com:nonlinear-labs-dev/nonlinux.git"
         "echo 1"
     COMMAND touch .nonlinux-cloned
@@ -61,8 +61,8 @@ add_custom_command(
         "mkdir -p /fs"
         "mount -o loop /workdir/fs.ext4 /fs"
         "cd /fs/nonlinux"
-        "git checkout nonlinear_2020.04"
-        "git pull origin nonlinear_2020.04"
+        "git checkout nonlinear_2020.05"
+        "git pull origin nonlinear_2020.05"
 )
 
 add_custom_command(
@@ -77,7 +77,7 @@ add_custom_command(
         "mkdir -p /fs"
         "mount -o loop /workdir/fs.ext4 /fs"
         "cd /fs/nonlinux"
-        "git pull origin nonlinear_2020.04"
+        "git pull origin nonlinear_2020.05"
         "make nonlinear_defconfig"
         "chown -R ${USER_ID}.${GROUP_ID} /workdir/ccache"
     COMMAND touch .nonlinux-setup
