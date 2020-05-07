@@ -33,9 +33,12 @@ public class SetupModel {
 	public enum EditModeRibbonBehaviour {
 		relative, absolute
 	}
-
+	
 	public enum PedalType {
-		pot_tip_active, pot_ring_active, switch_closing, switch_opening
+		PotTipActive, PotRingActive, PotTipActiveReverse, PotRingActiveReverse,
+		Resitor, ResistorReversed, SwitchClosing, SwitchOpening, CV0to5V, CV0To5VAutoRange,
+		OFF, BossEV30, BossFV500L, DoepferFP5, FractalEV2, KorgDS1H, KorgEXP2,
+		LeadFootLFX1, MAudioEXP, MoogEP3, RolandDP10, RolandEV5, YamahaFC3A, YamahaFC7
 	}
 
 	public enum PresetStoreMode {
@@ -113,14 +116,16 @@ public class SetupModel {
 		public EnumDataModelEntity<EditModeRibbonBehaviour> editmodeRibbonBehavior = createEnumDataModelEntity(
 				EditModeRibbonBehaviour.class, EditModeRibbonBehaviour.absolute);
 		public StringDataModelEntity passPhrase = new StringDataModelEntity();
+
 		public EnumDataModelEntity<PedalType> pedal1Type = createEnumDataModelEntity(PedalType.class,
-				PedalType.pot_tip_active);
+				PedalType.PotTipActive);
 		public EnumDataModelEntity<PedalType> pedal2Type = createEnumDataModelEntity(PedalType.class,
-				PedalType.pot_tip_active);
+				PedalType.PotTipActive);
 		public EnumDataModelEntity<PedalType> pedal3Type = createEnumDataModelEntity(PedalType.class,
-				PedalType.pot_tip_active);
+				PedalType.PotTipActive);
 		public EnumDataModelEntity<PedalType> pedal4Type = createEnumDataModelEntity(PedalType.class,
-				PedalType.pot_tip_active);
+				PedalType.PotTipActive);
+
 		public BooleanDataModelEntity benderOnPressedKeys = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetDragEnabled = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetGlitchSuppression = new BooleanDataModelEntity();

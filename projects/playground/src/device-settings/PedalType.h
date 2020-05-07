@@ -18,6 +18,8 @@ class PedalType : public EnumSetting<PedalTypes>
   virtual ~PedalType();
 
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
+  bool persistent() const override;
+  bool set(tEnum m) override;
 
  private:
   void sendToLPC() const override;

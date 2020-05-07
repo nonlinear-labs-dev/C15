@@ -329,6 +329,43 @@ void LPCProxy::sendSetting(uint16_t key, uint16_t value)
 
 void LPCProxy::sendPedalSetting(uint16_t pedal, uint16_t pedalType)
 {
+  /*
+   * 3.2
+Message implementation
+In contrast to the current implementation where the pedal type is transmitted as a simple number and the
+LPC makes sense of that itself and calls the EHC setup/parametrization with corresponding hard-coded data,
+the new message implementation will need to load and send all the setup data for an EHC controller
+explicitly, using various commands from the EHC API. The legacy calls shall not be used anymore, even
+they are still implemented in LPC.
+The general procedure when confirming a pedal preset in the UI is to consecutively send a number of EHC
+messages:
+– disable controller processing
+– delete any controllers attached to the current input jack (tip and ring). This affords the reset of auto-
+ranging, and removes any controller still active at the adjacent contact of the selected input (a
+scenario that can happen when 2-wire controllers are used).
+– send main configuration (contents of EHC_CR configuration register)
+– send dead-zones for auto-ranging (when present in the preset)
+– send manual range limits (when present in the preset)
+– enable controller processing
+Whereas, when sending the global settings upon initial edit buffer and preset change/load:
+– disable controller processing
+– for (all pedals)
+–
+– if the „pot“-field in the main configuration EHC_CR is false, delete adjacent controller (for the
+same reason as above).
+– send main configuration (contents of EHC_CR configuration register)
+– send dead-zones for auto-ranging (when present in the preset)
+– send manual range upper and lower limits (when present in the preset)
+enable controller processing
+The individual messages for the pedals require that the EHC controller number (CTRLID), plus hardware
+source (HWSID) for the configuration register call, have to be set up properly in the transmitted data.
+The controller number is directly corresponding to the hardware input used, so it must be known before if the
+pedal hardware is ring active or tip active. This can be implemented by setting bit 0 of CTRLID right in the
+preset data, and then ORing in („Pedal Number“ * 2) for the actual calls, see section „7 Compatibility“ in the
+EHC API. The HWSID directly corresponds to the „Pedal Number“ which is the equivalent of the TRS jack
+number it is attached to, for this first EHC implementation.
+   */
+
 #warning continue here
   auto config = EHC_presets[pedalType];
 

@@ -11,6 +11,11 @@ PedalType::PedalType(UpdateDocumentContributor &settings, uint16_t lpcKey)
 {
 }
 
+bool PedalType::set(PedalTypes m)
+{
+  return EnumSetting::set(m);
+}
+
 PedalType::~PedalType()
 {
 }

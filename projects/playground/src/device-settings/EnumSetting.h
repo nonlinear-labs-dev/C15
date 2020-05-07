@@ -37,16 +37,29 @@ template <typename TEnum> class EnumSetting : public Setting
 
   void load(const Glib::ustring &text)
   {
+    auto toLower = [](const std::string &s) {
+      std::string ret;
+      for(auto &c : s)
+      {
+        ret.push_back(std::tolower(c));
+      }
+      return ret;
+    };
+
+    auto newText = toLower(text);
+
     int i = 0;
     for(const auto &it : enumToString())
     {
-      if(text == it)
+      if(newText == toLower(it))
       {
         set((tEnum) i);
         return;
       }
       i++;
     }
+
+    g_warn_if_reached();
   }
 
   void inc(int dir, bool wrap)

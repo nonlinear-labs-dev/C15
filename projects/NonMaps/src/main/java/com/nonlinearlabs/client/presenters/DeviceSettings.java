@@ -19,7 +19,10 @@ public class DeviceSettings {
 	static public class Pedal {
 		public String displayValue = "---";
 		public double sliderPosition = 0;
-		static public String[] options = { "Pot Tip Active", "Pot Ring Active", "Switch Closing", "Switch Opening" };
+
+		static public String[] options = { "Pot Tip Active", "Pot Ring Active", "Pot Tip Active Reverse", "Pot Ring Active Reverse", "Resistor", "Resitor Reversed", 
+										   "Switch Closing", "Switch Opening", "CV 0..5V", "CV 0..5V Auto Range", "OFF", "Boss EV 30", "Doepfer FP 5", "Fractal EV 2",
+										   "Korg DS1H", "Korg EXP2", "Lead Foot LFX1", "MAudio EXP", "Moog EP3", "Roland DP10", "Roland EV5", "Yamaha FC3A", "Yamaha FC7" };
 		public int selected = 0;
 	}
 
