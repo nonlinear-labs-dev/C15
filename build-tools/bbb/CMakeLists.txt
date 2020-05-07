@@ -103,6 +103,8 @@ add_custom_command(
         "make lpc_bb_driver-rebuild"
         "make espi_driver-clean-for-reconfigure"
         "make espi_driver-rebuild"
+        "make bbb_tools-clean-for-reconfigure"
+        "make bbb_tools-rebuild"
         "make"
         "chown -R ${USER_ID}.${GROUP_ID} /workdir/ccache"
         "cp /fs/nonlinux/output/images/rootfs.tar.gz /workdir/"
