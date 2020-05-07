@@ -10,7 +10,6 @@
 #include "spibb/nl_spi_bb.h"
 #include "drv/nl_gpio.h"
 #include "cmsis/lpc43xx_ssp.h"
-#include "string.h"
 #include "sys/nl_ticker.h"
 
 static LPC_SSPn_Type*  BB_SSP;

@@ -10,7 +10,6 @@
 #include "sys/crc.h"
 #include "spibb/nl_bb_msg.h"
 #include "shared/lpc-defs.h"
-#include <string.h>
 #include <stdio.h>
 
 #pragma GCC diagnostic ignored "-Wunused-function"

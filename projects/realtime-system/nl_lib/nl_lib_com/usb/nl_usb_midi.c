@@ -30,7 +30,6 @@
     @author		Nemanja Nikodijevic [2014-12-11]
 
 *******************************************************************************/
-#include <string.h>
 #include "usb/nl_usb_midi.h"
 #include "usb/nl_usb_descmidi.h"
 #include "usb/nl_usb_core.h"

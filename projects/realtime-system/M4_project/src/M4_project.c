@@ -5,8 +5,6 @@
 *******************************************************************************/
 
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "sys/nl_coos.h"
 #include "sys/nl_ticker.h"
