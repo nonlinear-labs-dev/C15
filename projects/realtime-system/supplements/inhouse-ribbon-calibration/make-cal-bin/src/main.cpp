@@ -12,20 +12,20 @@ void Usage(void)
 
 int main(int const argc, char const* const argv[])
 {
-  if(argc != 3)
+  if (argc != 3)
   {
     Usage();
     return 3;
   }
 
   FILE* infile;
-  if((infile = fopen(argv[1], "r")) == nullptr)
+  if ((infile = fopen(argv[1], "r")) == nullptr)
   {
     printf("FATAL: Cannot open input file \"%s\"\n", argv[1]);
     return 3;  // --> exit
   }
   FILE* outfile;
-  if((outfile = fopen(argv[2], "wb")) == nullptr)
+  if ((outfile = fopen(argv[2], "wb")) == nullptr)
   {
     printf("FATAL: Cannot open output file \"%s\"\n", argv[2]);
     return 3;  // --> exit
@@ -34,7 +34,7 @@ int main(int const argc, char const* const argv[])
   class RibbonData
   {
    public:
-    int valid = 0;
+    int      valid = 0;
     uint16_t X[34];
     uint16_t Y[33];
   };
@@ -44,23 +44,23 @@ int main(int const argc, char const* const argv[])
   char buffer[1024];
   enum Action
   {
-    NONE = -1,
+    NONE    = -1,
     RIBBON1 = 0,
     RIBBON2 = 1
   };
 
-  while(!feof(infile))
+  while (!feof(infile))
   {
     char* buf = buffer;
-    if(fgets(buf, 1024, infile) == nullptr)
+    if (fgets(buf, 1024, infile) == nullptr)
       break;
     Action action = NONE;
-    if(strncmp("Ribbon1=", buf, 8) == 0)
+    if (strncmp("Ribbon1=", buf, 8) == 0)
       action = RIBBON1;
-    else if(strncmp("Ribbon2=", buf, 8) == 0)
+    else if (strncmp("Ribbon2=", buf, 8) == 0)
       action = RIBBON2;
 
-    switch(action)
+    switch (action)
     {
       case NONE:
         break;
@@ -69,74 +69,74 @@ int main(int const argc, char const* const argv[])
       {
         int select = int(action) - int(RIBBON1);
         buf += 8;
-        for(int i = 0; buf[i] != 0; i++)
-          if(buf[i] == '\n')
+        for (int i = 0; buf[i] != 0; i++)
+          if (buf[i] == '\n')
           {
             buf[i] = 0;
             break;
           }
         FILE* ribfile;
-        if((ribfile = fopen(buf, "r")) == nullptr)
+        if ((ribfile = fopen(buf, "r")) == nullptr)
         {
           printf("FATAL: Cannot open ribbon file \"%s\"\n", buf);
           return 3;  // --> exit
         }
 
         {
-          char buffer[1024];
+          char  buffer[1024];
           char* buf = buffer;
-          while(!feof(ribfile))
+          while (!feof(ribfile))
           {
             buf = buffer;
-            if(fgets(buf, 1024, ribfile) == nullptr)
+            if (fgets(buf, 1024, ribfile) == nullptr)
               break;
-            if(strncmp("[Calibration-X]", buf, 15) == 0)
+            if (strncmp("[Calibration-X]", buf, 15) == 0)
             {
               fgets(buf, 1024, ribfile);
-              for(int k = 0; buf[k] != 0; k++)
+              for (int k = 0; buf[k] != 0; k++)
               {
-                if(buf[k] == ',' || buf[k] == '\n')
+                if (buf[k] == ',' || buf[k] == '\n')
                 {
                   buf[k] = ' ';
                 }
               }
 
-              for(int i = 0; i < 34; i++)
+              for (int i = 0; i < 34; i++)
               {
-                if(sscanf(buf, "%hu", &(ribbon[select].X[i])) != 1)
+                if (sscanf(buf, "%hu", &(ribbon[select].X[i])) != 1)
                 {
                   printf("FATAL: Cannot read 34 X values ribbon file\n");
                   return 3;  // --> exit
                 }
-                while(*buf != ' ' && *buf != 0)
+                while (*buf != ' ' && *buf != 0)
                   buf++;
-                if(*buf == ' ')
+                if (*buf == ' ')
                   buf++;
               }
 
               ribbon[select].valid++;
             }
-            else if(strncmp("[Calibration-Y]", buf, 15) == 0)
+            else if (strncmp("[Calibration-Y]", buf, 15) == 0)
             {
               fgets(buf, 1024, ribfile);
-              for(int k = 0; buf[k] != 0; k++)
+              for (int k = 0; buf[k] != 0; k++)
               {
-                if(buf[k] == ',' || buf[k] == '\n')
+                if (buf[k] == ',' || buf[k] == '\n')
                 {
                   buf[k] = ' ';
                 }
               }
 
-              for(int i = 0; i < 33; i++)
+              for (int i = 0; i < 33; i++)
               {
-                if(sscanf(buf, "%hu", &(ribbon[select].Y[i])) != 1)
+                if (sscanf(buf, "%hu", &(ribbon[select].Y[i])) != 1)
                 {
                   printf("FATAL: Cannot read 33 Y values ribbon file\n");
                   return 3;  // --> exit
                 }
-                while(*buf != ' ' && *buf != 0)
+                while (*buf != ' ' && *buf != 0)
                   buf++;
-                if(*buf == ' ')
+                if (*buf == ' ')
                   buf++;
               }
 
@@ -151,7 +151,7 @@ int main(int const argc, char const* const argv[])
   }
   fclose(infile);
 
-  if(ribbon[0].valid < 2 || ribbon[1].valid < 2)
+  if (ribbon[0].valid < 2 || ribbon[1].valid < 2)
   {
     printf("FATAL: failed to find/analyse two complete calibration sets\n");
     return 3;  // --> exit
@@ -162,27 +162,27 @@ int main(int const argc, char const* const argv[])
     ,
     2 * 33 + 2 * 34  // message size
   };
-  if(fwrite(header, 2, 2, outfile) != 2)
+  if (fwrite(header, 2, 2, outfile) != 2)
   {
     printf("FATAL: Error writing binary file\n");
     return 3;  // --> exit
   }
-  if(fwrite(ribbon[0].X, 2, 34, outfile) != 34)
+  if (fwrite(ribbon[0].X, 2, 34, outfile) != 34)
   {
     printf("FATAL: Error writing binary file\n");
     return 3;  // --> exit
   }
-  if(fwrite(ribbon[0].Y, 2, 33, outfile) != 33)
+  if (fwrite(ribbon[0].Y, 2, 33, outfile) != 33)
   {
     printf("FATAL: Error writing binary file\n");
     return 3;  // --> exit
   }
-  if(fwrite(ribbon[1].X, 2, 34, outfile) != 34)
+  if (fwrite(ribbon[1].X, 2, 34, outfile) != 34)
   {
     printf("FATAL: Error writing binary file\n");
     return 3;  // --> exit
   }
-  if(fwrite(ribbon[1].Y, 2, 33, outfile) != 33)
+  if (fwrite(ribbon[1].Y, 2, 33, outfile) != 33)
   {
     printf("FATAL: Error writing binary file\n");
     return 3;  // --> exit
