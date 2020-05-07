@@ -277,7 +277,7 @@ namespace UNDO
 
   void Transaction::traverse(std::function<void(const UNDO::Transaction *)> cb) const
   {
-    std::vector<const Transaction *> list{ this };
+    std::vector<const Transaction *> list { this };
     unsigned long long index = 0;
 
     while(index < list.size())

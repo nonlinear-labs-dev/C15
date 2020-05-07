@@ -14,24 +14,6 @@ class PedalMenuEditorEntry : public MenuEditorEntry
   {
   }
 
-  bool redraw(FrameBuffer& fb) override
-  {
-    auto ret = SetupLabel::redraw(fb);
-
-    /*if(isHighlight())
-    {
-      fb.setColor(FrameBufferColors::C179);
-      fb.drawRect(getPosition());
-    }*/
-
-    return ret;
-  }
-
-  int getIndex() const
-  {
-    return m_index;
-  }
-
  protected:
   void setFontColor(FrameBuffer& fb) const override
   {
