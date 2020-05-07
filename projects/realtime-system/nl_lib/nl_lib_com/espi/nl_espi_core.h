@@ -27,7 +27,14 @@ typedef struct
   GPIO_NAME_T* sap;
 } ESPI_PINS_T;
 
-void ESPI_Init(uint32_t clkRateInHz);
+extern LPC_SSPn_Type* ESPI_SSP;
+
+inline void ESPI_Init(uint32_t clkRateInHz)
+{
+  /** init SSP peripheral */
+  SPI_DMA_Init(ESPI_SSP, SPI_MODE_MASTER, clkRateInHz);
+}
+
 void ESPI_Config(LPC_SSPn_Type* SSPx, ESPI_PINS_T* espi_pins);
 
 void     ESPI_SAP_Set(void);
