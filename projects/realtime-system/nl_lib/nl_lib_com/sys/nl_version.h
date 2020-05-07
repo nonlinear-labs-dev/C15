@@ -18,7 +18,8 @@
 // 58 == release candidate, beta test
 // 59 == release candidate, beta test
 // 60 == release candidate, beta test, lots of improvements (Keybed Scanner)
-#define SW_VERSION 60206
+// 61 == release candidate, beta test, removed all standard libraries, and now using hardware floating point
+#define SW_VERSION 61206
 
 void* GetVersionString();
 
