@@ -37,6 +37,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 include_directories ("./nl_lib/nl_lib_com")
+include_directories (${CMAKE_SOURCE_DIR}/projects)
 
 add_subdirectory (M0_project)
 add_subdirectory (M4_project)
