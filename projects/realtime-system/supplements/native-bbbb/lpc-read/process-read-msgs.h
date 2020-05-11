@@ -13,6 +13,7 @@
 #define NO_UNKNOWN      (0x0080)
 #define NO_STATDATA     (0x0100)
 #define NO_OVERLAY      (0x0200)
-#define NO_ALL          (0x03FF)
+#define NO_KEY_LOG      (0x0400)
+#define NO_ALL          (0x07FF)
 
 void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t* const data, uint16_t flags);

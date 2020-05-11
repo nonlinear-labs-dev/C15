@@ -132,14 +132,47 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
   uint16_t *p;
   double    last[8], intermediate[8], min[8], max[8], scale[8];
   uint16_t  adc[8], deadzone[8];
+  int       same;
 
   EHC_ControllerConfig_T config[8];
   EHC_ControllerStatus_T status[8];
 
   static uint32_t lastMessage = ~0;
+  static double   makeTime    = 0;
 
   switch (cmd)
   {
+    case LPC_BB_MSG_TYPE_KEY_EMUL:
+      if (flags & NO_KEY_LOG)
+        return;
+      dump(cmd, len, data, flags);
+      if (len != 3)
+      {
+        printf("PARAM : wrong length of %d\n", len);
+        return;
+      }
+      if ((same = !(flags & NO_OVERLAY) && (lastMessage == (((uint32_t) cmd << 16)) + (uint32_t) data[0])))
+        cursorUp(1);
+      displayCounter();
+      double time = (data[1] | (int) data[2] << 16) / 1000.0;
+      if (time > 0)
+      {
+        makeTime = time;
+        printf("KEY = %3d, %8.2lfms            ", data[0], time);
+      }
+      else
+      {
+        if (same)
+          printf("KEY = %3d, %8.2lfms  %8.2lfms", data[0], makeTime, time);
+        else
+          printf("KEY = %3d,             %8.2lfms", data[0], time);
+      }
+      if (data[0] <= HW_SOURCE_ID_PEDAL_8)
+        printf(" (%5.1lf%%)", 100.0 * data[1] / 16000.0);
+      printf("\n");
+      lastMessage = (cmd << 16) + data[0];
+      return;
+
     case LPC_BB_MSG_TYPE_PARAMETER:
       if (flags & NO_PARAMS)
         return;
@@ -205,24 +238,27 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       if (flags & NO_STATDATA)
         return;
       dump(cmd, len, data, flags);
-      if (len != 9)
+      if (len != 10)
       {
         printf("STATUS : wrong length of %d\n", len);
         return;
       }
       if (!(flags & NO_OVERLAY) && (lastMessage == ((uint32_t) cmd << 16)))
-        cursorUp(9);
+        cursorUp(10);
       displayCounter();
       printf("SYSTEM STATUS:\n");
-      printf("  M4 ticker      : %5d\n", data[0]);
-      printf("  Scheduler      : %5d task overruns\n", data[1]);
-      printf("  Scheduler      : %5d tasks max. per time-slice\n", data[2]);
-      printf("  Scheduler      : %5dus max. task runtime\n", data[3]);
-      printf("  Scheduler      : %5dus max. time-slice\n", data[4]);
-      printf("  BBB Msg        : %5d buffer overruns / ESPI send fails\n", data[5]);
-      printf("  TCD Msg        : %5d buffer overruns / USB send fails\n", data[6]);
-      printf("  M0 ADC Scanner : %5dus max. round trip time\n", data[7]);
-      // printf("  M0 Key Scanner : %5d (overrun flag)\n", data[8]);
+      printf("  M4 ticker      : %10u\n", (unsigned) data[0] + ((unsigned) data[1] << 16));
+      printf("  Scheduler      : %5d task overruns\n", data[2]);
+      printf("  Scheduler      : %5d tasks max. per time-slice\n", data[3]);
+      printf("  Scheduler      : %5dus max. task runtime\n", data[4]);
+      printf("  Scheduler      : %5dus max. time-slice\n", data[5]);
+      printf("  BBB Msg        : %5d buffer overruns / ESPI send fails\n", data[6]);
+      printf("  TCD Msg        : %5d buffer overruns / USB send fails\n", data[7]);
+      printf("  M0 ADC Scanner : %5dus max. round trip time\n", data[8]);
+      if (data[8] != 0xFFFF)
+        printf("  M0 Key Scanner : %5d (overrun flag)\n", data[9]);
+      else
+        printf("  M0 Key Scanner : -n/a- (overrun flag)\n");
       lastMessage = cmd << 16;
       return;
 
