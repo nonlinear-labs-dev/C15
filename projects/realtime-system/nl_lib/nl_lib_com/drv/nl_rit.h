@@ -13,44 +13,16 @@
 #include "cmsis/LPC43xx.h"
 #include "drv/nl_cgu.h"
 
-inline void RIT_Init_IntervalInUs(uint32_t const time_us)
+inline void RIT_Init_IntervalInHz(uint32_t const freq_hz)
 {
-  uint32_t cmp_value;
-
   /* Initialize RITimer */
   LPC_RITIMER->COMPVAL = 0xFFFFFFFF;
   LPC_RITIMER->MASK    = 0x00000000;
   LPC_RITIMER->CTRL    = 0x0C;
   LPC_RITIMER->COUNTER = 0x00000000;
 
-  /* Determine approximate compare value based on clock rate and passed interval */
-  cmp_value = (uint32_t)(NL_LPC_CLK / 1000000ul * time_us);
-
   /* Set timer compare value */
-  LPC_RITIMER->COMPVAL = cmp_value;
-
-  /* Set timer enable clear bit to clear timer to 0 whenever
-	 * counter value equals the contents of RICOMPVAL */
-  LPC_RITIMER->CTRL |= (1 << 1);
-
-  NVIC_EnableIRQ(RITIMER_IRQn);
-}
-
-inline void RIT_Init_IntervalInNs(uint32_t const ns)
-{
-  uint32_t cmp_value;
-
-  /* Initialize RITimer */
-  LPC_RITIMER->COMPVAL = 0xFFFFFFFF;
-  LPC_RITIMER->MASK    = 0x00000000;
-  LPC_RITIMER->CTRL    = 0x0C;
-  LPC_RITIMER->COUNTER = 0x00000000;
-
-  /* Determine approximate compare value based on clock rate and passed interval */
-  cmp_value = (uint32_t)(((NL_LPC_CLK / 1000000ul) * ns) / 1000ul);
-
-  /* Set timer compare value */
-  LPC_RITIMER->COMPVAL = cmp_value;
+  LPC_RITIMER->COMPVAL = NL_LPC_CLK / freq_hz;
 
   /* Set timer enable clear bit to clear timer to 0 whenever
 	 * counter value equals the contents of RICOMPVAL */
