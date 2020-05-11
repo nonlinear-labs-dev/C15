@@ -45,8 +45,9 @@
 #include "ipc/emphase_ipc.h"
 #include "usb/nl_usb_midi.h"
 #include "drv/nl_cgu.h"
+#include <cr_section_macros.h>
 
-__attribute__((aligned(4))) static uint8_t  keyOn[NUM_KEYS];    // flag array to store logical on/off state
+__attribute__((aligned(4))) static uint16_t keyOff[NUM_KEYS];   // flag array to store logical on/off state
 __attribute__((aligned(4))) static uint32_t keyTime[NUM_KEYS];  // in M0 systicks, which are already left-shifted (for speed)
 
 typedef union
@@ -63,6 +64,7 @@ __attribute__((aligned(4))) static SwitchUnion_T currentSwitches;   // current s
 __attribute__((aligned(4))) static SwitchUnion_T changedSwitches;   // which switches have changed
 __attribute__((aligned(4))) static SwitchUnion_T savedSwitches[8];  // saved switch state
 __attribute__((aligned(4))) static uint8_t       tempLower;         // we need a temp because of the interleaving
+__attribute__((aligned(4))) static uint32_t      ticker;            // incremented after one full scanning round
 
 // direct GPIO access for max execution speed
 // NOTE: Overrides definitions made in "boards/emphase_v5.c" !!!
@@ -103,6 +105,14 @@ __attribute__((aligned(4))) void (*KBS_Process)(void) = Process01;
 *******************************************************************************/
 void KBS_Init(void)
 {
+  uint16_t mask = 0x0101;
+  for (int i = 0; i < 64; i++)
+  {
+    keyOff[i] = mask;
+    mask <<= 1;
+    if (mask == 0x0100)
+      mask = 0x0101;
+  }
   KBS_Process = Process01;
   SetHwLine(0);  // Initially select bank 0 lower switches, before main process starts stepping lines
 }
@@ -137,112 +147,113 @@ void KBS_Config(KBS_PINS_T *pins)
 	            clobbering lower switches for a bank before CheckForStateChanges2()
 	            had a chance to process it.
 *******************************************************************************/
-static void Process01(void)
+__attribute__((section(".ramfunc"))) static void Process01(void)
 {
+  ticker += (1 << IPC_KEYBUFFER_TIME_SHIFT);
   GetHwLowerSwitches();
   SetHwLine(1);               // prepare readout upper switches of bank 0
   CheckForStateChanges2(56);  // check (stage 2), bank 7
   KBS_Process = Process02;
 }
-static void Process02(void)
+__attribute__((section(".ramfunc"))) static void Process02(void)
 {
   GetHwUpperSwitches();
   SetHwLine(2);              // prepare readout lower switches of bank 1
   CheckForStateChanges1(0);  // check (stage 1), bank 0
   KBS_Process = Process03;
 }
-static void Process03(void)
+__attribute__((section(".ramfunc"))) static void Process03(void)
 {
   GetHwLowerSwitches();
   SetHwLine(3);              // prepare readout upper switches of bank 1
   CheckForStateChanges2(0);  // check (stage 2), bank 0
   KBS_Process = Process04;
 }
-static void Process04(void)
+__attribute__((section(".ramfunc"))) static void Process04(void)
 {
   GetHwUpperSwitches();
   SetHwLine(4);              // prepare readout lower switches of bank 2
   CheckForStateChanges1(8);  // check (stage 1), bank 1
   KBS_Process = Process05;
 }
-static void Process05(void)
+__attribute__((section(".ramfunc"))) static void Process05(void)
 {
   GetHwLowerSwitches();
   SetHwLine(5);              // prepare readout upper switches of bank 2
   CheckForStateChanges2(8);  // check (stage 2), bank 1
   KBS_Process = Process06;
 }
-static void Process06(void)
+__attribute__((section(".ramfunc"))) static void Process06(void)
 {
   GetHwUpperSwitches();
   SetHwLine(6);               // prepare readout lower switches of bank 3
   CheckForStateChanges1(16);  // check (stage 1), bank 2
   KBS_Process = Process07;
 }
-static void Process07(void)
+__attribute__((section(".ramfunc"))) static void Process07(void)
 {
   GetHwLowerSwitches();
   SetHwLine(7);               // prepare readout upper switches of bank 3
   CheckForStateChanges2(16);  // check (stage 2), bank 2
   KBS_Process = Process08;
 }
-static void Process08(void)
+__attribute__((section(".ramfunc"))) static void Process08(void)
 {
   GetHwUpperSwitches();
   SetHwLine(8);               // prepare readout lower switches of bank 4
   CheckForStateChanges1(24);  // check (stage 1), bank 3
   KBS_Process = Process09;
 }
-static void Process09(void)
+__attribute__((section(".ramfunc"))) static void Process09(void)
 {
   GetHwLowerSwitches();
   SetHwLine(9);               // prepare readout upper switches of bank 4
   CheckForStateChanges2(24);  // check (stage 2), bank 3
   KBS_Process = Process10;
 }
-static void Process10(void)
+__attribute__((section(".ramfunc"))) static void Process10(void)
 {
   GetHwUpperSwitches();
   SetHwLine(10);              // prepare readout lower switches of bank 5
   CheckForStateChanges1(32);  // check (stage 1), bank 4
   KBS_Process = Process11;
 }
-static void Process11(void)
+__attribute__((section(".ramfunc"))) static void Process11(void)
 {
   GetHwLowerSwitches();
   SetHwLine(11);              // prepare readout upper switches of bank 5
   CheckForStateChanges2(32);  // check (stage 2), bank 4
   KBS_Process = Process12;
 }
-static void Process12(void)
+__attribute__((section(".ramfunc"))) static void Process12(void)
 {
   GetHwUpperSwitches();
   SetHwLine(12);              // prepare readout lower switches of bank 6
   CheckForStateChanges1(40);  // check (stage 1), bank 5
   KBS_Process = Process13;
 }
-static void Process13(void)
+__attribute__((section(".ramfunc"))) static void Process13(void)
 {
   GetHwLowerSwitches();
   SetHwLine(13);              // prepare readout upper switches of bank 6
   CheckForStateChanges2(40);  // check (stage 2), bank 5
   KBS_Process = Process14;
 }
-static void Process14(void)
+__attribute__((section(".ramfunc"))) static void Process14(void)
 {
   GetHwUpperSwitches();
   SetHwLine(14);              // prepare readout lower switches of bank 7
   CheckForStateChanges1(48);  // check (stage 1), bank 6
   KBS_Process = Process15;
 }
-static void Process15(void)
+__attribute__((section(".ramfunc"))) static void Process15(void)
 {
   GetHwLowerSwitches();
   SetHwLine(15);              // prepare readout upper switches of bank 7
   CheckForStateChanges2(48);  // check (stage 2), bank 6
   KBS_Process = Process16;
 }
-static void Process16(void)
+__attribute__((section(".ramfunc"))) static void Process16(void)
 {
   GetHwUpperSwitches();
   SetHwLine(0);               // prepare readout lower switches of bank 0
@@ -324,27 +335,15 @@ static __attribute__((always_inline)) inline void DetectNotes(uint32_t const key
 {
   if (!(changedSwitches.both & mask))
     return;
-  if (currentSwitches.upper & mask)  // upper contact closed ?
-  {
-    if (currentSwitches.lower & mask)  // lower contact also closed ?
-    {
-      if (!keyOn[key])  // not already on --> key-on event
-      {
-        keyOn[key] = 1;  // key is down and on
-        Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(key | IPC_KEYBUFFER_NOTEON | (s.timer - keyTime[key]));
-      }
-      return;
-    }
-    // now upper contact is closed and lower contact must be open
-    keyTime[key] = s.timer;  // start time measuring
+
+  if ((currentSwitches.both & mask) == keyOff[key])
+  {  // either both switches on AND key off, or both switches off AND key on ==> key event (either on or off)
+    Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(key | ((keyOff[key] ^= mask) ? 0 : IPC_KEYBUFFER_NOTEON) | (ticker - keyTime[key]));
     return;
   }
-  // now both contacts must be open
-  if (keyOn[key])  // not already off --> key-off event
-  {
-    keyOn[key] = 0;  // key is up and off
-    Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(key | (s.timer - keyTime[key]));
-  }
+
+  // now upper contact is closed and lower contact must be open (or vice-versa, irrelevant)
+  keyTime[key] = ticker;  // start time measuring
 }
 
 // EOF
