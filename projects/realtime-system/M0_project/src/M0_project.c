@@ -12,6 +12,7 @@
 #include "cmsis/LPC43xx.h"
 #include "boards/emphase_v5.h"
 #include "ipc/emphase_ipc.h"
+#include "sys/delays.h"
 #include "drv/nl_rit.h"
 #include "drv/nl_cgu.h"
 #include "drv/nl_gpdma.h"
@@ -28,9 +29,9 @@
 #define ESPI_MODE_ATT_DOUT LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_DIN      LPC_SSP0, ESPI_CPOL_1 | ESPI_CPHA_1
 
-static inline uint32_t M0TicksToUS(uint32_t const ticks)
+static inline uint32_t M4TicksToUS(uint32_t const ticks)
 {
-  return (M0_SYSTICK_IN_NS * (ticks >> IPC_KEYBUFFER_TIME_SHIFT) + 499) / 1000;  // rounded
+  return M4_PERIOD_US * ticks;
 }
 
 /******************************************************************************/
@@ -65,12 +66,10 @@ static void ProcessADCs(void)
   if (first)
   {
     first      = 0;
-    totalTicks = s.timer;
+    totalTicks = s.ticker;
   }
   else
   {
-    IPC_SetADCTime(savedTicks = (s.timer - totalTicks));
-    totalTicks = s.timer;
     // Feedback loop to adjust the cycle time to collect all the ADC data 16 times
     // per 12.5ms ADC cycle (the feedback is slow, only +- 1 tick, ~1us, of adjustment
     // per run of this process routine).
@@ -78,25 +77,29 @@ static void ProcessADCs(void)
     // which assumes we have 16 values collected during the 12.5ms.
     // The feedback loop is protected from trying to make the cycle time shorter
     // than physically possible, determined by interrupt load. This is the standard
-    // case at the moment as ProcessADCs() execution time is just slightly longer
-    // than the 781us required.
-    while (s.timer - totalTicks < compensatingTicks)
-      ;
-    if (M0TicksToUS(savedTicks) < 12500 / 16)  // cycle was faster than 16 rounds per 12.5ms ?
-      compensatingTicks += (1 << IPC_KEYBUFFER_TIME_SHIFT);
+    // case at the moment as ProcessADCs() execution time is just slightly longer,
+    // with ~820us, than the 781us required.
+    IPC_SetADCTime(savedTicks = (s.ticker - totalTicks));
+    totalTicks = s.ticker;
+
+    for (uint32_t i = 0; i < compensatingTicks; i++)
+      DELAY_HUNDRED_CLK_CYCLES;  // something like 500ns...1us, depending on IRQ load
+
+    if (M4TicksToUS(savedTicks) < 12500 / 16 - 7)  // cycle was faster than 16 rounds per 12.5ms (the 7 is a fudge factor)?
+      compensatingTicks++;
     else
     {
       if (compensatingTicks)  // cycle time can be shortened ?
-        compensatingTicks -= (1 << IPC_KEYBUFFER_TIME_SHIFT);
+        compensatingTicks--;
     }
   }
 
-  // switch mode: 13.6 µs
-  // now, all adc channel & detect values have been read ==> sync read index to write index
+  // now, all adc channel & detect values have been read ==> sync read index to last write index
   IPC_AdcUpdateReadIndex();
   // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
   IPC_AdcBufferWriteNext();
 
+  // switch mode: 13.6 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_ADC);
   NL_GPDMA_Poll();
 
@@ -116,7 +119,7 @@ static void ProcessADCs(void)
     default:
       break;
   }
-  // pedal 1 : 57 µs
+  // pedal 1 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_RING);
   NL_GPDMA_Poll();
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_RING);
@@ -127,7 +130,7 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_TIP, val);
 
-  // pedal 2 : 57 µs
+  // pedal 2 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_RING);
   NL_GPDMA_Poll();
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_RING);
@@ -138,7 +141,7 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_TIP, val);
 
-  // pedal 3 : 57 µs
+  // pedal 3 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_RING);
   NL_GPDMA_Poll();
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_RING);
@@ -149,7 +152,7 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_TIP, val);
 
-  // pedal 4 : 57 µs
+  // pedal 4 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_RING);
   NL_GPDMA_Poll();
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_RING);
@@ -160,7 +163,7 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_TIP, val);
 
-  // detect pedals: 32.5 µs
+  // detect pedals: 32.5 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_DIN);
   NL_GPDMA_Poll();
 
@@ -173,7 +176,7 @@ static void ProcessADCs(void)
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_DETECT, ((detect & 0b01000000) >> 6) ? 4095 : 0);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) ? 4095 : 0);
 
-  // set pull resistors: best case: 17.3 µs - worst case: 36 µs
+  // set pull resistors: best case: 17.3 µs - worst case: 36 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_ATT_DOUT);
   NL_GPDMA_Poll();
 
@@ -187,7 +190,7 @@ static void ProcessADCs(void)
 
   NL_GPDMA_Poll();
 
-  // pitchbender: 42 µs
+  // pitchbender: 42 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_ADC);
   NL_GPDMA_Poll();
 
@@ -196,13 +199,13 @@ static void ProcessADCs(void)
 
   IPC_WriteAdcBuffer(IPC_ADC_PITCHBENDER, ESPI_DEV_Pitchbender_GetValue());
 
-  // aftertouch: 29 µs
+  // aftertouch: 29 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Aftertouch_EspiPull();
   NL_GPDMA_Poll();
 
   IPC_WriteAdcBuffer(IPC_ADC_AFTERTOUCH, ESPI_DEV_Aftertouch_GetValue());
 
-  // 2 ribbons: 57 µs
+  // 2 ribbons: 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Ribbons_EspiPull_Upper();
   NL_GPDMA_Poll();
   IPC_WriteAdcBuffer(IPC_ADC_RIBBON1, ESPI_DEV_Ribbons_GetValue(UPPER_RIBBON));
@@ -221,10 +224,8 @@ int main(void)
 
   NL_GPDMA_Init(0b00000011);  // inverse to the mask in the M4_Main
 
-  // 20MHz clock freq... works up to ~50MHz in V7.1 hardware (AT not checked, though).
-  // With 20MHz, max M0 cycle time seems to be just under 90us even worst case, so
-  // overrun (when > 125us) is unlikely, the scheduling always stays in sync, no missed
-  // time slices
+  // Increased from 1.6 to 2MHz clock freq... works up to ~5MHz in V7.1 hardware.
+  // With 2MHz, max M0 ADC scanning cycle time is reduced by about 15%
   ESPI_Init(2000000);
 
   ESPI_DEV_Pedals_Init();
@@ -232,7 +233,7 @@ int main(void)
   ESPI_DEV_Pitchbender_Init();
   ESPI_DEV_Ribbons_Init();
 
-  RIT_Init_IntervalInNs(M0_SYSTICK_IN_NS);
+  RIT_Init_IntervalInHz(M0_FREQ_HZ);
 
   while (1)
     ProcessADCs();
@@ -241,32 +242,18 @@ int main(void)
 }
 
 /******************************************************************************/
-static inline void SendInterruptToM4(void)
-{
-  __DSB();
-  __SEV();
-}
 
-/******************************************************************************/
-
-void M0_RIT_OR_WWDT_IRQHandler(void)
+__attribute__((section(".ramfunc"))) void M0_RIT_OR_WWDT_IRQHandler(void)
 {
   // Clear interrupt flag early, to allow for short, single cycle IRQ overruns,
   // that is if, the keybed scanner occasionally takes longer than one time slot
   // (but no more than two), the interrupt routine is invoked again as soon as
-  // it completed the first pass. By this, no IRQ is lost and M4 clocking precision
-  // is guaranteed, albeit with an occasional jitter.
+  // it completed the first pass. By this, no IRQ is lost, albeit the ticker
+  // used in KBS_Process for key timing will have a little bit of jitter.
   // Only when eeprom memory access etc slows down the bus there is a slight
   // chance of a burst of overruns where the M0 main process hardly gets any execution
-  // time and the clocking of the M4 core may slew for that time.
+  // time
   RIT_ClearInt();
-
-  s.timer += (1 << IPC_KEYBUFFER_TIME_SHIFT);
-
-  if (!(s.timer & (M0_SYSTICKS_PER_PERIOD_MASK << IPC_KEYBUFFER_TIME_SHIFT)))
-    SendInterruptToM4();
-
   (*KBS_Process)();
-
-  // s.RitCrtlReg |= RIT_GetCtrlReg();
+  s.RitCrtlReg |= RIT_GetCtrlReg();  // note that this profiling increases IRQ time itself (Heisenberg ;-)
 }
