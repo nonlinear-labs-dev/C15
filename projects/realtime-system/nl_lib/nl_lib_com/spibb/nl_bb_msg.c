@@ -20,7 +20,7 @@
 #include "sys/nl_eeprom.h"
 #include "sys/nl_coos.h"
 #include "sys/nl_version.h"
-#include "sys/nl_ticker.h"
+#include "sys/nl_watchdog.h"
 #include "heartbeat/nl_heartbeat.h"
 #include "shared/lpc-defs.h"
 
@@ -290,6 +290,12 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
       case LPC_SETTING_ID_PLAY_MODE_LOWER_RIBBON_BEHAVIOUR:  // Play mode ribbon 2 behaviour
         ADC_WORK_SetRibbon2Behaviour(data[1]);               // 0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
         break;
+      case LPC_SETTING_ID_UPPER_RIBBON_VALUE:
+        ADC_WORK_SetRibbon1OutputValue(data[1]);
+        break;
+      case LPC_SETTING_ID_LOWER_RIBBON_VALUE:
+        ADC_WORK_SetRibbon2OutputValue(data[1]);
+        break;
       case LPC_SETTING_ID_BASE_UNIT_UI_MODE:   // "Unit Mode" - Ribbon 1 can be switched between Edit and Play mode.
         ADC_WORK_SetRibbon1EditMode(data[1]);  // 0: Play, 1: Parameter Edit
         break;
@@ -322,6 +328,9 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;
       case LPC_SETTING_ID_ENABLE_EHC:
         NL_EHC_Enable(data[1]);
+        break;
+      case LPC_SETTING_ID_ENABLE_KEY_LOGGING:
+        POLY_KeyLogging(data[1]);
         break;
       case LPC_SETTING_ID_AUDIO_ENGINE_CMD:
         MSG_SendAEDevelopperCmd(data[1]);
