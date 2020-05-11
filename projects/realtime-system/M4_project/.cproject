@@ -38,6 +38,16 @@
 									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1285262424" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fsingle-precision-constant" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.426990680" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
@@ -148,12 +158,20 @@
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M4"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
-									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.342537190" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fsingle-precision-constant" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.156073012" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
-								<option id="com.crt.advproject.gcc.hdrlib.962960206" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.specs.1068299426" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.962960206" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.none" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.1068299426" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.none" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.fpu.1508984804" name="Floating point" superClass="com.crt.advproject.gcc.fpu" value="com.crt.advproject.gcc.fpu.fpv4.hard" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.629190753" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4}&quot;"/>

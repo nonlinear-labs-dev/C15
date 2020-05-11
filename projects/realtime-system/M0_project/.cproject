@@ -30,12 +30,14 @@
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M0"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
-									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.92120640" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.239271170" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
-								<option id="com.crt.advproject.gcc.hdrlib.683141649" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.specs.1713976219" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.683141649" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.none" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.1713976219" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1937775030" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/nl_lib_com}&quot;"/>
@@ -134,12 +136,14 @@
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M0"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
-									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1577009247" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.1227551263" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
-								<option id="com.crt.advproject.gcc.hdrlib.1565904813" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.specs.1750292575" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.1565904813" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.none" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.1750292575" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.297768844" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/nl_lib_com}&quot;"/>
@@ -180,7 +184,7 @@
 								<option id="com.crt.advproject.link.gcc.hdrlib.2047654277" name="Library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.newlibnano.nohost" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.gcc.multicore.slave.1285402177" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave"/>
 								<option id="gnu.c.link.option.paths.244063509" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m0/Debug}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.libs.2050190243" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="nl_lib_m0"/>

@@ -39,7 +39,7 @@
 									<listOptionValue builtIn="false" value="CORE_M4"/>
 									<listOptionValue builtIn="false" value="__USE_CMSIS=CMSIS_LPC43xx_DriverLib"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
-									<listOptionValue builtIn="false" value="__NEWLIB__"/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.2116916296" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fsingle-precision-constant" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.1925830102" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
@@ -49,24 +49,25 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../nl_lib_com&quot;"/>
 								</option>
 								<option id="com.crt.advproject.gcc.fpu.466104131" name="Floating point" superClass="com.crt.advproject.gcc.fpu" value="com.crt.advproject.gcc.fpu.fpv4.hard" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.hdrlib.1965400331" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.hdrlib.1965400331" name="Library headers" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.none" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lib.debug.option.optimization.level.162182297" name="Optimization Level" superClass="com.crt.advproject.gcc.lib.debug.option.optimization.level" value="gnu.c.optimization.level.general" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lib.debug.option.debugging.level.244438450" name="Debug Level" superClass="com.crt.advproject.gcc.lib.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.lto.191187803" name="Enable Link-time optimization (-flto)" superClass="com.crt.advproject.gcc.lto" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.optimization.flags.115821174" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="" valueType="string"/>
 								<option id="gnu.c.compiler.option.warnings.extrawarn.1677208002" name="Extra warnings (-Wextra)" superClass="gnu.c.compiler.option.warnings.extrawarn" value="false" valueType="boolean"/>
-								<option id="com.crt.advproject.gcc.specs.1470508324" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.newlibnano" valueType="enumerated"/>
+								<option id="com.crt.advproject.gcc.specs.1470508324" name="Specs" superClass="com.crt.advproject.gcc.specs" value="com.crt.advproject.gcc.specs.none" valueType="enumerated"/>
 								<inputType id="com.crt.advproject.compiler.input.372262461" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
 							<tool command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GASErrorParser" id="com.crt.advproject.gas.lib.debug.924680876" name="MCU Assembler" superClass="com.crt.advproject.gas.lib.debug">
 								<option id="com.crt.advproject.gas.arch.474403797" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
 								<option id="com.crt.advproject.gas.thumb.1789754416" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
-								<option id="gnu.both.asm.option.flags.crt.786747300" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__ -DDEBUG -D__CODE_RED -DCORE_M4 -D__USE_CMSIS=CMSIS_LPC43xx_DriverLib -D__LPC43XX__" valueType="string"/>
+								<option id="gnu.both.asm.option.flags.crt.786747300" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DDEBUG -D__CODE_RED -DCORE_M4 -D__USE_CMSIS=CMSIS_LPC43xx_DriverLib -D__LPC43XX__" valueType="string"/>
 								<option id="gnu.both.asm.option.include.paths.177008671" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/nl_lib_m4/src}&quot;"/>
 								</option>
-								<option id="com.crt.advproject.gas.fpu.1056496682" name="Floating point" superClass="com.crt.advproject.gas.fpu" value="com.crt.advproject.gas.fpu.fpv4" valueType="enumerated"/>
-								<option id="com.crt.advproject.gas.hdrlib.1215213135" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.codered" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.fpu.1056496682" name="Floating point" superClass="com.crt.advproject.gas.fpu" value="com.crt.advproject.gas.fpu.fpv4.hard" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.hdrlib.1215213135" name="Library headers" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.none" valueType="enumerated"/>
+								<option id="com.crt.advproject.gas.specs.1541740495" name="Specs" superClass="com.crt.advproject.gas.specs" value="com.crt.advproject.gas.specs.none" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1129987118" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="com.crt.advproject.assembler.input.674250113" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
 							</tool>
@@ -116,6 +117,13 @@
 									<listOptionValue builtIn="false" value="CORE_M4"/>
 									<listOptionValue builtIn="false" value="__USE_CMSIS=CMSIS_LPC43xx_DriverLib"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.2145178328" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -fsingle-precision-constant" valueType="string"/>
