@@ -20,7 +20,7 @@ enum LPC_BB_MESSAGE_TYPES
   LPC_BB_MSG_TYPE_SENSORS_RAW   = 0x0E00,  // direction: output; arguments (uint16): 13, sensor raw data (see nl_tcd_adc_work.c)
   LPC_BB_MSG_TYPE_EHC_CONFIG    = 0x0F00,  // direction: input;  arguments (uint16): 2, 1x command, 1x data
   LPC_BB_MSG_TYPE_EHC_DATA      = 0x1000,  // direction: output; arguments (uint16): n, (see nl_ehc_ctrl.c)
-  LPC_BB_MSG_TYPE_KEY_EMUL      = 0x1100,  // direction: input;  arguments (uint16): 3, midi key , time(lo), time(high)
+  LPC_BB_MSG_TYPE_KEY_EMUL      = 0x1100,  // direction: input/output;  arguments (uint16): 3, midi key , time(lo), time(high)
   LPC_BB_MSG_TYPE_STAT_DATA     = 0x1200,  // direction: output; arguments (uint16): 4
 };
 
@@ -49,9 +49,11 @@ enum LPC_SETTING_IDS
   LPC_SETTING_ID_EDIT_SMOOTHING_TIME              = 33,      // not used, ==> tTcdRange(0, 16000)
   LPC_SETTING_ID_PRESET_GLITCH_SUPPRESSION        = 34,      // not used, OFF = 0, ON = 1
   LPC_SETTING_ID_BENDER_RAMP_BYPASS               = 35,      // not used, OFF = 0, ON = 1
+  LPC_SETTING_ID_UPPER_RIBBON_VALUE               = 36,      // set initial output value (for relative mode)
+  LPC_SETTING_ID_LOWER_RIBBON_VALUE               = 37,      // set initial output value (for relative mode)
   LPC_SETTING_ID_SOFTWARE_MUTE_OVERRIDE           = 0xFF01,  // direction: input; arguments(uint16): 1, mode bit pattern
   LPC_SETTING_ID_SEND_RAW_SENSOR_DATA             = 0xFF02,  // direction: input; arguments(uint16): 1, flag (!= 0)
-  LPC_SETTING_ID_SEND_FORCED_KEY                  = 0xFF03,  // unused
+  LPC_SETTING_ID_ENABLE_KEY_LOGGING               = 0xFF03,  // direction: input; arguments(uint16): 1, flag (!= 0)
   LPC_SETTING_ID_ENABLE_EHC                       = 0xFF04,  // direction: input; arguments(uint16): 1, flag (!= 0)
   LPC_SETTING_ID_AUDIO_ENGINE_CMD                 = 0xFF05,  // direction: input; arguments(uint16): 1, command (1:testtone OFF; 2:testtone ON; 3:default sound)
   LPC_SETTING_ID_SYSTEM_SPECIAL                   = 0xFF06,  // direction: input; arguments(uint16): 1, command (1:reset heartbeat: 2: system reset: 3:Enable MIDI)
