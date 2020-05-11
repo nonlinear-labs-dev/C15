@@ -67,7 +67,7 @@ SECTIONS
         KEEP(*(.bss.$RESERVED*))
         . = ALIGN(4) ;
         _end_uninit_RESERVED = .;
-    } > RamLocM4
+    } > RamLoc40
 
 
 	/* Main DATA section (RamLoc40) */
@@ -80,7 +80,7 @@ SECTIONS
 	   *(.data*)
 	   . = ALIGN(4) ;
 	   _edata = . ;
-	} > RamLocM4 AT>MFlashA512
+	} > RamLoc40 AT>MFlashA512
 
 
     /* MAIN BSS SECTION */
@@ -92,7 +92,7 @@ SECTIONS
         . = ALIGN(4) ;
         _ebss = .;
         PROVIDE(end = .);
-    } > RamLocM4
+    } > RamLoc40
 
 
     /* DEFAULT NOINIT SECTION */
@@ -102,11 +102,11 @@ SECTIONS
         *(.noinit*)
          . = ALIGN(4) ;
         _end_noinit = .;
-    } > RamLocM4
+    } > RamLoc40
 
     /*  Export StackTop and HeapBase, must be done BEFORE the shared section declaration */
     PROVIDE(_pvHeapStart = DEFINED(__user_heap_base) ? __user_heap_base : .);
-    PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_RamLocM4 - 0);
+    PROVIDE(_vStackTop = DEFINED(__user_stack_top) ? __user_stack_top : __top_RamLoc40 - 0);
     
     /* SHARED Section */
     .shared (NOLOAD):  ALIGN(4)
@@ -115,5 +115,5 @@ SECTIONS
         *(.shared*)
          . = ALIGN(4) ;
         _end_shared = .;
-    } > RamShared
+    } > RamAHB16
 }
