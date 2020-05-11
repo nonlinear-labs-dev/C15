@@ -12,8 +12,9 @@
 #include "nl_tcd_msg.h"
 #include "ipc/emphase_ipc.h"
 #include "drv/nl_cgu.h"
+#include "spibb/nl_bb_msg.h"
 
-//------- modul local variables
+//------- module local variables
 
 static uint32_t keyEvent[32];  // array for new events read from the ring buffer for keybed events
 
@@ -22,13 +23,26 @@ static uint32_t allVelTables[VEL_CURVE_COUNT][65] = {};  // converts time differ
                                                          // element 64: longest timeInUs (526788 us or higher) -> 0     = min. velocity
 static uint32_t *velTable = allVelTables[VEL_CURVE_NORMAL];
 
+enum KeyLog_T
+{
+  LOG_OFF = 0,
+  LOG_ON,
+};
+
+static enum KeyLog_T logKeys = LOG_OFF;
+
+void POLY_KeyLogging(uint16_t const on)
+{
+  logKeys = (on != 0) ? LOG_ON : LOG_OFF;
+}
+
 /*******************************************************************************
 @brief  	Generate_VelTable - generates the elements of velTable[]
 @param[in]	curve - selects one of the five verlocity curves
 			table index: 0 ... 64 (shortest ... longest key-switch time)
 			table values: 16383 ... 0
 *******************************************************************************/
-void Generate_VelTable(uint32_t curve)
+static void Generate_VelTable(uint32_t const curve)
 {
   if (curve >= VEL_CURVE_COUNT)
     return;
@@ -79,7 +93,7 @@ void POLY_Init(void)
 /******************************************************************************
 	@brief		Select a Velocity table
 *******************************************************************************/
-void POLY_Select_VelTable(uint32_t curve)
+void POLY_Select_VelTable(uint32_t const curve)
 {
   if (curve >= VEL_CURVE_COUNT)
     return;
@@ -87,12 +101,56 @@ void POLY_Select_VelTable(uint32_t curve)
 }
 
 /******************************************************************************
-	@brief		POLY_ForceKey : force a key down/up event via software
-	            This is *NOT* thread-safe, eg when M0 core writes the buffer
-	            at the same time there will be corruption
-	            Use for testing only.
+	@brief		ProcessKeyEvent : convert key event to MIDI event.
+	            Also emits the key message back to BBB, and log the full
+	            key event if requested
 *******************************************************************************/
-void POLY_ForceKey(uint16_t midiKeyNumber, uint16_t timeLow, uint16_t timeHigh)
+static void ProcessKeyEvent(uint32_t const keyEvent, enum KeyLog_T const logFlag)
+{
+  uint32_t key = (keyEvent & IPC_KEYBUFFER_KEYMASK) + 36;
+  MSG_KeyPosition(key);
+
+  uint32_t time = M0_PERIOD_62_5NS * (keyEvent >> IPC_KEYBUFFER_TIME_SHIFT);  // us
+
+  //--- Calc On velocity
+  uint32_t vel;
+
+  if (time <= 2500)  // clipping the low end: zero at a times <= 2.5 ms
+    vel = velTable[0];
+  else if (time >= ((1 << 19) + 2500))  // clipping at a maximum of 524 ms (2^19 us)
+    vel = velTable[64];
+  else
+  {
+    // first adjust the input to zero for a time of 2500us,
+    // then lower 13 bits (0...8191) used for interpolation, upper 6 bits (0...63) used as index in the table
+    uint32_t fract = (time - 2500) & 0x1FFF;
+    uint32_t index = (time - 2500) >> 13;
+    vel            = (velTable[index] * (8192 - fract) + velTable[index + 1] * fract) >> 13;  // ((0...16393) * 8192) / 8192
+  }
+  if (!(keyEvent & IPC_KEYBUFFER_NOTEON))  //--- releasing a key
+  {
+    MSG_KeyUp(vel);
+    time = -time;  // negate time for key logging
+  }
+  else  //--- pressing a key
+  {
+    MSG_KeyDown(vel);
+    ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_LAST_KEY, key);
+  }
+  if (logFlag)
+  {
+    uint16_t buffer[3];
+    buffer[0] = key;
+    buffer[1] = time & 0xFFFF;
+    buffer[2] = time >> 16;
+    BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_KEY_EMUL, 3, buffer);
+  }
+}
+
+/******************************************************************************
+	@brief		POLY_ForceKey : emulate a key down/up event via software
+*******************************************************************************/
+void POLY_ForceKey(uint16_t const midiKeyNumber, uint16_t const timeLow, uint16_t const timeHigh)
 {
   uint32_t forcedKeyEvent;
   int      time;
@@ -103,49 +161,20 @@ void POLY_ForceKey(uint16_t midiKeyNumber, uint16_t timeLow, uint16_t timeHigh)
     time = -time;
   else
     forcedKeyEvent |= IPC_KEYBUFFER_NOTEON;
-  forcedKeyEvent |= (M0_SYSTICKS_PER_PERIOD * time / M0_PERIOD_US) << IPC_KEYBUFFER_TIME_SHIFT;
-  Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(forcedKeyEvent);
+  forcedKeyEvent |= (time / M0_PERIOD_62_5NS) << IPC_KEYBUFFER_TIME_SHIFT;
+  ProcessKeyEvent(forcedKeyEvent, LOG_OFF);  // emulated key, never log it
+  MSG_SendMidiBuffer();                      // note this call also takes care of sending other pending MIDI data like ActiveSensing
 }
 
 /******************************************************************************
-	@brief		POLY_Process: reading new key events from the ring buffer,
+	@brief		POLY_Process: reading new key events from the ring buffer
 *******************************************************************************/
 void POLY_Process(void)
 {
   uint32_t i;
-  uint32_t time;
-  uint32_t vel;
-
-  uint32_t numKeyEvents = Emphase_IPC_M4_KeyBuffer_ReadBuffer(keyEvent, 32);  // reads the latest key up/down events from the ring buffer shared with the M0
+  uint32_t numKeyEvents = Emphase_IPC_M4_KeyBuffer_ReadBuffer(keyEvent, 32);  // reads the latest key up/down events from M0 ring buffer
 
   for (i = 0; i < numKeyEvents; i++)
-  {
-    MSG_KeyPosition((keyEvent[i] & IPC_KEYBUFFER_KEYMASK) + 36);
-
-    time = M0_PERIOD_US * (keyEvent[i] >> IPC_KEYBUFFER_TIME_SHIFT) / M0_SYSTICKS_PER_PERIOD;  // us
-
-    //--- Calc On velocity
-
-    if (time <= 2500)  // clipping the low end: zero at a times <= 2.5 ms
-      vel = velTable[0];
-    else if (time >= (524288 + 2500))  // clipping at a maximum of 524 ms (2^19 us)
-      vel = velTable[64];
-    else
-    {
-      time -= 2500;  // shifting the curve to the left to adjust the input to zero for a time of 2.5 ms
-
-      uint32_t fract = time & 0x1FFF;                                                           // lower 13 bits used for interpolation
-      uint32_t index = time >> 13;                                                              // upper 6 bits (0...63) used as index in the table
-      vel            = (velTable[index] * (8192 - fract) + velTable[index + 1] * fract) >> 13;  // (0...16393) * 8192 / 8192
-    }
-    if (!(keyEvent[i] & IPC_KEYBUFFER_NOTEON))  //--- releasing a key
-      MSG_KeyUp(vel);
-    else  //--- pressing a key
-    {
-      MSG_KeyDown(vel);
-      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_LAST_KEY, (keyEvent[i] & IPC_KEYBUFFER_KEYMASK) + 36);
-    }
-  }
-
-  MSG_SendMidiBuffer();  // note this call also takes care of sending all other pending MIDI data, like HWSources and ActiveSensing!
+    ProcessKeyEvent(keyEvent[i], logKeys);  // hardware key event, so send key log if requested
+  MSG_SendMidiBuffer();                     // note this call also takes care of sending other pending MIDI data like ActiveSensing
 }

@@ -21,9 +21,10 @@
 
 //======== public functions
 
-void POLY_Select_VelTable(uint32_t curve);
+void POLY_Select_VelTable(uint32_t const curve);
 void POLY_Init(void);
 void POLY_Process(void);
-void POLY_ForceKey(uint16_t midiKeyNumber, uint16_t timeLow, uint16_t timeHigh);
+void POLY_ForceKey(uint16_t const midiKeyNumber, uint16_t const timeLow, uint16_t const timeHigh);
+void POLY_KeyLogging(uint16_t const on);
 
 #endif /* NL_TCD_POLY_H_ */
