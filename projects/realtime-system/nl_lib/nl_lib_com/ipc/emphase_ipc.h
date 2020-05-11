@@ -50,14 +50,17 @@ typedef struct
 
 typedef struct
 {
-  uint32_t           keyBufferData[EMPHASE_IPC_KEYBUFFER_SIZE];
-  volatile uint32_t  keyBufferWritePos;
+  uint32_t keyBufferData[EMPHASE_IPC_KEYBUFFER_SIZE];
+#ifdef CORE_M4
+  volatile
+#endif
+      uint32_t       keyBufferWritePos;
   uint32_t           keyBufferReadPos;
   ADC_BUFFER_ARRAY_T adcBufferData;
   uint32_t           adcConfigData;
   uint32_t           adcBufferWriteIndex;
   uint32_t           adcBufferReadIndex;
-  volatile uint32_t  timer;  // counts in (1 << IPC_KEYBUFFER_TIME_SHIFT) increments !!
+  volatile uint32_t  ticker;
   uint32_t           ADCTicks;
   uint32_t           RitCrtlReg;
 } SharedData_T;
@@ -78,10 +81,11 @@ void Emphase_IPC_Init(void);
 static inline void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(uint32_t const keyEvent)
 {
   // !! this is a potentially critical section !!
-  // Emphase_IPC_M4_KeyBuffer_ReadBuffer() should not be called while we are here
-  // because it uses keyBufferWritePos in a compare
-  // NOTE : No check is done if the write overruns the buffer, we rely
-  // on the buffer being big enough to avoid this
+  // Emphase_IPC_M4_KeyBuffer_ReadBuffer() should not run while we are here
+  // because it uses keyBufferWritePos in a compare. Unless keyBufferWritePos
+  // isn't update so fast as to overrun keyBufferReadPos nothing bad will happe, though.
+  // NOTE : No check is done anyway if the write overruns the buffer, we rely
+  // on the buffer being big enough to avoid this.
   s.keyBufferData[s.keyBufferWritePos] = keyEvent;
   s.keyBufferWritePos                  = (s.keyBufferWritePos + 1) & (EMPHASE_IPC_KEYBUFFER_MASK);
 }
@@ -97,8 +101,11 @@ static inline void Emphase_IPC_M0_KeyBuffer_WriteKeyEvent(uint32_t const keyEven
 static inline uint32_t Emphase_IPC_M4_KeyBuffer_ReadBuffer(uint32_t* const pKeyEvent, uint8_t const maxNumOfEventsToRead)
 {
   // !! this is a potentially critical section !!
-  // Emphase_IPC_M0_KeyBuffer_WriteKeyEvent() should not be called while we are here
-  // because it updates keyBufferWritePos
+  // Emphase_IPC_M0_KeyBuffer_WriteKeyEvent() should not run while we are here
+  // because it updates keyBufferWritePos.
+  // As long as keyBufferWritePos, which is volatile from M4's view, doesn't update so fast
+  // that it overruns keyBufferReadPos (which is extremely unlikely, only when Emphase_IPC_M4_KeyBuffer_ReadBuffer
+  // is interrupted/stalling for a really long time), nothing bad will happen, though.
   uint8_t count = 0;
   while ((s.keyBufferReadPos != s.keyBufferWritePos) && (count < maxNumOfEventsToRead))
   {
@@ -124,6 +131,10 @@ static inline uint32_t Emphase_IPC_KeyBuffer_GetSize()
 ******************************************************************************/
 static inline int32_t IPC_ReadAdcBuffer(uint8_t const adc_id)
 {
+  // M0 may advance adcBufferReadIndex while we are reading values for a number
+  // of ADCs during an M4 time-slice. This means values of different ADCs may
+  // not all be from the same conversion cycle of M0. Since the conversion cycle
+  // runs 16 times per M4 time-slice the error is neglegible, though.
   return s.adcBufferData.values[adc_id][s.adcBufferReadIndex];
 }
 
@@ -134,6 +145,11 @@ static inline int32_t IPC_ReadAdcBuffer(uint8_t const adc_id)
 ******************************************************************************/
 static inline int32_t IPC_ReadAdcBufferAveraged(uint8_t const adc_id)
 {
+  // Again, values in the buffers for different ADCs may not be in sync with
+  // M4's time-slice, but because of the averaging the error is even smaller.
+  // More importantly, M0 may be just in the middle of its non-atomic
+  // read-modify-write operation in IPC_WriteAdcBuffer, but again the error
+  // is very small because only a delta is added/subtracted.
   return s.adcBufferData.sum[adc_id] / IPC_ADC_BUFFER_SIZE;
 }
 
@@ -144,6 +160,7 @@ static inline int32_t IPC_ReadAdcBufferAveraged(uint8_t const adc_id)
 ******************************************************************************/
 static inline int32_t IPC_ReadAdcBufferSum(uint8_t const adc_id)
 {
+  // see notes for IPC_ReadAdcBufferAveraged
   return s.adcBufferData.sum[adc_id];
 }
 
@@ -154,10 +171,13 @@ static inline int32_t IPC_ReadAdcBufferSum(uint8_t const adc_id)
 ******************************************************************************/
 static inline void IPC_WriteAdcBuffer(uint8_t const adc_id, int32_t const value)
 {
+  // see notes for IPC_ReadAdcBufferAveraged above
+  asm volatile("cpsid i");  // IRQs off, make critical section as short as possible (M0 IRQs are long because of keybed scanner)
   // subtract out the overwritten value and add in new value to sum
   s.adcBufferData.sum[adc_id] += -(s.adcBufferData.values[adc_id][s.adcBufferWriteIndex]) + value;
   // write value to ring buffer
   s.adcBufferData.values[adc_id][s.adcBufferWriteIndex] = value;
+  asm volatile("cpsie i");  // IRQs on
 }
 
 /******************************************************************************/

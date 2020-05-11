@@ -45,7 +45,7 @@ void Emphase_IPC_Init(void)
   s.adcConfigData       = 0;
   s.adcBufferReadIndex  = 0;
   s.adcBufferWriteIndex = 0;
-  s.timer               = 0;
+  s.ticker              = 0;
   s.ADCTicks            = 0;
   s.RitCrtlReg          = 0;
 }
