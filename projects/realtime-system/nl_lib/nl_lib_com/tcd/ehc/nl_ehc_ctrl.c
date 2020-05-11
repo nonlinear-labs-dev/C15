@@ -12,7 +12,6 @@
 #include "nl_ehc_adc.h"
 #include "tcd/nl_tcd_adc_work.h"
 #include "spibb/nl_bb_msg.h"
-#include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_eeprom.h"
 #include "shared/lpc-defs.h"
@@ -280,8 +279,8 @@ static void sendControllerData(const EHC_ControllerConfig_T config, const uint32
   if (config.hwId == 15)  // catch de-activated controller, just in case
     return;
   if (!config.silent)
-    MSG_HWSourceUpdate(config.hwId, value);
-  ADC_WORK_WriteHWValueForBB(config.hwId, value);
+    ADC_WORK_WriteHWValueForAE(config.hwId, value);
+  ADC_WORK_WriteHWValueForUI(config.hwId, value);
 }
 
 // --------------- init autoranging, that is, set reasonable default for fixed ranges
@@ -1030,6 +1029,11 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
 /*************************************************************************/ /**
 * @brief	NL_EHC_ProcessControllers
 * main repetitive process called from ADC_Work_Process every 12.5ms
+* The controllers are process from controller #7 down to #0, and update their
+* output accordingly. When several controllers share the same HWSID and want to
+* update it, the last controller dominates. This establishes a priority
+* with the device connected to jack #1 being highest, jack #4 being lowest.
+* Within a jack, the tip contact has priority over the ring contact.
 ******************************************************************************/
 void NL_EHC_ProcessControllers1(void)
 {
@@ -1038,8 +1042,8 @@ void NL_EHC_ProcessControllers1(void)
     return;
 
   ResetSettlingDisplay();
-  for (int i = 0; i < NUMBER_OF_CONTROLLERS / 2; i++)
-  {
+  for (int i = NUMBER_OF_CONTROLLERS - 1; i >= NUMBER_OF_CONTROLLERS / 2; i--)
+  {  // process controllers #7 down to #4
     if (!ctrl[i].status.initialized)
       continue;
     if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?
@@ -1064,8 +1068,8 @@ void NL_EHC_ProcessControllers2(void)
   if (!EHC_sampleBuffersValid())
     return;
 
-  for (int i = NUMBER_OF_CONTROLLERS / 2; i < NUMBER_OF_CONTROLLERS; i++)
-  {
+  for (int i = (NUMBER_OF_CONTROLLERS / 2) - 1; i >= 0; i--)
+  {  // process controllers #3 down to #0
     if (!ctrl[i].status.initialized)
       continue;
     if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?
