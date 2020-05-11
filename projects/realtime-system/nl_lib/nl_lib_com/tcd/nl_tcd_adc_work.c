@@ -3,7 +3,7 @@
  *
  *  Created on: 13.03.2015
  *      Author: ssc
- *  Last change on : 2020-01-03 KSTR
+ *  Last change on : 2020-05-10 KSTR
  */
 
 #include <math.h>
@@ -27,14 +27,16 @@
 #define AT_DEADRANGE 30    // 0.73 % of 0 ... 4095
 #define AT_FACTOR    5080  // 5080 / 4096 for saturation = 100 % at 81 % of the input range
 
-static uint32_t bbSendValue[NUM_HW_SOURCES] = {};
-static int32_t  lastPitchbend;
-static int32_t  pitchbendZero;
+static uint16_t uiSendValue[NUM_HW_SOURCES];
+static uint16_t aeSendValue[NUM_HW_REAL_SOURCES];
 
-static uint32_t  pbSignalIsSmall;
-static uint32_t  pbTestTime;
-static uint32_t  pbTestMode;
-static uint32_t  pbRampMode;
+static int32_t lastPitchbend;
+static int32_t pitchbendZero;
+
+static uint16_t  pbSignalIsSmall;
+static uint16_t  pbTestTime;
+static uint16_t  pbTestMode;
+static uint16_t  pbRampMode;
 static int32_t   pbRamp;
 static int32_t   pbRampInc;
 static uint32_t  allBenderTables[3][33] = {};  // contains the bender curves
@@ -91,16 +93,16 @@ static const LIB_interpol_data_T ribbonCalibration[2] =
 typedef struct
 {
   int32_t              last;           ///< last raw value (0...4095)
-  int32_t              touch;          ///< flag for "touch begins"
-  int32_t              behavior;       ///< bit field: Bit 0:return/#non-return, Bit 1:relative/#absolute
+  uint16_t             touch;          ///< flag for "touch begins"
+  uint16_t             behavior;       ///< bit field: Bit 0:return/#non-return, Bit 1:relative/#absolute
   int32_t              relFactor;      ///< scale factor for relative movement
-  uint32_t             isEditControl;  ///< flag for usage as "Edit Control Slider"
-  uint32_t             editBehavior;   ///< flag absolute/#relative
-  uint32_t             incBase;        ///< base value for relative increment
+  uint16_t             isEditControl;  ///< flag for usage as "Edit Control Slider"
+  uint16_t             editBehavior;   ///< flag absolute/#relative
+  uint16_t             incBase;        ///< base value for relative increment
   int32_t              output;         ///< processed output value (0...16000)
   LIB_interpol_data_T *calibration;    ///< pointer to calibration data to be used
-  uint8_t              ipcId;          ///< ID to fetch raw data from M0 kernel
-  uint32_t             hwSourceId;     ///< ID for BB and TCD message
+  uint16_t             ipcId;          ///< ID to fetch raw data from M0 kernel
+  uint16_t             hwSourceId;     ///< ID for BB and TCD message
 } Ribbon_Data_T;
 
 // working variables
@@ -109,10 +111,10 @@ static Ribbon_Data_T ribbon[2];  // two ribbons
 #define RIB2 1
 
 // global control
-static uint32_t suspend                  = 1;  // will be set to zero by ADC_WORK_Init()
-static int      send_raw_sensor_messages = 0;  // sends raw sensor values every 12.5ms when set (!= 0)
+static uint16_t suspend                  = 1;  // will be set to zero by ADC_WORK_Init()
+static uint16_t send_raw_sensor_messages = 0;  // sends raw sensor values every 12.5ms when set (!= 0)
 
-static int32_t SetThreshold(int32_t val)
+static int16_t SetThreshold(int32_t val)
 {  // set threshold to 80%
   val *= 8;
   val /= 10;
@@ -135,14 +137,14 @@ int memcmp32(void *data1, void *data2, uint16_t count)
 * @brief	ADC_WORK_Select_BenderTable
 * @param	0: soft, 1: normal, 2: hard
 ******************************************************************************/
-void ADC_WORK_Select_BenderTable(uint32_t curve)
+void ADC_WORK_Select_BenderTable(uint16_t const curve)
 {
   if (curve > 2)
     return;
   benderTable = allBenderTables[curve];
 }
 
-void Generate_BenderTable(uint32_t curve)
+void Generate_BenderTable(uint16_t const curve)
 {
   float_t range = 8000.0;  // separate processing of absolute values for positive and negative range
 
@@ -179,14 +181,14 @@ void Generate_BenderTable(uint32_t curve)
 * @brief	ADC_WORK_Select_AftertouchTable -
 * @param	0: soft, 1: normal, 2: hard
 ******************************************************************************/
-void ADC_WORK_Select_AftertouchTable(uint32_t curve)
+void ADC_WORK_Select_AftertouchTable(uint16_t const curve)
 {
   if (curve > 2)
     return;
   aftertouchTable = allAftertouchTables[curve];
 }
 
-void Generate_AftertouchTable(uint32_t curve)
+void Generate_AftertouchTable(uint16_t const curve)
 {
   float_t range = 16000.0;  // full TCD range
 
@@ -219,10 +221,16 @@ void Generate_AftertouchTable(uint32_t curve)
   }
 }
 
-void ClearHWValuesForBB(void)
+void ClearHWValuesForUI(void)
 {
   for (int i = 0; i < NUM_HW_SOURCES; i++)
-    bbSendValue[i] = 0;
+    uiSendValue[i] = 0;
+}
+
+void ClearHWValuesForAE(void)
+{
+  for (int i = 0; i < NUM_HW_SOURCES; i++)
+    uiSendValue[i] = 0;
 }
 
 /*****************************************************************************
@@ -278,7 +286,8 @@ void ADC_WORK_Init1(void)
   if (NL_EEPROM_ReadBlock(rib_eepromHandle, tmp, EEPROM_READ_BOTH))
     memcpy(ribbonCalibrationData, tmp, sizeof(ribbonCalibrationData));
 
-  ClearHWValuesForBB();
+  ClearHWValuesForUI();
+  ClearHWValuesForAE();
 }
 
 void ADC_WORK_Init2(void)
@@ -293,12 +302,12 @@ void ADC_WORK_Init2(void)
 * @param	value: ribbon position (0 ... 16000)
 * @param	inc: position increment (theoretically -16000 ... 16000)
 ******************************************************************************/
-static void SendEditMessageToBB(uint32_t const which, uint32_t const value, int32_t inc)
+static void SendEditMessageToBB(uint16_t const which, uint16_t const value, int16_t inc)
 {
   if (ribbon[which].editBehavior)  // 1: the ribbon sends the absolute value
   {
-    BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, ribbon[which].hwSourceId, value);  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
-    BB_MSG_SendTheBuffer();
+    BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, ribbon[which].hwSourceId, value);
+    BB_MSG_SendTheBuffer();  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
   }
   else  // 0: the ribbon sends the increment
   {
@@ -315,43 +324,78 @@ static void SendEditMessageToBB(uint32_t const which, uint32_t const value, int3
     BB_MSG_SendTheBuffer();
   }
 }
-
 /// "return"-Behaviour braucht eigene Funktion, die mit einem Timer-Task aufgerufen wird
 /// mit Abfrage, ob das Ribbon losgelassen wurde. Sprungartiges Zurücksetzen.
 
-void ADC_WORK_WriteHWValueForBB(uint32_t hwSourceId, uint32_t value)
+void ADC_WORK_WriteHWValueForUI(uint16_t const hwSourceId, uint16_t const value)
 {
-  bbSendValue[hwSourceId] = value | 0x80000;  // the bit is set to check for values to send, will be masked out
+  uiSendValue[hwSourceId] = value + 1;  // makes sure it isn't zero (assumes that 0xFFFF is never used as input)
 }
 
-void ADC_WORK_SendBBMessages(void)  // is called as a regular COOS task
+void ADC_WORK_WriteHWValueForAE(uint16_t const hwSourceId, uint16_t const value)
+{
+  aeSendValue[hwSourceId] = value + 1;  // makes sure it isn't zero (assumes that 0xFFFF is never used as input)
+}
+
+void ADC_WORK_SendUIMessages(void)  // is called as a regular COOS task
 {
   uint32_t i;
   uint32_t send = 0;
 
   for (i = 0; i < NUM_HW_SOURCES; i++)
   {
-    if (bbSendValue[i] > 0)  // and by this, the 0x80000 update flag is detected, regardless of parameter value
+    if (uiSendValue[i])
     {
-      if (BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_PARAMETER, i, (bbSendValue[i] & 0xFFFF)) > -1)
-      {
-        bbSendValue[i] = 0;
+      if (BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_PARAMETER, i, uiSendValue[i] - 1) > -1)
+      {                      //
+        uiSendValue[i] = 0;  // clear value, including update flag
         send           = 1;
-      }
+      }  // else: sending failed, try agai later
     }
   }
-
-  if (send == 1)
-  {
+  if (send)
     BB_MSG_SendTheBuffer();
+}
+
+static void SendAEMessages(void)
+{
+  static const enum HW_SOURCE_IDS PRIORITY_TABLE[NUM_HW_REAL_SOURCES] = {
+    HW_SOURCE_ID_PEDAL_8,  // update EHCs first
+    HW_SOURCE_ID_PEDAL_7,
+    HW_SOURCE_ID_PEDAL_6,
+    HW_SOURCE_ID_PEDAL_5,
+    HW_SOURCE_ID_PEDAL_4,
+    HW_SOURCE_ID_PEDAL_3,
+    HW_SOURCE_ID_PEDAL_2,
+    HW_SOURCE_ID_PEDAL_1,
+    HW_SOURCE_ID_AFTERTOUCH,  // update AT and PB last, so that they override a macro ...
+    HW_SOURCE_ID_PITCHBEND,   // ... control shared with with pedals quickly, to reduce glitching
+    HW_SOURCE_ID_RIBBON_1,    // update ribbons last, so that they override a macro ...
+    HW_SOURCE_ID_RIBBON_2,    // ... control shared with with pedals quickly, to reduce glitching
+  };
+
+  uint16_t j, i;
+  uint16_t send = 0;
+
+  for (j = 0; j < NUM_HW_REAL_SOURCES; j++)
+  {
+    i = PRIORITY_TABLE[j];  // sort update by priority
+    if (aeSendValue[i])
+    {
+      MSG_HWSourceUpdate(i, aeSendValue[i] - 1);
+      aeSendValue[i] = 0;  // clear value, including update flag
+      send           = 1;
+    }
   }
+  if (send)
+    MSG_SendMidiBuffer();
 }
 
 /*****************************************************************************
 * @brief	ADC_WORK_SetRibbon1Behaviour
 * @param	0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
 ******************************************************************************/
-void ADC_WORK_SetRibbon1Behaviour(uint32_t behaviour)
+void ADC_WORK_SetRibbon1Behaviour(uint16_t const behaviour)
 {
   ribbon[RIB1].behavior = behaviour;
   if (ribbon[RIB1].isEditControl == 0)  // initialization if working as a HW source
@@ -359,7 +403,7 @@ void ADC_WORK_SetRibbon1Behaviour(uint32_t behaviour)
     if ((ribbon[RIB1].behavior == 1) || (ribbon[RIB1].behavior == 3))  // "return" behaviour
     {
       ribbon[RIB1].output = 8000;
-      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_RIBBON_1, 8000);
+      ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_RIBBON_1, 8000);
     }
   }
 }
@@ -376,7 +420,7 @@ uint32_t ADC_WORK_GetRibbon1Behaviour(void)
 * @brief	ADC_WORK_SetRibbonRelFactor -
 * @param
 ******************************************************************************/
-void ADC_WORK_SetRibbonRelFactor(uint32_t factor)
+void ADC_WORK_SetRibbonRelFactor(uint16_t const factor)
 {
   ribbon[RIB1].relFactor = factor;
   ribbon[RIB2].relFactor = factor;
@@ -386,7 +430,7 @@ void ADC_WORK_SetRibbonRelFactor(uint32_t factor)
 * @brief	ADC_WORK_SetRibbon2Behaviour -
 * @param	0: Abs + Non-Return, 1: Abs + Return, 2: Rel + Non-Return, 3: Rel + Return
 ******************************************************************************/
-void ADC_WORK_SetRibbon2Behaviour(uint32_t behaviour)
+void ADC_WORK_SetRibbon2Behaviour(uint16_t const behaviour)
 {
   ribbon[RIB2].behavior = behaviour;
   if (ribbon[RIB2].isEditControl == 0)  // initialization if working as a HW source
@@ -394,7 +438,7 @@ void ADC_WORK_SetRibbon2Behaviour(uint32_t behaviour)
     if ((ribbon[RIB2].behavior == 1) || (ribbon[RIB2].behavior == 3))  // "return" behaviour
     {
       ribbon[RIB2].output = 8000;
-      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_RIBBON_2, 8000);
+      ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_RIBBON_2, 8000);
     }
   }
 }
@@ -411,7 +455,7 @@ uint32_t ADC_WORK_GetRibbon2Behaviour(void)
 * @brief	ADC_WORK_SetRibbon1EditMode -
 * @param	0: Play, 1: (Parameter) Edit
 ******************************************************************************/
-void ADC_WORK_SetRibbon1EditMode(uint32_t mode)
+void ADC_WORK_SetRibbon1EditMode(uint16_t const mode)
 {
   ribbon[RIB1].isEditControl = mode;
 }
@@ -420,9 +464,25 @@ void ADC_WORK_SetRibbon1EditMode(uint32_t mode)
 * @brief	ADC_WORK_SetRibbon1EditBehaviour -
 * @param	0: Relative + Non-Return, 1: Absolute + Non-Return
 ******************************************************************************/
-void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour)
+void ADC_WORK_SetRibbon1EditBehaviour(uint16_t const behaviour)
 {
   ribbon[RIB1].editBehavior = behaviour;
+}
+
+/*****************************************************************************
+* @brief	ADC_WORK_SetRibbon1/2OutputValue
+* @param	0..16000 output value
+******************************************************************************/
+void ADC_WORK_SetRibbon1OutputValue(uint16_t const value)
+{
+  if (ribbon[RIB1].touch != 2 && !ribbon[RIB1].isEditControl)
+    ribbon[RIB1].output = value;
+}
+
+void ADC_WORK_SetRibbon2OutputValue(uint16_t const value)
+{
+  if (ribbon[RIB2].touch != 2 && !ribbon[RIB2].isEditControl)
+    ribbon[RIB2].output = value;
 }
 
 /*****************************************************************************
@@ -430,7 +490,7 @@ void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour)
 * @param	length: # of words in data array
 * @param	data: array containing calibration data sets for the ribbons
 ******************************************************************************/
-void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t *data)
+void ADC_WORK_SetRibbonCalibration(uint16_t const length, uint16_t *data)
 {
   if (length != (34 + 33 + 34 + 33))  // data must contain X (34 point) and Y (33 points) sets,  for each ribbon
     return;
@@ -478,109 +538,8 @@ void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t *data)
     rib_updateEeprom = 1;     // no, start step chain
 }
 
-/*****************************************************************************
-* @brief  Process Ribbons, array'd style, new Linearization/Calibration
-******************************************************************************/
-static void ProcessRibbons(void)
+static void checkCalibrationEepromUpdate(void)
 {
-  int32_t value;
-  int32_t valueToSend;
-
-  for (int i = 0; i <= 1; i++)
-  {
-    uint32_t send        = 0;
-    uint32_t touchBegins = 0;
-    int32_t  inc         = 0;
-
-    // value = IPC_ReadAdcBufferAveraged(ribbon[i].ipcId); ???
-    value = IPC_ReadAdcBuffer(ribbon[i].ipcId);
-
-    if (value > ribbon[i].last + 1)  // rising values (min. +2)
-    {
-      if (value > ribbonCalibrationData[i].threshold)  // above the touch threshold
-      {
-        if (ribbon[i].touch == 0)
-        {
-          ribbon[i].touch = 1;
-          touchBegins     = 1;
-        }
-        valueToSend = LIB_InterpolateValue(ribbon[i].calibration, value);
-        send        = 1;
-      }
-      ribbon[i].last = value;
-    }
-    else if (value + 1 < ribbon[i].last)  // falling values (min. -2)
-    {
-      if (value > ribbonCalibrationData[i].threshold)  // above the touch threshold; ribbon1Touch is already on, because the last value was higher
-      {
-        // outputs the previous value (one sample delay) to avoid sending samples of the falling edge of a touch release
-        valueToSend = LIB_InterpolateValue(ribbon[i].calibration, ribbon[i].last);
-        send        = 1;
-      }
-      else  // below the touch threshold
-      {
-        ribbon[i].touch = 0;
-
-        if (ribbon[i].isEditControl == 0)  // working as a play control
-        {
-          if ((ribbon[i].behavior == 1) || (ribbon[i].behavior == 3))  // "return" behaviour
-          {
-            MSG_HWSourceUpdate(ribbon[i].hwSourceId, 8000);
-            ADC_WORK_WriteHWValueForBB(ribbon[i].hwSourceId, 8000);
-
-            ribbon[i].output = 8000;
-          }
-        }
-      }
-      ribbon[i].last = value;
-    }
-
-    if (send)
-    {
-      if (touchBegins)  // in the incremental mode the jump to the touch position has to be ignored
-      {
-        inc         = 0;
-        touchBegins = 0;
-      }
-      else
-        inc = valueToSend - ribbon[i].incBase;
-
-      ribbon[i].incBase = valueToSend;
-
-      if (ribbon[i].isEditControl)
-      {
-        inc = (inc * ribbon[i].relFactor) / 256;
-        SendEditMessageToBB(i, valueToSend, inc);
-      }
-      else
-      {
-        if (ribbon[i].behavior < 2)  // absolute
-        {
-          ribbon[i].output = valueToSend;
-
-          MSG_HWSourceUpdate(ribbon[i].hwSourceId, ribbon[i].output);
-          ADC_WORK_WriteHWValueForBB(ribbon[i].hwSourceId, ribbon[i].output);
-        }
-        else  // relative
-        {
-          if (inc != 0)
-          {
-            inc = (inc * ribbon[i].relFactor) / 256;
-            ribbon[i].output += inc;
-
-            if (ribbon[i].output < 0)
-              ribbon[i].output = 0;
-            if (ribbon[i].output > 16000)
-              ribbon[i].output = 16000;
-
-            MSG_HWSourceUpdate(ribbon[i].hwSourceId, ribbon[i].output);
-            ADC_WORK_WriteHWValueForBB(ribbon[i].hwSourceId, ribbon[i].output);
-          }
-        }
-      }
-    }
-  }  // for all ribbons
-
   static RibbonCalibrationData_T tmp[2];
   if (rib_updateEeprom && !NL_EEPROM_Busy())
   {
@@ -616,7 +575,91 @@ static void ProcessRibbons(void)
   }
 }
 
-void ADC_WORK_SetRawSensorMessages(uint32_t flag)
+/*****************************************************************************
+* @brief  Process Ribbons, array'd style, new Linearization/Calibration
+******************************************************************************/
+static void ProcessRibbons(void)
+{
+  for (int i = 0; i <= 1; i++)
+  {
+    int16_t input = IPC_ReadAdcBuffer(ribbon[i].ipcId);
+    int     potentialRelease;
+    int     position;
+    int     inc;
+
+    if (!ribbon[i].touch)
+    {  // wait for initial touch
+      if (input > ribbonCalibrationData[i].threshold)
+      {  // but we won't use any data yet for output because it might not have settled fully
+        ribbon[i].touch = 1;
+        ribbon[i].last  = input;  // save initial input
+      }
+      continue;  // quit and process next ribbon
+    }
+    else
+    {
+      if (input <= ribbonCalibrationData[i].threshold  // hard below threshold, or
+          || input + 150 < ribbon[i].last)             // very fast value drop, more than to be expected by fastest user action
+      {
+        ribbon[i].touch = 0;  // wait for new touch
+        if (!ribbon[i].isEditControl && (ribbon[i].behavior & 0b01))
+        {                   // play control with "return" behavior
+          position = 8000;  // center (zero) value
+          goto Output;
+        }
+        continue;  // quit and process next ribbon
+      }
+      potentialRelease = (input + 4 <= ribbon[i].last);  // a drop more than just a few values
+    }
+
+    // normal processing starts here
+    // touch has settled, readout continuous values
+
+    if (potentialRelease)  // then use previous output to avoid sending drooping final value right before a release
+      position = LIB_InterpolateValue(ribbon[i].calibration, ribbon[i].last);
+    else
+      position = LIB_InterpolateValue(ribbon[i].calibration, input);
+    ribbon[i].last = input;
+
+    if (ribbon[i].touch == 1)  // touch begins ?
+    {
+      ribbon[i].touch = 2;  // mark "stable data" phase
+      inc             = 0;  // start increment is zero
+    }
+    else
+      inc = position - ribbon[i].incBase;
+    ribbon[i].incBase = position;
+
+    if (inc > 18 || inc < -14)           // apply scale factor only if there is enough delta, this eliminates noise ...
+      inc *= ribbon[i].relFactor / 256;  // ... and allows for fine adjustment even with large gains
+                                         // the asymmetry accounts for the skew in value flow introduced by "potentialRelease"
+    if (ribbon[i].isEditControl)
+    {
+      SendEditMessageToBB(i, position, inc);
+      continue;  // do NOT update ribbon[i].output
+    }
+    // play control
+    if (ribbon[i].behavior & 0b10)  // relative
+    {
+      ribbon[i].output += inc;  // bug atm : preset, or edit buffer, does not send the initial value of the ribbon as displayed
+      position = ribbon[i].output;
+      if (position < 0)
+        position = 0;
+      if (position > 16000)
+        position = 16000;
+    }
+
+  Output:
+    ADC_WORK_WriteHWValueForAE(ribbon[i].hwSourceId, position);
+    ADC_WORK_WriteHWValueForUI(ribbon[i].hwSourceId, position);
+    ribbon[i].output = position;
+
+  }  // for all ribbons
+
+  checkCalibrationEepromUpdate();
+}
+
+void ADC_WORK_SetRawSensorMessages(uint16_t const flag)
 {
   send_raw_sensor_messages = (flag != 0);
 }
@@ -632,42 +675,10 @@ void ADC_WORK_Resume(void)
 }
 
 /*****************************************************************************
-* @brief  ADC_WORK_Process -
+* @brief  Process Aftertouch and Bender
 ******************************************************************************/
-void ADC_WORK_Process1(void)
+static void ProcessAtfertouchAndBender(void)
 {
-  if (suspend)
-    return;
-
-    //  DBG_GPIO3_1_On();
-
-#if 01
-  if (send_raw_sensor_messages)
-  {
-    uint16_t data[13];
-    // clang-format off
-    data[0] = (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_DETECT) >= 2048) ? 1 : 0) << 0)
-            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_DETECT) >= 2048) ? 1 : 0) << 1)
-            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_DETECT) >= 2048) ? 1 : 0) << 2)
-            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_DETECT) >= 2048) ? 1 : 0) << 3);
-    // clang-format on
-    data[1]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_TIP);
-    data[2]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_RING);
-    data[3]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_TIP);
-    data[4]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_RING);
-    data[5]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_TIP);
-    data[6]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_RING);
-    data[7]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_TIP);
-    data[8]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_RING);
-    data[9]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PITCHBENDER);
-    data[10] = IPC_ReadAdcBufferAveraged(IPC_ADC_AFTERTOUCH);
-    data[11] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON1);
-    data[12] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON2);
-    BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_SENSORS_RAW, 13, data);
-    BB_MSG_SendTheBuffer();
-  }
-#endif
-
   int32_t value;
   int32_t valueToSend;
 
@@ -758,8 +769,8 @@ void ADC_WORK_Process1(void)
 
       valueToSend = 8000 + valueToSend;  // 8001 ... 16000
 
-      MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, valueToSend);
-      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_PITCHBEND, valueToSend);
     }
     else if (value < -BENDER_DEADRANGE)  // is in the negative work range
     {
@@ -782,15 +793,15 @@ void ADC_WORK_Process1(void)
 
       valueToSend = 8000 - valueToSend;  // 7999 ... 0
 
-      MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, valueToSend);
-      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_PITCHBEND, valueToSend);
     }
     else  // is in the dead range
     {
       if ((lastPitchbend > BENDER_DEADRANGE) || (lastPitchbend < -BENDER_DEADRANGE))  // was outside of the dead range before
       {
-        MSG_HWSourceUpdate(HW_SOURCE_ID_PITCHBEND, 8000);
-        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_PITCHBEND, 8000);
+        ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_PITCHBEND, 8000);
+        ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_PITCHBEND, 8000);
       }
     }
 
@@ -822,46 +833,89 @@ void ADC_WORK_Process1(void)
         valueToSend    = (aftertouchTable[index] * (128 - fract) + aftertouchTable[index + 1] * fract) >> 7;  // (0...16000) * 128 / 128
       }
 
-      MSG_HWSourceUpdate(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
-      ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
+      ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
+      ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_AFTERTOUCH, valueToSend);
     }
     else  // inside of the dead range
     {
       if (lastAftertouch > AT_DEADRANGE)  // was outside of the dead range before   /// define
       {
-        MSG_HWSourceUpdate(HW_SOURCE_ID_AFTERTOUCH, 0);
-        ADC_WORK_WriteHWValueForBB(HW_SOURCE_ID_AFTERTOUCH, 0);
+        ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_AFTERTOUCH, 0);
+        ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_AFTERTOUCH, 0);
       }
     }
 
     lastAftertouch = value;
   }
+}
 
-  //==================== Ribbons
-  ProcessRibbons();
+/*****************************************************************************
+* @brief  Send Raw ADC values
+******************************************************************************/
+static void SendRawValues(void)
+{
+  if (send_raw_sensor_messages)
+  {
+    uint16_t data[13];
+    // clang-format off
+	    data[0] = (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_DETECT) >= 2048) ? 1 : 0) << 0)
+	            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_DETECT) >= 2048) ? 1 : 0) << 1)
+	            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_DETECT) >= 2048) ? 1 : 0) << 2)
+	            | (((IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_DETECT) >= 2048) ? 1 : 0) << 3);
+    // clang-format on
+    data[1]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_TIP);
+    data[2]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL1_RING);
+    data[3]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_TIP);
+    data[4]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL2_RING);
+    data[5]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_TIP);
+    data[6]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL3_RING);
+    data[7]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_TIP);
+    data[8]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PEDAL4_RING);
+    data[9]  = IPC_ReadAdcBufferAveraged(IPC_ADC_PITCHBENDER);
+    data[10] = IPC_ReadAdcBufferAveraged(IPC_ADC_AFTERTOUCH);
+    data[11] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON1);
+    data[12] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON2);
+    BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_SENSORS_RAW, 13, data);
+    BB_MSG_SendTheBuffer();
+  }
+}
+
+/*****************************************************************************
+* @brief  ADC_WORK_Process -
+*         The four ADC_WORK_Process* sections are separated by only one 125us time-slice.
+*
+******************************************************************************/
+void ADC_WORK_Process1(void)
+{
+  if (suspend)
+    return;
+  //  DBG_GPIO3_1_On();
+  NL_EHC_ProcessControllers1();  // External Hardware Controllers (ADCs 7..4)
 }
 
 void ADC_WORK_Process2(void)
 {
   if (suspend)
     return;
-  //==================== External Hardware Controllers
-  NL_EHC_ProcessControllers1();
+  NL_EHC_ProcessControllers2();  // External Hardware Controllers (ADCs 3..0)
 }
 
 void ADC_WORK_Process3(void)
 {
   if (suspend)
     return;
-  //==================== External Hardware Controllers
-  NL_EHC_ProcessControllers2();
+  NL_EHC_ProcessControllers3();  // External Hardware Controllers (EEPROM, and send EHC data)
+
+  SendRawValues();  // send raw ADC values if requested
 }
 
 void ADC_WORK_Process4(void)
 {
   if (suspend)
     return;
-  //==================== External Hardware Controllers
-  NL_EHC_ProcessControllers3();
+  ProcessAtfertouchAndBender();
+  ProcessRibbons();
+
+  SendAEMessages();  // send all AE messages in one go, to preserve priorities, like ribbons updating last etc
   //  DBG_GPIO3_1_Off();
 }
