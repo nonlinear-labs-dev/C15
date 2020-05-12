@@ -59,6 +59,19 @@ found:
   SSPx->CR1 |= SSP_CR1_SSP_EN;
 }
 
+inline uint16_t SPI_DMA_GetCRDIV(LPC_SSPn_Type *const SSPx)
+{
+  return (SSPx->CR0 >> 8) & 0xFF;
+}
+
+inline void SPI_DMA_SetCRDIV(LPC_SSPn_Type *const SSPx, uint16_t const crdiv)
+{
+  SSPx->CR0 &= (~SSP_CR0_SCR(0xFF)) & SSP_CR0_BITMASK;
+  SSPx->CR0 |= (SSP_CR0_SCR(crdiv)) & SSP_CR0_BITMASK;
+}
+
+// -----------------
+
 void SPI_DMA_SwitchMode(LPC_SSPn_Type *SSPx, uint32_t pol_pha);
 void SPI_DMA_SwitchModeNonBlocking(LPC_SSPn_Type *SSPx, uint32_t pol_pha);
 
