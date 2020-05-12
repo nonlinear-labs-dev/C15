@@ -269,17 +269,13 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
   // data[2]  - second value
 
   if (type == LPC_BB_MSG_TYPE_RIBBON_CAL)
-  {
     ADC_WORK_SetRibbonCalibration(length, data);
-  }
   else if (type == LPC_BB_MSG_TYPE_EHC_CONFIG)
-  {
     NL_EHC_SetEHCconfig(data[0], data[1]);  // Configurate External Hardware Controller
-  }
   else if (type == LPC_BB_MSG_TYPE_KEY_EMUL)
-  {
     POLY_ForceKey(data[0], data[1], data[2]);
-  }
+  else if (type == LPC_BB_MSG_TYPE_KEYMAP_DATA)
+    POLY_SetKeyRemapTable(length, data);
   else if (type == LPC_BB_MSG_TYPE_SETTING)
   {
     switch (data[0])
@@ -331,6 +327,9 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         break;
       case LPC_SETTING_ID_ENABLE_KEY_LOGGING:
         POLY_KeyLogging(data[1]);
+        break;
+      case LPC_SETTING_ID_ENABLE_KEY_MAPPING:
+        POLY_EnableKeyMapping(data[1]);
         break;
       case LPC_SETTING_ID_AUDIO_ENGINE_CMD:
         MSG_SendAEDevelopperCmd(data[1]);
