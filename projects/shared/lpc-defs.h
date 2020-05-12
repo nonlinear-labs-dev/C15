@@ -22,6 +22,7 @@ enum LPC_BB_MESSAGE_TYPES
   LPC_BB_MSG_TYPE_EHC_DATA      = 0x1000,  // direction: output; arguments (uint16): n, (see nl_ehc_ctrl.c)
   LPC_BB_MSG_TYPE_KEY_EMUL      = 0x1100,  // direction: input/output;  arguments (uint16): 3, midi key , time(lo), time(high)
   LPC_BB_MSG_TYPE_STAT_DATA     = 0x1200,  // direction: output; arguments (uint16): 4
+  LPC_BB_MSG_TYPE_KEYMAP_DATA   = 0x1300,  // direction: input; arguments  (uint16): 32 (for 61 keys)
 };
 
 enum LPC_SETTING_IDS
@@ -57,6 +58,7 @@ enum LPC_SETTING_IDS
   LPC_SETTING_ID_ENABLE_EHC                       = 0xFF04,  // direction: input; arguments(uint16): 1, flag (!= 0)
   LPC_SETTING_ID_AUDIO_ENGINE_CMD                 = 0xFF05,  // direction: input; arguments(uint16): 1, command (1:testtone OFF; 2:testtone ON; 3:default sound)
   LPC_SETTING_ID_SYSTEM_SPECIAL                   = 0xFF06,  // direction: input; arguments(uint16): 1, command (1:reset heartbeat: 2: system reset: 3:Enable MIDI)
+  LPC_SETTING_ID_ENABLE_KEY_MAPPING               = 0xFF07,  // direction: input; arguments(uint16): 1, flag (!= 0)
 };
 
 enum LPC_REQUEST_IDS
@@ -104,7 +106,9 @@ enum HW_SOURCE_IDS
   HW_SOURCE_ID_PEDAL_6    = 9,
   HW_SOURCE_ID_PEDAL_7    = 10,
   HW_SOURCE_ID_PEDAL_8    = 11,
-  HW_SOURCE_ID_LAST_KEY   = 12,  // only used to signal last pressed key to BBB (not a real HW_SOURCE for AE)
+  // HW_SOURCE_ID_LAST_KEY is only used to signal last pressed key to BBB (not a real HW_SOURCE for AE)
+  // high byte is the physical key number 0..60, low byte is logical note number (36..96, unless hardware-remapped)
+  HW_SOURCE_ID_LAST_KEY   = 12,
 };
 #define NUM_HW_REAL_SOURCES (HW_SOURCE_ID_PEDAL_8 + 1)  // all but LAST_KEY
 #define NUM_HW_SOURCES      (HW_SOURCE_ID_LAST_KEY + 1)
