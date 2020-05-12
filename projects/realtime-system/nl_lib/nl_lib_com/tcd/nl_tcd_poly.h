@@ -20,11 +20,15 @@
 #define VEL_CURVE_COUNT     5
 
 //======== public functions
-
-void POLY_Select_VelTable(uint32_t const curve);
 void POLY_Init(void);
 void POLY_Process(void);
+
+void POLY_EnableKeyMapping(uint16_t const on);
+void POLY_SetKeyRemapTable(uint16_t const length, uint16_t *data);
+
 void POLY_ForceKey(uint16_t const midiKeyNumber, uint16_t const timeLow, uint16_t const timeHigh);
 void POLY_KeyLogging(uint16_t const on);
+
+void POLY_Select_VelTable(uint32_t const curve);
 
 #endif /* NL_TCD_POLY_H_ */
