@@ -14,7 +14,7 @@
 #define M4_PERIOD_US (5ul)  // M0 interrupt period in 1us multiples
 #define M4_FREQ_HZ   (1000000 / M4_PERIOD_US)
 
-#define M0_PERIOD_62_5NS (16ul)  // M0 interrupt period in 62.5ns multiples
+#define M0_PERIOD_62_5NS (20ul)  // M0 interrupt period in 62.5ns multiples
 #define M0_FREQ_HZ       (16000000ul / M0_PERIOD_62_5NS)
 
 #endif
