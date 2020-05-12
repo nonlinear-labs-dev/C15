@@ -8,6 +8,15 @@
 #define EMPHASE_IPC_H
 #include <stdint.h>
 
+// #define ADC_STRESS_TEST
+
+#ifdef ADC_STRESS_TEST
+// use a free-running 0..4095 counter rather than real ADC values
+// counter is incremented when adcBufferWriteIndex is advanced
+#warning "ADC stress test is on, no real ADC values will be used"
+static uint16_t adc_val;
+#endif
+
 // ID's for IPC
 // M0-->M4
 // 1. ADC's
@@ -169,8 +178,14 @@ static inline int32_t IPC_ReadAdcBufferSum(uint8_t const adc_id)
 *   @param[in]	IPC id of the adc channel 0...15
 *   @param[in]  adc channel value
 ******************************************************************************/
+#ifdef ADC_STRESS_TEST
+static inline void IPC_WriteAdcBuffer(uint8_t const adc_id, int32_t value)
+{
+  value = adc_val;
+#else
 static inline void IPC_WriteAdcBuffer(uint8_t const adc_id, int32_t const value)
 {
+#endif
   // see notes for IPC_ReadAdcBufferAveraged above
   asm volatile("cpsid i");  // IRQs off, make critical section as short as possible (M0 IRQs are long because of keybed scanner)
   // subtract out the overwritten value and add in new value to sum
@@ -186,6 +201,9 @@ static inline void IPC_WriteAdcBuffer(uint8_t const adc_id, int32_t const value)
 static inline void IPC_AdcBufferWriteNext(void)
 {
   s.adcBufferWriteIndex = (s.adcBufferWriteIndex + 1) & IPC_ADC_BUFFER_MASK;
+#ifdef ADC_STRESS_TEST
+  adc_val = (adc_val + 1) & 4095;
+#endif
 }
 
 /******************************************************************************/
