@@ -36,16 +36,20 @@
 	            considerably by saving the bulk switch states per bank, not individually
 	            per key number.
 
+	            Functions are located in RAM for a little speed increase.
+
 	            Finally, the access to the GPIOs was optimized for speed.
 	            NOTE : the definitions made in "boards/emphase_v5.c" are
 	            not used anymore  !!
+
+	            For better EMC, a little bit of jitter is introduced by
+	            constantly varying the time until the next timer interrupt triggers.
 *******************************************************************************/
 #include "drv/nl_kbs.h"
 #include <stdint.h>
 #include "ipc/emphase_ipc.h"
 #include "usb/nl_usb_midi.h"
 #include "drv/nl_cgu.h"
-#include <cr_section_macros.h>
 
 __attribute__((aligned(4))) static uint16_t keyOff[NUM_KEYS];   // flag array to store logical on/off state
 __attribute__((aligned(4))) static uint32_t keyTime[NUM_KEYS];  // in M0 systicks, which are already left-shifted (for speed)
