@@ -34,32 +34,94 @@ static inline uint32_t M4TicksToUS(uint32_t const ticks)
   return M4_PERIOD_US * ticks;
 }
 
+// ------------------------ clock jitter for ESPI
+static int16_t espiCLKDIV;
+static int16_t randomTableIndex = 10;
+static int16_t randomTable[11]  = {
+  +3, -2, +1, -1, -5, -4, +4, +2, +0, +5, -3
+};
+// --- apply jitter to the ESPI clock
+// we have 10 calls and the random table is 11 entries long, which
+// will spread the varying ESPI clocks & data freqs over all the different
+// hardware accesses in a pseudo-random fashion, for maximum jitter
+static void jitterESPIclk(void)
+{
+  int16_t offset = randomTable[randomTableIndex];
+  if (!--randomTableIndex)
+    randomTableIndex = 10;
+
+  if ((espiCLKDIV + offset) > 1 && (espiCLKDIV + offset) < 255)
+    ESPI_SetCRDIV((uint16_t)(espiCLKDIV + offset));
+}
+
+// ---------------- clock jitter for timer IRQ
+// 8 bit pseudo-random generator using a simple and fast Galois linear-feedback shift register
+// period is 255, values span the range of 1..255 (0 ever won't occur)
+// possible generator polynoms are, giving different sequences :
+//   0x8E, 0x95, 0x96, 0xA6, 0xAF, 0xB1, 0xB2, 0xB4, 0xB8, 0xC3, 0xC6, 0xD4, 0xE1, 0xE7, 0xF3, 0xFA
+// source : https://doitwireless.com/2014/06/26/8-bit-pseudo-random-number-generator/
+static inline uint32_t rand(void)
+{
+  static uint32_t rand8 = 0x5A;  // seed value, must not be 0
+  uint32_t        r1, r2;
+  asm volatile(
+      "\n mov %[r1], #0xB8"                                // generator polynom GP = x^8 + x^6 + x^5 + x^4 + 1 (10111000b == B8h)
+      "\n lsr %[rand8], #1"                                // rand8 >> 1, shift into carry flag
+      "\n sbc %[r2], %[r2]"                                // mask, all 1's if carry set, 0's else
+      "\n and %[r1], %[r2]"                                // ANDing results in either GP or 0
+      "\n eor %[rand8], %[r1]"                             // rand8 ^= (carry ? GP : 0)
+      : [r1] "=r"(r1), [r2] "=r"(r2), [rand8] "+r"(rand8)  // out/ in-out parameters "=":out only, "+":in-out
+      :                                                    // in only parameters
+      : "cc");                                             // clobber list (cc=condition codes)
+  return rand8;
+}
+
+static inline void jitterIRQ(void)
+{
+  RIT_SetCompVal((NL_LPC_CLK / M0_FREQ_HZ) - 32 + (rand() >> 2));  // offset clock by +-32 clock periods
+}
+
 /******************************************************************************/
 /** @note	Espi device functions do NOT switch mode themselves!
- 	 	 	espi bus speed: 1.6 MHz -> 0.625 µs                    Bytes    t_µs
-                                                     POL/PHA | multi | t_µs_sum
+ 	 	 	espi bus speed: 2.0 MHz -> 0.500 µs              Bytes    t_µs
+                                                   POL/PHA | multi | t_µs_sum
 --------------------------------------------------------------------------------
-P1D1   ADC-2CH     ribbon_board         MCP3202   R/W  0/1   3   2   15  30
-P1D2   ADC-1CH     pitch_bender_board   MCP3201   R    0/1   3   1   15  15
+P1D1   ADC-2CH     ribbon_board         MCP3202   R/W  0/1   3   2   12  24
+P1D2   ADC-1CH     pitch_bender_board   MCP3201   R    0/1   3   1   12  12
 --------------------------------------------------------------------------------
-P0D1   1CH-ADC     aftertouch_board     MCP3201   R    0/1   3   1   15  15
+P0D1   1CH-ADC     aftertouch_board     MCP3201   R    0/1   3   1   12  12
 --------------------------------------------------------------------------------
-P2D2   ATTENUATOR  pedal_audio_board    LM1972    W    0/0   2   2   10  20
+P2D2   ATTENUATOR  pedal_audio_board    LM1972    W    0/0   2   2    8  16 (unused)
 --------------------------------------------------------------------------------
-P3D1   ADC-1CH     volume_poti_board    MCP3201   R    0/1   3   1   15  15
+P3D1   ADC-1CH     volume_poti_board    MCP3201   R    0/1   3   1   12  12 (unused)
 --------------------------------------------------------------------------------
-P4D1   ADC-8CH     pedal_audio_board    MCP3208   R/W  0/1   3   4   15  60
-P4D2   DETECT      pedal_audio_board    HC165     R    1/1   1   1    5   5
-P4D3   SET_PULL_R  pedal_audio_board    HC595     W    0/0   1   1    5   5
+P4D1   ADC-8CH     pedal_audio_board    MCP3208   R/W  0/1   3   4   12  48
+P4D2   DETECT      pedal_audio_board    HC165     R    1/1   1   1    4   4
+P4D3   SET_PULL_R  pedal_audio_board    HC595     W    0/0   1   1    4   4
 --------------------------------------------------------------------------------
-                                                                13      165
+                                                                 13      132
 *******************************************************************************/
+static uint32_t compensatingTicks = 0;
+
+static inline void adjustedWait(void)
+{
+  for (uint32_t i = 0; i < compensatingTicks; i++)
+    DELAY_TEN_CLK_CYCLES;  // something like 70ns on average, depending on IRQ load
+}
+
 static void ProcessADCs(void)
 {
-  static uint32_t compensatingTicks = 0;
-  static uint32_t totalTicks        = 0;
-  static uint32_t hbLedCnt          = 0;
-  static uint8_t  first             = 1;
+  // This process is free-running, not controlled by a timer IRQ, but with a feedback
+  // loop to keep cycle time close to the required value.
+  // Because of the adaptive action of the feedback loop, and because the process
+  // is interrupted by the keybed-scanner many times at arbitrary points, the used
+  // hardware lines will have jitter which is a good thing for EMC.
+  // To increase that jitter (to spread RF frequency components), the SPI DMA clock
+  // is slightly varied for each SPI burst access.
+
+  static uint32_t totalTicks = 0;
+  static uint32_t hbLedCnt   = 0;
+  static uint8_t  first      = 1;
   int32_t         val;
   uint32_t        savedTicks;
 
@@ -70,20 +132,17 @@ static void ProcessADCs(void)
   }
   else
   {
-    // Feedback loop to adjust the cycle time to collect all the ADC data 16 times
-    // per 12.5ms ADC cycle (the feedback is slow, only +- 1 tick, ~1us, of adjustment
-    // per run of this process routine).
+    // Feedback loop to adjust the cycle time to collect all the ADC data
+    // 16 times per 12.5ms ADC cycle, 781us.
+    // The feedback is slow, only about +-700ns of adjustment per run of this process routine.
     // This is because the ADC readout from M4 side is with 16-fold averaging
     // which assumes we have 16 values collected during the 12.5ms.
     // The feedback loop is protected from trying to make the cycle time shorter
-    // than physically possible, determined by interrupt load. This is the standard
-    // case at the moment as ProcessADCs() execution time is just slightly longer,
-    // with ~820us, than the 781us required.
+    // than physically possible, determined by interrupt load.
+    // The actual waiting time is distributed across the whole function in 10 places
+    // to increase jitter (good for EMC)
     IPC_SetADCTime(savedTicks = (s.ticker - totalTicks));
     totalTicks = s.ticker;
-
-    for (uint32_t i = 0; i < compensatingTicks; i++)
-      DELAY_HUNDRED_CLK_CYCLES;  // something like 500ns...1us, depending on IRQ load
 
     if (M4TicksToUS(savedTicks) < 12500 / 16 - 7)  // cycle was faster than 16 rounds per 12.5ms (the 7 is a fudge factor)?
       compensatingTicks++;
@@ -99,10 +158,11 @@ static void ProcessADCs(void)
   // Starting a new round of adc channel & detect value read-ins, advance ipc write index first
   IPC_AdcBufferWriteNext();
 
+  jitterESPIclk();
+  adjustedWait();
   // switch mode: 13.6 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_ADC);
   NL_GPDMA_Poll();
-
   // do heartbeat LED here, enough time
   hbLedCnt++;
   switch (hbLedCnt)
@@ -119,6 +179,9 @@ static void ProcessADCs(void)
     default:
       break;
   }
+
+  jitterESPIclk();
+  adjustedWait();
   // pedal 1 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_1_ADC_RING);
   NL_GPDMA_Poll();
@@ -130,6 +193,8 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_1_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_TIP, val);
 
+  jitterESPIclk();
+  adjustedWait();
   // pedal 2 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_2_ADC_RING);
   NL_GPDMA_Poll();
@@ -141,6 +206,8 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_2_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_TIP, val);
 
+  jitterESPIclk();
+  adjustedWait();
   // pedal 3 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_3_ADC_RING);
   NL_GPDMA_Poll();
@@ -152,6 +219,8 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_3_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL3_TIP, val);
 
+  jitterESPIclk();
+  adjustedWait();
   // pedal 4 : 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Pedals_EspiPullChannel_Blocking(ESPI_PEDAL_4_ADC_RING);
   NL_GPDMA_Poll();
@@ -163,6 +232,8 @@ static void ProcessADCs(void)
   val = ESPI_DEV_Pedals_GetValue(ESPI_PEDAL_4_ADC_TIP);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL4_TIP, val);
 
+  jitterESPIclk();
+  adjustedWait();
   // detect pedals: 32.5 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_DIN);
   NL_GPDMA_Poll();
@@ -176,6 +247,8 @@ static void ProcessADCs(void)
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL2_DETECT, ((detect & 0b01000000) >> 6) ? 4095 : 0);
   IPC_WriteAdcBuffer(IPC_ADC_PEDAL1_DETECT, ((detect & 0b10000000) >> 7) ? 4095 : 0);
 
+  jitterESPIclk();
+  adjustedWait();
   // set pull resistors: best case: 17.3 µs - worst case: 36 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_ATT_DOUT);
   NL_GPDMA_Poll();
@@ -190,6 +263,8 @@ static void ProcessADCs(void)
 
   NL_GPDMA_Poll();
 
+  jitterESPIclk();
+  adjustedWait();
   // pitchbender: 42 µs (NOTE: Timing not up to date, might be about 20% faster now)
   SPI_DMA_SwitchMode(ESPI_MODE_ADC);
   NL_GPDMA_Poll();
@@ -199,12 +274,16 @@ static void ProcessADCs(void)
 
   IPC_WriteAdcBuffer(IPC_ADC_PITCHBENDER, ESPI_DEV_Pitchbender_GetValue());
 
+  jitterESPIclk();
+  adjustedWait();
   // aftertouch: 29 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Aftertouch_EspiPull();
   NL_GPDMA_Poll();
 
   IPC_WriteAdcBuffer(IPC_ADC_AFTERTOUCH, ESPI_DEV_Aftertouch_GetValue());
 
+  jitterESPIclk();
+  adjustedWait();
   // 2 ribbons: 57 µs (NOTE: Timing not up to date, might be about 20% faster now)
   ESPI_DEV_Ribbons_EspiPull_Upper();
   NL_GPDMA_Poll();
@@ -227,6 +306,7 @@ int main(void)
   // Increased from 1.6 to 2MHz clock freq... works up to ~5MHz in V7.1 hardware.
   // With 2MHz, max M0 ADC scanning cycle time is reduced by about 15%
   ESPI_Init(2000000);
+  espiCLKDIV = (int16_t) ESPI_GetCRDIV();
 
   ESPI_DEV_Pedals_Init();
   ESPI_DEV_Aftertouch_Init();
@@ -243,7 +323,8 @@ int main(void)
 
 /******************************************************************************/
 
-__attribute__((section(".ramfunc"))) void M0_RIT_OR_WWDT_IRQHandler(void)
+// __attribute__((section(".ramfunc")))
+void M0_RIT_OR_WWDT_IRQHandler(void)
 {
   // Clear interrupt flag early, to allow for short, single cycle IRQ overruns,
   // that is if, the keybed scanner occasionally takes longer than one time slot
@@ -251,9 +332,10 @@ __attribute__((section(".ramfunc"))) void M0_RIT_OR_WWDT_IRQHandler(void)
   // it completed the first pass. By this, no IRQ is lost, albeit the ticker
   // used in KBS_Process for key timing will have a little bit of jitter.
   // Only when eeprom memory access etc slows down the bus there is a slight
-  // chance of a burst of overruns where the M0 main process hardly gets any execution
-  // time
+  // chance of a burst of overruns where the M0 main process hardly gets any
+  //  execution time if the IRQ execution time is close to IRQ repeat rate already.
   RIT_ClearInt();
+  jitterIRQ();
   (*KBS_Process)();
   s.RitCrtlReg |= RIT_GetCtrlReg();  // note that this profiling increases IRQ time itself (Heisenberg ;-)
 }
