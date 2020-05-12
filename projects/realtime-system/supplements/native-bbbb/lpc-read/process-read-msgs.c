@@ -187,9 +187,10 @@ void processReadMsgs(uint16_t const cmd, uint16_t const len, uint16_t *const dat
       if (!(flags & NO_OVERLAY) && (lastMessage == (((uint32_t) cmd << 16)) + (uint32_t) data[0]))
         cursorUp(1);
       displayCounter();
-      printf("PARAM (HWSID %02d) %s = %5d", data[0], paramNameTable[data[0]], data[1]);
       if (data[0] <= HW_SOURCE_ID_PEDAL_8)
-        printf(" (%5.1lf%%)", 100.0 * data[1] / 16000.0);
+        printf("PARAM (HWSID %02d) %s = %5d (%5.1lf%%)", data[0], paramNameTable[data[0]], data[1], 100.0 * data[1] / 16000.0);
+      else  // key
+        printf("PARAM (HWSID %02d) %s : key number=%3d, note number=%3d", data[0], paramNameTable[data[0]], data[1] >> 8, data[1] & 0xFF);
       printf("\n");
       lastMessage = (cmd << 16) + data[0];
       return;
