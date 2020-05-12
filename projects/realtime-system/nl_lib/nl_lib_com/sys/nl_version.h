@@ -19,7 +19,8 @@
 // 59 == release candidate, beta test
 // 60 == release candidate, beta test, lots of improvements (Keybed Scanner)
 // 61 == release candidate, beta test, removed all standard libraries, and now using hardware floating point
-#define SW_VERSION 61206
+// 62 == release candidate, beta test, introduce jitter on ESPI and keybed scanner for EMC, add key mapping
+#define SW_VERSION 62206
 
 void* GetVersionString();
 
