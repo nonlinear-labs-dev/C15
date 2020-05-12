@@ -31,6 +31,11 @@ inline void RIT_Init_IntervalInHz(uint32_t const freq_hz)
   NVIC_EnableIRQ(RITIMER_IRQn);
 }
 
+inline void RIT_SetCompVal(uint32_t const value)
+{
+  LPC_RITIMER->COMPVAL = value;
+}
+
 static inline void RIT_ClearInt(void)
 {
   LPC_RITIMER->CTRL |= 1;
