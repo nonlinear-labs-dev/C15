@@ -2,11 +2,14 @@ package com.nonlinearlabs.client.dataModel.setup;
 
 import java.util.HashMap;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.dataModel.DataModelEntityBase;
+import com.nonlinearlabs.client.dataModel.EnumDataModelEntity;
 import com.nonlinearlabs.client.dataModel.Updater;
 import com.nonlinearlabs.client.dataModel.ValueDataModelEntity;
 import com.nonlinearlabs.client.dataModel.ValueUpdater;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.PedalType;
 
 public class SetupUpdater extends Updater {
 	private final HashMap<String, DataModelEntityBase> xmlNodeNameToSetting = createSettingMap();
@@ -65,7 +68,13 @@ public class SetupUpdater extends Updater {
 				if (didChange(valueNode)) {
 					DataModelEntityBase s = findSettingFromTagName(setting.getNodeName());
 					if (s != null) {
-						s.fromString(getText(valueNode));
+						
+						if(setting.getNodeName().matches("Pedal\\dType") && s instanceof EnumDataModelEntity<?>) {
+							EnumDataModelEntity<PedalType> e = (EnumDataModelEntity<PedalType>)s;
+							e.fromInt(Integer.parseInt(getText(valueNode)));
+						} else {
+							s.fromString(getText(valueNode));
+						}
 
 						if (s instanceof ValueDataModelEntity) {
 							ValueUpdater u = new ValueUpdater(setting, (ValueDataModelEntity) s);

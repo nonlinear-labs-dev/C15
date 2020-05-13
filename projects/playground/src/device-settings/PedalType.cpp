@@ -4,6 +4,8 @@
 #include <EHC-pedal-presets.h>
 #include "Application.h"
 #include "proxies/lpc/LPCProxy.h"
+#include "xml/Writer.h"
+#include "xml/Attribute.h"
 
 PedalType::PedalType(UpdateDocumentContributor &settings, uint16_t lpcKey)
     : super(settings, PedalTypes::PotTipActive)
@@ -11,14 +13,7 @@ PedalType::PedalType(UpdateDocumentContributor &settings, uint16_t lpcKey)
 {
 }
 
-bool PedalType::set(PedalTypes m)
-{
-  return EnumSetting::set(m);
-}
-
-PedalType::~PedalType()
-{
-}
+PedalType::~PedalType() = default;
 
 void PedalType::sendToLPC() const
 {
@@ -53,4 +48,10 @@ const std::vector<Glib::ustring> &PedalType::enumToDisplayString() const
   }
 
   return s_modeNames;
+}
+
+void PedalType::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
+{
+  bool changed = knownRevision < getUpdateIDOfLastChange();
+  writer.writeTextElement("value", std::to_string(get()), Attribute("changed", changed));
 }

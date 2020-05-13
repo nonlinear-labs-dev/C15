@@ -20,9 +20,33 @@ public class DeviceSettings {
 		public String displayValue = "---";
 		public double sliderPosition = 0;
 
-		static public String[] options = { "Pot Tip Active", "Pot Ring Active", "Pot Tip Active Reverse", "Pot Ring Active Reverse", "Resistor", "Resitor Reversed", 
-										   "Switch Closing", "Switch Opening", "CV 0..5V", "CV 0..5V Auto Range", "OFF", "Boss EV 30", "Doepfer FP 5", "Fractal EV 2",
-										   "Korg DS1H", "Korg EXP2", "Lead Foot LFX1", "MAudio EXP", "Moog EP3", "Roland DP10", "Roland EV5", "Yamaha FC3A", "Yamaha FC7" };
+		static public String[] options = {
+			"Pot, Tip-Active",
+			"Pot, Ring-Active",
+			"Pot, Tip-Act. Rev.",
+			"Pot, Ring-Act. Rev.",
+			"Resistor",
+			"Resistor, Rev.",
+			"Switch, Closing",
+			"Switch, Opening",
+			"CV, 0..5V",
+			"CV, 0..5V(Auto-Range)",
+			"---OFF---",
+			"E:Boss EV-30",
+			"E:Boss FV-500L",
+			"E:Doepfer FP5",
+			"E:Fractal EV-2",
+			"D:Korg DS-1H",
+			"E:Korg EXP-2",
+			"E:Lead Foot LFX-1",
+			"E:M-Audio EX-P (M.)",
+			"E:Moog EP-3 (std.)",
+			"D:Roland DP-10 (cont.)",
+			"E:Roland EV-5",
+			"D:Yamaha FC3A",
+			"E:Yamaha FC7"
+		};
+
 		public int selected = 0;
 	}
 
