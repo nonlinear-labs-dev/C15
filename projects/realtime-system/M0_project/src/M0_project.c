@@ -34,38 +34,17 @@ static inline uint32_t M4TicksToUS(uint32_t const ticks)
   return M4_PERIOD_US * ticks;
 }
 
-// ------------------------ clock jitter for ESPI
-static int16_t espiCLKDIV;
-static int16_t randomTableIndex = 10;
-static int16_t randomTable[11]  = {
-  +3, -2, +1, -1, -5, -4, +4, +2, +0, +5, -3
-};
-// --- apply jitter to the ESPI clock
-// we have 10 calls and the random table is 11 entries long, which
-// will spread the varying ESPI clocks & data freqs over all the different
-// hardware accesses in a pseudo-random fashion, for maximum jitter
-static void jitterESPIclk(void)
-{
-  int16_t offset = randomTable[randomTableIndex];
-  if (!--randomTableIndex)
-    randomTableIndex = 10;
-
-  if ((espiCLKDIV + offset) > 1 && (espiCLKDIV + offset) < 255)
-    ESPI_SetCRDIV((uint16_t)(espiCLKDIV + offset));
-}
-
-// ---------------- clock jitter for timer IRQ
 // 8 bit pseudo-random generator using a simple and fast Galois linear-feedback shift register
 // period is 255, values span the range of 1..255 (0 ever won't occur)
 // possible generator polynoms are, giving different sequences :
 //   0x8E, 0x95, 0x96, 0xA6, 0xAF, 0xB1, 0xB2, 0xB4, 0xB8, 0xC3, 0xC6, 0xD4, 0xE1, 0xE7, 0xF3, 0xFA
 // source : https://doitwireless.com/2014/06/26/8-bit-pseudo-random-number-generator/
+static uint32_t        rand8 = 0x5A;  // seed value, must not be 0
 static inline uint32_t rand(void)
 {
-  static uint32_t rand8 = 0x5A;  // seed value, must not be 0
-  uint32_t        r1, r2;
+  uint32_t r1, r2;
   asm volatile(
-      "\n mov %[r1], #0xB8"                                // generator polynom GP = x^8 + x^6 + x^5 + x^4 + 1 (10111000b == B8h)
+      "\n mov %[r1], ~#0xB8"                               // generator polynom GP = x^8 + x^6 + x^5 + x^4 + 1 (10111000b == B8h)
       "\n lsr %[rand8], #1"                                // rand8 >> 1, shift into carry flag
       "\n sbc %[r2], %[r2]"                                // mask, all 1's if carry set, 0's else
       "\n and %[r1], %[r2]"                                // ANDing results in either GP or 0
@@ -76,9 +55,29 @@ static inline uint32_t rand(void)
   return rand8;
 }
 
+static uint32_t        rand32 = 0x12345678;
+static inline uint32_t xorshift_u32(void)
+{  // 32 bit xor-shift generator, period 2^32-1, non-zero seed required, range 1...2^32-1
+   // source : https://www.jstatsoft.org/index.php/jss/article/view/v008i14/xorshift.pdf
+  rand32 ^= rand32 << 13;
+  rand32 ^= rand32 >> 17;
+  rand32 ^= rand32 << 5;
+  return rand32;
+}
+
+// ------------------------ clock jitter for ESPI
+static int16_t espiCLKDIV;
+static void    jitterESPIclk(void)
+{
+  int16_t offset = (int16_t)((int16_t)(xorshift_u32() & 15) - 8);
+  if ((espiCLKDIV + offset) > 1 && (espiCLKDIV + offset) < 255)
+    ESPI_SetCRDIV((uint16_t)(espiCLKDIV + offset));
+}
+
+// ---------------- clock jitter for timer IRQ
 static inline void jitterIRQ(void)
 {
-  RIT_SetCompVal((NL_LPC_CLK / M0_FREQ_HZ) - 32 + (rand() >> 2));  // offset clock by +-32 clock periods
+  RIT_SetCompVal((NL_LPC_CLK / M0_FREQ_HZ) - 32 + (xorshift_u32() & 63));  // offset clock by 2^6(+-32) clock periods
 }
 
 /******************************************************************************/
