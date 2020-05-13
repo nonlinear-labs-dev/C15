@@ -53,8 +53,8 @@ static int      rib_updateEeprom = 0;  // flag / step chain variable
 typedef struct __attribute__((packed))
 {
   int16_t threshold;
-  int16_t tableX[33];
-  int16_t tableY[33];
+  int16_t __attribute__((packed)) tableX[33];
+  int16_t __attribute__((packed)) tableY[33];
 } RibbonCalibrationData_T;
 
 // clang-format off
@@ -78,13 +78,13 @@ static const LIB_interpol_data_T ribbonCalibration[2] =
 {
   {
 	.points   = 33,
-	.x_values = ribbonCalibrationData[0].tableX,
-	.y_values = ribbonCalibrationData[0].tableY
+	.x_values = &ribbonCalibrationData[0].tableX[0],
+	.y_values = &ribbonCalibrationData[0].tableY[0]
   },
   {
 	.points   = 33,
-	.x_values = ribbonCalibrationData[1].tableX,
-	.y_values = ribbonCalibrationData[1].tableY
+	.x_values = &ribbonCalibrationData[1].tableX[0],
+	.y_values = &ribbonCalibrationData[1].tableY[0]
   }
 };
 // clang-format on
