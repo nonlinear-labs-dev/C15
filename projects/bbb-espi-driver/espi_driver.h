@@ -70,6 +70,8 @@ struct oleds_fb_par
 
 int panel_unit_is_online(void);
 
+int jitteredClock(int const sck_hz_mult);
+
 void espi_driver_scs_select(struct espi_driver *spi, s32 port, s32 device);
 s32  espi_driver_transfer(struct spi_device *dev, struct spi_transfer *xfer);
 s32  espi_driver_set_mode(struct spi_device *dev, u16 mode);
