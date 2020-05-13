@@ -15,12 +15,10 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
-import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
-import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.Viewport;
 import com.nonlinearlabs.client.world.overlay.belt.Belt;
@@ -32,191 +30,37 @@ import com.nonlinearlabs.client.world.pointer.Gesture;
 
 public class Overlay extends OverlayLayout {
 
-	private class LayerDisplay extends OverlayControl {
+	private class PartMuteDisplay extends SVGImage {
 
-		public LayerDisplay(OverlayLayout parent) {
-			super(parent);
 
-			EditBufferModel.get().soundType.onChange(v -> {
-				setVisible(v != SoundType.Single);
-				return true;
-			});
+		private boolean isMuted = false;
+		private boolean inLayer = false;
 
-			NonMaps.get().getNonLinearWorld().getPresetManager().onLoadToPartModeToggled((x) -> {
+		public PartMuteDisplay(OverlayLayout parent, VoiceGroup vg) {
+			super(parent, "mute-part-a.svg");
+
+			BasicParameterModel mute = EditBufferModel.get().getParameter(new ParameterId(395, vg));
+
+			mute.value.value.onChange(value -> {
+				isMuted = value > 0;
+				setVisible(inLayer && isMuted);
 				invalidate(INVALIDATION_FLAG_UI_CHANGED);
 				return true;
 			});
-		}
-
-		public boolean isLoadIntoPartEnabled() {
-			return NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
-		}
-
-		@Override
-		public void draw(Context2d ctx, int invalidationMask) {
-			RGB c = new RGBA(EditBufferPresenterProvider.getPresenter().voiceGroupIndicationColor, 0.25);
-			RGB stroke = RGBA.black().withAlpha(0.5);
-			getPixRect().fill(ctx, c);
-
-			switch(EditBufferPresenterProvider.getPresenter().soundType) {
-				case Split:
-					drawSplitIndication(ctx, c, stroke);
-				break;
-				case Layer:
-					drawLayerIndication(ctx, c, stroke);
-				break;
-				default:
-				break;
-			}
-		}
-
-		private VoiceGroup getSelectedVoiceGroup() {
-			return EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
-		}
-
-		private void drawSplitIndication(Context2d ctx, RGB fill, RGB stroke) {
-			VoiceGroup selected = getSelectedVoiceGroup();
-			Rect pix = getPixRect().copy();
-
-			final double margin = Millimeter.toPixels(1);
-			final double partWidth = Millimeter.toPixels(2);
-			final double partHeight = Millimeter.toPixels(5);
-			final double yMargin = Millimeter.toPixels(2.5);
-
-			final RGB ogFill = fill;
-			final RGB lighterFill = ogFill.brighter(96);
-
-			if(selected == VoiceGroup.I)
-				fill = lighterFill;
-
-			Rect box = new Rect(0, pix.getTop() + yMargin, partWidth, partHeight);
-
-			box.setLeft(pix.getCenterPoint().getX() - margin / 2 - partWidth);
-			box.fillAndStroke(ctx, fill, 2, stroke);
-
-			fill = ogFill;
-			
-			if(selected == VoiceGroup.II)
-				fill = lighterFill;
-
-			box.setLeft(pix.getCenterPoint().getX() + margin / 2);
-			box.fillAndStroke(ctx, fill, 2, stroke);
-
-			if(isLoadIntoPartEnabled()) {
-				if(selected == VoiceGroup.I) {
-					drawTriangleUpwards(ctx, lighterFill, stroke, new Position(pix.getCenterPoint().getX() - margin / 2 - partWidth / 2, pix.getBottom()), partWidth, Math.abs(pix.getBottom() - box.getBottom()));
-				}
-				else {
-					drawTriangleUpwards(ctx, lighterFill, stroke, new Position(pix.getCenterPoint().getX() + margin / 2 + partWidth / 2, pix.getBottom()), partWidth, Math.abs(pix.getBottom() - box.getBottom()));
-				}
-			}
-		}
-
-		private void drawLayerIndication(Context2d ctx, RGB fill, RGB stroke) {
-			VoiceGroup selected = getSelectedVoiceGroup();
-			Rect pix = getPixRect().copy();
-
-			final double margin = Millimeter.toPixels(1);
-			final double partWidth = Millimeter.toPixels(5);
-			final double partHeight = Millimeter.toPixels(2);
-
-			final RGB ogFill = fill;
-			final RGB lighterFill = ogFill.brighter(96);
-
-			if(selected == VoiceGroup.I)
-				fill = lighterFill;
-
-			Rect box = new Rect(pix.getCenterPoint().getX() - partWidth / 2, 0, partWidth, partHeight);
-			
-			final double boxIY = pix.getCenterPoint().getY() - margin / 2 - partHeight;
-			box.setTop(boxIY);
-			box.fillAndStroke(ctx, fill, 2, stroke);
-
-			fill = ogFill;
-			
-			if(selected == VoiceGroup.II)
-				fill = lighterFill;
-
-			final double boxIIY = pix.getCenterPoint().getY() + margin / 2;
-			box.setTop(boxIIY);
-			box.fillAndStroke(ctx, fill, 2, stroke);
-
-			if(isLoadIntoPartEnabled()) {
-				if(selected == VoiceGroup.I) {
-					drawTriangleSideways(ctx, lighterFill, stroke, new Position(pix.getLeft(), boxIY + partHeight / 2), partHeight * 1.2, partHeight * 1.2);
-				}
-				else {
-					drawTriangleSideways(ctx, lighterFill, stroke, new Position(pix.getLeft(), boxIIY + partHeight / 2), partHeight * 1.2, partHeight * 1.2);
-				}
-			}
-		}
-
-		private void drawTriangleSideways(Context2d ctx, RGB fill, RGB stroke, Position pos, double width, double height) {
-			ctx.beginPath();
-			ctx.moveTo(pos.getX(), pos.getY() - width);
-			ctx.lineTo(pos.getX(), pos.getY() + width);
-			ctx.lineTo(pos.getX() + height, pos.getY());
-			ctx.closePath();
-			ctx.setFillStyle(fill.toString());
-			ctx.setLineWidth(1);
-			ctx.setStrokeStyle(stroke.toString());
-			ctx.fill();
-			ctx.stroke();
-		}
-
-		private void drawTriangleUpwards(Context2d ctx, RGB fillColor, RGB strokeColor, Position pos, double width, double height) {
-			ctx.beginPath();
-			ctx.moveTo(pos.getX() + width, pos.getY());
-			ctx.lineTo(pos.getX() - width, pos.getY());
-			ctx.lineTo(pos.getX(), pos.getY() - height);
-			ctx.closePath();
-			ctx.setFillStyle(fillColor.toString());
-			ctx.setLineWidth(1);
-			ctx.setStrokeStyle(strokeColor.toString());
-			ctx.fill();
-			ctx.stroke();
-		}
-
-		@Override
-		public Control mouseDown(Position eventPoint) {
-			if (isVisible())
-				return this;
-			return super.mouseDown(eventPoint);
-		}
-
-		@Override
-		public Control click(Position eventPoint) {
-			if (isVisible()) {
-				EditBufferUseCases.get().toggleVoiceGroup();
-				return this;
-			}
-
-			return super.click(eventPoint);
-		}
-	}
-
-	private class PartMuteDisplay extends Label {
-
-		public PartMuteDisplay(OverlayLayout parent) {
-			super(parent);
 
 			EditBufferModel.get().soundType.onChange(v -> {
-				setVisible(v == SoundType.Layer);
+				inLayer = v == SoundType.Layer;
+				setVisible(inLayer && isMuted);
+				invalidate(INVALIDATION_FLAG_UI_CHANGED);
 				return true;
 			});
+
+			setVisible(mute.value.value.getValue() > 0 && EditBufferModel.get().soundType.getValue() == SoundType.Layer);
 		}
 
 		@Override
-		public String getDrawText(Context2d ctx) {
-			VoiceGroup g = EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
-			BasicParameterModel param = EditBufferModel.get().getParameter(new ParameterId(395, g));
-			boolean muted = param.value.getQuantizedAndClipped(true) > 0.5;
-			return muted ? "\uE0BA" : "";
-		}
-
-		@Override
-		public RGB getColorFont() {
-			return EditBufferPresenterProvider.getPresenter().voiceGroupIndicationColor;
+		public int getSelectedPhase() {
+			return 0;
 		}
 	}
 
@@ -230,12 +74,14 @@ public class Overlay extends OverlayLayout {
 	private List<CompareDialog> compareDialogs;
 	private ModalDialog modalDialog;
 	private LayerDisplay layerDisplay;
-	private PartMuteDisplay partMuteDisplay;
+	private PartMuteDisplay partMuteDisplayI;
+	private PartMuteDisplay partMuteDisplayII;
 
 	public Overlay(Viewport parent) {
 		super(parent);
 		addChild(layerDisplay = new LayerDisplay(this));
-		addChild(partMuteDisplay = new PartMuteDisplay(this));
+		addChild(partMuteDisplayI = new PartMuteDisplay(this, VoiceGroup.I));
+		addChild(partMuteDisplayII = new PartMuteDisplay(this, VoiceGroup.II));
 		addChild(belt = new Belt(this, parent.getNonMaps()));
 		addChild(buttons = new GlobalButtons(this, belt));
 		addChild(undoRedo = new UndoRedoButtons(this, belt));
@@ -410,7 +256,12 @@ public class Overlay extends OverlayLayout {
 		layerDisplay.doLayout((w - layerDisplayWidth) / 2, 0, layerDisplayWidth, layerDisplayHeight);
 
 		Rect layerDisplayPos = layerDisplay.getRelativePosition();
-		partMuteDisplay.doLayout(layerDisplayPos.getRight(), layerDisplayPos.getTop() + Millimeter.toPixels(0.5), layerDisplayPos.getWidth(), layerDisplayPos.getHeight());
+		
+		double muteHeight = layerDisplayPos.getHeight() / 3;
+		double muteYMargin = muteHeight / 2;
+
+		partMuteDisplayI.doLayout(layerDisplayPos.getLeft(), layerDisplayPos.getTop() + muteYMargin, layerDisplayPos.getWidth(), muteHeight);
+		partMuteDisplayII.doLayout(layerDisplayPos.getLeft(), layerDisplayPos.getTop() + muteHeight + (muteYMargin), layerDisplayPos.getWidth(), muteHeight);
 
 		double beltHeight = Millimeter.toPixels(40);
 		belt.doLayout(0, h - beltHeight, w, beltHeight);

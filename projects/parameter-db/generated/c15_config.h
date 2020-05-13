@@ -1,11 +1,11 @@
 #pragma once
 
 /******************************************************************************/
-/**	@file       c15_config.h
-    @date       2020-04-29, 13:13
-    @version	1.7B-5
-    @author     M. Seeber
-    @brief      crucial information about the audio engine
+/**	@file	c15_config.h
+    @date	2020-05-01, 17:50
+    @version	1.7B-6
+    @author	M. Seeber
+    @brief	crucial information about the audio engine
     @todo
 *******************************************************************************/
 
@@ -17,7 +17,7 @@ namespace C15
   namespace Config
   {
 
-    const char milestone[7] = "1.7B-5";
+    const char milestone[7] = "1.7B-6";
     const uint32_t total_polyphony = 24;
     const uint32_t local_polyphony = total_polyphony >> 1;
     const uint32_t tcd_elements = 400;

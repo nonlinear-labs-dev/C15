@@ -218,6 +218,7 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto voiceGroup = to<VoiceGroup>(request->get("voice-group"));
     editBuffer->undoableConvertToSingle(transaction, voiceGroup);
     Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });
+    Application::get().getHWUI()->setCurrentVoiceGroupAndUpdateParameterSelection(transaction, VoiceGroup::I);
   });
 
   addAction("convert-to-split", [=](auto request) {

@@ -20,6 +20,7 @@ add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/projects/realtime-system/M0_project/c15_lpc_m0.bin
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/projects/realtime-system/M4_project/c15_lpc_m4.bin
     DEPENDS .docker-container-created
+    DEPENDS ${ALL_FILES_IN_PROJECT}
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}

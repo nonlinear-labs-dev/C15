@@ -8,6 +8,8 @@
 #include <groups/MacroControlsGroup.h>
 #include <proxies/hwui/HWUIHelper.h>
 #include <parameter_declarations.h>
+#include <proxies/hwui/HWUI.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/PresetManagerLayout.h>
 
 VoiceGroupIndicator::VoiceGroupIndicator(const Rect& r)
     : Control(r)
@@ -63,10 +65,7 @@ bool VoiceGroupIndicator::drawLayer(FrameBuffer& fb)
 
   if(isLayerPartMuted(VoiceGroup::I))
   {
-    if(m_selectedVoiceGroup == VoiceGroup::I)
-      fb.setColor(FrameBufferColors::C77);
-    else
-      fb.setColor(FrameBufferColors::C255);
+    fb.setColor(FrameBufferColors::C43);
 
     auto centerX = absPos.getLeft() + 6;
     auto centerY = absPos.getTop() + 2;
@@ -83,10 +82,7 @@ bool VoiceGroupIndicator::drawLayer(FrameBuffer& fb)
 
   if(isLayerPartMuted(VoiceGroup::II))
   {
-    if(m_selectedVoiceGroup == VoiceGroup::II)
-      fb.setColor(FrameBufferColors::C77);
-    else
-      fb.setColor(FrameBufferColors::C255);
+    fb.setColor(FrameBufferColors::C43);
 
     auto centerX = absPos.getLeft() + 6;
     auto centerY = absPos.getTop() + 9;
@@ -168,6 +164,14 @@ void VoiceGroupIndicator::onParameterSelectionChanged(const Parameter* old, cons
 
 bool VoiceGroupIndicator::shouldDraw()
 {
+  if(auto layout = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getBaseLayout())
+  {
+    if(dynamic_cast<PresetManagerLayout*>(layout.get()))
+    {
+      return m_currentSoundType != SoundType::Single;
+    }
+  }
+
   if(m_currentSoundType == SoundType::Single)
     return false;
 

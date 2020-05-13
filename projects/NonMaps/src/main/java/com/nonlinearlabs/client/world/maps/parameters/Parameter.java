@@ -44,7 +44,7 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	private boolean onPresenterUpdated(ParameterPresenter p) {
 		presenter = p;
-		invalidate(INVALIDATION_FLAG_SCROLLED);
+		invalidate(INVALIDATION_FLAG_UI_CHANGED);
 		return true;
 	}
 

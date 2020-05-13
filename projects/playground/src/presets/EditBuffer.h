@@ -2,6 +2,7 @@
 
 #include "ParameterDualGroupSet.h"
 #include "presets/recall/RecallParameterGroups.h"
+#include "SendEditBufferScopeGuard.h"
 #include <nltools/threading/Expiration.h>
 #include <tools/DelayedJob.h>
 #include <tools/Uuid.h>
@@ -22,6 +23,7 @@ class EditBuffer : public ParameterDualGroupSet
   ~EditBuffer() override;
 
   Glib::ustring getName() const;
+  Glib::ustring getNameWithSuffix() const;
   Glib::ustring getVoiceGroupName(VoiceGroup vg) const;
   Glib::ustring getVoiceGroupNameWithSuffix(VoiceGroup vg, bool addSpace) const;
   size_t getHash() const;
@@ -137,6 +139,8 @@ class EditBuffer : public ParameterDualGroupSet
   PartOrigin getPartOrigin(VoiceGroup vg) const;
 
  private:
+  std::unique_ptr<SendEditBufferScopeGuard> scopedSendEditBufferGuard(UNDO::Transaction *transaction);
+
   Glib::ustring getEditBufferName() const;
   bool findAnyParameterChanged(VoiceGroup vg) const;
 
@@ -223,4 +227,6 @@ class EditBuffer : public ParameterDualGroupSet
   void undoableLoadPresetPartIntoSingleSound(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup copyFrom,
                                              VoiceGroup copyTo);
   void cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType);
+  bool isMonoEnabled(const VoiceGroup& vg) const;
+  bool hasMoreThanOneUnisonVoice(const VoiceGroup& vg) const;
 };
