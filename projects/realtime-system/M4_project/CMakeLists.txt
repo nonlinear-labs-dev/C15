@@ -1,9 +1,11 @@
-set (CPU "cortex-m4")
-
 set(BLOBNAME "c15_lpc_m4")
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=${CPU} -Wall -O3")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fdata-sections -ffunction-sections -Wl,--gc-sections -mfpu=fpv4-sp-d16 -mfloat-abi=hard")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-m4 -mthumb")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-print-memory-usage")
 
 add_compile_options("-DCORE_M4")
 
@@ -14,7 +16,7 @@ add_executable(${BLOBNAME} ${SOURCES})
 target_include_directories (${BLOBNAME} PRIVATE "../nl_lib/nl_lib_m4/src")
 target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_SOURCE_DIR}/projects/)
 
-target_link_options(${BLOBNAME} PUBLIC -specs=nano.specs -specs=nosys.specs -Wl,-Map,output.map)
+target_link_options(${BLOBNAME} PUBLIC -Wl,-Map,output.map -Wl,--gc-sections)
 target_link_directories(${BLOBNAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/realtime-system/ld)
 
 set_target_properties(${BLOBNAME} PROPERTIES LINKER_LANGUAGE C)
