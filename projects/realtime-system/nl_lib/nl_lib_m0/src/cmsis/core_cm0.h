@@ -478,7 +478,7 @@ extern "C"
 
     \param [in]      IRQn  External interrupt number. Value cannot be negative.
  */
-  inline static void NVIC_EnableIRQ(IRQn_Type IRQn)
+  inline void NVIC_EnableIRQ(IRQn_Type IRQn)
   {
     NVIC->ISER[0] = (1 << ((uint32_t)(IRQn) &0x1F));
   }
