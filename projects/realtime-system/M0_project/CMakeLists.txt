@@ -2,25 +2,23 @@ set (CPU "cortex-m0")
 
 set(BLOBNAME "c15_lpc_m0")
 
-# Optimisation / CPU and Warnings
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=${CPU} -Wall")
-
-# Autoremove unused code
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdata-sections -ffunction-sections -Wl,--gc-section")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=${CPU} -Wall -O3")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fdata-sections -ffunction-sections -Wl,--gc-section")
 
 add_compile_options("-DCORE_M0")
-add_compile_options("-DC15_VERSION_4")
 
 file(GLOB_RECURSE SOURCES ./src/*.c ../nl_lib/nl_lib_com/*.c ../nl_lib/nl_lib_m0/*.c)
 
-include_directories ("../nl_lib/nl_lib_m0/src")
-
 add_executable(${BLOBNAME} ${SOURCES})
 
-target_link_options(${BLOBNAME} PUBLIC -specs=nano.specs -specs=nosys.specs)
-target_link_directories(${BLOBNAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ld)
+target_include_directories (${BLOBNAME} PRIVATE "../nl_lib/nl_lib_m0/src")
+target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_SOURCE_DIR}/projects/)
 
-set_target_properties(${BLOBNAME} PROPERTIES LINK_FLAGS "-TLPC4337_M0.ld")
+target_link_options(${BLOBNAME} PUBLIC -specs=nano.specs -specs=nosys.specs -Wl,-Map,output.map)
+target_link_directories(${BLOBNAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/realtime-system/ld)
+
+set_target_properties(${BLOBNAME} PROPERTIES LINKER_LANGUAGE C)
+set_target_properties(${BLOBNAME} PROPERTIES LINK_FLAGS "-TC15_LPC4337_M0.ld")
 set_target_properties(${BLOBNAME} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS}")
 
 add_custom_target(${BLOBNAME}.bin 

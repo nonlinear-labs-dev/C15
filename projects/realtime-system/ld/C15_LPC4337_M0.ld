@@ -113,5 +113,4 @@ SECTIONS
          . = ALIGN(4) ;
         _end_shared = .;
     } > RamAHB16
-
 }

@@ -28,7 +28,7 @@
  * 					- SSP_SLAVE_MODE	:SPI slave
  * @param[in]	clk_rate	Clock Rate in Hz
  **********************************************************************/
-inline void SPI_DMA_Init(LPC_SSPn_Type *const SSPx, uint32_t const mode, uint32_t const clk_rate)
+inline static void SPI_DMA_Init(LPC_SSPn_Type *const SSPx, uint32_t const mode, uint32_t const clk_rate)
 {
   uint32_t prescale, cr0_div;
 

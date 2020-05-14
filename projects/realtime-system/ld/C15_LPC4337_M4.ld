@@ -82,7 +82,6 @@ SECTIONS
 	   _edata = . ;
 	} > RamLoc40 AT>MFlashA512
 
-
     /* MAIN BSS SECTION */
     .bss : ALIGN(4)
     {
@@ -93,7 +92,6 @@ SECTIONS
         _ebss = .;
         PROVIDE(end = .);
     } > RamLoc40
-
 
     /* DEFAULT NOINIT SECTION */
     .noinit (NOLOAD): ALIGN(4)

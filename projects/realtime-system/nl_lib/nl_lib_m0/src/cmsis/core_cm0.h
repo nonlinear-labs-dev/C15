@@ -176,8 +176,7 @@ extern "C"
 
   /** \brief  Union type to access the Application Program Status Register (APSR).
  */
-  typedef union
-  {
+  typedef union {
     struct
     {
 #if (__CORTEX_M != 0x04)
@@ -198,8 +197,7 @@ extern "C"
 
   /** \brief  Union type to access the Interrupt Program Status Register (IPSR).
  */
-  typedef union
-  {
+  typedef union {
     struct
     {
       uint32_t ISR : 9;         /*!< bit:  0.. 8  Exception number                   */
@@ -210,8 +208,7 @@ extern "C"
 
   /** \brief  Union type to access the Special-Purpose Program Status Registers (xPSR).
  */
-  typedef union
-  {
+  typedef union {
     struct
     {
       uint32_t ISR : 9; /*!< bit:  0.. 8  Exception number                   */
@@ -235,8 +232,7 @@ extern "C"
 
   /** \brief  Union type to access the Control Registers (CONTROL).
  */
-  typedef union
-  {
+  typedef union {
     struct
     {
       uint32_t nPRIV : 1;       /*!< bit:      0  Execution privilege in Thread mode */
@@ -482,7 +478,7 @@ extern "C"
 
     \param [in]      IRQn  External interrupt number. Value cannot be negative.
  */
-  inline void NVIC_EnableIRQ(IRQn_Type IRQn)
+  inline static void NVIC_EnableIRQ(IRQn_Type IRQn)
   {
     NVIC->ISER[0] = (1 << ((uint32_t)(IRQn) &0x1F));
   }
