@@ -17,23 +17,63 @@ class PedalMenuEditorEntry : public MenuEditorEntry
  protected:
   void setFontColor(FrameBuffer& fb) const override
   {
-    if((int) m_parent->m_mode->get() == m_index || isHighlight())
+    bool active = isActive();
+    bool selected = isHighlight();
+
+    if(active && selected)
     {
       fb.setColor(FrameBufferColors::C255);
     }
-    else
+    else if(active && !selected)
+    {
+      fb.setColor(FrameBufferColors::C43);
+    }
+    else if(!active && selected)
+    {
+      fb.setColor(FrameBufferColors::C255);
+    }
+    else if(!active && !selected)
     {
       Label::setFontColor(fb);
     }
   }
 
+ public:
+  bool redraw(FrameBuffer& fb) override
+  {
+
+    auto ret = SetupLabel::redraw(fb);
+    if(isHighlight()) {
+      fb.setColor(FrameBufferColors::C255);
+      fb.drawRect(getPosition());
+    }
+    return ret;
+  }
+
+ protected:
+  bool isActive() const
+  {
+    return (int) m_parent->m_mode->get() == m_index;
+  }
+
   void setBackgroundColor(FrameBuffer& fb) const override
   {
-    if((int) m_parent->m_mode->get() == m_index)
+    bool active = isActive();
+    bool selected = isHighlight();
+
+    if(active && selected)
     {
-      fb.setColor(FrameBufferColors::C179);
+      fb.setColor(FrameBufferColors::C77);
     }
-    else
+    else if(active && !selected)
+    {
+      fb.setColor(FrameBufferColors::C77);
+    }
+    else if(!active && selected)
+    {
+      fb.setColor(FrameBufferColors::C43);
+    }
+    else if(!active && !selected)
     {
       fb.setColor(FrameBufferColors::C43);
     }
