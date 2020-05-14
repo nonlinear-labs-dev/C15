@@ -12,9 +12,6 @@
 #include "cmsis/lpc43xx_cgu.h"
 #include "drv/nl_cgu.h"
 
-extern inline uint16_t SPI_DMA_GetCRDIV(LPC_SSPn_Type *const SSPx);
-extern inline void     SPI_DMA_SetCRDIV(LPC_SSPn_Type *const SSPx, uint16_t const crdiv);
-
 /**********************************************************************
  * @brief		Initializes the SPI-DMA driver for the desired SSP
  * @param[in]	SSPx	Pointer to selected SSP peripheral, should be:

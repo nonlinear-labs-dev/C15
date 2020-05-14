@@ -13,7 +13,7 @@
 #include "cmsis/LPC43xx.h"
 #include "drv/nl_cgu.h"
 
-inline static void RIT_Init_IntervalInHz(uint32_t const freq_hz)
+inline void RIT_Init_IntervalInHz(uint32_t const freq_hz)
 {
   /* Initialize RITimer */
   LPC_RITIMER->COMPVAL = 0xFFFFFFFF;
@@ -31,7 +31,7 @@ inline static void RIT_Init_IntervalInHz(uint32_t const freq_hz)
   NVIC_EnableIRQ(RITIMER_IRQn);
 }
 
-inline static void RIT_SetCompVal(uint32_t const value)
+inline void RIT_SetCompVal(uint32_t const value)
 {
   LPC_RITIMER->COMPVAL = value;
 }
