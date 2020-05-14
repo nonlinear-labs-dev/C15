@@ -37,6 +37,8 @@
 									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.92120640" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections" valueType="string"/>
 								<option id="gnu.c.compiler.option.optimization.flags.239271170" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-fno-common" valueType="string"/>
@@ -140,6 +142,8 @@
 									<listOptionValue builtIn="false" value="__CODE_RED"/>
 									<listOptionValue builtIn="false" value="CORE_M0"/>
 									<listOptionValue builtIn="false" value="__LPC43XX__"/>
+									<listOptionValue builtIn="false" value=""/>
+									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
 									<listOptionValue builtIn="false" value=""/>
