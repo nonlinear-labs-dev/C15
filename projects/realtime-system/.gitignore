@@ -2,8 +2,14 @@
 
 # Whitelist some files
 
-# Blacklist files/folders in same directory as the .gitignore file
+# Blacklist files/folders
 .metadata/
+src/main/.settings
+src/main/Release
+src/main/Debug
+src/co-proc/.settings
+src/co-proc/Release
+src/co-proc/Debug
 
 # Whitelist our folders we want to sync
 # trailing "/" is optional for folders, may match file though.
