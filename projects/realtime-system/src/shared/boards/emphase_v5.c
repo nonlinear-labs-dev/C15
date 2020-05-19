@@ -4,8 +4,12 @@
     @author		2015-01-27 DTZ
     changes:
     	2019-11-18 KSTR	:
-    		added pins for supervisor communication (toggle line and
-    		non-maskable "always unmute" hardware jumper
+    		- added pins for supervisor communication (I/O-lines and
+    		  non-maskable "always unmute" hardware jumper)
+    	2020-05-17 KSTR	:
+    		- make all pins "slow" type to improve EMC ("slow" is fast enough with 30MHz++)
+    		- avoid floating inputs: enable input buffer on all pins and set up
+    		  pull-ups/pull-downs in "repeater" mode to
 *******************************************************************************/
 
 #include <stdint.h>
@@ -123,22 +127,22 @@ static void Delay100(void)
 static PIN_CFG_T lpc_espi_data_sck = {
   .pinId        = { 3, 3 },
   .ioType       = PIN_TYPE_PIN,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
-  .slewRate     = PIN_SRATE_FAST,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .slewRate     = PIN_SRATE_SLOW,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 2
 };
 
 static PIN_CFG_T lpc_espi_data_sdo = {
   .pinId        = { 3, 7 },
   .ioType       = PIN_TYPE_PIN,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
-  .slewRate     = PIN_SRATE_FAST,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .slewRate     = PIN_SRATE_SLOW,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 5
 };
 
@@ -147,9 +151,9 @@ static PIN_CFG_T lpc_espi_data_sdi = {
   .ioType       = PIN_TYPE_PIN,
   .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
-  .slewRate     = PIN_SRATE_FAST,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .slewRate     = PIN_SRATE_SLOW,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 5
 };
 
@@ -158,11 +162,11 @@ static PIN_CFG_T lpc_espi_data_sap = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 5, 11 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 4
 };
 
@@ -171,11 +175,11 @@ static PIN_CFG_T lpc_espi_data_dmx = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 3, 11 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -185,11 +189,11 @@ static PIN_CFG_T lpc_espi_scs[6] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 8 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -197,11 +201,11 @@ static PIN_CFG_T lpc_espi_scs[6] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 9 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -209,11 +213,11 @@ static PIN_CFG_T lpc_espi_scs[6] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 10 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
 
@@ -222,11 +226,11 @@ static PIN_CFG_T lpc_espi_scs[6] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 12 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -234,11 +238,11 @@ static PIN_CFG_T lpc_espi_scs[6] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 13 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -246,11 +250,11 @@ static PIN_CFG_T lpc_espi_scs[6] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 14 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   }
 };
@@ -291,11 +295,11 @@ static void InitEspiPins(void)
 static PIN_CFG_T bbb_lpc_bilo = {
   .pinId        = { 1, 3 },
   .ioType       = PIN_TYPE_PIN,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 5
 };
 
@@ -305,8 +309,8 @@ static PIN_CFG_T bbb_lpc_boli = {
   .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 5
 };
 
@@ -315,11 +319,11 @@ static PIN_CFG_T bbb_lpc_rdy = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 1, 0 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -328,11 +332,11 @@ static PIN_CFG_T bbb_lpc_prq = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 1, 1 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -344,8 +348,8 @@ static PIN_CFG_T bbb_lpc_scs = {
   .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 5
 };
 
@@ -354,11 +358,11 @@ static PIN_CFG_T bbb_lpc_sp1 = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 1, 3 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -367,11 +371,11 @@ static PIN_CFG_T bbb_lpc_sp2 = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 1, 4 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -381,8 +385,8 @@ static PIN_CFG_T bbb_lpc_sck = {
   .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 1
 };
 
@@ -419,11 +423,11 @@ static PIN_CFG_T lpc_ks_line[4] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 0, 0 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -431,11 +435,11 @@ static PIN_CFG_T lpc_ks_line[4] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 0, 1 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -443,22 +447,22 @@ static PIN_CFG_T lpc_ks_line[4] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 0, 2 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   { .pinId        = { 1, 16 },
     .ioType       = PIN_TYPE_GPIO,
     .gpioId       = { 0, 3 },
     .direction    = PIN_GPIO_DIR_OUT,
-    .inputBuffer  = PIN_INBUF_OFF,
+    .inputBuffer  = PIN_INBUF_ON,
     .glitchFilter = PIN_FILTER_ON,
-    .slewRate     = PIN_SRATE_FAST,
-    .pullDown     = PIN_PDN_OFF,
-    .pullUp       = PIN_PUP_OFF,
+    .slewRate     = PIN_SRATE_SLOW,
+    .pullDown     = PIN_PDN_ON,
+    .pullUp       = PIN_PUP_ON,
     .function     = 0 }
 };
 
@@ -470,9 +474,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   },
   {
@@ -482,9 +486,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   },
   {
@@ -494,9 +498,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   },
   {
@@ -506,9 +510,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   },
   {
@@ -518,9 +522,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   },
   {
@@ -530,9 +534,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   },
   {
@@ -542,9 +546,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   },
   {
@@ -554,9 +558,9 @@ static PIN_CFG_T lpc_ks_key[8] = {
       .direction    = PIN_GPIO_DIR_IN,
       .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
-      .slewRate     = PIN_SRATE_FAST,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .slewRate     = PIN_SRATE_SLOW,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 4,
   }
 };
@@ -566,11 +570,11 @@ static PIN_CFG_T lpc_ks_dmx = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 2, 2 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
-  .slewRate     = PIN_SRATE_FAST,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .slewRate     = PIN_SRATE_SLOW,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -622,11 +626,11 @@ static PIN_CFG_T lpc_dbg_led_m4_hb = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 2, 11 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -635,11 +639,11 @@ static PIN_CFG_T lpc_dbg_led_task_ovfl = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 2, 13 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -648,11 +652,11 @@ static PIN_CFG_T lpc_dbg_led_error = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 2, 14 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -661,11 +665,11 @@ static PIN_CFG_T lpc_dbg_led_m0_hb = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 2, 10 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -674,11 +678,11 @@ static PIN_CFG_T lpc_dbg_led_audio_ok = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 2, 12 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -688,11 +692,11 @@ static PIN_CFG_T lpc_dbg_pod[] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 1 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -700,11 +704,11 @@ static PIN_CFG_T lpc_dbg_pod[] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 2 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -712,11 +716,11 @@ static PIN_CFG_T lpc_dbg_pod[] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 3 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   },
   {
@@ -724,11 +728,11 @@ static PIN_CFG_T lpc_dbg_pod[] = {
       .ioType       = PIN_TYPE_GPIO,
       .gpioId       = { 3, 4 },
       .direction    = PIN_GPIO_DIR_OUT,
-      .inputBuffer  = PIN_INBUF_OFF,
+      .inputBuffer  = PIN_INBUF_ON,
       .glitchFilter = PIN_FILTER_ON,
       .slewRate     = PIN_SRATE_SLOW,
-      .pullDown     = PIN_PDN_OFF,
-      .pullUp       = PIN_PUP_OFF,
+      .pullDown     = PIN_PDN_ON,
+      .pullUp       = PIN_PUP_ON,
       .function     = 0,
   }
 };
@@ -736,11 +740,11 @@ static PIN_CFG_T lpc_dbg_pod[] = {
 static PIN_CFG_T lpc_dbg_uart_tx = {
   .pinId        = { 2, 10 },
   .ioType       = PIN_TYPE_PIN,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
-  .pullUp       = PIN_PUP_OFF,
+  .pullDown     = PIN_PDN_ON,
+  .pullUp       = PIN_PUP_ON,
   .function     = 2
 };
 
@@ -782,11 +786,11 @@ static PIN_CFG_T lpc_sup_mute_req = {
   .ioType       = PIN_TYPE_GPIO,
   .gpioId       = { 2, 15 },
   .direction    = PIN_GPIO_DIR_OUT,
-  .inputBuffer  = PIN_INBUF_OFF,
+  .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
   .pullDown     = PIN_PDN_ON,
-  .pullUp       = PIN_PUP_OFF,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -799,7 +803,7 @@ static PIN_CFG_T lpc_sup_mute_ack = {
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
   .pullDown     = PIN_PDN_ON,
-  .pullUp       = PIN_PUP_OFF,
+  .pullUp       = PIN_PUP_ON,
   .function     = 0
 };
 
@@ -811,7 +815,7 @@ static PIN_CFG_T lpc_unmute_jumper = {
   .inputBuffer  = PIN_INBUF_ON,
   .glitchFilter = PIN_FILTER_ON,
   .slewRate     = PIN_SRATE_SLOW,
-  .pullDown     = PIN_PDN_OFF,
+  .pullDown     = PIN_PDN_ON,
   .pullUp       = PIN_PUP_ON,
   .function     = 0,
 };
