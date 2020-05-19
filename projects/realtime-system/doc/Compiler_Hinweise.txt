@@ -1,0 +1,33 @@
+Compiliert nur mit LPCXpresso Version 8.2.2_650 !!
+
+GitHub Repo "C15" auf den Rechner auschecken (klonen), sagen wir zB nach D:\C15 (im folgenden abgekürzt auf ~).
+Branch auswählen, falls es nicht "master" sein soll.
+Beides zB mit "GitHub Desktop for Windows"
+
+Die entscheidenden Konfigurations-Files von LPCxpresso/Eclipse sind:
+~\projects\realtime-system\src\co-proc\.cproject   Projekt-Einstellungen
+~\projects\realtime-system\src\co-proc\.project    Einbindung der /src/shared Sourcen, Abhängigkeiten von anderen Projekten
+~\projects\realtime-system\src\main\.cproject      Projekt-Einstellungen
+~\projects\realtime-system\src\main\.project       Einbindung der /src/shared Sourcen, Abhängigkeiten von anderen Projekten
+Es empfielt sich diese vier Files auf read-only zu setzen, v.a. wenn man nur compilieren will.
+LPCxpresso verändert allein durch Aufrufen jedesmal die .cproject und fügt weitere "Leerzeilen" hinzu obwohl
+man rein garnichts geändert hat (ein Bug?)
+
+LPCxpresso starten, workspace auf ~\projects\realtime-system setzen.
+
+Über File->Import den Project-Importer starten.
+Dort unter General->ExistingProject_into_Workspace beide Projekte laden ("main" und "co-proc").
+Dazu "Browse" --> "OK" --> "Finish" klicken.
+Dieser Schritt ist nur einmal erforderlich.
+
+Kompilieren (zB mit CTRL-B). Beider Projekte sind verknüpft, es wird immer alles gebaut wenn sich
+irgendwo was ändert.
+Warnings wie "warning: unknown option after '#pragma GCC diagnostic' kind" darf man ignorieren, weil
+abhängig vom unterliegenden Compiler welche warning options es gibt und es sind die ignores passend
+für mehrere verschiedene Compiler im Source-Code.
+
+Ausgabefile zum Proggen mit dem Adapter ist:
+~\projects\realtime-system\src\main\Release\main.axf
+und zum Update via "mxli" auf dem BBB:
+~\projects\realtime-system\src\main\Release\main.bin
+Das sagt er auch zum Schluss im Consolenfenster wenn man main compliert.
