@@ -46,11 +46,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/shared/io</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/shared/ipc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -174,16 +169,6 @@
 			<name>src/shared/drv/nl_spi_dma.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_spi_dma.h</locationURI>
-		</link>
-		<link>
-			<name>src/shared/io/pin_setup.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/io/pin_setup.h</locationURI>
-		</link>
-		<link>
-			<name>src/shared/io/pins.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/io/pins.h</locationURI>
 		</link>
 		<link>
 			<name>src/shared/ipc/emphase_ipc.c</name>
