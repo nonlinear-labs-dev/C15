@@ -1,12 +1,8 @@
 #!/bin/sh
 
-BINARY_DIR=$1
+BINARY_DIR=$(realpath $1)
 shift
-SOURCE_DIR=$1
-shift
-USER_ID=$1
-shift
-GROUP_ID=$1
+SOURCE_DIR=$(realpath $1)
 shift
 
 SCRIPT="echo \"Starting script:\""
@@ -17,5 +13,5 @@ do
 done
 
 SCRIPT="$SCRIPT && echo \"Script done.\""
-DOCKERNAME="nl-lpc-cross-build-environment-$USER"
-docker run --privileged -u $USER_ID:$GROUP_ID --rm -v $BINARY_DIR:/workdir -v $SOURCE_DIR:/sources $DOCKERNAME bash -c "$SCRIPT"
+DOCKERNAME="nl-lpc-cross-build-environment"
+docker run --privileged --rm -v $BINARY_DIR:/workdir -v $SOURCE_DIR:/sources $DOCKERNAME bash -c "$SCRIPT"

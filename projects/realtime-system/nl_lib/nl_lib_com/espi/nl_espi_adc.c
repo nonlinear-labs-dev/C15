@@ -7,7 +7,6 @@
     @author		Nemanja Nikodijevic 2014-07-07
 *******************************************************************************/
 
-#include <stdlib.h>
 #include "espi/nl_espi_core.h"
 #include "espi/nl_espi_adc.h"
 
@@ -16,6 +15,16 @@
 static ESPI_ADC_T* polled_adc = NULL;
 static uint8_t     polled_channel;
 static uint8_t     txb[3], rxb[3];
+
+static uint16_t adcValBuffer[16];  // make sure this is big enough for all ADCs in the system, currently 12
+static uint16_t adcValBufferNextFree = 0;
+
+static uint16_t* allocADCvalBuffer(uint16_t const numberOfWords)
+{
+  uint16_t current = adcValBufferNextFree;
+  adcValBufferNextFree += numberOfWords;
+  return &adcValBuffer[current];
+}
 
 static void ESPI_ADC_Callback(uint32_t status)
 {
@@ -37,7 +46,7 @@ void ESPI_ADC_Init(ESPI_ADC_T* adc, uint8_t cn, uint8_t port, uint8_t dev)
   adc->channel_num = cn;
   adc->espi_port   = port;
   adc->espi_dev    = dev;
-  adc->channel_val = (uint16_t*) malloc(cn * sizeof(uint16_t));
+  adc->channel_val = allocADCvalBuffer(cn);
 
   for (i = 0; i < cn; i++)
     adc->channel_val[i] = 0;

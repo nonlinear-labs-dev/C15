@@ -31,9 +31,7 @@ extern void (*const DBG_Pod_On[4])(void);
 extern void (*const DBG_Pod_Off[4])(void);
 
 void DBG_Init(void);
-void DBG_Config(LPC_USARTn_Type* UARTx, uint32_t speed, DBG_PINS_T* dbgpins);
-
-uint32_t DBG_Write(char* str);
+void DBG_Config(DBG_PINS_T* dbgpins);
 
 void DBG_Process(void);
 void DBG_Led(GPIO_NAME_T* led, uint8_t state);

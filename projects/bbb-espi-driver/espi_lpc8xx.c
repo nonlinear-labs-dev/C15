@@ -176,7 +176,6 @@ void espi_driver_encoder_poll(struct espi_driver *p)
   u8                  rx_buff[3];
   u8                  tx_buff[3];
   u8                  tmp;
-  extern int          sck_hz;
   s16                 new_delta;
 
   tx_buff[0] = 0xAA;
@@ -186,7 +185,7 @@ void espi_driver_encoder_poll(struct espi_driver *p)
   xfer.len           = 1;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = sck_hz;
+  xfer.speed_hz      = jitteredClock(1);
 
   espi_driver_scs_select((struct espi_driver *) p, ESPI_EDIT_PANEL_PORT, ESPI_EDIT_ENCODER_DEVICE);
   espi_driver_transfer(((struct espi_driver *) p)->spidev, &xfer);

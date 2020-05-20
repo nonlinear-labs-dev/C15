@@ -147,9 +147,10 @@ void Usage(char const *const string, int const exitCode)
   puts(" a   All options");
   puts(" r   oveRlay messages of same type");
   puts(" c   diagnostiC status data");
-  puts(" d   addtional hex Dump, forces -r");
+  puts(" d   additional hex Dump, forces -r");
   puts(" e   EHC data");
   puts(" h   Heartbeat");
+  puts(" k   Key logging");
   puts(" m   Mute status");
   puts(" n   Notificiation");
   puts(" p   Parameter");
@@ -210,6 +211,11 @@ int main(int argc, char *argv[])
       displayFlags |= NO_HEARTBEAT;
     else if (strncmp(argv[1], "+h", 2) == 0)
       displayFlags &= ~NO_HEARTBEAT;
+
+    else if (strncmp(argv[1], "-k", 2) == 0)
+      displayFlags |= NO_KEY_LOG;
+    else if (strncmp(argv[1], "+k", 2) == 0)
+      displayFlags &= ~NO_KEY_LOG;
 
     else if (strncmp(argv[1], "-m", 2) == 0)
       displayFlags |= NO_MUTESTATUS;

@@ -39,8 +39,9 @@ void writeData(FILE *const output, uint16_t const len, uint16_t *data)
 #define MUTE_CTRL_MUTE      "mute"
 #define MUTE_CTRL_UNMUTE    "unmute"
 #define RAW_SENSORS         "sensors"
-#define RAW_SENSORS_ON      "on"
-#define RAW_SENSORS_OFF     "off"
+#define KEY_LOGGING         "key-logging"
+#define ON                  "on"
+#define OFF                 "off"
 #define AE_CMD              "ae-cmd"
 #define AE_CMD_TTON         "tton"
 #define AE_CMD_TTOFF        "ttoff"
@@ -68,9 +69,10 @@ void Usage(void)
   puts("     clear-eeprom : erase EEPROM");
   puts("     status       : get diagnostic status data (and clear it)");
   puts("     save-ehc     : save current EHC config data to EEPROM");
-  puts("  set[ting] : mute-ctrl|sensors|ae-cmd|system");
+  puts("  set[ting] : mute-ctrl|sensors|key-logging|ae-cmd|system");
   puts("     mute-ctrl: disable|mute|unmute : disable mute override or set/clear muting");
   puts("     sensors: on|off                : turn raw sensor messages on/off");
+  puts("     key-logging: on|off            : turn key-logging messages on/off");
   puts("     ae-cmd: tton|ttoff|def-snd     : Audio Engine Special, test-tone on/off, load default sound");
   puts("     system: reboot|hb-reset|enable-midi");
   puts("                  : System Special; reboot system, reset heartbeat counter, enable midi");
@@ -174,19 +176,39 @@ int main(int argc, char const *argv[])
     if (strncmp(argv[2], RAW_SENSORS, sizeof RAW_SENSORS) == 0)
     {
       SET_DATA[2] = LPC_SETTING_ID_SEND_RAW_SENSOR_DATA;
-      if (strncmp(argv[3], RAW_SENSORS_OFF, sizeof RAW_SENSORS_OFF) == 0)
+      if (strncmp(argv[3], OFF, sizeof OFF) == 0)
       {
         SET_DATA[3] = 0;
         writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
         return 0;
       }
-      if (strncmp(argv[3], RAW_SENSORS_ON, sizeof RAW_SENSORS_ON) == 0)
+      if (strncmp(argv[3], ON, sizeof ON) == 0)
       {
         SET_DATA[3] = 1;
         writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
         return 0;
       }
       puts("set sensors : illegal parameter");
+      Usage();
+    }
+
+    // key-logging
+    if (strncmp(argv[2], KEY_LOGGING, sizeof KEY_LOGGING) == 0)
+    {
+      SET_DATA[2] = LPC_SETTING_ID_ENABLE_KEY_LOGGING;
+      if (strncmp(argv[3], OFF, sizeof OFF) == 0)
+      {
+        SET_DATA[3] = 0;
+        writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
+        return 0;
+      }
+      if (strncmp(argv[3], ON, sizeof ON) == 0)
+      {
+        SET_DATA[3] = 1;
+        writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
+        return 0;
+      }
+      puts("set key-logging : illegal parameter");
       Usage();
     }
 

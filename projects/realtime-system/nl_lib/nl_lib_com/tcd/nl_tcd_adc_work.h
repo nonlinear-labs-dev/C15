@@ -28,21 +28,24 @@ void ADC_WORK_Process4(void);
 //void ADC_WORK_Suspend(void);
 //void ADC_WORK_Resume(void);
 
-void ADC_WORK_WriteHWValueForBB(uint32_t hwSourceId, uint32_t value);
-void ADC_WORK_SendBBMessages(void);
+void ADC_WORK_WriteHWValueForUI(uint16_t const hwSourceId, uint16_t const value);
+void ADC_WORK_SendUIMessages(void);
+void ADC_WORK_WriteHWValueForAE(uint16_t const hwSourceId, uint16_t const value);
 
-void ADC_WORK_SetRibbon1EditMode(uint32_t mode);
-void ADC_WORK_SetRibbon1EditBehaviour(uint32_t behaviour);
-void ADC_WORK_SetRibbon1Behaviour(uint32_t behaviour);
-void ADC_WORK_SetRibbon2Behaviour(uint32_t behaviour);
-void ADC_WORK_SetRibbonRelFactor(uint32_t factor);
-void ADC_WORK_SetRibbonCalibration(uint16_t length, uint16_t* data);
-void ADC_WORK_SetRawSensorMessages(uint32_t flag);
+void ADC_WORK_SetRibbon1EditMode(uint16_t const mode);
+void ADC_WORK_SetRibbon1EditBehaviour(uint16_t const behaviour);
+void ADC_WORK_SetRibbon1Behaviour(uint16_t const behaviour);
+void ADC_WORK_SetRibbon2Behaviour(uint16_t const behaviour);
+void ADC_WORK_SetRibbon1OutputValue(uint16_t const value);
+void ADC_WORK_SetRibbon2OutputValue(uint16_t const value);
+void ADC_WORK_SetRibbonRelFactor(uint16_t const factor);
+void ADC_WORK_SetRibbonCalibration(uint16_t const length, uint16_t* data);
+void ADC_WORK_SetRawSensorMessages(uint16_t const flag);
 
 uint32_t ADC_WORK_GetRibbon1Behaviour(void);
 uint32_t ADC_WORK_GetRibbon2Behaviour(void);
 
-void ADC_WORK_Select_BenderTable(uint32_t curve);
-void ADC_WORK_Select_AftertouchTable(uint32_t curve);
+void ADC_WORK_Select_BenderTable(uint16_t const curve);
+void ADC_WORK_Select_AftertouchTable(uint16_t const curve);
 
 #endif /* TCD_NL_TCD_ADC_WORK_H_ */

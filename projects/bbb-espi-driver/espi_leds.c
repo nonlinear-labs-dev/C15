@@ -112,8 +112,6 @@ void espi_driver_leds_poll(struct espi_driver *p)
   u64          diff   = now - lastUpdate;
   unsigned int diffMS = jiffies_to_msecs(diff);
 
-  extern int sck_hz;
-
   mutex_lock(&led_state_lock);  // keep led_fops_write() from interfering
   if (force_update)
     memcpy(led_st, led_new_st, LED_STATES_SIZE);
@@ -132,7 +130,7 @@ void espi_driver_leds_poll(struct espi_driver *p)
   xfer.len           = LED_STATES_SIZE;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = sck_hz;
+  xfer.speed_hz      = jitteredClock(1);
 
   espi_driver_scs_select(p, ESPI_SELECTION_PANEL_PORT, ESPI_SELECTION_LEDS_DEVICE);
   espi_driver_transfer(p->spidev, &xfer);

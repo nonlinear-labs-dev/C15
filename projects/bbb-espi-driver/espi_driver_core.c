@@ -27,7 +27,22 @@
 
 #define WORKQUEUE_DELAY_MS 2  // orig. code used 8 ms
 
-int sck_hz = 1000000;
+int sck_hz = 1300000;  // was: 1MHz.
+
+static uint32_t rand32 = 0x12345678;
+static uint32_t xorshift_u32(void)
+{  // 32 bit xor-shift generator, period 2^32-1, non-zero seed required, range 1...2^32-1
+   // source : https://www.jstatsoft.org/index.php/jss/article/view/v008i14/xorshift.pdf
+  rand32 ^= rand32 << 13;
+  rand32 ^= rand32 >> 17;
+  rand32 ^= rand32 << 5;
+  return rand32;
+}
+
+int jitteredClock(int const sck_hz_mult)
+{
+  return sck_hz_mult * sck_hz - (xorshift_u32() & 0x0FFFF);  //  0 ... -3.3% of clock freq, to add jitter
+}
 
 static struct workqueue_struct *workqueue;
 
@@ -103,7 +118,7 @@ s32 espi_driver_set_mode(struct spi_device *dev, u16 mode)
   xfer.len           = 1;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = sck_hz;
+  xfer.speed_hz      = jitteredClock(1);
 
   dev->mode = mode;
   status    = spi_setup(dev);

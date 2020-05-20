@@ -10,7 +10,7 @@
 #include "drv/nl_gpio.h"
 #include "espi/nl_espi_core.h"
 
-static LPC_SSPn_Type* ESPI_SSP = NULL;
+LPC_SSPn_Type* ESPI_SSP = NULL;
 
 static ESPI_PINS_T* pins = NULL;
 
@@ -20,11 +20,6 @@ void ESPI_Config(LPC_SSPn_Type* SSPx, ESPI_PINS_T* espi_pins)
   pins     = espi_pins;
 }
 /*********************************************************************************************************************/
-void ESPI_Init(uint32_t clkRateInHz)
-{
-  /** init SSP peripheral */
-  SPI_DMA_Init(ESPI_SSP, SPI_MODE_MASTER, clkRateInHz);
-}
 
 void ESPI_SAP_Set(void)
 {

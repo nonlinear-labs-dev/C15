@@ -1,15 +1,13 @@
 /******************************************************************************/
 /** @file	Emphase_M4_Main.c
     @date	2016-03-09 SSC
-		@changes 2020-03-31 KSTR
+	@changes 2020-05-11 KSTR
 *******************************************************************************/
 
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "sys/nl_coos.h"
-#include "sys/nl_ticker.h"
+#include "sys/nl_watchdog.h"
 #include "sys/delays.h"
 #include "boards/emphase_v5.h"
 
@@ -39,11 +37,12 @@
 
 static volatile uint16_t waitForFirstSysTick = 1;
 
+void M4SysTick_Init(void);
+
+// --- all 125us processes combined in one single tasks
 void FastProcesses(void)
 {
   SYS_WatchDogClear();  // every 125 us, clear Watchdog
-  POLY_Process();       // every 125 us, reading and applying keybed events
-  USB_MIDI_Poll();      // every 125 us, same time grid as in USB 2.0, may do callbacks, also from within interrupt ?
   NL_GPDMA_Poll();      // every 125 us, for all the DMA transfers (SPI devices), may do callbacks ?
   SPI_BB_Polling();     // every 125 us, checking the buffer with messages from the BBB, may do callbacks ?
 }
@@ -118,7 +117,7 @@ void Init(void)
   COOS_Task_Add(ADC_WORK_Process2,        1*TS+1,   10*TS);       // every 12.5 ms, reading ADC values and applying changes
   COOS_Task_Add(ADC_WORK_Process3,        2*TS+2,   10*TS);       // every 12.5 ms, reading ADC values and applying changes
   COOS_Task_Add(ADC_WORK_Process4,        3*TS+3,   10*TS);       // every 12.5 ms, reading ADC values and applying changes
-  COOS_Task_Add(ADC_WORK_SendBBMessages,  4*TS+4,   10*TS);       // every 12.5 ms, sending the results of the ADC processing to the BBB
+  COOS_Task_Add(ADC_WORK_SendUIMessages,  4*TS+4,   10*TS);       // every 12.5 ms, sending the results of the ADC processing to the BBB
   COOS_Task_Add(DBG_Process,              5*TS+5,   80*TS);       // every 100 ms, processes error and warning LEDs
   COOS_Task_Add(SUP_Process,              6*TS+6,   8 *TS);       // supervisor communication every 10ms
   COOS_Task_Add(HBT_Process,              80*TS+7,  8 *TS);       // heartbeat communication every 10ms, start after 100ms
@@ -128,10 +127,11 @@ void Init(void)
   COOS_Task_Add(ADC_WORK_Init2,           9*TS+9, 0); // preparing the ADC processing (will be executed after the M0 has been initialized)
   // clang-format on
 
-  /* M0 init, also starting our time-slice interrupt  */
+  /* M0 init  */
   CPU_M0_Init();
-  NVIC_SetPriority(M0CORE_IRQn, M0APP_IRQ_PRIORITY);
-  NVIC_EnableIRQ(M0CORE_IRQn);
+
+  /* M4 sysTick */
+  M4SysTick_Init();
 
   /* watchdog */
   SYS_WatchDogInit(WATCHDOG_TIMEOUT_MS);
@@ -151,29 +151,48 @@ int main(void)
   DBG_Led_Audio_Off();
 
   while (1)
-  {
-    COOS_Dispatch();
+  {                   // Since M0 handles key events in 16us turnaround time, we want to ...
+    POLY_Process();   // ... read and process keybed events as fast as possible.
+    USB_MIDI_Poll();  // Send/receive MIDI data, may do callbacks, also from within interrupt ?
+    COOS_Dispatch();  // Standard dispatching of the slower stuff
   }
 
   return 0;
 }
 
 /*************************************************************************/ /**
-* @brief	ticker interrupt
-* this will be triggered every 125us from M0 core, to sync it with M0's data
-* aquisition
+* @brief	ticker interrupt routines using the standard M4 system ticker
+*           IRQ will be triggered every 125us, our basic scheduler time-slice
 ******************************************************************************/
-void M0CORE_IRQHandler(void)
+
+#define SYST_CSR   (uint32_t *) (0xE000E010)  // SysTick Control & Status Reg
+#define SYST_RVR   (uint32_t *) (0xE000E014)  // SysTick Reload Value
+#define SYST_CVR   (uint32_t *) (0xE000E018)  // SysTick Counter Value
+#define SYST_CALIB (uint32_t *) (0xE000E01C)  // SysTick Calibration
+
+void M4SysTick_Init(void)
 {
-  LPC_CREG->M0TXEVENT = 0;
-  SYS_ticker++;
+  *SYST_RVR = (NL_LPC_CLK / M4_FREQ_HZ) - 1;
+  *SYST_CVR = 0;
+  *SYST_CSR = 0b111;  // processor clock | IRQ enabled | counter enabled
+}
+
+void SysTick_Handler(void)
+{
+  static uint16_t cntr = 25;  // 25 * 5us = 125us time slice
+
+  s.ticker++;
+  if (!--cntr)
+  {
+    cntr = 25;
 #if DBG_CLOCK_MONITOR
-  DBG_GPIO3_1_On();
+    DBG_GPIO3_1_On();
 #endif
-  waitForFirstSysTick = 0;
-  SPI_BB_ToggleHeartbeat();  // driving the LPC-BB "heartbeat" from IRQ for high precision.
-  COOS_Update();
+    waitForFirstSysTick = 0;
+    SPI_BB_ToggleHeartbeat();  // driving the LPC-BB "heartbeat" from IRQ for high precision.
+    COOS_Update();
 #if DBG_CLOCK_MONITOR
-  DBG_GPIO3_1_Off();
+    DBG_GPIO3_1_Off();
 #endif
+  }
 }

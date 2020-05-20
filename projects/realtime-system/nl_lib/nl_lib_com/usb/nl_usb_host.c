@@ -4,8 +4,8 @@
     @brief    	Driver for the USB host port on LPC43xx
     @author		Nemanja Nikodijevic 2015-10-15
 *******************************************************************************/
+#include <stddef.h>
 #include "usb/nl_usb_host.h"
-#include <stdlib.h>
 
 #ifdef USB_MIDI_HOST
 #include "usb/nl_usb_host_midi.h"

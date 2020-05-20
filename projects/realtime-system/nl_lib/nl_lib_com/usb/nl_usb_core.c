@@ -6,12 +6,11 @@
     @ingroup	nl_drv_modules
     @author		Nemanja Nikodijevic 2014-12-11
 *******************************************************************************/
-#include <string.h>
 #include "cmsis/LPC43xx.h"
 #include "cmsis/lpc_types.h"
-
 #include "usb/nl_usbd.h"
 #include "usb/nl_usb_core.h"
+#include "sys/nl_stdlib.h"
 
 #ifdef __CC_ARM
 #pragma diag_suppress 111, 177, 1441

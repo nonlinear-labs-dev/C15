@@ -11,7 +11,6 @@
 #include "tcd/nl_tcd_adc_work.h"
 #include "ipc/emphase_ipc.h"
 #include "espi/dev/nl_espi_dev_pedals.h"
-#include <stdlib.h>
 
 // =============
 // ============= local constants and types

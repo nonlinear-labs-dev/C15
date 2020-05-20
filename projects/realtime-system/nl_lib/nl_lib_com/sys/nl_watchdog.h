@@ -1,16 +1,14 @@
 /******************************************************************************/
-/** @file		nl_ticker.h
-    @date		2020-01-27
+/** @file		nl_watchdog.h
+    @date		2020-05-10
     @version	0
     @author		KSTR
-    @brief		system ticker global variable
+    @brief		watchdog
 *******************************************************************************/
-#ifndef NL_SYS_TICKER_H_
-#define NL_SYS_TICKER_H_
+#ifndef NL_WATCHDOG_H_
+#define NL_WATCHDOG_H_
 
 #include "stdint.h"
-
-extern volatile uint32_t SYS_ticker;
 
 void SYS_WatchDogInit(uint32_t timeoutInMs);
 void SYS_WatchDogClear(void);

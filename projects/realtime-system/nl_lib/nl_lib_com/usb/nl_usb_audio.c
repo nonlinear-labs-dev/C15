@@ -5,7 +5,6 @@
     @author		Nemanja Nikodijevic 2015-08-10
 *******************************************************************************/
 #include <stdint.h>
-#include <stdlib.h>
 #include "cmsis/LPC43xx.h"
 #include "usb/nl_usb_audio.h"
 #include "usb/nl_usb_descaudio.h"

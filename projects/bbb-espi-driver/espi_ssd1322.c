@@ -11,8 +11,6 @@
 #include "espi_fb.h"
 
 /* SSD1322 stuff **************************************************************/
-#define ESPI_SSD1322_SPEED 5000000  //10000000
-
 #define SSD1322_SET_CMD_LOCK     0xFD
 #define SSD1322_SET_DISP_OFF     0xAE
 #define SSD1322_SET_DISP_ON      0xAF
@@ -62,7 +60,7 @@ static void ssd1322_command(struct espi_driver *sb, u8 cmd, u8 *data, u16 len)
   xfer.len           = 1;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = ESPI_SSD1322_SPEED;
+  xfer.speed_hz      = jitteredClock(4);  // was: = ESPI_SSD1322_SPEED;
 
   gpio_set_value(sb->gpio_sap, 0);
   espi_driver_transfer(sb->spidev, &xfer);
@@ -87,7 +85,7 @@ static void ssd1322_data(struct espi_driver *sb, u8 *data, u32 len)
   xfer.len           = len;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = ESPI_SSD1322_SPEED;
+  xfer.speed_hz      = jitteredClock(4);  // was: = ESPI_SSD1322_SPEED;
 
   espi_driver_transfer(sb->spidev, &xfer);
 }

@@ -6,67 +6,11 @@
     @ingroup  	SPI_DMA
     @author		Nemanja Nikodijevic 2013-04-05
 *******************************************************************************/
-#include <stdlib.h>
 #include "drv/nl_spi_dma.h"
 #include "cmsis/lpc43xx_gpdma.h"
 #include "cmsis/lpc43xx_ssp.h"
 #include "cmsis/lpc43xx_cgu.h"
 #include "drv/nl_cgu.h"
-
-/**********************************************************************
- * @brief		Initializes the SPI-DMA driver for the desired SSP
- * @param[in]	SSPx	Pointer to selected SSP peripheral, should be:
- * 					- LPC_SSP0	:SSP0 peripheral
- * 					- LPC_SSP1	:SSP1 peripheral
- * @param[in]	mode	SPI Mode, should be:
- * 					- SSP_MASTER_MODE	:SPI master
- * 					- SSP_SLAVE_MODE	:SPI slave
- * @param[in]	clk_rate	Clock Rate in Hz
- **********************************************************************/
-void SPI_DMA_Init(LPC_SSPn_Type *SSPx, uint32_t mode, uint32_t clk_rate)
-{
-  uint32_t prescale, cr0_div, cmp_clk, ssp_clk;
-
-  if ((SSPx != LPC_SSP0) && (SSPx != LPC_SSP1))
-    return;
-
-  SSPx->CR0 = SSP_CPHA_SECOND | SSP_CPOL_HI | SSP_FRAME_SPI | SSP_DATABIT_8;
-  SSPx->CR1 = mode;
-
-  // Set clock rate for SSP peripheral
-  ssp_clk = NL_LPC_CLK;
-#if 0
-	if(SSPx == LPC_SSP0)
-		ssp_clk =  CGU_GetPCLKFrequency(CGU_PERIPHERAL_SSP0);
-	else
-		ssp_clk =  CGU_GetPCLKFrequency(CGU_PERIPHERAL_SSP1);
-#endif
-
-  cr0_div  = 0;
-  cmp_clk  = 0xFFFFFFFF;
-  prescale = 2;
-  while (cmp_clk > clk_rate)
-  {
-    cmp_clk = ssp_clk / ((cr0_div + 1) * prescale);
-    if (cmp_clk > clk_rate)
-    {
-      cr0_div++;
-      if (cr0_div > 0xFF)
-      {
-        cr0_div = 0;
-        prescale += 2;
-      }
-    }
-  }
-
-  /* Write computed prescaler and divider back to register */
-  SSPx->CR0 &= (~SSP_CR0_SCR(0xFF)) & SSP_CR0_BITMASK;
-  SSPx->CR0 |= (SSP_CR0_SCR(cr0_div)) & SSP_CR0_BITMASK;
-  SSPx->CPSR = prescale & SSP_CPSR_BITMASK;
-
-  SSPx->DMACR |= (SSP_DMA_TX | SSP_DMA_RX);
-  SSPx->CR1 |= SSP_CR1_SSP_EN;
-}
 
 /**********************************************************************
  * @brief		Initializes the SPI-DMA driver for the desired SSP
@@ -213,7 +157,6 @@ uint32_t SPI_DMA_SendReceive(LPC_SSPn_Type *SSPx, uint8_t *tx_buff, uint8_t *rx_
 uint32_t SPI_DMA_SendReceiveBlocking(LPC_SSPn_Type *SSPx, uint8_t *tx_buff, uint8_t *rx_buff, uint32_t len,
                                      TransferCallback Callback)
 {
-  uint8_t isalloc = 0;
   uint8_t ch;
 
   if (SSPx == LPC_SSP0)
@@ -223,29 +166,24 @@ uint32_t SPI_DMA_SendReceiveBlocking(LPC_SSPn_Type *SSPx, uint8_t *tx_buff, uint
   else
     return 0;
 
+  if (SPI_DMA_Send(SSPx, tx_buff, len, NULL) == 0)
+    return 0;
+
   if (rx_buff == NULL)
   {
-    rx_buff = (uint8_t *) malloc(sizeof(uint8_t) * len);
-    isalloc = 1;
+    uint8_t buffer[len];  // allocate a temp buffer on the stack
+    if (SPI_DMA_Receive(SSPx, buffer, len, Callback) == 0)
+      return 0;
   }
-
-  if (SPI_DMA_Send(SSPx, tx_buff, len, NULL) == 0)
+  else
   {
-    if (isalloc)
-      free(rx_buff);
-    return 0;
-  }
-  if (SPI_DMA_Receive(SSPx, rx_buff, len, Callback) == 0)
-  {
-    if (isalloc)
-      free(rx_buff);
-    return 0;
+    if (SPI_DMA_Receive(SSPx, rx_buff, len, Callback) == 0)
+      return 0;
   }
 
   while (NL_GPDMA_ChannelBusy(ch))
     NL_GPDMA_Poll();
-  if (isalloc)
-    free(rx_buff);
+
   return len;
 }
 

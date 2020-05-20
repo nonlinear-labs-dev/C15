@@ -1,10 +1,19 @@
 #include <espi/nl_espi_io.h>
-#include <stdlib.h>
 #include "nl_espi_core.h"
 
 static uint8_t    rxb[ESPI_SHIFT_MAX_BYTES];
 static uint8_t    txb[ESPI_SHIFT_MAX_BYTES];
 static ESPI_IO_T* polled_io = NULL;
+
+static uint8_t  ioValBuffer[8];  // make sure this is big enough for all IOs in the system, currently 3
+static uint16_t ioValBufferNextFree = 0;
+
+static uint8_t* allocIOvalBuffer(uint16_t const numberOfWords)
+{
+  uint16_t current = ioValBufferNextFree;
+  ioValBufferNextFree += numberOfWords;
+  return &ioValBuffer[current];
+}
 
 void ESPI_IO_Init(ESPI_IO_T* io,
                   uint8_t    dir,
@@ -16,7 +25,7 @@ void ESPI_IO_Init(ESPI_IO_T* io,
   io->espi_port   = port;
   io->espi_dev    = dev;
   io->io          = dir;
-  io->val         = (uint8_t*) malloc(nreg * sizeof(uint8_t));
+  io->val         = allocIOvalBuffer(nreg);
 
   int i;
   for (i = 0; i < nreg; i++)

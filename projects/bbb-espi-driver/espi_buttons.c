@@ -310,8 +310,6 @@ void espi_driver_pollbuttons(struct espi_driver *p)
   struct spi_transfer xfer;
   u8                  i, j, changed_bits, bit_pos, btn_id;
 
-  extern int sck_hz;
-
   static int initial_passes = 3;  // flag first three passes for initialization instead of change detection
 
   xfer.tx_buf        = NULL;
@@ -319,7 +317,7 @@ void espi_driver_pollbuttons(struct espi_driver *p)
   xfer.len           = BUTTON_BYTES_GENERAL_PANELS;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = sck_hz;
+  xfer.speed_hz      = jitteredClock(1);
 
   espi_driver_set_mode(((struct espi_driver *) p)->spidev, SPI_MODE_3);
 

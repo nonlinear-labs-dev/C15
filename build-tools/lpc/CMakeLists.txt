@@ -1,17 +1,19 @@
 SET(USER $ENV{USER})
-SET(DOCKERNAME nl-lpc-cross-build-environment-${USER})
+SET(DOCKERNAME nl-lpc-cross-build-environment)
 
-file(GLOB_RECURSE ALL_FILES_IN_PROJECT ${CMAKE_SOURCE_DIR}/projects/realtime-system/*)
+SET(RT_SOURCES_DIR ${CMAKE_SOURCE_DIR}/projects/realtime-system)
+file(GLOB_RECURSE ALL_FILES_IN_PROJECT ${RT_SOURCES_DIR}/*.c ${RT_SOURCES_DIR}/*.h ${RT_SOURCES_DIR}/*.txt)
 
-EXECUTE_PROCESS(OUTPUT_VARIABLE GROUP_ID COMMAND sh -c "getent group $ENV{USER} | cut -d: -f3")
+EXECUTE_PROCESS(OUTPUT_VARIABLE GROUP_ID COMMAND sh -c "id -g $USER")
 EXECUTE_PROCESS(OUTPUT_VARIABLE USER_ID COMMAND sh -c "id -u $USER")
+
 string(STRIP ${GROUP_ID} GROUP_ID)
 string(STRIP ${USER_ID} USER_ID)
 
 add_custom_command(
-    COMMENT "Create Docker Container for the current User ${USER}"
+    COMMENT "Create Docker Container"
     OUTPUT .docker-container-created
-    COMMAND docker build --build-arg user=${USER} --build-arg user_id=${USER_ID} --build-arg group_id=${GROUP_ID} -t ${DOCKERNAME} ${CMAKE_CURRENT_SOURCE_DIR} DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile
+    COMMAND docker build -t ${DOCKERNAME} ${CMAKE_CURRENT_SOURCE_DIR} DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile
     COMMAND touch .docker-container-created
 )
 
@@ -24,12 +26,11 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
-        ${USER_ID}
-        ${GROUP_ID}
         "cd /workdir"
         "cmake -DBUILD_AUDIOENGINE=Off -DBUILD_BBBB=Off -DBUILD_PLAYGROUND=Off -DBUILD_ONLINEHELP=Off -DBUILD_TEXT2SOLED=Off -DBUILD_TESTING=Off -DBUILD_REALTIME_SYSTEM=On /sources"
         "make c15_lpc_m0.bin"
         "make c15_lpc_m4.bin"
+        "chown -R ${USER_ID}.${GROUP_ID} /workdir/*"
 )
 
 IF(BUILD_BBB) # we need the BBB utilities

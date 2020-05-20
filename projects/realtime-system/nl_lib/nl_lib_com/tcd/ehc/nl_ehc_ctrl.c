@@ -7,21 +7,27 @@
     @ingroup	nl_tcd_modules
 *******************************************************************************/
 
+#include <stddef.h>
 #include "nl_ehc_ctrl.h"
 #include "nl_ehc_adc.h"
 #include "tcd/nl_tcd_adc_work.h"
 #include "spibb/nl_bb_msg.h"
-#include "tcd/nl_tcd_msg.h"
 #include "drv/nl_dbg.h"
 #include "sys/nl_eeprom.h"
-#include <stdlib.h>
-
 #include "shared/lpc-defs.h"
 #include "shared/lpc-converters.h"
 
 // =============
 // ============= local constants and types
 // =============
+
+static inline uint16_t diff(uint16_t const a, uint16_t const b)
+{
+  if (a >= b)
+    return a - b;
+  else
+    return b - a;
+}
 
 #define SHOW_SETTLING (0)
 
@@ -86,20 +92,20 @@ static void ShowSettlingDisplay(void)
 
 #define ADC_MAX_SCALED (4096 * AVG_DIV)
 
-typedef struct
+typedef struct __attribute__((packed))
 {
-  const int MAX_DRIFT;
-  const int DRIFT_INDUCED_RAMPING_TIME;          // ramping time for drift-induced change
-  const int DRIFT_INDUCED_RAMPING_TIME_REDUCED;  // // ramping time for drift-induced change when already ramping otherwise
-  const int NORMAL_RAMPING_TIME;
-  const int SHORT_RAMPING_TIME;
-  const int SHOCK_CHANGE_THRESHOLD;  // amount of parameter change to trigger shock change, in 16k units
+  const uint16_t MAX_DRIFT;
+  const uint16_t DRIFT_INDUCED_RAMPING_TIME;          // ramping time for drift-induced change
+  const uint16_t DRIFT_INDUCED_RAMPING_TIME_REDUCED;  // // ramping time for drift-induced change when already ramping otherwise
+  const uint16_t NORMAL_RAMPING_TIME;
+  const uint16_t SHORT_RAMPING_TIME;
+  const uint16_t SHOCK_CHANGE_THRESHOLD;  // amount of parameter change to trigger shock change, in 16k units
   // when going out of settling
-  const int SETTLING_OFFSET;  // # of ADC lsb's which are allowed to vary near zero
-  const int SETTLING_GAIN;    // #  of ADC lsb's which are allowed to vary near full scale
+  const uint16_t SETTLING_OFFSET;  // # of ADC lsb's which are allowed to vary near zero
+  const uint16_t SETTLING_GAIN;    // #  of ADC lsb's which are allowed to vary near full scale
   // when going into settling
-  const int SETTLING_OFFSET_REDUCED;  // # of ADC lsb's which are allowed to vary near zero
-  const int SETTLING_GAIN_REDUCED;    // #  of ADC lsb's which are allowed to vary near full scale
+  const uint16_t SETTLING_OFFSET_REDUCED;  // # of ADC lsb's which are allowed to vary near zero
+  const uint16_t SETTLING_GAIN_REDUCED;    // #  of ADC lsb's which are allowed to vary near full scale
 } ControllerParameterSet_T;
 
 #define PARAMETER_SETS        (4)  // number of different parameter sets
@@ -273,8 +279,8 @@ static void sendControllerData(const EHC_ControllerConfig_T config, const uint32
   if (config.hwId == 15)  // catch de-activated controller, just in case
     return;
   if (!config.silent)
-    MSG_HWSourceUpdate(config.hwId, value);
-  ADC_WORK_WriteHWValueForBB(config.hwId, value);
+    ADC_WORK_WriteHWValueForAE(config.hwId, value);
+  ADC_WORK_WriteHWValueForUI(config.hwId, value);
 }
 
 // --------------- init autoranging, that is, set reasonable default for fixed ranges
@@ -673,7 +679,7 @@ static int doAutoHold(Controller_T *const this, int value)
     }
     else  // already settled
     {
-      if (saturated || (abs(avg - this->settledValue) > CTRL_PARAMS[this->paramSet].MAX_DRIFT))
+      if (saturated || (diff(avg, this->settledValue) > CTRL_PARAMS[this->paramSet].MAX_DRIFT))
       {  // value drifted away too far, or reached end points?
         int alreadyRamping = this->status.isRamping;
         this->settledValue = doRamping(this, this->settledValue, 0);  // advance to next output candidate value
@@ -700,7 +706,7 @@ static int doAutoHold(Controller_T *const this, int value)
     this->status.isSettled = 0;
   }
   int new = doRamping(this, value, 0);                                        // get next output candidate value
-  if (abs(new - value) > CTRL_PARAMS[this->paramSet].SHOCK_CHANGE_THRESHOLD)  // fast "shock" change present ?
+  if (diff(new, value) > CTRL_PARAMS[this->paramSet].SHOCK_CHANGE_THRESHOLD)  // fast "shock" change present ?
   {
     initRamping(this, (new + value) / 2, CTRL_PARAMS[this->paramSet].SHORT_RAMPING_TIME);  //   then init a short "shock" ramp from half-way there
     // DBG_Led_Error_TimedOn(3);
@@ -1023,6 +1029,11 @@ void NL_EHC_SetLegacyPedalType(uint16_t const controller, uint16_t type)
 /*************************************************************************/ /**
 * @brief	NL_EHC_ProcessControllers
 * main repetitive process called from ADC_Work_Process every 12.5ms
+* The controllers are process from controller #7 down to #0, and update their
+* output accordingly. When several controllers share the same HWSID and want to
+* update it, the last controller dominates. This establishes a priority
+* with the device connected to jack #1 being highest, jack #4 being lowest.
+* Within a jack, the tip contact has priority over the ring contact.
 ******************************************************************************/
 void NL_EHC_ProcessControllers1(void)
 {
@@ -1031,8 +1042,8 @@ void NL_EHC_ProcessControllers1(void)
     return;
 
   ResetSettlingDisplay();
-  for (int i = 0; i < NUMBER_OF_CONTROLLERS / 2; i++)
-  {
+  for (int i = NUMBER_OF_CONTROLLERS - 1; i >= NUMBER_OF_CONTROLLERS / 2; i--)
+  {  // process controllers #7 down to #4
     if (!ctrl[i].status.initialized)
       continue;
     if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?
@@ -1057,8 +1068,8 @@ void NL_EHC_ProcessControllers2(void)
   if (!EHC_sampleBuffersValid())
     return;
 
-  for (int i = NUMBER_OF_CONTROLLERS / 2; i < NUMBER_OF_CONTROLLERS; i++)
-  {
+  for (int i = (NUMBER_OF_CONTROLLERS / 2) - 1; i >= 0; i--)
+  {  // process controllers #3 down to #0
     if (!ctrl[i].status.initialized)
       continue;
     if (ctrl[i].wiper->detect >= 4095)  // low level input (M0) has been reading "detect" all the time ?

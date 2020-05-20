@@ -41,7 +41,6 @@ s32 ssd1305_fb_init(struct oleds_fb_par *par)
   struct spi_transfer xfer;
   s32                 i;
   struct espi_driver *sb = par->espi;
-  extern int          sck_hz;
 
   ssd1305_buff     = kcalloc(SSD1305_BUFF_SIZE, sizeof(u8), GFP_KERNEL);
   ssd1305_tmp_buff = kcalloc(SSD1305_BUFF_SIZE, sizeof(u8), GFP_KERNEL);
@@ -92,7 +91,7 @@ s32 ssd1305_fb_init(struct oleds_fb_par *par)
   xfer.len           = i;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = sck_hz;
+  xfer.speed_hz      = jitteredClock(1);
 
   gpio_set_value(sb->gpio_sap, 0);
   espi_driver_scs_select(sb, ESPI_PLAY_PANEL_PORT, ESPI_PLAY_SOLED_DEVICE);
@@ -118,7 +117,6 @@ s32 ssd1305_fb_init(struct oleds_fb_par *par)
 void ssd1305_fb_deinit(struct espi_driver *p)
 {
   struct spi_transfer xfer;
-  extern int          sck_hz;
 
   memset(ssd1305_buff, 0, SSD1305_BUFF_SIZE);
 
@@ -127,7 +125,7 @@ void ssd1305_fb_deinit(struct espi_driver *p)
   xfer.len           = SSD1305_BUFF_SIZE;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = sck_hz;
+  xfer.speed_hz      = jitteredClock(1);
 
   gpio_set_value(((struct espi_driver *) p)->gpio_sap, 1);
   espi_driver_scs_select((struct espi_driver *) p, ESPI_PLAY_PANEL_PORT, ESPI_PLAY_SOLED_DEVICE);
@@ -164,7 +162,6 @@ void espi_driver_ssd1305_poll(struct espi_driver *p)
 {
   struct spi_transfer xfer;
   u8                  update;
-  extern int          sck_hz;
 
   ssd1305_update_display(p->oleds);
 
@@ -183,7 +180,7 @@ void espi_driver_ssd1305_poll(struct espi_driver *p)
   xfer.len           = SSD1305_BUFF_SIZE;
   xfer.bits_per_word = 8;
   xfer.delay_usecs   = 0;
-  xfer.speed_hz      = sck_hz;
+  xfer.speed_hz      = jitteredClock(1);
 
   gpio_set_value(((struct espi_driver *) p)->gpio_sap, 1);
   espi_driver_scs_select((struct espi_driver *) p, ESPI_PLAY_PANEL_PORT, ESPI_PLAY_SOLED_DEVICE);

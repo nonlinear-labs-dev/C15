@@ -12,7 +12,7 @@
 
 typedef struct __attribute__((packed))
 {
-  uint16_t M4_ticker;
+  uint32_t M4_ticker;
   uint16_t COOS_totalOverruns;
   uint16_t COOS_maxTasksPerSlice;
   uint16_t COOS_maxTaskTime;

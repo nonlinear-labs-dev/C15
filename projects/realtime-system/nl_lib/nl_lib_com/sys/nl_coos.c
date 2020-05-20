@@ -5,7 +5,6 @@
 *******************************************************************************/
 #include "sys/nl_coos.h"
 #include "drv/nl_dbg.h"
-#include "sys/nl_ticker.h"
 #include "sys/nl_status.h"
 #include "ipc/emphase_ipc.h"
 
@@ -139,7 +138,7 @@ void COOS_Dispatch(void)
   uint16_t index;
   uint16_t tasks = 0;
 
-  uint32_t dispatchTime = s.timer;
+  uint32_t dispatchTime = s.ticker;
 
 #if DGB_TIMING_PINS
   DispatchTotalTime(1);
@@ -151,10 +150,10 @@ void COOS_Dispatch(void)
 #if DGB_TIMING_PINS
       DispatchTaskTime(1);
 #endif
-      uint32_t taskTime = s.timer;
+      uint32_t taskTime = s.ticker;
       (*COOS_taskArray[index].pTask)();  // run the task
       COOS_taskArray[index].run--;       // decrease the run flag, so postponed tasks will also be handled
-      taskTime = s.timer - taskTime;
+      taskTime = s.ticker - taskTime;
       if (taskTime > NL_systemStatus.COOS_maxTaskTime)
         NL_systemStatus.COOS_maxTaskTime = taskTime;
 #if DGB_TIMING_PINS
@@ -174,7 +173,7 @@ void COOS_Dispatch(void)
   }
   if (tasks > NL_systemStatus.COOS_maxTasksPerSlice)
     NL_systemStatus.COOS_maxTasksPerSlice = tasks;
-  dispatchTime = s.timer - dispatchTime;
+  dispatchTime = s.ticker - dispatchTime;
   if (dispatchTime > NL_systemStatus.COOS_maxDispatchTime)
     NL_systemStatus.COOS_maxDispatchTime = dispatchTime;
 

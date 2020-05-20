@@ -11,14 +11,17 @@ AllowAllParametersOfDeclarationOnNextLine: 'false'
 AllowShortBlocksOnASingleLine: 'false'
 AllowShortCaseLabelsOnASingleLine: 'false'
 AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: 'false'
 AllowShortLoopsOnASingleLine: 'false'
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
+AlwaysBreakTemplateDeclarations: 'false'
 BinPackArguments: 'true'
 BinPackParameters: 'true'
 BreakAfterJavaFieldAnnotations: 'true'
 BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: 'true'
+BreakConstructorInitializersBeforeComma: 'true'
 ColumnLimit: '0'
 DerivePointerAlignment: 'true'
 IndentCaseLabels: 'true'
