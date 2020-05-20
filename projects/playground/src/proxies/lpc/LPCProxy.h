@@ -7,6 +7,7 @@
 #include <memory>
 #include <nltools/threading/Throttler.h>
 #include <tools/Signal.h>
+#include <device-settings/PedalType.h>
 
 class Application;
 class Parameter;
@@ -40,11 +41,6 @@ enum LPCSettingIDs
 
   TRANSITION_TIME = 12,  // ==> tTcdRange(0, 16000)
 
-  PEDAL_1_TYPE = 26,  // ==> PotTipActive = 0
-  PEDAL_2_TYPE = 27,  // ... PotRingActive = 1
-  PEDAL_3_TYPE = 28,  // ... SwitchClosing = 2
-  PEDAL_4_TYPE = 29,  // ... SwitchOpening = 3
-
   AFTERTOUCH_CURVE = 30,  // SOFT = 0, NORMAL = 1, HARD = 2
   BENDER_CURVE = 31,      // ZERO = 0, NARROW = 1, WIDE = 2
 
@@ -65,7 +61,7 @@ class LPCProxy
 
   void sendSetting(uint16_t key, gint16 value);
   void sendSetting(uint16_t key, uint16_t value);
-  void sendPedalSetting(uint16_t pedal, uint16_t pedalType);
+  void sendPedalSetting(uint16_t pedal, PedalTypes pedalType);
   void sendSetting(uint16_t key, bool v);
 
   sigc::connection onRibbonTouched(sigc::slot<void, int> s);

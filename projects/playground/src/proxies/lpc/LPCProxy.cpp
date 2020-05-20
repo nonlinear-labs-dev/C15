@@ -327,10 +327,21 @@ void LPCProxy::sendSetting(uint16_t key, uint16_t value)
   DebugLevel::info("sending setting", key, "=", value);
 }
 
-void LPCProxy::sendPedalSetting(uint16_t pedal, uint16_t pedalType)
+void LPCProxy::sendPedalSetting(uint16_t pedal, PedalTypes pedalType)
 {
-#warning "TODO: get preset blob from /shared/ and send it downstream"
-  DebugLevel::info("EHC: send pedal setting", pedal, "=", pedalType);
+  auto len = EHC_GetLPCMessageLength();
+  uint8_t buffer[len];
+  if(auto written = EHC_ComposeLPCSetupMessageById(static_cast<EHC_PRESET_ID>(pedalType), pedal, EHC_NORESET, buffer))
+  {
+    DebugLevel::info("EHC: send pedal setting", pedal, "=", pedalType);
+    nltools::msg::LPCMessage msg;
+    msg.message = Glib::Bytes::create(buffer, written);
+    nltools::msg::send(nltools::msg::EndPoint::Lpc, msg);
+  }
+  else
+  {
+    DebugLevel::warning("Could not compose pedal preset", pedal, "=", pedalType);
+  }
 }
 
 void LPCProxy::sendSetting(uint16_t key, gint16 value)

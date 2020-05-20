@@ -64,10 +64,10 @@ Settings::Settings(UpdateDocumentMaster *master)
   addSetting("TransitionTime", new TransitionTime(*this));
   addSetting("RandomizeAmount", new RandomizeAmount(*this));
   addSetting("RibbonRelFactor", new RibbonRelativeFactor(*this));
-  addSetting("Pedal1Type", new PedalType(*this, PEDAL_1_TYPE));
-  addSetting("Pedal2Type", new PedalType(*this, PEDAL_2_TYPE));
-  addSetting("Pedal3Type", new PedalType(*this, PEDAL_3_TYPE));
-  addSetting("Pedal4Type", new PedalType(*this, PEDAL_4_TYPE));
+  addSetting("Pedal1Type", new PedalType(*this, 1));
+  addSetting("Pedal2Type", new PedalType(*this, 2));
+  addSetting("Pedal3Type", new PedalType(*this, 3));
+  addSetting("Pedal4Type", new PedalType(*this, 4));
   addSetting("EncoderAcceleration", new EncoderAcceleration(*this));
   addSetting("LayoutVersionMode", new LayoutMode(this));
   addSetting("AftertouchCurve", new AftertouchCurve(*this));

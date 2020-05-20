@@ -33,12 +33,11 @@ public class SetupModel {
 	public enum EditModeRibbonBehaviour {
 		relative, absolute
 	}
-	
+
 	public enum PedalType {
-		PotTipActive, PotRingActive, PotTipActiveReverse, PotRingActiveReverse,
-		Resitor, ResistorReversed, SwitchClosing, SwitchOpening, CV0to5V, CV0To5VAutoRange,
-		OFF, BossEV30, BossFV500L, DoepferFP5, FractalEV2, KorgDS1H, KorgEXP2,
-		LeadFootLFX1, MAudioEXP, MoogEP3, RolandDP10, RolandEV5, YamahaFC3A, YamahaFC7
+		None, PotTipActive, PotRingActive, PotTipActiveReverse, PotRingActiveReverse, Resitor, ResistorReversed,
+		SwitchClosing, SwitchOpening, CV0to5V, CV0To5VAutoRange, OFF, BossEV30, BossFV500L, DoepferFP5, FractalEV2,
+		KorgDS1H, KorgEXP2, LeadFootLFX1, MAudioEXP, MoogEP3, RolandDP10, RolandEV5, YamahaFC3A, YamahaFC7
 	}
 
 	public enum PresetStoreMode {
@@ -80,17 +79,17 @@ public class SetupModel {
 
 		public double toPercent() {
 			switch (getValue()) {
-			case off:
-				return 0;
+				case off:
+					return 0;
 
-			case percent_10:
-				return 10;
+				case percent_10:
+					return 10;
 
-			case percent_25:
-				return 25;
+				case percent_25:
+					return 25;
 
-			case percent_50:
-				return 50;
+				case percent_50:
+					return 50;
 			}
 			return 0;
 		}

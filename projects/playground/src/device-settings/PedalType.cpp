@@ -17,7 +17,7 @@ PedalType::~PedalType() = default;
 
 void PedalType::sendToLPC() const
 {
-  Application::get().getLPCProxy()->sendPedalSetting(m_lpcKey, (uint16_t)(get()));
+  Application::get().getLPCProxy()->sendPedalSetting(m_lpcKey, get());
 }
 
 const std::vector<Glib::ustring> &PedalType::enumToString() const
@@ -42,8 +42,8 @@ const std::vector<Glib::ustring> &PedalType::enumToDisplayString() const
   if(s_modeNames.empty())
   {
     forEachValue<PedalTypes>([&](PedalTypes e) {
-      auto index = static_cast<int>(e);
-      s_modeNames.emplace_back(EHC_presets[index].name);
+      auto index = static_cast<EHC_PRESET_ID>(e);
+      s_modeNames.emplace_back(EHC_GetPresetById(index)->displayName);
     });
   }
 

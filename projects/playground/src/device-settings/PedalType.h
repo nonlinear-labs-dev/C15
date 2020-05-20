@@ -1,12 +1,20 @@
 #pragma once
 
 #include <nltools/enums/EnumTools.h>
+#include <EHC-pedal-presets.h>
 #include "EnumSetting.h"
 
-ENUM(PedalTypes, int, PotTipActive = 0, PotRingActive = 1, PotTipActiveReverse = 2, PotRingActiveReverse = 3,
-     Resitor = 4, ResistorReversed = 5, SwitchClosing = 6, SwitchOpening = 7, CV0to5V = 8, CV0To5VAutoRange = 9,
-     OFF = 10, BossEV30 = 11, BossFV500L = 12, DoepferFP5 = 13, FractalEV2 = 14, KorgDS1H = 15, KorgEXP2 = 16,
-     LeadFootLFX1 = 17, MAudioEXP = 18, MoogEP3 = 19, RolandDP10 = 20, RolandEV5 = 21, YamahaFC3A = 22, YamahaFC7 = 23)
+ENUM(PedalTypes, int, None = EHC_PRESET_NONE, PotTipActive = EHC_PRESET_Pot_Tip_Active,
+     PotRingActive = EHC_PRESET_Pot_Ring_Active, PotTipActiveReverse = EHC_PRESET_Pot_Tip_Act_Rev,
+     PotRingActiveReverse = EHC_PRESET_Pot_Ring_Act_Rev, Resitor = EHC_PRESET_Resistor,
+     ResistorReversed = EHC_PRESET_Resistor_Rev, SwitchClosing = EHC_PRESET_Switch_Closing,
+     SwitchOpening = EHC_PRESET_Switch_Opening, CV0to5V = EHC_PRESET_CV_0_5V,
+     CV0To5VAutoRange = EHC_PRESET_CV_0_5V_Auto_Range, OFF = EHC_PRESET_OFF, BossEV30 = EHC_PRESET_Boss_EV_30,
+     BossFV500L = EHC_PRESET_Boss_FV_500L, DoepferFP5 = EHC_PRESET_Doepfer_FP5, FractalEV2 = EHC_PRESET_Fractal_EV_2,
+     KorgDS1H = EHC_PRESET_Korg_DS_1H, KorgEXP2 = EHC_PRESET_Korg_EXP_2, LeadFootLFX1 = EHC_PRESET_Lead_Foot_LFX_1,
+     MAudioEXP = EHC_PRESET_M_Audio_EX_P_M, MoogEP3 = EHC_PRESET_Moog_EP_3_std,
+     RolandDP10 = EHC_PRESET_Roland_DP_10_cont, RolandEV5 = EHC_PRESET_Roland_EV_5, YamahaFC3A = EHC_PRESET_Yamaha_FC3A,
+     YamahaFC7 = EHC_PRESET_Yamaha_FC7)
 
 class PedalType : public EnumSetting<PedalTypes>
 {
