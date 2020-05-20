@@ -128,7 +128,8 @@ public class DeviceSettingsProvider {
 	}
 
 	public void connectToPedal(int id, Pedal target) {
-		PedalParameterModel srcPedal = (PedalParameterModel) EditBufferModel.get().getParameter(new ParameterId(id, VoiceGroup.Global));
+		PedalParameterModel srcPedal = (PedalParameterModel) EditBufferModel.get()
+				.getParameter(new ParameterId(id, VoiceGroup.Global));
 		srcPedal.value.onChange(t -> {
 			double v = t.value.getValue();
 			target.displayValue = Stringizers.get().stringize(srcPedal.value.metaData.scaling.getValue(), v);
@@ -157,5 +158,9 @@ public class DeviceSettingsProvider {
 	public void register(Function<DeviceSettings, Boolean> cb) {
 		clients.add(cb);
 		cb.apply(settings);
+	}
+
+	public DeviceSettings getSettings() {
+		return settings;
 	}
 }

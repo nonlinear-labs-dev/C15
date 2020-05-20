@@ -107,6 +107,12 @@ public class Setup extends Composite {
 			fillListboxWithOptions(pedal2Type, options);
 			fillListboxWithOptions(pedal3Type, options);
 			fillListboxWithOptions(pedal4Type, options);
+
+			DeviceSettings settings = DeviceSettingsProvider.get().getSettings();
+			pedal1Type.setSelectedIndex(settings.pedal1.selected);
+			pedal2Type.setSelectedIndex(settings.pedal2.selected);
+			pedal3Type.setSelectedIndex(settings.pedal3.selected);
+			pedal4Type.setSelectedIndex(settings.pedal4.selected);
 		});
 
 		fillListboxWithOptions(velocityCurve, DeviceSettings.VelocityCurve.options);

@@ -4,17 +4,22 @@
 #include <http/NetworkRequest.h>
 #include <http/HTTPRequest.h>
 
+#include <Application.h>
+#include <device-settings/Settings.h>
+#include <device-settings/PedalType.h>
+
 namespace
 {
-  template <typename T> std::string getEnumStrings()
+  std::string getPedalStrings()
   {
     std::stringstream str;
 
-#warning "TODO: not return enum-string, but preset name base on enum"
-    for(const auto name : getAllStrings<T>())
+    auto types = Application::get().getSettings()->getSetting<PedalType>();
+
+    for(const auto name : types->enumToDisplayString())
     {
       if(str.tellp())
-        str << ',';
+        str << '\n';
       str << name;
     }
 
@@ -32,7 +37,7 @@ WebUISupport::WebUISupport(UpdateDocumentContributor *master)
       h->setStatusOK();
 
       if(h->get("name") == "PedalTypes")
-        h->respond(getEnumStrings<PedalTypes>());
+        h->respond(getPedalStrings());
 
       h->okAndComplete();
     }

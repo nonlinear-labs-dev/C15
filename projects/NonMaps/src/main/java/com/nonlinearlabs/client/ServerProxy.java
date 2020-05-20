@@ -1018,7 +1018,7 @@ public class ServerProxy {
 
 			@Override
 			public void onFileDownloaded(String text) {
-				c.accept(text.split(","));
+				c.accept(text.split("\n"));
 			}
 
 			@Override
