@@ -2,7 +2,6 @@ package com.nonlinearlabs.client.dataModel.setup;
 
 import java.util.HashMap;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.dataModel.DataModelEntityBase;
 import com.nonlinearlabs.client.dataModel.EnumDataModelEntity;

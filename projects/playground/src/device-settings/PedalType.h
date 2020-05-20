@@ -19,6 +19,7 @@ class PedalType : public EnumSetting<PedalTypes>
 
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  void load(const Glib::ustring &text) override;
 
  private:
   void sendToLPC() const override;

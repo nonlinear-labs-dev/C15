@@ -55,3 +55,17 @@ void PedalType::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdate
   bool changed = knownRevision < getUpdateIDOfLastChange();
   writer.writeTextElement("value", std::to_string(get()), Attribute("changed", changed));
 }
+
+void PedalType::load(const Glib::ustring &text)
+{
+  static std::map<std::string, std::string> m { { "pot-tip-active", "PotTipActive" },
+                                                { "pot-ring-active", "PotRingActive" },
+                                                { "switch-closing", "SwitchClosing" },
+                                                { "switch-opening", "SwitchOpening" } };
+
+  auto it = m.find(text);
+  if(it != m.end())
+    super::load(it->second);
+  else
+    super::load(text);
+}

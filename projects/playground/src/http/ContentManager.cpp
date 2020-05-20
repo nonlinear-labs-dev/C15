@@ -14,6 +14,7 @@
 #include "device-settings/Settings.h"
 #include "device-settings/DebugLevel.h"
 #include "device-info/DeviceInformation.h"
+#include <http/WebUISupport.h>
 #include <clipboard/Clipboard.h>
 #include <giomm.h>
 
@@ -83,6 +84,7 @@ void ContentManager::init()
 
 void ContentManager::addContentSections()
 {
+  addContentSection(static_cast<ContentSection *>(Application::get().getWebUISupport()));
   addContentSection(static_cast<ContentSection *>(Application::get().getPresetManager()));
   addContentSection(static_cast<ContentSection *>(Application::get().getUndoScope()));
   addContentSection(static_cast<ContentSection *>(Application::get().getSettings()));

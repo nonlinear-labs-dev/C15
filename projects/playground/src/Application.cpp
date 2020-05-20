@@ -22,6 +22,7 @@
 #include <presets/EditBuffer.h>
 #include <giomm.h>
 #include <proxies/usb/USBChangeListener.h>
+#include <http/WebUISupport.h>
 
 using namespace std::chrono_literals;
 
@@ -79,6 +80,7 @@ Application::Application(int numArgs, char **argv)
     , m_heartbeatState(false)
     , m_isQuit(false)
     , m_usbChangeListener(std::make_unique<USBChangeListener>())
+    , m_webUISupport(std::make_unique<WebUISupport>(m_http->getUpdateDocumentMaster()))
 {
 #ifdef _PROFILING
   Profiler::get().enable(true);
@@ -219,6 +221,11 @@ HTTPServer *Application::getHTTPServer()
 Clipboard *Application::getClipboard()
 {
   return m_clipboard.get();
+}
+
+WebUISupport *Application::getWebUISupport()
+{
+  return m_webUISupport.get();
 }
 
 const Options *Application::getOptions() const

@@ -1,6 +1,7 @@
 package com.nonlinearlabs.client;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
@@ -978,7 +979,8 @@ public class ServerProxy {
 	}
 
 	public void loadPresetPartIntoPart(VoiceGroup presetPart, VoiceGroup editbufferPart) {
-		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "load-selected-preset-part-into-editbuffer-part");
+		StaticURI.Path path = new StaticURI.Path("presets", "param-editor",
+				"load-selected-preset-part-into-editbuffer-part");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset-part", presetPart.toString()),
 				new StaticURI.KeyValue("editbuffer-part", editbufferPart.toString()));
 		queueJob(uri, false);
@@ -986,7 +988,9 @@ public class ServerProxy {
 
 	public void loadPresetPartIntoPart(String presetUUID, VoiceGroup presetPart, VoiceGroup loadTo) {
 		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "load-preset-part-into-editbuffer-part");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset-part", presetPart.toString()), new StaticURI.KeyValue("editbuffer-part", loadTo.toString()), new StaticURI.KeyValue("preset-uuid", presetUUID));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset-part", presetPart.toString()),
+				new StaticURI.KeyValue("editbuffer-part", loadTo.toString()),
+				new StaticURI.KeyValue("preset-uuid", presetUUID));
 		queueJob(uri, false);
 	}
 
@@ -1007,5 +1011,19 @@ public class ServerProxy {
 		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "randomize-part");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("part", part.toString()));
 		queueJob(uri, false);
+	}
+
+	public void downloadEnumStrings(String enumName, Consumer<String[]> c) {
+		downloadFile("/webui-support/enum/get-strings?name=" + URL.encodeQueryString(enumName), new DownloadHandler() {
+
+			@Override
+			public void onFileDownloaded(String text) {
+				c.accept(text.split(","));
+			}
+
+			@Override
+			public void onError() {
+			}
+		});
 	}
 }

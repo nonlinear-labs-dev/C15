@@ -17,6 +17,7 @@ class UndoScope;
 class Settings;
 class EmbeddedPC;
 class Clipboard;
+class WebUISupport;
 
 namespace Glib
 {
@@ -47,6 +48,7 @@ class Application
   Settings *getSettings();
   DeviceInformation *getDeviceInformation();
   Clipboard *getClipboard();
+  WebUISupport *getWebUISupport();
 
   void quit();
   bool isQuit() const;
@@ -75,6 +77,7 @@ class Application
   std::unique_ptr<DeviceInformation> m_deviceInformation;
   std::unique_ptr<Clipboard> m_clipboard;
   std::unique_ptr<USBChangeListener> m_usbChangeListener;
+  std::unique_ptr<WebUISupport> m_webUISupport;
 
   bool m_heartbeatState;
   bool m_isQuit;
