@@ -43,7 +43,8 @@ const std::vector<Glib::ustring> &PedalType::enumToDisplayString() const
   {
     forEachValue<PedalTypes>([&](PedalTypes e) {
       auto index = static_cast<EHC_PRESET_ID>(e);
-      s_modeNames.emplace_back(EHC_GetPresetById(index)->displayName);
+      if(auto p = EHC_GetPresetById(index))
+        s_modeNames.emplace_back(p->displayName);
     });
   }
 
