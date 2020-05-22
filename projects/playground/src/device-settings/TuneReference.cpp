@@ -56,7 +56,7 @@ void TuneReference::writeDocument(Writer& writer, tUpdateID knownRevision) const
   }
 }
 
-void TuneReference::sendToLPC() const
+void TuneReference::sendToLPC(SendReason reason) const
 {
   nltools::msg::Setting::TuneReference msg { m_value.getRawValue() };
   Application::get().getAudioEngineProxy()->sendSettingMessage<nltools::msg::Setting::TuneReference>(msg);

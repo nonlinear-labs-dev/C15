@@ -61,7 +61,7 @@ class LPCProxy
 
   void sendSetting(uint16_t key, gint16 value);
   void sendSetting(uint16_t key, uint16_t value);
-  void sendPedalSetting(uint16_t pedal, PedalTypes pedalType);
+  void sendPedalSetting(uint16_t pedal, PedalTypes pedalType, bool reset);
   void sendSetting(uint16_t key, bool v);
 
   sigc::connection onRibbonTouched(sigc::slot<void, int> s);

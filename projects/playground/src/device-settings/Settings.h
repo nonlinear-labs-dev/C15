@@ -44,7 +44,7 @@ class Settings : public ContentSection
   void handleHTTPRequest(std::shared_ptr<NetworkRequest> request, const Glib::ustring &path) override;
   Glib::ustring getPrefix() const override;
 
-  void sendToLPC();
+  void onEditBufferSent();
 
   tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
 

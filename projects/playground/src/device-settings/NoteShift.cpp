@@ -46,7 +46,7 @@ void NoteShift::set(int shift)
   }
 }
 
-void NoteShift::sendToLPC() const
+void NoteShift::sendToLPC(SendReason reason) const
 {
   uint16_t value = (m_shift >= 0) ? 0 : 0x8000;
   value |= abs(m_shift);

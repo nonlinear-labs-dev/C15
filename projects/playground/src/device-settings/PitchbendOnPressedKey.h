@@ -12,5 +12,5 @@ class PitchbendOnPressedKey : public BooleanSetting
   virtual ~PitchbendOnPressedKey();
 
  private:
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 };

@@ -12,7 +12,7 @@ BenderRampBypass::~BenderRampBypass()
 {
 }
 
-void BenderRampBypass::sendToLPC() const
+void BenderRampBypass::sendToLPC(SendReason reason) const
 {
   Application::get().getLPCProxy()->sendSetting(BENDER_RAMP_BYPASS, (uint16_t)(get()));
 }

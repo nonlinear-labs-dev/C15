@@ -13,7 +13,7 @@ BenderCurve::~BenderCurve()
 {
 }
 
-void BenderCurve::sendToLPC() const
+void BenderCurve::sendToLPC(SendReason reason) const
 {
   Application::get().getLPCProxy()->sendSetting(BENDER_CURVE, (uint16_t)(get()));
 }

@@ -13,7 +13,7 @@ AftertouchCurve::~AftertouchCurve()
 {
 }
 
-void AftertouchCurve::sendToLPC() const
+void AftertouchCurve::sendToLPC(SendReason reason) const
 {
   Application::get().getLPCProxy()->sendSetting(AFTERTOUCH_CURVE, (uint16_t)(get()));
 }

@@ -25,10 +25,10 @@ bool ParameterEditModeRibbonBehaviour::set(ParameterEditModeRibbonBehaviours m)
 
 void ParameterEditModeRibbonBehaviour::sendRelatedSettingToLPC() const
 {
-  Application::get().getSettings()->getSetting<RibbonRelativeFactor>()->sendToLPC();
+  Application::get().getSettings()->getSetting<RibbonRelativeFactor>()->sendToLPC(SendReason::SettingChanged);
 }
 
-void ParameterEditModeRibbonBehaviour::sendToLPC() const
+void ParameterEditModeRibbonBehaviour::sendToLPC(SendReason reason) const
 {
   uint16_t v = (uint16_t) get();
   Application::get().getLPCProxy()->sendSetting(PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR, v);

@@ -28,7 +28,7 @@ class EditSmoothingTime : public Setting
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
  private:
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
   QuantizedValue m_time;
 };

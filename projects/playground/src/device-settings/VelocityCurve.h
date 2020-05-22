@@ -20,7 +20,7 @@ class VelocityCurve : public EnumSetting<VelocityCurves>
   VelocityCurve(UpdateDocumentContributor &settings);
   virtual ~VelocityCurve();
 
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
 

@@ -1,4 +1,5 @@
 #include "Setting.h"
+#include "Settings.h"
 #include <xml/Writer.h>
 #include <xml/Attribute.h>
 
@@ -23,7 +24,11 @@ void Setting::notify()
 {
   m_signal.send(this);
   super::onChange();
-  sendToLPC();
+
+  if(static_cast<Settings *>(getParent())->isLoading())
+    sendToLPC(SendReason::SettingsLoaded);
+  else
+    sendToLPC(SendReason::SettingChanged);
 }
 
 void Setting::writeDocument(Writer &writer, tUpdateID knownRevision) const
@@ -32,7 +37,7 @@ void Setting::writeDocument(Writer &writer, tUpdateID knownRevision) const
   writer.writeTextElement("value", save(), Attribute("changed", changed));
 }
 
-void Setting::sendToLPC() const
+void Setting::sendToLPC(SendReason reason) const
 {
 }
 

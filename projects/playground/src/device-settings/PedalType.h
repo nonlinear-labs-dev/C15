@@ -29,7 +29,7 @@ class PedalType : public EnumSetting<PedalTypes>
   void load(const Glib::ustring &text) override;
 
  private:
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
   const std::vector<Glib::ustring> &enumToString() const override;
 
   uint16_t m_lpcKey;

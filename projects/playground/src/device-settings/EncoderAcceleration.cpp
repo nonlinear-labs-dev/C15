@@ -46,7 +46,7 @@ void EncoderAcceleration::set(tControlPositionValue amount)
   }
 }
 
-void EncoderAcceleration::sendToLPC() const
+void EncoderAcceleration::sendToLPC(SendReason reason) const
 {
 }
 
@@ -75,7 +75,7 @@ void EncoderAcceleration::incDec(int incs, ButtonModifiers modifiers)
   }
 
   notify();
-  sendToLPC();
+  sendToLPC(SendReason::SettingChanged);
 }
 
 Glib::ustring EncoderAcceleration::getDisplayString() const

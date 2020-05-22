@@ -29,7 +29,7 @@ class NoteShift : public Setting
   NoteShift(const NoteShift& other) = delete;
   NoteShift& operator=(const NoteShift&) = delete;
 
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
   int m_shift;
 };

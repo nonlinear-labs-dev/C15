@@ -50,7 +50,7 @@ void EditSmoothingTime::setDefault()
   set(m_time.getDefaultValue());
 }
 
-void EditSmoothingTime::sendToLPC() const
+void EditSmoothingTime::sendToLPC(SendReason reason) const
 {
   Application::get().getLPCProxy()->sendSetting(EDIT_SMOOTHING_TIME, m_time.getTcdValue());
 
@@ -77,7 +77,7 @@ void EditSmoothingTime::incDec(int incs, ButtonModifiers modifiers)
     incs++;
   }
 
-  sendToLPC();
+  sendToLPC(SendReason::SettingChanged);
   notify();
 }
 

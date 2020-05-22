@@ -24,7 +24,7 @@ class ParameterEditModeRibbonBehaviour : public EnumSetting<ParameterEditModeRib
   ParameterEditModeRibbonBehaviour(const ParameterEditModeRibbonBehaviour &other);
   ParameterEditModeRibbonBehaviour &operator=(const ParameterEditModeRibbonBehaviour &);
 
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
   const std::vector<Glib::ustring> &enumToString() const override;
   const std::vector<Glib::ustring> &enumToDisplayString() const override;

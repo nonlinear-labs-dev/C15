@@ -22,6 +22,7 @@
 #include <device-settings/DebugLevel.h>
 #include <nltools/Assert.h>
 #include <Application.h>
+#include <presets/SendEditBufferScopeGuard.h>
 
 PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
     : RPCActionManager("/presets/")
@@ -161,15 +162,12 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
       auto loadscope = presetManager.getUndoScope().startTransaction("Load Compare Buffer");
       auto loadtransaction = loadscope->getTransaction();
 
-      auto ae = Application::get().getAudioEngineProxy();
-      ae->toggleSuppressParameterChanges(loadtransaction);
+      SendEditBufferScopeGuard scopeGuard(loadtransaction);
 
       auto autoLoadSetting = Application::get().getSettings()->getSetting<DirectLoadSetting>();
       auto scopedLock = autoLoadSetting->scopedOverlay(BooleanSettings::BOOLEAN_SETTING_FALSE);
       editBuffer->copyFrom(loadtransaction, &p);
       editBuffer->undoableSetLoadedPresetInfo(loadtransaction, &p);
-
-      ae->toggleSuppressParameterChanges(loadtransaction);
     }
   });
 

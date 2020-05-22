@@ -22,7 +22,7 @@ class RibbonRelativeFactor : public Setting
   Glib::ustring getDisplayString() const;
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
  private:
   QuantizedValue m_factor;

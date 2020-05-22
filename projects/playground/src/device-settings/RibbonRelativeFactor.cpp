@@ -57,7 +57,7 @@ void RibbonRelativeFactor::set(tControlPositionValue amount)
   }
 }
 
-void RibbonRelativeFactor::sendToLPC() const
+void RibbonRelativeFactor::sendToLPC(SendReason reason) const
 {
   uint16_t v = (uint16_t)(m_factor.getTcdValue());
   Application::get().getLPCProxy()->sendSetting(RIBBON_REL_FACTOR, v);
@@ -88,7 +88,7 @@ void RibbonRelativeFactor::incDec(int incs, ButtonModifiers modifiers)
   }
 
   notify();
-  sendToLPC();
+  sendToLPC(SendReason::SettingChanged);
 }
 
 Glib::ustring RibbonRelativeFactor::getDisplayString() const

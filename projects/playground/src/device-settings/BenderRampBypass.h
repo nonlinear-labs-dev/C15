@@ -9,6 +9,6 @@ class BenderRampBypass : public BooleanSetting
   virtual ~BenderRampBypass();
 
  private:
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
   bool persistent() const override;
 };

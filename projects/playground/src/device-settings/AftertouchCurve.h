@@ -18,7 +18,7 @@ class AftertouchCurve : public EnumSetting<AftertouchCurves>
   AftertouchCurve(UpdateDocumentContributor &settings);
   virtual ~AftertouchCurve();
 
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
 

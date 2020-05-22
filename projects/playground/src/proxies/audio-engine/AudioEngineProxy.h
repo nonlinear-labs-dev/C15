@@ -41,14 +41,15 @@ class AudioEngineProxy
 
   void sendEditBuffer();
 
-  void toggleSuppressParameterChanges(UNDO::Transaction* transaction);
+  void freezeParameterMessages();
+  void thawParameterMessages();
 
   static nltools::msg::LayerPresetMessage createLayerEditBufferMessage(const EditBuffer& eb);
   static nltools::msg::SplitPresetMessage createSplitEditBufferMessage(const EditBuffer& eb);
   static nltools::msg::SinglePresetMessage createSingleEditBufferMessage(const EditBuffer& eb);
 
  private:
-  bool m_suppressParamChanges = false;
+  uint m_suppressParamChanges = 0;
 
   static void fillMonoPart(nltools::msg::ParameterGroups::MonoGroup& monoGroup, ParameterGroup* const& g);
   static void fillUnisonPart(nltools::msg::ParameterGroups::UnisonGroup& unisonGroup, ParameterGroup* const& g);

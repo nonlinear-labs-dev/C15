@@ -33,7 +33,7 @@ class TransitionTime : public Setting
   }
 
  private:
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
   QuantizedValue m_time;
 };

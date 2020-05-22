@@ -26,5 +26,5 @@ class EncoderAcceleration : public Setting
  private:
   QuantizedValue m_acceleration;
 
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 };

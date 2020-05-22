@@ -13,7 +13,7 @@ VelocityCurve::~VelocityCurve()
 {
 }
 
-void VelocityCurve::sendToLPC() const
+void VelocityCurve::sendToLPC(SendReason reason) const
 {
   Application::get().getLPCProxy()->sendSetting(VELOCITY_CURVE, (uint16_t)(get()));
 }

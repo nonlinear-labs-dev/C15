@@ -13,7 +13,7 @@ class TuneReference : public Setting
   Glib::ustring save() const override;
   Glib::ustring getDisplayString() const override;
   void incDec(int inc, ButtonModifiers mod);
-  void sendToLPC() const override;
+  void sendToLPC(SendReason reason) const override;
 
   Glib::ustring getName() const;
 

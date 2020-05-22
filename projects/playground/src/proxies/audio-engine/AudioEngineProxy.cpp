@@ -27,14 +27,6 @@ AudioEngineProxy::AudioEngineProxy()
   onConnectionEstablished(EndPoint::AudioEngine, sigc::mem_fun(this, &AudioEngineProxy::sendEditBuffer));
 }
 
-void AudioEngineProxy::toggleSuppressParameterChanges(UNDO::Transaction *transaction)
-{
-  transaction->addSimpleCommand([=](UNDO::Command::State) mutable {
-    if(std::exchange(m_suppressParamChanges, !m_suppressParamChanges))
-      sendEditBuffer();
-  });
-}
-
 constexpr auto cUnisonVoicesParameterNumber = 249;
 constexpr auto cMonoEnableParameterNumber = 364;
 
@@ -350,5 +342,18 @@ void AudioEngineProxy::sendEditBuffer()
       break;
   }
 
-  Application::get().getSettings()->sendToLPC();
+  Application::get().getSettings()->onEditBufferSent();
+}
+
+void AudioEngineProxy::freezeParameterMessages()
+{
+  m_suppressParamChanges++;
+}
+
+void AudioEngineProxy::thawParameterMessages()
+{
+  m_suppressParamChanges--;
+
+  if(m_suppressParamChanges == 0)
+    sendEditBuffer();
 }

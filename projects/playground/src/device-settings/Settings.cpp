@@ -207,10 +207,10 @@ void Settings::handleHTTPRequest(std::shared_ptr<NetworkRequest> request, const 
   m_actions->handleRequest(request);
 }
 
-void Settings::sendToLPC()
+void Settings::onEditBufferSent()
 {
   for(auto &s : m_settings)
-    s.second->sendToLPC();
+    s.second->sendToLPC(Setting::SendReason::EditBufferSent);
 }
 
 bool Settings::isLoading() const
