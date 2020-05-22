@@ -23,6 +23,14 @@ add_custom_command(
 )
 
 add_custom_command(
+    COMMENT "Create filesystem"
+    OUTPUT  .filesystem-created
+    COMMAND truncate -s 7G ${CMAKE_CURRENT_BINARY_DIR}/fs.ext4
+    COMMAND mkfs.ext4 ${CMAKE_CURRENT_BINARY_DIR}/fs.ext4
+    COMMAND touch .filesystem-created
+)
+
+add_custom_command(
     COMMENT "Download APLinux image to ${CMAKE_CURRENT_BINARY_DIR}/AP-Linux-V.4.0.iso"
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/AP-Linux-V.4.0.iso
     #COMMAND wget https://netix.dl.sourceforge.net/project/ap-linux/AP-Linux-V.4.0.iso
@@ -39,6 +47,7 @@ add_custom_command(
 add_custom_command(
     COMMENT "Create NonLinux ISO Image"
     DEPENDS .docker-container-created
+    DEPENDS .filesystem-created
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/AP-Linux-V.4.0.iso
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/NonLinux.pkg.tar.gz
     DEPENDS ${EPC_SCRIPTS}
@@ -52,6 +61,7 @@ add_custom_command(
 add_custom_command(
     COMMENT "Install system on virtual machine"
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/NonLinuxAP.iso
+    DEPENDS .filesystem-created
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disk.raw
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runScriptInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
@@ -69,6 +79,7 @@ add_custom_command(
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/AP-Linux-V.4.0.iso
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/NonLinux.pkg.tar.gz
     DEPENDS .docker-container-created
+    DEPENDS .filesystem-created
     OUTPUT .nonlinux-local-rootfs
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runScriptInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
@@ -82,6 +93,7 @@ add_custom_command(
     COMMENT "Create ePC update"
     DEPENDS .nonlinux-local-rootfs
     DEPENDS ${ALL_FILES_IN_PROJECT}
+    DEPENDS .filesystem-created
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/update.tar
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runScriptInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
@@ -92,6 +104,7 @@ add_custom_command(
 add_custom_command(
     COMMENT "Build install medium (to be run with prefix EPC_INSTALL_MEDIUM=/dev/sdX)"
     OUTPUT .nonlinux-install-medium
+    DEPENDS .filesystem-created
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/NonLinuxAP.iso
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/createInstallMedium.sh
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/createInstallMedium.sh
@@ -103,6 +116,7 @@ IF(BUILD_BBB) # we need the BBB utilities
     add_custom_command(
         COMMENT "Build ePC update"
         OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+        DEPENDS .filesystem-created
         DEPENDS epc-create-update
         DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
         DEPENDS bbb-rootfs
@@ -121,6 +135,7 @@ IF(BUILD_BBB) # we need the BBB utilities
 
     add_custom_target(epc-ota-update
         DEPENDS ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+        DEPENDS .filesystem-created
         COMMAND ${CMAKE_SOURCE_DIR}/build-tools/c15-ota-update.sh
             ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
             \${UNIT_NAME}

@@ -48,7 +48,7 @@ create_update() {
 }
 
 deploy_update() {
-    mv /update.tar /workdir/update.tar
+    mv /update.tar /bindir/update.tar
 }
 
 setup_build_overlay() {
@@ -115,6 +115,9 @@ update_fstab() {
 }
 
 set -x
+mkdir -p /workdir
+mount -o loop /bindir/fs.ext4 /workdir
+
 setup_build_overlay
 build_update
 setup_install_overlay

@@ -19,7 +19,7 @@ string(STRIP ${GROUP_ID} GROUP_ID)
 string(STRIP ${USER_ID} USER_ID)
 
 add_custom_command(
-    COMMENT "Create Docker Container for the current User ${USER}"
+    COMMENT "Create Docker Container"
     OUTPUT .docker-container-created 
     COMMAND docker build -t ${DOCKERNAME} ${CMAKE_CURRENT_SOURCE_DIR} DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile 
     COMMAND touch .docker-container-created

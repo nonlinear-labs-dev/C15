@@ -1,16 +1,19 @@
 #!/bin/sh
 
+mkdir -p /workdir
+mount -o loop /bindir/fs.ext4 /workdir
+
 rm -rf /workdir/squashfs-root /workdir/overlay-scratch /workdir/overlay-workdir /workdir/overlay-fs
 
 mkdir -p /internal/AP-Linux-mnt /workdir/overlay-scratch /workdir/overlay-workdir /workdir/overlay-fs
-mount -o loop /workdir/AP-Linux-V.4.0.iso /internal/AP-Linux-mnt
+mount -o loop /bindir/AP-Linux-V.4.0.iso /internal/AP-Linux-mnt
 unsquashfs -no-xattrs /internal/AP-Linux-mnt/arch/x86_64/airootfs.sfs
 
 mv /squashfs-root /workdir
 fuse-overlayfs -o lowerdir=/workdir/squashfs-root -o upperdir=/workdir/overlay-scratch -o workdir=/workdir/overlay-workdir /workdir/overlay-fs
 mkdir /workdir/overlay-fs/Audiophile2NonLinux
 chmod 777 /workdir/overlay-fs/Audiophile2NonLinux
-cp -a /workdir/NonLinux.pkg.tar.gz /sources/hook /sources/install /sources/sda.sfdisk /workdir/overlay-fs/Audiophile2NonLinux
+cp -a /bindir/NonLinux.pkg.tar.gz /sources/hook /sources/install /sources/sda.sfdisk /workdir/overlay-fs/Audiophile2NonLinux
 cp -a /sources/runme.sh /workdir/overlay-fs/etc/profile.d/
 
 /workdir/overlay-fs/bin/arch-chroot /workdir/overlay-fs /bin/bash -c "\
