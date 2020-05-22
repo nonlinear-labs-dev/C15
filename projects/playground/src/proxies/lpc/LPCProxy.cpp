@@ -331,6 +331,7 @@ void LPCProxy::sendPedalSetting(uint16_t pedal, PedalTypes pedalType)
 {
   auto len = EHC_GetLPCMessageLength();
   uint8_t buffer[len];
+#warning "support reset/no reset"
   if(auto written = EHC_ComposeLPCSetupMessageById(static_cast<EHC_PRESET_ID>(pedalType), pedal, EHC_NORESET, buffer))
   {
     DebugLevel::info("EHC: send pedal setting", pedal, "=", pedalType);

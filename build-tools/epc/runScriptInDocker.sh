@@ -10,10 +10,12 @@ TMPDIRNAME="$BINARY_DIR/tmp"
 TMPSCRIPT="$TMPDIRNAME/$TMPSCRIPTBASE"
 mkdir -p $TMPDIRNAME
 
-USER_ID=$(id -u $USER)
-DOCKERNAME="nl-epc-build-environment-$USER"
+DOCKERNAME="nl-epc-build-environment"
 
 cp $SCRIPT $TMPSCRIPT
 
-docker run -e TARGETUSER=$USER --privileged --rm -v $TMPDIRNAME:/script -v $BINARY_DIR:/workdir -v $SOURCE_DIR:/sources \
+GROUP_ID=$(id -g $USER)
+USER_ID=$(id -u $USER)
+
+docker run -e GROUP_ID=$GROUP_ID -e USER_ID=$USER_ID --privileged --rm -v $TMPDIRNAME:/script -v $BINARY_DIR:/workdir -v $SOURCE_DIR:/sources \
 $DOCKERNAME bash /script/$TMPSCRIPTBASE

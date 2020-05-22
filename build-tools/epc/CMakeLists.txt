@@ -1,10 +1,12 @@
 SET(USER $ENV{USER})
-SET(DOCKERNAME nl-epc-build-environment-${USER})
+SET(DOCKERNAME nl-epc-build-environment)
 
 file(GLOB_RECURSE ALL_FILES_IN_PROJECT ${CMAKE_SOURCE_DIR}/projects/*)
+file(GLOB_RECURSE ALL_BUILD_TOOLS_FILES ${CMAKE_SOURCE_DIR}/build-tools/*)
 file(GLOB_RECURSE NONMAPS_TARGET_FILES ${CMAKE_SOURCE_DIR}/projects/NonMaps/target/*)
 list(REMOVE_ITEM ALL_FILES_IN_PROJECT EXCLUDE REGEX ${NONMAPS_TARGET_FILES})
 list(REMOVE_ITEM ALL_FILES_IN_PROJECT EXCLUDE REGEX CMakeLists.txt)
+list(APPEND ALL_FILES_IN_PROJECT ${ALL_BUILD_TOOLS_FILES})
 
 EXECUTE_PROCESS(OUTPUT_VARIABLE GROUP_ID COMMAND sh -c "id -g $USER")
 EXECUTE_PROCESS(OUTPUT_VARIABLE USER_ID COMMAND sh -c "id -u $USER")
@@ -13,9 +15,9 @@ string(STRIP ${USER_ID} USER_ID)
 file(GLOB_RECURSE EPC_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
 add_custom_command(
-    COMMENT "Create Docker Container for the current User ${USER}"
+    COMMENT "Create Docker Container"
     OUTPUT .docker-container-created
-    COMMAND docker build --build-arg user=${USER} --build-arg user_id=${USER_ID} --build-arg group_id=${GROUP_ID} -t ${DOCKERNAME} ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND docker build -t ${DOCKERNAME} ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile
     COMMAND touch .docker-container-created
 )
@@ -103,8 +105,9 @@ IF(BUILD_BBB) # we need the BBB utilities
         OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
         DEPENDS epc-create-update
         DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
-        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
-        DEPENDS ${SOURCE_FILES}
+        DEPENDS bbb-rootfs
+        DEPENDS bbb-rootfs
+        DEPENDS ${ALL_FILES_IN_PROJECT}
         COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
             ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
             ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz

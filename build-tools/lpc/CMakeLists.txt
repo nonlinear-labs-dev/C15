@@ -37,7 +37,7 @@ IF(BUILD_BBB) # we need the BBB utilities
     add_custom_command(
         COMMENT "Build LPC update"
         OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-lpc-update.tar
-        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+        DEPENDS bbb-rootfs
         DEPENDS ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/M0_project/c15_lpc_m0.bin
         DEPENDS ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/M4_project/c15_lpc_m4.bin
         DEPENDS ${SOURCE_FILES}

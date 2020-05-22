@@ -28,4 +28,4 @@ md5sum /internal/AP-Linux-copy/arch/x86_64/airootfs.sfs > /internal/AP-Linux-cop
 xorriso -volid "ARCH_201704" -as mkisofs -no-emul-boot -boot-load-size 4 -boot-info-table -iso-level 4 -b isolinux/isolinux.bin -c isolinux/boot.cat -eltorito-alt-boot -e EFI/archiso/efiboot.img -no-emul-boot -o /internal/NonLinuxAP.iso /internal/AP-Linux-copy/
 isohybrid -u /internal/NonLinuxAP.iso
 mv /internal/NonLinuxAP.iso /workdir/NonLinuxAP.iso
-chown $TARGETUSER /workdir/NonLinuxAP.iso
+chown $USER_ID.$GROUP_ID /workdir/NonLinuxAP.iso
