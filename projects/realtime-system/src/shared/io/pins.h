@@ -39,7 +39,7 @@
 #define ledError        LED_E
 
 // board ID : input with external 10k pullup (HW V1.7) or open (older), so we need a soft pulldown
-#define pinBoardID_init() GPIO_DIR_IN(3, 0); SFSP(6, 1) = SFS_EIF + SFS_EIB + SFS_DHS + SFS_EPD + SFS_EPU + 0
+#define pinBoardID_init() GPIO_DIR_IN(3, 0); SFSP(6, 1) = SFS_EIF + SFS_EIB + SFS_DHS + SFS_EPD + SFS_DPU + 0
 #define pinBoardID           GPIO_Bit(3, 0)
 
 static inline void debugPinsInit(void)
@@ -95,7 +95,7 @@ static inline void espiPinsInit(void)
 {
   pinEspi_SCK_init();
   pinEspi_SDO_init();
-  pinEspi_SDO_init();
+  pinEspi_SDI_init();
   pinEspi_SAP_init();
   pinEspi_DMX_init();
   pPinEspi_SCS0_init();
