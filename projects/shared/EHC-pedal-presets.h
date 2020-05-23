@@ -1,7 +1,8 @@
 #pragma once
 
-#include "lpc-defs.h"
 #include <stddef.h>
+#include <stdint.h>
+#include "lpc-defs.h"
 
 #ifdef __cplusplus
 extern "C"

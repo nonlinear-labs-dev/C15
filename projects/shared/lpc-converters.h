@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include "lpc-defs.h"
 
 static inline uint16_t EHC_configToUint16(const EHC_ControllerConfig_T c)
