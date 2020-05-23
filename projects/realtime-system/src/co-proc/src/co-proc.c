@@ -8,22 +8,25 @@
   	@note	!!!!!! USE optimized most -O3 for compiling !!!!!!
 
 *******************************************************************************/
+
+#pragma GCC diagnostic ignored "-Wmain"
+
 #include <stdint.h>
 #include "cmsis/LPC43xx.h"
-#include "boards/emphase_v5.h"
 #include "ipc/emphase_ipc.h"
 #include "sys/delays.h"
 #include "drv/nl_rit.h"
 #include "drv/nl_cgu.h"
 #include "drv/nl_gpdma.h"
 #include "drv/nl_kbs.h"
-#include "drv/nl_dbg.h"
+#include "sys/nl_version.h"
 #include "espi/nl_espi_core.h"
 #include "espi/dev/nl_espi_dev_aftertouch.h"
 #include "espi/dev/nl_espi_dev_pedals.h"
 #include "espi/dev/nl_espi_dev_pitchbender.h"
 #include "espi/dev/nl_espi_dev_ribbons.h"
 #include "espi/dev/nl_espi_dev_adc.h"
+#include "io/pins.h"
 
 #define ESPI_MODE_ADC      LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
 #define ESPI_MODE_ATT_DOUT LPC_SSP0, ESPI_CPOL_0 | ESPI_CPHA_0
@@ -34,28 +37,8 @@ static inline uint32_t M4TicksToUS(uint32_t const ticks)
   return M4_PERIOD_US * ticks;
 }
 
-// 8 bit pseudo-random generator using a simple and fast Galois linear-feedback shift register
-// period is 255, values span the range of 1..255 (0 ever won't occur)
-// possible generator polynoms are, giving different sequences :
-//   0x8E, 0x95, 0x96, 0xA6, 0xAF, 0xB1, 0xB2, 0xB4, 0xB8, 0xC3, 0xC6, 0xD4, 0xE1, 0xE7, 0xF3, 0xFA
-// source : https://doitwireless.com/2014/06/26/8-bit-pseudo-random-number-generator/
-static uint32_t        rand8 = 0x5A;  // seed value, must not be 0
-static inline uint32_t rand(void)
-{
-  uint32_t r1, r2;
-  asm volatile(
-      "\n mov %[r1], ~#0xB8"                               // generator polynom GP = x^8 + x^6 + x^5 + x^4 + 1 (10111000b == B8h)
-      "\n lsr %[rand8], #1"                                // rand8 >> 1, shift into carry flag
-      "\n sbc %[r2], %[r2]"                                // mask, all 1's if carry set, 0's else
-      "\n and %[r1], %[r2]"                                // ANDing results in either GP or 0
-      "\n eor %[rand8], %[r1]"                             // rand8 ^= (carry ? GP : 0)
-      : [r1] "=r"(r1), [r2] "=r"(r2), [rand8] "+r"(rand8)  // out/ in-out parameters "=":out only, "+":in-out
-      :                                                    // in only parameters
-      : "cc");                                             // clobber list (cc=condition codes)
-  return rand8;
-}
+static uint32_t rand32 = 0x12345678;
 
-static uint32_t        rand32 = 0x12345678;
 static inline uint32_t xorshift_u32(void)
 {  // 32 bit xor-shift generator, period 2^32-1, non-zero seed required, range 1...2^32-1
    // source : https://www.jstatsoft.org/index.php/jss/article/view/v008i14/xorshift.pdf
@@ -143,12 +126,17 @@ static void ProcessADCs(void)
     IPC_SetADCTime(savedTicks = (s.ticker - totalTicks));
     totalTicks = s.ticker;
 
-    if (M4TicksToUS(savedTicks) < 12500 / 16 - 7)  // cycle was faster than 16 rounds per 12.5ms (the 7 is a fudge factor)?
-      compensatingTicks++;
+    if (!savedTicks)  // M4 seems to have stalled
+      compensatingTicks = 0;
     else
     {
-      if (compensatingTicks)  // cycle time can be shortened ?
-        compensatingTicks--;
+      if (M4TicksToUS(savedTicks) < 12500 / 16 - 7)  // cycle was faster than 16 rounds per 12.5ms (the 7 is a fudge factor)?
+        compensatingTicks++;
+      else
+      {
+        if (compensatingTicks)  // cycle time can be shortened ?
+          compensatingTicks--;
+      }
     }
   }
 
@@ -167,12 +155,12 @@ static void ProcessADCs(void)
   switch (hbLedCnt)
   {
     case 1:
-      DBG_Led_Cpu_On();
+      ledM0heartbeat = 1;
       break;
-    case 500:
-      DBG_Led_Cpu_Off();
+    case 300:
+      ledM0heartbeat = 0;
       break;
-    case 1000:
+    case 600:
       hbLedCnt = 0;
       break;
     default:
@@ -294,12 +282,14 @@ static void ProcessADCs(void)
 }
 
 /******************************************************************************/
-int main(void)
+volatile char* pVersionString;
+
+void main(void)
 {
-  EMPHASE_V5_M0_Init();
+  pVersionString = VERSION_STRING;  // referencing the version string so compiler won't optimize it away
 
   Emphase_IPC_Init();
-
+  KBS_Init();
   NL_GPDMA_Init(0b00000011);  // inverse to the mask in the M4_Main
 
   // Increased from 1.6 to 2MHz clock freq... works up to ~5MHz in V7.1 hardware.
@@ -316,8 +306,6 @@ int main(void)
 
   while (1)
     ProcessADCs();
-
-  return 0;
 }
 
 /******************************************************************************/

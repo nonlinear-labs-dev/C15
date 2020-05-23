@@ -20,9 +20,6 @@
  * warranty that such application will be suitable for the specified
  * use without further testing or modification.
  **********************************************************************/
-#ifndef __USB_H__
-#define __USB_H__
-
 /** \file
  *  \brief Common definitions and declarations for the USB stack.
  *
@@ -30,6 +27,7 @@
  *  \addtogroup USBD_Core 
  *  @{
  */
+#pragma once
 
 #include <stdint.h>
 
@@ -708,5 +706,3 @@ typedef void* USBD_HANDLE_T;
 /** DMA  IN EP - Error */
 #define USB_EVT_IN_DMA_ERR 13
 /** @} */
-
-#endif /* __USB_H__ */

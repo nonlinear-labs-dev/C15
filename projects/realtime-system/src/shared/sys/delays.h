@@ -3,8 +3,7 @@
     @date		2015-02-12 dtz
     @author		Daniel Tzschentke 2015-02-12
 *******************************************************************************/
-#ifndef DELAYS_H_
-#define DELAYS_H_
+#pragma once
 
 #define DELAY_ONE_CLK_CYCLE asm volatile("nop")  // 204 MHz => ~4.9ns
 
@@ -43,5 +42,3 @@
   DELAY_HUNDRED_CLK_CYCLES        \
   DELAY_HUNDRED_CLK_CYCLES        \
   DELAY_HUNDRED_CLK_CYCLES
-
-#endif

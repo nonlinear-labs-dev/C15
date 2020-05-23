@@ -5,13 +5,10 @@
     @author		KSTR
     @brief		watchdog
 *******************************************************************************/
-#ifndef NL_WATCHDOG_H_
-#define NL_WATCHDOG_H_
+#pragma once
 
 #include "stdint.h"
 
 void SYS_WatchDogInit(uint32_t timeoutInMs);
 void SYS_WatchDogClear(void);
 void SYS_Reset(void);
-
-#endif

@@ -4,9 +4,7 @@
     @brief    	Definitions for the USB Audio driver
     @author		Nemanja Nikodijevic 2015-07-23
 *******************************************************************************/
-
-#ifndef _NL_USB_AUDIO_H_
-#define _NL_USB_AUDIO_H_
+#pragma once
 
 /** Audio Request codes */
 #define USB_AUDIO_REQ_SET_CUR 0x01
@@ -28,5 +26,3 @@ typedef void (*AudioRcvCallback)(uint32_t* buff, uint32_t len);
 /* USB Audio functions */
 void USB_Audio_Init(AudioRcvCallback audrcv, LPC_TIMERn_Type* TIMx);
 void USB_Audio_Poll(void);
-
-#endif

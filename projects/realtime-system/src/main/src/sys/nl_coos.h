@@ -24,8 +24,7 @@
 	@ingroup	nl_sys_modules
 	@todo		Error functions should use callback functions
 *******************************************************************************/
-#ifndef NL_SYS_COOS_H_
-#define NL_SYS_COOS_H_
+#pragma once
 
 #include "stdint.h"
 
@@ -34,5 +33,3 @@ int32_t COOS_Task_Add(void (*taskName)(), uint32_t phase, uint32_t period);
 int32_t COOS_Task_Delete(const uint8_t taskIndex);
 void    COOS_Dispatch(void);
 void    COOS_Update(void);
-
-#endif

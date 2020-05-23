@@ -5,8 +5,7 @@
     @author		KSTR
     @brief		some common functions
 *******************************************************************************/
-#ifndef NL_SYS_STDLIB_H_
-#define NL_SYS_STDLIB_H_
+#pragma once
 
 #include <stdint.h>
 #include <stddef.h>
@@ -26,5 +25,3 @@ static inline void *memcpy(void *dest, void *src, size_t n)
     *(p++) = *((uint8_t *) src++);
   return dest;
 }
-
-#endif

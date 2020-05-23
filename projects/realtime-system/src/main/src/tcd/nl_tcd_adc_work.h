@@ -4,9 +4,7 @@
  *  Created on: 13.03.2015
  *      Author: ssc
  */
-
-#ifndef TCD_NL_TCD_ADC_WORK_H_
-#define TCD_NL_TCD_ADC_WORK_H_
+#pragma once
 
 #include "stdint.h"
 
@@ -47,5 +45,3 @@ uint32_t ADC_WORK_GetRibbon2Behaviour(void);
 
 void ADC_WORK_Select_BenderTable(uint16_t const curve);
 void ADC_WORK_Select_AftertouchTable(uint16_t const curve);
-
-#endif /* TCD_NL_TCD_ADC_WORK_H_ */

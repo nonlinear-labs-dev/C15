@@ -6,9 +6,7 @@
     @ingroup  	SPI_DMA
     @author		Nemanja Nikodijevic 2013-04-05
 *******************************************************************************/
-
-#ifndef NL_SPI_DMA_H_
-#define NL_SPI_DMA_H_
+#pragma once
 
 #include "cmsis/LPC43xx.h"
 #include "cmsis/lpc43xx_ssp.h"
@@ -98,5 +96,3 @@ uint32_t SPI_DMA_SendReceiveBlocking(LPC_SSPn_Type *  SSPx,
                                      TransferCallback Callback);
 
 uint32_t SPI_DMA_ChannelBusy(uint32_t chan);
-
-#endif /* NL_SPI_DMA_H_ */

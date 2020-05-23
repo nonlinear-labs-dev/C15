@@ -29,9 +29,7 @@
 *******************************************************************************/
 
 #include "sup/nl_sup.h"
-#include "drv/nl_dbg.h"
-#include "drv/nl_pin.h"
-#include "drv/nl_gpio.h"
+#include "io/pins.h"
 #include "spibb/nl_bb_msg.h"
 
 static uint16_t unmute_status_bits     = 0;       // bit field
@@ -64,28 +62,20 @@ static uint8_t unknown_cntr;
 static uint8_t transition     = MUTED;
 static uint8_t new_transition = MUTED;
 
-static SUP_PINS_T* pins;
-
-// set GPIO pins use
-void SUP_Config(SUP_PINS_T* sup_pins)
-{
-  pins = sup_pins;
-}
-
 // return requested/actual muting status bit field
 uint16_t SUP_GetUnmuteStatusBits(void)
 {
   return unmute_status_bits;
 }
 
-void Set_Signalling_GPIO_Pin(uint8_t new_state)
+static inline void Set_Signalling_GPIO_Pin(uint8_t new_state)
 {
-  NL_GPIO_SetState(pins->lpc_sup_mute_request, new_state);
+  pinSup_OUTb = (new_state != 0);
 }
 
-uint8_t Get_Status_GPIO_Pin(void)
+static inline uint8_t Get_Status_GPIO_Pin(void)
 {
-  return NL_GPIO_Get(pins->lpc_sup_mute_status);
+  return pinSup_INb;
 }
 
 void SUP_Init(void)
@@ -118,12 +108,12 @@ void SUP_MidiTrafficDetected(void)
   midi_timeout = 1 + (TRAFFIC_TIMEOUT / SUP_PROCESS_TIMESLICE);
 }
 
-void Enable_Override_Muting(uint8_t on_off)
+static inline void Enable_Override_Muting(uint8_t on_off)
 {
   override = (on_off != 0);
 }
 
-void Override_Muting(uint8_t new_unmute_state)  // effective only when enabled
+static inline void Override_Muting(uint8_t new_unmute_state)  // effective only when enabled
 {
   override_state = (new_unmute_state != 0);
 }
@@ -137,7 +127,7 @@ void SUP_SetMuteOverride(uint32_t mode)
 
 // determine requested mute state and signal it to the Supervisor
 // set "request" bits in status bit field
-void Transmitter(void)
+static void Transmitter(void)
 {
   // determine the new mute state and its status bits (except the readback bits)
   if (midi_timeout)
@@ -174,12 +164,12 @@ void Transmitter(void)
     old_requested_unmute_state = requested_unmute_state;
     if (requested_unmute_state)
     {
-      DBG_Led_Audio_On();
+      ledAudioOk     = 1;
       new_transition = UNMUTED;
     }
     else
     {
-      DBG_Led_Audio_Off();
+      ledAudioOk     = 0;
       new_transition = MUTED;
     }
   }
@@ -197,7 +187,7 @@ void Transmitter(void)
 
 // detect actual mute state as returned by Supervisor
 // set returned "actual" state bits in status bit field
-void Detector(void)
+static void Detector(void)
 {
   old_returned_mstate = returned_mstate;
   returned_mstate     = Get_Status_GPIO_Pin();

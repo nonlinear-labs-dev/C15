@@ -6,8 +6,7 @@
     @ingroup  	LPC_RIT
     @author		Nemanja Nikodijevic 2014-08-15
 *******************************************************************************/
-#ifndef NL_RIT_H
-#define NL_RIT_H
+#pragma once
 
 #include <stdint.h>
 #include "cmsis/LPC43xx.h"
@@ -60,5 +59,3 @@ static inline uint32_t RIT_GetCompval(void)
 {
   return LPC_RITIMER->COMPVAL;
 };
-
-#endif

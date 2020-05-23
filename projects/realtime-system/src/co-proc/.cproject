@@ -41,7 +41,7 @@
 								</option>
 								<option id="com.crt.advproject.gcc.exe.release.option.optimization.level.65360126" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.release.option.optimization.level" value="gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.exe.release.option.debugging.level.1701174273" name="Debug Level" superClass="com.crt.advproject.gcc.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
-								<option id="com.crt.advproject.gcc.lto.1880477360" superClass="com.crt.advproject.gcc.lto" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.gcc.lto.1880477360" name="Enable Link-time optimization (-flto)" superClass="com.crt.advproject.gcc.lto" value="true" valueType="boolean"/>
 								<inputType id="com.crt.advproject.compiler.input.2142338687" superClass="com.crt.advproject.compiler.input"/>
 							</tool>
 							<tool id="com.crt.advproject.gas.exe.release.1966234881" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.release">
@@ -71,8 +71,9 @@
 								<option id="com.crt.advproject.link.gcc.multicore.slave.1101940556" name="Multicore configuration" superClass="com.crt.advproject.link.gcc.multicore.slave" value="M0APP" valueType="string"/>
 								<option id="com.crt.advproject.link.scriptdir.754222462" name="Script path" superClass="com.crt.advproject.link.scriptdir" value="&quot;../../../ld&quot;" valueType="string"/>
 								<option id="com.crt.advproject.link.toram.689978033" name="Link application to RAM" superClass="com.crt.advproject.link.toram" value="false" valueType="boolean"/>
-								<option id="com.crt.advproject.link.gcc.lto.1212945317" superClass="com.crt.advproject.link.gcc.lto" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.gcc.lto.optmization.level.1710805816" superClass="com.crt.advproject.link.gcc.lto.optmization.level" value="link.c.optimization.level.most" valueType="enumerated"/>
+								<option id="com.crt.advproject.link.gcc.lto.1212945317" name="Enable Link-time optimization (-flto)" superClass="com.crt.advproject.link.gcc.lto" value="true" valueType="boolean"/>
+								<option id="com.crt.advproject.link.gcc.lto.optmization.level.1710805816" name="Link-time optimization level" superClass="com.crt.advproject.link.gcc.lto.optmization.level" value="link.c.optimization.level.most" valueType="enumerated"/>
+								<option id="gnu.c.link.option.nodeflibs.1598848660" superClass="gnu.c.link.option.nodeflibs" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.289490617" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

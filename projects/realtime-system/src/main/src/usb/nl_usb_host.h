@@ -4,8 +4,7 @@
     @brief    	Driver for the USB host port on LPC43xx
     @author		Nemanja Nikodijevic 2015-10-15
 *******************************************************************************/
-#ifndef _NL_USB_HOST_H_
-#define _NL_USB_HOST_H_
+#pragma once
 
 #include <stdint.h>
 #include "cmsis/LPC43xx.h"
@@ -214,5 +213,3 @@ void USB_Host_QH_Insert(QH_T* qh);
 void USB_Host_QH_Remove(QH_T* qh);
 
 void USB_Host_PrepareTD(QTD_T* qTD, uint8_t dir, uint8_t* buffer, uint16_t length);
-
-#endif

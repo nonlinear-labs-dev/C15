@@ -6,9 +6,7 @@
     @brief		handlers for external controllers (pedals etc) processing
     @ingroup	nl_tcd_modules
 *******************************************************************************/
-
-#ifndef NL_EHC_CTRL_H_
-#define NL_EHC_CTRL_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -21,6 +19,3 @@ void NL_EHC_SetEHCconfig(const uint16_t cmd, uint16_t data);
 void NL_EHC_RequestToSendEHCdata(void);
 void NL_EHC_Enable(uint16_t flag);
 void NL_EHC_ForceEepromUpdate(void);
-
-#endif
-//EOF

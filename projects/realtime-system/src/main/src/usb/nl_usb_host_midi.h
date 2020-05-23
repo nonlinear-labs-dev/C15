@@ -4,8 +4,7 @@
     @brief    	Driver for the MIDI USB host port on LPC43xx
     @author		Nemanja Nikodijevic 2015-11-15
 *******************************************************************************/
-#ifndef _NL_USB_HOST_MIDI_H_
-#define _NL_USB_HOST_MIDI_H_
+#pragma once
 
 #include <stdint.h>
 #include "midi/nl_midi.h"
@@ -16,5 +15,3 @@ void    USBH_MIDI_Remove_Device(void);
 void    USBH_MIDI_QH_Process(void);
 
 void USBH_MIDI_Set_Callback(MIDI_Message_Callback msg_cb);
-
-#endif

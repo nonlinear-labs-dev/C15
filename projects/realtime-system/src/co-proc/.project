@@ -31,11 +31,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/shared/boards</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/shared/cmsis</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -54,16 +49,6 @@
 			<name>src/shared/sys</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/shared/boards/emphase_v5.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/boards/emphase_v5.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/boards/emphase_v5.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/boards/emphase_v5.h</locationURI>
 		</link>
 		<link>
 			<name>src/shared/cmsis/LPC43xx.h</name>
@@ -121,16 +106,6 @@
 			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_cgu.h</locationURI>
 		</link>
 		<link>
-			<name>src/shared/drv/nl_dbg.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_dbg.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_dbg.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_dbg.h</locationURI>
-		</link>
-		<link>
 			<name>src/shared/drv/nl_gpdma.c</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_gpdma.c</locationURI>
@@ -139,26 +114,6 @@
 			<name>src/shared/drv/nl_gpdma.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_gpdma.h</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_gpio.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_gpio.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_gpio.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_gpio.h</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_pin.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_pin.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_pin.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/drv/nl_pin.h</locationURI>
 		</link>
 		<link>
 			<name>src/shared/drv/nl_spi_dma.c</name>
@@ -189,11 +144,6 @@
 			<name>src/shared/sys/nl_stdlib.h</name>
 			<type>1</type>
 			<locationURI>WORKSPACE_LOC/src/shared/sys/nl_stdlib.h</locationURI>
-		</link>
-		<link>
-			<name>src/shared/sys/nl_version.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/src/shared/sys/nl_version.c</locationURI>
 		</link>
 		<link>
 			<name>src/shared/sys/nl_version.h</name>

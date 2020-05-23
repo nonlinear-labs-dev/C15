@@ -5,8 +5,7 @@
     @author		KSTR
     @brief		system status global variable
 *******************************************************************************/
-#ifndef NL_SYS_STATUS_H_
-#define NL_SYS_STATUS_H_
+#pragma once
 
 #include "stdint.h"
 
@@ -27,5 +26,3 @@ extern NL_systemStatus_T NL_systemStatus;
 
 void     NL_STAT_GetData(uint16_t *buffer);
 uint16_t NL_STAT_GetDataSize(void);
-
-#endif

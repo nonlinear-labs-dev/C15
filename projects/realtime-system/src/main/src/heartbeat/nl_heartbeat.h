@@ -6,9 +6,7 @@
     @ingroup  	nl_drv_modules
     @author		KSTR
 *******************************************************************************/
-
-#ifndef NL_HEARTBEAT_H_
-#define NL_HEARTBEAT_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -18,5 +16,3 @@
 void HBT_MidiReceive(uint8_t* buff, uint32_t len);
 void HBT_Process(void);
 void HBT_ResetCounter(void);
-
-#endif /* nl_heartbeat.h */

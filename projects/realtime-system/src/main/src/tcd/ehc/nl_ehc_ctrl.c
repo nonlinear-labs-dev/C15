@@ -1122,6 +1122,7 @@ void NL_EHC_ProcessControllers3(void)
       BB_MSG_SendTheBuffer();
     }
   }
+
   EHC_fillSampleBuffers();
 }
 

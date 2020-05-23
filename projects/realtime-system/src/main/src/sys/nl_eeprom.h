@@ -5,8 +5,7 @@
     @author		KSTR
     @brief		eeprom routines
 *******************************************************************************/
-#ifndef NL_SYS_EEPROM_H_
-#define NL_SYS_EEPROM_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -52,5 +51,3 @@ uint16_t NL_EEPROM_Busy(void);
 void NL_EEPROM_Process(void);            // cyclic task to perform the multi-page writes, or a full EEPROM erase
 void NL_EEPROM_RequestFullErase(void);   // initiate a full EEPROM erase
 int  NL_EEPROM_FullEraseFinished(void);  // flag finished full EEPROM erase
-
-#endif

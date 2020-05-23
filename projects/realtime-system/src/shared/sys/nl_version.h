@@ -5,8 +5,7 @@
     @author		KSTR
     @brief		define firmware version and place string in image
 *******************************************************************************/
-#ifndef NL_VERSION_H_
-#define NL_VERSION_H_
+#pragma once
 
 // ==== V 205 ====
 // fix for max. Velocity und max. HWSource, added keybed press sent to BBBB
@@ -20,8 +19,17 @@
 // 60 == release candidate, beta test, lots of improvements (Keybed Scanner)
 // 61 == release candidate, beta test, removed all standard libraries, and now using hardware floating point
 // 62 == release candidate, beta test, introduce jitter on ESPI and keybed scanner for EMC, add key mapping
-#define SW_VERSION 62206
+#define SW_VERSION 63206
 
-void* GetVersionString();
-
+#define STR_IMPL_(x) #x            //stringify argument
+#define STR(x)       STR_IMPL_(x)  //indirection to expand argument macros
+#if defined CORE_M4
+#define CORE "M4"
+#elif defined CORE_M0
+#define CORE "M0"
+#else
+#error "either CORE_M4 or CORE_M0 must be defined!"
 #endif
+
+// volatile needed to keep compiler from optimizing away this string
+static volatile char VERSION_STRING[] = "\n\nC15 RT-SYS, LPC4337 Core " CORE ", FIRMWARE VERSION: " STR(SW_VERSION) " \n\n\0\0\0";

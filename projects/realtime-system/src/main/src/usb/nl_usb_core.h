@@ -6,9 +6,7 @@
     @ingroup	nl_drv_modules
     @author		Nemanja Nikodijevic 2014-12-11
 *******************************************************************************/
-
-#ifndef __USBCORE_H__
-#define __USBCORE_H__
+#pragma once
 
 #include "usb/nl_usbd.h"
 
@@ -243,5 +241,3 @@ void USB_DataInStage(void);
 void USB_DataOutStage(void);
 void USB_StatusInStage(void);
 void USB_StatusOutStage(void);
-
-#endif /* __USBCORE_H__ */

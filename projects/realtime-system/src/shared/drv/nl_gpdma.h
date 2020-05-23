@@ -4,8 +4,7 @@
     @brief    	Basic GPDMA functions
     @author		Nemanja Nikodijevic [2014-10-09]
 *******************************************************************************/
-#ifndef NL_GPDMA_H
-#define NL_GPDMA_H
+#pragma once
 
 #include "cmsis/LPC43xx.h"
 #include "cmsis/lpc_types.h"
@@ -69,5 +68,3 @@ void     NL_GPDMA_Init(uint8_t ch);
 void     NL_GPDMA_Poll(void);
 Status   NL_GPDMA_SetupChannel(NL_GPDMA_ChDesc* desc, TransferCallback callback);
 uint32_t NL_GPDMA_ChannelBusy(uint8_t ch);
-
-#endif

@@ -48,7 +48,6 @@
 #include "drv/nl_kbs.h"
 #include <stdint.h>
 #include "ipc/emphase_ipc.h"
-// #include "usb/nl_usb_midi.h"
 #include "drv/nl_cgu.h"
 
 __attribute__((aligned(4))) static uint16_t keyOff[NUM_KEYS];   // flag array to store logical on/off state
@@ -109,6 +108,9 @@ __attribute__((aligned(4))) void (*KBS_Process)(void) = Process01;
 *******************************************************************************/
 void KBS_Init(void)
 {
+  *pLINE_MASKREG = 0xFFFFFFF0;  // set up masking for "line select" : bits 0..3
+  *pKEYS_MASKREG = 0xFFFFFF00;  // set up masking for "keys" : bits 0..7
+
   uint16_t mask = 0x0101;
   for (int i = 0; i < 64; i++)
   {
@@ -119,15 +121,6 @@ void KBS_Init(void)
   }
   KBS_Process = Process01;
   SetHwLine(0);  // Initially select bank 0 lower switches, before main process starts stepping lines
-}
-
-/******************************************************************************/
-/**	@brief
-*******************************************************************************/
-void KBS_Config(KBS_PINS_T *pins)
-{
-  *pLINE_MASKREG = 0xFFFFFFF0;  // set up masking for "line select" : bits 0..3
-  *pKEYS_MASKREG = 0xFFFFFF00;  // set up masking for "keys" : bits 0..7
 }
 
 /******************************************************************************/

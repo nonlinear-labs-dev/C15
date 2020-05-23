@@ -4,9 +4,7 @@
  *  Created on: 30.01.2015
  *      Author: ssc
  */
-
-#ifndef NL_TCD_POLY_H_
-#define NL_TCD_POLY_H_
+#pragma once
 
 #include "stdint.h"
 
@@ -30,5 +28,3 @@ void POLY_ForceKey(uint16_t const midiKeyNumber, uint16_t const timeLow, uint16_
 void POLY_KeyLogging(uint16_t const on);
 
 void POLY_Select_VelTable(uint32_t const curve);
-
-#endif /* NL_TCD_POLY_H_ */

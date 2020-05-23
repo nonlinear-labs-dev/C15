@@ -4,9 +4,7 @@
     @brief    	Descriptors for the USB Audio driver
     @author		Nemanja Nikodijevic 2015-07-23
 *******************************************************************************/
-
-#ifndef _NL_USB_DESCAUDIO_H_
-#define _NL_USB_DESCAUDIO_H_
+#pragma once
 
 #define USB_AUDIO_OUTPUT_ONLY
 
@@ -134,5 +132,3 @@ extern const uint8_t  USB_Audio_FSConfigDescriptor[];
 extern const uint8_t* USB_Audio_HSConfigDescriptor;
 extern const uint8_t  USB_Audio_StringDescriptor[];
 extern const uint8_t  USB_Audio_DeviceQualifier[];
-
-#endif

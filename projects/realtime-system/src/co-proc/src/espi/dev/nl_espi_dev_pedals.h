@@ -1,5 +1,4 @@
-#ifndef NL_ESPI_DEV_PEDALS_H_
-#define NL_ESPI_DEV_PEDALS_H_
+#pragma once
 
 #include "stdint.h"
 
@@ -21,5 +20,3 @@ void ESPI_DEV_Pedals_PullResistors_EspiSendIfChanged(void);
 
 uint8_t ESPI_DEV_Pedals_Detect_GetValue(void);
 void    ESPI_DEV_Pedals_Detect_EspiPull(void);
-
-#endif

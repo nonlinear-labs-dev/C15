@@ -5,9 +5,7 @@
     @author		Nemanja Nikodijevic 2014-07-16
     @todo 		info: bit/byte order ???
 *******************************************************************************/
-
-#ifndef NL_ESPI_IO_H
-#define NL_ESPI_IO_H
+#pragma once
 
 #define ESPI_SHIFT_IN  0
 #define ESPI_SHIFT_OUT 1
@@ -33,5 +31,3 @@ void ESPI_IO_Init(ESPI_IO_T* io,
 
 uint32_t ESPI_IO_In_Process(ESPI_IO_T* io);
 uint32_t ESPI_IO_Out_Process(ESPI_IO_T* io);
-
-#endif

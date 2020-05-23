@@ -6,9 +6,7 @@
  *	last changed: 2020-03-30  KSTR
  *	- SW_VERSION  203
  * */
-
-#ifndef NL_DRV_NL_BB_MSG_H_
-#define NL_DRV_NL_BB_MSG_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -24,5 +22,3 @@ int32_t BB_MSG_WriteMessageNoArg(uint16_t type);
 int32_t BB_MSG_SendTheBuffer(void);
 
 void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t *data);
-
-#endif /* NL_DRV_NL_BB_MSG_H_ */

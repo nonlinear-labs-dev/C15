@@ -4,8 +4,8 @@
     @brief    	MIDI framework
     @author		Nemanja Nikodijevic 2015-09-28
 *******************************************************************************/
-#ifndef _NL_MIDI_H_
-#define _NL_MIDI_H_
+#pragma once
+
 #include "cmsis/LPC43xx.h"
 
 #define MIDI_CHANNEL(x) ((x & 0x0F))
@@ -28,5 +28,3 @@ typedef void (*MIDI_Message_Callback)(MIDI_Message *);
 
 void  MIDI_UART_Init(LPC_USARTn_Type *UARTx, MIDI_Message_Callback midi_cb);
 float MIDI_Get_Note_Freq(uint8_t note);
-
-#endif

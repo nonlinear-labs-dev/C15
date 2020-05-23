@@ -50,7 +50,7 @@ static uint32_t *aftertouchTable;
 static uint16_t rib_eepromHandle = 0;  // EEPROM access handle
 static int      rib_updateEeprom = 0;  // flag / step chain variable
 
-typedef struct // __attribute__((packed))
+typedef struct  // __attribute__((packed))
 {
   int16_t threshold;
   int16_t __attribute__((packed)) tableX[33];

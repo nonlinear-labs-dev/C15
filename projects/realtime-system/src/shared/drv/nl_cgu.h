@@ -4,8 +4,7 @@
     @brief    	CGU functions
     @author		Nemanja Nikodijevic [2015-01-28]
 *******************************************************************************/
-#ifndef NL_CGU_H
-#define NL_CGU_H
+#pragma once
 
 #define NL_LPC_CLK              (204000000ul)
 #define NL_LPC_CLK_PERIOD_100PS (10000000000ul / NL_LPC_CLK)
@@ -16,5 +15,3 @@
 
 #define M0_PERIOD_62_5NS (20ul)  // M0 interrupt period in 62.5ns multiples
 #define M0_FREQ_HZ       (16000000ul / M0_PERIOD_62_5NS)
-
-#endif

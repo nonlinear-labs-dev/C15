@@ -6,12 +6,10 @@
     @ingroup  	LPC_ESPI
     @author		Nemanja Nikodijevic 2014-06-28
 *******************************************************************************/
-
-#ifndef NL_ESPI_CORE_H
-#define NL_ESPI_CORE_H
+#pragma once
 
 #include "drv/nl_spi_dma.h"
-#include "drv/nl_pin.h"
+#include "io/pins.h"
 
 #define ESPI_CPOL_0 SSP_CPOL_HI
 #define ESPI_CPOL_1 SSP_CPOL_LO
@@ -19,13 +17,6 @@
 #define ESPI_CPHA_1 SSP_CPHA_SECOND
 
 #define ESPI_PORT_OFF 7
-
-typedef struct
-{
-  GPIO_NAME_T* scs[6];
-  GPIO_NAME_T* dmx;
-  GPIO_NAME_T* sap;
-} ESPI_PINS_T;
 
 extern LPC_SSPn_Type* ESPI_SSP;
 
@@ -45,12 +36,16 @@ inline static void ESPI_SetCRDIV(uint16_t const crdiv)
   SPI_DMA_SetCRDIV(ESPI_SSP, crdiv);
 }
 
-void ESPI_Config(LPC_SSPn_Type* SSPx, ESPI_PINS_T* espi_pins);
+static inline void ESPI_SAP_Set(void)
+{
+  pinEspi_SAPb = 1;
+}
 
-void     ESPI_SAP_Set(void);
-void     ESPI_SAP_Clr(void);
+static inline void ESPI_SAP_Clr(void)
+{
+  pinEspi_SAPb = 0;
+}
+
 void     ESPI_SCS_Select(uint32_t port, uint32_t device);
 uint32_t ESPI_Transfer(uint8_t* tx, uint8_t* rx, uint32_t len, TransferCallback cb);
 uint32_t ESPI_TransferNonBlocking(uint8_t* tx, uint8_t* rx, uint32_t len, TransferCallback cb);
-
-#endif

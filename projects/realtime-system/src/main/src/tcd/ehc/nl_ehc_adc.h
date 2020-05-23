@@ -6,13 +6,10 @@
     @brief		ADC access for external controllers (pedals etc) processing
     @ingroup	nl_tcd_modules
 *******************************************************************************/
-
-#include "ipc/emphase_ipc.h"
+#pragma once
 
 #include <stdint.h>
-
-#ifndef NL_EHC_ADC_H_
-#define NL_EHC_ADC_H_
+#include "ipc/emphase_ipc.h"
 
 #define ADC_CHANNELS (8)   // fixed !
 #define SBUF_SIZE    (64)  // must be 2^N and larger than 3 (to hold the IIR buffer)
@@ -54,6 +51,3 @@ void EHC_getADCStats(EHC_AdcBuffer_T const* const this, uint16_t* const pMin, ui
 void EHC_initSampleBuffers(void);
 void EHC_fillSampleBuffers(void);
 int  EHC_sampleBuffersValid(void);
-
-#endif
-//EOF

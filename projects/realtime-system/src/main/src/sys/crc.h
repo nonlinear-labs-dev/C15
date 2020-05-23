@@ -7,9 +7,7 @@
  * notice must not be changed or removed and no warranty is either
  * expressed or implied by its publication or distribution.
  **********************************************************************/
-
-#ifndef _crc_h
-#define _crc_h
+#pragma once
 
 #include <stdint.h>
 
@@ -18,5 +16,3 @@ typedef uint32_t crc_t;
 void  crcInit(void);
 crc_t crcFast(const void* src, uint16_t const nBytes);
 crc_t crcFastAndCopy(const void* src, void* dest, uint16_t const nBytes);
-
-#endif

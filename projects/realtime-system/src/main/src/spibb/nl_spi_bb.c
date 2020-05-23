@@ -8,11 +8,10 @@
 *******************************************************************************/
 
 #include "spibb/nl_spi_bb.h"
-#include "drv/nl_gpio.h"
+#include "io/pins.h"
 #include "cmsis/lpc43xx_ssp.h"
 
-static LPC_SSPn_Type*  BB_SSP;
-static SPI_BB_PINS_T*  pins;
+static LPC_SSPn_Type*  BB_SSP               = LPC_SSP1;
 static MessageCallback SPI_BB_MsgCb         = NULL;
 static uint8_t*        SPI_BB_CurrentBuffer = 0;
 /** rx buffers */
@@ -47,11 +46,6 @@ typedef struct __attribute__((__packed__))
   uint16_t     values[1];
 } msg_t;
 
-#if 1
-
-/// static char log[128][32] = {};		/// Test für verloren gegangene Messages
-/// static int logIdx = 0;
-
 // calls the initialized callback for every message
 static void SPI_BB_PackageParser(uint8_t* buff, uint32_t len)
 {
@@ -76,7 +70,7 @@ static void SPI_BB_PackageParser(uint8_t* buff, uint32_t len)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waddress-of-packed-member"
 #pragma GCC diagnostic ignored "-Wattributes"
-          SPI_BB_MsgCb(package->header.type, package->header.length, package->values);
+        SPI_BB_MsgCb(package->header.type, package->header.length, package->values);
 #pragma GCC diagnostic push
       }
 
@@ -97,57 +91,6 @@ static void SPI_BB_PackageParser(uint8_t* buff, uint32_t len)
     }
   }
 }
-#endif
-
-#if 0  // nni original 2014-12-18 =>
-
-static void SPI_BB_PackageParser(uint8_t* buff, uint32_t len)
-{
-	uint32_t i;
-	uint16_t package_size;
-	uint32_t* package = (uint32_t*) buff;
-	uint16_t msg_type, msg_length;
-	uint32_t* msg_data;
-
-	if ((buff[0] & buff[3]) == 0xFF)
-	{
-		package_size = (package[0] & 0x00FFFF00) >> 8;
-
-		for (i = 1; i <= package_size; i++)
-		{
-			msg_type = (uint16_t) (package[i] >> 16);
-			msg_length = (uint16_t) (package[i] & 0xFFFF);
-
-			if (msg_type == MSG_NOTIFICATION)
-			{
-				msg_data = NULL;
-			}
-			else
-			{
-				msg_data = package + i + 1;
-				i += msg_length;
-			}
-
-			if (SPI_BB_MsgCb != NULL)
-			{
-				SPI_BB_MsgCb(msg_type, msg_length, msg_data);
-			}
-		}
-	}
-
-	//  when the parsing for the buffer is finished
-
-	for (i = 0; i < SPI_BB_BUFFER_NUM; i++)
-	{
-		if (buff == (uint8_t*)SPI_BB_Buffers[i])
-		{
-			SPI_BB_BufferState[i] = SPI_BB_BUFFER_FREE;
-			break;
-		}
-	}
-}
-
-#endif
 
 static void SPI_BB_InitTxBuff(void)
 {
@@ -202,35 +145,6 @@ static void SPI_BB_ReceiveCallback(uint32_t ret)
   }
 }
 
-static uint32_t SPI_BB_CheckGpIN(GPIO_NAME_T* gpio)
-{
-  if (LPC_GPIO_PORT->PIN[gpio->port] & (1 << gpio->pin))
-    return 1;
-  else
-    return 0;
-}
-
-static uint32_t SPI_BB_CheckGpOUT(GPIO_NAME_T* gpio)
-{
-  if (LPC_GPIO_PORT->SET[gpio->port] & (1 << gpio->pin))
-    return 1;
-  else
-    return 0;
-}
-
-/**********************************************************************
- * @brief		Configures the SPI-BB layer for the desired SSP
- * @param[in]	SSPx	Pointer to selected SSP peripheral, should be:
- * 					- LPC_SSP0	:SSP0 peripheral
- * 					- LPC_SSP1	:SSP1 peripheral
- * @param[in]	bb_pins	GPIO configuration structure pointer
- **********************************************************************/
-void SPI_BB_Config(LPC_SSPn_Type* SSPx, SPI_BB_PINS_T* bb_pins)
-{
-  BB_SSP = SSPx;
-  pins   = bb_pins;
-}
-
 /**********************************************************************
  * @brief		Initializes the SPI-BB communication
  * @param[in]	msg_cb	Pointer to the MessageCallback function
@@ -259,10 +173,7 @@ void SPI_BB_ToggleHeartbeat(void)
 {
   if (!enable_heartbeat)
     return;
-  if (SPI_BB_CheckGpOUT(pins->heartbeat))
-    NL_GPIO_Clr(pins->heartbeat);
-  else
-    NL_GPIO_Set(pins->heartbeat);
+  pinBspi_HBTb = !pinBspi_HBTb;
 }
 
 /**********************************************************************
@@ -275,16 +186,16 @@ void SPI_BB_Polling(void)
 
   enable_heartbeat = 1;
 
-  if ((tx_prq || (tx_buff_offset > sizeof(raw_package_header_t))) && !SPI_BB_CheckGpOUT(pins->prq))
-    NL_GPIO_Set(pins->prq);
-  else if (!(tx_prq || (tx_buff_offset > sizeof(raw_package_header_t))) && SPI_BB_CheckGpOUT(pins->prq))
-    NL_GPIO_Clr(pins->prq);
+  if (!pinBspi_PRQb && (tx_prq || (tx_buff_offset > sizeof(raw_package_header_t))))
+    pinBspi_PRQb = 1;
+  else if (pinBspi_PRQb && !(tx_prq || (tx_buff_offset > sizeof(raw_package_header_t))))
+    pinBspi_PRQb = 0;
 
   /** @todo recovery in case CS-low but no SPI-transfer */
   /* Chip select went down? */
-  if (!SPI_BB_CheckGpIN(pins->cs) && SPI_BB_CheckGpOUT(pins->rdy))
-    NL_GPIO_Clr(pins->rdy);
-  else if (SPI_BB_CheckGpIN(pins->cs) && !SPI_BB_CheckGpOUT(pins->rdy))
+  if (!pinBspi_SCSb && pinBspi_RDYb)
+    pinBspi_RDYb = 0;
+  else if (pinBspi_SCSb && !pinBspi_RDYb)
   {
     /* Chip select went up? */
     rcv_buff = SPI_BB_RxBufferAvailable();
@@ -296,7 +207,7 @@ void SPI_BB_Polling(void)
         SPI_BB_SendTxBuff();
 
         SPI_BB_CurrentBuffer = rcv_buff;
-        NL_GPIO_Set(pins->rdy);
+        pinBspi_RDYb         = 1;
         for (i = 0; i < SPI_BB_BUFFER_NUM; i++)
           if (rcv_buff == (uint8_t*) SPI_BB_Buffers[i])
           {
@@ -329,28 +240,4 @@ uint32_t SPI_BB_Send(uint8_t* buff, uint32_t len)
   }
 
   return len;
-}
-
-/******************************************************************************/
-/**	param[in]	state of prq, cs, heartbeat, rdy
-				-  0: gpios off
- 	 	 	 	- >0: gpios on
-*******************************************************************************/
-
-void SPI_BB_TestGpios(uint8_t state)
-{
-  if (state == 0)
-  {
-    NL_GPIO_Clr(pins->prq);
-    NL_GPIO_Clr(pins->cs);
-    NL_GPIO_Clr(pins->heartbeat);
-    NL_GPIO_Clr(pins->rdy);
-  }
-  else
-  {
-    NL_GPIO_Set(pins->prq);
-    NL_GPIO_Set(pins->cs);
-    NL_GPIO_Set(pins->heartbeat);
-    NL_GPIO_Set(pins->rdy);
-  }
 }

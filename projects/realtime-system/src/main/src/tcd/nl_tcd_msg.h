@@ -5,9 +5,7 @@
     @author		Stephan Schmitt [2012-06-15]
     @brief		<tbd>
 *******************************************************************************/
-
-#ifndef NL_TCD_MSG_H_
-#define NL_TCD_MSG_H_
+#pragma once
 
 #include "stdint.h"
 
@@ -30,5 +28,3 @@ void MSG_KeyUp(uint32_t vel);
 void MSG_HWSourceUpdate(uint32_t source, uint32_t position);
 void MSG_SendAEDevelopperCmd(uint32_t cmd);
 void MSG_SendActiveSensing(void);
-
-#endif /* NL_TCD_MSG_H_ */

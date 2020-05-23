@@ -6,9 +6,7 @@
     @brief		lookup table with piece-wise linear interpolation
     @ingroup	nl_tcd_modules
 *******************************************************************************/
-
-#ifndef NL_TCD_INTERPOL_H_
-#define NL_TCD_INTERPOL_H_
+#pragma once
 
 #include "stdint.h"
 
@@ -22,6 +20,3 @@ typedef struct
 
 // Table lookup with interpolation
 int16_t LIB_InterpolateValue(LIB_interpol_data_T *table, int16_t x);
-
-#endif
-//EOF

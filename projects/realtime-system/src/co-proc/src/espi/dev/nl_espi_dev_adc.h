@@ -6,9 +6,7 @@
     @ingroup  	LPC_ESPI
     @author		KSTR
 *******************************************************************************/
-
-#ifndef NL_ESPI_DEV_ADC_H
-#define NL_ESPI_DEV_ADC_H
+#pragma once
 
 // ID's for the low-level fetch routines
 // DO NOT CHANGE !!
@@ -24,5 +22,3 @@
 #define ESPI_AFTERTOUCH_ADC   9
 #define ESPI_RIBBON_1_ADC     10
 #define ESPI_RIBBON_2_ADC     11
-
-#endif

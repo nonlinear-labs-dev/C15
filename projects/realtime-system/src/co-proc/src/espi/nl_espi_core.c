@@ -7,37 +7,28 @@
     @author		Nemanja Nikodijevic 2014-06-28
 *******************************************************************************/
 
-#include "drv/nl_gpio.h"
+#include "io/pins.h"
 #include "espi/nl_espi_core.h"
 
-LPC_SSPn_Type* ESPI_SSP = NULL;
+LPC_SSPn_Type* ESPI_SSP = LPC_SSP0;
 
-static ESPI_PINS_T* pins = NULL;
-
-void ESPI_Config(LPC_SSPn_Type* SSPx, ESPI_PINS_T* espi_pins)
-{
-  ESPI_SSP = SSPx;
-  pins     = espi_pins;
-}
 /*********************************************************************************************************************/
-
-void ESPI_SAP_Set(void)
-{
-  NL_GPIO_Set(pins->sap);
-}
-
-void ESPI_SAP_Clr(void)
-{
-  NL_GPIO_Clr(pins->sap);
-}
 
 void ESPI_SCS_Select(uint32_t port, uint32_t device)
 {
+  static volatile uint32_t* const scs[6] = {
+    pPinEspi_SCS0w,
+    pPinEspi_SCS1w,
+    pPinEspi_SCS2w,
+    pPinEspi_SCS3w,
+    pPinEspi_SCS4w,
+    pPinEspi_SCS5w,
+  };
   uint8_t s;
   uint8_t i;
 
   //INVERT
-  NL_GPIO_Clr(pins->dmx);
+  pinEspi_DMXb = 0;
 
   if ((device == 1) || (device == 3))
     s = 0;
@@ -50,32 +41,24 @@ void ESPI_SCS_Select(uint32_t port, uint32_t device)
     port   = 7;
   }
   else
-  {
-    //INVERT
-    NL_GPIO_Set(pins->dmx);
-    ;
+  {  //INVERT
+    pinEspi_DMXb = 1;
     return;
   }
 
   do
   {
     for (i = 0; i < 3; i++)
-    {
-      if (port & (1 << i))
-        NL_GPIO_Set(pins->scs[s + i]);
-      else
-        NL_GPIO_Clr(pins->scs[s + i]);
-    }
+      *(scs[s + i]) = port & (1 << i);
     s += 3;
   } while ((s <= 3) && (device == 3));
 
   //INVERT
-  NL_GPIO_Set(pins->dmx);
+  pinEspi_DMXb = 1;
 }
 
 uint32_t ESPI_Transfer(uint8_t* tx, uint8_t* rx, uint32_t len, TransferCallback cb)
 {
-  //return SPI_DMA_SendReceive(ESPI_SSP, tx, rx, len, cb);
   return SPI_DMA_SendReceiveBlocking(ESPI_SSP, tx, rx, len, cb);
 }
 

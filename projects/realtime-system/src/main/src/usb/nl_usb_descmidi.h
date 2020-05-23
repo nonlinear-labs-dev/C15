@@ -6,9 +6,7 @@
     @ingroup  	USB_MIDI
     @author		Nemanja Nikodijevic 2013-01-23
 *******************************************************************************/
-
-#ifndef __USB_DESCMIDI_H__
-#define __USB_DESCMIDI_H__
+#pragma once
 
 /** MIDI device descriptor fields
  * @{
@@ -113,5 +111,3 @@ extern const uint8_t USB_MIDI_FSConfigDescriptor[];
 extern const uint8_t USB_MIDI_HSConfigDescriptor[];
 extern const uint8_t USB_MIDI_StringDescriptor[];
 extern const uint8_t USB_MIDI_DeviceQualifier[];
-
-#endif /* __USB_DESCMIDI_H__ */

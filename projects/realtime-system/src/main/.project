@@ -31,17 +31,17 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>src/shared/boards</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>src/shared/cmsis</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>src/shared/drv</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/shared/io</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -54,16 +54,6 @@
 			<name>src/shared/sys</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>src/shared/boards/emphase_v5.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/boards/emphase_v5.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/boards/emphase_v5.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/boards/emphase_v5.h</locationURI>
 		</link>
 		<link>
 			<name>src/shared/cmsis/LPC43xx.h</name>
@@ -121,16 +111,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_cgu.h</locationURI>
 		</link>
 		<link>
-			<name>src/shared/drv/nl_dbg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_dbg.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_dbg.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_dbg.h</locationURI>
-		</link>
-		<link>
 			<name>src/shared/drv/nl_gpdma.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_gpdma.c</locationURI>
@@ -141,26 +121,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_gpdma.h</locationURI>
 		</link>
 		<link>
-			<name>src/shared/drv/nl_gpio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_gpio.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_gpio.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_gpio.h</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_pin.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_pin.c</locationURI>
-		</link>
-		<link>
-			<name>src/shared/drv/nl_pin.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_pin.h</locationURI>
-		</link>
-		<link>
 			<name>src/shared/drv/nl_spi_dma.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_spi_dma.c</locationURI>
@@ -169,6 +129,16 @@
 			<name>src/shared/drv/nl_spi_dma.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/shared/drv/nl_spi_dma.h</locationURI>
+		</link>
+		<link>
+			<name>src/shared/io/pin_setup.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/shared/io/pin_setup.h</locationURI>
+		</link>
+		<link>
+			<name>src/shared/io/pins.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/shared/io/pins.h</locationURI>
 		</link>
 		<link>
 			<name>src/shared/ipc/emphase_ipc.c</name>
@@ -189,11 +159,6 @@
 			<name>src/shared/sys/nl_stdlib.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/shared/sys/nl_stdlib.h</locationURI>
-		</link>
-		<link>
-			<name>src/shared/sys/nl_version.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/shared/sys/nl_version.c</locationURI>
 		</link>
 		<link>
 			<name>src/shared/sys/nl_version.h</name>

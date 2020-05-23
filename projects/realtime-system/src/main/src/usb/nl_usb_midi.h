@@ -6,9 +6,7 @@
     @ingroup  	nl_drv_modules
     @author		Nemanja Nikodijevic 2014-12-11
 *******************************************************************************/
-
-#ifndef NL_USB_MIDI_H_
-#define NL_USB_MIDI_H_
+#pragma once
 
 #include "nl_usbd.h"
 
@@ -33,4 +31,3 @@ uint32_t USB_MIDI_SendDelayed(uint8_t* buff, uint32_t cnt);
 uint32_t USB_MIDI_CheckBuffer(void);
 uint32_t USB_MIDI_BytesToSend(void);
 void     USB_MIDI_DropMessages(uint8_t drop);
-#endif /* NL_USB_MIDI_H_ */

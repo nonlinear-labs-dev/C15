@@ -4,6 +4,8 @@
 	@changes 2020-05-11 KSTR
 *******************************************************************************/
 
+#pragma GCC diagnostic ignored "-Wmain"
+
 #include <stdint.h>
 
 #include "cr_start_m0.h"
@@ -11,12 +13,9 @@
 #include "sys/nl_coos.h"
 #include "sys/nl_watchdog.h"
 #include "sys/delays.h"
-#include "boards/emphase_v5.h"
+#include "CPU_clock.h"
 
-#include "drv/nl_gpio.h"
-#include "drv/nl_dbg.h"
 #include "drv/nl_gpdma.h"
-#include "drv/nl_kbs.h"
 
 #include "usb/nl_usb_midi.h"
 #include "ipc/emphase_ipc.h"
@@ -27,10 +26,13 @@
 #include "tcd/nl_tcd_adc_work.h"
 #include "tcd/nl_tcd_poly.h"
 #include "tcd/nl_tcd_msg.h"
+#include "drv/nl_dbg.h"
 #include "sup/nl_sup.h"
 #include "heartbeat/nl_heartbeat.h"
 #include "sys/nl_eeprom.h"
 #include "sys/crc.h"
+#include "io/pins.h"
+#include "sys/nl_version.h"
 
 #define DBG_CLOCK_MONITOR (0)
 
@@ -48,10 +50,16 @@ void FastProcesses(void)
   SPI_BB_Polling();     // every 125 us, checking the buffer with messages from the BBB, may do callbacks ?
 }
 
-void Init(void)
+volatile char *pVersionString;
+void           Init(void)
 {
-  /* board */
-  EMPHASE_V5_M4_Init();
+  pVersionString = VERSION_STRING;  // referencing the version string so compiler won't optimize it away
+
+  /* CPU clock */
+  CPU_ConfigureClocks();
+
+  /* I/O pins */
+  PINS_Init();
 
   /* supervisor */
   SUP_Init();
@@ -59,17 +67,6 @@ void Init(void)
   /* system */
   Emphase_IPC_Init();
   NL_GPDMA_Init(0b11111100);
-
-  /* debug */
-  DBG_Init();
-  DBG_Led_Error_On();
-  DBG_Led_Cpu_On();
-  DBG_Led_Warning_On();
-  DBG_Led_Audio_On();
-  DBG_GPIO3_1_Off();
-  DBG_GPIO3_2_Off();
-  DBG_GPIO3_3_Off();
-  DBG_GPIO3_4_Off();
 
   /* EEPROM */
   NL_EEPROM_Init();
@@ -82,21 +79,10 @@ void Init(void)
   MSG_DropMidiMessages(1);
   USB_MIDI_Config(HBT_MidiReceive);
 
-  volatile uint32_t timeOut = 0x0FFFFF;
-
-  do
-  {
-    USB_MIDI_Poll();
-    timeOut--;
-  } while ((!USB_MIDI_IsConfigured()) && (timeOut > 0));
-
-  //	if (USB_MIDI_IsConfigured() == TRUE)
-  //		DBG_Led_Usb_Off();
-
   /* lpc bbb communication */
   SPI_BB_Init(BB_MSG_ReceiveCallback);
 
-  /* velocity table */
+  /* velocity tables */
   POLY_Init();
 
   /* ADC processing */
@@ -129,7 +115,7 @@ void Init(void)
   // clang-format on
 
   /* M0 init  */
-  cr_start_m0(SLAVE_M0APP,&__core_m0app_START__);
+  cr_start_m0(SLAVE_M0APP, &__core_m0app_START__);
 
   /* M4 sysTick */
   M4SysTick_Init();
@@ -139,40 +125,35 @@ void Init(void)
 }
 
 /******************************************************************************/
-int main(void)
+void main(void)
 {
   Init();
 
   while (waitForFirstSysTick)
     ;
 
-  DBG_Led_Error_Off();
-  DBG_Led_Cpu_Off();
-  DBG_Led_Warning_Off();
-  DBG_Led_Audio_Off();
+  ledAudioOk = 0;
+  ledWarning = 0;
+  ledError   = 0;
 
   while (1)
-  {                   // Since M0 handles key events in 16us turnaround time, we want to ...
+  {                   // Since M0 handles key events in ~20us turnaround time, we want to ...
     POLY_Process();   // ... read and process keybed events as fast as possible.
     USB_MIDI_Poll();  // Send/receive MIDI data, may do callbacks, also from within interrupt ?
     COOS_Dispatch();  // Standard dispatching of the slower stuff
   }
-
-  return 0;
 }
 
 /*************************************************************************/ /**
 * @brief	ticker interrupt routines using the standard M4 system ticker
 *           IRQ will be triggered every 125us, our basic scheduler time-slice
 ******************************************************************************/
-
+void M4SysTick_Init(void)
+{
 #define SYST_CSR   (uint32_t *) (0xE000E010)  // SysTick Control & Status Reg
 #define SYST_RVR   (uint32_t *) (0xE000E014)  // SysTick Reload Value
 #define SYST_CVR   (uint32_t *) (0xE000E018)  // SysTick Counter Value
 #define SYST_CALIB (uint32_t *) (0xE000E01C)  // SysTick Calibration
-
-void M4SysTick_Init(void)
-{
   *SYST_RVR = (NL_LPC_CLK / M4_FREQ_HZ) - 1;
   *SYST_CVR = 0;
   *SYST_CSR = 0b111;  // processor clock | IRQ enabled | counter enabled
@@ -185,15 +166,9 @@ void SysTick_Handler(void)
   s.ticker++;
   if (!--cntr)
   {
-    cntr = 25;
-#if DBG_CLOCK_MONITOR
-    DBG_GPIO3_1_On();
-#endif
+    cntr                = 25;
     waitForFirstSysTick = 0;
     SPI_BB_ToggleHeartbeat();  // driving the LPC-BB "heartbeat" from IRQ for high precision.
     COOS_Update();
-#if DBG_CLOCK_MONITOR
-    DBG_GPIO3_1_Off();
-#endif
   }
 }

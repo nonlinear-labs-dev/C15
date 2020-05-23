@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 #include "espi/dev/nl_espi_dev_pitchbender.h"
 
 #include "espi/nl_espi_core.h"

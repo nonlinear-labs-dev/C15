@@ -1,5 +1,6 @@
 #include <espi/nl_espi_io.h>
 #include "nl_espi_core.h"
+#include "sys/delays.h"
 
 static uint8_t    rxb[ESPI_SHIFT_MAX_BYTES];
 static uint8_t    txb[ESPI_SHIFT_MAX_BYTES];
@@ -41,6 +42,9 @@ static void ESPI_IO_Out_Callback(uint32_t status)
   }
 
   ESPI_SAP_Clr();
+  DELAY_ONE_CLK_CYCLE;  // give some time ...
+  DELAY_ONE_CLK_CYCLE;  // ...
+  DELAY_ONE_CLK_CYCLE;  // ..., 15ns min
   ESPI_SAP_Set();
   ESPI_SCS_Select(ESPI_PORT_OFF, polled_io->espi_dev);
 }
@@ -74,6 +78,9 @@ uint32_t ESPI_IO_In_Process(ESPI_IO_T* io)
     return 0;
   ESPI_SCS_Select(io->espi_port, io->espi_dev);
   ESPI_SAP_Clr();
+  DELAY_ONE_CLK_CYCLE;  // give some time ...
+  DELAY_ONE_CLK_CYCLE;  // ...
+  DELAY_ONE_CLK_CYCLE;  // ..., 15ns min
   ESPI_SAP_Set();
   polled_io = io;
   ///SPI_DMA_SwitchMode(LPC_SSP0, SSP_CPHA_SECOND | SSP_CPOL_LO);

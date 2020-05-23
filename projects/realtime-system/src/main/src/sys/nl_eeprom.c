@@ -36,7 +36,7 @@ static uint16_t                 total;
 static uint16_t                 eepromBusy = 0;
 static uint16_t                 transfer;
 static uint16_t                 remaining;
-static uint32_t *               pDest;
+static volatile uint32_t *      pDest;  // EEPROM page buffer write pointer, volatile because of side effects
 static uint32_t *               pSrc;
 static uint16_t                 forceAlignNext    = 0;
 static uint16_t                 step              = 0;
@@ -171,9 +171,9 @@ static void StartWriteBlock(uint16_t offset)
     transfer = 128 - pageOffset;  // restrict amount to next 128byte boundary
   // copy to page register
   uint16_t count = transfer >> 2;  // words of data to transfer to page register
-  while (count--)
-    *pDest++ = *pSrc++;
-  remaining -= transfer;  // update remaining amount of date, if any
+  while (count--)                  // writing to the EEPROM page register must use 32bit aligned writes, ...
+    *pDest++ = *pSrc++;            // ... we can't use memcpy etc which are byte-wise
+  remaining -= transfer;           // update remaining amount of date, if any
   // start burning
   eepromBusy = 1;                                    // start multi-page write, if required
   Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);  // start burning the first chunk
@@ -193,8 +193,8 @@ static void Process()
   if (transfer > 128)
     transfer = 128;                // restrict amount to next 128byte boundary
   uint16_t count = transfer >> 2;  // words remaining data to transfer
-  while (count--)                  // 32bit words
-    *pDest++ = *pSrc++;
+  while (count--)                  // writing to the EEPROM page register must use 32bit aligned writes, ...
+    *pDest++ = *pSrc++;            // ... we can't use memcpy etc which are byte-wise
   remaining -= transfer;
   eepromBusy = 1;
   Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);
