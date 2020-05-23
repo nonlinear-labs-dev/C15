@@ -13,12 +13,10 @@
 #include "drv/nl_dbg.h"
 #include "tcd/nl_tcd_msg.h"
 
-#ifdef MS1_5_HEARTBEAT
 static uint64_t audio_engine_heartbeat = 0;  // accumulator for collect proccess
 static uint64_t heartbeat              = 0;  // value to transmit
 static uint8_t  heartbeat_update       = 0;  // flag for pending transmit
 static uint8_t  step                   = 0;  // collect process step chain
-#endif
 
 static uint8_t  traffic_update = 0;  // flag for incoming traffic
 static uint64_t lpc_heartbeat  = 0;  // our own value
@@ -37,17 +35,17 @@ void HBT_MidiReceive(uint8_t *buff, uint32_t len)
     MSG_DropMidiMessages(0);
   any_traffic = 1;
 
-#ifdef MS1_5_HEARTBEAT
-  // CAUTION : this assumes only 3-byte midi commands are ever received!
-  // Also, each command in the buffer is preceded by a dummy byte (for unknown reasons)
-  // which has to be skipped
+  // An USB midi frame is always 4 bytes
+  // The first byte is the header which identifies the message type
   for (; len >= 4; len -= 4, buff += 4)  // repeat until no commands left
   {
+    if (buff[0] != 0x0A)  // not an Aftertouch message ?
+      continue;           //  then ignore
     switch (step)
     {
       // wait for lowest 14 bits
       case 0:
-        if (buff[1] == 0xA0)  // marker found
+        if (buff[1] == 0xA0)  // marker found, Aftertouch channel 0
         {
           audio_engine_heartbeat = ((uint64_t) buff[3] << (7 * 0)) | ((uint64_t) buff[2] << (7 * 1));
           step                   = 1;
@@ -55,7 +53,7 @@ void HBT_MidiReceive(uint8_t *buff, uint32_t len)
         break;
       // wait for middle 14 bits
       case 1:
-        if (buff[1] == 0xA1)  // marker found
+        if (buff[1] == 0xA1)  // marker found, Aftertouch channel 1
         {
           audio_engine_heartbeat |= ((uint64_t) buff[3] << (7 * 2)) | ((uint64_t) buff[2] << (7 * 3));
           step = 2;
@@ -65,7 +63,7 @@ void HBT_MidiReceive(uint8_t *buff, uint32_t len)
         break;
       // wait for highest 14 bits and set new heartbeat value
       case 2:
-        if ((buff[1] == 0xA2) && !heartbeat_update)  // marker found and no pending transmits
+        if ((buff[1] == 0xA2) && !heartbeat_update)  // marker found (AT channel 2) and no pending transmits
         {
           audio_engine_heartbeat |= ((uint64_t) buff[3] << (7 * 4)) | ((uint64_t) buff[2] << (7 * 5));
           heartbeat = audio_engine_heartbeat + lpc_heartbeat;
@@ -76,7 +74,6 @@ void HBT_MidiReceive(uint8_t *buff, uint32_t len)
         break;
     }  // switch
   }    // for
-#endif
 }
 
 /******************************************************************************/
@@ -91,30 +88,12 @@ void HBT_Process(void)
     traffic_update = 0;
   }
 
-#ifdef MS1_5_HEARTBEAT
   if (heartbeat_update)
   {
-    BB_MSG_WriteMessage(BB_MSG_TYPE_HEARTBEAT, 4, (uint16_t *) &heartbeat);
+    BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_HEARTBEAT, 4, (uint16_t *) &heartbeat);
     BB_MSG_SendTheBuffer();
     heartbeat_update = 0;
   }
-#else
-  static uint16_t cntr = 10;
-  if (cntr)
-  {
-    if (!--cntr)
-    {
-      cntr = 10;
-      lpc_heartbeat++;
-#ifndef __NO_HEARTBEAT__
-      BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_HEARTBEAT, 4, (uint16_t *) &lpc_heartbeat);
-      BB_MSG_SendTheBuffer();
-#else
-#warning "HEARTBEAT turned off, please check __NO_HEARTBEAT__ define in compiler settings"
-#endif
-    }
-  }
-#endif
 }
 
 void HBT_ResetCounter(void)
