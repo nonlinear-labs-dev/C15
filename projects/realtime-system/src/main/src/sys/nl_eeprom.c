@@ -229,9 +229,9 @@ uint16_t NL_EEPROM_StartWriteBlock(uint16_t const handle, void *const data)
 /* process full erase cycle */
 static void FullEraseProcess(void)
 {
-  static uint16_t step     = 0;
-  static uint16_t pageAddr = 0;
-  uint32_t *      pEepromMem;
+  static uint16_t    step     = 0;
+  static uint16_t    pageAddr = 0;
+  volatile uint32_t *pEepromMem;
 
   switch (step)
   {
@@ -239,7 +239,7 @@ static void FullEraseProcess(void)
       pageAddr = 0;
       step     = 1;
     case 1:
-      pEepromMem = (uint32_t *) EEPROM_ADDRESS(pageAddr, 0);
+      pEepromMem = (volatile uint32_t *) EEPROM_ADDRESS(pageAddr, 0);
       for (uint32_t i = 0; i < EEPROM_PAGE_SIZE / 4; i++)
         pEepromMem[i] = 0;
       Chip_EEPROM_StartEraseAndProgramPage(LPC_EEPROM);
