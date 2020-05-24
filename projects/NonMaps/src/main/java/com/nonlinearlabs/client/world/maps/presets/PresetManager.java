@@ -46,6 +46,7 @@ import com.nonlinearlabs.client.world.overlay.PresetInfoDialog;
 import com.nonlinearlabs.client.world.overlay.belt.EditBufferDraggingButton;
 import com.nonlinearlabs.client.world.overlay.belt.presets.PresetContextMenu;
 import com.nonlinearlabs.client.world.overlay.html.presetSearch.PresetSearchDialog;
+import com.nonlinearlabs.client.world.overlay.html.shortcutNavigation.ShortcutNavigationDialog;
 
 public class PresetManager extends MapsLayout {
 
@@ -126,7 +127,7 @@ public class PresetManager extends MapsLayout {
 		});
 
 		EditBufferModel.get().soundType.onChange(type -> {
-			if(type == SoundType.Single) {
+			if (type == SoundType.Single) {
 				endLoadToPartMode();
 				return true;
 			}
@@ -672,6 +673,9 @@ public class PresetManager extends MapsLayout {
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_I
 				&& NonMaps.get().getNonLinearWorld().isCtrlDown() == false) {
 			ParameterInfoDialog.toggle();
+		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_Q
+				&& NonMaps.get().getNonLinearWorld().isCtrlDown() == false) {
+			ShortcutNavigationDialog.toggle();
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_H
 				&& NonMaps.get().getNonLinearWorld().isCtrlDown()) {
 			Window.open("/NonMaps/war/online-help/index.html", "", "");
@@ -1036,8 +1040,8 @@ public class PresetManager extends MapsLayout {
 	}
 
 	public StoreSelectMode getStoreSelectMode() {
-		if(isInStoreSelectMode())
-			return (StoreSelectMode)customPresetSelector;
+		if (isInStoreSelectMode())
+			return (StoreSelectMode) customPresetSelector;
 		return null;
 	}
 };

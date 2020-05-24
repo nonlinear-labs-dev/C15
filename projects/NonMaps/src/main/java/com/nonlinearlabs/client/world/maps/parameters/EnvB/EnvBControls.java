@@ -1,5 +1,7 @@
 package com.nonlinearlabs.client.world.maps.parameters.EnvB;
 
+import com.nonlinearlabs.client.Tracer;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
 import com.nonlinearlabs.client.world.maps.parameters.ParameterGroupControls;
@@ -40,6 +42,11 @@ class EnvBControls extends ParameterGroupControls {
 		addChild(new VerticalBlock(this));
 		addChild(new EnvBCol6(this));
 		addChild(new EnvBCol7(this));
+	}
 
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		Tracer.log("EnvBControls - " + getChildren().size());
+		super.fill(shortcuts);
 	}
 }

@@ -154,4 +154,10 @@ public class ChildrenOwner<TChild extends Control> {
 		}
 	}
 
+	public void fill(NavigationShortcuts shortcuts) {
+		for (Control c : getChildren()) {
+			c.fill(shortcuts);
+		}
+	}
+
 }

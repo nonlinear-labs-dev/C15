@@ -320,4 +320,7 @@ public abstract class Control {
 	public void beingDropped() {
 	}
 
+	public void fill(NavigationShortcuts shortcuts) {
+	}
+
 }

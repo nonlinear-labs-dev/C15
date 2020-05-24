@@ -4,6 +4,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.CachingMapsControl;
@@ -81,5 +82,14 @@ public abstract class ParameterGroup extends LayoutResizingVertical {
 	@Override
 	public Control onContextMenu(Position pos) {
 		return this;
+	}
+
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		super.fill(shortcuts);
+
+		shortcuts.add("show group " + getName(), () -> {
+			zoomTo(this);
+		});
 	}
 }

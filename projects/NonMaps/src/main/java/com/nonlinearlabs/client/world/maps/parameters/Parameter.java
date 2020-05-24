@@ -14,6 +14,7 @@ import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.useCases.IncrementalChanger;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
@@ -349,6 +350,17 @@ public abstract class Parameter extends LayoutResizingVertical {
 		} else {
 			super.doFirstLayoutPass(levelOfDetail);
 		}
+	}
+
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		super.fill(shortcuts);
+
+		String groupName = getParameterGroup().getName();
+
+		shortcuts.add("select group " + groupName + " parameter " + presenter.longName, () -> {
+			select();
+		});
 	}
 
 }

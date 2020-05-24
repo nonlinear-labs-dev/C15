@@ -24,6 +24,7 @@ import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.IPreset;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.NonLinearWorld;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
@@ -569,4 +570,24 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		return filterActive && isInFilterSet;
 	}
 
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		super.fill(shortcuts);
+
+		String bankName = getParent().getHeader().getBankName();
+		String presetName = name.getText();
+
+		shortcuts.add("show bank " + bankName + " preset " + presetName, () -> {
+			zoomTo(this);
+		});
+
+		shortcuts.add("select bank " + bankName + " preset " + presetName, () -> {
+			select();
+		});
+
+		shortcuts.add("load bank " + bankName + " preset " + presetName, () -> {
+			load();
+		});
+
+	}
 }

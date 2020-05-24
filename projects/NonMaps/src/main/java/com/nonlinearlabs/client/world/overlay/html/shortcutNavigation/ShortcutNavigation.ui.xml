@@ -1,0 +1,12 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<g:HTMLPanel>
+		<div class="w100p">
+			<g:TextArea ui:field="query" styleName="editable w100p txt-oneline" visibleLines="1"></g:TextArea>
+		</div>
+		<div class="w100p">
+			<g:ListBox ui:field="proposals" styleName="w100p" visibleItemCount="10"></g:ListBox>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>

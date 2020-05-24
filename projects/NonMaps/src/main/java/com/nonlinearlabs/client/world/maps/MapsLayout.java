@@ -7,6 +7,7 @@ import com.nonlinearlabs.client.Checksum;
 import com.nonlinearlabs.client.world.ChildrenOwner;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.ILayout;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
@@ -195,6 +196,10 @@ public abstract class MapsLayout extends MapsControl implements ILayout<MapsCont
 
 	public void moveBy(NonDimension dist) {
 		getNonPosition().moveBy(dist);
+	}
 
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		children.fill(shortcuts);
 	}
 }

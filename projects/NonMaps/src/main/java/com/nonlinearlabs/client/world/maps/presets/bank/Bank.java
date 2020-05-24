@@ -15,6 +15,7 @@ import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
 import com.nonlinearlabs.client.world.IPreset;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
@@ -905,5 +906,18 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		super.fill(shortcuts);
+
+		shortcuts.add("show bank " + getHeader().getBankName(), () -> {
+			zoomTo(this);
+		});
+
+		shortcuts.add("select bank " + getHeader().getBankName(), () -> {
+			selectBank(true);
+		});
 	}
 }

@@ -7,6 +7,7 @@ import com.google.gwt.canvas.dom.client.Context2d.Composite;
 import com.nonlinearlabs.client.world.ChildrenOwner;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.ILayout;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.pointer.Gesture;
@@ -150,5 +151,10 @@ public abstract class OverlayLayout extends OverlayControl implements ILayout<Ov
 	public void calcPixRect(Position parentsReference, double currentZoom) {
 		super.calcPixRect(parentsReference, currentZoom);
 		children.calcPixRect(getPixRect().getPosition(), currentZoom);
+	}
+
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		children.fill(shortcuts);
 	}
 }

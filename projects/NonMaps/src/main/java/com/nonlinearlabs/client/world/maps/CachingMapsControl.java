@@ -9,6 +9,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Checksum;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
+import com.nonlinearlabs.client.world.NavigationShortcuts;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
@@ -332,5 +333,11 @@ public class CachingMapsControl extends MapsLayout {
 
 	public Control recurseChildren(Position pos, ControlFinder handler) {
 		return child.recurseChildren(pos, handler);
+	}
+
+	@Override
+	public void fill(NavigationShortcuts shortcuts) {
+		super.fill(shortcuts);
+		child.fill(shortcuts);
 	}
 }
