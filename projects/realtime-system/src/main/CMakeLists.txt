@@ -11,9 +11,10 @@ add_compile_options("-DCORE_M4")
 
 file(GLOB_RECURSE SOURCES ./src/*.c ../shared/*.c)
 
-add_executable(${BLOBNAME} ${SOURCES})
+add_executable(${BLOBNAME} ${SOURCES} ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/co-proc.o)
 
 target_include_directories (${BLOBNAME} PRIVATE "./src")
+target_include_directories (${BLOBNAME} PRIVATE "../co-proc/src")
 target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_SOURCE_DIR}/projects/)
 
 target_link_options(${BLOBNAME} PUBLIC -Wl,-Map,output.map -Wl,--gc-sections)
