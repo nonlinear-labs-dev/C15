@@ -1,4 +1,4 @@
-set(BLOBNAME "c15_lpc_m4")
+set(BLOBNAME "main")
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-m4 -mthumb")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant")
@@ -9,18 +9,18 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-print-memory-usage")
 
 add_compile_options("-DCORE_M4")
 
-file(GLOB_RECURSE SOURCES ./src/*.c ../nl_lib/nl_lib_com/*.c ../nl_lib/nl_lib_m4/*.c)
+file(GLOB_RECURSE SOURCES ./src/*.c ../shared/*.c)
 
 add_executable(${BLOBNAME} ${SOURCES})
 
-target_include_directories (${BLOBNAME} PRIVATE "../nl_lib/nl_lib_m4/src")
+target_include_directories (${BLOBNAME} PRIVATE "./src")
 target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_SOURCE_DIR}/projects/)
 
 target_link_options(${BLOBNAME} PUBLIC -Wl,-Map,output.map -Wl,--gc-sections)
 target_link_directories(${BLOBNAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/realtime-system/ld)
 
 set_target_properties(${BLOBNAME} PROPERTIES LINKER_LANGUAGE C)
-set_target_properties(${BLOBNAME} PROPERTIES LINK_FLAGS "-TC15_LPC4337_M4.ld")
+set_target_properties(${BLOBNAME} PROPERTIES LINK_FLAGS "-TC15_LPC4337_main.ld")
 set_target_properties(${BLOBNAME} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS}")
 
 add_custom_target(${BLOBNAME}.bin 

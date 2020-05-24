@@ -1,4 +1,4 @@
-set(BLOBNAME "c15_lpc_m0")
+set(BLOBNAME "co-proc")
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-m0 -mthumb")
 
@@ -9,18 +9,18 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-print-memory-usage")
 
 add_compile_options("-DCORE_M0")
 
-file(GLOB_RECURSE SOURCES ./src/*.c ../nl_lib/nl_lib_com/*.c ../nl_lib/nl_lib_m0/*.c)
+file(GLOB_RECURSE SOURCES ./src/*.c ../shared/*.c)
 
 add_executable(${BLOBNAME} ${SOURCES})
 
-target_include_directories (${BLOBNAME} PRIVATE "../nl_lib/nl_lib_m0/src")
+target_include_directories (${BLOBNAME} PRIVATE "./src")
 target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_SOURCE_DIR}/projects/)
 
 target_link_options(${BLOBNAME} PUBLIC -Wl,-Map,output.map -Wl,--gc-sections)
 target_link_directories(${BLOBNAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/realtime-system/ld)
 
 set_target_properties(${BLOBNAME} PROPERTIES LINKER_LANGUAGE C)
-set_target_properties(${BLOBNAME} PROPERTIES LINK_FLAGS "-TC15_LPC4337_M0.ld")
+set_target_properties(${BLOBNAME} PROPERTIES LINK_FLAGS "-TC15_LPC4337_co-proc.ld")
 set_target_properties(${BLOBNAME} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS}")
 
 add_custom_target(${BLOBNAME}.bin 
