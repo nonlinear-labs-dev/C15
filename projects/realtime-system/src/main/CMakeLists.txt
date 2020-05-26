@@ -3,15 +3,15 @@ set(BLOBNAME "main")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-m4 -mthumb")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fno-builtin -nodefaultlibs -nostdlib")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fmessage-length=0 -ffunction-sections -fdata-sections ")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-print-memory-usage")
 
 add_compile_options("-DCORE_M4")
 
 file(GLOB_RECURSE SOURCES ./src/*.c ../shared/*.c)
 
-add_executable(${BLOBNAME} ${SOURCES} ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/co-proc.o)
+add_executable(${BLOBNAME} ${SOURCES} ../co-proc/co-proc.o)
 
 target_include_directories (${BLOBNAME} PRIVATE "./src")
 target_include_directories (${BLOBNAME} PRIVATE "../co-proc/src")

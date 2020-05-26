@@ -2,9 +2,9 @@ set(BLOBNAME "co-proc")
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-m0 -mthumb")
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -flto -ffat-lto-objects")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fno-builtin -nodefaultlibs -nostdlib")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-common -fmessage-length=0 -ffunction-sections -fdata-sections ")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-print-memory-usage")
 
 add_compile_options("-DCORE_M0")
