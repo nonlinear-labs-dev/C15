@@ -23,8 +23,8 @@
 #include <glibmm.h>
 #include <giomm/file.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/SelectVoiceGroupLayout.h>
+#include <proxies/hwui/HWUIHelper.h>
 #include <tools/StringTools.h>
-#include <presets/PresetPartSelection.h>
 
 constexpr static auto s_saveInterval = std::chrono::seconds(5);
 
@@ -235,8 +235,7 @@ void PresetManager::doAutoLoadSelectedPreset()
 {
   if(auto lock = m_isLoading.lock())
   {
-    auto hwui = Application::get().getHWUI();
-    FocusAndMode focusAndMode = hwui->getFocusAndMode();
+    FocusAndMode focusAndMode = Application::get().getHWUI()->getFocusAndMode();
 
     bool isPresetManagerActive = (focusAndMode.focus == UIFocus::Banks || focusAndMode.focus == UIFocus::Presets);
     bool isStoring = (focusAndMode.mode == UIMode::Store);
@@ -244,17 +243,47 @@ void PresetManager::doAutoLoadSelectedPreset()
 
     if(!isStoringPreset)
     {
-      scheduleAutoLoadPresetAccordingToLoadType();
+      scheduleAutoLoadSelectedPreset();
     }
   }
 }
 
-void PresetManager::scheduleAutoLoadPresetAccordingToLoadType()
+void PresetManager::scheduleAutoLoadSelectedPreset()
 {
   m_autoLoadScheduled = true;
   m_autoLoadThrottler.doTask([=]() {
     m_autoLoadScheduled = false;
-    autoLoadPresetAccordingToLoadType();
+
+    if(auto b = getSelectedBank())
+    {
+      const auto &presetUUID = b->getSelectedPresetUuid();
+      auto eb = getEditBuffer();
+      bool shouldLoad = eb->getUUIDOfLastLoadedPreset() != presetUUID || eb->isModified();
+
+      if(shouldLoad)
+      {
+        if(auto p = b->findPreset(presetUUID))
+        {
+          if(auto currentUndo = getUndoScope().getUndoTransaction())
+          {
+            if(!currentUndo->isClosed())
+            {
+              eb->undoableLoad(currentUndo, p);
+            }
+            else
+            {
+              currentUndo->reopen();
+              eb->undoableLoad(currentUndo, p);
+              currentUndo->close();
+            }
+            return;
+          }
+
+          auto scope = getUndoScope().startTransaction(p->buildUndoTransactionTitle("Load"));
+          eb->undoableLoad(scope->getTransaction(), p);
+        }
+      }
+    }
   });
 }
 
@@ -278,7 +307,7 @@ std::shared_ptr<ScopedGuard::Lock> PresetManager::getLoadingLock()
   return m_isLoading.lock();
 }
 
-void PresetManager::loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transaction, const Glib::RefPtr<Gio::File>& pmFolder)
+void PresetManager::loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder)
 {
   DebugLevel::gassy("loadMetadata", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Edit Buffer");
@@ -286,7 +315,7 @@ void PresetManager::loadMetadataAndSendEditBufferToLpc(UNDO::Transaction *transa
   m_editBuffer->sendToAudioEngine();
 }
 
-void PresetManager::loadInitSound(UNDO::Transaction *transaction, const Glib::RefPtr<Gio::File>& pmFolder)
+void PresetManager::loadInitSound(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder)
 {
   DebugLevel::gassy("loadInitSound", pmFolder->get_uri());
   SplashLayout::addStatus("Loading Init Sound");
@@ -908,38 +937,4 @@ void PresetManager::scheduleLoadToPart(const Preset *preset, VoiceGroup loadFrom
       m_autoLoadScheduled = false;
     }
   });
-}
-void PresetManager::autoLoadPresetAccordingToLoadType()
-{
-  auto eb = getEditBuffer();
-  auto hwui = Application::get().getHWUI();
-  auto currentVoiceGroup = hwui->getCurrentVoiceGroup();
-
-  if(auto bank = getSelectedBank())
-  {
-    if(auto selPreset = bank->getSelectedPreset())
-    {
-      auto directLoadSetting = Application::get().getSettings()->getSetting<DirectLoadSetting>();
-      auto loadToPartActive = Application::get().getHWUI()->isInLoadToPart();
-
-      switch(selPreset->getType())
-      {
-        case SoundType::Single:
-          eb->undoableLoadSelectedPreset(currentVoiceGroup);
-          break;
-        case SoundType::Layer:
-        case SoundType::Split:
-          if(loadToPartActive)
-          {
-            auto load = hwui->getPresetPartSelection(currentVoiceGroup);
-            eb->undoableLoadToPart(load->m_preset, load->m_voiceGroup, currentVoiceGroup);
-          }
-          else
-          {
-            eb->undoableLoadSelectedPreset(currentVoiceGroup);
-          }
-          break;
-      }
-    }
-  }
 }

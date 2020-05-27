@@ -314,8 +314,3 @@ FrameBuffer::Offset FrameBuffer::offset(const Point &offset)
 {
   return Offset(this, offset);
 }
-
-const std::vector<FrameBuffer::tPixel> &FrameBuffer::getBackBuffer() const
-{
-  return m_backBuffer;
-}

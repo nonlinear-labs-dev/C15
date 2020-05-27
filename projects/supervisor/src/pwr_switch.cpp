@@ -17,12 +17,11 @@
 	trigger will increase threefold.
 */
 
-#define DEBOUNCE_CNT (600 / PSW_TIMESLICE)  // 600ms
+#define DEBOUNCE_CNT (500 / PSW_TIMESLICE)  // 500ms
 
-static uint16_t accu;
-static int8_t   state, old_state;
-static uint8_t  reached_active;
-static uint16_t stateCntr;
+static uint8_t accu;
+static int8_t  state, old_state;
+static uint8_t reached_active;
 
 PwrSwitch_t PwrSwitch;
 
@@ -43,7 +42,7 @@ void PSW_Process(void)
   {
     case DEBOUNCE_CNT:
       state = +1;
-      break;  // accu tops out   ==> switch/button state := "active"
+      break;  // accu topps out   ==> switch/button state := "active"
     case 0:
       state = -1;
       break;  // accu bottoms out ==> switch/button state := "inactive"
@@ -53,9 +52,6 @@ void PSW_Process(void)
 
   if (state != old_state)  // state change ?
   {
-    if (state)
-      if (stateCntr < 0xFFFF)
-        stateCntr++;
     old_state = state;
     if (state == +1)  // switch/button state reached "active" ==> flag it
       reached_active = 1;
@@ -64,9 +60,8 @@ void PSW_Process(void)
 
 void PwrSwitch_t::Init(void)
 {
-  state     = -99;               // invalid
-  accu      = DEBOUNCE_CNT / 2;  // set accumulator to a center to have some de-bouncing of the first reading after init
-  stateCntr = 0;
+  state = -99;               // invalid
+  accu  = DEBOUNCE_CNT / 2;  // set accumulator to a center to have some de-bouncing of the first reading after init
 }
 
 void PwrSwitch_t::Arm(void)
@@ -100,16 +95,6 @@ uint8_t PwrSwitch_t::Off_Event(void)
 int8_t PwrSwitch_t::GetState(void)
 {
   return (state);
-}
-
-int8_t PwrSwitch_t::getStateCntr(void)
-{
-  return stateCntr;
-}
-
-void PwrSwitch_t::clrStateCntr(void)
-{
-  stateCntr = 0;
 }
 
 // end of file

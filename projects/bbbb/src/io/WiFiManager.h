@@ -7,6 +7,7 @@ class WiFiManager
   WiFiManager();
 
  private:
+  void readConfig();
   void saveConfig();
   void scheduleRestart();
 
@@ -16,4 +17,6 @@ class WiFiManager
   constexpr static auto c_ssidPattern = "ssid";
   constexpr static auto c_pwPattern = "wpa_passphrase";
   static constexpr auto c_fileName = "/etc/hostapd.conf";
+
+  void sendMessages() const;
 };

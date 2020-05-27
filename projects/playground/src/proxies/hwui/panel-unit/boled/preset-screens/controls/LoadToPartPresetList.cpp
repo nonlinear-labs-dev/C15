@@ -9,6 +9,7 @@
 #include <device-settings/Settings.h>
 #include <presets/Bank.h>
 #include <presets/Preset.h>
+#include <proxies/hwui/HWUIHelper.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListHeader.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/PresetListContent.h>
 #include <presets/PresetPartSelection.h>
@@ -187,11 +188,9 @@ void LoadToPartPresetList::onEnterButtonPressed()
 {
   if(const auto selection = getCurrentSelection())
   {
-    animateSelectedPreset([=] {
-      const auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
-      Application::get().getPresetManager()->getEditBuffer()->undoableLoadToPart(selection->m_preset,
-                                                                                 selection->m_voiceGroup, currentVG);
-    });
+    const auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+    Application::get().getPresetManager()->getEditBuffer()->undoableLoadToPart(selection->m_preset,
+                                                                               selection->m_voiceGroup, currentVG);
   }
 }
 

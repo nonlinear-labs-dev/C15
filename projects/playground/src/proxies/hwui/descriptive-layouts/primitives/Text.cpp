@@ -3,7 +3,6 @@
 #include "Text.h"
 #include "proxies/hwui/descriptive-layouts/PrimitiveInstance.h"
 #include <proxies/hwui/Oleds.h>
-#include <proxies/hwui/TextCropper.h>
 
 namespace DescriptiveLayouts
 {
@@ -72,12 +71,6 @@ namespace DescriptiveLayouts
   int Text::getFontHeight() const
   {
     return getStyleValue(StyleKey::FontSize);
-  }
-
-  Label::StringAndSuffix Text::shortenStringIfNeccessary(std::shared_ptr<Font> font,
-                                                         const Label::StringAndSuffix &text) const
-  {
-    return { TextCropper::shortenStringIfNeccessary(font, text.text, getPosition().getWidth()), text.suffix };
   }
 
   void Text::setProperty(PrimitiveProperty key, std::experimental::any value)

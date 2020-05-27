@@ -26,13 +26,10 @@ LoadModeMenu::LoadModeMenu(const Rect& rect)
     : ControlWithChildren(rect)
 {
   m_soundTypeConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &LoadModeMenu::bruteForce)));
+      sigc::mem_fun(this, &LoadModeMenu::bruteForce));
 
   m_directLoadSettingConnection
       = getDirectLoadSetting()->onChange(sigc::hide(sigc::mem_fun(this, &LoadModeMenu::bruteForce)));
-
-  m_loadToPartConnection = Application::get().getHWUI()->onLoadToPartModeChanged(
-      sigc::hide(sigc::mem_fun(this, &LoadModeMenu::bruteForce)));
 }
 
 LoadModeMenu::~LoadModeMenu()
@@ -61,11 +58,14 @@ void LoadModeMenu::bruteForce()
 void toggleLoadToPartDetail()
 {
   auto hwui = Application::get().getHWUI();
-  auto pm = Application::get().getPresetManager();
-
-  if(pm->getNumBanks() != 0)
+  auto focusAndMode = hwui->getFocusAndMode();
+  if(focusAndMode.detail != UIDetail::LoadToPart)
   {
-    hwui->toggleLoadToPart();
+    hwui->setFocusAndMode(UIDetail::LoadToPart);
+  }
+  else
+  {
+    hwui->setFocusAndMode(UIDetail::Init);
   }
 }
 
@@ -74,13 +74,8 @@ void LoadModeMenu::installSingle()
   m_buttonDHandler = std::make_unique<ShortVsLongPress>([this] { getDirectLoadSetting()->toggle(); },
                                                         [this] { getDirectLoadSetting()->toggle(); });
 
-  auto directLoadButton = addControl(new Button("Direct Load", { 0, 15, 58, 11 }));
+  auto directLoadButton = addControl(new Button("Direct Load", { 0, 50, 58, 11 }));
   directLoadButton->setHighlight(isDirectLoadEnabled());
-}
-
-void LoadModeMenu::setBackgroundColor(FrameBuffer& fb) const
-{
-  fb.setColor(FrameBufferColors::C43);
 }
 
 void LoadModeMenu::installDual()
@@ -88,10 +83,10 @@ void LoadModeMenu::installDual()
   m_buttonDHandler = std::make_unique<ShortVsLongPress>([this] { toggleLoadToPartDetail(); },
                                                         [this] { getDirectLoadSetting()->toggle(); });
 
-  auto loadToPartButton = addControl(new Button("To Part", { 0, 15, 58, 11 }));
+  auto loadToPartButton = addControl(new Button("To Part", { 0, 50, 58, 11 }));
   loadToPartButton->setHighlight(isLoadToPartEnabled());
 
-  auto directLoadButton = addControl(new Button("Direct Ld", { 4, 0, 50, 11 }));
+  auto directLoadButton = addControl(new Button("Direct Ld", { 4, 35, 50, 11 }));
   directLoadButton->setHighlight(isDirectLoadEnabled());
 }
 
@@ -107,7 +102,8 @@ bool LoadModeMenu::isDirectLoadEnabled()
 
 bool LoadModeMenu::isLoadToPartEnabled()
 {
-  return Application::get().getHWUI()->isInLoadToPart();
+  auto hwui = Application::get().getHWUI();
+  return hwui->getFocusAndMode().detail == UIDetail::LoadToPart;
 }
 
 bool LoadModeMenu::onButton(Buttons button, bool down, ButtonModifiers modifiers)

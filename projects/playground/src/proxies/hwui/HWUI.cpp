@@ -30,8 +30,6 @@
 #include <serialization/EditBufferSerializer.h>
 #include <iostream>
 #include <giomm.h>
-#include <presets/PresetPartSelection.h>
-#include <proxies/hwui/FrameBuffer.h>
 #include "UsageMode.h"
 
 HWUI::HWUI()
@@ -42,7 +40,6 @@ HWUI::HWUI()
     , m_focusAndMode(UIFocus::Parameters, UIMode::Select)
     , m_blinkCount(0)
 {
-
   if(isatty(fileno(stdin)))
   {
     m_keyboardInput = Gio::DataInputStream::create(Gio::UnixInputStream::create(0, true));
@@ -71,13 +68,6 @@ void HWUI::onButtonMessage(const nltools::msg::ButtonChangedMessage &msg)
 
 void HWUI::init()
 {
-
-  auto eb = Application::get().getPresetManager()->getEditBuffer();
-
-  m_editBufferSoundTypeConnection = eb->onSoundTypeChanged(sigc::mem_fun(this, &HWUI::onEditBufferSoundTypeChanged));
-
-  m_editBufferPresetLoadedConnection = eb->onPresetLoaded(sigc::mem_fun(this, &HWUI::onPresetLoaded));
-
   m_panelUnit.init();
   m_baseUnit.init();
 
@@ -550,17 +540,11 @@ VoiceGroup HWUI::getCurrentVoiceGroup() const
   return m_currentVoiceGroup;
 }
 
-void HWUI::setLoadToPart(bool state)
-{
-  if(std::exchange(m_loadToPartActive, state) != state)
-    m_loadToPartSignal.send(m_loadToPartActive);
-}
-
 void HWUI::setCurrentVoiceGroup(VoiceGroup v)
 {
   if(v == VoiceGroup::I || v == VoiceGroup::II)
     if(std::exchange(m_currentVoiceGroup, v) != v)
-      m_voiceGoupSignal.send(m_currentVoiceGroup);
+      m_voiceGoupSignal.deferedSend(m_currentVoiceGroup);
 }
 
 void HWUI::setCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *transaction, VoiceGroup v)
@@ -714,91 +698,4 @@ FocusAndMode HWUI::restrictFocusAndMode(FocusAndMode in) const
   in = removeEditOnFocusChange(in);
   in = removeInvalidsFromSound(in);
   return in;
-}
-
-sigc::connection HWUI::onLoadToPartModeChanged(const sigc::slot<void, bool> &cb)
-{
-  return m_loadToPartSignal.connectAndInit(cb, m_loadToPartActive);
-}
-
-bool HWUI::isInLoadToPart() const
-{
-  return m_loadToPartActive;
-}
-
-void HWUI::toggleLoadToPart()
-{
-  setLoadToPart(!isInLoadToPart());
-}
-
-void HWUI::onEditBufferSoundTypeChanged(SoundType type)
-{
-  if(type == SoundType::Single)
-  {
-    setLoadToPart(false);
-  }
-}
-
-PresetPartSelection *HWUI::getPresetPartSelection(VoiceGroup vg)
-{
-  static std::array<PresetPartSelection, 2> s_partLoad { PresetPartSelection { VoiceGroup::I },
-                                                         PresetPartSelection { VoiceGroup::II } };
-  return &s_partLoad[static_cast<int>(vg)];
-}
-
-void HWUI::onPresetLoaded()
-{
-  setLoadToPart(false);
-}
-
-std::string HWUI::exportBoled()
-{
-  std::string name
-      = "/tmp/boled-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()) + ".png";
-  exportOled(0, 0, 256, 64, name);
-  return name;
-}
-
-std::string HWUI::exportSoled()
-{
-  auto name = "/tmp/soled-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()) + ".png";
-  exportOled(0, 64, 128, 32, name);
-  return name;
-}
-
-void HWUI::exportOled(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const std::string &fileName) const
-{
-  typedef std::tuple<uint8_t, uint8_t, uint8_t> RGB;
-  static std::map<uint8_t, RGB> colorMap
-      = { { 0x00, std::make_tuple(43, 32, 21) },   { 0x02, std::make_tuple(77, 60, 10) },
-          { 0x05, std::make_tuple(103, 81, 12) },  { 0x06, std::make_tuple(128, 102, 16) },
-          { 0x0A, std::make_tuple(179, 142, 21) }, { 0x0B, std::make_tuple(204, 162, 24) },
-          { 0x0F, std::make_tuple(255, 203, 31) } };
-
-  constexpr auto frameBufferDimX = 256;
-  constexpr auto frameBufferDimY = 96;
-
-  auto &fb = FrameBuffer::get();
-  auto &buffer = fb.getBackBuffer();
-  png::image<png::rgb_pixel> boledFile(w, h);
-
-  for(png::uint_32 iy = 0; iy < h; ++iy)
-  {
-    for(png::uint_32 ix = 0; ix < w; ++ix)
-    {
-      int idx = (iy + y) * frameBufferDimX + (ix + x);
-      auto pixel = buffer[idx];
-      try
-      {
-        auto rgb = colorMap.at(pixel);
-        boledFile[iy][ix] = png::rgb_pixel(std::get<0>(rgb), std::get<1>(rgb), std::get<2>(rgb));
-      }
-      catch(...)
-      {
-        boledFile[iy][ix] = png::rgb_pixel();
-      }
-    }
-  }
-
-  boledFile.write(fileName);
 }

@@ -33,7 +33,7 @@ public class MCLowerBound extends MCSomething {
 	}
 
 	@Override
-	public Control doubleClick(Position pos) {
+	public Control doubleClick() {
 		ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
 
 		if (p.modulation.isModulated)

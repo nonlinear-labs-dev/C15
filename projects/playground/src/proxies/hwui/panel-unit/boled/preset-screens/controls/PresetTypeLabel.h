@@ -12,9 +12,6 @@ class SinglePresetTypeLabel : public PresetLabel
   void update(const Preset* newPreset);
 
  protected:
-  Font::Justification getJustification() const override;
-
- protected:
   int getXOffset() const override;
 };
 
@@ -28,10 +25,6 @@ class DualPresetTypeLabel : public Control
   void update(const Preset* selected);
 
  private:
-  const FrameBufferColors selectColor = FrameBufferColors::C255;
-  const FrameBufferColors loadedColor = FrameBufferColors::C179;
-  const FrameBufferColors defaultColor = FrameBufferColors::C77;
-
   bool m_anySelected = false;
   bool m_selectedI = false;
   bool m_selectedII = false;

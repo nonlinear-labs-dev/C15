@@ -6,13 +6,16 @@
 Passphrase::Passphrase(Settings& parent)
     : Setting(parent)
 {
+  nltools::msg::receive<nltools::msg::WiFi::WiFiPasswordChangedMessage>(
+      nltools::msg::EndPoint::Playground, sigc::mem_fun(this, &Passphrase::onMessageReceived));
+
+  m_password = "Not Received Yet!";
 }
 
 Passphrase::~Passphrase() = default;
 
-void Passphrase::load(const Glib::ustring& password)
+void Passphrase::load(const Glib::ustring& unused)
 {
-  updatePassword(password);
 }
 
 Glib::ustring Passphrase::save() const
@@ -50,4 +53,10 @@ void Passphrase::updatePassword(const Glib::ustring& password)
 Glib::ustring Passphrase::getDisplayString() const
 {
   return m_password;
+}
+
+void Passphrase::onMessageReceived(const nltools::msg::WiFi::WiFiPasswordChangedMessage& msg)
+{
+  m_password = msg.m_password.get();
+  notify();
 }

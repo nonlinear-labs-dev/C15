@@ -22,11 +22,10 @@ ModuleCaption::ModuleCaption(const Rect &pos)
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
       sigc::hide<0>(sigc::mem_fun(this, &ModuleCaption::onParameterSelected)));
 
-  Application::get().getHWUI()->onCurrentVoiceGroupChanged(
-      sigc::hide(sigc::mem_fun(this, &ModuleCaption::onSelectionChanged)));
+  Application::get().getHWUI()->onCurrentVoiceGroupChanged(sigc::mem_fun(this, &ModuleCaption::onSelectionChanged));
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &ModuleCaption::onSoundTypeChanged)));
+      sigc::mem_fun(this, &ModuleCaption::onSoundTypeChanged));
 }
 
 Label::StringAndSuffix ModuleCaption::shortenStringIfNeccessary(std::shared_ptr<Font> font,
@@ -40,6 +39,8 @@ void ModuleCaption::onParameterSelected(Parameter *newOne)
   updateText(newOne);
 }
 
+;
+
 void ModuleCaption::updateText(Parameter *newOne)
 {
   if(newOne)
@@ -50,7 +51,7 @@ void ModuleCaption::updateText(Parameter *newOne)
   }
 }
 
-void ModuleCaption::onSelectionChanged()
+void ModuleCaption::onSelectionChanged(VoiceGroup v)
 {
   auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
   updateText(selected);

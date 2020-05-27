@@ -5,7 +5,6 @@
 #include "ParameterNotAvailableInSoundInfo.h"
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/HWUI.h>
-#include <sigc++/adaptors/hide.h>
 
 ParameterNotAvailableInSoundInfo::ParameterNotAvailableInSoundInfo(const Rect &r, const Glib::ustring &text)
     : MultiLineLabel(r, text)
@@ -14,7 +13,7 @@ ParameterNotAvailableInSoundInfo::ParameterNotAvailableInSoundInfo(const Rect &r
       sigc::mem_fun(this, &ParameterNotAvailableInSoundInfo::onSelectionChanged));
 
   m_sountTypeConnection = Application::get().get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &ParameterNotAvailableInSoundInfo::onSoundTypeChanged)));
+      sigc::mem_fun(this, &ParameterNotAvailableInSoundInfo::onSoundTypeChanged));
 
   setVisible(false);
 }

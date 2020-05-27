@@ -18,11 +18,6 @@ void DescriptiveLayouts::EditBufferName::onChange(const EditBuffer *eb)
   setValue({ eb->getName(), 0 });
 }
 
-void DescriptiveLayouts::EditBufferNameWithSuffix::onChange(const EditBuffer *eb)
-{
-  setValue({ eb->getNameWithSuffix(), 0 });
-}
-
 void DescriptiveLayouts::CurrentVoiceGroupLabel::onChange(const EditBuffer *eb)
 {
   auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
