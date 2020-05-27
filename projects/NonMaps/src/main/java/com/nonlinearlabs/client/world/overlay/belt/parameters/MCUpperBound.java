@@ -30,10 +30,10 @@ public class MCUpperBound extends MCSomething {
 			getParent().startEdit(BeltParameterLayout.Mode.mcUpper, getPixRect().getWidth());
 
 		return getParent();
-	}	
+	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
 
 		if (p.modulation.isModulated)

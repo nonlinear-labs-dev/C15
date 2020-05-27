@@ -25,12 +25,12 @@
 /****
 Firmware versions and Internal ID Numbers
 The ID Numbers+1 will be displayed as LED blinks during Power-Up, after HW- Version
-	5.0			= 0
-	5.1			= 0
-	5.2			= 0
+	5.0			= 1
+	5.1			= 2
+	5.2			= 3
 	etc
 ****/
-#define FW5_Version_ID (1)
+#define FW5_Version_ID (2)
 #define FW_Version_ID  (50 + FW5_Version_ID)
 
 // --------- define this != 0 to check and display severe ePC status error
@@ -58,14 +58,16 @@ The ID Numbers+1 will be displayed as LED blinks during Power-Up, after HW- Vers
 // times should be preferably the same as much as possible to maintain good load balancing via offsets
 #define TSLICE (50)  // ~50ms seems to be a good overall slice
 
-#define SM_TIMESLICE        TSLICE        // granularity of the main state machine
-#define LED_TIMESLICE       TSLICE        // shortest ON or OFF time
-#define AUDIO_TIMESLICE     TSLICE        // 50ms is long enough for relay settling
-#define BBB_TIMESLICE       (2 * TSLICE)  // 100ms should be OK for power button min ON/OFF time
-#define ePC_TIMESLICE       (2 * TSLICE)  // must be longer than 50 (ms) according to Intel NUC power button spec
-#define PSW_TIMESLICE       TSLICE        // polling interval for power button/switch
-#define ESPI_TIMESLICE      (1)           // initial ESPI override to set all LEDs on TopCover and PanelUnit, max speed
-#define MONENGINE_TIMESLICE (10)          // 10ms, do not change (code in the LPC depends on it)
+#define SM_TIMESLICE             TSLICE        // granularity of the main state machine
+#define LED_TIMESLICE            25            // shortest ON or OFF time
+#define AUDIO_TIMESLICE          TSLICE        // 50ms is long enough for relay settling
+#define BBB_TIMESLICE            (2 * TSLICE)  // 100ms should be OK for power button min ON/OFF time
+#define ePC_TIMESLICE            (2 * TSLICE)  // must be longer than 50 (ms) according to Intel NUC power button spec
+#define PSW_TIMESLICE            10            // polling interval for power button/switch
+#define ESPI_TIMESLICE           (1)           // initial ESPI override to set all LEDs on TopCover and PanelUnit, max speed
+#define MONENGINE_TIMESLICE      (10)          // 10ms, do not change (code in the LPC depends on it)
+#define POWER_CYCLING_TIME       (180000ul)    // in ms, 180sec (3min) for power cycling
+#define POWER_CYCLING_NO_OF_TGLS (15)          // number of power switch toggle events required to enable/disable power cycling
 
 #define NO_OF_TASKS 8  // 8 tasks total, see above
 

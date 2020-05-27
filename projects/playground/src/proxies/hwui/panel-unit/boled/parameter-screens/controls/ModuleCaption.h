@@ -28,6 +28,6 @@ class ModuleCaption : public Label
 
  private:
   void onParameterSelected(Parameter *newOne);
-  void onSelectionChanged(VoiceGroup v);
+  void onSelectionChanged();
   void onSoundTypeChanged();
 };

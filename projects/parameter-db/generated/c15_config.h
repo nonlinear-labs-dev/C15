@@ -2,11 +2,11 @@
 
 /******************************************************************************/
 /**	@file	c15_config.h
-    @date	2020-05-01, 17:50
-    @version	1.7B-6
-    @author	M. Seeber
-    @brief	crucial information about the audio engine
-    @todo
+	@date	2020-05-18, 18:11
+	@version	1.7B-6
+	@author	M. Seeber
+	@brief	crucial information about the audio engine
+	@todo
 *******************************************************************************/
 
 #include <stdint.h>

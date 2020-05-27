@@ -7,12 +7,16 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/Oleds.h>
 #include <proxies/hwui/controls/SwitchVoiceGroupButton.h>
+#include <sigc++/adaptors/hide.h>
 
 MuteIndicator::MuteIndicator(const Rect& r)
     : Label(r)
 {
-  m_soundTypeConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged([&] { setup(); });
-  m_vgConnection = Application::get().getHWUI()->onCurrentVoiceGroupChanged([&](auto) { setup(); });
+  m_soundTypeConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
+      sigc::hide(sigc::mem_fun(this, &MuteIndicator::setup)));
+
+  m_vgConnection = Application::get().getHWUI()->onCurrentVoiceGroupChanged(
+      sigc::hide(sigc::mem_fun(this, &MuteIndicator::setup)));
 }
 
 void MuteIndicator::setup()

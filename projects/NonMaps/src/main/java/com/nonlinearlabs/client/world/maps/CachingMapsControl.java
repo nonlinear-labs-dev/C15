@@ -321,8 +321,8 @@ public class CachingMapsControl extends MapsLayout {
 	}
 
 	@Override
-	public Control doubleClick() {
-		return child.doubleClick();
+	public Control doubleClick(Position pos) {
+		return child.doubleClick(pos);
 	}
 
 	@Override

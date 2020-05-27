@@ -181,8 +181,7 @@ public class BeltParameterLayout extends OverlayLayout {
 
 	private void fixMode() {
 
-		if(isParameterDisabled() != thisParameterIsDisabled.isVisible())
-		{
+		if (isParameterDisabled() != thisParameterIsDisabled.isVisible()) {
 			showAndHideChildren();
 		}
 
@@ -273,7 +272,8 @@ public class BeltParameterLayout extends OverlayLayout {
 			walkerX += r.width;
 		}
 
-		thisParameterIsDisabled.doLayout(sliderLeft, third - upperElementsY, slider.getRelativePosition().getWidth(), third);
+		thisParameterIsDisabled.doLayout(sliderLeft, third - upperElementsY, slider.getRelativePosition().getWidth(),
+				third);
 
 		parameterName.doLayout(sliderLeft, 2 * third - upperElementsY, slider.getRelativePosition().getWidth(), third);
 
@@ -293,7 +293,8 @@ public class BeltParameterLayout extends OverlayLayout {
 		final boolean isEnabled = !isParameterDisabled();
 
 		modulationButtons.setVisible(
-				isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
+				isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue)
+						&& isEnabled);
 		mcSourceDisplay.setVisible(isOneOf(Mode.modulateableParameter) && isEnabled);
 		editorMode.setVisible(isEnabled);
 		slider.setVisible(isEnabled);
@@ -303,13 +304,17 @@ public class BeltParameterLayout extends OverlayLayout {
 		final boolean modAssigned = isModulationAssigned();
 
 		mcPositionRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue)
+				&& isEnabled);
 		mcAmountRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue)
+				&& isEnabled);
 		mcLowerBoundRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue)
+				&& isEnabled);
 		mcUpperBoundRadioButton.setVisible(modAssigned
-				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue) && isEnabled);
+				&& isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper, Mode.paramValue)
+				&& isEnabled);
 
 		valueDisplay.setVisible(isOneOf(Mode.mcValue, Mode.mcAmount, Mode.mcSource, Mode.mcLower, Mode.mcUpper,
 				Mode.paramValue, Mode.modulateableParameter, Mode.unmodulateableParameter) && isEnabled);
@@ -326,31 +331,31 @@ public class BeltParameterLayout extends OverlayLayout {
 
 	private void instantiateRecall() {
 		switch (mode) {
-		case mcAmount:
-			if (!(currentRecall instanceof MCAmountRecallArea)) {
-				removeChild(currentRecall);
-				addChild(currentRecall = new MCAmountRecallArea(this));
-			}
-			break;
-		case mcValue:
-			if (!(currentRecall instanceof MCPositionRecallArea)) {
-				removeChild(currentRecall);
-				addChild(currentRecall = new MCPositionRecallArea(this));
-			}
-			break;
-		case modulateableParameter:
-		case paramValue:
-		case unmodulateableParameter:
-			if (!(currentRecall instanceof ParameterRecallArea)) {
-				removeChild(currentRecall);
-				addChild(currentRecall = new ParameterRecallArea(this));
-			}
-			break;
-		case mcLower:
-		case mcUpper:
-		case mcSource:
-		default:
-			break;
+			case mcAmount:
+				if (!(currentRecall instanceof MCAmountRecallArea)) {
+					removeChild(currentRecall);
+					addChild(currentRecall = new MCAmountRecallArea(this));
+				}
+				break;
+			case mcValue:
+				if (!(currentRecall instanceof MCPositionRecallArea)) {
+					removeChild(currentRecall);
+					addChild(currentRecall = new MCPositionRecallArea(this));
+				}
+				break;
+			case modulateableParameter:
+			case paramValue:
+			case unmodulateableParameter:
+				if (!(currentRecall instanceof ParameterRecallArea)) {
+					removeChild(currentRecall);
+					addChild(currentRecall = new ParameterRecallArea(this));
+				}
+				break;
+			case mcLower:
+			case mcUpper:
+			case mcSource:
+			default:
+				break;
 		}
 	}
 
@@ -447,32 +452,32 @@ public class BeltParameterLayout extends OverlayLayout {
 
 	public IncrementalChanger startEdit(final double width) {
 		final ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
-		if(isParameterDisabled() || isParameterHidden())
+		if (isParameterDisabled() || isParameterHidden())
 			return null;
 
 		switch (mode) {
-		case mcAmount:
-			currentIncrementalChanger = EditBufferUseCases.get().startEditMCAmount(p.id, width);
-			break;
+			case mcAmount:
+				currentIncrementalChanger = EditBufferUseCases.get().startEditMCAmount(p.id, width);
+				break;
 
-		case unmodulateableParameter:
-		case modulateableParameter:
-		case paramValue:
-		case mcSource:
-			currentIncrementalChanger = EditBufferUseCases.get().startEditParameterValue(p.id, width);
-			break;
+			case unmodulateableParameter:
+			case modulateableParameter:
+			case paramValue:
+			case mcSource:
+				currentIncrementalChanger = EditBufferUseCases.get().startEditParameterValue(p.id, width);
+				break;
 
-		case mcValue:
-			currentIncrementalChanger = EditBufferUseCases.get().startEditMacroControlValue(p.id, width);
-			break;
+			case mcValue:
+				currentIncrementalChanger = EditBufferUseCases.get().startEditMacroControlValue(p.id, width);
+				break;
 
-		case mcLower:
-			currentIncrementalChanger = EditBufferUseCases.get().startEditModulationAmountLowerBound(p.id, width);
-			break;
+			case mcLower:
+				currentIncrementalChanger = EditBufferUseCases.get().startEditModulationAmountLowerBound(p.id, width);
+				break;
 
-		case mcUpper:
-			currentIncrementalChanger = EditBufferUseCases.get().startEditModulationAmountUpperBound(p.id, width);
-			break;
+			case mcUpper:
+				currentIncrementalChanger = EditBufferUseCases.get().startEditModulationAmountUpperBound(p.id, width);
+				break;
 		}
 		return currentIncrementalChanger;
 	}
@@ -487,7 +492,7 @@ public class BeltParameterLayout extends OverlayLayout {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		startEdit().setToDefault();
 		return this;
 	}
@@ -523,24 +528,24 @@ public class BeltParameterLayout extends OverlayLayout {
 	public String[] getDecoratedValue(final boolean b) {
 		final ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
 		switch (mode) {
-		case mcAmount:
-			return p.modulation.amountDisplayValues;
+			case mcAmount:
+				return p.modulation.amountDisplayValues;
 
-		case mcLower:
-			return p.modulation.amountLowerBoundDisplayValues;
+			case mcLower:
+				return p.modulation.amountLowerBoundDisplayValues;
 
-		case mcUpper:
-			return p.modulation.amountUpperBoundDisplayValues;
+			case mcUpper:
+				return p.modulation.amountUpperBoundDisplayValues;
 
-		case mcValue:
-			return p.modulation.macroControlDisplayValues;
+			case mcValue:
+				return p.modulation.macroControlDisplayValues;
 
-		case mcSource:
-		case modulateableParameter:
-		case paramValue:
-		case unmodulateableParameter:
-		default:
-			return p.displayValues;
+			case mcSource:
+			case modulateableParameter:
+			case paramValue:
+			case unmodulateableParameter:
+			default:
+				return p.displayValues;
 		}
 	}
 

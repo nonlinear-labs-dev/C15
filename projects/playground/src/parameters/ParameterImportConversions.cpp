@@ -1,6 +1,7 @@
 #include "ValueRange.h"
 
 #include <parameters/ParameterImportConversions.h>
+#include <parameter_declarations.h>
 
 ParameterImportConversions& ParameterImportConversions::get()
 {
@@ -74,6 +75,13 @@ ParameterImportConversions::ParameterImportConversions(bool registerDefaults)
     registerConverter(249, 7, [=](auto v, auto soundType) { return voicesV7ToV8(v, soundType); });
 
     registerConverter(164, 5, [=](auto v, auto) { return driveV5ToV6(v); });
+
+    registerConverter(C15::PID::MC_Time_A, 5, [=](auto v, auto) { return 0.442; });
+    registerConverter(C15::PID::MC_Time_B, 5, [=](auto v, auto) { return 0.442; });
+    registerConverter(C15::PID::MC_Time_C, 5, [=](auto v, auto) { return 0.442; });
+    registerConverter(C15::PID::MC_Time_D, 5, [=](auto v, auto) { return 0.442; });
+    registerConverter(C15::PID::MC_Time_E, 5, [=](auto v, auto) { return 0.442; });
+    registerConverter(C15::PID::MC_Time_F, 5, [=](auto v, auto) { return 0.442; });
   }
 }
 

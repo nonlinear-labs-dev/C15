@@ -1,108 +1,112 @@
 package com.nonlinearlabs.client.world.maps.parameters;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.nonlinearlabs.client.world.Dimension;
+import com.nonlinearlabs.client.world.Gray;
+import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
 
-public class ModulateableSliderHorizontal extends Slider {
+public class ModulateableSliderHorizontal extends SliderHorizontal {
 
-	private boolean isVisible = false;
+	private boolean modVisible = false;
 
 	public ModulateableSliderHorizontal(MapsLayout parent, int parameterID) {
 		super(parent, parameterID);
 	}
 
 	@Override
-	protected double getBasicWidth() {
-		return 80;
+	public void draw(Context2d ctx, int invalidationMask) {
+		super.draw(ctx, invalidationMask);
+
+		if (presenter.modulation.isModulated && modVisible) {
+			drawModIndication(ctx);
+		}
 	}
 
-	@Override
-	protected double getBasicHeight() {
-		return 6;
+	private void drawModIndication(Context2d ctx) {
+		boolean isBiPolar = presenter.bipolar;
+		double targetValue = presenter.controlPosition;
+		double modLeft = presenter.modulation.modulationRange.left;
+		double modRight = presenter.modulation.modulationRange.right;
+
+		Rect r = getPixRect().copy();
+
+		double sliderLeftStart = isBiPolar() ? getPixRect().getCenterPoint().getX()
+				: getPixRect().getLeft() + toXPixels(19);
+		double sliderRightEnd = getPixRect().getRight() - toXPixels(19);
+
+		double width = sliderRightEnd - sliderLeftStart;
+		double targetX = 0;
+
+		if (isBiPolar) {
+			double x = r.getCenterPoint().getX();
+			r.setLeft(x + width / 2 * modLeft);
+			r.setRight(x + width / 2 * modRight);
+			targetX = x + width / 2 * targetValue;
+		} else {
+			r.setLeft(sliderLeftStart + width * modLeft);
+			r.setRight(sliderLeftStart + width * modRight);
+			targetX = sliderLeftStart + width * targetValue;
+		}
+
+		r = normalizeRect(r);
+
+		r.moveBy(0, toYPixels(-2.35));
+		r.setHeight(r.getHeight() * 0.3);
+
+		RGB fillColor = getColorCorona();
+
+		Rect leftRect = r.copy();
+		leftRect.setRight(targetX);
+		leftRect.fill(ctx, fillColor);
+
+		Rect rightRect = r.copy();
+		double oldWidth = rightRect.getRight() - targetX;
+
+		rightRect.setLeft(targetX);
+		rightRect.setWidth(oldWidth);
+		rightRect.fill(ctx, fillColor);
+
+		leftRect.moveBy(0, toYPixels(8.9));
+		rightRect.moveBy(0, toYPixels(8.9));
+
+		leftRect.fill(ctx, fillColor);
+		rightRect.fill(ctx, fillColor);
 	}
 
-	@Override
-	protected double getMinHeight() {
+	protected Rect normalizeRect(Rect r) {
+		r.normalize();
+		r = r.getIntersection(getPixRect());
+		return r;
+	}
+
+	protected double getVerticalOffset() {
 		return 0;
+	}
+
+	protected RGB getColorCorona() {
+		return new Gray(200);
+	}
+
+	protected Rect getSliderRect() {
+		Rect r = new Rect(getPixRect().getPosition(), getSliderDimension());
+		r.centerIn(getPixRect());
+		r.moveBy(0, toYPixels(getVerticalOffset()));
+		return r;
+	}
+
+	private Dimension getSliderDimension() {
+		return new Dimension(toXPixels(getBasicWidth() - 4), toYPixels(getBasicHeight()));
+	}
+
+	protected double getSliderHandleWidth() {
+		return 7;
 	}
 
 	@Override
 	public void doFirstLayoutPass(double levelOfDetail) {
 		super.doFirstLayoutPass(levelOfDetail);
-		isVisible = levelOfDetail >= getLevelOfDetailForFullVisibility();
-	}
-
-	@Override
-	public boolean isVisible() {
-		return isVisible && super.isVisible();
-	}
-
-	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		if (!isVisible)
-			return;
-
-		Rect pixRect = getPixRect();
-
-		double centerX = pixRect.getCenterPoint().getX();
-
-		if (isBiPolar()) {
-			Rect middle = new Rect(centerX - toXPixels(0.5), pixRect.getTop() - toYPixels(4), toXPixels(1),
-					pixRect.getHeight() + toYPixels(8));
-			middle.fill(ctx, getColorObjectContour());
-		}
-
-		double indicatorAreaWidth = getIndicatorAreaWidth();
-		double indicatorStartX = isBiPolar() ? centerX : pixRect.getLeft() + toXPixels(19);
-
-		drawBackground(ctx);
-		drawIndicatorArea(ctx, centerX, indicatorAreaWidth, indicatorStartX);
-		drawHandle(ctx, indicatorAreaWidth, indicatorStartX);
-	}
-
-	protected void drawBackground(Context2d ctx) {
-		Rect background = calcBackgroundRect();
-		background.fillAndStroke(ctx, getColorSliderBackground(), toXPixels(1), getColorObjectContour());
-	}
-
-	protected Rect calcBackgroundRect() {
-		Rect background = getPixRect().copy();
-		double xPadding = toXPixels(18.5);
-		double yPadding = 0;
-		background.applyPadding(xPadding, yPadding, xPadding, yPadding);
-		return background;
-	}
-
-	protected double getIndicatorAreaWidth() {
-		double indicatorAreaWidth = (getBasicWidth() - 38) * getValue();
-
-		if (isBiPolar())
-			indicatorAreaWidth = indicatorAreaWidth / 2;
-
-		return indicatorAreaWidth;
-	}
-
-	protected void drawIndicatorArea(Context2d ctx, double centerX, double indicatorAreaWidth, double indicatorStartX) {
-		Rect pixRect = getPixRect();
-		ctx.setFillStyle(getColorSliderHighlight().toString());
-		ctx.fillRect(indicatorStartX, pixRect.getTop() + toYPixels(0.5), toXPixels(indicatorAreaWidth),
-				pixRect.getHeight() - toYPixels(1));
-	}
-
-	protected void drawHandle(Context2d ctx, double indicatorAreaWidth, double indicatorStartX) {
-		Rect pixRect = getPixRect();
-
-		if (Math.abs(getValue()) < 0.001)
-			ctx.setFillStyle(getColorObjectContour().toString());
-		else {
-			ctx.setFillStyle(getColorObjectContour().toString());
-			ctx.fillRect(indicatorStartX + toXPixels(indicatorAreaWidth - 1), pixRect.getTop() + toYPixels(0.5),
-					toXPixels(2), pixRect.getHeight() - toYPixels(1));
-			ctx.setFillStyle(getColorIndicator().toString());
-		}
-
-		ctx.fillRect(indicatorStartX + toXPixels(indicatorAreaWidth - 0.5), pixRect.getTop() + toYPixels(0.5),
-				toXPixels(1), pixRect.getHeight() - toYPixels(1));
+		modVisible = levelOfDetail >= 5;
 	}
 }

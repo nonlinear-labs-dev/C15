@@ -32,14 +32,14 @@ ParameterLayout2::ParameterLayout2()
     , m_soundTypeRedrawThrottler { std::chrono::milliseconds(50) }
 {
   addControl(new ParameterNameLabel(Rect(BIG_SLIDER_X - 2, 8, BIG_SLIDER_WIDTH + 4, 11)));
-  addControl(new LockedIndicator(Rect(64, 1, 10, 11)));
+  addControl(new LockedIndicator(Rect(65, 1, 10, 11)));
   addControl(new VoiceGroupIndicator(Rect(2, 15, 16, 16)));
   addControl(new UndoIndicator(Rect(1, 32, 10, 8)));
   addControl(new ParameterNotAvailableInSoundInfo(Rect(BIG_SLIDER_X - 2, 9, BIG_SLIDER_WIDTH + 4, 50),
                                                   "Only available with Layer Sounds"));
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::mem_fun(this, &ParameterLayout2::onSoundTypeChanged), false);
+      sigc::hide(sigc::mem_fun(this, &ParameterLayout2::onSoundTypeChanged)), false);
 }
 
 ModuleCaption *ParameterLayout2::createModuleCaption() const

@@ -25,7 +25,7 @@ public class MCValueEdit extends MCSomething {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
 
 		if (p.modulation.isModulated)

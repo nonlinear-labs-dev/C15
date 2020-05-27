@@ -5,9 +5,6 @@ import com.nonlinearlabs.client.Checksum;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Tracer;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.EditParameter;
@@ -83,8 +80,9 @@ public abstract class Parameter extends LayoutResizingVertical {
 			getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), toXPixels(1), null, c);
 		}
 
-		if(presenter != null && presenter.disabled) {
-			getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), toXPixels(1), RGB.black().withAlpha(0.5), RGB.black().withAlpha(0.2));
+		if (presenter != null && presenter.disabled) {
+			getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), toXPixels(1),
+					RGB.black().withAlpha(0.5), RGB.black().withAlpha(0.2));
 		}
 	}
 
@@ -133,8 +131,8 @@ public abstract class Parameter extends LayoutResizingVertical {
 	}
 
 	@Override
-	public Control doubleClick() {
-		if(!presenter.disabled && !presenter.hidden)
+	public Control doubleClick(Position pos) {
+		if (!presenter.disabled && !presenter.hidden)
 			setDefault();
 		return this;
 	}
@@ -143,37 +141,36 @@ public abstract class Parameter extends LayoutResizingVertical {
 	public Control mouseDown(Position eventPoint) {
 
 		switch (SetupModel.get().localSettings.editParameter.getValue()) {
-		case always:
-			select();
+			case always:
+				select();
 
-			if (isBoolean() && !presenter.disabled)
-				toggleBoolean();
-			else if(!presenter.disabled)
-				startMouseEdit();
-			return this;
-
-		case if_selected:
-			if (isSelected()) {
 				if (isBoolean() && !presenter.disabled)
 					toggleBoolean();
-				else if(!presenter.disabled)
+				else if (!presenter.disabled)
 					startMouseEdit();
 				return this;
-			}
 
-			break;
+			case if_selected:
+				if (isSelected()) {
+					if (isBoolean() && !presenter.disabled)
+						toggleBoolean();
+					else if (!presenter.disabled)
+						startMouseEdit();
+					return this;
+				}
+				break;
 
-		case never:
-			break;
+			case never:
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 
 		return super.mouseDown(eventPoint);
 	}
 
-	private void startMouseEdit() {
+	protected void startMouseEdit() {
 		currentParameterChanger = EditBufferUseCases.get().startEditParameterValue(getParameterNumber(),
 				Millimeter.toPixels(100));
 	}
@@ -192,8 +189,14 @@ public abstract class Parameter extends LayoutResizingVertical {
 		return super.pinch(eventPoint, touchDist, pinch);
 	}
 
+	public boolean forceFine(boolean in) {
+		return in;
+	}
+
 	@Override
 	public Control mouseDrag(Position oldPoint, Position newPoint, boolean fine) {
+		fine = forceFine(fine);
+
 		boolean noDrag = (SetupModel.get().localSettings.editParameter.getValue() == EditParameter.never)
 				|| getWorld().isSpaceDown();
 
@@ -212,7 +215,7 @@ public abstract class Parameter extends LayoutResizingVertical {
 			return this;
 		} else if (noDrag) {
 			return getWorld().mouseDrag(oldPoint, newPoint, fine);
-		} else if(presenter.disabled || presenter.hidden) {
+		} else if (presenter.disabled || presenter.hidden) {
 			return this;
 		}
 
@@ -320,21 +323,21 @@ public abstract class Parameter extends LayoutResizingVertical {
 
 	@Override
 	public double getBottomMargin() {
-		if(presenter.hidden)
+		if (presenter.hidden)
 			return 0;
 		return super.getBottomMargin();
 	}
 
 	@Override
 	public double getTopMargin() {
-		if(presenter.hidden)
+		if (presenter.hidden)
 			return 0;
 		return super.getTopMargin();
 	}
 
 	@Override
 	public double getHeightMargin() {
-		if(presenter.hidden)
+		if (presenter.hidden)
 			return 0;
 		return super.getHeightMargin();
 	}

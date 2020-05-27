@@ -13,6 +13,8 @@ struct PwrSwitch_t
   uint8_t On_Event(void);   // true when a "turn system ON" request event happened
   uint8_t Off_Event(void);  // true when a "turn system FF" request event happened
   int8_t  GetState(void);   // get current debounced state of the hardware element
+  int8_t  getStateCntr(void);
+  void    clrStateCntr(void);
 };
 
 void PSW_Process(void);  // step-chain task

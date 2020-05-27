@@ -1,13 +1,16 @@
 [Unit]
 Description=Nonlinear-Labs C15 Audio Engine
-After=syslog.target systemd-modules-load.service sound.target fix-overlay-order.service
+After=syslog.target systemd-modules-load.service sound.target fix-overlay-order.service fixCpuBindings.service
 StartLimitIntervalSec=0
 StartLimitInterval=0
 
 [Service]
 WorkingDirectory=@C15_INSTALL_PATH@/audio-engine
 ExecStartPre=amixer -D hw:PCH set Master 100%
-ExecStart=@C15_INSTALL_PATH@/audio-engine/audio-engine -m hw:EMPHASE -a hw:PCH -n 3 -s 49 -r 48000 --playground-host=localhost --heartbeat=hw:EMPHASE
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment FRAMES_PER_PERIOD=49"
+ExecStartPre=/usr/bin/bash -c "if cat /proc/cpuinfo | grep \"model name\" | grep \"7010\" > /dev/null; then /usr/bin/systemctl set-environment FRAMES_PER_PERIOD=49; fi"
+ExecStartPre=/usr/bin/bash -c "if cat /proc/cpuinfo | grep \"model name\" | grep \"5010\" > /dev/null; then /usr/bin/systemctl set-environment FRAMES_PER_PERIOD=64; fi"
+ExecStart=@C15_INSTALL_PATH@/audio-engine/audio-engine -m hw:EMPHASE -a hw:PCH -n 3 -s ${FRAMES_PER_PERIOD} -r 48000 --playground-host=localhost --heartbeat=hw:EMPHASE
 Restart=on-failure
 RestartSec=1
 

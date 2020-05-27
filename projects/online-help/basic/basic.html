@@ -9,7 +9,7 @@
 	
 	<link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="../style.css" type="text/css" />
-	<link rel="stylesheet" href="../fonts/source-sans-pro.css" type="text/css" />
+	<link rel="stylesheet" href="../fonts/ssp.css" type="text/css" />
 
 	<script src="../jq/jquery-1.7.1.min.js" type="text/javascript"></script>
 </head>
@@ -49,8 +49,8 @@
 			
 			<div class="mt1"></div>
 				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 150" preserveAspectRatio="xMinYMin meet" >
-					<image width="800" height="150" xlink:href="images/C15-back.svg"></image>
-						<a class="rollover" xlink:href="images/power.html"><rect class="aaa" x="77" y="78" width="30" height="50" rx="3" ry="3" /></a>
+					<image width="800" height="150" xlink:href="images/c-15-back.svg"></image>
+						<a class="rollover" xlink:href="images/power.html"><rect class="aaa" x="68" y="103" width="35" height="32" rx="3" ry="3" /></a>
 						<a class="rollover" xlink:href="images/a-out.html"><rect class="aaa" x="147" y="90" width="49" height="45" rx="3" ry="3" /></a>
 						<a class="rollover" xlink:href="images/pedals.html"><rect class="aaa" x="210" y="90" width="88" height="45" rx="3" ry="3" /></a>
 						<a class="rollover" xlink:href="images/usb.html"><rect class="aaa" x="302" y="90" width="30" height="45" rx="3" ry="3" /></a>
@@ -59,7 +59,7 @@
 
 			<div class="mt1"></div>
 		
-			<p>The <strong>Base Unit</strong> provides access to all performance-related items (Hardware Sources, keys). Furthermore, it can be used to edit parameters and navigate presets and banks. Navigation of parameters is a candidate for future integration.</p>
+			<p>The <b>Base Unit</b> provides access to all performance-related items (Hardware Sources, keys). Furthermore, it can be used to edit parameters and navigate presets and banks. Navigation of parameters is a candidate for future integration.</p>
 
 			<div id="panelunit-link"></div>
 
@@ -76,7 +76,7 @@
 
 			<div class="mt1"></div>
 		
-		<p>The <strong>Panel Unit</strong> can be used to select and edit parameters, modulation and system settings. Presets, banks and the undo history can be navigated and managed. In short, all relevant data can be modified on the Panel Unit.</p>
+		<p>The <b>Panel Unit</b> can be used to select and edit parameters, modulation and system settings. Presets, banks and the undo history can be navigated and managed. In short, all relevant data can be modified on the Panel Unit.</p>
 			
 			<!-- C15 TOP Hover -->
 		
@@ -84,9 +84,9 @@
 			<span id="idx_gui"></span>
 			<b>The Graphical User Interface</b>
 			<div class="mt1"></div>
-			<img class="img-frame" src="images/gui.svg" alt="gui-web">
+			<img class="img-frame" src="images/gfk_gui-devices.svg" alt="gui-web">
 			
-			<p>The <strong>Graphical User Interface</strong>  provides complete access to parameters and modulation and system settings as well. In addition, there are some more helper features and settings available. The User Manual is also available as a separate HTML document.<br />Each interface holds items that are elements which can be interacted with (most of them being part of a preset). In the following, items and their features will be explained in general (before focussing on the individual interfaces in the following chapters).</p>
+			<p>The <b>Graphical User Interface</b>  provides complete access to parameters and modulation and system settings as well. In addition, there are some more helper features and settings available. The User Manual is also available as a separate HTML document.<br />Each interface holds items that are elements which can be interacted with (most of them being part of a preset). In the following, items and their features will be explained in general (before focussing on the individual interfaces in the following chapters).</p>
 
 		</div><!-- end txt -->
 
@@ -102,7 +102,7 @@
 			<p class="img-caption left-txt">A pressed key (left), with Aftertouch (right)</p>
 			<p>The Keybed as the arguably most important performance input provides polyphonic control over notes (currently 20 voices) and monophonic aftertouch (as shown in the picture above). The semi-weighted, high quality Keybed is produced by Fatar, offering 61 keys (spanning 5 octaves).<br />Apart from the integrated, monophonic Aftertouch, there are seven additional monophonic Hardware Sources supporting performance. (Currently, the whole modulation mechanism is monophonic.) The Bender, two Ribbons (as shown in the upper picture below) and four external pedals (as shown in the lower pictures below: a continuous and a switch pedal) can be integrated and used for expressive play.</p>
 			<span id="idx_bender"></span>
-			<img class="img-frame" src="images/ribbend.jpg" alt="ribbons-bender">
+			<img class="img-frame" src="images/ribbend.jpg" alt="ribbons-bender" >
 			<img class="img-frame" src="images/2670-2671.jpg" alt="pedals">
 			<p>While performing, notes can be played (on the Keybed) and movements can be made (via the Hardware Sources) in order to bring motion and variability into your sound.<br />The eight Hardware Sources are considered the first of three modulation stages, gathering the user’s performance input and redistributing movements to the four Macro Controls. Hardware Sources provide a variety of aspects, depending on the behavior and settings of an individual source.<br />To explore all related details, refer to <a href="../synth-engine/hw-sources/hwsources.html">5.3 Using Hardware Sources</a>.</p>			
 		
@@ -144,24 +144,24 @@
 			<span id="idx_modscheme"></span> 
 			<h3>3.4 Modulation Scheme</h3>
 			
-			<img class="img-frame mb2" src="images/mod-scheme.svg" alt="modulation scheme">
+			<img class="img-frame mb2 img-zoom-a" src="images/gfk_mod-scheme.svg" alt="modulation scheme">
 
 			<p>The modulation mechanism translates movements of user performance (on the Hardware Sources) into parameter movements, increasing the variation and expressivity of a preset.<br />There is no automatic modulation (like an LFO - except for the Flanger) within the C15 instrument, only the user has an influence on movements.<br />In the Sound Engine, almost all parameters operate as smoothers. The smoothing time depends on the instrument settings and operational context. (There is a smoothing time for parameter edits, a transition time for preset recall and a smoothing time for modulation as well, defined for each Macro Control, which is currently in development).<br /> In a preset, the flow of movements is defined by several amount parameters, weighting the amount and direction of movements. Each Hardware Source features a separate amount for each Macro Control. Multiple Hardware Sources can affect one specific Macro Control.<br />Any target parameter features an MC selector and modulation amount, completing the routing of modulations. A target parameter can only follow one Macro Control. The effect of Hardware Sources on Macro Controls is essentially dependent on the type and settings of the source, so it is hard to generalize.<br />The effect of Macro Controls on target parameters on the other hand can be generalized. Defining modulation aspects of a parameter happens in relative context to both the Macro Control and the parameter as neither of them changes when editing modulation amounts.<br />
 Modulation amounts define the range for target parameters in which to move according to the corresponding Macro Control. As neither Macro Control nor the target parameter change in position, the amount will always reflect the Macro Control position within the modulation range.</p>		
 
-			<img class="img-frame" src="images/mod-scheme-a.svg" alt="modulation scheme a">
+			<img class="img-frame" src="images/gfk_mod-scheme-a.svg" alt="modulation scheme a">
 			<span id="idx_bipo"></span>
 			<p>When comparing unipolar and bipolar target parameters, it becomes obvious that the full modulation range (-100% ... 100%) for bipolar parameters is effectively twice the unipolar parameter modulation range (0% ... 100%).</p>
 
-			<img class="img-frame" src="images/para-unibi.svg" alt="polar a">
+			<img class="img-frame" src="images/gfk_para-unibi.svg" alt="polar a">
 			
 <p>When a target parameter has a <span id="idx_linscale"></span><span id="idx_exposcale"></span> linear scaling, the modulation amount can be displayed in the same format, sharing the parameter’s unit. Nonlinear scalings of target parameters require the modulation amount to be in percent.</p>
 
-			<img class="img-frame" src="images/para-linex.svg" alt="polar b">
+			<img class="img-frame" src="images/gfk_para-linex.svg" alt="polar b">
 
 <p>There can be cases where the modulation range exceeds the parameter range. When a modulation moves a parameter out of its operational range, it will remain at the corresponding edge (clipped) until the modulation went back far enough to fit the parameter range again.</p>
 
-			<a href="modulation_basics.html"><img class="img-frame" src="images/mod-scheme-b.svg" alt="modulation scheme b" id="mod-scheme"></a>
+			<a href="modulation_basics.html"><img class="img-frame" src="images/gfk_mod-scheme-b.svg" alt="modulation scheme b" id="mod-scheme"></a>
 
 <p>Use this interactive <a href="modulation_basics.html">Modulation Scheme</a> for a better understanding of the modulation mechanism.<br /></p>
 	
@@ -198,7 +198,7 @@ Modulation amounts define the range for target parameters in which to move accor
 				
 				<li>
 					<b>Change Recognition</b>
-					<img class="img-frame" src="images/BOLED_change-rec.png" alt="change recognition">
+					<img class="img-frame" src="images/boled_change-rec.png" alt="change recognition">
 					<p>When changing a loaded preset, the system will recognize any change and indicate it by a star symbol (“*”) behind the unique number. When storing a sound after changes occurred, it will be interpreted as a new preset by the system, unless the user forces overwriting an existing preset.<br />More information about dealing with changes to loaded presets can be found in chapter <a href="../interface/interface.html#idx_overviews">4.8 Overviews</a>
 .</p>
 				</li>
@@ -229,11 +229,11 @@ In the Graphical User Interface, every parameter and every bank will be shown in
 			
 			<p>The usual undo history of a program would be a list-like data structure. When an editing action is tracked, it will be simply appended. If a certain number of edits was undone, they will be lost when continuing with new editing actions.</p>
 
-				<img class="img-frame-alt-2" src="images/undo-a-web.png" alt="undo a">
+				<img class="mb2i" src="images/gfk_undo-a-web.svg" alt="undo a">
 					
 <p>However, the C15 undo history is realized as a tree-like data structure. All editing actions will be tracked and new branches will emerge when continuing with new editing actions (after having undone a certain number of edits).</p>
 			
-				<img class="img-frame-alt-2" src="images/undo-b-web.png" alt="undo b">
+				<img class="mb2i" src="images/gfk_undo-b-web.svg" alt="undo b">
 <p>Using this mechanism, there will be no loss of editing steps, as all steps and branches are accessible. Nevertheless, an ever-growing undo tree will require lots of memory and may be capable of slowing down the system. This can be avoided by making a certain element the new root of the tree (elements prior to that position will be lost in this case) or by deleting inactive branches of the undo tree.<br />Within a branch, the mechanism is quite similar to the ordinary list-based undo, providing backward and forward navigation via undo or redo. The extended tree- based functionalities emerge when navigating to other branches.<br />
 The C15 undo mechanism tracks different user actions. Parameter selection, edits to parameters, preset recalls and edits to presets and banks can be undone. However, the modulation mechanism is not integrated into the undo mechanism, as it is part of the user performance.</p>
 

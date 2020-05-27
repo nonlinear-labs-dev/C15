@@ -28,22 +28,22 @@ void MacroControlsGroup::init()
 
   appendParameter(new MacroControlSmoothingParameter(this, { C15::PID::MC_Time_A, VoiceGroup::Global },
                                                      ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(),
-                                                     0.4, 100, 1000));
+                                                     0.442, 100, 1000));
   appendParameter(new MacroControlSmoothingParameter(this, { C15::PID::MC_Time_B, VoiceGroup::Global },
                                                      ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(),
-                                                     0.4, 100, 1000));
+                                                     0.442, 100, 1000));
   appendParameter(new MacroControlSmoothingParameter(this, { C15::PID::MC_Time_C, VoiceGroup::Global },
                                                      ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(),
-                                                     0.4, 100, 1000));
+                                                     0.442, 100, 1000));
   appendParameter(new MacroControlSmoothingParameter(this, { C15::PID::MC_Time_D, VoiceGroup::Global },
                                                      ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(),
-                                                     0.4, 100, 1000));
+                                                     0.442, 100, 1000));
   appendParameter(new MacroControlSmoothingParameter(this, { C15::PID::MC_Time_E, VoiceGroup::Global },
                                                      ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(),
-                                                     0.4, 100, 1000));
+                                                     0.442, 100, 1000));
   appendParameter(new MacroControlSmoothingParameter(this, { C15::PID::MC_Time_F, VoiceGroup::Global },
                                                      ScaleConverter::get<EnvelopeAttackDecayTimeMSScaleConverter>(),
-                                                     0.4, 100, 1000));
+                                                     0.442, 100, 1000));
 }
 
 ParameterId MacroControlsGroup::modSrcToSmoothingId(MacroControls mcId)

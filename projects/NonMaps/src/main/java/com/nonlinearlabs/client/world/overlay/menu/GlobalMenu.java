@@ -193,7 +193,7 @@ public class GlobalMenu extends OverlayLayout {
 			@Override
 			public Control mouseDown(Position eventPoint) {
 				getParent().toggle();
-                Window.open("/online-help/index.html", "", "");
+				Window.open("/online-help/index.html", "", "");
 				return this;
 			}
 
@@ -338,7 +338,7 @@ public class GlobalMenu extends OverlayLayout {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		return this;
 	}
 

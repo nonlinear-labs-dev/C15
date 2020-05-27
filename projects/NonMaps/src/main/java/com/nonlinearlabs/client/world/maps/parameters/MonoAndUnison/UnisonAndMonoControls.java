@@ -3,6 +3,7 @@ package com.nonlinearlabs.client.world.maps.parameters.MonoAndUnison;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
+import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.LayoutResizingHorizontal;
@@ -31,7 +32,7 @@ class UnisonAndMonoControls extends LayoutResizingHorizontal {
 	}
 
     @Override
-    public Control doubleClick() {
+    public Control doubleClick(Position pos) {
        return null;
     }
 

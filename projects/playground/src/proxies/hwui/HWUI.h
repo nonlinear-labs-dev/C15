@@ -11,6 +11,7 @@
 #include <array>
 #include <memory>
 #include <glibmm/refptr.h>
+#include <png++/image.hpp>
 
 class Application;
 class UsageMode;
@@ -27,6 +28,8 @@ namespace nltools
     struct ButtonChangedMessage;
   }
 }
+
+class PresetPartSelection;
 
 class HWUI
 {
@@ -47,13 +50,17 @@ class HWUI
   FocusAndMode getOldFocusAndMode() const;
 
   VoiceGroup getCurrentVoiceGroup() const;
+  bool isInLoadToPart() const;
 
+  void setLoadToPart(bool state);
   void setCurrentVoiceGroup(VoiceGroup v);
   void setCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *transaction, VoiceGroup v);
 
   void toggleCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *transaction);
   void toggleCurrentVoiceGroup();
+
   sigc::connection onCurrentVoiceGroupChanged(const sigc::slot<void, VoiceGroup> &cb);
+  sigc::connection onLoadToPartModeChanged(const sigc::slot<void, bool> &cb);
 
   void freezeFocusAndMode();
   void thawFocusAndMode();
@@ -72,7 +79,18 @@ class HWUI
   sigc::connection connectToBlinkTimer(const sigc::slot<void, int> &cb);
   void deInit();
 
+  void toggleLoadToPart();
+
+  PresetPartSelection *getPresetPartSelection(VoiceGroup vg);
+
+  std::string exportSoled();
+  std::string exportBoled();
+
  private:
+  void exportOled(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const std::string &fileName) const;
+
+  void onPresetLoaded();
+  void onEditBufferSoundTypeChanged(SoundType type);
   void undoableUpdateParameterSelection(UNDO::Transaction *transaction);
   void onButtonMessage(const nltools::msg::ButtonChangedMessage &msg);
   void onButtonPressed(Buttons buttonID, bool state);
@@ -96,7 +114,13 @@ class HWUI
   FocusAndMode restrictFocusAndMode(FocusAndMode in) const;
   FocusAndMode removeEditOnFocusChange(FocusAndMode in) const;
 
+  sigc::connection m_editBufferSoundTypeConnection;
+  sigc::connection m_editBufferPresetLoadedConnection;
+
   Signal<void, VoiceGroup> m_voiceGoupSignal;
+  Signal<void, bool> m_loadToPartSignal;
+
+  bool m_loadToPartActive = false;
   VoiceGroup m_currentVoiceGroup = VoiceGroup::I;
 
   PanelUnit m_panelUnit;

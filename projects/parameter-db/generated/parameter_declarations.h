@@ -1,12 +1,12 @@
 #pragma once
 
 /******************************************************************************/
-/**	@file       parameter_declarations.h
-    @date       2020-05-01, 17:50
-    @version    1.7B-6
-    @author     M. Seeber
-    @brief      descriptors for all parameter-related details
-    @todo
+/**	@file	parameter_declarations.h
+	@date	2020-05-18, 18:11
+	@version	1.7B-6
+	@author	M. Seeber
+	@brief	descriptors for all parameter-related details
+	@todo
 *******************************************************************************/
 
 namespace C15

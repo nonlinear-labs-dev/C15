@@ -12,6 +12,17 @@ function formatNote(note) {
   return base + octave;
 }
 
+function formatNoteIgnoreOctave(note) {
+  var keyLabels = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  var OctaveCount = 5;
+  var KeysPerOctave = 12;
+  var KeyCount = OctaveCount * KeysPerOctave;
+
+  note = Math.max(0, Math.min(note, KeyCount));
+  var index = note % KeysPerOctave;
+  return keyLabels[parseInt(index)];
+}
+
 function formatOnOff(cp) {
   return Number(cp) === Number(1) ? "On" : "Off";
 }

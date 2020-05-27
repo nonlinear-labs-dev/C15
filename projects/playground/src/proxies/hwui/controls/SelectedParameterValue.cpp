@@ -19,7 +19,7 @@ SelectedParameterValue::SelectedParameterValue(const Rect &rect)
       sigc::mem_fun(this, &SelectedParameterValue::onVoiceGroupSelectionChanged));
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::mem_fun(this, &SelectedParameterValue::onSoundTypeChanged), false);
+      sigc::hide(sigc::mem_fun(this, &SelectedParameterValue::onSoundTypeChanged)), false);
 }
 
 SelectedParameterValue::~SelectedParameterValue()

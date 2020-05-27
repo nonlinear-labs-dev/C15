@@ -260,8 +260,8 @@ public class Overlay extends OverlayLayout {
 		double muteHeight = layerDisplayPos.getHeight() / 3;
 		double muteYMargin = muteHeight / 2;
 
-		partMuteDisplayI.doLayout(layerDisplayPos.getLeft(), layerDisplayPos.getTop() + muteYMargin, layerDisplayPos.getWidth(), muteHeight);
-		partMuteDisplayII.doLayout(layerDisplayPos.getLeft(), layerDisplayPos.getTop() + muteHeight + (muteYMargin), layerDisplayPos.getWidth(), muteHeight);
+		partMuteDisplayI.doLayout(layerDisplayPos.getLeft() - Millimeter.toPixels(0.2), layerDisplayPos.getTop() + muteYMargin, layerDisplayPos.getWidth(), muteHeight);
+		partMuteDisplayII.doLayout(layerDisplayPos.getLeft() - Millimeter.toPixels(0.2), layerDisplayPos.getTop() + muteHeight + (muteYMargin), layerDisplayPos.getWidth(), muteHeight);
 
 		double beltHeight = Millimeter.toPixels(40);
 		belt.doLayout(0, h - beltHeight, w, beltHeight);

@@ -98,14 +98,14 @@ Glib::ustring PresetInfoContent::createPresetTypeString(const Preset *preset)
 
   auto monoI = preset->findParameterByID({ 364, VoiceGroup::I }, false);
   auto monoII = preset->findParameterByID({ 364, VoiceGroup::II }, false);
-  auto unisonI = preset->findParameterByID({ 249, VoiceGroup::I }, true);
-  auto unisonII = preset->findParameterByID({ 249, VoiceGroup::II }, true);
+  auto unisonI = preset->findParameterByID({ 249, VoiceGroup::I }, false);
+  auto unisonII = preset->findParameterByID({ 249, VoiceGroup::II }, false);
 
   const auto monoIEnabled = monoI ? differs(monoI->getValue(), 0.0) : false;
   const auto monoIIEnabled = monoII ? differs(monoII->getValue(), 0.0) : false;
 
-  const auto unisonIEnabled = differs(unisonI->getValue(), 0.0);
-  const auto unisonIIEnabled = differs(unisonII->getValue(), 0.0);
+  const auto unisonIEnabled = unisonI ? differs(unisonI->getValue(), 0.0) : false;
+  const auto unisonIIEnabled = unisonII ? differs(unisonII->getValue(), 0.0) : false;
 
   auto createSuffixedString = [&](const std::string &prefix, auto I, auto II) -> std::string {
     if(I && II)

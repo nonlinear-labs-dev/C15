@@ -204,7 +204,7 @@ public class Header extends Label {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		if (doubleClickWaiter != null)
 			doubleClickWaiter.cancel();
 

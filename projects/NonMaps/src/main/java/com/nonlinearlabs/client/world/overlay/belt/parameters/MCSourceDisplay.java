@@ -9,7 +9,7 @@ import com.nonlinearlabs.client.world.overlay.SVGImage;
 public class MCSourceDisplay extends SVGImage {
 
 	public MCSourceDisplay(BeltParameterLayout parent) {
-		super(parent, "MC_A_Label.svg", "MC_B_Label.svg", "MC_C_Label.svg", "MC_D_Label.svg");
+		super(parent, "MC_A_Label.svg", "MC_B_Label.svg", "MC_C_Label.svg", "MC_D_Label.svg", "MC_E_Label.svg", "MC_F_Label.svg");
 	}
 
 	@Override
@@ -32,7 +32,10 @@ public class MCSourceDisplay extends SVGImage {
 				return 2;
 			case D:
 				return 3;
-
+			case E:
+				return 4;
+			case F:
+				return 5;
 			default:
 				break;
 			}

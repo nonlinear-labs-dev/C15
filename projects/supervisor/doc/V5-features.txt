@@ -1,6 +1,6 @@
 Supervisor Firmware V5 features.	2019-11-06 KSTR
 Last changed :
-	2019-11-15 KSTR		: baudrate changed from 300bps to 1200bps.
+	2020-05-19 KSTR		: implement power-cycling hidden feature
 
 V5.x firmware is primarily intedend to be used with V7.1 hardware but it was attempted
 to remain fully compatible to V6 & V7 hardware and older Firmwares for BBB and LPC
@@ -87,3 +87,20 @@ is already tested and consist of the following signals (applied via BBB GPIOs) :
 	  by this hardware switch right away.
 	- When the Push-Button is used (standard in V7&V6, and optional for V7.1), the C15
 	  restarts when it was up before the power had failed.
+
+
+5) Hard-coded or hidden feature for Power-Cycling.
+Selectable via #defines (see main.c)
+The feature is implemented either as hard-coded version where it cannot be switched off and
+normal operation of the C15 will be impossible or as a hidden feature of the power button/switch:
+There now is a counter which counts the number power-button/switch actions. For C15's with buttons,
+the number of presses is counted, for C15's with switches the number of in&out cycles is counted.
+The switch/button actions are interpreted in the same way as a normal action, that is, the de-bouncing
+time (>600ms) until a switch/button action is considered stable has to be respected.
+The counter is reset in the early boot stage, on the transition from "Standby" to "Booting".
+When the counter reaches a value of 15, the power-cycling mode is toggled and the counter is reset.
+When power-cycling mode is engaged, the C15 will be shut down after 3 minutes and re-started again, 
+cycling forever (or until power-cycling is disengaged). Switch/button can be use to shorten the cycle,
+starting a shut down as in normal operation.
+Engaged power-cycling is always indicated by a very fast blinking power LED and the blinking pattern is not changed
+when the C15 changes state, unlike to the normal LED indication schemes of states.

@@ -48,13 +48,11 @@ public abstract class ParameterGroup extends LayoutResizingVertical {
 		return super.addChild(child);
 	}
 
-	public void fillBackground(Context2d ctx)
-	{
+	public void fillBackground(Context2d ctx) {
 		getPixRect().drawRoundedRect(ctx, Rect.ROUNDING_ALL, toXPixels(6), toXPixels(2), new Gray(26), null);
 	}
 
-	public void drawBorder(Context2d ctx)
-	{
+	public void drawBorder(Context2d ctx) {
 		getPixRect().drawRoundedRect(ctx, Rect.ROUNDING_ALL, toXPixels(6), toXPixels(2), null,
 				getColorModuleHeaderBackground());
 	}
@@ -67,7 +65,7 @@ public abstract class ParameterGroup extends LayoutResizingVertical {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		NonRect viewportPosAtClick = NonMaps.theMaps.getNonLinearWorld().getViewport().getNonPosition().copy();
 
 		if (zoomTo(this)) {
