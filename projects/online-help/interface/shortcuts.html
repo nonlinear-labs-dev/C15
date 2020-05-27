@@ -9,7 +9,7 @@
 	
 	<link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="../style.css" type="text/css" />
-	<link rel="stylesheet" href="../fonts/source-sans-pro.css" type="text/css" />
+	<link rel="stylesheet" href="../fonts/ssp.css" type="text/css" />
 	
 	<script src="../jq/jquery-1.7.1.min.js" type="text/javascript"></script>
 </head>
@@ -37,87 +37,104 @@
 			
 <span id="idx_shortcuts"></span>
 			
-			<div class="mb2"></div>
+			<div class="mt2"></div>
 
-			<table class="sc-table"><tbody>
-				
-			<tr><th colspan="2">UI Components</th></tr>
-			<tr><td class="yellow fw400">Ctrl + P</td><td>show/hide Presets</td></tr>
-			<tr><td class="yellow fw400">Ctrl + E</td><td>show/hide Parameters</td></tr>
+			<p class="grid-header">UI Components</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Ctrl + P</div><div>show/hide Presets</div>
+				<div class="yellow fw400">Ctrl + E</div><div>show/hide Parameters</div>
+			</div>
 			
-			<tr><th colspan="2">Tabs</th></tr>
-			<tr><td class="yellow fw400">Shift + P</td><td>show/hide Preset tab</td></tr>
-			<tr><td class="yellow fw400">Shift + E</td><td>show/hide Parameter tab</td></tr>
-			<tr><td class="yellow fw400">Shift + N</td><td>show/hide Sound tab</td></tr>
+			<p class="grid-header">Tabs</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Shift + P</div><div>show/hide Preset tab</div>
+				<div class="yellow fw400">Shift + E</div><div>show/hide Parameter tab</div>
+				<div class="yellow fw400">Shift + N</div><div>show/hide Sound tab</div>
+			</div>
 			
-			<tr><th colspan="2">Windows</th></tr>
-			<tr><td class="yellow fw400">I</td><td>show/hide Parameter Info window</td></tr>
-			<tr><td class="yellow fw400">P</td><td>show/hide Preset Info window</td></tr>
-			<tr><td class="yellow fw400">B</td><td>show/hide Bank Info window</td></tr>
-			<tr><td class="yellow fw400">U</td><td>show/hide Undo History window</td></tr>
+			<p class="grid-header">Windows</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">I</div><div>show/hide Parameter Info window</div>
+				<div class="yellow fw400">P</div><div>show/hide Preset Info window</div>
+				<div class="yellow fw400">B</div><div>show/hide Bank Info window</div>
+				<div class="yellow fw400">U</div><div>show/hide Undo History window</div>
+			</div>
 			
-			<tr><th colspan="2">Context Menus</th></tr>
-			<tr><td class="yellow fw400">Ctrl + Click,<br />Right Mousebutton,<br />Long Touch</td>
-			<td>open the local context menu</td></tr>
-			<tr><td class="yellow fw400">Esc</td>
-			<td>close the local context menu</td></tr>
+			<p class="grid-header">Context Menus</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Ctrl + Click,<br />Right Mousebutton,<br />Long Touch</div>	<div>open the local context menu</div>
+				<div class="yellow fw400">Esc</div><div>close the local context menu</div>
+			</div>
 			
-			<tr><th colspan="2">Banks/Presets</th></tr>
-			<tr><td class="yellow fw400">Right Arrow</td><td>select next Bank</td></tr>
-			<tr><td class="yellow fw400">Left Arrow</td><td>select previous Bank</td></tr>
-			<tr><td class="yellow fw400">Down Arrow</td><td>select next Preset</td></tr>
-			<tr><td class="yellow fw400">Up Arrow</td><td>select previous Preset</td></tr>
-			<tr><td class="yellow fw400">Mousewheel on bank in Preset tab</td><td>select previous/next preset<br />(depends on direction)</td></tr>
-			<tr><td class="yellow fw400">Enter</td><td>load/reload selected Preset</td></tr>
-			<tr><td class="yellow fw400">Del</td><td>delete the selected Preset(s)</td></tr>
-			<tr><td class="yellow fw400">D</td><td>enable/disable Direct Load<br />(and open the Preset toolbar)</td></tr>
-			<tr><td class="yellow fw400">Shift + Click on Preset</td><td>start Multiple Selection</td></tr>
-			<tr><td class="yellow fw400">Click on background</td><td>finish Multiple Selection<br />(and restore the previous selection)</td></tr>
-			<tr><td class="yellow fw400">Shift + Mouse frame</td><td>select multiple Presets</td></tr>
-				
-			<tr><th colspan="2">Preset Store</th></tr>
-			<tr><td class="yellow fw400">S</td><td>activate Store Select mode<br />(and open the Preset tab)</td></tr>
-			<tr><td class="yellow fw400">Enter</td><td>apply Store (and finish the Store Select mode)</td></tr>
-			<tr><td class="yellow fw400">Ctrl + S</td><td>store Preset at current position<br />(depending on Append/Insert/Overwrite)</td></tr>
+			<p class="grid-header">Banks/Presets</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Right Arrow</div><div>select next Bank</div>
+				<div class="yellow fw400">Left Arrow</div><div>select previous Bank</div>
+				<div class="yellow fw400">Down Arrow</div><div>select next Preset</div>
+				<div class="yellow fw400">Up Arrow</div><div>select previous Preset</div>
+				<div class="yellow fw400">Mousewheel on bank in Preset tab</div><div>select previous/next preset<br />(depends on direction)</div>
+				<div class="yellow fw400">Enter</div><div>load/reload selected Preset</div>
+				<div class="yellow fw400">Del</div><div>delete the selected Preset(s)</div>
+				<div class="yellow fw400">D</div><div>enable/disable Direct Load<br />(and open the Preset toolbar)</div>
+				<div class="yellow fw400">Shift + Click on Preset</div><div>start Multiple Selection</div>
+				<div class="yellow fw400">Click on background</div><div>finish Multiple Selection<br />(and restore the previous selection)</div>
+				<div class="yellow fw400">Shift + Mouse frame</div><div>select multiple Presets</div>
+			</div>
 			
-			<tr><th colspan="2">Rename</th></tr>
-			<tr><td class="yellow fw400">R</td><td>open the Rename dialog</td></tr>
-			<tr><td class="yellow fw400">Enter</td><td>Apply (and close the dialog)</td></tr>
-			<tr><td class="yellow fw400">Esc</td><td>Cancel (and close the dialog)</td></tr>
-			
-			<tr><th colspan="2">Parameter Editing</th></tr>
-			<tr><td class="yellow fw400">K</td><td>increment value, coarse</td></tr>
-			<tr><td class="yellow fw400">Shift + K</td><td>increment value, fine</td></tr>
-			<tr><td class="yellow fw400">M</td><td>decrement value, coarse</td></tr>
-			<tr><td class="yellow fw400">Shift + M</td><td>decrement value, fine</td></tr>
-			<tr><td class="yellow fw400">Double Click</td><td>set to Default value</td></tr>
-			<tr><td class="yellow fw400">Drag on parameter</td><td>adjust parameter control position</td></tr>
-			<tr><td class="yellow fw400">Mousewheel on Parameter tab</td><td>adjust selected parameter control position</td></tr>
-			
-			<tr><th colspan="2">Search</th></tr>
-			<tr><td class="yellow fw400">F</td><td>open Preset Search dialog</td></tr>
-			<tr><td class="yellow fw400">Esc</td><td>finish Search (and close the dialog)</td></tr>
-			
-			<tr><th colspan="2">Undo/Redo</th></tr>
-			<tr><td class="yellow fw400">Ctrl + Z</td><td>Undo</td></tr>
-			<tr><td class="yellow fw400">Ctrl + Y</td><td>Redo</td></tr>
-			
-			<tr><th colspan="2">Help</th></tr>
-			<tr><td class="yellow fw400">Ctrl + H</td><td>open HTML Help (in new browser tab)</td></tr>
-			
-			<tr><th colspan="2">Panning</th></tr>
-			<tr><td class="yellow fw400">Space + Drag</td><td>temporarily lock the interface (parameters/banks) in order to allow panning gestures on them</td></tr>
-			
-			<tr><th colspan="2">Zooming</th></tr>
-			<tr><td class="yellow fw400">Double Click on background</td><td>1st time: zoom to standard position and scale<br />
-														2nd time: back to last zoom position and scale</td></tr>
-			<tr><td class="yellow fw400">Double Click on group header</td><td>1st time: zoom group to fullscreen<br />
-														2nd time: back to last zoom position and scale</td></tr>
-			<tr><td class="yellow fw400">Mousewheel on main area</td><td>adjust zoom level directly</td></tr>
+			<p class="grid-header">Preset Store</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">S</div><div>activate Store Select mode<br />(and open the Preset tab)</div>
+				<div class="yellow fw400">Enter</div><div>apply Store (and finish the Store Select mode)</div>
+				<div class="yellow fw400">Ctrl + S</div><div>store Preset at current position<br />(depending on Append/Insert/Overwrite)</div>
+			</div>
 
+			<p class="grid-header">Rename</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">R</div><div>open the Rename dialog</div>
+				<div class="yellow fw400">Enter</div><div>Apply (and close the dialog)</div>
+				<div class="yellow fw400">Esc</div><div>Cancel (and close the dialog)</div>
+			</div>
 			
-			</tbody></table>
+			<p class="grid-header">Parameter Editing</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">K</div><div>increment value, coarse</div>
+				<div class="yellow fw400">Shift + K</div><div>increment value, fine</div>
+				<div class="yellow fw400">M</div><div>decrement value, coarse</div>
+				<div class="yellow fw400">Shift + M</div><div>decrement value, fine</div>
+				<div class="yellow fw400">Double Click</div><div>set to Default value</div>
+				<div class="yellow fw400">Drag on parameter</div><div>adjust parameter control position</div>
+				<div class="yellow fw400">Mousewheel on Parameter tab</div><div>adjust selected parameter control position</div>
+			</div>
 			
+			<p class="grid-header">Search</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">F</div><div>open Preset Search dialog</div>
+				<div class="yellow fw400">Esc</div><div>finish Search (and close the dialog)</div>
+			</div>
+			
+			<p class="grid-header">Undo/Redo</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Ctrl + Z</div><div>Undo</div>
+				<div class="yellow fw400">Ctrl + Y</div><div>Redo</div>
+			</div>
+			
+			<p class="grid-header">Help</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Ctrl + H</div><div>open HTML Help (in new browser tab)</div>
+			</div>
+			
+			<p class="grid-header">Panning</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Space + Drag</div><div>temporarily lock the interface (parameters/banks) in order to allow panning gestures on them</div>
+			</div>
+			
+			<p class="grid-header">Zooming</p>
+			<div class="grid-shortcuts">
+				<div class="yellow fw400">Double Click on background</div><div>1st time: zoom to standard position and scale<br />2nd time: back to last zoom position and scale</div>
+				<div class="yellow fw400">Double Click on group header</div><div>1st time: zoom group to fullscreen<br />2nd time: back to last zoom position and scale</div>
+				<div class="yellow fw400">Mousewheel on main area</div><div>adjust zoom level directly</div>
+			</div>
+
 		</div><!-- end txt -->
 
 	</div><!-- end main-content -->

@@ -2,6 +2,7 @@
 #include <Application.h>
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
+#include <sigc++/adaptors/hide.h>
 
 DescriptiveLayouts::SoundConditions::EditBufferCondition::EditBufferCondition()
 {
@@ -9,7 +10,7 @@ DescriptiveLayouts::SoundConditions::EditBufferCondition::EditBufferCondition()
       sigc::mem_fun(this, &EditBufferCondition::onEditBufferChanged));
 
   m_editbufferTypeChangedConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::mem_fun(this, &EditBufferCondition::onEditBufferChanged));
+      sigc::hide(sigc::mem_fun(this, &EditBufferCondition::onEditBufferChanged)));
 }
 
 void DescriptiveLayouts::SoundConditions::EditBufferCondition::onEditBufferChanged()

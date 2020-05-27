@@ -66,7 +66,7 @@ public class EditorModeButton extends SVGImage {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		return this;
 	}
 }

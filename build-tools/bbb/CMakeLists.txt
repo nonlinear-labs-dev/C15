@@ -40,6 +40,7 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
+        " "
         "mkdir -p /fs"
         "mount -o loop /workdir/fs.ext4 /fs"
         "git clone -b nonlinear_2020.04 --single-branch https://github.com/nonlinear-labs-dev/nonlinux.git /fs/nonlinux"
@@ -58,6 +59,7 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
+        " "
         "mkdir -p /fs"
         "mount -o loop /workdir/fs.ext4 /fs"
         "cd /fs/nonlinux"
@@ -72,6 +74,7 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
+        " "
         "export HOME=/workdir/ccache"
         "mkdir -p /workdir/ccache"
         "mkdir -p /fs"
@@ -90,6 +93,7 @@ add_custom_command(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
+        " "
         "export HOME=/workdir/ccache"
         "mkdir -p /workdir/ccache"
         "mkdir -p /fs"
@@ -108,6 +112,22 @@ add_custom_command(
         "cp /fs/nonlinux/output/images/rootfs.tar.gz /workdir/"
         "chown ${USER_ID}.${GROUP_ID} /workdir/rootfs.tar.gz"
     COMMAND echo "The final rootfs is located at ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz"
+)
+
+add_custom_command(
+    COMMENT "Starting Buildroot console"
+    DEPENDS .nonlinux-setup
+    OUTPUT .nonlinux-interactive
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_SOURCE_DIR}
+        " -ti "
+        "export HOME=/workdir/ccache"
+        "mkdir -p /workdir/ccache"
+        "mkdir -p /fs"
+        "mount -o loop /workdir/fs.ext4 /fs"
+        "cd /fs/nonlinux"
+        "bash"
 )
 
 add_custom_command(
@@ -136,4 +156,5 @@ add_custom_target(bbb-ota-update
 
 add_custom_target(bbb-rootfs DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz)
 add_custom_target(bbb-prepare-build-dir DEPENDS .nonlinux-setup)
+add_custom_target(bbb-interactive DEPENDS .nonlinux-interactive )
 

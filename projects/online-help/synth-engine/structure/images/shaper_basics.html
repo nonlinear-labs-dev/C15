@@ -9,7 +9,7 @@
 		
 		<link rel="shortcut icon" href="../../../images/favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="../../../style.css" type="text/css" />
-		<link rel="stylesheet" href="../../../fonts/source-sans-pro.css" type="text/css" />
+		<link rel="stylesheet" href="../../../fonts/ssp.css" type="text/css" />
 		<script src="shaper_basics_script.js"></script>
 		
 	</head>
@@ -32,7 +32,7 @@
 			<h4 class="center-txt">Shaper Basics</h4>
 			<p class="center-txt"><a href="shaper.html#shaper-basics">back to Shaper</a></p>
 
-			<p>Shaper units provide the possibility to distort signals. In the C15, shapers are implemented for each Oscillator, Mixer and the Cabinet unit. They can be mixed (cross-faded) onto the actual signal. The shaping algorithm is defined by three Parameters: Drive, Fold and Asymetry. Depending on Fold, the shaping effect can be a mixture of saturation and a periodic folding, both having their individual effects on the signal's harmonics.</p>
+			<p>Shaper units provide the possibility to distort signals. In the C15, shapers are implemented for each Oscillator, Mixer and the Cabinet unit. They can be mixed (cross-faded) onto the actual signal. The shaping algorithm is defined by three Parameters: Drive, Fold and Asymmetry. Depending on Fold, the shaping effect can be a mixture of saturation and a periodic folding, both having their individual effects on the signal's harmonics.</p>
 			
 			<div class="ctrl-panel mt2">
 				<div class="control">
@@ -52,7 +52,7 @@
 					</footer>
 				</div>
 				<div class="control">
-					<header>Asymetry</header>
+					<header>Asymmetry</header>
 					<input id="ShaperAsym" class="horiSlider slider-a" type="range" oninput="shaper.updateAsym(this.value)" value="0" min="0" max="1000" step="1">
 					<footer>
 						<span id="ShaperAsymValue">0.0</span>
@@ -73,8 +73,8 @@
 				<h4>Fold</h4>
 				<p>Amount of folding back of the shaper curve for high input amplitudes. A higher amount of folding leads to a softer but more nasal sound, as the signal becomes folded back into a periodic sine curve.</p>
 
-				<h4>Asymetry</h4>
-				<p>Asymetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a parabolic curve that shifts the frequency of the fundamental to its double.</p>
+				<h4>Asymmetry</h4>
+				<p>Asymmetry of the shaper curve, generating even (2nd, 4th, ...) harmonics. At higher values it becomes a parabolic curve that shifts the frequency of the fundamental to its double.</p>
 
 		</div>
 	</div><!-- end main content -->

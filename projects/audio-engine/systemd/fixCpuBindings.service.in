@@ -1,0 +1,11 @@
+[Unit]
+Description=Fix CPU bindings
+After=fix-overlay-order.service
+
+[Service]
+ExecStart=@C15_INSTALL_PATH@/scripts/fixCpuBindings.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

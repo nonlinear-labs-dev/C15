@@ -18,7 +18,7 @@
         "Name": {
           "Class": "WideHighlightLabel",
           "Position": "64, 0",
-          "Events": "EditBufferName => Text[Text]"
+          "Events": "EditBufferNameWithSuffix => Text[Text]"
         },
         "ButtonA": {
           "Class": "Button",

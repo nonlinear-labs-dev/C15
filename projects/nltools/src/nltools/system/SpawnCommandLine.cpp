@@ -2,6 +2,7 @@
 #include <glibmm/spawn.h>
 #include <nltools/system/SpawnCommandLine.h>
 #include <nltools/logging/Log.h>
+#include <nltools/ExceptionTools.h>
 
 SpawnCommandLine::SpawnCommandLine(const std::string &cmd)
 {
@@ -11,7 +12,13 @@ SpawnCommandLine::SpawnCommandLine(const std::string &cmd)
   }
   catch(Glib::Error &error)
   {
-    nltools::Log::warning(error.what());
+    nltools::Log::error(error.what());
+  }
+  catch(...)
+  {
+    auto currentExp = std::current_exception();
+    auto info = nltools::handle_eptr(currentExp);
+    nltools::Log::error(info);
   }
 }
 

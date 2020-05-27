@@ -49,7 +49,7 @@ abstract class MCRadioButton extends SVGImage {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		return this;
 	}
 

@@ -4,6 +4,8 @@
 #ifndef __LED_H__
 #define __LED_H__
 
+#include <stdint.h>
+
 struct Led_t
 {
   void On(void);
@@ -15,6 +17,7 @@ struct Led_t
   void Blink_Standby(void);
   void On_IndicateGlitch1(void);
   void On_IndicateGlitch2(void);
+  void PowerCyclingOverride(uint8_t on);
   void Show_Hardware_and_Firmware_ID(void);  // overrides LED output for the time this function takes
 };
 

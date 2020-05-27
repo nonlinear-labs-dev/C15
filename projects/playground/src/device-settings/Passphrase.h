@@ -13,8 +13,6 @@ class Passphrase : public Setting
 
   Glib::ustring getDisplayString() const override;
 
-  void onMessageReceived(const nltools::msg::WiFi::WiFiPasswordChangedMessage& msg);
-
   void dice();
   void resetToDefault();
   void load(const Glib::ustring& text) override;

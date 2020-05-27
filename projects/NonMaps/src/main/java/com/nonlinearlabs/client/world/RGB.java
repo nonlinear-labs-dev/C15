@@ -42,6 +42,10 @@ public class RGB {
 		this.b = clip(Integer.valueOf(noHashtag.substring(4, 5), 16));
 	}
 
+	public RGB adjust(double d) {
+		return new RGB((int)(r * d), (int)(g * d), (int)(b * d));
+	}
+
 	public RGB brighter(int amount) {
 		return new RGB(r + amount, g + amount, b + amount);
 	}
@@ -100,6 +104,18 @@ public class RGB {
 
 	public RGBA withAlpha(double alpha) {
 		return new RGBA(this, alpha);
+	}
+
+	public int getRed() {
+		return r;
+	}
+
+	public int getGreen() {
+		return g;
+	}
+
+	public int getBlue() {
+		return b;
 	}
 
 }

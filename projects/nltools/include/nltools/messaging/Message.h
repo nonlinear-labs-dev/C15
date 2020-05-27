@@ -114,44 +114,6 @@ namespace nltools
 
         Helper::StringWrapper<8> m_password;
       };
-
-      struct WiFiPasswordChangedMessage
-      {
-        constexpr static MessageType getType()
-        {
-          return MessageType::WiFiPasswordChanged;
-        }
-
-        WiFiPasswordChangedMessage()
-        {
-        }
-
-        template <typename T> WiFiPasswordChangedMessage(const T& password)
-        {
-          m_password.set(password);
-        }
-
-        Helper::StringWrapper<8> m_password;
-      };
-
-      struct WiFiSSIDChangedMessage
-      {
-        constexpr static MessageType getType()
-        {
-          return MessageType::WiFiSSIDChanged;
-        }
-
-        WiFiSSIDChangedMessage()
-        {
-        }
-
-        template <typename T> WiFiSSIDChangedMessage(const T& ssid)
-        {
-          m_ssid.set(ssid);
-        }
-
-        Helper::StringWrapper<128> m_ssid;
-      };
     }
 
     namespace Setting

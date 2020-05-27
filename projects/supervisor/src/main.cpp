@@ -1,5 +1,5 @@
 /******************************************************************************/
-/** @version	V5.0 2019-05 KSTR
+/** @version	V5.2 2020-05 KSTR
     @date		
     @author		KSTR
     @brief    	        systick 1ms
@@ -16,6 +16,14 @@
 	2019-10-25 KSTR : Adapt default muting and ePC/BBB monitoring
     
 *****/
+
+#if defined __PWR_CYCLING
+#if (!defined __PWR_CYCLING_HARDCODED && !defined __PWR_CYCLING_HIDDEN_FEATURE) || (defined __PWR_CYCLING_HARDCODED && defined __PWR_CYCLING_HIDDEN_FEATURE)
+#error "You must supply either __PWR_CYCLING_HARDCODED or __PWR_CYCLING_HIDDEN_FEATURE when using __PWR_CYCLING!"
+#else
+#warning "Power-Cycling enabled. For cycle-time see definition of POWER_CYCLING_TIME in globals.h"
+#endif
+#endif
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -34,6 +42,16 @@
 #include "ESPI.h"
 #include "LPC.h"
 #include "comm.h"
+
+#define REBOOT_TIME (POWER_CYCLING_TIME / SM_TIMESLICE);
+
+static uint32_t reboot_timer = 0;
+#if defined __PWR_CYCLING && defined __PWR_CYCLING_HARDCODED
+#warning "hardcoded Power-Cycling, normal device operation will be impossible!"
+#define powerCycling (1)
+#else
+static uint8_t powerCycling = 0;
+#endif
 
 // state machine handler variable
 struct StateMachine_t
@@ -103,8 +121,23 @@ void SM_Pause(uint16_t ms)
   sm.pause = ms / SM_TIMESLICE;
 }
 
+static void CheckPowerCyclingRequest(void)
+{
+#if defined __PWR_CYCLING && defined __PWR_CYCLING_HIDDEN_FEATURE
+#warning "Power-Cycling enabled as hidden feature of the power button/switch! For required number of presses see definition of POWER_CYCLING_NO_OF_TGLS in globals.h"
+  if (PwrSwitch.getStateCntr() > POWER_CYCLING_NO_OF_TGLS)
+  {
+    powerCycling = !powerCycling;
+    Led.PowerCyclingOverride(powerCycling);
+    reboot_timer = powerCycling * REBOOT_TIME;
+    PwrSwitch.clrStateCntr();
+  }
+#endif
+}
+
 void SM_ProcessStates(void)
 {
+  CheckPowerCyclingRequest();
   if (sm.pause)  // wait first ?
     sm.pause--;
   else
@@ -146,18 +179,19 @@ void SM_Standby(void)
       }
       return;
     case 2:
-      if (PwrSwitch.On_Event() || config.auto_reboot)
+      if (PwrSwitch.On_Event() || config.auto_reboot || powerCycling)
       {
         if (config.auto_reboot)
           sm.step = 3;  // start wait time
         else
           SM_TransitionTo(SM_Booting);
         config.auto_reboot = 0;
+        PwrSwitch.clrStateCntr();
       }
       return;
     default:
       sm.step++;
-      if (sm.step >= 1000 / TSLICE)  // wait a second before auto-restart, to allow for bouncing power plug etc.
+      if (sm.step >= 1000 / SM_TIMESLICE)  // wait a second before auto-restart, to allow for bouncing power plug etc.
         SM_TransitionTo(SM_Booting);
       return;
   }
@@ -171,6 +205,7 @@ void SM_Booting(void)
       sm.step++;
       Led.Blink_Medium();
       Audio.Mute(1);
+      reboot_timer = powerCycling * REBOOT_TIME;
       SM_Pause(200);
       return;
     case 1:
@@ -201,7 +236,13 @@ void SM_Booting(void)
 
 void SM_Running(void)
 {
-  if (PwrSwitch.Off_Event() && !BitGet(config.status, STAT_SYSTEM_LOCKED))
+  uint8_t reboot = 0;
+  if (reboot_timer)
+  {
+    if (!--reboot_timer)
+      reboot = 1;
+  }
+  if ((PwrSwitch.Off_Event() || reboot) && !BitGet(config.status, STAT_SYSTEM_LOCKED))
     SM_TransitionTo(SM_Shutdown);
   else
   {

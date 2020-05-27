@@ -46,6 +46,7 @@ namespace DescriptiveLayouts
     m_map[EventSources::MCModRange] = std::make_unique<CurrentModParamModRangeEventSource>();
     m_map[EventSources::EditBufferTypeText] = std::make_unique<EditBufferTypeStringEvent>();
     m_map[EventSources::EditBufferName] = std::make_unique<EditBufferName>();
+    m_map[EventSources::EditBufferNameWithSuffix] = std::make_unique<EditBufferNameWithSuffix>();
     m_map[EventSources::ParameterControlPosition] = std::make_unique<CurrentParameterControlPosition>();
 
     m_map[EventSources::EditBufferMasterVolume] = std::make_unique<ParameterValue<247, VoiceGroup::Global>>();

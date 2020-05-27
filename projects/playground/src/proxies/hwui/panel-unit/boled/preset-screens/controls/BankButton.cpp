@@ -3,6 +3,7 @@
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/controls/Button.h>
+#include <sigc++/adaptors/hide.h>
 #include "BankButton.h"
 
 auto getSoundType()
@@ -15,7 +16,7 @@ BankButton::BankButton(const Rect& pos, bool bankFocus)
     , m_bankFocus(bankFocus)
 {
   m_soundTypeChanged = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::mem_fun(this, &BankButton::bruteForce));
+      sigc::hide(sigc::mem_fun(this, &BankButton::bruteForce)));
 }
 
 BankButton::~BankButton()
@@ -86,5 +87,8 @@ void BankButton::installDual()
   };
 
   m_buttonAHandler = std::make_unique<ShortVsLongPress>(
-      [this] { Application::get().getHWUI()->toggleCurrentVoiceGroup(); }, toggleBankFocus);
+      [this] {
+          Application::get().getHWUI()->toggleCurrentVoiceGroup();
+          },
+          toggleBankFocus);
 }

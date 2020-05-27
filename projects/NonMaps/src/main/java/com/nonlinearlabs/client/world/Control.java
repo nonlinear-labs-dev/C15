@@ -272,7 +272,7 @@ public abstract class Control {
 	public void onRemoved() {
 	}
 
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		return null;
 	}
 

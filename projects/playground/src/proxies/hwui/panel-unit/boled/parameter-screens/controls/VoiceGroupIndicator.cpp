@@ -6,21 +6,23 @@
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/controls/SwitchVoiceGroupButton.h>
 #include <groups/MacroControlsGroup.h>
-#include <proxies/hwui/HWUIHelper.h>
 #include <parameter_declarations.h>
+#include <proxies/hwui/HWUI.h>
+#include <proxies/hwui/panel-unit/boled/preset-screens/PresetManagerLayout.h>
 
 VoiceGroupIndicator::VoiceGroupIndicator(const Rect& r)
     : Control(r)
 {
-  Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::mem_fun(this, &VoiceGroupIndicator::onSoundTypeChanged));
-
   auto eb = Application::get().getPresetManager()->getEditBuffer();
+
+  eb->onSoundTypeChanged(sigc::mem_fun(this, &VoiceGroupIndicator::onSoundTypeChanged));
 
   eb->onSelectionChanged(sigc::mem_fun(this, &VoiceGroupIndicator::onParameterSelectionChanged));
 
   Application::get().getHWUI()->onCurrentVoiceGroupChanged(
       sigc::mem_fun(this, &VoiceGroupIndicator::onVoiceGroupSelectionChanged));
+
+  Application::get().getHWUI()->onLoadToPartModeChanged(sigc::mem_fun(this, &VoiceGroupIndicator::onLoadModeChanged));
 }
 
 VoiceGroupIndicator::~VoiceGroupIndicator()
@@ -49,7 +51,7 @@ bool VoiceGroupIndicator::drawLayer(FrameBuffer& fb)
   fb.setColor(m_selectedVoiceGroup == VoiceGroup::II ? FrameBufferColors::C255 : FrameBufferColors::C128);
   fb.fillRect(Rect(absPos.getLeft(), absPos.getTop() + 7, 12, 5));
 
-  if(HWUIHelper::isLoadToPartActive())
+  if(m_inLoadToPart)
   {
     const auto startX = absPos.getLeft() + 13;
     auto startY = absPos.getTop() + (m_selectedVoiceGroup == VoiceGroup::I ? 2 : 9);
@@ -63,42 +65,38 @@ bool VoiceGroupIndicator::drawLayer(FrameBuffer& fb)
 
   if(isLayerPartMuted(VoiceGroup::I))
   {
-    if(m_selectedVoiceGroup == VoiceGroup::I)
-      fb.setColor(FrameBufferColors::C77);
-    else
-      fb.setColor(FrameBufferColors::C255);
+    fb.setColor(FrameBufferColors::C43);
 
-    auto centerX = absPos.getLeft() + 6;
+    auto centerX = absPos.getLeft() + 5;
     auto centerY = absPos.getTop() + 2;
     fb.setPixel(centerX - 2, centerY - 2);
     fb.setPixel(centerX - 2, centerY + 2);
     fb.setPixel(centerX - 1, centerY - 1);
     fb.setPixel(centerX - 1, centerY + 1);
     fb.setPixel(centerX, centerY);
-    fb.setPixel(centerX + 2, centerY - 2);
-    fb.setPixel(centerX + 2, centerY + 2);
-    fb.setPixel(centerX + 1, centerY - 1);
-    fb.setPixel(centerX + 1, centerY + 1);
+    fb.setPixel(centerX + 1, centerY);
+    fb.setPixel(centerX + 3, centerY - 2);
+    fb.setPixel(centerX + 3, centerY + 2);
+    fb.setPixel(centerX + 2, centerY - 1);
+    fb.setPixel(centerX + 2, centerY + 1);
   }
 
   if(isLayerPartMuted(VoiceGroup::II))
   {
-    if(m_selectedVoiceGroup == VoiceGroup::II)
-      fb.setColor(FrameBufferColors::C77);
-    else
-      fb.setColor(FrameBufferColors::C255);
+    fb.setColor(FrameBufferColors::C43);
 
-    auto centerX = absPos.getLeft() + 6;
+    auto centerX = absPos.getLeft() + 5;
     auto centerY = absPos.getTop() + 9;
     fb.setPixel(centerX - 2, centerY - 2);
     fb.setPixel(centerX - 2, centerY + 2);
     fb.setPixel(centerX - 1, centerY - 1);
     fb.setPixel(centerX - 1, centerY + 1);
     fb.setPixel(centerX, centerY);
-    fb.setPixel(centerX + 2, centerY - 2);
-    fb.setPixel(centerX + 2, centerY + 2);
-    fb.setPixel(centerX + 1, centerY - 1);
-    fb.setPixel(centerX + 1, centerY + 1);
+    fb.setPixel(centerX + 1, centerY);
+    fb.setPixel(centerX + 3, centerY - 2);
+    fb.setPixel(centerX + 3, centerY + 2);
+    fb.setPixel(centerX + 2, centerY - 1);
+    fb.setPixel(centerX + 2, centerY + 1);
   }
 
   return true;
@@ -112,7 +110,7 @@ bool VoiceGroupIndicator::drawSplit(FrameBuffer& fb)
   fb.setColor(m_selectedVoiceGroup == VoiceGroup::II ? FrameBufferColors::C255 : FrameBufferColors::C128);
   fb.fillRect(Rect(absPos.getLeft() + 7, absPos.getTop(), 5, 12));
 
-  if(HWUIHelper::isLoadToPartActive())
+  if(m_inLoadToPart)
   {
     const auto startY = absPos.getTop() + 13;
     auto startX = absPos.getLeft() + (m_selectedVoiceGroup == VoiceGroup::I ? 2 : 9);
@@ -137,10 +135,9 @@ bool VoiceGroupIndicator::isLayerPartMuted(VoiceGroup vg) const
   return false;
 }
 
-void VoiceGroupIndicator::onSoundTypeChanged()
+void VoiceGroupIndicator::onSoundTypeChanged(SoundType type)
 {
-  auto eb = Application::get().getPresetManager()->getEditBuffer();
-  m_currentSoundType = eb->getType();
+  m_currentSoundType = type;
   setDirty();
 }
 
@@ -150,8 +147,6 @@ void VoiceGroupIndicator::onParameterChanged(const Parameter* parameter)
 
   if(paramNum == C15::PID::Split_Split_Point || MacroControlsGroup::isMacroControl(paramNum))
     m_selectedVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
-  else
-    m_selectedVoiceGroup = parameter->getID().getVoiceGroup();
 
   setDirty();
 }
@@ -168,6 +163,14 @@ void VoiceGroupIndicator::onParameterSelectionChanged(const Parameter* old, cons
 
 bool VoiceGroupIndicator::shouldDraw()
 {
+  if(auto layout = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().getBaseLayout())
+  {
+    if(dynamic_cast<PresetManagerLayout*>(layout.get()))
+    {
+      return m_currentSoundType != SoundType::Single;
+    }
+  }
+
   if(m_currentSoundType == SoundType::Single)
     return false;
 
@@ -188,5 +191,11 @@ bool VoiceGroupIndicator::shouldDraw()
 void VoiceGroupIndicator::onVoiceGroupSelectionChanged(VoiceGroup vg)
 {
   m_selectedVoiceGroup = vg;
+  setDirty();
+}
+
+void VoiceGroupIndicator::onLoadModeChanged(bool loadModeActive)
+{
+  m_inLoadToPart = loadModeActive;
   setDirty();
 }

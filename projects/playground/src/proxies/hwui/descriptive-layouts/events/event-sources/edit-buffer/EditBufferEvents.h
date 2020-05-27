@@ -16,6 +16,12 @@ namespace DescriptiveLayouts
     void onChange(const EditBuffer *eb) override;
   };
 
+  class EditBufferNameWithSuffix : public EditBufferEvent<DisplayString>
+  {
+   public:
+    void onChange(const EditBuffer *eb) override;
+  };
+
   class CurrentVoiceGroupLabel : public EditBufferEvent<DisplayString>
   {
    public:
@@ -61,7 +67,7 @@ namespace DescriptiveLayouts
   class IsSplitSound : public EditBufferEvent<bool>
   {
    public:
-    void onChange(const EditBuffer* eb) override;
+    void onChange(const EditBuffer *eb) override;
   };
 
   class CurrentVoiceGroupText : public VoiceGroupSelectedEvent<DisplayString>

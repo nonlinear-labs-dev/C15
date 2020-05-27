@@ -39,21 +39,21 @@ public class Belt extends OverlayLayout {
 
 	public void openTab(BeltTab tab) {
 		switch (tab) {
-		case Parameter:
-			parameterLayout.fadeIn();
-			presetLayout.fadeOut();
-			soundLayout.fadeOut();
-			break;
-		case Sound:
-			soundLayout.fadeIn();
-			parameterLayout.fadeOut();
-			presetLayout.fadeOut();
-			break;
-		case Preset:
-			soundLayout.fadeOut();
-			parameterLayout.fadeOut();
-			presetLayout.fadeIn();
-			break;
+			case Parameter:
+				parameterLayout.fadeIn();
+				presetLayout.fadeOut();
+				soundLayout.fadeOut();
+				break;
+			case Sound:
+				soundLayout.fadeIn();
+				parameterLayout.fadeOut();
+				presetLayout.fadeOut();
+				break;
+			case Preset:
+				soundLayout.fadeOut();
+				parameterLayout.fadeOut();
+				presetLayout.fadeIn();
+				break;
 		}
 	}
 
@@ -200,7 +200,7 @@ public class Belt extends OverlayLayout {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		return this;
 	}
 

@@ -8,6 +8,7 @@
 #include "presets/PresetParameter.h"
 #include "parameters/SplitPointParameter.h"
 #include "parameters/scale-converters/ScaleConverter.h"
+#include "proxies/audio-engine/AudioEngineProxy.h"
 
 using EBL = EditBufferLogicalParts;
 
@@ -70,7 +71,15 @@ TEST_CASE("Load Part I of Split into Layer Part I")
     auto scope = TestHelper::createTestScope();
     auto transaction = scope->getTransaction();
 
+    auto oldAEMessage = AudioEngineProxy::createLayerEditBufferMessage(*eb);
+
     eb->undoableLoadToPart(transaction, preset, VoiceGroup::I, VoiceGroup::I);
+
+    THEN("AudioEngine Message is different")
+    {
+      auto newAEMessage = AudioEngineProxy::createLayerEditBufferMessage(*eb);
+      CHECK_FALSE(newAEMessage == oldAEMessage);
+    }
 
     THEN("Type is Same")
     {

@@ -2,6 +2,7 @@ package com.nonlinearlabs.client.world.overlay.belt.sound;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
+import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
@@ -11,9 +12,14 @@ import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
+import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
+import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
+import com.nonlinearlabs.client.world.maps.presets.bank.preset.ChoosePresetPartDialog;
+import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
+import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Label;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -68,11 +74,11 @@ public class LayerSoundLayout extends SoundLayout {
 			double parts = 20;
 			double unit = (w - 2 * margin) / parts;
 
-			getChildren().get(0).doLayout(margin + 0 * unit + margin, margin, 2 * unit - 2 * margin, h - 2 * margin);
-			getChildren().get(1).doLayout(margin + 2 * unit + margin, margin, 8 * unit - 2 * margin, h - 2 * margin);
-			getChildren().get(2).doLayout(margin + 10 * unit + margin, margin, 4 * unit - 2 * margin, h - 2 * margin);
-			getChildren().get(3).doLayout(margin + 14 * unit + margin, margin, 4 * unit - 2 * margin, h - 2 * margin);
-			getChildren().get(4).doLayout(margin + 18 * unit + margin, margin, 2 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(0).doLayout(margin * 1.5, margin * 1.2, 1.5 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(1).doLayout(margin + 1.5 * unit + margin, margin, 8.5 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(2).doLayout(margin + 10 * unit + margin, margin, 4.25 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(3).doLayout(margin + 14.25 * unit + margin, margin, 4.25 * unit - 2 * margin, h - 2 * margin);
+			getChildren().get(4).doLayout(margin + 18.5 * unit + margin, margin, 1.5 * unit - 2 * margin, h - 2 * margin);
 		}
 
 		@Override
@@ -91,6 +97,57 @@ public class LayerSoundLayout extends SoundLayout {
 					contentRight - contentLeft + 1 * margin, getPixRect().getHeight() - 2 * margin);
 			contentRect.drawRoundedArea(ctx, margin, 1, new Gray(30), new Gray(30));
 			super.draw(ctx, invalidationMask);
+
+			if(isDropTarget) {
+				getPixRect().getReducedBy(1).drawRoundedArea(ctx, margin, 1, RGBA.transparent(), RGB.red());
+			}
+		}
+
+		private boolean isDropTarget = false;
+
+
+		@Override
+		public Control drag(Position pos, DragProxy dragProxy) {
+			if (!getPixRect().contains(pos))
+				return null;
+	
+			if (dragProxy.getOrigin() instanceof IPreset) {
+				setIsDropTarget(true);
+				return this;
+			}
+			return super.drag(pos, dragProxy);
+		}
+	
+		@Override
+		public void dragLeave() {
+			setIsDropTarget(false);
+			super.dragLeave();
+		}
+	
+		private void setIsDropTarget(boolean isDropTarget) {
+			if (this.isDropTarget != isDropTarget) {
+				this.isDropTarget = isDropTarget;
+				invalidate(INVALIDATION_FLAG_UI_CHANGED);
+			}
+		}
+
+		private ChoosePresetPartDialog choosePresetPart = null;
+	
+		@Override
+		public Control drop(Position pos, DragProxy dragProxy) {
+	
+			if (dragProxy.getOrigin() instanceof IPreset)
+				if(dragProxy.getOrigin() instanceof Preset) {
+					Preset p = (Preset)dragProxy.getOrigin();
+					if(p.isDual()) {
+						choosePresetPart = new ChoosePresetPartDialog(p, group);		
+					} else {
+						NonMaps.get().getServerProxy().loadPresetPartIntoPart(p.getUUID(), VoiceGroup.I, group);
+					}
+				}
+	
+			setIsDropTarget(false);
+			return this;
 		}
 
 		private class VoiceGroupLabel extends Label {
@@ -152,12 +209,11 @@ public class LayerSoundLayout extends SoundLayout {
 			@Override
 			public Control click(Position eventPoint) {
 				if (isMuted())
-					EditBufferUseCases.get().setParameterValue(new ParameterId(395, group), 0, true);
+					EditBufferUseCases.get().unmutePart(group);
 				else if (isOtherPartMuted()) {
-					EditBufferUseCases.get().setParameterValue(new ParameterId(395, getOtherGroup()), 0, true);
-					EditBufferUseCases.get().setParameterValue(new ParameterId(395, group), 1, true);
+					EditBufferUseCases.get().setMuteForPartAndUnmuteOther(group);					
 				} else {
-					EditBufferUseCases.get().setParameterValue(new ParameterId(395, group), 1, true);
+					EditBufferUseCases.get().mutePart(group);
 				}
 				return this;
 			}

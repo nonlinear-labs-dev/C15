@@ -74,8 +74,12 @@ public class SliderHorizontal extends Slider {
 		return background;
 	}
 
+	protected double getIndicatorAreaBaseWidth() {
+		return (getBasicWidth() - 38);
+	}
+
 	protected double getIndicatorAreaWidth() {
-		double indicatorAreaWidth = (getBasicWidth() - 38) * getValue();
+		double indicatorAreaWidth = getIndicatorAreaBaseWidth() * getValue();
 
 		if (isBiPolar())
 			indicatorAreaWidth = indicatorAreaWidth / 2;
