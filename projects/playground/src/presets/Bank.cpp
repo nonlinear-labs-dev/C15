@@ -12,6 +12,7 @@
 #include <Application.h>
 #include <device-settings/Settings.h>
 #include <proxies/hwui/HWUI.h>
+#include <proxies/hwui/HWUIHelper.h>
 
 std::string to_string(Bank::AttachmentDirection dir);
 

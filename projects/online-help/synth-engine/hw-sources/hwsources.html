@@ -9,7 +9,7 @@
 	
 	<link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="../../style.css" type="text/css" />
-	<link rel="stylesheet" href="../../fonts/ssp.css" type="text/css" />
+	<link rel="stylesheet" href="../../fonts/source-sans-pro.css" type="text/css" />
 
 	<script src="../../jq/jquery-1.7.1.min.js" type="text/javascript"></script>
 
@@ -65,17 +65,18 @@
 			
 		</div><!-- end txt -->
 		
-		<div class="tbl">
-			<table class="mb2 center-txt" style="width: 100%;"><tbody>
+		<div class="txt-block-wide" style="overflow: auto;">
+			<div class="small">
+			<table class="mb2 center-txt"><tbody>
 				<tr>
-					<td class="bg-light"><b>Source</b></td>
-					<td class="bg-light"><b>Continuity</b></td>
-					<td class="bg-light"><b>Polarity</b></td>
-					<td class="bg-light"><b>Return<br />Behavior</b></td>
-					<td class="bg-light"><b>Integration</b></td>
-					<td class="bg-light"><b>Recall<br />Behavior</b></td>
-					<td class="bg-light"><b>Settings</b></td>
-					<td class="bg-light"><b>Operation<br />Mode</b></td>
+					<td class="bg-light"><strong>Source</strong></td>
+					<td class="bg-light"><strong>Continuity</strong></td>
+					<td class="bg-light"><strong>Polarity</strong></td>
+					<td class="bg-light"><strong>Return<br />Behavior</strong></td>
+					<td class="bg-light"><strong>Integration</strong></td>
+					<td class="bg-light"><strong>Recall<br />Behavior</strong></td>
+					<td class="bg-light"><strong>Settings</strong></td>
+					<td class="bg-light"><strong>Operation<br />Mode</strong></td>
 				</tr>
 				<tr>
 					<td>Pedal 1</td>
@@ -158,6 +159,7 @@
 					<td>absolute/<br />relative</td>
 				</tr>
 			</tbody></table>
+		</div>
 	</div><!-- end txt wide -->
 		
 	<div class="txt-block">
@@ -175,7 +177,7 @@
 	<div class="txt-block">
 		<p>Considering the Hardware Sources, their current settings and the modulation amounts on Macro Controls alltogether, they can be referred to as a „Modulation Template“. All included settings will be stored and recalled with presets, but for different use cases (like different pedals on another device), the template may not work properly. We plan to further investigate on template functionalities (like import and export functions) and may offer solutions in the near future.<br />For the sound design (and included factory presets) so far, the following template appeared to be meaningful, and it can be found in most of the presets:</p>
 		
-		<img class="img-frame-alt" src="images/gui_hw-nll-template.png" alt="nll-template"><div class="mb2"></div>
+		<img class="img-frame-alt" src="images/08.5-3-nll-template.png" alt="nll-template"><div class="mb2"></div>
 		
 		<p>The template defines two non-returning, continuous Pedals (1 and 2) for Macro Controls A and B, which are used to modulate different sound aspects like phase modulation intensities, filter frequencies, resonances or effect amounts, for example. Similarly, the two Ribbons are mapped on the two Macro Controls as well.<br />In addition, Macro Control C is assigned to the Bender and primarily used for bending pitches. The remaining Macro Control D is assigned to a returning, continuous Pedal (4), which serves as a Sustain or Damper Pedal (depending on the sound).</p>
 			

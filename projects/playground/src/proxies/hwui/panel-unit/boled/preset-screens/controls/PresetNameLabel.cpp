@@ -3,7 +3,6 @@
 #include "Application.h"
 #include <presets/Preset.h>
 #include <proxies/hwui/FrameBuffer.h>
-#include <proxies/hwui/HWUI.h>
 
 PresetNameLabel::PresetNameLabel(const Rect &pos)
     : super(pos)
@@ -37,15 +36,16 @@ Font::Justification PresetNameLabel::getJustification() const
 PresetNameLabel::StringAndSuffix PresetNameLabel::shortenStringIfNeccessary(std::shared_ptr<Font> font,
                                                                             const StringAndSuffix &text) const
 {
-  return TextCropper::shortenStringIfNeccessary(font, text.text, getPosition().getWidth() - getXOffset());
+  return TextCropper::shortenStringIfNeccessary(font, text.text,
+                                                getPosition().getWidth() - getXOffset() - getRightMargin());
 }
 
 int PresetNameLabel::getXOffset() const
 {
-  return 3;
+  return 6;
 }
 
 int PresetNameLabel::getRightMargin() const
 {
-  return 0;
+  return 3;
 }

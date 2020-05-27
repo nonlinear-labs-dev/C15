@@ -11,8 +11,21 @@ PresetPartSelection::PresetPartSelection(VoiceGroup focus)
   auto pm = Application::get().getPresetManager();
   auto eb = pm->getEditBuffer();
 
-  resetToLoaded();
-  m_presetLoadedConnection = eb->onPresetLoaded(sigc::mem_fun(this, &PresetPartSelection::onPresetLoaded));
+  if(auto bank = pm->getSelectedBank())
+  {
+    m_bank = bank;
+    if(auto preset = bank->getSelectedPreset())
+    {
+      m_preset = preset;
+      if(m_preset->isDual())
+      {
+        auto src = eb->getPartOrigin(m_focusedVoiceGroup).sourceGroup;
+        m_voiceGroup = src != VoiceGroup::Global ? src : VoiceGroup::I;
+      }
+      else
+        m_voiceGroup = VoiceGroup::I;
+    }
+  }
 }
 
 void PresetPartSelection::selectNextBank()
@@ -107,31 +120,4 @@ void PresetPartSelection::selectPreviousPresetPart()
       }
     }
   }
-}
-
-void PresetPartSelection::resetToLoaded()
-{
-  auto pm = Application::get().getPresetManager();
-  auto eb = pm->getEditBuffer();
-
-  if(auto bank = pm->getSelectedBank())
-  {
-    m_bank = bank;
-    if(auto preset = bank->getSelectedPreset())
-    {
-      m_preset = preset;
-      if(m_preset->isDual())
-      {
-        auto src = eb->getPartOrigin(m_focusedVoiceGroup).sourceGroup;
-        m_voiceGroup = src != VoiceGroup::Global ? src : VoiceGroup::I;
-      }
-      else
-        m_voiceGroup = VoiceGroup::I;
-    }
-  }
-}
-
-void PresetPartSelection::onPresetLoaded()
-{
-  resetToLoaded();
 }

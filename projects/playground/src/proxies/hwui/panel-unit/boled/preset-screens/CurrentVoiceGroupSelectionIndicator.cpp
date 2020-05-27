@@ -21,7 +21,7 @@ CurrentVoiceGroupSelectionIndicator::CurrentVoiceGroupSelectionIndicator(const R
       sigc::mem_fun(this, &CurrentVoiceGroupSelectionIndicator::focusChanged));
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &CurrentVoiceGroupSelectionIndicator::focusChanged)));
+      sigc::mem_fun(this, &CurrentVoiceGroupSelectionIndicator::focusChanged));
 }
 
 void CurrentVoiceGroupSelectionIndicator::focusChanged()

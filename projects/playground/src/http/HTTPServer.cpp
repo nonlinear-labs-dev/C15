@@ -139,7 +139,7 @@ void HTTPServer::redirectToIndexPage(std::shared_ptr<HTTPRequest> request) const
 
 bool HTTPServer::isStaticFileURL(const Glib::ustring &path)
 {
-  static const auto allowedPaths = { "/NonMaps/", "/online-help/", "/playground/resources/", "/tmp/" };
+  static const auto allowedPaths = { "/NonMaps/", "/online-help/", "/playground/resources/" };
   for(auto p : allowedPaths)
     if(path.find(p) == 0)
       return true;

@@ -16,8 +16,6 @@
 #include <presets/Preset.h>
 #include <http/UndoScope.h>
 #include <parameters/names/ParameterDB.h>
-#include <parameter_declarations.h>
-#include <http/SoupOutStream.h>
 
 //NonMember helperFunctions pre:
 IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer);
@@ -152,26 +150,6 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     editBuffer->undoableRandomizePart(scope->getTransaction(), vg, Initiator::EXPLICIT_WEBUI);
   });
 
-  addAction("mute", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Mute " + toString(vg));
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg })->setCPFromWebUI(scope->getTransaction(), 1);
-  });
-
-  addAction("unmute", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Unmute " + toString(vg));
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg })->setCPFromWebUI(scope->getTransaction(), 0);
-  });
-
-  addAction("mute-part-unmute-other", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Mute " + toString(vg));
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg })->setCPFromWebUI(scope->getTransaction(), 1);
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg == VoiceGroup::I ? VoiceGroup::II : VoiceGroup::I })
-        ->setCPFromWebUI(scope->getTransaction(), 0);
-  });
-
   addAction("set-modamount-and-value", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
 
@@ -272,22 +250,6 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     if(auto presetToLoad = pm->findPreset(presetUUID))
     {
       editBuffer->undoableLoadToPart(presetToLoad, presetPart, loadTo);
-    }
-  });
-
-  addAction("download-soled-as-png", [=](std::shared_ptr<NetworkRequest> request) {
-    if(auto httpRequest = std::dynamic_pointer_cast<HTTPRequest>(request))
-    {
-      auto hwui = Application::get().getHWUI();
-      httpRequest->respond(hwui->exportSoled());
-    }
-  });
-
-  addAction("download-boled-as-png", [=](auto request) {
-    if(auto httpRequest = std::dynamic_pointer_cast<HTTPRequest>(request))
-    {
-      auto hwui = Application::get().getHWUI();
-      httpRequest->respond(hwui->exportBoled());
     }
   });
 }

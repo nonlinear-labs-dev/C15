@@ -1,4 +1,3 @@
-#include <sigc++/adaptors/hide.h>
 #include "ModulationModeButton.h"
 #include "Application.h"
 #include "parameters/ModulateableParameter.h"
@@ -12,7 +11,7 @@ ModulationModeButton::ModulationModeButton(const Glib::ustring &caption, Buttons
       sigc::mem_fun(this, &ModulationModeButton::onParameterSelectionChanged));
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &ModulationModeButton::onSoundTypeChanged)), false);
+      sigc::mem_fun(this, &ModulationModeButton::onSoundTypeChanged), false);
 }
 
 ModulationModeButton::~ModulationModeButton()

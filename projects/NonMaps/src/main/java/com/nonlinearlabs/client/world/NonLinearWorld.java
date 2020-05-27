@@ -533,7 +533,7 @@ public class NonLinearWorld extends MapsLayout {
 	}
 
 	@Override
-	public Control doubleClick(Position pos) {
+	public Control doubleClick() {
 		zoomTo(parameterEditor);
 		presetManager.resetStoredViewportPosition();
 		return this;

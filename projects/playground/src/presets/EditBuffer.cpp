@@ -160,15 +160,15 @@ sigc::connection EditBuffer::onRecallValuesChanged(const sigc::slot<void> &s)
   return m_recallSet.m_signalRecallValues.connect(s);
 }
 
-sigc::connection EditBuffer::onSoundTypeChanged(const sigc::slot<void, SoundType> &s)
+sigc::connection EditBuffer::onSoundTypeChanged(sigc::slot<void> s)
 {
-  return m_signalTypeChanged.connectAndInit(s, m_type);
+  return m_signalTypeChanged.connectAndInit(s);
 }
 
-sigc::connection EditBuffer::onSoundTypeChanged(const sigc::slot<void, SoundType> &s, bool init)
+sigc::connection EditBuffer::onSoundTypeChanged(sigc::slot<void> s, bool init)
 {
   if(init)
-    return m_signalTypeChanged.connectAndInit(s, m_type);
+    return m_signalTypeChanged.connectAndInit(s);
   else
     return m_signalTypeChanged.connect(s);
 }
@@ -338,21 +338,6 @@ void EditBuffer::undoableSelectParameter(Parameter *p)
   }
 }
 
-bool EditBuffer::isParameterFocusLocked() const
-{
-  return m_lockParameterFocusChanges;
-}
-
-void EditBuffer::lockParameterFocusChanges()
-{
-  m_lockParameterFocusChanges = true;
-}
-
-void EditBuffer::unlockParameterFocusChanges()
-{
-  m_lockParameterFocusChanges = false;
-}
-
 void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p)
 {
   if(m_lastSelectedParameter != p->getID())
@@ -375,7 +360,7 @@ void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, Paramet
       if(newP)
         newP->onSelected();
 
-      if(!getParent()->isLoading() && !isParameterFocusLocked())
+      if(!getParent()->isLoading())
       {
         if(auto hwui = Application::get().getHWUI())
         {
@@ -459,7 +444,7 @@ void EditBuffer::writeDocument(Writer &writer, tUpdateID knownRevision) const
 bool isLoadToPartActive()
 {
   auto hwui = Application::get().getHWUI();
-  return hwui->isInLoadToPart();
+  return hwui->getFocusAndMode().detail == UIDetail::LoadToPart;
 }
 
 void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto)
@@ -493,6 +478,7 @@ void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset)
 
   SendEditBufferScopeGuard scope(transaction);
 
+  auto ae = Application::get().getAudioEngineProxy();
   const auto oldType = getType();
 
   setAttribute(transaction, "origin-I", preset->getUuid().raw());
@@ -633,21 +619,21 @@ void EditBuffer::sendToAudioEngine()
 
 void EditBuffer::undoableUnlockAllGroups(UNDO::Transaction *transaction)
 {
-  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
+  for(auto vg : { VoiceGroup::I, VoiceGroup::II })
     for(auto group : getParameterGroups(vg))
       group->undoableUnlock(transaction);
 }
 
 void EditBuffer::undoableLockAllGroups(UNDO::Transaction *transaction)
 {
-  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
+  for(auto vg : { VoiceGroup::I, VoiceGroup::II })
     for(auto group : getParameterGroups(vg))
       group->undoableLock(transaction);
 }
 
 void EditBuffer::undoableToggleGroupLock(UNDO::Transaction *transaction, const Glib::ustring &groupId)
 {
-  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
+  for(auto vg : { VoiceGroup::I, VoiceGroup::II })
     if(auto g = getParameterGroupByID({ groupId, vg }))
       g->undoableToggleLock(transaction);
 }
@@ -884,7 +870,7 @@ void EditBuffer::undoableSetType(UNDO::Transaction *transaction, SoundType type)
 
     transaction->addSimpleCommand([=](auto state) {
       swap->swapWith(m_type);
-      m_signalTypeChanged.send(m_type);
+      m_signalTypeChanged.send();
       onChange();
     });
   }
@@ -1531,9 +1517,6 @@ void EditBuffer::undoableLoadSelectedToPart(UNDO::Transaction *transaction, Voic
 
 void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType)
 {
-  auto scope = std::make_unique<GenericScopeGuard>([&] { lockParameterFocusChanges(); },
-                                                   [&] { unlockParameterFocusChanges(); });
-
   using ParameterNumberMap = std::unordered_map<int, int>;
   using From = SoundType;
   using To = SoundType;

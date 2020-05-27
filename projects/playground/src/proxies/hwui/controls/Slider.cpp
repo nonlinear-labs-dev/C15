@@ -6,7 +6,6 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
-#include <sigc++/adaptors/hide.h>
 
 Slider::Slider(Parameter *param, const Rect &rect)
     : super(rect)
@@ -14,7 +13,7 @@ Slider::Slider(Parameter *param, const Rect &rect)
     , m_bipolar(false)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &Slider::onSoundTypeChanged)), false);
+      sigc::mem_fun(this, &Slider::onSoundTypeChanged), false);
   setParameter(param);
 }
 

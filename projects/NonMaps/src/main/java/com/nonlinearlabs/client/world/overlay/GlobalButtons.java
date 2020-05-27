@@ -48,7 +48,7 @@ class GlobalButtons extends OverlayLayout {
 	}
 
 	@Override
-	public Control doubleClick(Position pos) {
+	public Control doubleClick() {
 		return this;
 	}
 

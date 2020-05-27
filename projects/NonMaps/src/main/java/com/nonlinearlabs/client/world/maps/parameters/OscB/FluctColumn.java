@@ -5,6 +5,7 @@ import com.nonlinearlabs.client.world.maps.parameters.ModulateableKnob;
 import com.nonlinearlabs.client.world.maps.parameters.ModulationSourceSlider;
 import com.nonlinearlabs.client.world.maps.parameters.ModulationSourceSwitch;
 import com.nonlinearlabs.client.world.maps.parameters.ParameterColumn;
+import com.nonlinearlabs.client.world.maps.parameters.SmallKnobParameter;
 
 class FluctColumn extends ParameterColumn {
 
@@ -12,7 +13,7 @@ class FluctColumn extends ParameterColumn {
 		super(parent);
 		addChild(new ModulateableKnob(this, 87));
 		addChild(new ModulationSourceSlider(this, 89));
-		addChild(new ModulateableKnob(this, 302));
+		addChild(new SmallKnobParameter(this, 302));
 		addChild(new ModulationSourceSwitch(this, 394));
 	}
 }

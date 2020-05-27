@@ -9,11 +9,10 @@ class VoiceGroupIndicator : public Control
   bool redraw(FrameBuffer& fb) override;
 
  private:
-  void onSoundTypeChanged(SoundType type);
+  void onSoundTypeChanged();
   void onParameterChanged(const Parameter* parameter);
   void onParameterSelectionChanged(const Parameter* old, const Parameter* newParam);
   void onVoiceGroupSelectionChanged(VoiceGroup vg);
-  void onLoadModeChanged(bool loadModeActive);
 
   bool drawSplit(FrameBuffer& fb);
   bool drawLayer(FrameBuffer& fb);
@@ -23,7 +22,6 @@ class VoiceGroupIndicator : public Control
 
   VoiceGroup m_selectedVoiceGroup {};
   SoundType m_currentSoundType {};
-  bool m_inLoadToPart = false;
 
   sigc::connection m_parameterChanged;
   const Parameter* m_param = nullptr;

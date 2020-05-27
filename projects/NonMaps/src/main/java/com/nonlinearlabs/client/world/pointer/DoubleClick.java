@@ -20,7 +20,7 @@ class DoubleClick extends Terminus implements Gesture.HasPosition {
 
 	@Override
 	public Control applyTo(Control receiver) {
-		Control ret = receiver.doubleClick(this.pos);
+		Control ret = receiver.doubleClick();
 
 		if (ret != null)
 			setReceiver(receiver);

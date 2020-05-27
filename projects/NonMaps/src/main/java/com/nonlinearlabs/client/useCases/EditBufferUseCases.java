@@ -15,6 +15,8 @@ import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.dataModel.editBuffer.PhysicalControlParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.RibbonParameterModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenter.Bank.Preset;
 import com.nonlinearlabs.client.tools.NLMath;
 
 public class EditBufferUseCases {
@@ -206,7 +208,7 @@ public class EditBufferUseCases {
 
 	public void setToDefault(ParameterId id) {
 		BasicParameterModel p = EditBufferModel.get().getParameter(id);
-		if (p != null) {
+		if(p != null) {
 			setParameterValue(id, p.value.metaData.defaultValue.getValue(), true);
 		}
 	}
@@ -318,7 +320,7 @@ public class EditBufferUseCases {
 
 	public IncrementalChanger startEditParameterValue(ParameterId id, double pixelsPerRange) {
 		BasicParameterModel p = EditBufferModel.get().getParameter(id);
-		if (p.value.getValue().metaData.isBoolean.getBool()) {
+		if(p.value.getValue().metaData.isBoolean.getBool()) {
 			pixelsPerRange = Millimeter.toPixels(10);
 		}
 
@@ -397,15 +399,16 @@ public class EditBufferUseCases {
 
 	private boolean containsElement(int e, int[] arr) {
 		for (int i : arr) {
-			if (e == i)
-				return true;
+			if(e == i)
+			return true;
 		}
 		return false;
 	}
 
 	private VoiceGroup getVoiceGroupFor(int paramNumber) {
-		if (EditBufferModel.get().soundType.getValue() == SoundType.Layer) {
-			if (containsElement(paramNumber, ParameterFactory.voicesParameters)) {
+		if(EditBufferModel.get().soundType.getValue() == SoundType.Layer) {
+			if(containsElement(paramNumber, ParameterFactory.voicesParameters)) 
+			{
 				return VoiceGroup.I;
 			}
 		}
@@ -419,10 +422,11 @@ public class EditBufferUseCases {
 	}
 
 	public void toggleDirectLoad() {
-		if (SetupModel.get().systemSettings.directLoad.getBool()) {
+		if(SetupModel.get().systemSettings.directLoad.getBool()) {
 			SetupModel.get().systemSettings.directLoad.setValue(false);
 			NonMaps.theMaps.getServerProxy().setSetting("DirectLoad", "off");
-		} else {
+		}
+		else {
 			SetupModel.get().systemSettings.directLoad.setValue(true);
 			NonMaps.theMaps.getServerProxy().setSetting("DirectLoad", "on");
 		}
@@ -435,7 +439,7 @@ public class EditBufferUseCases {
 	public void loadPresetPart(String uuid, VoiceGroup i) {
 		NonMaps.theMaps.getServerProxy().loadPresetPartIntoPart(uuid, i, EditBufferModel.get().voiceGroup.getValue());
 	}
-
+	
 	public void loadPresetPartIntoPart(String uuid, VoiceGroup from, VoiceGroup to) {
 		NonMaps.get().getServerProxy().loadPresetPartIntoPart(uuid, from, to);
 	}
@@ -453,26 +457,6 @@ public class EditBufferUseCases {
 			NonMaps.get().getServerProxy().randomizeSound();
 		else
 			NonMaps.get().getServerProxy().randomizePart(EditBufferModel.get().voiceGroup.getValue());
-	}
-
-	public void roundParameter(int paramNumber) {
-		ParameterId id = toParamId(paramNumber);
-		ModulateableParameterModel p = (ModulateableParameterModel) EditBufferModel.get().getParameter(id);
-		double rounded = p.value.getQuantizedAndClipped(false);
-		setParameterValue(id, rounded, true);
-
-	}
-
-	public void unmutePart(VoiceGroup group) {
-		NonMaps.get().getServerProxy().unmutePart(group);
-	}
-
-	public void mutePart(VoiceGroup group) {
-		NonMaps.get().getServerProxy().mutePart(group);
-	}
-
-	public void setMuteForPartAndUnmuteOther(VoiceGroup g) {
-		NonMaps.get().getServerProxy().setMuteForPartAndUnmuteOther(g);
 	}
 
 }

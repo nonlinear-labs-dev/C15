@@ -28,7 +28,6 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/MacroControlParameterLayouts.h>
 #include <memory>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/VoiceGroupIndicator.h>
-#include <sigc++/adaptors/hide.h>
 
 MacroControlParameterLayout2::MacroControlParameterLayout2()
     : super()
@@ -40,7 +39,7 @@ MacroControlParameterLayout2::MacroControlParameterLayout2()
   setMode(Mode::MacroControlValue);
 
   m_editBufferTypeConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &MacroControlParameterLayout2::onSoundTypeChanged)));
+      sigc::mem_fun(this, &MacroControlParameterLayout2::onSoundTypeChanged));
 }
 
 MacroControlParameterLayout2::~MacroControlParameterLayout2()

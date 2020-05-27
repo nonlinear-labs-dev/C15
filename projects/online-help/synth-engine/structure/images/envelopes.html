@@ -9,7 +9,7 @@
 	
 	<link rel="shortcut icon" href="../../../images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="../../../style.css" type="text/css" />
-	<link rel="stylesheet" href="../../../fonts/ssp.css" type="text/css" />
+	<link rel="stylesheet" href="../../../fonts/source-sans-pro.css" type="text/css" />
 
 	<script src="../../../jq/jquery-1.7.1.min.js" type="text/javascript"></script>
 
@@ -36,8 +36,11 @@
 		</div><!-- end txt -->
 
 		<span id="idx_envab"></span>
-		<img class="dia mb2i" src="envelope-ab.svg" alt="envelope-ab">
+		<h5 class="mt3 mb1 center-txt">1. Example for an ADBDSR curve of envelopes A and B</h5>
+		<img class="dia" src="envelope-ab.svg" alt="envelope-ab">
 
+		<span id="idx_envc"></span>
+		<h5 class="mt3 mb1 center-txt">2. Example for an ADBDSR curve of envelope C</h5>
 		<img class="dia" src="envelope-c.svg" alt="envelope-c">
 		
 		<div class="txt-block mt3">
@@ -46,17 +49,8 @@
 	
 		</div><!-- end txt -->
 
-		<h5 class="mt3 mb1 center-txt">Examples for Envelopes</h5>
-		<img class="dia mb2i" src="envelopes-examples.svg" alt="envelopes-examples">
-		<div class="txt-block mt3">
-			<h5 class="mt3 mb1 center-txt">Envelope Amounts</h5>
-			<p>The oscillator and shaper groups feature several envelope amount parameters. They can be understood as an additional multiplier for the corresponding main parameter value. This multiplier blends between a constant signal of one and the corresponding envelope signal, as the following pictures illustrate.</p>
-		</div>
-		<img class="dia mb2i" src="envelopes-multiplier.svg" alt="envelopes-multiplier">
-		<div class="txt-block mt3">
-		<p>As a result, the corresponding main parameter can be blended by the amount parameter between its pure value and a fully modulated version (by the corresponding envelope). On the other hand, for pitch-related parameters (Oscillators, Comb Filter, State Variable Filter) and the State Variable Filter resonance, the associated envelope amount parameters simply weight the corresponding envelope signals, before being added to the main parameter value.</p>
-		</div>
-		<img class="dia" src="envelopes-scaling-amt.svg" alt="envelopes-scaling-amt">
+		<h5 class="mt3 mb1 center-txt">3. Examples for envelopes</h5>
+		<img class="dia" src="envelopes-examples.svg" alt="envelopes-examples">
 		
 		<div class="txt-block mt2">
 			<p class="center-txt"><a href="../structure.html#block-medium">back to Structure</a></p>

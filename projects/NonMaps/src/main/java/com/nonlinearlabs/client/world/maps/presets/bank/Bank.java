@@ -106,6 +106,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		return tapes[o.ordinal()];
 	}
 
+
 	@Override
 	public void doFirstLayoutPass(double levelOfDetail) {
 		super.doFirstLayoutPass(levelOfDetail);
@@ -612,7 +613,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	}
 
 	@Override
-	public Control doubleClick(Position pos) {
+	public Control doubleClick() {
 		return this;
 	}
 

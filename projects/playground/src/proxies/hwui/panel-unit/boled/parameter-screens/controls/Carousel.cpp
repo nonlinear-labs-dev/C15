@@ -11,7 +11,7 @@ Carousel::Carousel(const Rect &pos)
       sigc::hide<0>(sigc::mem_fun(this, &Carousel::setup)));
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
-      sigc::hide(sigc::mem_fun(this, &Carousel::setupSelected)), false);
+      sigc::mem_fun(this, &Carousel::setupSelected), false);
 }
 
 Carousel::~Carousel() = default;

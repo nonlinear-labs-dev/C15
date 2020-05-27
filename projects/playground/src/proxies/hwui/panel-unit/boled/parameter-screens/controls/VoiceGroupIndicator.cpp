@@ -6,6 +6,7 @@
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/controls/SwitchVoiceGroupButton.h>
 #include <groups/MacroControlsGroup.h>
+#include <proxies/hwui/HWUIHelper.h>
 #include <parameter_declarations.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/PresetManagerLayout.h>
@@ -13,16 +14,15 @@
 VoiceGroupIndicator::VoiceGroupIndicator(const Rect& r)
     : Control(r)
 {
-  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
+      sigc::mem_fun(this, &VoiceGroupIndicator::onSoundTypeChanged));
 
-  eb->onSoundTypeChanged(sigc::mem_fun(this, &VoiceGroupIndicator::onSoundTypeChanged));
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
 
   eb->onSelectionChanged(sigc::mem_fun(this, &VoiceGroupIndicator::onParameterSelectionChanged));
 
   Application::get().getHWUI()->onCurrentVoiceGroupChanged(
       sigc::mem_fun(this, &VoiceGroupIndicator::onVoiceGroupSelectionChanged));
-
-  Application::get().getHWUI()->onLoadToPartModeChanged(sigc::mem_fun(this, &VoiceGroupIndicator::onLoadModeChanged));
 }
 
 VoiceGroupIndicator::~VoiceGroupIndicator()
@@ -51,7 +51,7 @@ bool VoiceGroupIndicator::drawLayer(FrameBuffer& fb)
   fb.setColor(m_selectedVoiceGroup == VoiceGroup::II ? FrameBufferColors::C255 : FrameBufferColors::C128);
   fb.fillRect(Rect(absPos.getLeft(), absPos.getTop() + 7, 12, 5));
 
-  if(m_inLoadToPart)
+  if(HWUIHelper::isLoadToPartActive())
   {
     const auto startX = absPos.getLeft() + 13;
     auto startY = absPos.getTop() + (m_selectedVoiceGroup == VoiceGroup::I ? 2 : 9);
@@ -67,36 +67,34 @@ bool VoiceGroupIndicator::drawLayer(FrameBuffer& fb)
   {
     fb.setColor(FrameBufferColors::C43);
 
-    auto centerX = absPos.getLeft() + 5;
+    auto centerX = absPos.getLeft() + 6;
     auto centerY = absPos.getTop() + 2;
     fb.setPixel(centerX - 2, centerY - 2);
     fb.setPixel(centerX - 2, centerY + 2);
     fb.setPixel(centerX - 1, centerY - 1);
     fb.setPixel(centerX - 1, centerY + 1);
     fb.setPixel(centerX, centerY);
-    fb.setPixel(centerX + 1, centerY);
-    fb.setPixel(centerX + 3, centerY - 2);
-    fb.setPixel(centerX + 3, centerY + 2);
-    fb.setPixel(centerX + 2, centerY - 1);
-    fb.setPixel(centerX + 2, centerY + 1);
+    fb.setPixel(centerX + 2, centerY - 2);
+    fb.setPixel(centerX + 2, centerY + 2);
+    fb.setPixel(centerX + 1, centerY - 1);
+    fb.setPixel(centerX + 1, centerY + 1);
   }
 
   if(isLayerPartMuted(VoiceGroup::II))
   {
     fb.setColor(FrameBufferColors::C43);
 
-    auto centerX = absPos.getLeft() + 5;
+    auto centerX = absPos.getLeft() + 6;
     auto centerY = absPos.getTop() + 9;
     fb.setPixel(centerX - 2, centerY - 2);
     fb.setPixel(centerX - 2, centerY + 2);
     fb.setPixel(centerX - 1, centerY - 1);
     fb.setPixel(centerX - 1, centerY + 1);
     fb.setPixel(centerX, centerY);
-    fb.setPixel(centerX + 1, centerY);
-    fb.setPixel(centerX + 3, centerY - 2);
-    fb.setPixel(centerX + 3, centerY + 2);
-    fb.setPixel(centerX + 2, centerY - 1);
-    fb.setPixel(centerX + 2, centerY + 1);
+    fb.setPixel(centerX + 2, centerY - 2);
+    fb.setPixel(centerX + 2, centerY + 2);
+    fb.setPixel(centerX + 1, centerY - 1);
+    fb.setPixel(centerX + 1, centerY + 1);
   }
 
   return true;
@@ -110,7 +108,7 @@ bool VoiceGroupIndicator::drawSplit(FrameBuffer& fb)
   fb.setColor(m_selectedVoiceGroup == VoiceGroup::II ? FrameBufferColors::C255 : FrameBufferColors::C128);
   fb.fillRect(Rect(absPos.getLeft() + 7, absPos.getTop(), 5, 12));
 
-  if(m_inLoadToPart)
+  if(HWUIHelper::isLoadToPartActive())
   {
     const auto startY = absPos.getTop() + 13;
     auto startX = absPos.getLeft() + (m_selectedVoiceGroup == VoiceGroup::I ? 2 : 9);
@@ -135,9 +133,10 @@ bool VoiceGroupIndicator::isLayerPartMuted(VoiceGroup vg) const
   return false;
 }
 
-void VoiceGroupIndicator::onSoundTypeChanged(SoundType type)
+void VoiceGroupIndicator::onSoundTypeChanged()
 {
-  m_currentSoundType = type;
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  m_currentSoundType = eb->getType();
   setDirty();
 }
 
@@ -147,6 +146,8 @@ void VoiceGroupIndicator::onParameterChanged(const Parameter* parameter)
 
   if(paramNum == C15::PID::Split_Split_Point || MacroControlsGroup::isMacroControl(paramNum))
     m_selectedVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
+  else
+    m_selectedVoiceGroup = parameter->getID().getVoiceGroup();
 
   setDirty();
 }
@@ -191,11 +192,5 @@ bool VoiceGroupIndicator::shouldDraw()
 void VoiceGroupIndicator::onVoiceGroupSelectionChanged(VoiceGroup vg)
 {
   m_selectedVoiceGroup = vg;
-  setDirty();
-}
-
-void VoiceGroupIndicator::onLoadModeChanged(bool loadModeActive)
-{
-  m_inLoadToPart = loadModeActive;
   setDirty();
 }
