@@ -27,14 +27,12 @@ if(BUILD_BBB AND BUILD_EPC AND BUILD_LPC)
         DEPENDS bbb-rootfs
         DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
         DEPENDS lpc-blobs
-        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/co-proc.o
-        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/main.bin
+        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/src/main/main.bin
         DEPENDS ${SOURCE_FILES}
         COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
             ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
             ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
-            ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/co-proc.o
-            ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/main.bin
+            ${CMAKE_BINARY_DIR}/build-tools/lpc/projects/realtime-system/src/main/main.bin
             ${CMAKE_BINARY_DIR}
             ${CMAKE_SOURCE_DIR}
             nonlinear-c15-update

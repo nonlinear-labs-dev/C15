@@ -13,6 +13,7 @@
 #include "ipc/emphase_ipc.h"
 #include "drv/nl_cgu.h"
 #include "spibb/nl_bb_msg.h"
+#include "shared/lpc-defs.h"
 
 #define KEY_MIN_TIME (2000)  // in us, shorter attack/release times than this will be clipped
 

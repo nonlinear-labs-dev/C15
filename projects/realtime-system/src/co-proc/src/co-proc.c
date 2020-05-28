@@ -1,11 +1,9 @@
 /******************************************************************************/
-/**	@file 	M0_IPC_Test.c
-	@date	2016-03-09 SSC
+/**	@file 	co-proc.c
+	@date	2020-05-27 KSTR
   	@author	2015-01-31 DTZ
 
-	@brief	see the M4_IPC_Test.c file for the documentation
-
-  	@note	!!!!!! USE optimized most -O3 for compiling !!!!!!
+  	@note	!!!!!! USE "optimized most", -O3, for compiling !!!!!!
 
 *******************************************************************************/
 

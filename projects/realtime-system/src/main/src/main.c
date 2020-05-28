@@ -122,6 +122,7 @@ void           Init(void)
 
   /* watchdog */
   SYS_WatchDogInit(WATCHDOG_TIMEOUT_MS);
+  //#warning "watchdog is off!"
 }
 
 /******************************************************************************/

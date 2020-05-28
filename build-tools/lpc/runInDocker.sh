@@ -1,8 +1,8 @@
 #!/bin/sh
 
-BINARY_DIR=$(realpath $1)
+BINARY_DIR=$1
 shift
-SOURCE_DIR=$(realpath $1)
+SOURCE_DIR=$1
 shift
 
 SCRIPT="echo \"Starting script:\""

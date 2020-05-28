@@ -108,8 +108,7 @@ IF(BUILD_BBB) # we need the BBB utilities
         COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
             ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
             ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
-            "unused-lpc-m0"
-            "unused-lpc-m4"
+            "unused-lpc"
             ${CMAKE_BINARY_DIR}
             ${CMAKE_SOURCE_DIR}
             nonlinear-epc-update

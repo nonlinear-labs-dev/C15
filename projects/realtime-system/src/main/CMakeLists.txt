@@ -12,6 +12,9 @@ add_compile_options("-DCORE_M4")
 file(GLOB_RECURSE SOURCES ./src/*.c ../shared/*.c)
 
 add_executable(${BLOBNAME} ${SOURCES} ../co-proc/co-proc.o)
+add_dependencies(${BLOBNAME} co-proc.o)
+
+set_source_files_properties(../co-proc/co-proc.o PROPERTIES GENERATED TRUE)
 
 target_include_directories (${BLOBNAME} PRIVATE "./src")
 target_include_directories (${BLOBNAME} PRIVATE "../co-proc/src")
@@ -26,5 +29,6 @@ set_target_properties(${BLOBNAME} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS}")
 
 add_custom_target(${BLOBNAME}.bin 
     COMMENT "Create ${BLOBNAME}.bin" 
-    DEPENDS ${BLOBNAME} 
+    DEPENDS ${BLOBNAME}
+    BYPRODUCTS ${BLOBNAME}.bin
     COMMAND arm-none-eabi-objcopy -Obinary ${BLOBNAME} ${BLOBNAME}.bin)

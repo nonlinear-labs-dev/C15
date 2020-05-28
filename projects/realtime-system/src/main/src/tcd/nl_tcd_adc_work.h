@@ -8,8 +8,6 @@
 
 #include "stdint.h"
 
-#include "../../../shared/lpc-defs.h"
-
 #define NON_RETURN       0
 #define RETURN_TO_ZERO   1
 #define RETURN_TO_CENTER 2

@@ -1,4 +1,4 @@
-LPC firmware Version 206 (beta V. 60206) (for Milestone 1.7) features:
+LPC firmware Version 206 (beta V. 63206) (for Milestone 1.7) features:
 
 
 0) Proccesing changes : 
@@ -114,9 +114,14 @@ See ExternalHardwareControllers_API_V1.0 for details.
 
 
 
-7) Complete rewrite of the M0 core stuff, notably the keybed scanner, which now works with 16us cycle
-time --> 16us (vs. 150us) velocity resolution.
+7) Complete rewrite of the M0 core stuff, notably the keybed scanner, which now works with 20us cycle
+time --> 20us (vs. 150us) velocity resolution.
 
 
 
 8) Added service and profiling features
+
+
+
+9) Complete Restructuring of the source tree for less overlap, no libraries etc.
+

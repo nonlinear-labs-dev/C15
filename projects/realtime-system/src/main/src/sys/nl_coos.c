@@ -10,26 +10,7 @@
 
 #define COOS_MAX_TASKS 16  // max number of task the COOS should handle (memory size)
 
-#define LOG_TASK_TIME   (1)
-#define DGB_TIMING_PINS (0)
-
-#if DGB_TIMING_PINS
-static void DispatchTotalTime(int on)
-{
-  if (on)
-    DBG_GPIO3_2_On();
-  else
-    DBG_GPIO3_2_Off();
-}
-
-static void DispatchTaskTime(int on)
-{
-  if (on)
-    DBG_GPIO3_3_On();
-  else
-    DBG_GPIO3_3_Off();
-}
-#endif
+#define LOG_TASK_TIME (1)
 
 typedef struct
 {
@@ -140,25 +121,16 @@ void COOS_Dispatch(void)
 
   uint32_t dispatchTime = s.ticker;
 
-#if DGB_TIMING_PINS
-  DispatchTotalTime(1);
-#endif
   for (index = 0; index < COOS_MAX_TASKS; index++)  // run the next task (if one is ready)
   {
     if (COOS_taskArray[index].run > 0)
     {
-#if DGB_TIMING_PINS
-      DispatchTaskTime(1);
-#endif
       uint32_t taskTime = s.ticker;
       (*COOS_taskArray[index].pTask)();  // run the task
       COOS_taskArray[index].run--;       // decrease the run flag, so postponed tasks will also be handled
       taskTime = s.ticker - taskTime;
       if (taskTime > NL_systemStatus.COOS_maxTaskTime)
         NL_systemStatus.COOS_maxTaskTime = taskTime;
-#if DGB_TIMING_PINS
-      DispatchTaskTime(0);
-#endif
 #if LOG_TASK_TIME
       if (taskTime > COOS_taskArray[index].max_time)
         COOS_taskArray[index].max_time = taskTime;
@@ -182,9 +154,6 @@ void COOS_Dispatch(void)
     DBG_Led_Warning_TimedOn(3);
     taskOverflow = 0;
   }
-#if DGB_TIMING_PINS
-  DispatchTotalTime(0);
-#endif
 }
 
 /******************************************************************************/

@@ -6,12 +6,11 @@
 
 EPC_UPDATE=$1
 BBB_UPDATE=$2
-LPC_CORE_0=$3
-LPC_CORE_1=$4
-BINARY_DIR=$5
-SOURCE_DIR=$6/build-tools/create-c15-update
-OUTNAME=$7
-ASPECTS=$8
+LPC_UPDATE=$3
+BINARY_DIR=$4
+SOURCE_DIR=$5/build-tools/create-c15-update
+OUTNAME=$6
+ASPECTS=$7
 OUT_DIRECTORY=$BINARY_DIR/$OUTNAME
 OUT_TAR=$BINARY_DIR/$OUTNAME.tar
 
@@ -42,8 +41,7 @@ fail_and_exit() {
 check_preconditions () {
     if [ -z "$EPC_UPDATE" -a $UPDATE_EPC == 1 ]; then echo "ePC update missing..." && return 1; fi
     if [ -z "$BBB_UPDATE" -a $UPDATE_BBB == 1 ]; then echo "BBB update missing..." && return 1; fi
-    if [ -z "$LPC_CORE_0" -a $UPDATE_LPC == 1 ]; then echo "LPC update missing..." && return 1; fi
-    if [ -z "$LPC_CORE_1" -a $UPDATE_LPC == 1 ]; then echo "LPC update missing..." && return 1; fi
+    if [ -z "$LPC_UPDATE" -a $UPDATE_LPC == 1 ]; then echo "LPC update missing..." && return 1; fi
     return 0
 }
 
@@ -70,8 +68,7 @@ deploy_updates() {
     fi
 
     if [ $UPDATE_LPC == 1 ]; then
-        cp $LPC_CORE_0 $OUT_DIRECTORY/LPC/M0_project.bin && chmod 666 $OUT_DIRECTORY/LPC/M0_project.bin || fail_and_exit;
-        cp $LPC_CORE_1 $OUT_DIRECTORY/LPC/M4_project.bin && chmod 666 $OUT_DIRECTORY/LPC/M4_project.bin || fail_and_exit;
+        cp $LPC_UPDATE $OUT_DIRECTORY/LPC/main.bin && chmod 666 $OUT_DIRECTORY/LPC/main.bin || fail_and_exit;
     fi
 
     echo "Deploying updates done."

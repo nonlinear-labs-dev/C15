@@ -4,7 +4,6 @@
  *  Created on: 21.01.2015
  *      Author: ssc
  *	last changed: 2020-03-30  KSTR
- *	- SW_VERSION  203
  * */
 #pragma once
 

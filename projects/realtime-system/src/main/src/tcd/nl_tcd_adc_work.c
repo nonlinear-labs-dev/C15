@@ -17,6 +17,7 @@
 #include "drv/nl_dbg.h"
 #include "sys/nl_eeprom.h"
 #include "sys/nl_stdlib.h"
+#include "shared/lpc-defs.h"
 
 #define BENDER_DEADRANGE    20    // +/-1 % of +/-2047
 #define BENDER_SMALL_THRESH 200   // +/-10 % of +/-2047, test range

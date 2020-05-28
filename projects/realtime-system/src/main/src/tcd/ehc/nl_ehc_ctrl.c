@@ -1103,6 +1103,8 @@ void NL_EHC_ProcessControllers3(void)
   {
     checkTimer = EEPROM_UPDATE_CHECK_TIME;
     forceEepromUpdate |= forceEepromUpdateExternal;
+    //#warning "test code only!"
+    //    forceEepromUpdate = 1;
     int writeNeeded = forceEepromUpdate;
     for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
     {
