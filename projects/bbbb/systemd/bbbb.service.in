@@ -1,6 +1,6 @@
 [Unit]
 Description=Nonlinear-Labs BeagleBoneBlackBridge
-After=syslog.target network.target systemd-modules-load.service
+After=syslog.target network.target systemd-modules-load.service install-update-from-usb.service
 
 [Service]
 ExecStart=@C15_INSTALL_PATH@/bbbb/bbbb --playground-host=192.168.10.10

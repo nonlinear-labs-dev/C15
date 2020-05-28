@@ -25,6 +25,8 @@ public class DeveloperSettings extends LayoutResizingVertical {
 		addChild(new BlockingMainThreadIndication(this));
 		addChild(new BenderRampBypassSetting(this));
 		addChild(new CrashOnError(this));
+		addChild(new ExportBoled(this));
+		addChild(new ExportSoled(this));
 
 		SetupModel.get().localSettings.showDeveloperOptions.onChange(v -> {
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);

@@ -25,7 +25,7 @@ void AlsaMidiInput::open(const std::string &deviceName)
 void AlsaMidiInput::start()
 {
   m_run = true;
-  m_task = std::make_unique<HighPriorityTask>(1, [=]() { doBackgroundWork(); });
+  m_task = std::make_unique<HighPriorityTask>(2, [=]() { doBackgroundWork(); });
 }
 
 void AlsaMidiInput::stop()

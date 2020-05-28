@@ -2,6 +2,7 @@ package com.nonlinearlabs.client.world.overlay.belt.sound;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
+import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -10,9 +11,14 @@ import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
+import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
+import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
+import com.nonlinearlabs.client.world.maps.presets.bank.preset.ChoosePresetPartDialog;
+import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
+import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Label;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 
@@ -38,7 +44,7 @@ public class SplitSoundLayout extends SoundLayout {
 			double parts = 20;
 			double unit = (w - 2 * margin) / parts;
 			double splitPointHeight = Math.min(h, Millimeter.toPixels(30));
-			double splitPointWidth = Math.min(3*unit, Millimeter.toPixels(40));
+			double splitPointWidth = Math.min(3 * unit, Millimeter.toPixels(40));
 			getChildren().get(0).doLayout(0 * unit, margin, 8 * unit, h - 2 * margin);
 			getChildren().get(1).doLayout(9 * unit, (h - splitPointHeight) / 2, splitPointWidth, splitPointHeight);
 			getChildren().get(2).doLayout(10 * unit + splitPointWidth, margin, 8 * unit, h - 2 * margin);
@@ -121,8 +127,7 @@ public class SplitSoundLayout extends SoundLayout {
 			double parameterLabelWidth = 6 * xunit;
 			double parameterValueWidth = 10 * xunit;
 
-
-			if(group == VoiceGroup.I) {
+			if (group == VoiceGroup.I) {
 				m_voiceGroupLabel.doLayout(margin, middleLine - labelHeight / 2, voiceGroupLabelWidth, labelHeight);
 				m_presetName.doLayout(margin + 4 * xunit, margin, presetNameWidth, 5 * yunit);
 				m_volumeLabel.doLayout(margin + 4 * xunit, margin + 8 * yunit, parameterLabelWidth, 5 * yunit);
@@ -133,9 +138,11 @@ public class SplitSoundLayout extends SoundLayout {
 				m_tuneValue.doLayout(margin, margin + 15 * yunit, parameterValueWidth, 5 * yunit);
 				m_tuneLabel.doLayout(margin + parameterValueWidth, margin + 15 * yunit, parameterLabelWidth, 5 * yunit);
 				m_volumeValue.doLayout(margin, margin + 8 * yunit, parameterValueWidth, 5 * yunit);
-				m_volumeLabel.doLayout(margin + parameterValueWidth, margin + 8 * yunit, parameterLabelWidth, 5 * yunit);
+				m_volumeLabel.doLayout(margin + parameterValueWidth, margin + 8 * yunit, parameterLabelWidth,
+						5 * yunit);
 				m_presetName.doLayout(margin, margin, presetNameWidth, 5 * yunit);
-				m_voiceGroupLabel.doLayout(w - margin - voiceGroupLabelWidth, middleLine - labelHeight / 2, voiceGroupLabelWidth, labelHeight);
+				m_voiceGroupLabel.doLayout(w - margin - voiceGroupLabelWidth, middleLine - labelHeight / 2,
+						voiceGroupLabelWidth, labelHeight);
 			}
 		}
 
@@ -150,17 +157,24 @@ public class SplitSoundLayout extends SoundLayout {
 
 			double contentLeft = getChildren().get(1).getPixRect().getLeft();
 			double contentRight = getPixRect().getRight();
-			if(group == VoiceGroup.I) {
+			if (group == VoiceGroup.I) {
 				Rect contentRect = new Rect(contentLeft - 2 * margin, getPixRect().getTop() + 1 * margin,
 						contentRight - contentLeft + 1 * margin, getPixRect().getHeight() - 2 * margin);
 				contentRect.drawRoundedArea(ctx, margin, 1, new Gray(30), new Gray(30));
 			} else {
-				Rect r = getPixRect().getReducedBy(margin*2).copy();
-				double spaceBetwheenLabelAndLabel = m_voiceGroupLabel.getPixRect().getLeft() - m_presetName.getPixRect().getRight();
-				r.set(r.getLeft(), r.getTop(), r.getWidth() - (m_voiceGroupLabel.getPixRect().getWidth() + spaceBetwheenLabelAndLabel), r.getHeight());
+				Rect r = getPixRect().getReducedBy(margin * 2).copy();
+				double spaceBetwheenLabelAndLabel = m_voiceGroupLabel.getPixRect().getLeft()
+						- m_presetName.getPixRect().getRight();
+				r.set(r.getLeft(), r.getTop(),
+						r.getWidth() - (m_voiceGroupLabel.getPixRect().getWidth() + spaceBetwheenLabelAndLabel),
+						r.getHeight());
 				r.drawRoundedArea(ctx, margin, 1, new Gray(30), new Gray(30));
 			}
-			
+
+			if(isDropTarget) {
+				getPixRect().getReducedBy(1).drawRoundedArea(ctx, margin, 1, RGBA.transparent(), RGB.red());
+			}
+
 			super.draw(ctx, invalidationMask);
 		}
 
@@ -250,6 +264,52 @@ public class SplitSoundLayout extends SoundLayout {
 			Volume(VoiceGroupSoundSettings parent) {
 				super(parent, new ParameterId(358, group));
 			}
+		}
+
+		@Override
+		public Control drag(Position pos, DragProxy dragProxy) {
+			if (!getPixRect().contains(pos))
+				return null;
+	
+			if (dragProxy.getOrigin() instanceof IPreset) {
+				setIsDropTarget(true);
+				return this;
+			}
+			return super.drag(pos, dragProxy);
+		}
+	
+		@Override
+		public void dragLeave() {
+			setIsDropTarget(false);
+			super.dragLeave();
+		}
+	
+		private boolean isDropTarget = false;
+
+		private void setIsDropTarget(boolean isDropTarget) {
+			if (this.isDropTarget != isDropTarget) {
+				this.isDropTarget = isDropTarget;
+				invalidate(INVALIDATION_FLAG_UI_CHANGED);
+			}
+		}
+
+		private ChoosePresetPartDialog choosePresetPart = null;
+	
+		@Override
+		public Control drop(Position pos, DragProxy dragProxy) {
+	
+			if (dragProxy.getOrigin() instanceof IPreset)
+				if(dragProxy.getOrigin() instanceof Preset) {
+					Preset p = (Preset)dragProxy.getOrigin();
+					if(p.isDual()) {
+						choosePresetPart = new ChoosePresetPartDialog(p, group);		
+					} else {
+						NonMaps.get().getServerProxy().loadPresetPartIntoPart(p.getUUID(), VoiceGroup.I, group);
+					}
+				}
+	
+			setIsDropTarget(false);
+			return this;
 		}
 	}
 

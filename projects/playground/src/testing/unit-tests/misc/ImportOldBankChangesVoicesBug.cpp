@@ -9,6 +9,8 @@
 #include <http/UpdateDocumentMaster.h>
 #include <xml/MemoryInStream.h>
 #include <libundo/undo/Scope.h>
+#include <parameter_declarations.h>
+#include <parameters/scale-converters/EnvelopeAttackDecayTimeMSScaleConverter.h>
 
 TEST_CASE("Import Bank Fresh Results in Correct Voices", "[Unison]")
 {
@@ -42,6 +44,22 @@ TEST_CASE("Import Bank Fresh Results in Correct Voices", "[Unison]")
       CHECK(voicesI->getDisplayString() == "8 voices");
     }
   }
+}
+
+TEST_CASE("MC Smoothing A-D set to 20ms")
+{
+  FuxieSwarmsTestBank bank;
+  auto preset = bank.getPreset(0);
+  CHECK(preset != nullptr);
+
+  auto mcASmoothing = preset->findParameterByID({ C15::PID::MC_Time_A, VoiceGroup::Global }, false);
+  CHECK(mcASmoothing != nullptr);
+
+  EnvelopeAttackDecayTimeMSScaleConverter conv;
+  auto& dim = conv.getDimension();
+  auto val = mcASmoothing->getValue();
+  auto display = dim.stringize(conv.controlPositionToDisplay(val));
+  CHECK(display == "20.0 ms");
 }
 
 TEST_CASE("UnisonVoices Conversion rules")

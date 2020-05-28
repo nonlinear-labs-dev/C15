@@ -123,6 +123,40 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
             presenter.isAnyParameterChanged = anyChanged;
             notifyChanges();
         }
+
+        boolean anyLocked = isAnyParameterLocked();
+        if(anyLocked != presenter.isAnyParameterLocked) {
+            presenter.isAnyParameterLocked = anyLocked;
+            notifyChanges();
+        }
+
+        boolean allLocked = areAllParametersLocked();
+        if(allLocked != presenter.allParametersLocked) {
+            presenter.allParametersLocked = allLocked;
+            notifyChanges();
+        }
+    }
+
+    private boolean isAnyParameterLocked() {
+        for (VoiceGroup g : VoiceGroup.values()) {
+            for (BasicParameterModel param : EditBufferModel.get().byVoiceGroup[g.ordinal()].parameters.values()) {
+                if (param.isLocked())
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean areAllParametersLocked() {
+        for (VoiceGroup g : VoiceGroup.values()) {
+            for (BasicParameterModel param : EditBufferModel.get().byVoiceGroup[g.ordinal()].parameters.values()) {
+                if (!param.isLocked())
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     private boolean isAnyParameterChanged() {

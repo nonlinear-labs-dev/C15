@@ -5,12 +5,6 @@
 SSID::SSID(Settings &parent)
     : Setting(parent)
 {
-  nltools::msg::receive<nltools::msg::WiFi::WiFiSSIDChangedMessage>(nltools::msg::EndPoint::Playground,
-                                                                    [this](const auto &msg) {
-                                                                      m_ssid = msg.m_ssid.get();
-                                                                      notify();
-                                                                    });
-
   parent.getSetting<DeviceName>()->onChange([=](const Setting *s) {
     static const std::string dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-_";
 
@@ -22,14 +16,13 @@ SSID::SSID(Settings &parent)
 
     setSSIDAndNotifyBBB(ssid);
   });
-
-  m_ssid = "Not Received Yet!";
 }
 
 SSID::~SSID() = default;
 
-void SSID::load(const Glib::ustring &unused)
+void SSID::load(const Glib::ustring &ssid)
 {
+  m_ssid = ssid;
 }
 
 Glib::ustring SSID::save() const
@@ -39,7 +32,7 @@ Glib::ustring SSID::save() const
 
 bool SSID::persistent() const
 {
-  return false;
+  return true;
 }
 
 Glib::ustring SSID::getDisplayString() const

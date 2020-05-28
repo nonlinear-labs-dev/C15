@@ -2,6 +2,7 @@
 
 #include "ParameterDualGroupSet.h"
 #include "presets/recall/RecallParameterGroups.h"
+#include "nltools/GenericScopeGuard.h"
 #include <nltools/threading/Expiration.h>
 #include <tools/DelayedJob.h>
 #include <tools/Uuid.h>
@@ -22,6 +23,7 @@ class EditBuffer : public ParameterDualGroupSet
   ~EditBuffer() override;
 
   Glib::ustring getName() const;
+  Glib::ustring getNameWithSuffix() const;
   Glib::ustring getVoiceGroupName(VoiceGroup vg) const;
   Glib::ustring getVoiceGroupNameWithSuffix(VoiceGroup vg, bool addSpace) const;
   size_t getHash() const;
@@ -46,7 +48,6 @@ class EditBuffer : public ParameterDualGroupSet
   void undoableLoadSelectedToPart(UNDO::Transaction *transaction, VoiceGroup from, VoiceGroup to);
 
  private:
-  void undoableLoadSinglePreset(Preset *preset, VoiceGroup to);
   void undoableLoadSelectedPresetPartIntoPart(VoiceGroup from, VoiceGroup copyTo);
   void undoableLoadPresetPartIntoPart(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup from,
                                       VoiceGroup copyTo);
@@ -89,8 +90,8 @@ class EditBuffer : public ParameterDualGroupSet
   sigc::connection onPresetLoaded(const sigc::slot<void> &s);
   sigc::connection onLocksChanged(const sigc::slot<void> &s);
   sigc::connection onRecallValuesChanged(const sigc::slot<void> &s);
-  sigc::connection onSoundTypeChanged(sigc::slot<void> s);
-  sigc::connection onSoundTypeChanged(sigc::slot<void> s, bool init);
+  sigc::connection onSoundTypeChanged(const sigc::slot<void, SoundType> &s);
+  sigc::connection onSoundTypeChanged(const sigc::slot<void, SoundType> &s, bool init);
 
   bool isModified() const;
   void sendToAudioEngine();
@@ -137,6 +138,8 @@ class EditBuffer : public ParameterDualGroupSet
   PartOrigin getPartOrigin(VoiceGroup vg) const;
 
  private:
+  std::unique_ptr<GenericScopeGuard> scopedSendEditBufferGuard(UNDO::Transaction *transaction);
+
   Glib::ustring getEditBufferName() const;
   bool findAnyParameterChanged(VoiceGroup vg) const;
 
@@ -155,12 +158,16 @@ class EditBuffer : public ParameterDualGroupSet
   void doDeferedJobs();
   void checkModified();
 
+  bool isParameterFocusLocked() const;
+  void lockParameterFocusChanges();
+  void unlockParameterFocusChanges();
+
   Signal<void, Parameter *, Parameter *> m_signalSelectedParameter;
   SignalWithCache<void, bool> m_signalModificationState;
   Signal<void> m_signalChange;
   Signal<void> m_signalPresetLoaded;
   Signal<void> m_signalLocksChanged;
-  Signal<void> m_signalTypeChanged;
+  Signal<void, SoundType> m_signalTypeChanged;
 
   sigc::connection m_voiceGroupConnection;
 
@@ -177,6 +184,7 @@ class EditBuffer : public ParameterDualGroupSet
 
   DelayedJob m_deferredJobs;
 
+  bool m_lockParameterFocusChanges = false;
   bool m_isModified;
   RecallParameterGroups m_recallSet;
   SoundType m_type;
@@ -223,4 +231,6 @@ class EditBuffer : public ParameterDualGroupSet
   void undoableLoadPresetPartIntoSingleSound(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup copyFrom,
                                              VoiceGroup copyTo);
   void cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType);
+  bool isMonoEnabled(const VoiceGroup &vg) const;
+  bool hasMoreThanOneUnisonVoice(const VoiceGroup &vg) const;
 };

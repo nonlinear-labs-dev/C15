@@ -20,12 +20,12 @@ public class MCAmountEdit extends MCSomething {
 
 		if (p.modulation.isModulated)
 			getParent().startEdit(BeltParameterLayout.Mode.mcAmount, getPixRect().getWidth());
-		
+
 		return getParent();
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
 		EditBufferUseCases.get().resetModulationAmount(p.id);
 		return this;

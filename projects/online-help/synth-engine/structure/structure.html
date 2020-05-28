@@ -9,7 +9,7 @@
 	
 	<link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="../../style.css" type="text/css" />
-	<link rel="stylesheet" href="../../fonts/source-sans-pro.css" type="text/css" />
+	<link rel="stylesheet" href="../../fonts/ssp.css" type="text/css" />
 	
 	<script src="../../jq/jquery-1.7.1.min.js" type="text/javascript"></script>
 	
@@ -41,7 +41,9 @@
 			<h5>Signal Flow</h5>
 			
 			<div class="nospace">
-				<p>The overall signal flow of the synthesis engine is illustrated in the following diagram. For a more detailed version <a href="images/block-detail.html">click here</a>.<br /><br />The links below provide further information about particular components. (You can access the the same subpages by clicking in the blue frames in the diagram).<br /><br />
+				<p>The overall signal flow of the synthesis engine is illustrated in the following diagram. For a more detailed version <span id="diagram-link"></span><a href="synth_engine_over.html"><b>click here</b></a>.</p>
+				
+				<p>The links below provide further information about particular components. (You can access the same subpages by clicking in the blue frames in the diagram).<br /><br />
 					<a href="images/envelopes.html">Envelopes</a> | 
 					<a href="images/osc.html">Oscillators</a> | 
 					<a href="images/shaper.html">Shapers</a> | 
@@ -63,6 +65,7 @@
 		<div class="dia-2 mb2">
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1590 820" preserveAspectRatio="xMinYMin meet" >
 				<image width="1590" height="820" href="images/block-simple.svg"></image>
+					<a class="rollover" href="synth_engine_over.html"><rect class="bbb" x="50" y="32" width="58" height="52" rx="6" ry="6" /></a>
 					<a class="rollover" href="images/envelopes.html"><rect class="bbb" x="50" y="160" width="160" height="380" rx="6" ry="6" /></a>
 					<a class="rollover" href="images/osc.html"><rect class="bbb"x="330" y="200" height="300" width="160" rx="6" ry="6" /></a>
 					<a class="rollover" href="images/shaper.html"><rect class="bbb"x="500" y="200" height="300" width="160" rx="6" ry="6" /></a>
@@ -76,30 +79,14 @@
 					<a class="rollover" href="images/echo.html"><rect class="bbb"x="1270" y="660" width="120" height="100" rx="6" ry="6" /></a>
 					<a class="rollover" href="images/reverb.html"><rect class="bbb"x="1400" y="660" width="120" height="100" rx="6" ry="6" /></a>
 					<a class="rollover" href="images/other.html"><rect class="bbb"x="224" y="652" width="312" height="118" rx="6" ry="6" /></a>
-					<a class="rollover" href="images/block-detail.html"><rect class="bbb"x="46" y="30" width="64" height="58" rx="6" ry="6" /></a>
 			</svg>
 		</div><!-- end dia -->
 
 		<div class="txt-block mt2">
 
-			<p>
-				
-			</p>
-
-			<p>
-			Two Oscillators and Shapers produce signals which are passed to the Comb Filter, to the State Variable Filter, and to the Output Mixer. The filter output signals are also connected to this mixer. The resulting mix is passed to the effect section and finally to the output. A second mix from the filters and effects is defined for the Feedback bus.<br /><br />There is a symmetric approach for the Oscillators, Shapers and Envelopes. Envelope A, Oscillator A and Shaper A (also called "branch A") are quasi-identical to Envelope B, Oscillator B and Shaper B ("branch B"). Envelope C can be mapped to the filters, pitches, and feedback amounts.</p>
-			
-			<h5>Automation and Rendering</h5>
-
-			<p>Besides a few exceptions (oscillator phases, unison voices – only effective when playing new notes), all parameters operate as smoothers within the synth engine and can perform transitions from one value to another in a specified time (adjustable by the user). This affects modulations, preset transitions and editing of parameters, each having their individual times.<br /><br />The whole control process of the synth engine is realized by a custom automation protocol, called TCD (time, curve, destination). Anything from a preset recall to performance is transmitted, even instructions for envelope signals. There will be a separate document in the future, explaining the basics and capabilities of TCD.<br /><br />At the moment, adjustable parameters are only capable of handling monophonic values. It is planned to change this in the future in order to be able to implement splitting, layering of sounds and modulating selected voices.<br /></p>
-			
-			
+			<p>Two Oscillators and Shapers produce signals which are passed to the Comb Filter, to the State Variable Filter, and to the Output Mixer. The filter output signals are also connected to this mixer. The resulting mix is passed to the effect section and finally to the output. A second mix from the filters and effects is defined for the Feedback bus.<br /><br />There is a symmetric approach for the Oscillators, Shapers and Envelopes. Envelope A, Oscillator A and Shaper A (also called "branch A") are quasi-identical to Envelope B, Oscillator B and Shaper B ("branch B"). Envelope C can be mapped to the filters, pitches, and feedback amounts.</p>
+						
 		</div><!-- end txt -->
-		
-		
-		<div class="txt-block mb1">
-		</div><!-- end txt -->
-
 
 		
 </div><!-- end main-content -->

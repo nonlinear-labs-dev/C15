@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 enum LPC_BB_MESSAGE_TYPES
 {
   LPC_BB_MSG_TYPE_PRESET_DIRECT = 0x0100,  // not used, direction: input; arguments(uint16): N, Nx data

@@ -1,0 +1,588 @@
+body {
+	font-family: 'SSP-LW00';
+	color: #ddd;
+	background-color: #000;
+	min-height: 100%;
+	-webkit-touch-callout: none;
+/*
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+*/
+}
+
+h1 {
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+	font-size: 24px;
+	text-align: center;
+	margin: 20px auto 0px auto;
+	padding: 0;
+}	
+
+a {
+	color: #3368A7;
+	text-decoration: none;
+	outline: none;
+/* 	border-bottom: none; */
+}
+
+a:focus {
+	color: #3D79C0;
+	text-decoration: none;
+	outline: 1px solid #3D79C0;
+/* 	border-bottom: none; */
+}
+
+a:link {
+	color: #9ECAFF;
+	text-decoration: none;
+	outline: none;
+/* 	border-bottom: none; */
+}
+
+a:visited {
+	color: #9ECAFF;
+	text-decoration: none;
+	outline: none;
+/* 	border-bottom: none; */
+}
+
+a:hover {
+	color: #fff;
+	text-decoration: none;
+	outline: none;
+}
+
+a:active {
+	color: #fff;
+	text-decoration: none;
+	outline: none;
+}
+
+.dia-box {
+	position: relative;
+	margin: auto; 
+	width: 80%;
+/* 	margin-left: 19%; */
+}
+
+.dia-box a {
+	text-decoration: none;
+	outline: none;
+}
+
+.dia-box label a {
+	width: 100%;
+	color: #eee;
+}
+
+/*
+.dia-box a:focus {
+	color: #3b617e;
+}
+
+.dia-box a:link {
+	color: #ccc;
+}
+
+.dia-box a:visited {
+	color: #ccc;
+}
+
+.dia-box a:hover {
+	color: #9bbed8;
+}
+
+.dia-box a:active {
+	color: #3b617e;
+}
+*/
+
+ol {
+	list-style-type: none;
+	counter-reset: item;
+	margin: 1em 0em 0em 1.3em;
+	color: #ddd;
+}
+
+ol li {
+	margin: 0em 0em 0.5em 0em;
+}
+
+ol li ol {
+	margin: 0em 0em 0em 1.5em;
+}
+
+ol li ol li {
+	margin: 0em 0em 0em 0.5em;
+}
+
+li::before {
+	counter-increment: item;
+	content:  "." counters(item, ".");
+	display: inline-block;
+	width: 1em;
+	margin-left: -1.5em;
+	margin-right: 0.5em;
+	text-align: right;
+	direction: rtl;
+}
+
+ol .fett::before {
+	font-weight: 400;
+}
+
+ul {
+	list-style: none inside;
+	margin: 0em 1em 0.5em -1em;
+	color: #ddd;
+}
+
+ul li {
+	margin: 0.2em 0em 0.2em 0em;
+}
+
+ul li::before {
+	content: "·";
+	display: inline-block;
+/* 	width: .8em; */
+/* 	margin: 0 0 0 -0.8em; */
+	font-weight: 600;
+}
+
+
+#show-menu label {
+	display: block;	
+}
+
+#show-menu:checked ~ .hide-me {
+	display: none;	
+}
+
+
+
+
+#show-menu + label span:before {
+	content: "Hide Menu";
+	position: absolute;
+	left: -159px;
+}
+
+#show-menu:checked + label span:before {
+	content: "Show Menu";
+}
+
+#show-menu + label span {
+	background-position-x: -100px;
+	position: absolute;
+	left: 164px;
+}
+
+#show-menu:checked + label span {
+	background-position-x: -80px;
+}
+
+#full-pic + label span:before {
+	content: "Zoom In";
+	position: absolute;
+	left: -159px;
+}
+
+#full-pic:checked + label span:before {
+	content: "Zoom Out";
+}
+
+#full-pic + label span {
+	background-position-x: -140px;
+	position: absolute;
+	left: 164px;
+}
+
+#full-pic:checked + label span {
+	background-position-x: -120px;
+}
+
+#full-pic:checked ~ img {
+	width: 200%;
+}
+
+#show-help + label span {
+	background-position-x: -20px;
+	position: absolute;
+	left: 164px;
+}
+
+#show-help:checked + label span {
+	background-position-x: 0px;
+}
+
+#block-diagram {
+	width: 100%;
+}
+
+.fb-pic {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;	
+	width: 100%;
+}
+
+#feedback:checked ~ .fb-pic {
+	display: block;
+}
+
+.fm-pic {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+#fm:checked ~ .fm-pic {
+	display: block;
+}
+
+.sub-pic {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+#sub:checked ~ .sub-pic {
+	display: block;
+}
+
+.exres-pic {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+#exres:checked ~ .exres-pic {
+	display: block;
+}
+
+.off-pic {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+#off-pic:checked ~ .off-pic {
+	display: block;
+}
+
+#show-help ~ .tip {
+	display: none;
+
+}
+
+#show-help:checked ~ .tip {
+	display: inherit;
+}
+
+.topent {
+	border-radius: 3px;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	border: 2px solid #3c4862;
+	border-bottom: 1px solid #3c4862;
+}
+
+.mident {
+	border: none;
+	border-left: 2px solid #3c4862;
+	border-right: 2px solid #3c4862;
+	border-bottom: 1px solid #3c4862;
+}
+
+.nbb {
+	border-bottom: 1px solid #1c243a;
+}
+
+.botent {
+	border-radius: 3px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border: 2px solid #3c4862;
+	border-top: none;
+}
+
+.singent {
+	border-radius: 3px;
+	border: 2px solid #3c4862;
+}
+
+.dia-box label {
+	color: #eee;
+	font-weight: 400;
+	background-color: rgba(40, 52, 83, 0.7);
+	width: 185px;
+	height: 21px;
+	padding: 5px 5px 5px 10px;
+    display: flex;
+    justify-content: space-between;
+	position: fixed;
+	left: 20px;
+	z-index: 6;
+    cursor: pointer;
+}
+
+.dia-box .show-label {
+	background-color: rgba(55, 65, 93, 1);
+}
+
+#show-menu:checked + .show-label {
+	background-color: rgba(55, 65, 93, 1);
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+
+.show-label {top: 12px;}
+.diatyp {top: 46px;}
+#full-pic + label {top: 78px;}
+.showpath {top: 110px;}
+#off + label {top: 142px;}
+#fm + label {top: 174px;}
+#sub + label {top: 206px;}
+#exres + label {top: 238px;}
+#feedback + label {top: 270px;}
+.help-label {top: 302px;}
+.pdf {top: 334px;}
+.back {top: 366px;}
+
+
+/*****************************/
+/* !checkbox */
+/*****************************/
+
+input[type="checkbox"] {
+    display:none;
+}
+
+input[type="checkbox"] + label span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0px 5px 0px 5px;
+    background: url(checkbox-c.png) -20px top no-repeat;
+}
+
+input[type="checkbox"]:checked + label span {
+    background:url(checkbox-c.png) 0px top no-repeat transparent;
+}
+
+/*****************************/
+/* !radiobutton */
+/*****************************/
+
+input[type="radio"] {
+    display:none;
+}
+
+input[type="radio"] + label span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0px 5px 0px 5px;
+    background: url(checkbox-c.png) -60px top no-repeat;
+    cursor: pointer;
+}
+
+input[type="radio"]:checked + label span {
+    background: url(checkbox-c.png) -40px top no-repeat transparent;
+}
+
+/*****************************/
+/* !imagehover */
+/*****************************/
+
+.hover-svg {
+	position: absolute;
+	z-index: 3;
+}
+
+/*
+#hoverbox {
+	position: relative;
+	width: 100%;
+	padding-bottom: 50%;
+	vertical-align: middle;
+	margin: 0;
+	overflow: hidden;
+}
+*/
+
+#hoverbox svg {
+	position: absolute;
+	display: inline-block;
+	top: 0;
+	left: 0;
+}
+
+.aaa {
+	fill: rgb(55, 127, 237);
+	fill-opacity: 0.4;
+	stroke-width: 3px; 
+	stroke: rgb(55, 127, 237); 
+	stroke-opacity: 1;
+}
+
+.aaa:hover {
+	fill: rgb(147, 190, 255); 
+	fill-opacity: .8;
+	stroke-width: 3px; 
+	stroke: rgb(53, 122, 225); 
+	stroke-opacity: 1;
+}
+
+.bbb {
+	fill-opacity: 0;
+/* 	stroke-width: 1px;  */
+	stroke: rgb(91, 154, 248);
+	stroke-opacity: 1;
+}
+
+.bbb:hover {
+	fill: rgb(147, 190, 255); 
+	fill-opacity: .2;
+/*
+	stroke-width: 3px; 
+	stroke: rgb(147, 190, 255); 
+	stroke-opacity: 1;
+*/
+}
+
+.env {top: 21.5%; left: 4.9%; width: 6.7%; height: 40.8%;}
+#full-pic:checked ~ .env {top: 21.5%; left: 10.1%; width: 13.3%; height: 41.8%;}
+.osc {top: 24%; left: 24.7%; width: 6.8%; height: 35%;}
+#full-pic:checked ~ .osc {top: 25%; left: 49.3%; width: 12.7%; height: 34%;}
+.shp {top: 24%; left: 32.8%; width: 6.6%; height: 35%;}
+#full-pic:checked ~ .shp {top: 25%; left: 66%; width: 12.5%; height: 34%;}
+.cmb {top: 38%; left: 64%; width: 6.9%; height: 8.5%;}
+#full-pic:checked ~ .cmb {top: 38.6%; left: 128%; width: 13.7%; height: 8.2%;}
+.svf {top: 38%; left: 79.1%; width: 6.9%; height: 8.5%;}
+#full-pic:checked ~ .svf {top: 38.6%; left: 158.2%; width: 13.9%; height: 8.1%;}
+.fbm {top: 11%; left: 70.3%; width: 20.7%; height: 5.5%;}
+#full-pic:checked ~ .fbm {top: 11.3%; left: 140.5%; width: 41.4%; height: 5.5%;}
+.opm {top: 65.6%; left: 62.7%; width: 22.6%; height: 5.3%;}
+#full-pic:checked ~ .opm {top: 65.7%; left: 125.4%; width: 45.2%; height: 5.6%;}
+.flg {top: 83.3%; left: 62.7%; width: 4.3%; height: 5.3%;}
+#full-pic:checked ~ .flg {top: 83.4%; left: 125.3%; width: 8.8%; height: 5.6%;}
+.cab {top: 83.3%; left: 69.1%; width: 4.3%; height: 5.3%;}
+#full-pic:checked ~ .cab {top: 83.4%; left: 138.1%; width: 8.8%; height: 5.6%;}
+.gap {top: 83.3%; left: 75.4%; width: 4.3%; height: 5.3%;}
+#full-pic:checked ~ .gap {top: 83.4%; left: 150.6%; width: 8.8%; height: 5.6%;}
+.ech {top: 83.3%; left: 81.7%; width: 4.3%; height: 5.3%;}
+#full-pic:checked ~ .ech {top: 83.3%; left: 163.3%; width: 8.8%; height: 5.6%;}
+.rev {top: 83.3%; left: 88%; width: 4.3%; height: 5.3%;}
+#full-pic:checked ~ .rev {top: 83.3%; left: 176%; width: 8.8%; height: 5.6%;}
+
+.env-d {top: 34%; left: 4%; width: 4.2%; height: 29.7%;}
+#full-pic:checked ~ .env-d {top: 34%; left: 7.8%; width: 8.6%; height: 30%;}
+.osc-d {top: 27.9%; left: 31.7%; width: 4.4%; height: 49%;}
+#full-pic:checked ~ .osc-d {top: 28%; left: 63.3%; width: 8.7%; height: 49.1%;}
+.shp-d {top: 27.9%; left: 41.4%; width: 3.7%; height: 49%;}
+#full-pic:checked ~ .shp-d {top: 28%; left: 82.9%; width: 7.5%; height: 49.1%;}
+.cmb-d {top: 42.4%; left: 65.1%; width: 4.3%; height: 8.2%;}
+#full-pic:checked ~ .cmb-d {top: 42.5%; left: 130.3%; width: 8.4%; height: 8.4%;}
+.svf-d {top: 42.2%; left: 81.7%; width: 4.4%; height: 8.4%;}
+#full-pic:checked ~ .svf-d {top: 42.6%; left: 163.5%; width: 8.6%; height: 8.2%;}
+.fbm-d {top: 16%; left: 69.4%; width: 18.8%; height: 4.9%;}
+#full-pic:checked ~ .fbm-d {top: 16.1%; left: 138.8%; width: 37.8%; height: 4.8%;}
+.opm-d {top: 66.4%; left: 57.5%; width: 31.4%; height: 4.7%;}
+#full-pic:checked ~ .opm-d {top: 66.5%; left: 115.2%; width: 62.5%; height: 4.7%;}
+.flg-d {top: 82.5%; left: 60.2%; width: 4.3%; height: 4.8%;}
+#full-pic:checked ~ .flg-d {top: 82.5%; left: 120.5%; width: 8.5%; height: 4.9%;}
+.cab-d {top: 82.5%; left: 66.2%; width: 4.3%; height: 4.8%;}
+#full-pic:checked ~ .cab-d {top: 82.5%; left: 132.4%; width: 8.5%; height: 4.9%;}
+.gap-d {top: 82.5%; left: 72.1%; width: 4.3%; height: 4.8%;}
+#full-pic:checked ~ .gap-d {top: 82.5%; left: 144.2%; width: 8.5%; height: 4.9%;}
+.ech-d {top: 82.5%; left: 78%; width: 4.3%; height: 4.8%;}
+#full-pic:checked ~ .ech-d {top: 82.5%; left: 156%; width: 8.5%; height: 4.9%;}
+.rev-d {top: 82.5%; left: 83.9%; width: 4.3%; height: 4.8%;}
+#full-pic:checked ~ .rev-d {top: 82.5%; left: 167.8%; width: 8.5%; height: 4.9%;}
+
+.tip {
+	position: absolute;
+	z-index: 5;
+/* 	background-color: red; */
+	cursor: pointer;
+}
+
+.tip span {
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility .3s, opacity .3s ease;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	background-color: rgba(16, 25, 50, 0.8);
+	border: 1px solid #4c5776;
+	border-radius: 5px;
+	width: 300px;
+	z-index: 5;
+}
+
+.flg span, .cab span, .gap span, .ech span, .rev span, .opm span,
+.flg-d span, .cab-d span, .gap-d span, .ech-d span, .rev-d span, .opm-d span {
+	top: unset;
+	left: unset;
+	bottom: 10px;
+	right: 10px;
+}
+
+.svf span, .fbm span, .cmb span,
+.svf-d span, .fbm-d span, .cmb-d span {
+	top: 10px;
+	right: 10px;
+	left: unset;
+}
+
+.tip:hover span {
+	visibility: visible;
+	opacity: 1;
+}
+
+.tip span div {
+	max-height: 200px;
+	overflow-y: auto;
+	cursor: text;
+}
+
+.tip span p {
+	margin: 0;
+	padding: 10px;
+	color: #ddd;
+	font-size: 15px;
+}
+
+.tip span h1 {
+	width: 100%;
+	margin: 0;
+	background-color: #4c5776;
+	color: #eee;
+	font-size: 18px;
+	padding: 2px 0; 
+}
+
+@media (max-width: 500px) {.tip span p {font-size: 13px;}}
+@media (max-width: 500px) {.tip span h1 {font-size: 15px;}}
+
+.center-txt {text-align: center;}
+.fw-300 {font-weight: 300;}
+
+
+
+

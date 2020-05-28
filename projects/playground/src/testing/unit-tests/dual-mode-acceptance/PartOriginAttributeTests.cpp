@@ -163,7 +163,7 @@ TEST_CASE("Step Direct Load and Load to Part Preset List", "[Preset][Loading]")
 
     auto uuid = eb->getUUIDOfLastLoadedPreset();
     CHECK(uuid == bank->getPresetAt(0)->getUuid());
-    hwui->setFocusAndMode(UIDetail::LoadToPart);
+    hwui->setLoadToPart(true);
 
     detail::pressButton(Buttons::BUTTON_INC);
     forceAutoLoadIfPending();

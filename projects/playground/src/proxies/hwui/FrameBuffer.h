@@ -87,6 +87,8 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
   Clip clipRespectingOffset(const Rect &rect);
   Offset offset(const Point &offset);
 
+  const std::vector<tPixel>& getBackBuffer() const;
+
   bool swapBuffers();
   bool isValidColor(Colors c) const;
 

@@ -6,7 +6,7 @@
 ENUM(UIFocus, uint8_t, Any, Sound, Parameters, Presets, Banks, Setup, Unchanged);
 ENUM(UIMode, uint8_t, Any, Select, Store, Edit, Info, Unchanged);
 ENUM(UIDetail, uint8_t, Any, Unchanged, Init, ButtonA, ButtonB, ButtonC, ButtonD, MCSelect, MCAmount, MCPosition,
-     MCModRange, Voices, SoundParameters, LoadToPart);
+     MCModRange, Voices, SoundParameters);
 ENUM(LayoutVersionMode, uint8_t, Old, Mixed, New);
 
 enum ButtonModifier

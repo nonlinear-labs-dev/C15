@@ -41,7 +41,7 @@ public class ModulationSourceButton extends SVGImage {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		if (isVisible() && getParent().isVisible())
 			return this;
 

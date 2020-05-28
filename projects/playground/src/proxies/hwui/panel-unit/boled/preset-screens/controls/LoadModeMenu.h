@@ -22,10 +22,14 @@ class LoadModeMenu : public ControlWithChildren
 
   sigc::connection m_soundTypeConnection;
   sigc::connection m_directLoadSettingConnection;
+  sigc::connection m_loadToPartConnection;
 
   std::unique_ptr<ShortVsLongPress> m_buttonDHandler;
 
   static bool isDirectLoadEnabled();
   static bool isLoadToPartEnabled();
   static SoundType getSoundType();
+
+ protected:
+  void setBackgroundColor(FrameBuffer& fb) const override;
 };

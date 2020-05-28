@@ -7,6 +7,8 @@
 #include "hardware.h"
 #include "led.h"
 
+Led_t Led;  // public handler
+
 // LED command array:
 // A command string is terminated with a zero.
 // The absolute value of each command values represent a wait time,
@@ -22,206 +24,91 @@
 #define ON(ms)  (+t(ms))
 #define OFF(ms) (-t(ms))
 
-const int8_t LCA_NOP[]         = { 0 };                                     // does nothing
-const int8_t LCA_OFF[]         = { OFF(200), 0 };                           // turn OFF, refresh port every 200ms
-const int8_t LCA_ON[]          = { ON(200), 0 };                            // turn ON, refresh port every 200ms
-const int8_t LCA_50ms_BLINK[]  = { ON(50), OFF(50), 0 };                    // 50ms ON, 50ms OFF loop
-const int8_t LCA_100ms_BLINK[] = { ON(100), OFF(100), 0 };                  // 100ms ON, 100ms OFF loop
-const int8_t LCA_200ms_BLINK[] = { ON(200), OFF(200), 0 };                  // 200ms ON, 200ms OFF loop
-const int8_t LCA_500ms_BLINK[] = { ON(500), OFF(500), 0 };                  // 500ms ON, 500ms OFF loop
-const int8_t LCA_BLINK_STBY[]  = { ON(50), OFF(1950), 0 };                  // 50ms ON, 2seconds OFF loop
-const int8_t LCA_ON_GLITCH1[]  = { ON(950), OFF(50), 0 };                   // 1sec ON, 50ms OFF loop
-const int8_t LCA_ON_GLITCH2[]  = { ON(850), OFF(50), ON(50), OFF(50), 0 };  // 1sec ON, 50ms OFF loop
+// the LED display sequences
+const int8_t SEQ_NOP[]         = { 0 };                                     // does nothing
+const int8_t SEQ_OFF[]         = { OFF(200), 0 };                           // turn OFF, refresh port every 200ms
+const int8_t SEQ_ON[]          = { ON(200), 0 };                            // turn ON, refresh port every 200ms
+const int8_t SEQ_25ms_BLINK[]  = { ON(25), OFF(25), 0 };                    // 25ms ON, 25ms OFF loop
+const int8_t SEQ_50ms_BLINK[]  = { ON(50), OFF(50), 0 };                    // 50ms ON, 50ms OFF loop
+const int8_t SEQ_100ms_BLINK[] = { ON(100), OFF(100), 0 };                  // 100ms ON, 100ms OFF loop
+const int8_t SEQ_200ms_BLINK[] = { ON(200), OFF(200), 0 };                  // 200ms ON, 200ms OFF loop
+const int8_t SEQ_500ms_BLINK[] = { ON(500), OFF(500), 0 };                  // 500ms ON, 500ms OFF loop
+const int8_t SEQ_BLINK_STBY[]  = { ON(25), OFF(2975), 0 };                  // 25ms ON, 3seconds OFF loop
+const int8_t SEQ_ON_GLITCH1[]  = { ON(950), OFF(50), 0 };                   // 1sec ON, 50ms OFF loop
+const int8_t REQ_ON_GLITCH2[]  = { ON(850), OFF(50), ON(50), OFF(50), 0 };  // 1sec ON, 50ms OFF loop
+const int8_t SEQ_PWR_CYCLING[] = { ON(50), OFF(50), 0 };                    // rapid 50ms blinking
 
-static const int8_t *    pLca_start = LCA_NOP;  // command pointer
-static const int8_t *    pLca       = LCA_NOP;  // ^
+static const int8_t *    pSeq_start = SEQ_NOP;  // sequence pointer
+static const int8_t *    pSeq       = SEQ_NOP;  // ^
 static volatile uint16_t wait       = 0;        // timer variable
 
-static uint8_t override   = 0;  // flag for an overriding LED sequence
-static uint8_t last_state = 0;  // temp variable to update LED when override is over
-
-// override variables
-static const int8_t *pOLca_start = LCA_NOP;  // command pointer
-static const int8_t *pOLca       = LCA_NOP;  // ^
-static uint16_t      Owait       = 0;        // timer variable
-
 // special function "hardware and firmware ID" that is handled in code, not data
-static uint8_t show_id = 0;  // triggering
-static uint8_t step    = 0;  // step-chain variable
 static uint8_t hw_blinks;    // blink count for HW revision
 static uint8_t fw_blinks;    // blink count for FW revision
+static uint8_t show_id = 0;  // triggering
 
-Led_t Led;  // public handler
+static uint8_t doPowerCyclingOverride = 0;
 
-void LED(uint8_t on)
-{
-  if (!override)  // no physical output when in overrride
-    PowerLED(on);
-  last_state = on;
-}
-
-void Normal(void)
-{
-  if (!pLca)
-    return;
-  if (wait)  // timer running ?
-  {
-    wait--;
-    return;
-  }
-
-  int8_t c = *pLca;  // get command
-  if (c == 0)        // end of sequence ?
-  {
-    pLca = pLca_start;  // reset sequence
-    return;
-  }
-
-  pLca++;      // forward to next command
-  LED(c > 0);  // apply cmd to hardware LED (unless overriden), >0 means ON
-  if (c < 0)
-  {
-    if (c == -128)
-      c = 127;  // catch 2's complement corner case
-    else
-      c = -c;
-  }
-  wait = (c - 1);
-}
-
-void Override(void)
-{
-  if (!pOLca)
-    return;
-  if (Owait)  // timer running ?
-  {
-    Owait--;
-    return;
-  }
-
-  int8_t c;
-
-  if (show_id)  // special case "hardware and firmware ID"
-  {
-    pOLca = &c;  // force command address to local variable
-    switch (step)
-    {
-      case 0:
-        c = OFF(1000);
-        step++;
-        break;  // 1 sec OFF : prefix
-      case 1:
-        c = ON(200);
-        step++;
-        break;  // 200ms ON, then...
-      case 2:
-        c = OFF(800);
-        step += --hw_blinks ? -1 : +1;
-        break;  // ... 800ms OFF, and repeat if more
-      case 3:
-        c = OFF(1700);
-        step++;
-        break;  // 2.5 total OFF : delimiter
-      case 4:
-        c = ON(800);
-        step++;
-        break;  // 800ms ON, then...
-      case 5:
-        c = OFF(200);
-        step += --fw_blinks ? -1 : +1;
-        break;  // ... 200ms OFF, and repeat if more
-      case 6:
-        c = OFF(2300);
-        step++;
-        break;  // 2.5 sec total OFF : postfix
-      default:
-        c       = 0;
-        show_id = 0;
-        break;  // stop chain
-    }
-  }
-
-  c = *pOLca;  // get current command
-  if (c == 0)  // end of sequence ?
-  {
-    pOLca = pOLca_start = NULL;  // stop chain
-    override            = 0;
-    PowerLED(last_state);
-    return;
-  }
-
-  pOLca++;          // forward to next command
-  PowerLED(c > 0);  // apply cmd to hardware LED
-  if (c < 0)
-  {
-    if (c == -128)
-      c = 127;  // catch 2's complement corner case
-    else
-      c = -c;
-  }
-  Owait = (c - 1);
-}
-
-void LED_Process(void)
-{
-  if (override)
-    Override();  // process override only when needed
-  Normal();      // call normal sequence handler, it just does no physical output when overddiden
-}
-
-void LCA_Set(const int8_t *p)  // set a normal command
-{
-  pLca = pLca_start = p;
-  wait              = 0;
-}
-
-void LCA_OSet(const int8_t *p)  // set an override command
-{
-  pOLca = pOLca_start = p;
-  Owait               = 0;
-  override            = 1;
-}
+static int8_t showPowerCyclingOverride(void);
+static int8_t showHWandFWids(void);
+static int8_t getNextCmd(void);
+static void   displayCmd(const int8_t c);
+static void   applyWait(int8_t c);
+static void   DisplayCmdString(void);
+static void   Seq_Set(const int8_t *seq);
 
 void Led_t::On(void)
 {
-  LCA_Set(LCA_ON);
+  Seq_Set(SEQ_ON);
 };
+
 void Led_t::Off(void)
 {
-  LCA_Set(LCA_OFF);
+  Seq_Set(SEQ_OFF);
 };
+
 void Led_t::Blink_VeryFast(void)
 {
-  LCA_Set(LCA_50ms_BLINK);
+  Seq_Set(SEQ_25ms_BLINK);
 };
+
 void Led_t::Blink_Fast(void)
 {
-  LCA_Set(LCA_100ms_BLINK);
+  Seq_Set(SEQ_100ms_BLINK);
 };
+
 void Led_t::Blink_Medium(void)
 {
-  LCA_Set(LCA_200ms_BLINK);
+  Seq_Set(SEQ_200ms_BLINK);
 };
+
 void Led_t::Blink_Slow(void)
 {
-  LCA_Set(LCA_500ms_BLINK);
+  Seq_Set(SEQ_500ms_BLINK);
 };
+
 void Led_t::Blink_Standby(void)
 {
-  LCA_Set(LCA_BLINK_STBY);
+  Seq_Set(SEQ_BLINK_STBY);
 };
+
 void Led_t::On_IndicateGlitch1(void)
 {
-  LCA_Set(LCA_ON_GLITCH1);
+  Seq_Set(SEQ_ON_GLITCH1);
 };
+
 void Led_t::On_IndicateGlitch2(void)
 {
-  LCA_Set(LCA_ON_GLITCH2);
+  Seq_Set(REQ_ON_GLITCH2);
+};
+
+void Led_t::PowerCyclingOverride(uint8_t on)
+{
+  doPowerCyclingOverride = on;
 };
 
 void Led_t::Show_Hardware_and_Firmware_ID(void)  // handle special case
 {
-  LCA_OSet(LCA_NOP);           // set a dummy pointer to have a valid one
   show_id = 1;                 // flag special case
   switch (config.hardware_id)  // setup blink counter according to HW revision
   {
@@ -236,6 +123,113 @@ void Led_t::Show_Hardware_and_Firmware_ID(void)  // handle special case
       break;  // 6.0 assumed
   }
   fw_blinks = FW5_Version_ID + 1;  // set blink counter according to firmware revision
+}
+
+static int8_t showPowerCyclingOverride(void)
+{
+  static const int8_t *pSeq = SEQ_PWR_CYCLING;
+  int8_t               c    = *pSeq++;
+  if (!c)
+    pSeq = SEQ_PWR_CYCLING;
+  return c;
+}
+
+static int8_t showHWandFWids(void)
+{
+  static uint8_t step = 0;
+  int8_t         c;
+  switch (step)
+  {
+    case 0:
+      c = OFF(1000);
+      step++;
+      break;  // 1 sec OFF : prefix
+    case 1:
+      c = ON(200);
+      step++;
+      break;  // 200ms ON, then...
+    case 2:
+      c = OFF(800);
+      step += --hw_blinks ? -1 : +1;
+      break;  // ... 800ms OFF, and repeat if more
+    case 3:
+      c = OFF(1700);
+      step++;
+      break;  // 2.5 total OFF : delimiter
+    case 4:
+      c = ON(800);
+      step++;
+      break;  // 800ms ON, then...
+    case 5:
+      c = OFF(200);
+      step += --fw_blinks ? -1 : +1;
+      break;  // ... 200ms OFF, and repeat if more
+    case 6:
+      c = OFF(2300);
+      step++;
+      break;  // 2.5 sec total OFF : postfix
+    default:
+      c       = 0;
+      show_id = 0;  // stop
+      step    = 0;  // reset sequence
+      break;  
+  }
+  return c;
+}
+
+void LED_Process(void)
+{
+  DisplayCmdString();
+}
+
+static void DisplayCmdString(void)
+{
+  if (wait)  // timer running ?
+  {
+    wait--;
+    return;
+  }
+  int8_t c = getNextCmd();
+  displayCmd(c);
+  applyWait(c);
+}
+
+static int8_t getNextCmd(void)
+{
+  int8_t c = *pSeq++;
+  if (!c)
+    pSeq = pSeq_start;
+  if (show_id)
+    return showHWandFWids();
+  if (doPowerCyclingOverride)
+    return showPowerCyclingOverride();
+  return c;
+}
+
+static void displayCmd(const int8_t c)
+{
+  if (!c)
+    return;
+  PowerLED(c > 0);
+}
+
+static void applyWait(int8_t c)
+{
+  if (!c)
+    return;
+  if (c < 0)
+  {
+    if (c == -128)
+      c++;
+    c = -c;
+  }
+  wait = c - 1;
+}
+
+static void Seq_Set(const int8_t *seq)
+{
+  pSeq_start = pSeq = seq;
+  wait              = 0;
 }
 
 // end of file

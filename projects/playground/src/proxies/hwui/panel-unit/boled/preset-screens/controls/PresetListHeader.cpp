@@ -36,7 +36,7 @@ void PresetListHeader::setupWithArrows(Bank *bank)
   auto pm = Application::get().getPresetManager();
 
   const Rect &pos = getPosition();
-  const int arrowWidth = 11;
+  const int arrowWidth = 13;
   const int arrowHeight = 14;
 
   auto order = pm->getBankPosition(bank->getUuid());

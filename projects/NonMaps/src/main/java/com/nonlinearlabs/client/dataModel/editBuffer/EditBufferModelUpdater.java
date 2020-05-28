@@ -2,6 +2,7 @@ package com.nonlinearlabs.client.dataModel.editBuffer;
 
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.dataModel.Updater;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel.ModSource;
 
@@ -31,6 +32,9 @@ public class EditBufferModelUpdater extends Updater {
 			EditBufferModel.get().isChanged.setValue(Boolean.valueOf(changed));
 			String soundType = getAttributeValue(root, "editbuffer-type");
 			EditBufferModel.get().soundType.setValue(EditBufferModel.SoundType.valueOf(soundType));
+
+			if(EditBufferModel.SoundType.valueOf(soundType) == SoundType.Single)
+				EditBufferModel.get().voiceGroup.setValue(VoiceGroup.I);
 
 			String vgIName = getAttributeValue(root, "vg-I-name");
 			EditBufferModel.get().loadedPresetInVG1.setValue(vgIName);

@@ -8,8 +8,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.overlay.GWTDialog;
 
@@ -19,7 +17,7 @@ public class ChoosePresetPartDialog extends GWTDialog {
     static int modalPopupTop = 0;
     Preset preset = null;
 
-    public ChoosePresetPartDialog(Preset p) {
+    public ChoosePresetPartDialog(Preset p, VoiceGroup target) {
         setModal(true);
         setWidth("20em");
         addHeader("Part of Dual Preset?");
@@ -28,7 +26,7 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
         HTMLPanel panel = new HTMLPanel("");
         HTMLPanel buttons = new HTMLPanel("");
-        panel.add(new Label("Which part of the dual preset do you want to load?", true));
+        panel.add(new Label("Which part of the dual preset do you want to load into EditBuffer part " + target.toString() + "?", true));
 
         Button part1, part2, cancelButton;
 
@@ -36,7 +34,7 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                EditBufferUseCases.get().loadPresetPart(preset.getUUID(), VoiceGroup.I);
+                EditBufferUseCases.get().loadPresetPartIntoPart(preset.getUUID(), VoiceGroup.I, target);
                 commit();
             }
         }));
@@ -45,7 +43,7 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                EditBufferUseCases.get().loadPresetPart(preset.getUUID(), VoiceGroup.II);
+                EditBufferUseCases.get().loadPresetPartIntoPart(preset.getUUID(), VoiceGroup.II, target);
                 commit();
             }
         }));

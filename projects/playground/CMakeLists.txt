@@ -31,7 +31,7 @@ string(STRIP ${COMMIT_COUNT} COMMIT_COUNT)
 string(STRIP ${HEAD_REF} HEAD_REF)
 string(STRIP ${BRANCH_NAME} BRANCH_NAME)
 
-set(LIBS gio-unix-2.0 giomm-2.4 uuid libsoup-2.4 freetype2)
+set(LIBS gio-unix-2.0 giomm-2.4 uuid libsoup-2.4 freetype2 libpng)
 
 # OPTIONS
 OPTION(DEV_PC "Enable some tests and tools not suitable for embedded device" OFF)

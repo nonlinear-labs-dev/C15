@@ -30,8 +30,8 @@ inline constexpr bool VOICE_FADE_INTERPOLATION = true;
 
 // basic logging switches
 inline constexpr bool LOG_MISSING = false;
-inline constexpr bool LOG_FAIL = true;
-inline constexpr bool LOG_INIT = true;
+inline constexpr bool LOG_FAIL = false;
+inline constexpr bool LOG_INIT = false;
 inline constexpr bool LOG_MIDI = false;
 inline constexpr bool LOG_MIDI_DETAIL = false;
 inline constexpr bool LOG_DISPATCH = false;
@@ -44,7 +44,7 @@ inline constexpr bool LOG_RECALL_LEVELS = false;
 inline constexpr bool LOG_KEYS = false;
 inline constexpr bool LOG_KEYS_POLY = false;
 inline constexpr bool LOG_TRANSITIONS = false;
-inline constexpr bool LOG_RESET = true;
+inline constexpr bool LOG_RESET = false;
 inline constexpr bool LOG_HW = false;
 // more detailed logging of specific parameters
 inline constexpr bool LOG_ENGINE_STATUS = false;

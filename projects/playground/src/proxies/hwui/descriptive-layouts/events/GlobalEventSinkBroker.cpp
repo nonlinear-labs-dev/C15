@@ -287,12 +287,12 @@ namespace DescriptiveLayouts
 
       if(!vgIMuted && !vgIIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part I");
         muteI->setCPFromHwui(scope->getTransaction(), 1);
       }
       else if(vgIIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Unmute Part II");
         muteI->setCPFromHwui(scope->getTransaction(), 0);
         muteII->setCPFromHwui(scope->getTransaction(), 0);
       }
@@ -306,12 +306,12 @@ namespace DescriptiveLayouts
 
       if(!vgIMuted && !vgIIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part II");
         muteII->setCPFromHwui(scope->getTransaction(), 1);
       }
       else if(vgIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part");
+        auto scope = eb->getParent()->getUndoScope().startTransaction("Unmute Part I");
         muteI->setCPFromHwui(scope->getTransaction(), 0);
         muteII->setCPFromHwui(scope->getTransaction(), 0);
       }

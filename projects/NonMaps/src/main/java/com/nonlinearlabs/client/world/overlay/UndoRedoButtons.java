@@ -38,7 +38,7 @@ class UndoRedoButtons extends OverlayLayout {
 	}
 
 	@Override
-	public Control doubleClick() {
+	public Control doubleClick(Position pos) {
 		return this;
 	}
 
