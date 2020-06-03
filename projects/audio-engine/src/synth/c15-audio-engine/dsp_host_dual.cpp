@@ -685,6 +685,18 @@ void dsp_host_dual::globalParChg(const uint32_t _id, const nltools::msg::HWAmoun
   auto param = m_params.get_hw_amt(_id);
   if(param->update_position(static_cast<float>(_msg.controlPosition)))
   {
+    // #1909 : auto-reset amounts of hw ribbons in non-return mode when hw amt changes
+    auto source = m_params.get_hw_src(param->m_sourceId);
+    // ribbon ids are 6, 7 -- check is rather ugly
+    if(param->m_sourceId > 5 && source->m_behavior == C15::Properties::HW_Return_Behavior::Stay)
+    {
+      // all amounts related to source, except the current, will be reset
+      for(int i = source->m_offset; i < source->m_offset + m_params.m_global.m_macro_count; i++)
+      {
+        if(i != _id)
+          m_params.get_hw_amt(i)->update_position(0.0f);
+      }
+    }
     if(LOG_EDITS)
     {
       nltools::Log::info("ha_edit(srcId:", param->m_sourceId, ", amtId:", _id, ", pos:", param->m_position, ")");
