@@ -93,9 +93,10 @@ check_preconditions() {
             if mount.cifs //192.168.10.10/update /mnt/windows -o user=TEST,password=TEST \
                 && ls -l /mnt/windows/ | grep Phase22Renderer.ens; then
                     report "" "E85: OS too old for update!" "Please contact NLL!" && return 1
+            else
+              report "" "E86: Can't detect OS!" "Please contact NLL!" && return 1
             fi
         fi
-        report "" "Something went wrong!" "Please retry update!" && return 1
     fi
     return 0
 }
