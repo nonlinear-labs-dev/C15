@@ -73,17 +73,18 @@ executeOnWin() {
 
 TIMEOUT=10
 
-wait4playground() {
+isNllLinuxSystem() {
     for COUNTER in $(seq 1 $TIMEOUT); do
-        echo "awaiting playground ... $COUNTER/$TIMEOUT"
+        echo "checking for NLL linux ... $COUNTER/$TIMEOUT"
         sleep 1
-        executeAsRoot "systemctl status playground" && return 0
+        executeAsRoot "test -d /usr/local/C15" && echo "MS1.7++ found" && return 0
+        executeAsRoot "test -d /usr/local/nonlinear" && echo "MS1.5 found" && return 0
     done
     return 1
 }
 
 check_preconditions() {
-    if ! wait4playground; then
+    if ! isNllLinuxSystem; then
         if [ -z "$EPC_IP" ]; then report "" "E81: Usage: $EPC_IP <IP-of-ePC> wrong ..." "Please retry update!" && return 1; fi
         if ! ping -c1 $EPC_IP 1>&2 > /dev/null; then  report "" "E82: Cannot ping ePC on $EPC_IP ..." "Please retry update!" && return 1; fi
         if executeOnWin "mountvol p: /s & p: & DIR P:\nonlinear"; then
