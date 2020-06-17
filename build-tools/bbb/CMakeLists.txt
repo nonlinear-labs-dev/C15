@@ -100,6 +100,8 @@ add_custom_command(
         'rm -rf /fs/nonlinux/output/target/usr/C15'
         'rm -rf /fs/nonlinux/output/target/usr/C15-\*'
         "cd /fs/nonlinux"
+        "rm -rf /fs/nonlinux/output/target"
+        "find /fs/nonlinux/output/ -name .stamp_target_installed -delete"
         "make C15-clean-for-reconfigure"
         "make C15-rebuild"
         "make lpc_bb_driver-clean-for-reconfigure"
