@@ -210,6 +210,7 @@ print_C15_build_info() {
         print_build_info $(find $BINARY_DIR/build-tools/lpc/ -type f -name "main.bin")
     fi
     if [ $UPDATE_BBB == 1 ]; then
+        print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "bbbb")
         print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "lpc")
         print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "lpc-read")
         print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "ehc")

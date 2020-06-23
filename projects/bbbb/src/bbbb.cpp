@@ -10,6 +10,14 @@
 #include <ui/Window.h>
 #endif
 
+
+#include <stdio.h>
+#include <string.h>
+#include "version.h"
+
+#define PROGNAME "bbbb"
+#define VERSION "--version"
+
 void printStackTrace(int i)
 {
   nltools::Log::error("Crash signal caught!");
@@ -39,8 +47,19 @@ void printStackTrace(int i)
   exit(EXIT_FAILURE);
 }
 
+static void printVersion(void)
+{
+  printf(PROGNAME " version %s, %s\n", GetC15Version(), GetC15Build());
+}
+
 int main(int numArgs, char** argv)
 {
+  if (numArgs == 2 && strncmp(argv[1], VERSION, sizeof VERSION) == 0)
+  {
+    printVersion();
+    return 0;
+  }
+  
   Gio::init();
 
   ::signal(SIGSEGV, printStackTrace);

@@ -40,6 +40,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC pthread)
 target_link_libraries(${PROJECT_NAME} PUBLIC nltools)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../nltools/include/)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_BINARY_DIR}/projects/shared)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/shared)
+
 
 configure_file(${PROJECT_SOURCE_DIR}/systemd/${PROJECT_NAME}.service.in ${PROJECT_BINARY_DIR}/systemd/${PROJECT_NAME}.service @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/systemd/install-update-from-usb.service.in ${PROJECT_BINARY_DIR}/systemd/install-update-from-usb.service @ONLY)
