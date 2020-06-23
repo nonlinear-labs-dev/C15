@@ -70,10 +70,10 @@ endforeach(lib)
 
 target_include_directories(${LIB_NAME} PUBLIC src)
 target_include_directories(${LIB_NAME} PUBLIC ${PROJECT_BINARY_DIR}/src)
-#target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_BINARY_DIR}/projects/shared)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/nltools/include/)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/parameter-db/generated/)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/playground/src)
+target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_BINARY_DIR}/projects/shared)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/shared)
 target_link_libraries(${LIB_NAME} PUBLIC pthread stdc++fs nltools)
 

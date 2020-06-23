@@ -183,31 +183,39 @@ calc_checksum() {
     return 1
 }
 
-print_version_string()
+print_build_info()
 {
-    [ ! -z "$1" ] && echo "$1:" && echo "$(grep --binary-files=text "~C15" $1 | sed '$ s/\x00*$//')" && echo " "
+    if [ ! -z "$1" ]; then
+        echo -e "\e[33m$1\e[39m"
+        echo "$(cat $1 | tr '\0' '\n' | grep --binary-files=text '~C15')"
+    fi
 }
 
-print_C15_version_strings() {
-    echo "Getting version strings..."
+print_epc_build_info()
+{
+    FILE=$BINARY_DIR/build-tools/epc/tmp/usr/local/C15/$1
+    rm -f $FILE 2> /dev/null
+    tar -C $BINARY_DIR/build-tools/epc/tmp --extract --file=$BINARY_DIR/build-tools/epc/tmp/update/NonLinuxOverlay.tar.gz ./usr/local/C15/$1
+    print_build_info $FILE
+}
+
+print_C15_build_info() {
+    echo "Getting build info..."
     if [ $UPDATE_EPC == 1 ]; then
-        FILE=$BINARY_DIR/build-tools/epc/tmp/usr/local/C15/playground/playground
-        rm -f $FILE
         tar -C $BINARY_DIR/build-tools/epc/tmp --extract --file=$BINARY_DIR/build-tools/epc/update.tar ./update/NonLinuxOverlay.tar.gz
-        tar -C $BINARY_DIR/build-tools/epc/tmp --extract --file=$BINARY_DIR/build-tools/epc/tmp/update/NonLinuxOverlay.tar.gz ./usr/local/C15/playground/playground
-        FILE=$BINARY_DIR/build-tools/epc/tmp/usr/local/C15/playground/playground
-        print_version_string $FILE
+        print_epc_build_info  playground/playground
+        print_epc_build_info  audio-engine/audio-engine
     fi
     if [ $UPDATE_LPC == 1 ]; then
-        print_version_string $(find $BINARY_DIR/build-tools/lpc/ -type f -name "main.bin")
+        print_build_info $(find $BINARY_DIR/build-tools/lpc/ -type f -name "main.bin")
     fi
     if [ $UPDATE_BBB == 1 ]; then
-        print_version_string $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "lpc")
-        print_version_string $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "lpc-read")
-        print_version_string $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "ehc")
-        print_version_string $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "ehc-preset")
+        print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "lpc")
+        print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "lpc-read")
+        print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "ehc")
+        print_build_info $(find $BINARY_DIR/build-tools/bbb/rootfs/usr -type f -name "ehc-preset")
     fi
-    echo "Getting version strings done."
+    echo "Getting build info done."
 }
 
 main() {
@@ -217,7 +225,7 @@ main() {
     deploy_scripts || fail_and_exit
     get_tools_from_rootfs || fail_and_exit
     create_update_tar || fail_and_exit
-    print_C15_version_strings
+    print_C15_build_info
 }
 
 main

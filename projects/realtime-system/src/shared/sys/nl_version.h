@@ -32,4 +32,4 @@
 #error "either CORE_M4 or CORE_M0 must be defined!"
 #endif
 
-static const char VERSION_STRING[] = "\n\nC15 RT-SYS, LPC4337 Core " CORE ", FIRMWARE VERSION: " STR(SW_VERSION) " \n\n\0\0\0";
+static const char VERSION_STRING[] = "\n\n~C15 RT-SYS, LPC4337 Core " CORE ", FIRMWARE VERSION: " STR(SW_VERSION) " \n\n\0\0\0";

@@ -27,7 +27,7 @@ add_custom_command(
 )
 
 add_custom_command(
-    COMMENT "Create filesystem"
+    COMMENT "Creating filesystem..."
     OUTPUT  .filesystem-created
     COMMAND truncate -s 12G ${CMAKE_CURRENT_BINARY_DIR}/fs.ext4
     COMMAND mkfs.ext4 ${CMAKE_CURRENT_BINARY_DIR}/fs.ext4
@@ -35,7 +35,7 @@ add_custom_command(
 )
 
 add_custom_command(
-    COMMENT "Clone nonlinux from github"
+    COMMENT "Cloning nonlinux from github..."
     OUTPUT .nonlinux-cloned 
     DEPENDS .filesystem-created
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
@@ -54,7 +54,7 @@ add_custom_command(
 )
 
 add_custom_command(
-    COMMENT "Pull nonlinux from github"
+    COMMENT "Pulling nonlinux from github..."
     OUTPUT .nonlinux-pulled 
     DEPENDS .nonlinux-cloned 
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
@@ -69,7 +69,7 @@ add_custom_command(
 )
 
 add_custom_command(
-    COMMENT "Setup nonlinux"
+    COMMENT "Setting up nonlinux..."
     OUTPUT .nonlinux-setup
     DEPENDS .nonlinux-pulled .docker-container-created 
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
@@ -87,7 +87,7 @@ add_custom_command(
 )
 
 add_custom_command(
-    COMMENT "Build BBB rootfs"
+    COMMENT "Building BBB rootfs..."
     OUTPUT ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
     DEPENDS .nonlinux-setup
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runInDocker.sh
@@ -131,7 +131,7 @@ add_custom_command(
 )
 
 add_custom_command(
-    COMMENT "Build BBB update"
+    COMMENT "Building BBB update..."
     OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-bbb-update.tar
     DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
     DEPENDS ${SOURCE_FILES}

@@ -41,6 +41,8 @@ ENDIF(DEV_PC)
 target_link_libraries(${AE_LIB_NAME} PUBLIC pthread nltools)
 target_include_directories(${AE_LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/nltools/include)
 target_include_directories(${AE_LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/parameter-db/generated)
+target_include_directories(${AE_LIB_NAME} PUBLIC ${CMAKE_BINARY_DIR}/projects/shared)
+target_include_directories(${AE_LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/shared)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${C15_INSTALL_PATH}/${PROJECT_NAME})
 

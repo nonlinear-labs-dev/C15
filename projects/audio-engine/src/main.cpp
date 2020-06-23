@@ -14,6 +14,13 @@
 
 #include "ui/C15_CLI.h"
 
+#include <stdio.h>
+#include <string.h>
+#include "version.h"
+
+#define PROGNAME "audio-engine"
+#define VERSION "--version"
+
 static Glib::RefPtr<Glib::MainLoop> theMainLoop;
 static std::unique_ptr<AudioEngineOptions> theOptions;
 
@@ -66,8 +73,19 @@ std::unique_ptr<C15_CLI> createCLI(Synth *synth)
   return nullptr;
 }
 
+static void printVersion(void)
+{
+  printf(PROGNAME " version %s, %s\n", GetC15Version(), GetC15Build());
+}
+
 int main(int args, char *argv[])
 {
+  if (args == 2 && strncmp(argv[1], VERSION, sizeof VERSION) == 0)
+  {
+    printVersion();
+    return 0;
+  }
+  
   Glib::init();
   connectSignals();
   theOptions = std::make_unique<AudioEngineOptions>(args, argv);

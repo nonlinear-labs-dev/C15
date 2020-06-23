@@ -4,8 +4,26 @@
 #include "playground-helpers.h"
 #include <giomm.h>
 
+#include <stdio.h>
+#include <string.h>
+#include "version.h"
+
+#define PROGNAME "playground"
+#define VERSION "--version"
+
+static void printVersion(void)
+{
+  printf(PROGNAME " version %s, %s\n", GetC15Version(), GetC15Build());
+}
+
 int main(int numArgs, char **argv)
 {
+  if (numArgs == 2 && strncmp(argv[1], VERSION, sizeof VERSION) == 0)
+  {
+    printVersion();
+    return 0;
+  }
+    
   Glib::init();
   Gio::init();
 
