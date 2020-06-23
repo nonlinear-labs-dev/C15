@@ -10,9 +10,9 @@ OPTION(BUILD_TESTING "Enable tests" On)
 OPTION(BUILD_REALTIME_SYSTEM "Enable building of the LPC realtime system" Off)
 OPTION(BUILD_LPC_TOOLS "Enable building of the LPC helper tools" Off)
 
-EXEC_PROGRAM("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "log -n 1 --pretty='format:%cd' --date=format:'%Y-%m-%d %H:%M:%S'" OUTPUT_VARIABLE LAST_COMMIT_STAMP)
-EXEC_PROGRAM("git" ${CMAKE_CURRENT_SOURCE_DIR} ARGS "rev-parse --abbrev-ref HEAD" OUTPUT_VARIABLE BRANCH_NAME)
-SET(C15_VERSION "${LAST_COMMIT_STAMP}")
+#generate build info
+add_subdirectory(shared)
+SET(C15_VERSION "${COMMIT_DATE}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -Wno-deprecated-declarations")
 
@@ -33,8 +33,6 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
     message("This build will use CCache.")
 endif()
-
-message("building C15 firmware version: ${C15_VERSION}")
 
 SET(C15_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/C15)
 

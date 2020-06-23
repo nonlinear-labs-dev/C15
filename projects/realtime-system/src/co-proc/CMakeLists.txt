@@ -13,6 +13,7 @@ file(GLOB_RECURSE SOURCES ./src/*.c ../shared/*.c)
 
 add_executable(${BLOBNAME} ${SOURCES})
 
+target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_BINARY_DIR}/projects/shared)
 target_include_directories (${BLOBNAME} PRIVATE "./src")
 target_include_directories (${BLOBNAME} PRIVATE "../main/src")
 target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_SOURCE_DIR}/projects/)

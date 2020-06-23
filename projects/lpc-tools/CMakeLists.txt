@@ -17,6 +17,7 @@ add_executable(ehc-preset src/ehc-preset.c  ${CMAKE_SOURCE_DIR}/projects/shared/
 
 include_directories(src)
 include_directories(${CMAKE_SOURCE_DIR}/projects/)
+include_directories(${CMAKE_BINARY_DIR}/projects/shared)
 
 
 # INSTALL

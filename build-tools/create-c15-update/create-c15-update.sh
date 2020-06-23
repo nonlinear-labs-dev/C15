@@ -185,7 +185,7 @@ calc_checksum() {
 
 print_version_string()
 {
-    [ ! -z "$1" ] && echo " " $(grep -m 1 --binary-files=text "C15 Version" $1 | sed '$ s/\x00*$//') " (" $1 ")"
+    [ ! -z "$1" ] && echo "$1:" && echo "$(grep --binary-files=text "~C15" $1 | sed '$ s/\x00*$//')" && echo " "
 }
 
 print_C15_version_strings() {

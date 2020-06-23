@@ -16,6 +16,7 @@ add_dependencies(${BLOBNAME} co-proc.o)
 
 set_source_files_properties(../co-proc/co-proc.o PROPERTIES GENERATED TRUE)
 
+target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_BINARY_DIR}/projects/shared)
 target_include_directories (${BLOBNAME} PRIVATE "./src")
 target_include_directories (${BLOBNAME} PRIVATE "../co-proc/src")
 target_include_directories (${BLOBNAME} PRIVATE ${CMAKE_SOURCE_DIR}/projects/)
