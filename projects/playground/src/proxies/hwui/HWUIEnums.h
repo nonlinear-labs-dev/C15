@@ -3,7 +3,7 @@
 #include <bitset>
 #include <nltools/enums/EnumTools.h>
 
-ENUM(UIFocus, uint8_t, Any, Sound, Parameters, Presets, Banks, Setup, Unchanged);
+ENUM(UIFocus, uint8_t, Any, Sound, Parameters, Presets, Banks, Setup, Undo, Unchanged);
 ENUM(UIMode, uint8_t, Any, Select, Store, Edit, Info, Unchanged);
 ENUM(UIDetail, uint8_t, Any, Unchanged, Init, ButtonA, ButtonB, ButtonC, ButtonD, MCSelect, MCAmount, MCPosition,
      MCModRange, Voices, SoundParameters);

@@ -58,6 +58,11 @@ bool UndoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
       case Buttons::BUTTON_STORE:
         Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode(UIFocus::Presets, UIMode::Store));
         return true;
+
+      case Buttons::BUTTON_INFO:
+        Application::get().getHWUI()->undoableSetFocusAndMode(
+            FocusAndMode(UIFocus::Undo, UIMode::Info, UIDetail::Init));
+        return true;
     }
   }
 

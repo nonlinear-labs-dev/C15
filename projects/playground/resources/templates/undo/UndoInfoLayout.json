@@ -1,27 +1,29 @@
 {
   "layouts": {
-    "Sound-Voices-Info-Layout": {
+    "Undo-Info-Layout": {
       "Selector": {
-        "UIFocus": "Sound",
+        "UIFocus": "Undo",
         "UIMode": "Info",
-        "UIDetail": "Voices"
+        "UIDetail": "Init"
       },
       "Controls": {
         "Header": {
           "Class": "InvertedLabel",
           "Position": "0, 0",
           "Init": {
-            "Text[Text]": "Voices Info"
+            "Text[Text]": "Undo Info"
           }
         },
         "Name": {
           "Class": "WideHighlightLabel",
           "Position": "64, 0",
-          "Events": "EditBufferName => Text[Text]"
+          "Init": {
+            "Text[Text]": "Undo Info goes here!"
+          }
         }
       },
       "EventSinks": {
-        "BUTTON_SOUND": "SwitchToInitDetail"
+        "BUTTON_INFO": "OpenUndoScreen"
       }
     }
   }

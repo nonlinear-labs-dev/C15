@@ -1,6 +1,6 @@
 {
   "layouts": {
-    "Single-Sound-Select-Layout": {
+    "Sound-Info-Layout": {
       "Selector": {
         "UIFocus": "Sound",
         "UIMode": "Info",
