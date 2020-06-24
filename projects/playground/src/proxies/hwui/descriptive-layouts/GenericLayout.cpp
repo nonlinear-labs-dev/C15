@@ -259,9 +259,9 @@ namespace DescriptiveLayouts
     auto *hwui = Application::get().getHWUI();
     auto current = hwui->getFocusAndMode();
     if(current.mode == UIMode::Info)
-      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Select, UIDetail::Init });
+      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Select, UIDetail::Unchanged });
     else
-      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Info, UIDetail::Init });
+      hwui->setFocusAndMode({ UIFocus::Unchanged, UIMode::Info, UIDetail::Unchanged });
   }
 
   void GenericLayout::toggleEdit()

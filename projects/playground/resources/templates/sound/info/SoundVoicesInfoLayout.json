@@ -1,0 +1,28 @@
+{
+  "layouts": {
+    "Single-Sound-Select-Layout": {
+      "Selector": {
+        "UIFocus": "Sound",
+        "UIMode": "Info",
+        "UIDetail": "Voices"
+      },
+      "Controls": {
+        "Header": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Init": {
+            "Text[Text]": "Voices Info"
+          }
+        },
+        "Name": {
+          "Class": "WideHighlightLabel",
+          "Position": "64, 0",
+          "Events": "EditBufferName => Text[Text]"
+        }
+      },
+      "EventSinks": {
+        "BUTTON_SOUND": "SwitchToInitDetail"
+      }
+    }
+  }
+}
