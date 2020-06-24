@@ -42,8 +42,10 @@ class SetupLayout : public Layout
   void finishLists();
   void onEnterInSelectionMode(ButtonModifiers modifiers);
   void onEnterInEditMode();
+  void toggleInfo();
 
   std::unique_ptr<NavTree::Setup> m_tree;
   FocusAndMode m_focusAndMode;
   SetupEditor *m_editor;
+  Control *m_infoLayout = nullptr;
 };

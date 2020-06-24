@@ -98,6 +98,8 @@ namespace NavTree
       return name;
     }
 
+    virtual Control *createInfoView() = 0;
+
     InnerNode *parent;
     virtual Control *createView() = 0;
 
@@ -138,6 +140,15 @@ namespace NavTree
     std::list<std::unique_ptr<Node>> children;
   };
 
+  struct PlaceHolderInfo : public ControlWithChildren
+  {
+    explicit PlaceHolderInfo(const std::string &str)
+        : ControlWithChildren(Rect(0, 0, 256, 96))
+    {
+      addControl(new Label({ str, 0 }, Rect(0, 0, 256, 12)));
+    }
+  };
+
   struct Velocity : EditableLeaf
   {
     Velocity(InnerNode *parent)
@@ -153,6 +164,11 @@ namespace NavTree
     virtual Control *createEditor() override
     {
       return new VelocityEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Velocity Curve");
     }
   };
 
@@ -172,6 +188,11 @@ namespace NavTree
     {
       return new AftertouchEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Aftertouch Curve");
+    }
   };
 
   struct BenderCurveSetting : EditableLeaf
@@ -189,6 +210,11 @@ namespace NavTree
     virtual Control *createEditor() override
     {
       return new BenderCurveEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Bender Curve");
     }
   };
 
@@ -217,6 +243,11 @@ namespace NavTree
       return new PedalSelectionControl(param);
     }
 
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Pedal Setting");
+    }
+
     PedalParameter *param;
   };
 
@@ -235,6 +266,11 @@ namespace NavTree
     Control *createEditor() override
     {
       return new WiFiSettingEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Wifi Curve");
     }
   };
 
@@ -261,30 +297,10 @@ namespace NavTree
     {
       return new NumericSettingEditor<tSetting>();
     }
-  };
 
-  template <typename tSetting> struct EnumSettingItem : EditableLeaf
-  {
-   private:
-    tSetting *getSetting()
+    Control *createInfoView() override
     {
-      return Application::get().getSettings()->getSetting<tSetting>();
-    }
-
-   public:
-    EnumSettingItem(InnerNode *parent, const char *name)
-        : EditableLeaf(parent, name)
-    {
-    }
-
-    Control *createView() override
-    {
-      return new SettingView<tSetting>();
-    }
-
-    Control *createEditor() override
-    {
-      return new EnumSettingEditor<tSetting>();
+      return new PlaceHolderInfo("Setting Item");
     }
   };
 
@@ -304,6 +320,11 @@ namespace NavTree
     {
       return new PresetGlitchSuppressionEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Preset Glitch Suppression");
+    }
   };
 
   struct EditSmoothingTime : EditableLeaf
@@ -322,6 +343,11 @@ namespace NavTree
     {
       return new EditSmoothingTimeEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Edit Smoothing Time");
+    }
   };
 
   struct PedalSettings : InnerNode
@@ -333,6 +359,11 @@ namespace NavTree
       children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal2ParameterID().getNumber()));
       children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal3ParameterID().getNumber()));
       children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal4ParameterID().getNumber()));
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Pedal Settings");
     }
   };
 
@@ -350,6 +381,11 @@ namespace NavTree
       children.emplace_back(new PedalSettings(this));
       children.emplace_back(new PresetGlitchSuppression(this));
       children.emplace_back(new WiFiSetting(this));
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Settings for the Device!");
     }
   };
 
@@ -376,6 +412,11 @@ namespace NavTree
       boled.setOverlay(new RenameDeviceLayout(boled.getLayout()));
       return true;
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Device Name");
+    }
   };
 
   struct SSID : Leaf
@@ -388,6 +429,11 @@ namespace NavTree
     virtual Control *createView() override
     {
       return new SSIDView();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("SSID");
     }
   };
 
@@ -406,6 +452,11 @@ namespace NavTree
     virtual Control *createEditor() override
     {
       return new PassphraseEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Passphrase");
     }
   };
 
@@ -428,6 +479,11 @@ namespace NavTree
 
       return nullptr;
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Update");
+    }
   };
 
   struct FreeInternalMemory : Leaf
@@ -440,6 +496,11 @@ namespace NavTree
     virtual Control *createView() override
     {
       return new FreeInternalMemoryView();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("df -h");
     }
   };
 
@@ -460,6 +521,11 @@ namespace NavTree
     {
       return new UISoftwareVersionEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Version");
+    }
   };
 
   struct DateTime : EditableLeaf
@@ -478,6 +544,11 @@ namespace NavTree
     virtual Control *createEditor() override
     {
       return new DateTimeEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Date Time");
     }
   };
 
@@ -498,6 +569,11 @@ namespace NavTree
     {
       return new AddressLabel();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Purely Info about IP");
+    }
   };
 
   struct SystemInfo : InnerNode
@@ -513,6 +589,11 @@ namespace NavTree
       children.emplace_back(new UISoftwareVersion(this));
       children.emplace_back(new DateTime(this));
       children.emplace_back(new UpdateAvailable(this));
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Info about the system status and so on");
     }
   };
 
@@ -539,6 +620,11 @@ namespace NavTree
       boled.setOverlay(new AboutLayout());
       return true;
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("What could be here?");
+    }
   };
 
   struct EncoderAcceleration : EditableLeaf
@@ -556,6 +642,11 @@ namespace NavTree
     virtual Control *createEditor() override
     {
       return new EncoderAccelerationEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Encoder Acceleration");
     }
   };
 
@@ -575,6 +666,11 @@ namespace NavTree
     {
       return new RibbonRelativeFactorSettingEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Ribbon Relative Factor");
+    }
   };
 
   struct SignalFlowIndicationSetting : EditableLeaf
@@ -593,6 +689,11 @@ namespace NavTree
     {
       return new SignalFlowIndicatorEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Signal Flow Indication Curve?");
+    }
   };
 
   struct HardwareUI : InnerNode
@@ -603,6 +704,11 @@ namespace NavTree
       children.emplace_back(new EncoderAcceleration(this));
       children.emplace_back(new RibbonRelativeFactorSetting(this));
       children.emplace_back(new SignalFlowIndicationSetting(this));
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("HWUI?");
     }
   };
 
@@ -616,6 +722,11 @@ namespace NavTree
     virtual Control *createView() override
     {
       return new USBStickAvailableView();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Wheter or not a stick steckt");
     }
   };
 
@@ -635,6 +746,11 @@ namespace NavTree
     {
       return new ExportBackupEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Save all Banks Info");
+    }
   };
 
   struct BackupImport : EditableLeaf
@@ -653,6 +769,11 @@ namespace NavTree
     {
       return new ImportBackupEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Restore all Banks info");
+    }
   };
 
   struct Backup : InnerNode
@@ -663,6 +784,11 @@ namespace NavTree
       children.emplace_back(new USBStickAvailable(this));
       children.emplace_back(new BackupExport(this));
       children.emplace_back(new BackupImport(this));
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Back Up early and often~!");
     }
   };
 
@@ -677,6 +803,11 @@ namespace NavTree
       children.emplace_back(new About(this));
       children.emplace_back(new Backup(this));
       focus = children.begin();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo("Total Information!");
     }
 
     Glib::ustring getName() const override
@@ -894,6 +1025,16 @@ void SetupLayout::diveUp()
 
 bool SetupLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
+  if(m_infoLayout || i == Buttons::BUTTON_INFO)
+  {
+    if(i == Buttons::BUTTON_INFO && down)
+    {
+      toggleInfo();
+      return true;
+    }
+    return false;
+  }
+
   if(down)
   {
     if(i == Buttons::BUTTON_PRESET)
@@ -999,6 +1140,22 @@ void SetupLayout::setEditor(Control *c)
   g_assert(m_editor);
 }
 
+void SetupLayout::toggleInfo()
+{
+  if(m_infoLayout)
+  {
+    remove(m_infoLayout);
+    m_infoLayout = nullptr;
+  }
+  else
+  {
+    if(*m_tree->focus)
+    {
+      m_infoLayout = addControl(m_tree->focus->get()->createInfoView());
+    }
+  }
+}
+
 void SetupLayout::finishLists()
 {
   if(auto r = findControlOfType<SetupSelectionEntries>())
@@ -1030,7 +1187,7 @@ bool SetupLayout::redraw(FrameBuffer &fb)
 {
   ControlOwner::redraw(fb);
 
-  if(m_focusAndMode.mode == UIMode::Select)
+  if(m_focusAndMode.mode == UIMode::Select && m_infoLayout == nullptr)
   {
     fb.setColor(FrameBufferColors::C179);
     fb.drawRect(Rect(0, 28, 256, 12));
