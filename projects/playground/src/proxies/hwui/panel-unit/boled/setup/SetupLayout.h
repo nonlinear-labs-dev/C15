@@ -37,7 +37,6 @@ class SetupLayout : public Layout
   void addSelectionEntries();
   void addValueViews();
   bool addEditor();
-  bool isInSelectionMode() const;
   bool isInEditMode() const;
   void finishLists();
   void onEnterInSelectionMode(ButtonModifiers modifiers);

@@ -68,6 +68,7 @@
 #include <tools/StringTools.h>
 #include <parameter_declarations.h>
 #include "UISoftwareVersionEditor.h"
+#include "SetupInfoTexts.h"
 
 namespace NavTree
 {
@@ -142,11 +143,15 @@ namespace NavTree
 
   struct PlaceHolderInfo : public ControlWithChildren
   {
-    explicit PlaceHolderInfo(const std::string &str)
+    explicit PlaceHolderInfo(SetupInfoEntries entry)
         : ControlWithChildren(Rect(0, 0, 256, 96))
     {
-      addControl(new Label({ str, 0 }, Rect(0, 0, 256, 12)));
+      addControl(new Label({ SetupInfoHeaders.at(entry), 0 }, Rect(0, 0, 256, 12)));
+      m_content = addControl(new MultiLineLabel(Rect(0, 12, 256, 84), SetupInfoContent.at(entry)));
     }
+
+   private:
+    MultiLineLabel *m_content;
   };
 
   struct Velocity : EditableLeaf
@@ -168,7 +173,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Velocity Curve");
+      return new PlaceHolderInfo(SetupInfoEntries::VelocityCurve);
     }
   };
 
@@ -191,7 +196,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Aftertouch Curve");
+      return new PlaceHolderInfo(SetupInfoEntries::AftertouchCurve);
     }
   };
 
@@ -214,7 +219,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Bender Curve");
+      return new PlaceHolderInfo(SetupInfoEntries::BenderCurve);
     }
   };
 
@@ -245,7 +250,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Pedal Setting");
+      return new PlaceHolderInfo(SetupInfoEntries::PedalSetting);
     }
 
     PedalParameter *param;
@@ -270,7 +275,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Wifi Curve");
+      return new PlaceHolderInfo(SetupInfoEntries::WiFiSetting);
     }
   };
 
@@ -300,7 +305,8 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Setting Item");
+#warning add setting info getter for generic setting items
+      return new PlaceHolderInfo(SetupInfoEntries::SettingItem);
     }
   };
 
@@ -323,7 +329,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Preset Glitch Suppression");
+      return new PlaceHolderInfo(SetupInfoEntries::PresetGlitchSuppression);
     }
   };
 
@@ -346,7 +352,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Edit Smoothing Time");
+      return new PlaceHolderInfo(SetupInfoEntries::EditSmoothingTime);
     }
   };
 
@@ -363,7 +369,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Pedal Settings");
+      return new PlaceHolderInfo(SetupInfoEntries::Pedals);
     }
   };
 
@@ -385,7 +391,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Settings for the Device!");
+      return new PlaceHolderInfo(SetupInfoEntries::DeviceSettings);
     }
   };
 
@@ -415,7 +421,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Device Name");
+      return new PlaceHolderInfo(SetupInfoEntries::DeviceName);
     }
   };
 
@@ -433,7 +439,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("SSID");
+      return new PlaceHolderInfo(SetupInfoEntries::SSID);
     }
   };
 
@@ -456,7 +462,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Passphrase");
+      return new PlaceHolderInfo(SetupInfoEntries::Passphrase);
     }
   };
 
@@ -482,7 +488,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Update");
+      return new PlaceHolderInfo(SetupInfoEntries::UpdateAvailable);
     }
   };
 
@@ -500,7 +506,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("df -h");
+      return new PlaceHolderInfo(SetupInfoEntries::FreeMemory);
     }
   };
 
@@ -524,7 +530,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Version");
+      return new PlaceHolderInfo(SetupInfoEntries::SoftwareVersion);
     }
   };
 
@@ -548,7 +554,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Date Time");
+      return new PlaceHolderInfo(SetupInfoEntries::DateTime);
     }
   };
 
@@ -572,7 +578,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Purely Info about IP");
+      return new PlaceHolderInfo(SetupInfoEntries::WebsiteAddress);
     }
   };
 
@@ -593,7 +599,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Info about the system status and so on");
+      return new PlaceHolderInfo(SetupInfoEntries::SystemInfo);
     }
   };
 
@@ -623,7 +629,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("What could be here?");
+      return new PlaceHolderInfo(SetupInfoEntries::About);
     }
   };
 
@@ -646,7 +652,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Encoder Acceleration");
+      return new PlaceHolderInfo(SetupInfoEntries::EncoderAcceleration);
     }
   };
 
@@ -669,7 +675,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Ribbon Relative Factor");
+      return new PlaceHolderInfo(SetupInfoEntries::RibbonRelativeFactor);
     }
   };
 
@@ -692,7 +698,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Signal Flow Indication Curve?");
+      return new PlaceHolderInfo(SetupInfoEntries::SignalFlowIndicator);
     }
   };
 
@@ -708,7 +714,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("HWUI?");
+      return new PlaceHolderInfo(SetupInfoEntries::HardwareUI);
     }
   };
 
@@ -726,7 +732,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Wheter or not a stick steckt");
+      return new PlaceHolderInfo(SetupInfoEntries::USBAvailable);
     }
   };
 
@@ -749,7 +755,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Save all Banks Info");
+      return new PlaceHolderInfo(SetupInfoEntries::SaveAllBanks);
     }
   };
 
@@ -772,7 +778,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Restore all Banks info");
+      return new PlaceHolderInfo(SetupInfoEntries::RestoreAllBanks);
     }
   };
 
@@ -788,7 +794,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Back Up early and often~!");
+      return new PlaceHolderInfo(SetupInfoEntries::Backup);
     }
   };
 
@@ -807,7 +813,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo("Total Information!");
+      return new PlaceHolderInfo(SetupInfoEntries::Setup);
     }
 
     Glib::ustring getName() const override
@@ -963,13 +969,6 @@ void SetupLayout::addSelectionEntries()
     s->setHighlight((c.get() == focus));
     addSelectionEntry(s);
   }
-}
-
-bool SetupLayout::isInSelectionMode() const
-{
-  auto focus = m_tree->focus->get();
-  auto focusEditable = dynamic_cast<const NavTree::Leaf *>(focus);
-  return m_focusAndMode.mode == UIMode::Select || !focusEditable;
 }
 
 void SetupLayout::addValueViews()
