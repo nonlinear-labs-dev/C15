@@ -1,5 +1,7 @@
 #pragma once
 
+#include <device-settings/TransitionTime.h>
+#include <device-settings/TuneReference.h>
 enum class SetupInfoEntries
 {
   SettingItem,
@@ -32,7 +34,15 @@ enum class SetupInfoEntries
   Backup,
   Setup,
   TransitionTime,
-  TuneReference
+  TuneReference,
+  RandomizePart,
+  RandomizeSound,
+  InitPart,
+  InitSound,
+  ConvertToSingle,
+  ConvertToSplit,
+  ConvertToLayer,
+  PartLabel
 };
 
 template <typename tSetting> SetupInfoEntries SettingToSetupInfoEntry()
@@ -77,7 +87,15 @@ static std::map<SetupInfoEntries, const char*> SetupInfoHeaders {
   { SetupInfoEntries::Backup, "Backup" },
   { SetupInfoEntries::Setup, "not used.." },
   { SetupInfoEntries::TransitionTime, "Transition Time" },
-  { SetupInfoEntries::TuneReference, "Tune Reference" }
+  { SetupInfoEntries::TuneReference, "Tune Reference" },
+  { SetupInfoEntries::RandomizePart, "Randomize Part" },
+  { SetupInfoEntries::RandomizeSound, "Randomize Sound" },
+  { SetupInfoEntries::InitPart, "Init Part" },
+  { SetupInfoEntries::InitSound, "Init Sound" },
+  { SetupInfoEntries::ConvertToSingle, "Convert Sound To Single" },
+  { SetupInfoEntries::ConvertToSplit, "Convert Sound To Split" },
+  { SetupInfoEntries::ConvertToLayer, "Convert Sound To Layer" },
+  { SetupInfoEntries::PartLabel, "Dual Sound Part Name" }
 };
 
 static std::map<SetupInfoEntries, const char*> SetupInfoContent {
@@ -125,5 +143,17 @@ static std::map<SetupInfoEntries, const char*> SetupInfoContent {
   { SetupInfoEntries::Backup, "Backup lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum" },
   { SetupInfoEntries::Setup, "not used.. lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum" },
   { SetupInfoEntries::TransitionTime, "Transition Time is:  loreeeem loreeeem ipsumipsumloreeeem ipsumloreeeem ipsum" },
-  { SetupInfoEntries::TuneReference, "Tune Refrerence is : loreeeem loreeeem ipsumipsumloreeeem ipsumloreeeem ipsum" }
+  { SetupInfoEntries::TuneReference, "Tune Refrerence is : loreeeem loreeeem ipsumipsumloreeeem ipsumloreeeem ipsum" },
+  { SetupInfoEntries::RandomizePart, "RandomizePart lorem lorem ipsum libsum checksum" },
+  { SetupInfoEntries::RandomizeSound, "Randomize Sound lorem lorem ipsum libsum checksum" },
+  { SetupInfoEntries::InitPart, "Init Part lorem lorem ipsum libsum checksum" },
+  { SetupInfoEntries::InitSound, "Init Sound lorem lorem ipsum libsum checksum" },
+  { SetupInfoEntries::ConvertToSingle,
+    "Convert Sound To Single lorem lorem loremlorem loremlorem loremlorem loremlorem loremlorem" },
+  { SetupInfoEntries::ConvertToSplit,
+    "Convert Sound To Split lorem loremlorem loremlorem loremlorem loremlorem loremlorem loremlorem lorem" },
+  { SetupInfoEntries::ConvertToLayer,
+    "Convert Sound To Layer lorem loremlorem loremlorem loremlorem loremlorem loremlorem loremlorem loremlorem "
+    "lorem" },
+  { SetupInfoEntries::PartLabel, "Part Label of Dual Sound Part part?!" }
 };

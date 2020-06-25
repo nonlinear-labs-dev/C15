@@ -5,10 +5,10 @@
 #include "proxies/hwui/descriptive-layouts/concrete/menu/menu-items/MenuItem.h"
 #include "proxies/hwui/descriptive-layouts/concrete/menu/menu-overlays/MenuOverlay.h"
 
-class ScrollMenu : public ControlWithChildren, public ButtonReceiver
+class SoundEditMenu : public ControlWithChildren, public ButtonReceiver
 {
  public:
-  explicit ScrollMenu(const Rect &r);
+  explicit SoundEditMenu(const Rect &r);
   bool onButton(Buttons i, bool down, ButtonModifiers mod) override;
 
   void doLayout();
@@ -24,9 +24,10 @@ class ScrollMenu : public ControlWithChildren, public ButtonReceiver
 
  protected:
   MenuOverlay *m_overlay = nullptr;
+  Control *m_infoOverlay = nullptr;
 
   std::vector<MenuItem *> m_items;
-  int m_selectedItem{ 0 };
+  int m_selectedItem { 0 };
 
   bool handleScrolling(const Buttons &i, bool down);
   bool onButtonOverlay(const Buttons &i, bool down, const ButtonModifiers &mod);

@@ -6,7 +6,7 @@
 #include <proxies/hwui/descriptive-layouts/concrete/sound/menus/items/ConvertToSoundTypeItem.h>
 
 SingleSoundEditMenu::SingleSoundEditMenu(const Rect &r)
-    : ScrollMenu(r)
+    : SoundEditMenu(r)
 {
   init();
 }

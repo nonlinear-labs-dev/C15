@@ -6,10 +6,12 @@ class InitSound : public AnimatedGenericItem
 {
  public:
   InitSound(const Rect& rect);
+  Control* createInfo() override;
 };
 
 class InitPart : public AnimatedGenericItem
 {
  public:
   InitPart(const Rect& r);
+  Control* createInfo() override;
 };

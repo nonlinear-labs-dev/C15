@@ -11,7 +11,7 @@
 #include <proxies/hwui/descriptive-layouts/concrete/sound/menus/items/RandomizeItem.h>
 
 DualSoundEditMenu::DualSoundEditMenu(const Rect &r)
-    : ScrollMenu(r)
+    : SoundEditMenu(r)
 {
   init();
 }

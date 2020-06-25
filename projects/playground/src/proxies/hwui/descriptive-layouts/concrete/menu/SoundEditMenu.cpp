@@ -1,13 +1,13 @@
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/AnimatedGenericItem.h>
-#include "ScrollMenu.h"
+#include "SoundEditMenu.h"
 #include "proxies/hwui/descriptive-layouts/concrete/menu/menu-items/EditorItem.h"
 
-ScrollMenu::ScrollMenu(const Rect &r)
+SoundEditMenu::SoundEditMenu(const Rect &r)
     : ControlWithChildren(r)
 {
 }
 
-void ScrollMenu::scroll(int direction)
+void SoundEditMenu::scroll(int direction)
 {
   int s = m_items.size() - 1;
   int newIndex = m_selectedItem + direction;
@@ -15,8 +15,26 @@ void ScrollMenu::scroll(int direction)
   doLayout();
 }
 
-bool ScrollMenu::onButton(Buttons i, bool down, ButtonModifiers mod)
+bool SoundEditMenu::onButton(Buttons i, bool down, ButtonModifiers mod)
 {
+  if(i == Buttons::BUTTON_INFO && down)
+  {
+    if(m_infoOverlay)
+    {
+      remove(m_infoOverlay);
+      m_infoOverlay = nullptr;
+      return true;
+    }
+    else
+    {
+      if(auto selected = m_items.at(m_selectedItem))
+      {
+        m_infoOverlay = addControl(selected->createInfo());
+        return true;
+      }
+    }
+  }
+
   if(m_overlay)
   {
     return onButtonOverlay(i, down, mod);
@@ -25,7 +43,7 @@ bool ScrollMenu::onButton(Buttons i, bool down, ButtonModifiers mod)
   return handleScrolling(i, down) || onSelectedItemButtonHandler(i, down, mod);
 }
 
-bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const ButtonModifiers &mod)
+bool SoundEditMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const ButtonModifiers &mod)
 {
   if(m_selectedItem >= m_items.size() || m_selectedItem < 0)
     return false;
@@ -56,7 +74,7 @@ bool ScrollMenu::onSelectedItemButtonHandler(const Buttons &i, bool down, const 
   return false;
 }
 
-bool ScrollMenu::onButtonOverlay(const Buttons &i, bool down, const ButtonModifiers &mod)
+bool SoundEditMenu::onButtonOverlay(const Buttons &i, bool down, const ButtonModifiers &mod)
 {
   if(m_overlay)
   {
@@ -75,7 +93,7 @@ bool ScrollMenu::onButtonOverlay(const Buttons &i, bool down, const ButtonModifi
   return false;
 }
 
-bool ScrollMenu::handleScrolling(const Buttons &i, bool down)
+bool SoundEditMenu::handleScrolling(const Buttons &i, bool down)
 {
   if(down)
   {
@@ -93,7 +111,7 @@ bool ScrollMenu::handleScrolling(const Buttons &i, bool down)
   return false;
 }
 
-void ScrollMenu::doLayout()
+void SoundEditMenu::doLayout()
 {
   if(m_overlay)
   {
@@ -145,7 +163,7 @@ void ScrollMenu::doLayout()
   setDirty();
 }
 
-int ScrollMenu::getDefaultItemHeight() const
+int SoundEditMenu::getDefaultItemHeight() const
 {
   return 13;
 }

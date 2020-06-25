@@ -9,6 +9,7 @@
 #include <libundo/undo/Scope.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-overlays/ChangeSettingWithCommitOverlay.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SoundEditInfoLayout.h>
 
 RandomizeItem::RandomizeItem(const Rect& rect)
     : EditorItem("Randomize Sound", rect)
@@ -29,6 +30,11 @@ MenuOverlay* RandomizeItem::createOverlay()
     Application::get().getPresetManager()->getEditBuffer()->undoableRandomize(scope->getTransaction(),
                                                                               Initiator::EXPLICIT_HWUI);
   });
+}
+
+Control* RandomizeItem::createInfo()
+{
+  return new SoundEditInfoLayout(SetupInfoEntries::RandomizeSound);
 }
 
 RandomizePart::RandomizePart(const Rect& r)
@@ -53,4 +59,9 @@ MenuOverlay* RandomizePart::createOverlay()
     Application::get().getPresetManager()->getEditBuffer()->undoableRandomizePart(scope->getTransaction(), vg,
                                                                                   Initiator::EXPLICIT_HWUI);
   });
+}
+
+Control* RandomizePart::createInfo()
+{
+  return new SoundEditInfoLayout(SetupInfoEntries::RandomizePart);
 }

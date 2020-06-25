@@ -4,6 +4,7 @@
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
 #include <libundo/undo/Scope.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SoundEditInfoLayout.h>
 
 InitSound::InitSound(const Rect& rect)
     : AnimatedGenericItem("Init Sound", rect, [] {
@@ -16,6 +17,11 @@ InitSound::InitSound(const Rect& rect)
 {
 }
 
+Control* InitSound::createInfo()
+{
+  return new SoundEditInfoLayout(SetupInfoEntries::InitSound);
+}
+
 InitPart::InitPart(const Rect& r)
     : AnimatedGenericItem("Init Part", r, []() {
       auto pm = Application::get().getPresetManager();
@@ -26,4 +32,9 @@ InitPart::InitPart(const Rect& r)
       hwui->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
     })
 {
+}
+
+Control* InitPart::createInfo()
+{
+  return new SoundEditInfoLayout(SetupInfoEntries::InitPart);
 }

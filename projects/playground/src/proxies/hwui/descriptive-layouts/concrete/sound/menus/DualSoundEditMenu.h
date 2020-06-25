@@ -1,8 +1,8 @@
 #pragma once
 
-#include <proxies/hwui/descriptive-layouts/concrete/menu/ScrollMenu.h>
+#include <proxies/hwui/descriptive-layouts/concrete/menu/SoundEditMenu.h>
 
-class DualSoundEditMenu : public ScrollMenu
+class DualSoundEditMenu : public SoundEditMenu
 {
  public:
   explicit DualSoundEditMenu(const Rect& r);

@@ -3,6 +3,7 @@
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/RenameVoiceGroupLayout.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SoundEditInfoLayout.h>
 
 #include "PartLabelItem.h"
 
@@ -31,4 +32,8 @@ void PartLabelItem::doAction()
 {
   auto hwui = Application::get().getHWUI();
   hwui->getPanelUnit().getEditPanel().getBoled().reset(new RenameVoiceGroupLayout(currentVoiceGroup()));
+}
+
+Control * PartLabelItem::createInfo(){
+  return new SoundEditInfoLayout(SetupInfoEntries::PartLabel);
 }
