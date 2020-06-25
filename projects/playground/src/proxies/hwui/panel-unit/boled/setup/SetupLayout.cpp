@@ -305,8 +305,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-#warning add setting info getter for generic setting items
-      return new PlaceHolderInfo(SetupInfoEntries::SettingItem);
+      return new PlaceHolderInfo(SettingToSetupInfoEntry<tSetting>());
     }
   };
 

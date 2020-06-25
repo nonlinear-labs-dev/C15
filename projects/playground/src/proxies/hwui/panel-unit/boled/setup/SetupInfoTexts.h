@@ -31,7 +31,21 @@ enum class SetupInfoEntries
   RestoreAllBanks,
   Backup,
   Setup,
+  TransitionTime,
+  TuneReference
 };
+
+template <typename tSetting> SetupInfoEntries SettingToSetupInfoEntry()
+{
+  if constexpr(std::is_same_v<tSetting, TransitionTime>)
+  {
+    return SetupInfoEntries::TransitionTime;
+  }
+  else if constexpr(std::is_same_v<tSetting, TuneReference>)
+  {
+    return SetupInfoEntries::TuneReference;
+  }
+}
 
 static std::map<SetupInfoEntries, const char*> SetupInfoHeaders {
   { SetupInfoEntries::VelocityCurve, "Velocity Curve" },
@@ -61,7 +75,9 @@ static std::map<SetupInfoEntries, const char*> SetupInfoHeaders {
   { SetupInfoEntries::SaveAllBanks, "Save All Banks to USB" },
   { SetupInfoEntries::RestoreAllBanks, "Restore All Banks from USB" },
   { SetupInfoEntries::Backup, "Backup" },
-  { SetupInfoEntries::Setup, "not used.." }
+  { SetupInfoEntries::Setup, "not used.." },
+  { SetupInfoEntries::TransitionTime, "Transition Time" },
+  { SetupInfoEntries::TuneReference, "Tune Reference" }
 };
 
 static std::map<SetupInfoEntries, const char*> SetupInfoContent {
@@ -107,5 +123,7 @@ static std::map<SetupInfoEntries, const char*> SetupInfoContent {
   { SetupInfoEntries::RestoreAllBanks,
     "Restore All Banks from USB lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum" },
   { SetupInfoEntries::Backup, "Backup lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum" },
-  { SetupInfoEntries::Setup, "not used.. lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum" }
+  { SetupInfoEntries::Setup, "not used.. lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum" },
+  { SetupInfoEntries::TransitionTime, "Transition Time is:  loreeeem loreeeem ipsumipsumloreeeem ipsumloreeeem ipsum" },
+  { SetupInfoEntries::TuneReference, "Tune Refrerence is : loreeeem loreeeem ipsumipsumloreeeem ipsumloreeeem ipsum" }
 };
