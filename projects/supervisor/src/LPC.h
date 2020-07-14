@@ -1,4 +1,4 @@
-﻿// LPC processing (muting communication)
+// LPC processing (muting communication)
 // KSTR 2019-11-01
 
 #ifndef __LPC_H__

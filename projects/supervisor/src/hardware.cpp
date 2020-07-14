@@ -1,4 +1,4 @@
-﻿// hardware defintions and support routines
+// hardware defintions and support routines
 // KSTR 2019-06-07
 
 #include "hardware.h"

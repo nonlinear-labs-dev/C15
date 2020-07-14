@@ -1,4 +1,4 @@
-﻿// ePC (Intel NUC) processing
+// ePC (Intel NUC) processing
 // KSTR 2019-06-07
 
 #ifndef __ePC_H__

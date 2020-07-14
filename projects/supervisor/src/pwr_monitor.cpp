@@ -1,4 +1,4 @@
-﻿// system and input power processing
+// system and input power processing
 // KSTR 2019-06-07
 
 #include "pwr_monitor.h"

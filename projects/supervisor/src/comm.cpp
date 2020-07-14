@@ -1,4 +1,4 @@
-﻿// BBB communication
+// BBB communication
 // KSTR 2019-11-04
 
 #include "comm.h"

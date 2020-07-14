@@ -1,4 +1,4 @@
-﻿// initial ESPI override to set all LEDs on TopCover and PanelUnit
+// initial ESPI override to set all LEDs on TopCover and PanelUnit
 // KSTR 2019-06-21
 
 #include "ESPI.h"

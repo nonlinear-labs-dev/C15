@@ -1,4 +1,4 @@
-﻿// system and input power processing
+// system and input power processing
 // KSTR 2019-06-07
 
 #ifndef __PWR_MONITOR_H__

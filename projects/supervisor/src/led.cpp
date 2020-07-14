@@ -1,4 +1,4 @@
-﻿// LED command processing
+// LED command processing
 // KSTR 2019-06-07
 
 #include <stdint.h>

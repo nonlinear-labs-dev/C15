@@ -1,4 +1,4 @@
-﻿// power switch/button processing
+// power switch/button processing
 // KSTR 2019-06-07
 
 #ifndef __PWR_SWITCH_H__

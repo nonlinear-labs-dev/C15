@@ -1,13 +1,1 @@
-*               text=auto
-*.c             text eol=lf
-*.cpp           text eol=lf
-*.h             text eol=lf
-*.sh            text eol=lf
-*.txt           text eol=lf
-*.service       text eol=lf
-*.in            text eol=lf
-*.mk            text eol=lf
-.clang-format   text eol=lf
-.git*           text eol=lf
-oroot           text eol=lf
-nlhook          text eol=lf
+* -text
