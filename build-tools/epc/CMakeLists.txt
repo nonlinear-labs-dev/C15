@@ -1,6 +1,9 @@
 SET(USER $ENV{USER})
 SET(DOCKERNAME nl-epc-build-environment)
 
+SET(INTERACTIVE " -ti ")
+SET(NON_INTERACTIVE " ")
+
 file(GLOB_RECURSE ALL_FILES_IN_PROJECT ${CMAKE_SOURCE_DIR}/projects/*)
 file(GLOB_RECURSE ALL_BUILD_TOOLS_FILES ${CMAKE_SOURCE_DIR}/build-tools/*)
 file(GLOB_RECURSE NONMAPS_TARGET_FILES ${CMAKE_SOURCE_DIR}/projects/NonMaps/target/*)
@@ -58,6 +61,7 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/createNonlinuxISO.sh
+        ${NON_INTERACTIVE}
 )
 
 add_custom_command(
@@ -69,6 +73,7 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/installNonLinuxInfoVM.sh
+        ${NON_INTERACTIVE}
 )
 
 add_custom_command(
@@ -87,6 +92,7 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/createLocalRootFS.sh
+        ${NON_INTERACTIVE}
     COMMAND touch .nonlinux-local-rootfs
 )
 
@@ -101,6 +107,7 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/createUpdate.sh
+        ${NON_INTERACTIVE}
 )
 
 add_custom_command(
@@ -148,6 +155,15 @@ add_custom_target(epc-install-medium DEPENDS .nonlinux-install-medium)
 add_custom_target(epc-create-update DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/update.tar)
 add_custom_target(epc-nonlinux-iso DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/NonLinuxAP.iso)
 add_custom_target(epc-nonlinux-vm-installation DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/disk.raw)
+
+add_custom_target(epc-console 
+    DEPENDS .nonlinux-local-rootfs
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/runScriptInDocker.sh
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/runBash.sh
+        ${INTERACTIVE}
+    )
 
 
 
