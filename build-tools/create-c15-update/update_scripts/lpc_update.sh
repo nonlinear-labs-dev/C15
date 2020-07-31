@@ -28,7 +28,7 @@ if [ -z "$2" ] ; then
 	exit 34
 fi
 
-export_gpio {
+export_gpio() {
 	GPIO=$1
 	echo $GPIO > /sys/class/gpio/export
 	sleep 0.1
@@ -36,20 +36,18 @@ export_gpio {
 	sleep 0.1
 }
 
-unexport_gpio {
+unexport_gpio() {
 	GPIO=$1
 	echo $GPIO > /sys/class/gpio/unexport
 	sleep 0.1
 }
 
-write_to_gpio {
+write_to_gpio() {
 	GPIO=$1
 	VALUE=$2
 	echo $VALUE > /sys/class/gpio/gpio$GPIO/value
 	sleep 0.1
 }
-
-
 
 write_blob() {
 	# in-service programming of the LPC, errors are appended to file "/update/mxli.log"
