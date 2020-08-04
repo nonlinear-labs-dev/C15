@@ -17,6 +17,7 @@
 #include "usb/nl_usb_midi.h"
 #include "ipc/emphase_ipc.h"
 #include "spibb/nl_spi_bb.h"
+#include "usb/nl_usb_bb.h"
 #include "spibb/nl_bb_msg.h"
 #include "tcd/nl_tcd_adc_work.h"
 #include "tcd/nl_tcd_poly.h"
@@ -89,6 +90,7 @@ void Init(void)
 
   /* lpc bbb communication */
   SPI_BB_Init(BB_MSG_ReceiveCallback);
+  USB_BB_Init(BB_MSG_ReceiveCallback);
 
   /* velocity tables */
   POLY_Init();

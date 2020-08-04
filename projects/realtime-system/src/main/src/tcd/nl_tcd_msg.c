@@ -69,7 +69,7 @@ static void LogError(void)
     NL_systemStatus.TCD_usbJams++;
 }
 
-static inline void FillBuffer(uint8_t const b1, uint8_t const b2, uint16_t const w)
+static inline void FillBufferWithTCDdata(uint8_t const b1, uint8_t const b2, uint16_t const w)
 {
   if (bufHeadIndex >= BUFFER_SIZE)
   {  // current head is full, switch to next one
@@ -109,14 +109,14 @@ void MSG_Process(void)
 
   if (bufHead != bufTail)
   {  // send stashed buffers first
-    if (!USB_MIDI_Send(buff[bufTail], BUFFER_SIZE, 0))
+    if (!USB_MIDI_Send(buff[bufTail], BUFFER_SIZE))
       LogError();  // send failed
     bufTail = (bufTail + 1) & NUMBER_OF_BUFFERS_MASK;
     return;
   }
   if (bufHeadIndex != 0)
   {  // send current buffer
-    if (!USB_MIDI_Send(buff[bufHead], bufHeadIndex, 0))
+    if (!USB_MIDI_Send(buff[bufHead], bufHeadIndex))
       LogError();  // send failed
     bufHead      = (bufHead + 1) & NUMBER_OF_BUFFERS_MASK;
     bufHeadIndex = 0;
@@ -138,7 +138,7 @@ void MSG_KeyPosition(uint32_t key)
 {
   if ((key < 36) || (key > 96))
     return;  /// assertion
-  FillBuffer(AE_TCD_WRAPPER, AE_TCD_KEY_POS, key);
+  FillBufferWithTCDdata(AE_TCD_WRAPPER, AE_TCD_KEY_POS, key);
 #if LPC_KEYBED_DIAG
   keyOnOffIndex = key;
 #endif
@@ -151,7 +151,7 @@ void MSG_KeyPosition(uint32_t key)
 ******************************************************************************/
 void MSG_KeyDown(uint32_t vel)
 {
-  FillBuffer(AE_TCD_WRAPPER, AE_TCD_KEY_DOWN, vel);
+  FillBufferWithTCDdata(AE_TCD_WRAPPER, AE_TCD_KEY_DOWN, vel);
 #if LPC_KEYBED_DIAG
   TCD_keyOnOffCntr[keyOnOffIndex]++;
 #endif
@@ -164,7 +164,7 @@ void MSG_KeyDown(uint32_t vel)
 ******************************************************************************/
 void MSG_KeyUp(uint32_t vel)
 {
-  FillBuffer(AE_TCD_WRAPPER, AE_TCD_KEY_UP, vel);
+  FillBufferWithTCDdata(AE_TCD_WRAPPER, AE_TCD_KEY_UP, vel);
 #if LPC_KEYBED_DIAG
   TCD_keyOnOffCntr[keyOnOffIndex]--;
 #endif
@@ -180,7 +180,7 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
 {
   if ((source >= NUM_HW_REAL_SOURCES) || (position > 16000))
     return;  /// assertion
-  FillBuffer(AE_TCD_WRAPPER, AE_TCD_HW_POS | source, position);
+  FillBufferWithTCDdata(AE_TCD_WRAPPER, AE_TCD_HW_POS | source, position);
 }
 
 /*****************************************************************************
@@ -190,7 +190,7 @@ void MSG_HWSourceUpdate(uint32_t source, uint32_t position)
 ******************************************************************************/
 void MSG_SendAEDevelopperCmd(uint32_t cmd)
 {
-  FillBuffer(AE_TCD_WRAPPER, AE_TCD_DEVELOPPER_CMD, cmd);
+  FillBufferWithTCDdata(AE_TCD_WRAPPER, AE_TCD_DEVELOPPER_CMD, cmd);
 }
 
 /*****************************************************************************
@@ -200,8 +200,8 @@ void MSG_SendAEDevelopperCmd(uint32_t cmd)
 void MSG_SendActiveSensing(void)
 {
 #ifdef __IMPLEMENT_ACTIVE_SENSING
-  FillBuffer(0x0F,  // cable 0, packet type "single byte"
-             0xFE,  // MIDI real-time command "active sensing"
-             0);
+  FillBufferWithTCDdata(0x0F,  // cable 0, packet type "single byte"
+                        0xFE,  // MIDI real-time command "active sensing"
+                        0);
 #endif
 }

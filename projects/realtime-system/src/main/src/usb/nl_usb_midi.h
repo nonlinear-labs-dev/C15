@@ -26,7 +26,7 @@ void USB_MIDI_Config(MidiRcvCallback midircv);
 void USB_MIDI_Poll(void);
 
 uint32_t USB_MIDI_IsConfigured(void);
-uint32_t USB_MIDI_Send(uint8_t* buff, uint32_t cnt, uint8_t imm);
+uint32_t USB_MIDI_Send(uint8_t* buff, uint32_t cnt);
 uint32_t USB_MIDI_SendDelayed(uint8_t* buff, uint32_t cnt);
 uint32_t USB_MIDI_CheckBuffer(void);
 uint32_t USB_MIDI_BytesToSend(void);
