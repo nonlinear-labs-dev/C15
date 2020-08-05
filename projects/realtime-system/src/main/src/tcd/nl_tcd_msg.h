@@ -32,3 +32,5 @@ void MSG_KeyUp(uint32_t vel);
 void MSG_HWSourceUpdate(uint32_t source, uint32_t position);
 void MSG_SendAEDevelopperCmd(uint32_t cmd);
 void MSG_SendActiveSensing(void);
+
+void MSG_FillBufferWithSysExData(void *buffer, uint16_t len);

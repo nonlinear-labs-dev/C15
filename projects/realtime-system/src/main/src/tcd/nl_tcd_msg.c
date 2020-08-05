@@ -62,6 +62,7 @@ void MSG_CheckUSB(void)  // every 200 ms
   }
 }
 
+// -----------------------------------------------
 static void LogError(void)
 {
   DBG_Led_Error_TimedOn(10);
@@ -69,7 +70,8 @@ static void LogError(void)
     NL_systemStatus.TCD_usbJams++;
 }
 
-static inline void FillBufferWithTCDdata(uint8_t const b1, uint8_t const b2, uint16_t const w)
+// -----------------------------------------------
+static inline void FillBufferWithOneRawMIDIpacket(uint8_t const b1, uint8_t const b2, uint8_t const b3, uint8_t const b4)
 {
   if (bufHeadIndex >= BUFFER_SIZE)
   {  // current head is full, switch to next one
@@ -84,12 +86,84 @@ static inline void FillBufferWithTCDdata(uint8_t const b1, uint8_t const b2, uin
   }
   buff[bufHead][bufHeadIndex++] = b1;
   buff[bufHead][bufHeadIndex++] = b2;
-  buff[bufHead][bufHeadIndex++] = w >> 7;    // first 7 bits
-  buff[bufHead][bufHeadIndex++] = w & 0x7F;  // second 7 bits
+  buff[bufHead][bufHeadIndex++] = b3;
+  buff[bufHead][bufHeadIndex++] = b4;
+}
+
+// -----------------------------------------------
+static inline void FillBufferWithTCDdata(uint8_t const b1, uint8_t const b2, uint16_t const w)
+{
+  FillBufferWithOneRawMIDIpacket(b1, b2, w >> 7, w & 0x7F);
+}
+
+// -----------------------------------------------
+uint8_t GetNext7bits(uint8_t *buffer, uint16_t *bitNo)
+{
+  uint16_t startIndex = (*bitNo) / 8;
+  uint16_t startBit   = (*bitNo) % 8;
+  (*bitNo) += 7;
+
+  uint16_t out = 0;
+  if (startIndex != ((*bitNo)) / 8)
+    out = buffer[startIndex + 1];
+  out = ((((buffer[startIndex] << 8) + out) << startBit) >> 9) & 0x7F;
+  return out;
+}
+// -----------------------------------------------
+#define CABLE_NUMBER (0 << 4)
+#define SYSEX_START  (0x04)
+#define SYSEX_LAST3  (0x07)
+#define SYSEX_LAST2  (0x06)
+#define SYSEX_LAST1  (0x05)
+void PutRaw(uint8_t data, int8_t last)
+{
+  static uint8_t byteCntr = 0;
+  static uint8_t midiPacket[3];
+
+  midiPacket[byteCntr++] = data;
+  if (last)  // last data byte
+  {
+    if (last > 0)
+      switch (byteCntr)
+      {
+        case 1:  // one byte
+          FillBufferWithOneRawMIDIpacket(CABLE_NUMBER | SYSEX_LAST1, midiPacket[0], 0, 0);
+          break;
+        case 2:  // two byte
+          FillBufferWithOneRawMIDIpacket(CABLE_NUMBER | SYSEX_LAST2, midiPacket[0], midiPacket[1], 0);
+          break;
+        case 3:  // three byte
+          FillBufferWithOneRawMIDIpacket(CABLE_NUMBER | SYSEX_LAST3, midiPacket[0], midiPacket[1], midiPacket[2]);
+          break;
+      }
+    byteCntr = 0;
+    return;
+  }
+
+  if (byteCntr >= 3)  // packet is full and it is not the last packet
+  {
+    FillBufferWithOneRawMIDIpacket(CABLE_NUMBER | SYSEX_START, midiPacket[0], midiPacket[1], midiPacket[2]);
+    byteCntr = 0;  // next packet
+  }
+}
+
+// -----------------------------------------------
+void MSG_FillBufferWithSysExData(void *buffer, uint16_t len)
+{
+#define SYSEX_START_CMD (0xF0)
+#define SYSEX_END_CMD   (0xF7)
+  if (!len)
+    return;
+  uint16_t rawLen = (len * 8 + 7) / 7;  // raw amount of 7bit bytes
+  PutRaw(SYSEX_START_CMD, 0);
+  uint16_t BitNo = 0;
+  while (rawLen--)
+    PutRaw(GetNext7bits(buffer, &BitNo), 0);
+  PutRaw(SYSEX_END_CMD, 1);
 }
 
 /******************************************************************************/
-/**	@brief  SendMidiBuffer - sends the USB bulk
+/**	@brief  SendMidiBuffer - as USB bulk
 *******************************************************************************/
 void MSG_Process(void)
 {
