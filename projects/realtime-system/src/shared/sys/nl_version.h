@@ -20,7 +20,7 @@
 // 61 == release candidate, beta test, removed all standard libraries, and now using hardware floating point
 // 62 == release candidate, beta test, introduce jitter on ESPI and keybed scanner for EMC, add key mapping
 // 63 == release candidate, rewritten MIDI buffering
-#define SW_VERSION 206
+#define SW_VERSION 207
 
 #define STR_IMPL_(x) #x            //stringify argument
 #define STR(x)       STR_IMPL_(x)  //indirection to expand argument macros
