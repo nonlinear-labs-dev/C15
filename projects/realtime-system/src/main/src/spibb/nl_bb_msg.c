@@ -9,7 +9,6 @@
 
 #include "nl_bb_msg.h"
 #include "nl_spi_bb.h"
-#include "usb/nl_usb_bb.h"
 
 #include "tcd/nl_tcd_adc_work.h"
 #include "tcd/nl_tcd_poly.h"
@@ -248,7 +247,8 @@ int32_t BB_MSG_SendTheBuffer(void)
 
   uint8_t* buff    = (uint8_t*) sendBuffer;
   uint32_t success = SPI_BB_Send(buff, sendBufferLen * 2);
-  USB_BB_Send(buff, sendBufferLen * 2);
+
+  MSG_FillBufferWithSysExData(buff, sendBufferLen * 2);
 
   if (success)
   {
