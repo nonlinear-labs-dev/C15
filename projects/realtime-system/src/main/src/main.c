@@ -90,7 +90,7 @@ void Init(void)
 
   /* lpc bbb communication */
   SPI_BB_Init(BB_MSG_ReceiveCallback);
-  USB_BB_Init(BB_MSG_ReceiveCallback);
+  // USB_BB_Init(BB_MSG_ReceiveCallback);
 
   /* velocity tables */
   POLY_Init();
