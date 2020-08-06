@@ -137,17 +137,16 @@ void PresetList::stepBankSelection(int inc, const ButtonModifiers& modifiers, Pr
 
 void PresetList::stepPresetSelection(int inc, PresetManager* pm, Bank* bank) const
 {
-  auto scope = pm->getUndoScope().startTransaction("Select Preset");
-  while(inc < 0)
-  {
-    bank->selectPreviousPreset(scope->getTransaction());
-    inc++;
-  }
+  auto current = bank->getSelectedPreset();
+  auto currentPos = bank->getPresetPosition(current);
+  auto presetPosToSelect = std::max(0, std::min<int>(bank->getNumPresets() - 1, currentPos + inc));
 
-  while(inc > 0)
+  if(auto presetToSelect = bank->getPresetAt(presetPosToSelect))
   {
-    bank->selectNextPreset(scope->getTransaction());
-    inc--;
+    UNDO::Scope::tTransactionScopePtr scope = pm->getUndoScope().startContinuousTransaction(
+        pm, std::chrono::hours(1), presetToSelect->buildUndoTransactionTitle("Select Preset"));
+
+    bank->selectPreset(scope->getTransaction(), presetToSelect->getUuid());
   }
 }
 
