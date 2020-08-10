@@ -373,11 +373,12 @@ void dsp_host_dual::onMidiMessage(const uint32_t _status, const uint32_t _data0,
   {
     nltools::Log::info("midiMsg(status:", _status, ", data0:", _data0, ", data1:", _data1, ")");
   }
-  const uint32_t ch = _status & 15, st = (_status & 127) >> 4;
+  const uint32_t ch = _status & 0x0F, st = (_status & 0xF0) >> 4;
   uint32_t arg = 0;
-  // LPC MIDI Protocol 1.7 transmits every LPC Message as MIDI PitchBend Message! (avoiding TCD Protocol collisions)
-  if(st == 6)
-  {
+  // LPC MIDI Protocol 1.7 transmits every LPC Message as MIDI PitchBend Message, with ID==0xEk, k being channel # 0..F! (avoiding TCD Protocol collisions)
+  // Other messages are ignored
+  if(st == 0x0E)
+  {  // our message
     switch(ch)
     {
       case 0:
@@ -2571,7 +2572,7 @@ void dsp_host_dual::PotentialImprovements_RunNumericTests()
   nltools::Log::info(__PRETTY_FUNCTION__, "starting tests (proposal_enabled:", __POTENTIAL_IMPROVEMENT_PROPOSAL__, ")");
   const float TestGroup_Pattern_data[12]
       = { -1.0f, -0.99f, -0.75f, -0.5f, -0.3f, -0.0f, 0.0f, 0.3f, 0.5f, 0.75f, 0.99f, 1.0f };
-  const PolyValue TestGroup_Pattern{ TestGroup_Pattern_data };
+  const PolyValue TestGroup_Pattern { TestGroup_Pattern_data };
   const size_t TestGroups = 4;
   const char* RunInfo[TestGroups] = { "big", "unclamped", "clamped", "small" };
   const PolyValue TestGroup[TestGroups]

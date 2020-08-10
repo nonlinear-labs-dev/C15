@@ -46,7 +46,7 @@ void AlsaMidiInput::doBackgroundWork()
   uint8_t byte;
   snd_midi_event_t *parser = nullptr;
 
-  snd_midi_event_new(128, &parser);
+  snd_midi_event_new(512, &parser);
 
   int numPollFDs = snd_rawmidi_poll_descriptors_count(m_handle);
 
@@ -91,8 +91,16 @@ void AlsaMidiInput::doBackgroundWork()
         {
           if(event.type != SND_SEQ_EVENT_NONE)
           {
-            getCallback()(e);
-            break;
+            if(event.type == SND_SEQ_EVENT_SYSEX)
+            {
+#warning TODO : decode and proxy SysEx data to PG, containing BB messages
+              ;
+            }
+            else  // all other MIDI events go to AE's handler
+            {
+              getCallback()(e);
+              break;
+            }
           }
 
           rawIdx = 0;
