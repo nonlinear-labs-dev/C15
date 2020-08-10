@@ -4,6 +4,8 @@
 #include <nltools/ExceptionTools.h>
 #include <giomm.h>
 
+#include "stdio.h"
+
 AlsaMidiInput::AlsaMidiInput(const std::string &deviceName, Callback cb)
     : MidiInput(cb)
     , m_cancellable(Gio::Cancellable::create())
@@ -93,8 +95,14 @@ void AlsaMidiInput::doBackgroundWork()
           {
             if(event.type == SND_SEQ_EVENT_SYSEX)
             {
-#warning TODO : decode and proxy SysEx data to PG, containing BB messages
-              ;
+#warning  TODO : decode and proxy SysEx data to PG, containing BB messages
+              uint8_t *p = (uint8_t *) event.data.ext.ptr;
+              printf("SysEx Data : ");
+              for(int i = 0; i < event.data.ext.len; i++)
+              {
+                printf("%02X ", p[i]);
+              }
+              printf("\n");
             }
             else  // all other MIDI events go to AE's handler
             {
