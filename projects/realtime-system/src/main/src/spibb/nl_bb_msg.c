@@ -248,7 +248,9 @@ int32_t BB_MSG_SendTheBuffer(void)
   uint8_t* buff    = (uint8_t*) sendBuffer;
   uint32_t success = SPI_BB_Send(buff, sendBufferLen * 2);
 
+#if 0
   MSG_FillBufferWithSysExData(buff, sendBufferLen * 2);
+#endif
 
   if (success)
   {
@@ -371,6 +373,14 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
             break;
         }
         break;
+	  case LPC_SETTING_ID_TEST_SYSEX_MSG:
+  	    {
+		  if (data[1] > 1024  ||  data[1] < 1)
+		    break;
+		  uint8_t buffer[data[1]];
+		  MSG_FillBufferWithSysExData(buffer, sizeof buffer);
+	    }
+	    break;
       default:
         // do nothing
         type = 0;  // to set a breakpoint only
