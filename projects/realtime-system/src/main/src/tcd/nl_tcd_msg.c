@@ -101,15 +101,15 @@ static inline uint8_t GetNext7bits(uint8_t *buffer, uint16_t *bitNo, uint16_t co
 {
   uint16_t startIndex = (*bitNo) / 8;
   uint16_t startBit   = (*bitNo) % 8;
-  uint16_t stopBit    = (*bitNo+6) % 8;
+  uint16_t stopBit    = (*bitNo + 6) % 8;
   (*bitNo) += 7;
 
-  if (startBit <= 1 )  // all bits in current byte
+  if (startBit <= 1)  // all bits in current byte
     return (buffer[startIndex] >> (1 - startBit)) & 0x7F;
 
   uint16_t out;
   if ((*bitNo) < totalBits)
-     out = ((uint16_t)(buffer[startIndex]) << 8) | buffer[startIndex + 1];
+    out = ((uint16_t)(buffer[startIndex]) << 8) | buffer[startIndex + 1];
   else
     out = (uint16_t)(buffer[startIndex]) << 8;
   out >>= (7 - stopBit);
