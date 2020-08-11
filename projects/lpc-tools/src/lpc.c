@@ -109,6 +109,8 @@ Retry:
 
 #define RESET "reset"
 
+#define TEST_SYSEX "test-sysex"
+
 uint16_t REQ_DATA[] = { LPC_BB_MSG_TYPE_REQUEST, 0x0001, 0x0000 };
 uint16_t SET_DATA[] = { LPC_BB_MSG_TYPE_SETTING, 0x0002, 0x0000, 0x0000 };
 uint16_t KEY_DATA[] = { LPC_BB_MSG_TYPE_KEY_EMUL, 0x0003, 0x0000, 0x0000, 0x0000 };
@@ -521,6 +523,35 @@ int main(int argc, char const *argv[])
 
     printf(">>> LPC reset failed after %u retries\n", savedRetries);
     return 1;  // reset failed
+  }
+
+  // sysex test msg
+  if (strncmp(argv[1], TEST_SYSEX, sizeof TEST_SYSEX) == 0)
+  {
+    if (argc != 2 && argc != 3)
+    {
+      puts("test-sysex: wrong number of arguments");
+      Usage();
+    }
+
+    uint16_t length = 1;
+    if (argc == 3)
+    {
+      if (sscanf(argv[2], "%hu", &length) != 1)
+      {
+        puts("test-sysex: length argument error (uint16 expected)");
+        Usage();
+      }
+      if (length < 1 || length > 1024)
+      {
+        puts("reset: retries must be 1...1024");
+        Usage();
+      }
+    }
+    SET_DATA[2] = LPC_SETTING_ID_TEST_SYSEX_MSG;
+    SET_DATA[3] = length;
+    writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
+    return 0;
   }
 
   // unknown
