@@ -97,18 +97,25 @@ static inline void FillBufferWithTCDdata(uint8_t const b1, uint8_t const b2, uin
 }
 
 // -----------------------------------------------
-uint8_t GetNext7bits(uint8_t *buffer, uint16_t *bitNo)
+static inline uint8_t GetNext7bits(uint8_t *buffer, uint16_t *bitNo, uint16_t const totalBits)
 {
   uint16_t startIndex = (*bitNo) / 8;
   uint16_t startBit   = (*bitNo) % 8;
+  uint16_t stopBit    = (*bitNo+6) % 8;
   (*bitNo) += 7;
 
-  uint16_t out = 0;
-  if (startIndex != ((*bitNo)) / 8)
-    out = buffer[startIndex + 1];
-  out = ((((buffer[startIndex] << 8) + out) << startBit) >> 9) & 0x7F;
-  return out;
+  if (startBit <= 1 )  // all bits in current byte
+    return (buffer[startIndex] >> (1 - startBit)) & 0x7F;
+
+  uint16_t out;
+  if ((*bitNo) < totalBits)
+     out = ((uint16_t)(buffer[startIndex]) << 8) | buffer[startIndex + 1];
+  else
+    out = (uint16_t)(buffer[startIndex]) << 8;
+  out >>= (7 - stopBit);
+  return out & 0x7F;
 }
+
 // -----------------------------------------------
 #define CABLE_NUMBER (0 << 4)
 #define SYSEX_START  (0x04)
@@ -154,11 +161,11 @@ void MSG_FillBufferWithSysExData(void *buffer, uint16_t len)
 #define SYSEX_END_CMD   (0xF7)
   if (!len)
     return;
-  uint16_t rawLen = (len * 8 + 7) / 7;  // raw amount of 7bit bytes
+  uint16_t rawLen = (len * 8 + 6) / 7;  // raw amount of 7bit bytes
   PutRaw(SYSEX_START_CMD, 0);
   uint16_t BitNo = 0;
   while (rawLen--)
-    PutRaw(GetNext7bits(buffer, &BitNo), 0);
+    PutRaw(GetNext7bits(buffer, &BitNo, 8 * len), 0);
   PutRaw(SYSEX_END_CMD, 1);
 }
 
