@@ -146,7 +146,7 @@ void Usage(void)
   puts("     system: reboot|hb-reset|enable-midi");
   puts("                  : System Special; reboot system, reset heartbeat counter, enable midi");
   puts("  key <note-nr> <time>      : send emulated key");
-  puts("     <note-nr>              : MIDI key number, 60=\"C3\"");
+  puts("     <note-nr>              : hardware key number 0..60, 23=\"C3\"");
   puts("     <time>                 : key time (~1/velocity) in us (1000...525000), negative means key release");
   puts("  test <size> <count> <delay>   : send test message");
   puts("     <size>                     : payload size in words (1..1000)");
