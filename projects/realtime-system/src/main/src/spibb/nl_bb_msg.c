@@ -291,6 +291,16 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
   // data[1]  - first value
   // data[2]  - second value
 
+  static uint8_t sysExBuffer[1024];
+  static uint8_t first = 1;
+
+  if (first)
+  {
+    for (int i = 0; i < sizeof sysExBuffer; i++)
+        sysExBuffer[i] = 0xFF;
+    first = 0;
+  }
+
   if (type == LPC_BB_MSG_TYPE_TEST_MSG)
     ProcessTestMessage(length, data);
   else if (type == LPC_BB_MSG_TYPE_RIBBON_CAL)
@@ -373,14 +383,11 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
             break;
         }
         break;
-	  case LPC_SETTING_ID_TEST_SYSEX_MSG:
-  	    {
-		  if (data[1] > 1024  ||  data[1] < 1)
-		    break;
-		  uint8_t buffer[data[1]];
-		  MSG_FillBufferWithSysExData(buffer, sizeof buffer);
-	    }
-	    break;
+      case LPC_SETTING_ID_TEST_SYSEX_MSG:
+        if (data[1] > 1024  ||  data[1] < 1)
+          break;
+        MSG_FillBufferWithSysExData(sysExBuffer, data[1]);
+        break;
       default:
         // do nothing
         type = 0;  // to set a breakpoint only

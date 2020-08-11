@@ -95,22 +95,21 @@ void AlsaMidiInput::doBackgroundWork()
           {
             if(event.type == SND_SEQ_EVENT_SYSEX)
             {
-              printf("\ns");
-              fflush(stdout);
 #warning TODO : decode and proxy SysEx data to PG, containing BB messages
-#if 0
+#if 1
               uint8_t *p = (uint8_t *) event.data.ext.ptr;
-              printf("SysEx Data : ");
+              printf("\nSysEx Data (%i bytes) : ", event.data.ext.len);
               for(int i = 0; i < event.data.ext.len; i++)
               {
                 printf("%02X ", p[i]);
               }
               printf("\n");
+              fflush(stdout);
 #endif
             }
             else  // all other MIDI events go to AE's handler
             {
-              printf("\nt");
+              printf("\nt\n");
               fflush(stdout);
               getCallback()(e);
               break;

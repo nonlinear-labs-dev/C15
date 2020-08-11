@@ -154,6 +154,7 @@ void Usage(void)
   puts("     <delay>                    : delay in usecs between messages");
   puts("  reset [<retries>]           : reset and check if online, with optional retries if offline");
   puts("                              : return value is 0 when reset was successful, 1 otherwise");
+  puts("  test-sysex [<length>]       : create a SysEx message of length (default=1) bytes (all 0xFF's) and send to AE");
   exit(3);
 }
 
