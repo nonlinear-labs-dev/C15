@@ -59,6 +59,7 @@ enum LPC_SETTING_IDS
   LPC_SETTING_ID_AUDIO_ENGINE_CMD                 = 0xFF05,  // direction: input; arguments(uint16): 1, command (1:testtone OFF; 2:testtone ON; 3:default sound)
   LPC_SETTING_ID_SYSTEM_SPECIAL                   = 0xFF06,  // direction: input; arguments(uint16): 1, command (1:reset heartbeat: 2: system reset: 3:Enable MIDI)
   LPC_SETTING_ID_ENABLE_KEY_MAPPING               = 0xFF07,  // direction: input; arguments(uint16): 1, flag (!= 0)
+  LPC_SETTING_ID_TEST_SYSEX_MSG                   = 0xFF08,  // direction: input; arguments(uint16): 1, length (1..1024) of midi sysex test message to be sent to AE
 };
 
 enum LPC_REQUEST_IDS
