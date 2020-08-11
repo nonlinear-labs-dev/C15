@@ -8,12 +8,13 @@
 #include <sigc++/sigc++.h>
 #include <proxies/hwui/Oleds.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <proxies/hwui/HWUI.h>
 
 LockedIndicator::LockedIndicator(const Rect &pos)
     : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &LockedIndicator::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &LockedIndicator::onParameterSelected)), getHWUI()->getCurrentVoiceGroup());
 }
 
 LockedIndicator::~LockedIndicator()
@@ -32,7 +33,7 @@ void LockedIndicator::onParameterSelected(Parameter *newOne)
 
 void LockedIndicator::onParameterGroupChanged()
 {
-  auto group = Application::get().getPresetManager()->getEditBuffer()->getSelected()->getParentGroup();
+  auto group = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup();
   setText(group->areAllParametersLocked() ? "\uE30E" : "");
 }
 

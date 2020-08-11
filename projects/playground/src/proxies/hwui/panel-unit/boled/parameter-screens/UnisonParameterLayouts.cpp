@@ -57,7 +57,8 @@ bool ModulateableUnisonParameterLayout::onButton(Buttons i, bool down, ButtonMod
 
 bool ModulateableUnisonParameterLayout::isCurrentParameterModulated() const
 {
-  auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  auto selected
+      = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
   if(auto mod = dynamic_cast<const ModulateableParameter *>(selected))
   {
     return mod->getModulationSource() != MacroControls::NONE;

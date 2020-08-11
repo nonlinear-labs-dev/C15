@@ -30,7 +30,7 @@ TEST_CASE("Parameters do not Crash")
     parameterdetail::forAllParametersInAllVoiceGroupsDo([&](const Parameter *p) {
       auto scope = TestHelper::createTestScope();
       REQUIRE_NOTHROW(editBuffer->undoableSelectParameter(scope->getTransaction(), p->getID()));
-      REQUIRE(editBuffer->getSelected() == p);
+      REQUIRE(editBuffer->getSelectedParameterNumber() == p->getID().getNumber());
     });
   }
 }

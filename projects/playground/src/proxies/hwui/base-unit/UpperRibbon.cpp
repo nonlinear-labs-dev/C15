@@ -7,13 +7,14 @@
 #include "device-settings/BaseUnitUIMode.h"
 #include "device-settings/Settings.h"
 #include "groups/HardwareSourcesGroup.h"
+#include <proxies/hwui/HWUI.h>
 
 UpperRibbon::UpperRibbon()
 {
   initLEDs();
 
   m_parameterSelectionChangedSignal = Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &UpperRibbon::onParamSelectionChanged));
+      sigc::mem_fun(this, &UpperRibbon::onParamSelectionChanged), {});
   m_settingChangedSignal = Application::get().getSettings()->getSetting<BaseUnitUIMode>()->onChange(
       sigc::mem_fun(this, &UpperRibbon::onSettingChanged));
 }
@@ -47,7 +48,8 @@ Parameter* UpperRibbon::getResponsibleParameter()
   auto s = Application::get().getSettings()->getSetting<BaseUnitUIMode>();
 
   if(s->get() == BaseUnitUIModes::ParameterEdit)
-    return Application::get().getPresetManager()->getEditBuffer()->getSelected();
+    return Application::get().getPresetManager()->getEditBuffer()->getSelected(
+        Application::get().getHWUI()->getCurrentVoiceGroup());
 
   return Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
       HardwareSourcesGroup::getUpperRibbonParameterID());

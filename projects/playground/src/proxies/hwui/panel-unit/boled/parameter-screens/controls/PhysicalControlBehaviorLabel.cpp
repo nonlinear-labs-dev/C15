@@ -5,12 +5,14 @@
 #include <parameters/PhysicalControlParameter.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <sigc++/sigc++.h>
+#include <proxies/hwui/HWUI.h>
 
 PhysicalControlBehaviorLabel::PhysicalControlBehaviorLabel(const Rect &pos)
     : Label(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &PhysicalControlBehaviorLabel::setParameter)));
+      sigc::hide<0>(sigc::mem_fun(this, &PhysicalControlBehaviorLabel::setParameter)),
+      getHWUI()->getCurrentVoiceGroup());
 }
 
 void PhysicalControlBehaviorLabel::setParameter(Parameter *param)

@@ -4,12 +4,13 @@
 #include <presets/PresetManager.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ModulationBoundSlider.h>
+#include <proxies/hwui/HWUI.h>
 
 ModulationBoundSlider::ModulationBoundSlider(const Rect &pos)
     : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      mem_fun(this, &ModulationBoundSlider::onSelectionChanged));
+      mem_fun(this, &ModulationBoundSlider::onSelectionChanged), getHWUI()->getCurrentVoiceGroup());
 }
 
 ModulationBoundSlider::~ModulationBoundSlider()

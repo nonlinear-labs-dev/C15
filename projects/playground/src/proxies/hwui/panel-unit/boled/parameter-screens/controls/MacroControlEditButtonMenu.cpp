@@ -35,7 +35,7 @@ void MacroControlEditButtonMenu::setup()
   addButton("Rename", std::bind(&MacroControlEditButtonMenu::rename, this));
   addButton("Edit Info", std::bind(&MacroControlEditButtonMenu::editInfo, this));
 
-  if(eb->getSelected()->getParentGroup()->areAllParametersLocked())
+  if(eb->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup()->areAllParametersLocked())
     addButton("Unlock Group", std::bind(&MacroControlEditButtonMenu::unlockGroup, this));
   else
     addButton("Lock Group", std::bind(&MacroControlEditButtonMenu::lockGroup, this));
@@ -79,14 +79,14 @@ void MacroControlEditButtonMenu::unlockGroup()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   auto scope = Application::get().getUndoScope()->startTransaction("Unlock Group");
-  eb->getSelected()->getParentGroup()->undoableUnlock(scope->getTransaction());
+  eb->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup()->undoableUnlock(scope->getTransaction());
 }
 
 void MacroControlEditButtonMenu::lockGroup()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   auto scope = Application::get().getUndoScope()->startTransaction("Lock Group");
-  eb->getSelected()->getParentGroup()->undoableLock(scope->getTransaction());
+  eb->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup()->undoableLock(scope->getTransaction());
 }
 
 void MacroControlEditButtonMenu::unlockAll()

@@ -16,7 +16,8 @@ SelectedMacroControlsHWSourceAmount::SelectedMacroControlsHWSourceAmount(const R
     , m_hwParamID(ParameterId::invalid())
 {
   getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceAmount::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceAmount::onParameterSelected)),
+      getHWUI()->getCurrentVoiceGroup());
   Application::get().getHWUI()->onModifiersChanged(
       sigc::hide(sigc::mem_fun(this, &SelectedMacroControlsHWSourceAmount::onModifiersChanged)));
 }
@@ -99,5 +100,5 @@ void SelectedMacroControlsHWSourceAmount::updateTextFromRouter(const Parameter *
 
 void SelectedMacroControlsHWSourceAmount::onModifiersChanged()
 {
-  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }

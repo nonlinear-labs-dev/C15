@@ -6,13 +6,15 @@
 #include <parameters/PhysicalControlParameter.h>
 #include <sigc++/sigc++.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <proxies/hwui/HWUI.h>
 
 SelectedMacroControlsHWSourceSlider::SelectedMacroControlsHWSourceSlider(const Rect &rect)
     : super(rect)
     , m_hwParamID(ParameterId::invalid())
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceSlider::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceSlider::onParameterSelected)),
+      getHWUI()->getCurrentVoiceGroup());
 }
 
 void SelectedMacroControlsHWSourceSlider::onParameterSelected(Parameter *newOne)

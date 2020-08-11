@@ -1,6 +1,8 @@
 #include "Control.h"
 #include "proxies/hwui/Oleds.h"
+#include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <Application.h>
 
 Control::Control(const Rect &pos)
     : m_rect(pos)
@@ -86,4 +88,9 @@ int Control::getHeight() const
 int Control::getWidth() const
 {
   return m_rect.getWidth();
+}
+
+HWUI *Control::getHWUI() const
+{
+  return Application::get().getHWUI();
 }

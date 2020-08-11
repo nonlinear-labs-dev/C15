@@ -130,7 +130,8 @@ void PanelUnitParameterEditMode::setup()
   });
 
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &PanelUnitParameterEditMode::onParamSelectionChanged));
+      sigc::mem_fun(this, &PanelUnitParameterEditMode::onParamSelectionChanged),
+      Application::get().getHWUI()->getCurrentVoiceGroup());
 
   Glib::MainContext::get_default()->signal_idle().connect_once([=]() {
     auto hwui = Application::get().getHWUI();
@@ -149,8 +150,13 @@ bool PanelUnitParameterEditMode::handleMacroControlButton(bool state, int mcPara
   auto &mcStateMachine = getMacroControlAssignmentStateMachine();
   mcStateMachine.setCurrentMCParameter(mcParamId);
 
-  bool isAlreadySelected
-      = Application::get().getPresetManager()->getEditBuffer()->getSelected()->getID().getNumber() == mcParamId
+  bool isAlreadySelected = Application::get()
+                               .getPresetManager()
+                               ->getEditBuffer()
+                               ->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup())
+                               ->getID()
+                               .getNumber()
+          == mcParamId
       && Application::get().getHWUI()->getFocusAndMode().focus == UIFocus::Parameters;
 
   if(state)
@@ -288,7 +294,7 @@ bool PanelUnitParameterEditMode::toggleParameterSelection(const std::vector<gint
 
   if(state)
   {
-    Parameter *selParam = editBuffer->getSelected();
+    Parameter *selParam = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
 
     if(tryParameterToggleOnMacroControl(cleanedParameterIdForType, selParam))
       return true;
@@ -451,7 +457,7 @@ void PanelUnitParameterEditMode::bruteForceUpdateLeds()
 
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
 
-  if(Parameter *selParam = editBuffer->getSelected())
+  if(Parameter *selParam = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup()))
   {
     auto selParamID = selParam->getID();
 
@@ -585,7 +591,7 @@ void PanelUnitParameterEditMode::letMacroControlTargetsBlink()
 {
   auto &panelUnit = Application::get().getHWUI()->getPanelUnit();
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-  Parameter *selParam = editBuffer->getSelected();
+  Parameter *selParam = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
   auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
 
   if(auto modTime = dynamic_cast<MacroControlSmoothingParameter *>(selParam))
@@ -613,7 +619,8 @@ void PanelUnitParameterEditMode::letMacroControlTargetsBlink()
 void PanelUnitParameterEditMode::letOtherTargetsBlink(const std::vector<int> &targets)
 {
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-  auto &panelUnit = Application::get().getHWUI()->getPanelUnit();
+  auto hwui = Application::get().getHWUI();
+  auto &panelUnit = hwui->getPanelUnit();
 
   for(auto targetID : targets)
   {
@@ -622,7 +629,8 @@ void PanelUnitParameterEditMode::letOtherTargetsBlink(const std::vector<int> &ta
 
     if(isSignalFlowingThrough(currentParam))
     {
-      auto state = editBuffer->getSelected() == currentParam ? TwoStateLED::ON : TwoStateLED::BLINK;
+      auto state = editBuffer->getSelected(hwui->getCurrentVoiceGroup()) == currentParam ? TwoStateLED::ON
+                                                                                         : TwoStateLED::BLINK;
       panelUnit.getLED(m_mappings.findButton(targetID))->setState(state);
     }
   }

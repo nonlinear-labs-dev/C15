@@ -10,6 +10,7 @@ class OLEDProxy;
 class ButtonRepeat;
 class FrameBuffer;
 class OLEDProxy;
+class HWUI;
 
 class Layout : public sigc::trackable, public ControlOwner
 {
@@ -36,6 +37,7 @@ class Layout : public sigc::trackable, public ControlOwner
  protected:
   virtual void onInit();
   OLEDProxy &getOLEDProxy();
+  HWUI *getHWUI() const;
 
  private:
   bool m_initialized = false;

@@ -725,7 +725,7 @@ void PresetManager::stress(int numTransactions)
           auto transactionScope = getUndoScope().startTransaction("Stressing Undo System");
           m_editBuffer->undoableSelectParameter(transactionScope->getTransaction(), { parameterId, VoiceGroup::I });
 
-          if(auto p = m_editBuffer->getSelected())
+          if(auto p = m_editBuffer->getSelected(VoiceGroup::I))
           {
             p->stepCPFromHwui(transactionScope->getTransaction(), g_random_boolean() ? -1 : 1, ButtonModifiers());
           }
@@ -751,7 +751,7 @@ void PresetManager::stress(int numTransactions)
 
 void PresetManager::stressParam(UNDO::Transaction *trans, Parameter *param)
 {
-  if(m_editBuffer->getSelected() != param)
+  if(m_editBuffer->getSelected(VoiceGroup::I) != param)
   {
     m_editBuffer->undoableSelectParameter(trans, param);
   }
@@ -781,7 +781,7 @@ void PresetManager::stressBlocking(int numTransactions)
     auto transactionScope = getUndoScope().startTransaction("Stressing Undo System");
     m_editBuffer->undoableSelectParameter(transactionScope->getTransaction(), { parameterId, VoiceGroup::I });
 
-    if(auto p = m_editBuffer->getSelected())
+    if(auto p = m_editBuffer->getSelected(VoiceGroup::I))
     {
       p->stepCPFromHwui(transactionScope->getTransaction(), g_random_boolean() ? -1 : 1, ButtonModifiers());
     }

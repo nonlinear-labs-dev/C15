@@ -16,6 +16,7 @@
 #include <proxies/hwui/controls/Button.h>
 #include <device-settings/HighlightChangedParametersSetting.h>
 #include <parameters/ModulateableParameter.h>
+#include <parameters/MacroControlParameter.h>
 #include <proxies/hwui/controls/SwitchVoiceGroupButton.h>
 #include <presets/recall/RecallParameter.h>
 #include <parameters/scale-converters/ScaleConverter.h>
@@ -68,7 +69,7 @@ void ParameterLayout2::showRecallScreenIfAppropriate()
 
 Parameter *ParameterLayout2::getCurrentParameter() const
 {
-  return Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  return Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
 }
 
 Parameter *ParameterLayout2::getCurrentEditParameter() const
@@ -134,8 +135,9 @@ bool ParameterLayout2::onRotary(int inc, ButtonModifiers modifiers)
   {
     if(isParameterAvailableInSoundType(p))
     {
-      auto scope
-          = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterNameWithVoiceGroup());
+      auto name = ParameterId::isGlobal(p->getID().getNumber()) ? p->getGroupAndParameterName()
+                                                                : p->getGroupAndParameterNameWithVoiceGroup();
+      auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", name);
       p->stepCPFromHwui(scope->getTransaction(), inc, modifiers);
       return true;
     }
@@ -146,11 +148,17 @@ bool ParameterLayout2::onRotary(int inc, ButtonModifiers modifiers)
 
 void ParameterLayout2::handlePresetValueRecall()
 {
-  if(getCurrentParameter()->getParentGroup()->getID().getName() == "Part"
-     && Application::get().getPresetManager()->getEditBuffer()->getType() == SoundType::Layer)
-    getOLEDProxy().setOverlay(new PartMasterRecallLayout2());
-  else if(getCurrentEditParameter()->isChangedFromLoaded())
-    getOLEDProxy().setOverlay(new ParameterRecallLayout2());
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  if(auto editParam = getCurrentEditParameter())
+  {
+    if(editParam->isValueChangedFromLoaded())
+    {
+      if(editParam->getParentGroup()->getID().getName() == "Part" && eb->getType() == SoundType::Layer)
+        getOLEDProxy().setOverlay(new PartMasterRecallLayout2());
+      else
+        getOLEDProxy().setOverlay(new ParameterRecallLayout2());
+    }
+  }
 }
 
 bool ParameterLayout2::isParameterAvailableInSoundType(const Parameter *p, const EditBuffer *eb)
@@ -223,7 +231,8 @@ bool ParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modi
       case Buttons::BUTTON_A:
         if(auto button = findControlOfType<SwitchVoiceGroupButton>())
         {
-          return SwitchVoiceGroupButton::toggleVoiceGroup();
+          Application::get().getHWUI()->toggleCurrentVoiceGroup();
+          return true;
         }
         break;
 
@@ -346,7 +355,7 @@ ParameterRecallLayout2::ParameterRecallLayout2()
   m_recallValue = getCurrentParameter()->getControlPositionValue();
 
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &ParameterRecallLayout2::onParameterSelectionChanged));
+      sigc::mem_fun(this, &ParameterRecallLayout2::onParameterSelectionChanged), getHWUI()->getCurrentVoiceGroup());
 
   updateUI(false);
 }

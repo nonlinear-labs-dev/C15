@@ -21,27 +21,27 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 346, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
       eb->undoableLoad(presets.getSplitPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 346, VoiceGroup::I });
     }
   }
 
@@ -52,27 +52,27 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 346, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
       eb->undoableLoad(presets.getSplitPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 346, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::I });
     }
   }
 
@@ -83,27 +83,27 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 156, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 156, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
       eb->undoableLoad(presets.getSplitPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 156, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 156, VoiceGroup::II });
     }
 
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      CHECK(eb->getSelected()->getID() == ParameterId { 156, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 156, VoiceGroup::II });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 156, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 156, VoiceGroup::I });
     }
   }
 
@@ -114,27 +114,27 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 158, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 158, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
       eb->undoableLoad(presets.getSplitPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 158, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 158, VoiceGroup::II });
     }
 
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      CHECK(eb->getSelected()->getID() == ParameterId { 158, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 158, VoiceGroup::II });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 158, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 158, VoiceGroup::I });
     }
   }
 
@@ -145,27 +145,27 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 160, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 160, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
       eb->undoableLoad(presets.getSplitPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 160, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 160, VoiceGroup::II });
     }
 
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      CHECK(eb->getSelected()->getID() == ParameterId { 160, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 160, VoiceGroup::II });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 160, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 160, VoiceGroup::I });
     }
   }
 
@@ -176,14 +176,14 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 185, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 185, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
   }
 
@@ -194,14 +194,14 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 247, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 247, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
   }
 
@@ -212,14 +212,14 @@ TEST_CASE("FROM Layer")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 248, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 248, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
   }
 
@@ -230,27 +230,27 @@ TEST_CASE("FROM Layer")
     THEN("Split Preset Loaded")
     {
       eb->undoableLoad(presets.getSplitPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId({ 358, VoiceGroup::II }));
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId({ 247, VoiceGroup::Global }));
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
 
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      CHECK(eb->getSelected()->getID() == ParameterId({ 358, VoiceGroup::II }));
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single converted")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId({ 247, VoiceGroup::Global }));
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
   }
 
@@ -261,27 +261,27 @@ TEST_CASE("FROM Layer")
     THEN("Split Preset Loaded")
     {
       eb->undoableLoad(presets.getSplitPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId({ 358, VoiceGroup::II }));
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId({ 247, VoiceGroup::Global }));
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
 
     THEN("Split Convert")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      CHECK(eb->getSelected()->getID() == ParameterId({ 358, VoiceGroup::II }));
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single Convert")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId({ 247, VoiceGroup::Global }));
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
   }
 }
@@ -303,14 +303,14 @@ TEST_CASE("Split Loaded")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 185, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
 
     THEN("Single Convert")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 185, VoiceGroup::I });
+      CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
   }
 
@@ -321,14 +321,14 @@ TEST_CASE("Split Loaded")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 247, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
     THEN("Single Convert")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 247, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
   }
 
@@ -339,14 +339,14 @@ TEST_CASE("Split Loaded")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 248, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
 
     THEN("Single Convert")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 248, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
   }
 
@@ -357,27 +357,27 @@ TEST_CASE("Split Loaded")
     THEN("Single Preset Loaded")
     {
       eb->undoableLoad(presets.getSinglePreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 247, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
     THEN("Layer Preset Loaded")
     {
       eb->undoableLoad(presets.getLayerPreset());
-      CHECK(eb->getSelected()->getID() == ParameterId { 358, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 358, VoiceGroup::II });
     }
 
     THEN("Layer Convert")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
-      CHECK(eb->getSelected()->getID() == ParameterId { 358, VoiceGroup::II });
+      CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 358, VoiceGroup::II });
     }
 
     THEN("Single Convert")
     {
       auto scope = TestHelper::createTestScope();
       eb->undoableConvertToSingle(scope->getTransaction(), VoiceGroup::II);
-      CHECK(eb->getSelected()->getID() == ParameterId { 247, VoiceGroup::Global });
+      CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
   }
 }

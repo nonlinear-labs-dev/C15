@@ -66,7 +66,7 @@ void SelectedParamValueWithFrame::onParamValueChanged(const Parameter *param)
 
 void SelectedParamValueWithFrame::showName()
 {
-  if(auto p = Application::get().getPresetManager()->getEditBuffer()->getSelected())
+  if(auto p = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()))
   {
     setText(p->getShortName());
   }

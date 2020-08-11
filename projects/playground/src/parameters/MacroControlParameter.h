@@ -68,6 +68,7 @@ class MacroControlParameter : public Parameter
   void setLastMCViewUUID(const Glib::ustring &uuid);
 
   void updateMCViewsFromMCChange(const Initiator &initiator);
+  bool isChangedFromLoaded() const override;
 
  private:
   void updateBoundRibbon();

@@ -20,11 +20,16 @@ class RecallParameter : public UpdateDocumentContributor
   MacroControls getRecallModSource() const;
   tControlPositionValue getRecallModulationAmount() const;
 
+  const std::string& getGivenName() const;
+  const std::string& getInfo() const;
+  
  private:
   ParameterId m_id;
   tControlPositionValue m_recallValue = 0;
   tControlPositionValue m_recallModAmount = 0;
   MacroControls m_recallModSource = MacroControls::NONE;
+  std::string m_givenName = {};
+  std::string m_info = {};
 
   friend class RecallEditBufferSerializer;
 };

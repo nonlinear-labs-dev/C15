@@ -9,6 +9,7 @@
 #include <math.h>
 #include <parameters/scale-converters/ScaleConverter.h>
 #include <libundo/undo/Scope.h>
+#include <proxies/hwui/HWUI.h>
 
 UpperModulationBoundControl::UpperModulationBoundControl(const Rect &r)
     : super(r)
@@ -22,7 +23,7 @@ bool UpperModulationBoundControl::onRotary(int inc, ButtonModifiers modifiers)
 {
   auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
 
-  if(auto modulatedParam = dynamic_cast<ModulateableParameter *>(editBuffer->getSelected()))
+  if(auto modulatedParam = dynamic_cast<ModulateableParameter *>(editBuffer->getSelected(getHWUI()->getCurrentVoiceGroup())))
   {
     auto mc = modulatedParam->getModulationSource();
     auto mcID = MacroControlsGroup::modSrcToParamId(mc);

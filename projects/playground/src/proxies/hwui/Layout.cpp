@@ -1,8 +1,10 @@
 #include "Layout.h"
+#include <Application.h>
 #include <proxies/hwui/OLEDProxy.h>
 #include <proxies/hwui/Oleds.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/ButtonRepeat.h>
+#include <proxies/hwui/HWUI.h>
 
 Layout::Layout(OLEDProxy &oled)
     : m_oled(oled)
@@ -92,4 +94,9 @@ void Layout::removeButtonRepeat()
 OLEDProxy &Layout::getOLEDProxy()
 {
   return m_oled;
+}
+
+HWUI *Layout::getHWUI() const
+{
+  return Application::get().getHWUI();
 }

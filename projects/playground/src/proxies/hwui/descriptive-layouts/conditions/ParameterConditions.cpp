@@ -24,7 +24,7 @@ namespace conditiondetail
 
   const Parameter *getCurrentParameter()
   {
-    return getEditBuffer().getSelected();
+    return getEditBuffer().getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
   }
 
   const ModulateableParameter *getModulateableParameter()
@@ -60,7 +60,8 @@ bool ParameterConditions::HasMcSelected::check() const
 ParameterConditions::ParameterCondition::ParameterCondition()
 {
   m_paramChangedConnection = Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &ParameterCondition::onParameterSelectionChanged));
+      sigc::mem_fun(this, &ParameterCondition::onParameterSelectionChanged),
+      Application::get().getHWUI()->getCurrentVoiceGroup());
 }
 
 ParameterConditions::ParameterCondition::~ParameterCondition()

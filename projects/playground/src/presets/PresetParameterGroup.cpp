@@ -9,7 +9,7 @@
 #include <xml/Attribute.h>
 
 PresetParameterGroup::PresetParameterGroup(VoiceGroup vg)
-    : m_voiceGroup{ vg }
+    : m_voiceGroup { vg }
 {
 }
 
@@ -64,6 +64,11 @@ void PresetParameterGroup::copyFrom(UNDO::Transaction *transaction, const ::Para
 
 void PresetParameterGroup::writeDiff(Writer &writer, const GroupId &groupId, const PresetParameterGroup *other) const
 {
+  if(!other)
+  {
+    nltools::Log::error(groupId.toString(), "cant diff without other!");
+    return;
+  }
   auto name = Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID(groupId)->getLongName();
 
   writer.writeTag("group", Attribute("name", name), [&] {

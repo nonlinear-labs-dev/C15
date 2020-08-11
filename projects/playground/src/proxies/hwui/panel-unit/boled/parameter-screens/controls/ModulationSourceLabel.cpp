@@ -13,7 +13,8 @@ ModulationSourceLabel::ModulationSourceLabel(const Rect &r, Font::Justification 
     , m_justification(justification)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &ModulationSourceLabel::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &ModulationSourceLabel::onParameterSelected)),
+      getHWUI()->getCurrentVoiceGroup());
 }
 
 ModulationSourceLabel::~ModulationSourceLabel()

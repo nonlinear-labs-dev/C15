@@ -4,12 +4,13 @@
 #include "parameters/ModulateableParameter.h"
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
+#include <proxies/hwui/HWUI.h>
 
 ModulationModeButton::ModulationModeButton(const Glib::ustring &caption, Buttons id)
     : super(caption, id)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &ModulationModeButton::onParameterSelectionChanged));
+      sigc::mem_fun(this, &ModulationModeButton::onParameterSelectionChanged), getHWUI()->getCurrentVoiceGroup());
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
       sigc::hide(sigc::mem_fun(this, &ModulationModeButton::onSoundTypeChanged)), false);

@@ -14,6 +14,7 @@
 #include "mock/MockPresetStorage.h"
 #include <Application.h>
 #include <device-settings/Settings.h>
+#include <parameter_declarations.h>
 
 inline EditBuffer *getEditBuffer()
 {
@@ -300,7 +301,8 @@ TEST_CASE("Editbuffer Contents loaded")
   SECTION("Load Single Into I")
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableLoadSinglePresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::I);
+    editBuffer->undoableLoadSinglePresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(),
+                                                      VoiceGroup::I);
 
     REQUIRE(editBuffer->getVoiceGroupName(VoiceGroup::I) == presets.getSinglePreset()->getName());
     REQUIRE(editBuffer->getType() == SoundType::Layer);
@@ -311,7 +313,8 @@ TEST_CASE("Editbuffer Contents loaded")
   SECTION("Load Single Into II")
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableLoadSinglePresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(), VoiceGroup::II);
+    editBuffer->undoableLoadSinglePresetIntoDualSound(scope->getTransaction(), presets.getSinglePreset(),
+                                                      VoiceGroup::II);
     editBuffer->TEST_doDeferredJobs();
 
     REQUIRE(editBuffer->getVoiceGroupName(VoiceGroup::II) == presets.getSinglePreset()->getName());
@@ -377,7 +380,7 @@ TEST_CASE("Load <-> Changed")
 
   SECTION("Recall Poly Parameter (I) in Dual EditBuffer")
   {
-    Parameter *param{ nullptr };
+    Parameter *param { nullptr };
 
     {
       auto scope = TestHelper::createTestScope();
@@ -408,7 +411,7 @@ TEST_CASE("Load <-> Changed")
 
   SECTION("Recall Poly Parameter (II) in Dual EditBuffer")
   {
-    Parameter *param{ nullptr };
+    Parameter *param { nullptr };
 
     {
       auto scope = TestHelper::createTestScope();
@@ -440,7 +443,7 @@ TEST_CASE("Load <-> Changed")
 
   SECTION("Recall Global Parameter in Dual EditBuffer")
   {
-    Parameter *param{ nullptr };
+    Parameter *param { nullptr };
 
     {
       auto scope = TestHelper::createTestScope();
@@ -752,5 +755,29 @@ TEST_CASE("Init Sound initializes VG Labels to 'init'")
       REQUIRE(eb->getVoiceGroupName(VoiceGroup::I) == "Init");
       REQUIRE(eb->getVoiceGroupName(VoiceGroup::II) == "Init");
     }
+  }
+}
+
+TEST_CASE("Rename MC leads to changed EB")
+{
+  auto scope = TestHelper::createTestScope();
+  auto transaction = scope->getTransaction();
+  TestHelper::initSingleEditBuffer(transaction);
+  auto eb = TestHelper::getEditBuffer();
+  REQUIRE_FALSE(eb->findAnyParameterChanged());
+
+  auto mc = dynamic_cast<MacroControlParameter *>(eb->findParameterByID({ C15::PID::MC_A, VoiceGroup::Global }));
+  REQUIRE(mc != nullptr);
+
+  WHEN("MC Renamed -> EB Changed")
+  {
+    mc->undoableSetGivenName(transaction, "Foo Bar");
+    REQUIRE(eb->findAnyParameterChanged());
+  }
+
+  WHEN("MC Info changed -> EB Changed")
+  {
+    mc->undoableSetInfo(transaction, "Foo Bar");
+    REQUIRE(eb->findAnyParameterChanged());
   }
 }

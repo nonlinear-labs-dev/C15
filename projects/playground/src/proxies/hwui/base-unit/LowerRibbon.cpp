@@ -13,7 +13,7 @@ LowerRibbon::LowerRibbon()
 {
   initLEDs();
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &LowerRibbon::onParamSelectionChanged));
+      sigc::mem_fun(this, &LowerRibbon::onParamSelectionChanged), {});
 }
 
 int LowerRibbon::posToLedID(int pos) const

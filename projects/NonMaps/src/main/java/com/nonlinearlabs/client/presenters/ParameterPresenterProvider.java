@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.gwt.core.client.GWT;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.AftertouchParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
@@ -155,14 +156,20 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 		if (e instanceof PhysicalControlParameterModel)
 			updatePresenter((PhysicalControlParameterModel) e);
 
+		boolean McMetaChanged = false;
+
 		if (e instanceof MacroControlParameterModel)
+		{
 			updatePresenter((MacroControlParameterModel) e);
+			McMetaChanged = isMCMetaChanged((MacroControlParameterModel)e);
+		}
+
 
 		if (e instanceof ModulationRouterParameterModel)
 			updatePresenter((ModulationRouterParameterModel) e);
 
 		presenter.changed = presenter.valueChanged || presenter.modulation.isModAmountChanged
-				|| presenter.modulation.isModSourceChanged;
+				|| presenter.modulation.isModSourceChanged || McMetaChanged;
 
 		boolean highlight = SetupModel.get().systemSettings.highlightChangedParameters.isTrue();
 		boolean forceHighlight = SetupModel.get().systemSettings.forceHighlightChangedParameters.isTrue();
@@ -192,6 +199,19 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 		return rVal != rOgVal;
 	}
 
+	static public boolean isValueChanged(ModulateableParameterModel mod) {
+		boolean val = isValueChanged((BasicParameterModel)mod);
+		boolean modAmt = mod.ogModAmount.getValue() != mod.modAmount.getValue().value.getValue();
+		boolean modSrc = mod.ogModSource.getValue() != mod.modSource.getValue();
+		return val || modAmt || modSrc;
+	} 
+
+	static public boolean isMCMetaChanged(MacroControlParameterModel mc) {
+		boolean info = mc.info.getValue() != mc.ogInfo.getValue();
+		boolean name = mc.givenName.getValue() != mc.ogGivenName.getValue();
+		return info || name;
+	}
+
 	private void updatePresenter(ModulationRouterParameterModel p) {
 		PhysicalControlParameterModel m = (PhysicalControlParameterModel) EditBufferModel.get()
 				.getParameter(p.getAssociatedPhysicalControlID());
@@ -205,6 +225,7 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 			BasicParameterModel mcBPM = EditBufferModel.get().getParameter(new ParameterId(p.modSource.getValue()));
 			if (mcBPM != null && mcBPM instanceof MacroControlParameterModel) {
 				presenter.modulation.isMCPosChanged = isValueChanged(mcBPM);
+				presenter.changed = isValueChanged((MacroControlParameterModel)mcBPM);
 			}
 		}
 
@@ -390,6 +411,7 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 
 	private void updatePresenter(MacroControlParameterModel p) {
 		presenter.userGivenName = p.givenName.getValue();
+		presenter.parameterInfo = p.info.getValue();
 		presenter.showContextMenu = true;
 		presenter.isMacroControl = true;
 	}

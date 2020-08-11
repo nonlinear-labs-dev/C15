@@ -23,6 +23,9 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.MacroControlParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
@@ -64,8 +67,6 @@ public class ParameterInfoDialog extends GWTDialog {
 		});
 
 		super.pushDialogToFront();
-
-		GWT.log("ParameterInfo soll : " + infoBoxHeight);
 
 		if (infoBoxHeight != 0) {
 			infoField.setHeight(infoBoxHeight + "px");
@@ -192,6 +193,14 @@ public class ParameterInfoDialog extends GWTDialog {
 
 		presenter = EditBufferPresenterProvider.getPresenter().selectedParameter;
 		boolean isMC = presenter.isMacroControl;
+
+		BasicParameterModel bm = EditBufferModel.get().getSelectedParameter();
+		if(bm instanceof MacroControlParameterModel) {
+			MacroControlParameterModel mc = (MacroControlParameterModel)bm;
+			GWT.log(mc.givenName.getValue());
+			GWT.log(mc.info.getValue());
+		}
+
 
 		infoField.setEnabled(isMC);
 		paramNameEditor.setVisible(isMC);

@@ -218,12 +218,20 @@ const PresetManager *EditBuffer::getParent() const
   return static_cast<const PresetManager *>(super::getParent());
 }
 
-sigc::connection EditBuffer::onSelectionChanged(const sigc::slot<void, Parameter *, Parameter *> &s)
+sigc::connection EditBuffer::onSelectionChanged(const sigc::slot<void, Parameter *, Parameter *> &s,
+                                                std::optional<VoiceGroup> initialVG)
 {
-  return m_signalSelectedParameter.connectAndInit(s, nullptr, getSelected());
+  if(initialVG.has_value())
+  {
+    return m_signalSelectedParameter.connectAndInit(s, nullptr, getSelected(initialVG.value()));
+  }
+  else
+  {
+    return m_signalSelectedParameter.connect(s);
+  }
 }
 
-void EditBuffer::undoableSelectParameter(ParameterId id)
+void EditBuffer::undoableSelectParameter(const ParameterId &id)
 {
   if(auto p = findParameterByID(id))
     undoableSelectParameter(p);
@@ -243,10 +251,10 @@ void EditBuffer::setParameter(ParameterId id, double cpValue)
   {
     DebugLevel::gassy("EditBuffer::setParameter", id, cpValue);
     Glib::ustring name {};
-    if(m_type == SoundType::Single)
+    if(m_type == SoundType::Single || ParameterId::isGlobal(id.getNumber()))
       name = UNDO::StringTools::formatString("Set '%0'", p->getGroupAndParameterName());
     else
-      name = UNDO::StringTools::formatString("Set '%0' [%1]", p->getGroupAndParameterName(), id.toString());
+      name = UNDO::StringTools::formatString("Set '%0'", p->getGroupAndParameterNameWithVoiceGroup());
 
     if(cpValue == p->getDefaultValue())
       name += " to Default";
@@ -261,7 +269,9 @@ void EditBuffer::setModulationSource(MacroControls src, const ParameterId &id)
 {
   if(auto p = dynamic_cast<ModulateableParameter *>(findParameterByID(id)))
   {
-    auto scope = getUndoScope().startTransaction("Set MC Select for '%0'", p->getLongName());
+    auto dual = isDual() && id.isDual();
+    auto scope = getUndoScope().startTransaction(
+        "Set MC Select for '%0'", dual ? p->getGroupAndParameterNameWithVoiceGroup() : p->getGroupAndParameterName());
     p->undoableSelectModSource(scope->getTransaction(), src);
   }
 }
@@ -270,8 +280,10 @@ void EditBuffer::setModulationAmount(double amount, const ParameterId &id)
 {
   if(auto p = dynamic_cast<ModulateableParameter *>(findParameterByID(id)))
   {
+    auto dual = isDual() && id.isDual();
     auto scope = getUndoScope().startContinuousTransaction(p->getAmountCookie(), "Set MC Amount for '%0'",
-                                                           p->getGroupAndParameterName());
+                                                           dual ? p->getGroupAndParameterNameWithVoiceGroup()
+                                                                : p->getGroupAndParameterName());
     p->undoableSetModAmount(scope->getTransaction(), amount);
   }
 }
@@ -320,11 +332,11 @@ bool EditBuffer::isDual() const
 
 void EditBuffer::undoableSelectParameter(Parameter *p)
 {
-  if(p->getID() != m_lastSelectedParameter)
+  if(p->getID().getNumber() != m_lastSelectedParameter.getNumber())
   {
     auto newSelection = p;
     auto scope = getUndoScope().startContinuousTransaction(&newSelection, std::chrono::hours(1), "Select '%0'",
-                                                           p->getGroupAndParameterNameWithVoiceGroup());
+                                                           p->getGroupAndParameterName());
     undoableSelectParameter(scope->getTransaction(), p);
   }
   else
@@ -401,9 +413,17 @@ void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, Paramet
   }
 }
 
-Parameter *EditBuffer::getSelected() const
+Parameter *EditBuffer::getSelected(VoiceGroup voiceGroup) const
 {
-  return findParameterByID(m_lastSelectedParameter);
+  if(!isDual() && (voiceGroup == VoiceGroup::II))
+    voiceGroup = VoiceGroup::I;
+
+  if(ParameterId::isGlobal(m_lastSelectedParameter.getNumber()))
+    voiceGroup = VoiceGroup::Global;
+  else if(voiceGroup == VoiceGroup::Global)
+    voiceGroup = VoiceGroup::I;
+
+  return findParameterByID({ m_lastSelectedParameter.getNumber(), voiceGroup });
 }
 
 void EditBuffer::setName(UNDO::Transaction *transaction, const Glib::ustring &name)
@@ -1561,8 +1581,8 @@ void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, Sound
   if(itMap != conversions.end())
   {
     const auto &conv = itMap->second;
-    auto id = getSelected()->getID();
-    auto itConv = conv.find(id.getNumber());
+    auto id = getSelectedParameterNumber();
+    auto itConv = conv.find(id);
     if(itConv != conv.end())
     {
       auto vg = ParameterId::isGlobal(itConv->second) ? VoiceGroup::Global : currentVg;
@@ -1577,11 +1597,20 @@ void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, Sound
 
   if(newType == SoundType::Single && currentVg == VoiceGroup::II)
   {
-    auto sel = getSelected();
-    auto selNum = sel->getID().getNumber();
+    auto selNum = getSelectedParameterNumber();
     if(!ParameterId::isGlobal(selNum))
       undoableSelectParameter(transaction, { selNum, VoiceGroup::I });
 
     hwui->setCurrentVoiceGroup(VoiceGroup::I);
   }
+}
+
+int EditBuffer::getSelectedParameterNumber() const
+{
+  return m_lastSelectedParameter.getNumber();
+}
+
+void EditBuffer::fakeParameterSelectionSignal(VoiceGroup oldGroup, VoiceGroup group)
+{
+  m_signalSelectedParameter.send(getSelected(oldGroup), getSelected(group));
 }

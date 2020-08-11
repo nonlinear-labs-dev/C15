@@ -5,14 +5,18 @@
 #include <presets/EditBuffer.h>
 #include <parameters/MacroControlParameter.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <proxies/hwui/HWUI.h>
 
 HeadlineLabel::HeadlineLabel(const Rect &pos)
     : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &HeadlineLabel::updateText));
-  Application::get().getPresetManager()->getEditBuffer()->getSelected()->onParameterChanged(
-      mem_fun(this, &HeadlineLabel::updateMc));
+      sigc::mem_fun(this, &HeadlineLabel::updateText), getHWUI()->getCurrentVoiceGroup());
+  Application::get()
+      .getPresetManager()
+      ->getEditBuffer()
+      ->getSelected(getHWUI()->getCurrentVoiceGroup())
+      ->onParameterChanged(mem_fun(this, &HeadlineLabel::updateMc));
 }
 
 std::shared_ptr<Font> HeadlineLabel::getFont() const

@@ -5,6 +5,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <libundo/undo/Scope.h>
+#include <proxies/hwui/HWUI.h>
 
 bool ModulationBoundControl::onButton(Buttons i, bool down, ButtonModifiers)
 {
@@ -13,12 +14,16 @@ bool ModulationBoundControl::onButton(Buttons i, bool down, ButtonModifiers)
     case Buttons::BUTTON_DEFAULT:
       if(down)
       {
-        if(auto modulatedParam = dynamic_cast<ModulateableParameter *>(
-               Application::get().getPresetManager()->getEditBuffer()->getSelected()))
+        auto eb = Application::get().getPresetManager()->getEditBuffer();
+        if(auto modulatedParam
+           = dynamic_cast<ModulateableParameter *>(eb->getSelected(getHWUI()->getCurrentVoiceGroup())))
         {
           auto &undoScope = modulatedParam->getUndoScope();
-          auto scope = undoScope.startContinuousTransaction(modulatedParam, "Set MC Amount for '%0'",
-                                                            modulatedParam->getGroupAndParameterName());
+          auto dual = modulatedParam->getID().isDual() && eb->isDual();
+          auto scope
+              = undoScope.startContinuousTransaction(modulatedParam, "Set MC Amount for '%0'",
+                                                     dual ? modulatedParam->getGroupAndParameterNameWithVoiceGroup()
+                                                          : modulatedParam->getGroupAndParameterName());
           auto transaction = scope->getTransaction();
           modulatedParam->setModulationAmount(transaction, 0);
         }

@@ -12,8 +12,8 @@ RecallModulationSourceLabel::RecallModulationSourceLabel(Rect pos)
     : Label(pos)
 {
   Glib::ustring text = "";
-  if(auto modP
-     = dynamic_cast<ModulateableParameter*>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
+  if(auto modP = dynamic_cast<ModulateableParameter*>(
+         Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup())))
   {
     auto id = MacroControlsGroup::modSrcToParamId(modP->getOriginalParameter()->getRecallModSource());
 

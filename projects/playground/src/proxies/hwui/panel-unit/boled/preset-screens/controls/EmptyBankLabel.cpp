@@ -20,6 +20,6 @@ bool EmptyBankLabel::redraw(FrameBuffer &fb)
   super::redraw(fb);
   fb.setColor(FrameBufferColors::C179);
   const Rect &r = getPosition();
-  fb.drawRect(r.getLeft() + 1, r.getTop(), r.getWidth() - 2, r.getHeight());
+  fb.drawRect(r.getLeft(), r.getTop(), r.getWidth(), r.getHeight());
   return true;
 }

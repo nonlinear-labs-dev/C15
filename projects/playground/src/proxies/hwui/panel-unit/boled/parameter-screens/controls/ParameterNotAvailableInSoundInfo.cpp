@@ -30,14 +30,16 @@ ParameterNotAvailableInSoundInfo::ParameterNotAvailableInSoundInfo(const Rect &r
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
 
+  auto vg = getHWUI()->getCurrentVoiceGroup();
+
   m_parameterSelectionConnection
-      = eb->onSelectionChanged(sigc::mem_fun(this, &ParameterNotAvailableInSoundInfo::onSelectionChanged));
+      = eb->onSelectionChanged(sigc::mem_fun(this, &ParameterNotAvailableInSoundInfo::onSelectionChanged), vg);
 
   m_soundTypeConnection
       = eb->onSoundTypeChanged(sigc::hide(sigc::mem_fun(this, &ParameterNotAvailableInSoundInfo::onSoundTypeChanged)));
 
   m_parameterNameLabel
-      = addControl(new detail::BoldCenterAlignedLabel(eb->getSelected()->getLongName(), { 0, 8, 128, 10 }));
+      = addControl(new detail::BoldCenterAlignedLabel(eb->getSelected(vg)->getLongName(), { 0, 8, 128, 10 }));
   m_parameterNameLabel->setHighlight(true);
   addControl(new CenterAlignedLabel("Only available with", { 0, 20, 128, 10 }))->setHighlight(true);
   addControl(new CenterAlignedLabel("Layer Sounds", { 0, 32, 128, 10 }))->setHighlight(true);
@@ -58,7 +60,7 @@ void ParameterNotAvailableInSoundInfo::onSelectionChanged(const Parameter *old, 
 void ParameterNotAvailableInSoundInfo::onSoundTypeChanged()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto current = eb->getSelected();
+  auto current = eb->getSelected(getHWUI()->getCurrentVoiceGroup());
   const auto vis = !ParameterLayout2::isParameterAvailableInSoundType(current, eb);
   m_parameterNameLabel->setText({ current->getLongName(), 0 });
   setVisible(vis);

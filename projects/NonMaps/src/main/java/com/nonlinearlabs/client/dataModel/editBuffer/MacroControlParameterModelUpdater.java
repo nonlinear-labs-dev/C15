@@ -14,6 +14,9 @@ public class MacroControlParameterModelUpdater extends BasicParameterModelUpdate
 
         MacroControlParameterModel m = (MacroControlParameterModel)target;
         m.givenName.setValue(getChildText(root, "givenName"));
+        m.info.setValue(getChildText(root, "info"));
+        m.ogInfo.setValue(getChildText(root, "og-info"));
+        m.ogGivenName.setValue(getChildText(root, "og-name"));
     }
 
 }

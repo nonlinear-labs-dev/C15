@@ -16,6 +16,8 @@ class ParameterId
 
   uint16_t getNumber() const;
   VoiceGroup getVoiceGroup() const;
+  bool isDual() const;
+  bool isGlobal() const;
 
   std::string toString() const
   {
@@ -29,6 +31,7 @@ class ParameterId
   }
 
   static bool isGlobal(int number);
+  static bool isDual(int number);
 
   static ParameterId invalid();
 

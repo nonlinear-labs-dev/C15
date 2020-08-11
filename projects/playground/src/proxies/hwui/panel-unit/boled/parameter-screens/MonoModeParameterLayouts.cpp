@@ -10,7 +10,7 @@
 Parameter *MonoModeParameterLayout::getCurrentParameter() const
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  return eb->getSelected();
+  return eb->getSelected(getHWUI()->getCurrentVoiceGroup());
 }
 
 MonoModeParameterLayout::MonoModeParameterLayout()
@@ -50,7 +50,7 @@ bool MonoModeParameterLayout::onButton(Buttons i, bool down, ButtonModifiers mod
 Parameter *MonoModeModulateableParameterLayout::getCurrentParameter() const
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  return eb->getSelected();
+  return eb->getSelected(getHWUI()->getCurrentVoiceGroup());
 }
 
 MonoModeModulateableParameterLayout::MonoModeModulateableParameterLayout()
@@ -68,7 +68,7 @@ bool MonoModeModulateableParameterLayout::onButton(Buttons i, bool down, ButtonM
   if(down && i == Buttons::BUTTON_C)
   {
     auto current = dynamic_cast<const ModulateableMonoParameter *>(
-        Application::get().getPresetManager()->getEditBuffer()->getSelected());
+        Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
     if(current && current->getModulationSource() == MacroControls::NONE)
     {
       Application::get().getHWUI()->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Voices });

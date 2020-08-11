@@ -9,6 +9,7 @@
 #include <sigc++/sigc++.h>
 #include <proxies/hwui/FrameBuffer.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
+#include <proxies/hwui/HWUI.h>
 
 SelectedParameterModAmount::SelectedParameterModAmount(const Rect &rect)
     : super(rect)
@@ -16,7 +17,7 @@ SelectedParameterModAmount::SelectedParameterModAmount(const Rect &rect)
     , m_to(0)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &SelectedParameterModAmount::setParameter)));
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedParameterModAmount::setParameter)), getHWUI()->getCurrentVoiceGroup());
 }
 
 void SelectedParameterModAmount::setParameter(Parameter *param)

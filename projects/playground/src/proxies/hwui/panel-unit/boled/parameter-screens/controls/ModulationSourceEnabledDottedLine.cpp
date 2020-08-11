@@ -4,13 +4,15 @@
 #include "presets/PresetManager.h"
 #include "presets/EditBuffer.h"
 #include <sigc++/sigc++.h>
+#include <proxies/hwui/HWUI.h>
 
 ModulationSourceEnabledDottedLine::ModulationSourceEnabledDottedLine(const Rect &rect)
     : super(rect)
     , m_enabled(false)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &ModulationSourceEnabledDottedLine::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &ModulationSourceEnabledDottedLine::onParameterSelected)),
+      getHWUI()->getCurrentVoiceGroup());
 }
 
 ModulationSourceEnabledDottedLine::~ModulationSourceEnabledDottedLine()

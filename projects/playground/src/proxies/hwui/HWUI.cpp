@@ -557,9 +557,14 @@ void HWUI::setLoadToPart(bool state)
 
 void HWUI::setCurrentVoiceGroup(VoiceGroup v)
 {
+  auto oldGroup = m_currentVoiceGroup;
   if(v == VoiceGroup::I || v == VoiceGroup::II)
     if(std::exchange(m_currentVoiceGroup, v) != v)
+    {
       m_voiceGoupSignal.send(m_currentVoiceGroup);
+      auto eb = Application::get().getPresetManager()->getEditBuffer();
+      eb->fakeParameterSelectionSignal(oldGroup, m_currentVoiceGroup);
+    }
 }
 
 void HWUI::setCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *transaction, VoiceGroup v)
@@ -571,7 +576,7 @@ void HWUI::setCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *tr
 void HWUI::undoableUpdateParameterSelection(UNDO::Transaction *transaction)
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto selected = eb->getSelected();
+  auto selected = eb->getSelected(getCurrentVoiceGroup());
   auto id = selected->getID();
 
   if(id.getVoiceGroup() != VoiceGroup::Global)

@@ -40,7 +40,7 @@ void SpecialParameterCarousel::setup(Parameter *selectedParameter)
 
 void SpecialParameterCarousel::rebuild()
 {
-  auto s = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  auto s = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
   setup(s);
 }
 

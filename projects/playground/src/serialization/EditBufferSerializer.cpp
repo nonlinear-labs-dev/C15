@@ -41,8 +41,7 @@ void EditBufferSerializer::writeTagContent(Writer &writer) const
     }
   }
 
-  if(auto selectedParam = m_editBuffer->getSelected())
-    writer.writeTextElement("selected-parameter", selectedParam->getID().toString());
+  writer.writeTextElement("selected-parameter-number", to_string(m_editBuffer->getSelectedParameterNumber()));
 
   LastLoadedPresetInfoSerializer lastLoaded(m_editBuffer);
   lastLoaded.write(writer);
@@ -79,8 +78,18 @@ void EditBufferSerializer::readTagContent(Reader &reader) const
     return new ParameterGroupSerializer(group);
   });
 
-  reader.onTextElement("selected-parameter", [&](auto text, auto) mutable {
-    m_editBuffer->undoableSelectParameter(reader.getTransaction(), ParameterId(text));
+  reader.onTextElement("selected-parameter-number", [&](auto text, auto) mutable {
+    try
+    {
+      auto num = std::stoi(text);
+      ParameterId id { num, ParameterId::isGlobal(num) ? VoiceGroup::Global : VoiceGroup::I };
+      m_editBuffer->undoableSelectParameter(reader.getTransaction(), id);
+    }
+    catch(const std::invalid_argument &err)
+    {
+      nltools::Log::error(err.what(), "Selecting default Parameter..");
+      m_editBuffer->undoableSelectParameter(reader.getTransaction(), { 0, VoiceGroup::I });
+    }
   });
 
   reader.onTag(LastLoadedPresetInfoSerializer::getTagName(),

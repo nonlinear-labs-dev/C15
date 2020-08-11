@@ -3,6 +3,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/Parameter.h>
+#include <proxies/hwui/HWUI.h>
 
 namespace DescriptiveLayouts
 {
@@ -10,7 +11,8 @@ namespace DescriptiveLayouts
   {
     m_onParameterSelectionChangedConnection
         = Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-            sigc::mem_fun(this, &ParameterEvent::onParameterSelectionChanged));
+            sigc::mem_fun(this, &ParameterEvent::onParameterSelectionChanged),
+            Application::get().getHWUI()->getCurrentVoiceGroup());
   }
 
   template <typename T> ParameterEvent<T>::~ParameterEvent()

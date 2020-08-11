@@ -17,7 +17,7 @@ MacroControl::MacroControl(const Rect &pos)
   m_slider = addControl(new Slider(Rect(0, 13, 48, 4)));
 
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &MacroControl::onSelectionChanged)));
+      sigc::hide<0>(sigc::mem_fun(this, &MacroControl::onSelectionChanged)), getHWUI()->getCurrentVoiceGroup());
 }
 
 MacroControl::~MacroControl()

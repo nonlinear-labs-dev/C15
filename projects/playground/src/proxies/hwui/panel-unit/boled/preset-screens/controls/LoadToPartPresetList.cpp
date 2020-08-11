@@ -189,11 +189,14 @@ void LoadToPartPresetList::onEnterButtonPressed()
 {
   if(const auto selection = getCurrentSelection())
   {
-    animateSelectedPreset([=] {
-      const auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
-      Application::get().getPresetManager()->getEditBuffer()->undoableLoadToPart(selection->m_preset,
-                                                                                 selection->m_voiceGroup, currentVG);
-    });
+
+    auto eb = Application::get().getPresetManager()->getEditBuffer();
+    const auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+    auto oldPartInGroup = eb->getPartOrigin(currentVG);
+    eb->undoableLoadToPart(selection->m_preset, selection->m_voiceGroup, currentVG);
+    
+    if(oldPartInGroup.presetUUID == selection->m_preset->getUuid())
+      animateSelectedPreset([=] {});
   }
 }
 

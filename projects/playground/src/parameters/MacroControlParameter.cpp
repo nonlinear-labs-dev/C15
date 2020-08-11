@@ -25,6 +25,7 @@
 #include <presets/EditBuffer.h>
 #include <proxies/audio-engine/AudioEngineProxy.h>
 #include <xml/Attribute.h>
+#include <presets/recall/RecallParameter.h>
 
 static ParameterId lastSelectedMacroControl = MacroControlsGroup::modSrcToParamId(MacroControls::MC1);
 
@@ -45,6 +46,11 @@ void MacroControlParameter::writeDocProperties(Writer &writer, tUpdateID knownRe
   writer.writeTextElement("givenName", m_givenName);
   writer.writeTextElement("long-name", getLongName());
   writer.writeTextElement("short-name", getShortName());
+  if(auto og = getOriginalParameter())
+  {
+    writer.writeTextElement("og-info", og->getInfo());
+    writer.writeTextElement("og-name", og->getGivenName());
+  }
   writer.writeTextElement("info", m_info);
 }
 
@@ -234,6 +240,17 @@ void MacroControlParameter::undoableSetInfo(UNDO::Transaction *transaction, cons
       invalidate();
     });
   }
+}
+
+bool MacroControlParameter::isChangedFromLoaded() const
+{
+  if(auto og = getOriginalParameter())
+  {
+    auto nameSame = m_givenName == og->getGivenName();
+    auto infoSame = m_info == og->getInfo();
+    return !nameSame || !infoSame || Parameter::isChangedFromLoaded();
+  }
+  return Parameter::isChangedFromLoaded();
 }
 
 void MacroControlParameter::undoableResetConnectionsToTargets()

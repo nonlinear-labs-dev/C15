@@ -74,6 +74,16 @@ VoiceGroup ParameterId::getVoiceGroup() const
   return m_group;
 }
 
+bool ParameterId::isDual() const
+{
+  return isDual(getNumber());
+}
+
+bool ParameterId::isGlobal() const
+{
+  return isGlobal(getNumber());
+}
+
 bool ParameterId::isGlobal(int number)
 {
   if(number >= 400 || number < 0)
@@ -88,4 +98,9 @@ bool ParameterId::isGlobal(int number)
 ParameterId ParameterId::invalid()
 {
   return ParameterId { std::numeric_limits<decltype(m_num)>::max(), VoiceGroup::NumGroups };
+}
+
+bool ParameterId::isDual(int number)
+{
+  return !isGlobal(number);
 }

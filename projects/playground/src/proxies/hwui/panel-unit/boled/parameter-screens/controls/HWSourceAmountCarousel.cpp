@@ -23,15 +23,15 @@ HWSourceAmountCarousel::~HWSourceAmountCarousel()
 
 void HWSourceAmountCarousel::turn()
 {
-  if(auto p
-     = dynamic_cast<MacroControlParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
+  if(auto p = dynamic_cast<MacroControlParameter *>(
+         Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup())))
     p->toggleUiSelectedHardwareSource(1);
 }
 
 void HWSourceAmountCarousel::antiTurn()
 {
-  if(auto p
-     = dynamic_cast<MacroControlParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected()))
+  if(auto p = dynamic_cast<MacroControlParameter *>(
+         Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup())))
     p->toggleUiSelectedHardwareSource(-1);
 }
 
@@ -79,7 +79,7 @@ void HWSourceAmountCarousel::setup(Parameter *newOne)
 
 void HWSourceAmountCarousel::highlightSelected()
 {
-  setup(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  setup(Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }
 
 void HWSourceAmountCarousel::onMacroControlChanged(const Parameter *param)

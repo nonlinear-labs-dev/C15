@@ -176,14 +176,18 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("set-modamount-and-value", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
-
-    if(auto param = dynamic_cast<ModulateableParameter*>(editBuffer->findParameterByID(ParameterId(id))))
+    auto paramId = ParameterId(id);
+    if(auto param = dynamic_cast<ModulateableParameter*>(editBuffer->findParameterByID(paramId)))
     {
       auto modAmount = std::stod(request->get("mod-amount"));
       auto value = std::stod(request->get("value"));
 
+      auto isDual = editBuffer->isDual();
+      auto withSuffix = isDual && paramId.isDual();
+
       auto scope = editBuffer->getUndoScope().startContinuousTransaction(
-          param->getAmountCookie(), "Set Modulation Amount for '%0'", param->getGroupAndParameterName());
+          param->getAmountCookie(), "Set Modulation Amount for '%0'",
+          withSuffix ? param->getGroupAndParameterNameWithVoiceGroup() : param->getGroupAndParameterName());
       auto transaction = scope->getTransaction();
       param->undoableSetModAmount(transaction, modAmount);
       param->setCPFromHwui(transaction, value);

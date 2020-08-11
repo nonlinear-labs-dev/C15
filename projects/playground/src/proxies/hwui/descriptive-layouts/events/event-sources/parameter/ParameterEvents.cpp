@@ -56,7 +56,7 @@ DescriptiveLayouts::ParameterDisplayStringEventSource::~ParameterDisplayStringEv
 
 void DescriptiveLayouts::ParameterDisplayStringEventSource::onSelectedParameterChanged(const Parameter *p)
 {
-  auto str = p ? p->getDisplayString() : Glib::ustring{};
+  auto str = p ? p->getDisplayString() : Glib::ustring {};
 
   if(Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
   {
@@ -70,7 +70,8 @@ void DescriptiveLayouts::ParameterDisplayStringEventSource::onSelectedParameterC
 
 void DescriptiveLayouts::ParameterDisplayStringEventSource::onModifierChanged(ButtonModifiers mods)
 {
-  onSelectedParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  onSelectedParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected(
+      Application::get().getHWUI()->getCurrentVoiceGroup()));
 }
 
 void DescriptiveLayouts::ParameterValueChanged::onSelectedParameterChanged(const Parameter *p)

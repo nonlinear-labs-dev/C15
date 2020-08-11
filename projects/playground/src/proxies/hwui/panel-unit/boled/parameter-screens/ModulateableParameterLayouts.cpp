@@ -7,6 +7,7 @@
 #include <libundo/undo/TransactionCreationScope.h>
 #include <parameters/ModulateableParameter.h>
 #include <parameters/Parameter.h>
+#include <proxies/hwui/HWUI.h>
 #include <presets/EditBuffer.h>
 #include <presets/PresetManager.h>
 #include <proxies/hwui/buttons.h>
@@ -68,7 +69,8 @@ ModulateableParameterSelectLayout2::ModulateableParameterSelectLayout2()
   setMode(Mode::ParameterValue);
 
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &ModulateableParameterSelectLayout2::onSelectedParameterChanged));
+      sigc::mem_fun(this, &ModulateableParameterSelectLayout2::onSelectedParameterChanged),
+      getHWUI()->getCurrentVoiceGroup());
 
   Application::get().getHWUI()->onModifiersChanged(
       sigc::mem_fun(this, &ModulateableParameterSelectLayout2::onModfiersChanged));
@@ -214,9 +216,8 @@ bool ModulateableParameterSelectLayout2::onButton(Buttons i, bool down, ButtonMo
       case Buttons::BUTTON_A:
         if(m_mode == Mode::ParameterValue && !isCurrentParameterDisabled())
         {
-          auto eb = Application::get().getPresetManager()->getEditBuffer();
-
-          return SwitchVoiceGroupButton::toggleVoiceGroup();
+          Application::get().getHWUI()->toggleCurrentVoiceGroup();
+          return true;
         }
         else if(!isCurrentParameterDisabled() && m_mode != Mode::MacroControlPosition && isAssigned)
         {
@@ -293,7 +294,10 @@ bool ModulateableParameterSelectLayout2::onRotary(int inc, ButtonModifiers modif
     case Mode::MacroControlSelection:
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
-        auto scope = p->getUndoScope().startTransaction("Set MC Select for '%0'", p->getLongName());
+        auto isDual = Application::get().getPresetManager()->getEditBuffer()->isDual() && p->getID().isDual();
+        auto scope = p->getUndoScope().startTransaction("Set MC Select for '%0'",
+                                                        isDual ? p->getGroupAndParameterNameWithVoiceGroup()
+                                                               : p->getGroupAndParameterName());
         p->undoableIncrementMCSelect(scope->getTransaction(), inc);
       }
 
@@ -302,8 +306,10 @@ bool ModulateableParameterSelectLayout2::onRotary(int inc, ButtonModifiers modif
     case Mode::MacroControlAmount:
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
+        auto isDual = Application::get().getPresetManager()->getEditBuffer()->isDual() && p->getID().isDual();
         auto scope = p->getUndoScope().startContinuousTransaction(p->getAmountCookie(), "Set MC Amount for '%0'",
-                                                                  p->getGroupAndParameterName());
+                                                                  isDual ? p->getGroupAndParameterNameWithVoiceGroup()
+                                                                         : p->getGroupAndParameterName());
         p->undoableIncrementMCAmount(scope->getTransaction(), inc, modifiers);
       }
 
@@ -336,7 +342,10 @@ void ModulateableParameterSelectLayout2::setDefault()
     case Mode::MacroControlSelection:
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
-        auto scope = p->getUndoScope().startTransaction("Set MC Select for '%0'", p->getLongName());
+        auto isDual = Application::get().getPresetManager()->getEditBuffer()->isDual() && p->getID().isDual();
+        auto scope = p->getUndoScope().startTransaction("Set MC Select for '%0'",
+                                                        isDual ? p->getGroupAndParameterNameWithVoiceGroup()
+                                                               : p->getGroupAndParameterName());
         p->undoableSelectModSource(scope->getTransaction(), MacroControls::NONE);
       }
 

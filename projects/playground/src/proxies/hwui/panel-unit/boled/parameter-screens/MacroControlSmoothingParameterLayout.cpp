@@ -5,6 +5,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/MacroControlSmoothingParameter.h>
+#include <proxies/hwui/HWUI.h>
 
 bool MacroControlSmoothingParameterLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
@@ -46,7 +47,7 @@ bool MacroControlSmoothingParameterLayout::onButton(Buttons i, bool down, Button
 void MacroControlSmoothingParameterLayout::resetMod()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  if(auto modTime = dynamic_cast<MacroControlSmoothingParameter *>(eb->getSelected()))
+  if(auto modTime = dynamic_cast<MacroControlSmoothingParameter *>(eb->getSelected(getHWUI()->getCurrentVoiceGroup())))
   {
     if(auto mc = dynamic_cast<MacroControlParameter *>(eb->findParameterByID(modTime->getMC())))
     {
@@ -60,7 +61,7 @@ void MacroControlSmoothingParameterLayout::resetMod()
 void MacroControlSmoothingParameterLayout::selectMacroControl()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  if(auto modTime = dynamic_cast<MacroControlSmoothingParameter *>(eb->getSelected()))
+  if(auto modTime = dynamic_cast<MacroControlSmoothingParameter *>(eb->getSelected(getHWUI()->getCurrentVoiceGroup())))
   {
     eb->undoableSelectParameter(modTime->getMC());
   }

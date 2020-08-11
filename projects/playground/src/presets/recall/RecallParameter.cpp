@@ -2,6 +2,7 @@
 #include "RecallParameter.h"
 #include "RecallParameterGroups.h"
 #include "parameters/Parameter.h"
+#include "parameters/MacroControlParameter.h"
 #include "xml/Writer.h"
 #include <xml/Attribute.h>
 #include <glib.h>
@@ -24,6 +25,12 @@ void RecallParameter::copyFrom(UNDO::Transaction *transaction, const Parameter *
     {
       transaction->addUndoSwap(this, m_recallModAmount, modP->getModulationAmount());
       transaction->addUndoSwap(this, m_recallModSource, modP->getModulationSource());
+    }
+
+    if(auto mc = dynamic_cast<const MacroControlParameter *>(other))
+    {
+      transaction->addUndoSwap(this, m_givenName, std::string(mc->getGivenName()));
+      transaction->addUndoSwap(this, m_info, std::string(mc->getInfo()));
     }
   }
 }
@@ -58,4 +65,14 @@ tControlPositionValue RecallParameter::getRecallModulationAmount() const
 MacroControls RecallParameter::getRecallModSource() const
 {
   return m_recallModSource;
+}
+
+const std::string &RecallParameter::getGivenName() const
+{
+  return m_givenName;
+}
+
+const std::string &RecallParameter::getInfo() const
+{
+  return m_info;
 }

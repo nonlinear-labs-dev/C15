@@ -62,7 +62,7 @@ void PresetListContent::setup(Bank *bank, size_t focussedPresetPos)
   else if((hasBank && !hasEmptyBankLabel) || (!hasBank && !hasNoBankLabel))
   {
     clear();
-    m_emptyLabel = addControl(new EmptyBankLabel(Rect(0, 16, 126, 16)));
+    m_emptyLabel = addControl(new EmptyBankLabel(Rect(0, 16, 128, 16)));
 
     m_firstPreset = nullptr;
     m_secondPreset = nullptr;

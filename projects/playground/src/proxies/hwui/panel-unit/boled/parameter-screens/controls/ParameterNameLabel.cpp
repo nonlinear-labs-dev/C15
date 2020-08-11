@@ -15,7 +15,7 @@ ParameterNameLabel::ParameterNameLabel(const Rect &pos)
     : Label(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &ParameterNameLabel::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &ParameterNameLabel::onParameterSelected)), getHWUI()->getCurrentVoiceGroup());
 
   Application::get().getPresetManager()->getEditBuffer()->onPresetLoaded(
       sigc::mem_fun(this, &ParameterNameLabel::onPresetLoaded));
@@ -131,6 +131,6 @@ void ParameterNameLabel::setSuffixFontColor(FrameBuffer &fb) const
 
 void ParameterNameLabel::onPresetLoaded()
 {
-  const auto param = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  const auto param = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
   onParameterChanged(param);
 }

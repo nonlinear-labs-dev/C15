@@ -28,12 +28,14 @@ class EditBuffer : public ParameterGroupSet
   Glib::ustring getVoiceGroupNameWithSuffix(VoiceGroup vg, bool addSpace) const;
   size_t getHash() const;
   const Preset *getOrigin() const;
-  Parameter *getSelected() const;
+  Parameter *getSelected(VoiceGroup voiceGroup) const;
+  int getSelectedParameterNumber() const;
+
   bool isZombie() const;
 
   void setMacroControlValueFromMCView(ParameterId id, double value, const Glib::ustring &uuid);
 
-  void undoableSelectParameter(ParameterId id);
+  void undoableSelectParameter(const ParameterId& id);
   void undoableSelectParameter(Parameter *p);
   void undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p);
   void undoableSelectParameter(UNDO::Transaction *transaction, const ParameterId &id);
@@ -47,6 +49,7 @@ class EditBuffer : public ParameterGroupSet
   void undoableLoadSelectedToPart(VoiceGroup from, VoiceGroup to);
   void undoableLoadSelectedToPart(UNDO::Transaction *transaction, VoiceGroup from, VoiceGroup to);
 
+  void fakeParameterSelectionSignal(VoiceGroup oldGroup, VoiceGroup group);
  private:
   void undoableLoadSelectedPresetPartIntoPart(VoiceGroup from, VoiceGroup copyTo);
   void undoableLoadPresetPartIntoPart(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup from,
@@ -84,7 +87,7 @@ class EditBuffer : public ParameterGroupSet
   bool isDual() const;
 
   // CALLBACKS
-  sigc::connection onSelectionChanged(const sigc::slot<void, Parameter *, Parameter *> &s);
+  sigc::connection onSelectionChanged(const sigc::slot<void, Parameter *, Parameter *>& s, std::optional<VoiceGroup> initialVG);
   sigc::connection onModificationStateChanged(const sigc::slot<void, bool> &s);
   sigc::connection onChange(const sigc::slot<void> &s);
   sigc::connection onPresetLoaded(const sigc::slot<void> &s);

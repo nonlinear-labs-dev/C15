@@ -3,6 +3,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/MacroControlParameter.h>
+#include <proxies/hwui/HWUI.h>
 
 RenameMCLayout::RenameMCLayout()
     : super()
@@ -29,5 +30,6 @@ Glib::ustring RenameMCLayout::getInitialText() const
 
 MacroControlParameter *RenameMCLayout::getMacroControl() const
 {
-  return dynamic_cast<MacroControlParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  return dynamic_cast<MacroControlParameter *>(
+      Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }

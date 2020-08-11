@@ -30,7 +30,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Selected, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto p = editBuffer->getSelected();
+    auto p = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
 
     if(auto mrp = dynamic_cast<ModulationRoutingParameter *>(p))
     {
@@ -44,7 +44,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Assign, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto selParam = editBuffer->getSelected();
+    auto selParam = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
     auto mc = MacroControlsGroup::paramIDToModSrc(selParam->getID());
 
     auto targetId = m_macroControlAssignmentStateMachine.getCurrentModulateableParameter();
@@ -80,7 +80,7 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::SelectSource, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
-    auto p = editBuffer->getSelected();
+    auto p = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
     auto currentSource = choseHWBestSourceForMC(p->getID());
     editBuffer->undoableSelectParameter(currentSource);
     m_macroControlAssignmentStateMachine.setState(MacroControlAssignmentStates::Initial);

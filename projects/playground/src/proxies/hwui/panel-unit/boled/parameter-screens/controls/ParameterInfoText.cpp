@@ -6,6 +6,7 @@
 #include <proxies/hwui/Oleds.h>
 #include <parameters/names/ParameterDB.h>
 #include <parameters/MacroControlParameter.h>
+#include <proxies/hwui/HWUI.h>
 
 ParameterInfoText::ParameterInfoText(ControlOwner *parent)
     : super("")
@@ -13,7 +14,7 @@ ParameterInfoText::ParameterInfoText(ControlOwner *parent)
 {
   setPosition(Rect(2, 0, 0, 0));
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      mem_fun(this, &ParameterInfoText::onParameterSelected));
+      mem_fun(this, &ParameterInfoText::onParameterSelected), getHWUI()->getCurrentVoiceGroup());
 }
 
 void ParameterInfoText::onParameterSelected(Parameter *oldParam, Parameter *newParam)

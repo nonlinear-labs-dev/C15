@@ -20,7 +20,7 @@ ModuleCaption::ModuleCaption(const Rect &pos)
     : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &ModuleCaption::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &ModuleCaption::onParameterSelected)), getHWUI()->getCurrentVoiceGroup());
 
   Application::get().getHWUI()->onCurrentVoiceGroupChanged(
       sigc::hide(sigc::mem_fun(this, &ModuleCaption::onSelectionChanged)));
@@ -52,13 +52,15 @@ void ModuleCaption::updateText(Parameter *newOne)
 
 void ModuleCaption::onSelectionChanged()
 {
-  auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  auto selected
+      = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
   updateText(selected);
 }
 
 void ModuleCaption::onSoundTypeChanged()
 {
-  auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  auto selected
+      = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
   updateText(selected);
 }
 

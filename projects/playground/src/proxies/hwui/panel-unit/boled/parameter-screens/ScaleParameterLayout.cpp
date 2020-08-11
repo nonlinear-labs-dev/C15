@@ -88,8 +88,7 @@ void ScaleParameterSelectLayout::selectParameter(int inc)
 {
   static const auto ids = std::vector<int> { 312, 391, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323 };
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto selectedID = eb->getSelected()->getID();
-  auto id = selectedID.getNumber();
+  auto id = eb->getSelectedParameterNumber();
 
   auto idIt = std::find(ids.begin(), ids.end(), id);
   if(idIt == ids.end() || (*idIt == 323 && inc > 0))
@@ -115,7 +114,7 @@ void ScaleParameterSelectLayout::selectParameter(int inc)
     id = *idIt;
   }
 
-  eb->undoableSelectParameter({ id, selectedID.getVoiceGroup() });
+  eb->undoableSelectParameter({ id, VoiceGroup::Global });
 }
 
 void toggleHightlight(Control* c)

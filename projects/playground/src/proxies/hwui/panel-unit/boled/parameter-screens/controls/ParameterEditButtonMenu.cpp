@@ -21,9 +21,7 @@ ParameterEditButtonMenu::ParameterEditButtonMenu(const Rect &rect)
   eb->onLocksChanged(mem_fun(this, &ParameterEditButtonMenu::setup));
 }
 
-ParameterEditButtonMenu::~ParameterEditButtonMenu()
-{
-}
+ParameterEditButtonMenu::~ParameterEditButtonMenu() = default;
 
 void ParameterEditButtonMenu::setup()
 {
@@ -32,21 +30,21 @@ void ParameterEditButtonMenu::setup()
 
   clear();
 
-  if(eb->getSelected()->lockingEnabled())
+  if(eb->getSelected(vg)->lockingEnabled())
   {
-    if(eb->getSelected()->getParentGroup()->areAllParametersLocked())
+    if(eb->getSelected(vg)->getParentGroup()->areAllParametersLocked())
       addButton("Unlock Group", std::bind(&ParameterEditButtonMenu::toggleGroupLock, this));
     else
       addButton("Lock Group", std::bind(&ParameterEditButtonMenu::toggleGroupLock, this));
   }
 
-  if(!eb->getSelected()->getParentGroup()->areAllParametersLocked())
+  if(!eb->getSelected(vg)->getParentGroup()->areAllParametersLocked())
     addButton("Lock all", std::bind(&ParameterEditButtonMenu::lockAll, this));
 
   if(eb->hasLocks(vg))
     addButton("Unlock all", std::bind(&ParameterEditButtonMenu::unlockAll, this));
 
-  eb->onSelectionChanged(sigc::mem_fun(this, &ParameterEditButtonMenu::onParameterSelectionChanged));
+  eb->onSelectionChanged(sigc::mem_fun(this, &ParameterEditButtonMenu::onParameterSelectionChanged), vg);
 
   sanitizeIndex();
   sanitizeLastAction();
@@ -93,16 +91,18 @@ void ParameterEditButtonMenu::selectButton(size_t i)
 void ParameterEditButtonMenu::toggleGroupLock()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto group = eb->getSelected()->getParentGroup();
+  auto vg = getHWUI()->getCurrentVoiceGroup();
+  auto group = eb->getSelected(vg)->getParentGroup();
+  
   if(group->areAllParametersLocked())
   {
     auto scope = Application::get().getUndoScope()->startTransaction("Unlock Group");
-    eb->getSelected()->getParentGroup()->undoableUnlock(scope->getTransaction());
+    eb->getSelected(vg)->getParentGroup()->undoableUnlock(scope->getTransaction());
   }
   else
   {
     auto scope = Application::get().getUndoScope()->startTransaction("Lock Group");
-    eb->getSelected()->getParentGroup()->undoableLock(scope->getTransaction());
+    eb->getSelected(vg)->getParentGroup()->undoableLock(scope->getTransaction());
   }
   setup();
 }

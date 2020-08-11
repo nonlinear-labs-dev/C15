@@ -6,12 +6,14 @@
 #include "groups/MacroControlsGroup.h"
 #include <sigc++/sigc++.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/ParameterLayout.h>
+#include <proxies/hwui/HWUI.h>
 
 SelectedParamsMacroControlSlider::SelectedParamsMacroControlSlider(const Rect &rect)
     : super(rect)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &SelectedParamsMacroControlSlider::setTargetParameter)));
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedParamsMacroControlSlider::setTargetParameter)),
+      getHWUI()->getCurrentVoiceGroup());
 }
 
 SelectedParamsMacroControlSlider::~SelectedParamsMacroControlSlider()

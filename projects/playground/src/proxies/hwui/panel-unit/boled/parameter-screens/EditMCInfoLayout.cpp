@@ -3,6 +3,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/MacroControlParameter.h>
+#include <proxies/hwui/HWUI.h>
 
 EditMCInfoLayout::EditMCInfoLayout()
     : super()
@@ -29,5 +30,6 @@ Glib::ustring EditMCInfoLayout::getInitialText() const
 
 MacroControlParameter *EditMCInfoLayout::getMacroControl() const
 {
-  return dynamic_cast<MacroControlParameter *>(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  return dynamic_cast<MacroControlParameter *>(
+      Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }

@@ -31,7 +31,7 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::Swallow, []() { return; });
 
     registerEvent(EventSinks::IncParam, [eb, hwui]() {
-      if(auto p = eb->getSelected())
+      if(auto p = eb->getSelected(hwui->getCurrentVoiceGroup()))
       {
         auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
         p->stepCPFromHwui(scope->getTransaction(), 1, hwui->getButtonModifiers());
@@ -39,39 +39,39 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::DecParam, [eb, hwui]() {
-      if(auto p = eb->getSelected())
+      if(auto p = eb->getSelected(hwui->getCurrentVoiceGroup()))
       {
         auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
         p->stepCPFromHwui(scope->getTransaction(), -1, hwui->getButtonModifiers());
       }
     });
 
-    registerEvent(EventSinks::IncMCSel, [eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+    registerEvent(EventSinks::IncMCSel, [eb, hwui]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
         modParam->undoableIncrementMCSelect(1);
     });
 
-    registerEvent(EventSinks::DecMCSel, [eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+    registerEvent(EventSinks::DecMCSel, [eb, hwui]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
         modParam->undoableIncrementMCSelect(-1);
     });
 
-    registerEvent(EventSinks::IncMCAmt, [eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+    registerEvent(EventSinks::IncMCAmt, [eb, hwui]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
         modParam->undoableIncrementMCAmount(1, {});
       }
     });
 
-    registerEvent(EventSinks::DecMCAmt, [eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+    registerEvent(EventSinks::DecMCAmt, [eb, hwui]() {
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
         modParam->undoableIncrementMCAmount(-1, {});
       }
     });
 
     registerEvent(EventSinks::IncMCPos, [eb, hwui]() {
-      if(auto modP = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      if(auto modP = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
         if(auto mc = modP->getMacroControl())
         {
@@ -83,7 +83,7 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::DecMCPos, [eb, hwui]() {
-      if(auto modP = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      if(auto modP = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
         if(auto mc = modP->getMacroControl())
         {
@@ -94,8 +94,7 @@ namespace DescriptiveLayouts
       }
     });
 
-    registerEvent(EventSinks::ToggleVoiceGroupWithParameterSelection,
-                  []() { SwitchVoiceGroupButton::toggleVoiceGroup(); });
+    registerEvent(EventSinks::ToggleVoiceGroupWithParameterSelection, [hwui]() { hwui->toggleCurrentVoiceGroup(); });
 
     registerEvent(EventSinks::ToggleVoiceGroup, [hwui]() { hwui->toggleCurrentVoiceGroup(); });
 
@@ -132,7 +131,7 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
         if(modParam->getModulationSource() != MacroControls::NONE)
         {
@@ -142,7 +141,7 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::SwitchToMCModRangeDetail, [hwui, eb]() {
-      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected()))
+      if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
         if(modParam->getModulationSource() != MacroControls::NONE)
         {
@@ -152,7 +151,7 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::SwitchToMCSelectDetail, [hwui, eb]() {
-      if(dynamic_cast<ModulateableParameter *>(eb->getSelected()) != nullptr)
+      if(dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())) != nullptr)
       {
         hwui->setUiModeDetail(UIDetail::MCSelect);
       }

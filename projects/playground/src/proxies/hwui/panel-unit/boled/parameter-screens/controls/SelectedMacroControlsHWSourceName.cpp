@@ -4,13 +4,15 @@
 #include "presets/EditBuffer.h"
 #include "parameters/MacroControlParameter.h"
 #include <sigc++/sigc++.h>
+#include <proxies/hwui/HWUI.h>
 
 SelectedMacroControlsHWSourceName::SelectedMacroControlsHWSourceName(const Rect &rect)
     : super(rect)
     , m_hwParamID { ParameterId::invalid() }
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceName::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedMacroControlsHWSourceName::onParameterSelected)),
+      getHWUI()->getCurrentVoiceGroup());
 }
 
 SelectedMacroControlsHWSourceName::~SelectedMacroControlsHWSourceName()

@@ -242,7 +242,8 @@ void LPCProxy::onEditControlMessageReceived(const MessageParser::NLMessage &msg)
 
   gint16 value = separateSignedBitToComplementary(msg.params[1]);
 
-  if(auto p = Application::get().getPresetManager()->getEditBuffer()->getSelected())
+  if(auto p = Application::get().getPresetManager()->getEditBuffer()->getSelected(
+         Application::get().getHWUI()->getCurrentVoiceGroup()))
   {
     auto ribbonModeBehaviour = Application::get().getSettings()->getSetting<ParameterEditModeRibbonBehaviour>()->get();
 

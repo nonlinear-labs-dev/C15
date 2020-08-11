@@ -12,7 +12,7 @@ MCPositionLabel::MCPositionLabel(const Rect &rect)
     : super(rect)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &MCPositionLabel::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &MCPositionLabel::onParameterSelected)), getHWUI()->getCurrentVoiceGroup());
 
   Application::get().getHWUI()->onModifiersChanged(
       sigc::hide(sigc::mem_fun(this, &MCPositionLabel::onModifiersChanged)));
@@ -80,7 +80,7 @@ void MCPositionLabel::setSuffixFontColor(FrameBuffer &fb) const
 
 void MCPositionLabel::onModifiersChanged()
 {
-  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }
 
 void MCPositionLabel::ensureDisconnectedModulationSourceIfApplicable(const Parameter *parameter)

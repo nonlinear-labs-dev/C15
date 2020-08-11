@@ -246,6 +246,11 @@ const RecallParameter *Parameter::getOriginalParameter() const
 
 bool Parameter::isChangedFromLoaded() const
 {
+  return isValueChangedFromLoaded();
+}
+
+bool Parameter::isValueChangedFromLoaded() const
+{
   const int denominator = static_cast<const int>(getValue().getFineDenominator());
   const int roundedNow = static_cast<const int>(std::round(getControlPositionValue() * denominator));
   const int roundedOG = static_cast<const int>(std::round(getOriginalParameter()->getRecallValue() * denominator));

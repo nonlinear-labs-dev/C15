@@ -3,6 +3,7 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameters/Parameter.h>
+#include <proxies/hwui/HWUI.h>
 
 DescriptiveLayouts::CurrentParameterGroupLockStatus::CurrentParameterGroupLockStatus()
 {
@@ -22,5 +23,6 @@ void DescriptiveLayouts::CurrentParameterGroupLockStatus::onSelectedParameterCha
 
 void DescriptiveLayouts::CurrentParameterGroupLockStatus::onLockChanged()
 {
-  onSelectedParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  onSelectedParameterChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected(
+      Application::get().getHWUI()->getCurrentVoiceGroup()));
 }

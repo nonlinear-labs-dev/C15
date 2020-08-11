@@ -5,6 +5,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.MacroControlParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterFactory;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -12,6 +13,7 @@ import com.nonlinearlabs.client.dataModel.editBuffer.ScaleOffsetParameterModel;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.RGBA;
+import com.nonlinearlabs.client.world.overlay.belt.parameters.MacroControlContextMenu;
 
 public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     private static EditBufferPresenterProvider theProvider = new EditBufferPresenterProvider();
@@ -163,6 +165,13 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     private boolean isAnyParameterChanged() {
         for (VoiceGroup g : VoiceGroup.values()) {
             for (BasicParameterModel param : EditBufferModel.get().byVoiceGroup[g.ordinal()].parameters.values()) {
+                if(param instanceof MacroControlParameterModel)
+                {
+                    MacroControlParameterModel mc = (MacroControlParameterModel)param;
+                    if(ParameterPresenterProvider.isMCMetaChanged(mc))
+                        return true;
+                }
+
                 if (ParameterPresenterProvider.isValueChanged(param))
                     return true;
             }

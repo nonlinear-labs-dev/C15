@@ -7,6 +7,7 @@
 
 class Font;
 class FrameBuffer;
+class HWUI;
 
 class Control : public sigc::trackable, public Uncopyable
 {
@@ -33,6 +34,7 @@ class Control : public sigc::trackable, public Uncopyable
 
  protected:
   virtual void setBackgroundColor(FrameBuffer &fb) const;
+  HWUI *getHWUI() const;
 
  private:
   Rect m_rect;

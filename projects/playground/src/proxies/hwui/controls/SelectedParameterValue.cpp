@@ -11,7 +11,7 @@ SelectedParameterValue::SelectedParameterValue(const Rect &rect)
     : super(rect)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &SelectedParameterValue::onParameterSelected)));
+      sigc::hide<0>(sigc::mem_fun(this, &SelectedParameterValue::onParameterSelected)), getHWUI()->getCurrentVoiceGroup());
 
   Application::get().getHWUI()->onModifiersChanged(sigc::mem_fun(this, &SelectedParameterValue::onModifiersChanged));
 
@@ -28,7 +28,7 @@ SelectedParameterValue::~SelectedParameterValue()
 
 void SelectedParameterValue::onModifiersChanged(ButtonModifiers mods)
 {
-  onParamValueChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected());
+  onParamValueChanged(Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }
 
 void SelectedParameterValue::onParameterSelected(Parameter *parameter)
@@ -51,7 +51,7 @@ void SelectedParameterValue::onParamValueChanged(const Parameter *param)
 
 bool SelectedParameterValue::redraw(FrameBuffer &fb)
 {
-  auto amount = Application::get().getPresetManager()->getEditBuffer()->getSelected()->getDisplayString();
+  auto amount = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup())->getDisplayString();
 
   if(Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE))
   {
@@ -77,7 +77,7 @@ void SelectedParameterValue::onVoiceGroupSelectionChanged(VoiceGroup v)
 
 void SelectedParameterValue::onSoundTypeChanged()
 {
-  auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected();
+  auto selected = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
   auto visible = ParameterSelectLayout2::isParameterAvailableInSoundType(selected);
   setVisible(visible);
 }
