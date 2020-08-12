@@ -109,8 +109,11 @@ void AlsaMidiInput::doBackgroundWork()
             }
             else  // all other MIDI events go to AE's handler
             {
-              printf("\nt\n");
-              fflush(stdout);
+              if(event.type == SND_SEQ_EVENT_PITCHBEND)
+              {  // our own data ?
+                printf("\nTCD Data : %02X %02X %02X\n", e.raw[0], e.raw[1], e.raw[2]);
+                fflush(stdout);
+              }
               getCallback()(e);
               break;
             }
