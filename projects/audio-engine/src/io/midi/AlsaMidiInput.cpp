@@ -46,9 +46,9 @@ void AlsaMidiInput::close()
 void AlsaMidiInput::doBackgroundWork()
 {
   uint8_t byte;
-  snd_midi_event_t *parser = nullptr;
 
-  snd_midi_event_new(512, &parser);
+  // snd_midi_event_t *parser = nullptr;
+  // snd_midi_event_new(512, &parser);
 
   int numPollFDs = snd_rawmidi_poll_descriptors_count(m_handle);
 
@@ -83,7 +83,39 @@ void AlsaMidiInput::doBackgroundWork()
       auto readResult = snd_rawmidi_read(m_handle, &byte, 1);
 
       if(readResult == 1)
+      {  // got one byte
+        // printf("\n%02X\n", byte);
+        switch(rawIdx)
+        {
+          case 0:  // waiting for MIDI Msg "Pitchbend"
+            if((byte & 0xF0) == 0xE0)
+              e.raw[rawIdx++] = byte;
+            break;
+          case 1:
+          case 2:  // remaining 2 bytes
+            if(byte < 0x80)
+            {
+              e.raw[rawIdx++] = byte;
+              if(rawIdx == 3)
+              {  // last byte
+                rawIdx = 0;
+                getCallback()(e);
+                goto Done;
+              }
+            }
+            break;
+        }
+      }
+      else if(readResult == -19)
       {
+        nltools::throwException("Could not read from midi input file descriptor =>", snd_strerror(readResult));
+      }
+    }
+  Done:;
+  }
+}
+
+/*
         if(rawIdx < 3)
           e.raw[rawIdx++] = byte;
 
@@ -96,7 +128,7 @@ void AlsaMidiInput::doBackgroundWork()
             if(event.type == SND_SEQ_EVENT_SYSEX)
             {
 #warning TODO : decode and proxy SysEx data to PG, containing BB messages
-#if 1
+#if 0
               uint8_t *p = (uint8_t *) event.data.ext.ptr;
               printf("\nSysEx Data (%i bytes) : ", event.data.ext.len);
               for(int i = 0; i < event.data.ext.len; i++)
@@ -109,11 +141,13 @@ void AlsaMidiInput::doBackgroundWork()
             }
             else  // all other MIDI events go to AE's handler
             {
+#if 0
               if(event.type == SND_SEQ_EVENT_PITCHBEND)
               {  // our own data ?
                 printf("\nTCD Data : %02X %02X %02X\n", e.raw[0], e.raw[1], e.raw[2]);
                 fflush(stdout);
               }
+#endif
               getCallback()(e);
               break;
             }
@@ -121,11 +155,4 @@ void AlsaMidiInput::doBackgroundWork()
 
           rawIdx = 0;
         }
-      }
-      else if(readResult == -19)
-      {
-        nltools::throwException("Could not read from midi input file descriptor =>", snd_strerror(readResult));
-      }
-    }
-  }
-}
+ */
