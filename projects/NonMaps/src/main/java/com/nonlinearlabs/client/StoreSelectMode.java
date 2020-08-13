@@ -71,14 +71,14 @@ public class StoreSelectMode implements CustomPresetSelector {
 
 	public boolean canSelectPreviousBank() {
 		if (selectedBank != null) {
-			return selectedBank.getParent().canSelectBankWithOrdernumberOffset(selectedBank, -1);
+			return selectedBank.getPresetManager().canSelectBankWithOrdernumberOffset(selectedBank, -1);
 		}
 		return false;
 	}
 
 	public boolean canSelectNextBank() {
 		if (selectedBank != null) {
-			return selectedBank.getParent().canSelectBankWithOrdernumberOffset(selectedBank, 1);
+			return selectedBank.getPresetManager().canSelectBankWithOrdernumberOffset(selectedBank, 1);
 		}
 		return false;
 	}

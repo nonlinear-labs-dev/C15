@@ -18,6 +18,7 @@ import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
+import com.nonlinearlabs.client.world.maps.CachingMapsControl;
 import com.nonlinearlabs.client.world.maps.Label;
 import com.nonlinearlabs.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.client.world.maps.MapsControl;
@@ -398,8 +399,8 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	}
 
 	@Override
-	public PresetManager getParent() {
-		return (PresetManager) super.getParent();
+	public CachingMapsControl getParent() {
+		return (CachingMapsControl) super.getParent();
 	}
 
 	@Override
@@ -476,10 +477,10 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	}
 
 	public boolean isSelected() {
-		if (getParent().hasCustomPresetSelection())
-			return getParent().getCustomPresetSelection().getSelectedBank() == this;
+		if (getPresetManager().hasCustomPresetSelection())
+			return getPresetManager().getCustomPresetSelection().getSelectedBank() == this;
 
-		return uuid.equals(getParent().getSelectedBank());
+		return uuid.equals(getPresetManager().getSelectedBank());
 	}
 
 	public String getCurrentName() {
@@ -499,7 +500,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	}
 
 	public void selectBank(boolean userInteraction) {
-		getParent().selectBank(getUUID(), userInteraction);
+		getPresetManager().selectBank(getUUID(), userInteraction);
 		invalidate(INVALIDATION_FLAG_UI_CHANGED);
 	}
 
@@ -533,7 +534,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 			if (origin instanceof IPreset) {
 				IPreset p = (IPreset) origin;
 
-				PresetManager pm = getParent();
+				PresetManager pm = getPresetManager();
 
 				Preset targetPreset = findPresetAt(pos);
 
@@ -840,7 +841,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 
 	@Override
 	public void beingDragged(double xDiff, double yDiff) {
-		getParent().resetAttachingTapes();
+		getPresetManager().resetAttachingTapes();
 		super.beingDragged(xDiff, yDiff);
 	}
 
@@ -905,5 +906,9 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		}
 
 		return null;
+	}
+
+	public PresetManager getPresetManager() {
+		return getNonMaps().getNonLinearWorld().getPresetManager();
 	}
 }

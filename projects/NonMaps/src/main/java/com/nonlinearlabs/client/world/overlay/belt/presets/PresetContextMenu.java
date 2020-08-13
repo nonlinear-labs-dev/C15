@@ -27,7 +27,7 @@ public class PresetContextMenu extends ContextMenu {
 	public PresetContextMenu(OverlayLayout parent, final Preset preset) {
 		super(parent);
 		this.preset = preset;
-		final PresetManager pm = preset.getParent().getParent();
+		final PresetManager pm = preset.getParent().getPresetManager();
 		final boolean hasMultipleSelection = pm.hasMultiplePresetSelection();
 		final boolean multipleSelectionAllowed = SetupModel.get().localSettings.presetDragDrop
 				.getValue() == BooleanValues.on;
@@ -110,7 +110,6 @@ public class PresetContextMenu extends ContextMenu {
 				return super.click(eventPoint);
 			}
 		});
-
 
 		if (hasMultipleSelection && pm.getMultiSelection().getNumSelectedPresets() == 2) {
 			addChild(new PresetContextMenuItem(this, "Compare ...") {

@@ -122,9 +122,15 @@ public class NonLinearWorld extends MapsLayout {
 		return clipboardManager;
 	}
 
+	int useless = 0;
+
 	@Override
 	public void invalidate(int flags) {
 		invalidationMask |= flags;
+
+		if ((flags & INVALIDATION_FLAG_UI_CHANGED) != 0) {
+			useless++;
+		}
 	}
 
 	@Override

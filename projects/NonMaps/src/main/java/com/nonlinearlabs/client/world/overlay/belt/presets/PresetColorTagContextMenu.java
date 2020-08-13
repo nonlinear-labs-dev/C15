@@ -18,7 +18,7 @@ public class PresetColorTagContextMenu extends ContextMenu {
 	private final Preset preset;
 
 	private void setColor(ColorTag.Color color) {
-		final PresetManager pm = preset.getParent().getParent();
+		final PresetManager pm = preset.getParent().getPresetManager();
 		final boolean hasMultipleSelection = pm.hasMultiplePresetSelection();
 
 		if (hasMultipleSelection) {

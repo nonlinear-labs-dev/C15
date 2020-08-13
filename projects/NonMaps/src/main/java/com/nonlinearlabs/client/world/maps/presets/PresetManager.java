@@ -32,6 +32,7 @@ import com.nonlinearlabs.client.world.NonLinearWorld;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.RenameDialog;
+import com.nonlinearlabs.client.world.maps.CachingMapsControl;
 import com.nonlinearlabs.client.world.maps.MapsControl;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
 import com.nonlinearlabs.client.world.maps.NonDimension;
@@ -70,6 +71,11 @@ public class PresetManager extends MapsLayout {
 		for (Control c : getChildren()) {
 			if (c instanceof Bank) {
 				ret.add((Bank) c);
+			} else if (c instanceof CachingMapsControl) {
+				CachingMapsControl cmc = (CachingMapsControl) c;
+				if (cmc.getChild() instanceof Bank) {
+					ret.add((Bank) cmc.getChild());
+				}
 			}
 		}
 		return ret;
@@ -225,16 +231,14 @@ public class PresetManager extends MapsLayout {
 	private NonRect getAllBanksOutline() {
 		NonRect fence = new NonRect(Double.MAX_VALUE / 2, Double.MAX_VALUE / 2, -Double.MAX_VALUE, -Double.MAX_VALUE);
 
-		for (MapsControl c : getChildren()) {
-			if (c instanceof Bank) {
-				NonRect banksRect = c.getNonPosition();
-				double right = fence.getRight();
-				double bottom = fence.getBottom();
-				fence.setLeft(Math.min(banksRect.getLeft(), fence.getLeft()));
-				fence.setTop(Math.min(banksRect.getTop(), fence.getTop()));
-				fence.setBottom(Math.max(banksRect.getBottom(), bottom));
-				fence.setRight(Math.max(banksRect.getRight(), right));
-			}
+		for (Bank c : getBanks()) {
+			NonRect banksRect = c.getNonPosition();
+			double right = fence.getRight();
+			double bottom = fence.getBottom();
+			fence.setLeft(Math.min(banksRect.getLeft(), fence.getLeft()));
+			fence.setTop(Math.min(banksRect.getTop(), fence.getTop()));
+			fence.setBottom(Math.max(banksRect.getBottom(), bottom));
+			fence.setRight(Math.max(banksRect.getRight(), right));
 		}
 		return fence;
 	}
@@ -304,9 +308,8 @@ public class PresetManager extends MapsLayout {
 
 		ArrayList<MapsControl> currentChildren = new ArrayList<MapsControl>();
 
-		for (MapsControl c : getChildren()) {
-			if (c instanceof Bank)
-				currentChildren.add((Bank) c);
+		for (Bank c : getBanks()) {
+			currentChildren.add((Bank) c);
 		}
 
 		selectedBank = banks.getAttributes().getNamedItem("selected-bank").getNodeValue();
@@ -331,24 +334,20 @@ public class PresetManager extends MapsLayout {
 	}
 
 	private void clearDockingRelations() {
-		for (MapsControl control : getChildren()) {
-			if (control instanceof Bank) {
-				Bank bank = (Bank) control;
-				bank.removeAllSlaves();
-				bank.removeMaster();
-			}
+		for (Bank control : getBanks()) {
+			Bank bank = (Bank) control;
+			bank.removeAllSlaves();
+			bank.removeMaster();
 		}
 	}
 
 	private void installDockingRelations() {
-		for (MapsControl control : getChildren()) {
-			if (control instanceof Bank) {
-				Bank bank = (Bank) control;
-				Bank masterBank = NonMaps.theMaps.getNonLinearWorld().getPresetManager().findBank(bank.getMasterUUID());
+		for (Bank control : getBanks()) {
+			Bank bank = (Bank) control;
+			Bank masterBank = NonMaps.theMaps.getNonLinearWorld().getPresetManager().findBank(bank.getMasterUUID());
 
-				if (masterBank != null) {
-					bank.installRelationshipMasterSlave(masterBank);
-				}
+			if (masterBank != null) {
+				bank.installRelationshipMasterSlave(masterBank);
 			}
 		}
 	}
@@ -386,14 +385,12 @@ public class PresetManager extends MapsLayout {
 	}
 
 	public Bank findBank(String uuid) {
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				if (b.getUUID().equals(uuid))
-					return b;
-			}
+		for (Bank b : getBanks()) {
+			if (b.getUUID().equals(uuid))
+				return b;
 		}
 		return null;
+
 	}
 
 	public String getSelectedBank() {
@@ -404,20 +401,27 @@ public class PresetManager extends MapsLayout {
 	}
 
 	public void pushBankOntoTop(Bank presetBank) {
-		getChildren().remove(presetBank);
+		for (Control c : getChildren()) {
+			if (c instanceof CachingMapsControl) {
+				if (((CachingMapsControl) c).getChild() == presetBank) {
+					getChildren().remove(c);
+					break;
+				}
+			}
+		}
 		addChild(presetBank);
 	}
 
 	@Override
 	public <T extends MapsControl> T addChild(T child) {
-		T ret = super.addChild(child);
+		super.addChild(new CachingMapsControl(this, child));
 
 		if (moveAllBanks != null) {
 			getChildren().remove(moveAllBanks);
 			super.addChild(moveAllBanks);
 		}
 
-		return ret;
+		return child;
 	}
 
 	public void selectBank(String bankUUID, boolean userInteraction) {
@@ -446,12 +450,9 @@ public class PresetManager extends MapsLayout {
 		for (MapsControl c : getChildren())
 			c.doFirstLayoutPass(levelOfDetail);
 
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				if (b.getMaster() == null) {
-					b.layoutSlaves();
-				}
+		for (Bank b : getBanks()) {
+			if (b.getMaster() == null) {
+				b.layoutSlaves();
 			}
 		}
 	}
@@ -485,18 +486,14 @@ public class PresetManager extends MapsLayout {
 	public void updateMultipleRectangle(Position pos) {
 		moveSomeBanks.update(pos);
 
-		for (Control c : getChildren()) {
-
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				for (Control bc : b.getPresetList().getChildren()) {
-					if (bc instanceof Preset) {
-						Preset p = (Preset) bc;
-						if (moveSomeBanks.getSelectionRect().intersects(p.getPixRect())) {
-							multiSelection.add(p);
-						} else {
-							multiSelection.remove(p);
-						}
+		for (Bank b : getBanks()) {
+			for (Control bc : b.getPresetList().getChildren()) {
+				if (bc instanceof Preset) {
+					Preset p = (Preset) bc;
+					if (moveSomeBanks.getSelectionRect().intersects(p.getPixRect())) {
+						multiSelection.add(p);
+					} else {
+						multiSelection.remove(p);
 					}
 				}
 			}
@@ -599,13 +596,10 @@ public class PresetManager extends MapsLayout {
 	}
 
 	public Preset findLoadedPreset() {
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				Preset p = b.getPresetList().findLoadedPreset();
-				if (p != null)
-					return p;
-			}
+		for (Bank b : getBanks()) {
+			Preset p = b.getPresetList().findLoadedPreset();
+			if (p != null)
+				return p;
 		}
 		return null;
 	}
@@ -752,12 +746,9 @@ public class PresetManager extends MapsLayout {
 		if (b != null) {
 			int targetOrderNumber = b.getOrderNumber() + i;
 
-			for (Control c : getChildren()) {
-				if (c instanceof Bank) {
-					Bank candidate = (Bank) c;
-					if (candidate.getOrderNumber() == targetOrderNumber)
-						return true;
-				}
+			for (Bank candidate : getBanks()) {
+				if (candidate.getOrderNumber() == targetOrderNumber)
+					return true;
 			}
 		}
 		return false;
@@ -774,13 +765,10 @@ public class PresetManager extends MapsLayout {
 	}
 
 	private void selectBankWithOrderNumber(int i) {
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				if (b.getOrderNumber() == i) {
-					b.selectBank(true);
-					return;
-				}
+		for (Bank b : getBanks()) {
+			if (b.getOrderNumber() == i) {
+				b.selectBank(true);
+				return;
 			}
 		}
 	}
@@ -818,16 +806,12 @@ public class PresetManager extends MapsLayout {
 		Set<String> matches = PresetSearch.get().results.getValue();
 		LinkedList<Preset> ret = new LinkedList<Preset>();
 
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-
-				for (Control f : b.getPresetList().getChildren()) {
-					if (f instanceof Preset) {
-						Preset p = (Preset) f;
-						if (matches.contains(p.getUUID()))
-							ret.add(p);
-					}
+		for (Bank b : getBanks()) {
+			for (Control f : b.getPresetList().getChildren()) {
+				if (f instanceof Preset) {
+					Preset p = (Preset) f;
+					if (matches.contains(p.getUUID()))
+						ret.add(p);
 				}
 			}
 		}
@@ -869,10 +853,9 @@ public class PresetManager extends MapsLayout {
 	}
 
 	public boolean isEmpty() {
-		for (Control c : getChildren())
-			if (c instanceof Bank)
-				if (!((Bank) c).isEmpty())
-					return false;
+		for (Control c : getBanks())
+			if (!((Bank) c).isEmpty())
+				return false;
 
 		return true;
 	}
@@ -915,13 +898,10 @@ public class PresetManager extends MapsLayout {
 	}
 
 	public Preset findPreset(String uuid) {
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				Preset p = b.getPresetList().findPreset(uuid);
-				if (p != null)
-					return p;
-			}
+		for (Bank b : getBanks()) {
+			Preset p = b.getPresetList().findPreset(uuid);
+			if (p != null)
+				return p;
 		}
 
 		return null;
@@ -959,14 +939,11 @@ public class PresetManager extends MapsLayout {
 
 	public void moveAllBanksBy(NonDimension distance) {
 
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				NonPosition np = b.getNonPosition().getPosition().copy();
-				np.moveBy(distance);
-				np.snapTo(getSnapGridResolution());
-				b.getNonPosition().moveTo(np);
-			}
+		for (Bank b : getBanks()) {
+			NonPosition np = b.getNonPosition().getPosition().copy();
+			np.moveBy(distance);
+			np.snapTo(getSnapGridResolution());
+			b.getNonPosition().moveTo(np);
 		}
 		requestLayout();
 	}

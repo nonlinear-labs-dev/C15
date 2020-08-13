@@ -111,7 +111,7 @@ public abstract class BankContextMenu extends ContextMenu {
 				}
 			}
 
-			if (bank.getParent().canSelectBankWithOrdernumberOffset(bank, -1)) {
+			if (bank.getPresetManager().canSelectBankWithOrdernumberOffset(bank, -1)) {
 				addChild(new ContextMenuItem(this, "Move Left") {
 					@Override
 					public Control click(Position eventPoint) {
@@ -121,7 +121,7 @@ public abstract class BankContextMenu extends ContextMenu {
 				});
 			}
 
-			if (bank.getParent().canSelectBankWithOrdernumberOffset(bank, 1)) {
+			if (bank.getPresetManager().canSelectBankWithOrdernumberOffset(bank, 1)) {
 				addChild(new ContextMenuItem(this, "Move Right") {
 					@Override
 					public Control click(Position eventPoint) {

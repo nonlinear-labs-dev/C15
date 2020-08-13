@@ -30,8 +30,6 @@ import com.nonlinearlabs.client.dataModel.setup.DeviceInfoUpdater;
 import com.nonlinearlabs.client.dataModel.setup.DeviceInformation;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupUpdater;
-import com.nonlinearlabs.client.useCases.EditBufferUseCases;
-import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
 import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.RenameDialog;
@@ -106,25 +104,25 @@ public class ServerProxy {
 
 	private void applyChanges(String responseText) {
 		try (StopWatchState s = new StopWatchState("ServerProxy::applyChanges")) {
-			
+
 			Document xml = XMLParser.parse(responseText);
 
 			Node webUIHelper = xml.getElementsByTagName("webui-helper").item(0);
 			updateSyncedPart(webUIHelper);
 
 			Node world = xml.getElementsByTagName("nonlinear-world").item(0);
+
 			Node editBufferNode = xml.getElementsByTagName("edit-buffer").item(0);
 			Node settingsNode = xml.getElementsByTagName("settings").item(0);
 			Node undoNode = xml.getElementsByTagName("undo").item(0);
 			Node presetManagerNode = xml.getElementsByTagName("preset-manager").item(0);
 			Node deviceInfo = xml.getElementsByTagName("device-information").item(0);
 			Node clipboardInfo = xml.getElementsByTagName("clipboard").item(0);
-		
+
 			nonMaps.getNonLinearWorld().getClipboardManager().update(clipboardInfo);
 			nonMaps.getNonLinearWorld().getPresetManager().update(presetManagerNode);
 			nonMaps.getNonLinearWorld().getViewport().getOverlay().update(settingsNode, editBufferNode,
 					presetManagerNode, deviceInfo, undoNode);
-			nonMaps.getNonLinearWorld().invalidate(Control.INVALIDATION_FLAG_UI_CHANGED);
 
 			setPlaygroundSoftwareVersion(deviceInfo);
 			setBuildVersion(deviceInfo);
@@ -136,11 +134,11 @@ public class ServerProxy {
 			DeviceInfoUpdater deviceInfoUpdater = new DeviceInfoUpdater(deviceInfo);
 			deviceInfoUpdater.doUpdate();
 
-			if(!omitOracles(world)) {
+			if (!omitOracles(world)) {
 				EditBufferModelUpdater ebu = new EditBufferModelUpdater(editBufferNode);
 				ebu.doUpdate();
 			}
-			
+
 			PresetManagerUpdater pmu = new PresetManagerUpdater(presetManagerNode, PresetManagerModel.get());
 			pmu.doUpdate();
 
@@ -173,19 +171,19 @@ public class ServerProxy {
 		String branch = getChildText(deviceInfo, "build-branch");
 		String date = getChildText(deviceInfo, "build-date");
 
-		if(branch != null) {
+		if (branch != null) {
 			DeviceInformation.get().branch.setValue(branch);
 		}
 
-		if(commits != null) {
+		if (commits != null) {
 			DeviceInformation.get().commits.setValue(commits);
 		}
 
-		if(head != null) {
+		if (head != null) {
 			DeviceInformation.get().head.setValue(head);
 		}
 
-		if(date != null) {
+		if (date != null) {
 			DeviceInformation.get().date.setValue(date);
 		}
 	}
@@ -471,15 +469,14 @@ public class ServerProxy {
 
 	public void setModulationAmount(double amount, ParameterId id) {
 		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "set-mod-amount");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("amount", amount), 
-											new StaticURI.KeyValue("id", id));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("amount", amount), new StaticURI.KeyValue("id", id));
 		queueJob(uri, true);
 	}
 
 	public void setModulationSource(ModSource src, ParameterId id) {
 		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "set-mod-src");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("source", src.toInt()), 
-											new StaticURI.KeyValue("id", id));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("source", src.toInt()),
+				new StaticURI.KeyValue("id", id));
 		queueJob(uri, true);
 	}
 

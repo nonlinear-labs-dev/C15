@@ -148,7 +148,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		boolean isOriginPreset = isLoaded() && isInStoreSelectMode();
 
 		if (isInMultiplePresetSelectionMode()) {
-			selected = getParent().getParent().getMultiSelection().contains(this);
+			selected = getParent().getPresetManager().getMultiSelection().contains(this);
 			loaded = false;
 		}
 
@@ -169,7 +169,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	public boolean isInStoreSelectMode() {
-		return getParent().getParent().isInStoreSelectMode();
+		return getParent().getPresetManager().isInStoreSelectMode();
 	}
 
 	public void update(int i, Node preset) {
@@ -236,7 +236,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		boolean isSearchOpen = PresetSearchDialog.isShown();
 
 		if (isInMultiplePresetSelectionMode()) {
-			selected = getParent().getParent().getMultiSelection().contains(this);
+			selected = getParent().getPresetManager().getMultiSelection().contains(this);
 			loaded = false;
 		}
 
@@ -326,7 +326,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	public boolean isLoaded() {
-		PresetManager pm = getParent().getParent();
+		PresetManager pm = getParent().getPresetManager();
 		CustomPresetSelector sel = pm.getCustomPresetSelection();
 		if (sel instanceof StoreSelectMode)
 			return this == sel.getOriginalPreset();
@@ -367,7 +367,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 			selectPreset();
 			wasJustSelected = true;
 		}
-		getParent().getParent().pushBankOntoTop(getParent());
+		getParent().getPresetManager().pushBankOntoTop(getParent());
 		return this;
 	}
 
@@ -386,12 +386,12 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 			return this;
 
 		if (isInMultiplePresetSelectionMode()) {
-			getParent().getParent().getMultiSelection().toggle(this);
+			getParent().getPresetManager().getMultiSelection().toggle(this);
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
 		} else if (isInLoadToPartMode()) {
 			loadToPartClickBehaviour((LoadToPartMode) getCustomPresetSelection());
 		} else if (NonMaps.get().getNonLinearWorld().isShiftDown() && !isInMultiplePresetSelectionMode()) {
-			getParent().getParent().startMultiSelection(this, true);
+			getParent().getPresetManager().startMultiSelection(this, true);
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
 		} else if (isInStoreSelectMode() || !isSelected()) {
 			selectPreset();
@@ -433,7 +433,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	private boolean isSelectedInMultiplePresetSelectionMode() {
-		MultiplePresetSelection mp = getParent().getParent().getMultiSelection();
+		MultiplePresetSelection mp = getParent().getPresetManager().getMultiSelection();
 		if (mp != null) {
 			return mp.getSelectedPresets().contains(this.getUUID());
 		}
@@ -441,7 +441,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	private boolean isInMultiplePresetSelectionMode() {
-		return getParent().getParent().hasMultiplePresetSelection();
+		return getParent().getPresetManager().hasMultiplePresetSelection();
 	}
 
 	@Override
@@ -529,7 +529,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 	public void load() {
 		VoiceGroup vg = EditBufferPresenterProvider.getPresenter().voiceGroupEnum;
-		LoadToPartMode loadToPart = getParent().getParent().getLoadToPartMode();
+		LoadToPartMode loadToPart = getParent().getPresetManager().getLoadToPartMode();
 		if (loadToPart != null) {
 			EditBufferUseCases.get().loadPresetPartIntoPart(loadToPart.getSelectedPreset().getUUID(),
 					type != SoundType.Single ? loadToPart.getSelectedPart() : VoiceGroup.I, vg);
@@ -577,7 +577,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		super.beingDropped();
 
 		if (isInMultiplePresetSelectionMode())
-			getParent().getParent().closeMultiSelection();
+			getParent().getPresetManager().closeMultiSelection();
 	}
 
 	public void rename() {

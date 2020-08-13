@@ -29,6 +29,10 @@ public class CachingMapsControl extends MapsLayout {
 		child.setParent(this);
 	}
 
+	public MapsControl getChild() {
+		return child;
+	}
+
 	public Control handleGesture(Gesture g) {
 		return child.handleGesture(g);
 	}
@@ -70,9 +74,13 @@ public class CachingMapsControl extends MapsLayout {
 	}
 
 	public boolean isTooLargeToCache() {
-		Rect screenSize = NonMaps.theMaps.getNonLinearWorld().getViewport().getPixRect();
-		Rect mySize = getPixRect();
-		return (2 * mySize.getWidth() >= screenSize.getWidth()) || (2 * mySize.getHeight() >= screenSize.getHeight());
+		return false;
+		/*
+		 * Rect screenSize =
+		 * NonMaps.theMaps.getNonLinearWorld().getViewport().getPixRect(); Rect mySize =
+		 * getPixRect(); return (2 * mySize.getWidth() >= screenSize.getWidth()) || (2 *
+		 * mySize.getHeight() >= screenSize.getHeight());
+		 */
 	}
 
 	private boolean shouldCache() {

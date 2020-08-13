@@ -103,7 +103,7 @@ public class Header extends Label {
 	@Override
 	public Control drop(Position pos, DragProxy dragProxy) {
 		Bank b = getParent();
-		PresetManager pm = b.getParent();
+		PresetManager pm = b.getPresetManager();
 
 		if (b == dragProxy.getOrigin())
 			return null;
@@ -178,7 +178,7 @@ public class Header extends Label {
 	public Control mouseDown(Position eventPoint) {
 		Tracer.log("down");
 		Bank parent = getParent();
-		parent.getParent().pushBankOntoTop(parent);
+		parent.getPresetManager().pushBankOntoTop(parent);
 		return this;
 	}
 
@@ -197,7 +197,7 @@ public class Header extends Label {
 
 		doubleClickWaiter = new DoubleClickWaiter(point, (c) -> {
 			Tracer.log("click");
-			getParent().getParent().selectBank(getParent().getUUID(), true);
+			getParent().getPresetManager().selectBank(getParent().getUUID(), true);
 		});
 
 		return this;
@@ -336,10 +336,10 @@ public class Header extends Label {
 	public Control onContextMenu(Position pos) {
 		Bank bank = getParent();
 
-		if (bank.getParent().isInStoreSelectMode())
+		if (bank.getPresetManager().isInStoreSelectMode())
 			return null;
 
-		bank.getParent().pushBankOntoTop(bank);
+		bank.getPresetManager().pushBankOntoTop(bank);
 
 		boolean showContextMenus = SetupModel.get().localSettings.contextMenus.getValue() == BooleanValues.on;
 

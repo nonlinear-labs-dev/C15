@@ -169,7 +169,7 @@ public class LoadToPartMode implements CustomPresetSelector {
 
 	public boolean canSelectPreviousBank() {
 		if (m_currentData.m_selectedBank != null) {
-			return m_currentData.m_selectedBank.getParent()
+			return m_currentData.m_selectedBank.getPresetManager()
 					.canSelectBankWithOrdernumberOffset(m_currentData.m_selectedBank, -1);
 		}
 		return false;
@@ -177,7 +177,7 @@ public class LoadToPartMode implements CustomPresetSelector {
 
 	public boolean canSelectNextBank() {
 		if (m_currentData.m_selectedBank != null) {
-			return m_currentData.m_selectedBank.getParent()
+			return m_currentData.m_selectedBank.getPresetManager()
 					.canSelectBankWithOrdernumberOffset(m_currentData.m_selectedBank, 1);
 		}
 		return false;
