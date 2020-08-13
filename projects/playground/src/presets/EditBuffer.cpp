@@ -47,7 +47,7 @@ EditBuffer::EditBuffer(PresetManager *parent)
     , m_isModified(false)
     , m_recallSet(this)
     , m_type(SoundType::Single)
-    , m_lastSelectedParameter { 0, VoiceGroup::I }
+    , m_lastSelectedParameter{ 0, VoiceGroup::I }
 {
   m_hashOnStore = getHash();
 }
@@ -250,7 +250,7 @@ void EditBuffer::setParameter(ParameterId id, double cpValue)
   if(auto p = findParameterByID(id))
   {
     DebugLevel::gassy("EditBuffer::setParameter", id, cpValue);
-    Glib::ustring name {};
+    Glib::ustring name{};
     if(m_type == SoundType::Single || ParameterId::isGlobal(id.getNumber()))
       name = UNDO::StringTools::formatString("Set '%0'", p->getGroupAndParameterName());
     else
@@ -631,7 +631,7 @@ void EditBuffer::undoableInitSound(UNDO::Transaction *transaction)
 
 void EditBuffer::undoableSetDefaultValues(UNDO::Transaction *transaction, Preset *other)
 {
-  for(auto vg : { VoiceGroup::I, VoiceGroup::II })
+  for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
     for(auto &g : getParameterGroups(vg))
       if(auto otherGroup = other->findParameterGroup(g->getID()))
         g->undoableSetDefaultValues(transaction, otherGroup);
@@ -878,7 +878,7 @@ void EditBuffer::copyAndInitGlobalMasterGroupToPartMasterGroups(UNDO::Transactio
   auto partII = getParameterGroupByID({ "Part", VoiceGroup::II });
 
   //Copy Volume and Tune
-  for(auto &ids : std::vector<std::pair<int, int>> { { 358, 247 }, { 360, 248 } })
+  for(auto &ids : std::vector<std::pair<int, int>>{ { 358, 247 }, { 360, 248 } })
   {
     auto pI = partI->findParameterByID({ ids.first, VoiceGroup::I });
     auto pII = partII->findParameterByID({ ids.first, VoiceGroup::II });
@@ -1135,7 +1135,7 @@ void EditBuffer::loadPresetGlobalMasterIntoVoiceGroupMaster(UNDO::Transaction *t
 {
   auto part = getParameterGroupByID({ "Part", copyTo });
 
-  for(auto &ids : std::vector<std::pair<int, int>> { { 358, 247 }, { 360, 248 } })
+  for(auto &ids : std::vector<std::pair<int, int>>{ { 358, 247 }, { 360, 248 } })
   {
     auto p = part->findParameterByID({ ids.first, part->getVoiceGroup() });
     if(auto pGlobal = preset->findParameterByID({ ids.second, VoiceGroup::Global }, false))
@@ -1440,10 +1440,10 @@ void EditBuffer::undoableLoadPresetPartIntoSplitSound(UNDO::Transaction *transac
   {
     initFadeParameters(transaction, invert(copyTo));
 
-    const auto unisonTo = GroupId { "Unison", copyTo };
-    const auto unisonI = GroupId { "Unison", VoiceGroup::I };
-    const auto monoTo = GroupId { "Mono", copyTo };
-    const auto monoI = GroupId { "Mono", VoiceGroup::I };
+    const auto unisonTo = GroupId{ "Unison", copyTo };
+    const auto unisonI = GroupId{ "Unison", VoiceGroup::I };
+    const auto monoTo = GroupId{ "Mono", copyTo };
+    const auto monoI = GroupId{ "Mono", VoiceGroup::I };
 
     getParameterGroupByID(unisonTo)->copyFrom(transaction, preset->findParameterGroup(unisonI));
     getParameterGroupByID(monoTo)->copyFrom(transaction, preset->findParameterGroup(monoI));
