@@ -943,7 +943,7 @@ void NL_EHC_SendEHCdata(void)
   }
   BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_EHC_DATA, EHC_DATA_MSG_SIZE, data);
   BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_EHC_DATA, 1);
-  BB_MSG_SendTheBuffer();
+  // BB_MSG_SendTheBuffer();
   for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++)
     ctrl[i].status.isSaved = 0;
 #undef EHC_DATA_MSG_SIZE
@@ -1121,7 +1121,7 @@ void NL_EHC_ProcessControllers3(void)
     {
       forceEepromUpdateExternal = 0;
       BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_EHC_EEPROMSAVE, 0 == forceEepromUpdate);
-      BB_MSG_SendTheBuffer();
+      // BB_MSG_SendTheBuffer();
     }
   }
 

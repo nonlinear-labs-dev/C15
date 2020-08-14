@@ -268,7 +268,7 @@ void SUP_Process(void)
   if (unmute_status_bits != old_unmute_status_bits)
   {  // send any changed status to BB
     BB_MSG_WriteMessage1Arg(LPC_BB_MSG_TYPE_MUTESTATUS, unmute_status_bits);
-    BB_MSG_SendTheBuffer();
+    // BB_MSG_SendTheBuffer();
     old_unmute_status_bits = unmute_status_bits;
   }
 #endif

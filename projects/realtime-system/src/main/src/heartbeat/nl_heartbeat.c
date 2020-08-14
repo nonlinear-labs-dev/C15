@@ -91,7 +91,7 @@ void HBT_Process(void)
   if (heartbeat_update)
   {
     BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_HEARTBEAT, 4, (uint16_t *) &heartbeat);
-    BB_MSG_SendTheBuffer();
+    // BB_MSG_SendTheBuffer();
     heartbeat_update = 0;
   }
 }

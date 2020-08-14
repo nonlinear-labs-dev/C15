@@ -308,7 +308,7 @@ static void SendEditMessageToBB(uint16_t const which, uint16_t const value, int1
   if (ribbon[which].editBehavior)  // 1: the ribbon sends the absolute value
   {
     BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, ribbon[which].hwSourceId, value);
-    BB_MSG_SendTheBuffer();  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
+    // BB_MSG_SendTheBuffer();  // sends the value as an Edit Control message; results being displayed on the upper Ribbon
   }
   else  // 0: the ribbon sends the increment
   {
@@ -322,7 +322,7 @@ static void SendEditMessageToBB(uint16_t const which, uint16_t const value, int1
     // sends the increment as an Edit Control message; results being displayed on the Ribbon
     BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_EDIT_CONTROL, ribbon[which].hwSourceId,
                             inc > 0 ? inc : 0x8000 | -inc);
-    BB_MSG_SendTheBuffer();
+    // BB_MSG_SendTheBuffer();
   }
 }
 /// "return"-Behaviour braucht eigene Funktion, die mit einem Timer-Task aufgerufen wird
@@ -341,7 +341,6 @@ void ADC_WORK_WriteHWValueForAE(uint16_t const hwSourceId, uint16_t const value)
 void ADC_WORK_SendUIMessages(void)  // is called as a regular COOS task
 {
   uint32_t i;
-  uint32_t send = 0;
 
   for (i = 0; i < NUM_HW_SOURCES; i++)
   {
@@ -350,12 +349,9 @@ void ADC_WORK_SendUIMessages(void)  // is called as a regular COOS task
       if (BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_PARAMETER, i, uiSendValue[i] - 1) > -1)
       {                      //
         uiSendValue[i] = 0;  // clear value, including update flag
-        send           = 1;
-      }  // else: sending failed, try agai later
+      }                      // else: sending failed, try agai later
     }
   }
-  if (send)
-    BB_MSG_SendTheBuffer();
 }
 
 static void SendAEMessages(void)
@@ -872,7 +868,7 @@ static void SendRawValues(void)
     data[11] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON1);
     data[12] = IPC_ReadAdcBufferAveraged(IPC_ADC_RIBBON2);
     BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_SENSORS_RAW, 13, data);
-    BB_MSG_SendTheBuffer();
+    // BB_MSG_SendTheBuffer();
   }
 }
 

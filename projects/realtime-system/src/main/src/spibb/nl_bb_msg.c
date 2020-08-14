@@ -29,59 +29,6 @@
 static uint16_t sendBuffer[SENDBUFFER_SIZE] = {};
 static uint32_t sendBufferLen               = 0;  // behind the 4-byte header
 
-void SignalBufferOverrun(void);
-
-void BB_MSG_WriteMessage_DBG(uint16_t type, uint16_t length, uint16_t* data)
-{
-#ifdef BB_MSG_DBG
-  int32_t remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + length + 2);
-
-  if (remainingBuffer < 0)
-  {
-    SignalBufferOverrun();
-  }
-
-  sendBuffer[sendBufferLen] = type;
-  sendBufferLen++;
-  sendBuffer[sendBufferLen] = length;
-  sendBufferLen++;
-
-  if (data != NULL)
-  {
-    uint32_t i;
-
-    for (i = 0; i < length; i++)
-    {
-      sendBuffer[sendBufferLen] = data[i];
-      sendBufferLen++;
-    }
-  }
-  BB_MSG_SendTheBuffer();
-#endif
-}
-
-void BB_MSG_WriteMessage1Arg_DBG(uint16_t type, uint16_t arg)
-{
-#ifdef BB_MSG_DBG
-  int32_t remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + 3);
-
-  if (remainingBuffer < 0)
-  {
-    SignalBufferOverrun();
-  }
-
-  sendBuffer[sendBufferLen] = type;
-  sendBufferLen++;
-  sendBuffer[sendBufferLen] = 1;
-  sendBufferLen++;
-
-  sendBuffer[sendBufferLen] = arg;
-  sendBufferLen++;
-
-  BB_MSG_SendTheBuffer();
-#endif
-}
-
 void SignalBufferOverrun(void)
 {
   // TODO :
@@ -91,6 +38,8 @@ void SignalBufferOverrun(void)
     NL_systemStatus.BB_MSG_bufferOvers++;
   DBG_Led_Error_TimedOn(2);
 }
+
+int32_t BB_MSG_SendTheBuffer(void);
 
 /**********************************************************************
  * @brief		Writing a generic message into the SPI send buffer
@@ -105,9 +54,15 @@ void SignalBufferOverrun(void)
 
 int32_t BB_MSG_WriteMessage(uint16_t type, uint16_t length, uint16_t* data)
 {
-#ifndef BB_MSG_DBG
   int32_t remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + length + 2);
 
+  if (remainingBuffer < 0 && BB_MSG_SendTheBuffer() <= 0)
+  {
+    SignalBufferOverrun();
+    return -1;  // buffer is full
+  }
+
+  remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + length + 2);
   if (remainingBuffer < 0)
   {
     SignalBufferOverrun();
@@ -131,9 +86,6 @@ int32_t BB_MSG_WriteMessage(uint16_t type, uint16_t length, uint16_t* data)
   }
 
   return remainingBuffer;
-#else
-  return 0;
-#endif
 }
 
 /**********************************************************************
@@ -147,9 +99,15 @@ int32_t BB_MSG_WriteMessage(uint16_t type, uint16_t length, uint16_t* data)
 
 int32_t BB_MSG_WriteMessage2Arg(uint16_t type, uint16_t arg0, uint16_t arg1)
 {
-#ifndef BB_MSG_DBG
   int32_t remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + 4);
 
+  if (remainingBuffer < 0 && BB_MSG_SendTheBuffer() <= 0)
+  {
+    SignalBufferOverrun();
+    return -1;  // buffer is full
+  }
+
+  remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + 4);
   if (remainingBuffer < 0)
   {
     SignalBufferOverrun();
@@ -168,9 +126,6 @@ int32_t BB_MSG_WriteMessage2Arg(uint16_t type, uint16_t arg0, uint16_t arg1)
   sendBufferLen++;
 
   return remainingBuffer;
-#else
-  return 0;
-#endif
 }
 
 /**********************************************************************
@@ -183,9 +138,15 @@ int32_t BB_MSG_WriteMessage2Arg(uint16_t type, uint16_t arg0, uint16_t arg1)
 
 int32_t BB_MSG_WriteMessage1Arg(uint16_t type, uint16_t arg)
 {
-#ifndef BB_MSG_DBG
   int32_t remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + 3);
 
+  if (remainingBuffer < 0 && BB_MSG_SendTheBuffer() <= 0)
+  {
+    SignalBufferOverrun();
+    return -1;  // buffer is full
+  }
+
+  remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + 3);
   if (remainingBuffer < 0)
   {
     SignalBufferOverrun();
@@ -201,35 +162,6 @@ int32_t BB_MSG_WriteMessage1Arg(uint16_t type, uint16_t arg)
   sendBufferLen++;
 
   return remainingBuffer;
-#else
-  return 0;
-#endif
-}
-
-/**********************************************************************
- * @brief		Writes a message with 0 arguments into the send buffer
- * @param[in]	type	message type (see defines)
- * @return		>= 0: "success" and remaining buffer space
- * 				-1: "buffer is full, try again later"
- **********************************************************************/
-
-int32_t BB_MSG_WriteMessageNoArg(uint16_t type)
-{
-#ifndef BB_MSG_DBG
-  int32_t remainingBuffer = SENDBUFFER_SIZE - (sendBufferLen + 1);
-
-  if (remainingBuffer < 0)
-  {
-    return -1;  // buffer is full
-  }
-
-  sendBuffer[sendBufferLen] = (type << 16);  // no data fields
-  sendBufferLen++;
-
-  return remainingBuffer;
-#else
-  return 0;
-#endif
 }
 
 /**********************************************************************
@@ -239,11 +171,10 @@ int32_t BB_MSG_WriteMessageNoArg(uint16_t type)
  *              -1 = "failure, try again later"
  *              sendBufferLen*2 = "success"
  **********************************************************************/
-
 int32_t BB_MSG_SendTheBuffer(void)
 {
-  if (sendBufferLen == 0)
-    return 0;  // nothing to send
+  if (sendBufferLen == 1)
+    return 1;  // signal send OK
 
   uint8_t* buff    = (uint8_t*) sendBuffer;
   uint32_t success = SPI_BB_Send(buff, sendBufferLen * 2);
@@ -277,7 +208,7 @@ static void ProcessTestMessage(uint16_t length, uint16_t* data)
       }
   data[0] = (data[0] & 0x3FFF) | (!dataOk << 14) | (!seqOk << 15);
   BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_TEST_MSG, data[0]);
-  BB_MSG_SendTheBuffer();
+  // BB_MSG_SendTheBuffer();
 }
 
 /*****************************************************************************
@@ -400,11 +331,11 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
     {
       case LPC_REQUEST_ID_SW_VERSION:  // sending the firmware version to the BB
         BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_SW_VERSION, SW_VERSION);
-        BB_MSG_SendTheBuffer();
+        // BB_MSG_SendTheBuffer();
         break;
       case LPC_REQUEST_ID_UNMUTE_STATUS:  // sending the muting status to the BB
         BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_UNMUTE_STATUS, SUP_GetUnmuteStatusBits());
-        BB_MSG_SendTheBuffer();
+        // BB_MSG_SendTheBuffer();
         break;
       case LPC_REQUEST_ID_EHC_DATA:  // send EHC data to BB
         NL_EHC_RequestToSendEHCdata();
@@ -419,13 +350,13 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         NL_STAT_GetData(buffer);
         BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_STAT_DATA, words, buffer);
         BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_STAT_DATA, 1);
-        BB_MSG_SendTheBuffer();
+        // BB_MSG_SendTheBuffer();
         break;
       }
       case LPC_REQUEST_ID_CLEAR_STAT:
         NL_STAT_ClearData();
         BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_CLEAR_STAT, 1);
-        BB_MSG_SendTheBuffer();
+        // BB_MSG_SendTheBuffer();
         break;
       case LPC_REQUEST_ID_EHC_EEPROMSAVE:
         NL_EHC_ForceEepromUpdate();
@@ -438,7 +369,7 @@ void BB_MSG_ReceiveCallback(uint16_t type, uint16_t length, uint16_t* data)
         NL_STAT_GetKeyData(buffer);
         BB_MSG_WriteMessage(LPC_BB_MSG_TYPE_KEYCNTR_DATA, words, buffer);
         BB_MSG_WriteMessage2Arg(LPC_BB_MSG_TYPE_NOTIFICATION, LPC_NOTIFICATION_ID_KEYCNTR_DATA, 1);
-        BB_MSG_SendTheBuffer();
+        // BB_MSG_SendTheBuffer();
         break;
       }
 #endif

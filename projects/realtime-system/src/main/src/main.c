@@ -42,9 +42,10 @@ void M4SysTick_Init(void);
 // --- all 125us processes combined in one single tasks
 void FastProcesses(void)
 {
-  SYS_WatchDogClear();  // every 125 us, clear Watchdog
-  NL_GPDMA_Poll();      // every 125 us, for all the DMA transfers (SPI devices), may do callbacks ?
-  SPI_BB_Polling();     // every 125 us, checking the buffer with messages from the BBB, may do callbacks ?
+  SYS_WatchDogClear();     // every 125 us, clear Watchdog
+  BB_MSG_SendTheBuffer();  // send pending BB messages
+  NL_GPDMA_Poll();         // every 125 us, for all the DMA transfers (SPI devices), may do callbacks ?
+  SPI_BB_Polling();        // every 125 us, checking the buffer with messages from the BBB, may do callbacks ?
 }
 
 volatile char dummy;
