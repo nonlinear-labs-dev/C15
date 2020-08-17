@@ -179,9 +179,7 @@ int32_t BB_MSG_SendTheBuffer(void)
   uint8_t* buff    = (uint8_t*) sendBuffer;
   uint32_t success = SPI_BB_Send(buff, sendBufferLen * 2);
 
-#if 0
   MSG_FillBufferWithSysExData(buff, sendBufferLen * 2);
-#endif
 
   if (success)
   {
