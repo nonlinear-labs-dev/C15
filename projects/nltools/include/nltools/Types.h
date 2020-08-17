@@ -17,3 +17,9 @@ template <typename T> inline typename std::enable_if<std::is_floating_point<T>::
 {
   return std::abs(a - b) > std::numeric_limits<T>::epsilon();
 }
+
+#ifdef _DEVELOPMENT_PC
+constexpr auto isDevelopmentPC = true;
+#else
+constexpr auto isDevelopmentPC = false;
+#endif

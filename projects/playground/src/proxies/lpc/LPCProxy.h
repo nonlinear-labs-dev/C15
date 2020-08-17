@@ -67,7 +67,7 @@ class LPCProxy
   sigc::connection onRibbonTouched(sigc::slot<void, int> s);
   sigc::connection onLPCSoftwareVersionChanged(const sigc::slot<void, int> &s);
   int getLastTouchedRibbonParameterID() const;
-  int getLPCSoftwareVersion() const;
+  std::string getLPCSoftwareVersion() const;
 
  private:
   void onLPCMessage(const nltools::msg::LPCMessage &msg);
@@ -101,7 +101,7 @@ class LPCProxy
 
   std::unique_ptr<QuantizedValue::IncrementalChanger> m_relativeEditControlMessageChanger;
 
-  int m_lpcSoftwareVersion;
+  int m_lpcSoftwareVersion = -1;
   Throttler m_throttledRelativeParameterChange;
   gint32 m_throttledRelativeParameterAccumulator = 0;
 

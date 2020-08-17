@@ -381,6 +381,7 @@ void LPCProxy::onHeartbeatStumbled()
   settings->sendSettingsToLPC(SendReason::HeartBeatDropped);
   settings->sendPresetSettingsToLPC();
   sendCalibrationData();
+  requestLPCSoftwareVersion();
 }
 
 sigc::connection LPCProxy::onLPCSoftwareVersionChanged(const sigc::slot<void, int> &s)
@@ -395,10 +396,17 @@ void LPCProxy::requestLPCSoftwareVersion()
   *cmp << v;
   queueToLPC(cmp);
 
-  DebugLevel::info("sending request", MessageParser::SOFTWARE_VERSION);
+  DebugLevel::info("sending request SOFTWARE_VERSION to LPC");
 }
 
-int LPCProxy::getLPCSoftwareVersion() const
+std::string LPCProxy::getLPCSoftwareVersion() const
 {
-  return m_lpcSoftwareVersion;
+  if(m_lpcSoftwareVersion == -1)
+  {
+    return "-";
+  }
+  else
+  {
+    return std::to_string(m_lpcSoftwareVersion);
+  }
 }

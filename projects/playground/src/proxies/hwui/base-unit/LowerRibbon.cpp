@@ -9,35 +9,21 @@
 #include <glib.h>
 #include <math.h>
 
+static Parameter *getParameter()
+{
+  return Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+      HardwareSourcesGroup::getLowerRibbonParameterID());
+}
+
 LowerRibbon::LowerRibbon()
 {
   initLEDs();
-  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::mem_fun(this, &LowerRibbon::onParamSelectionChanged), {});
+  getParameter()->onParameterChanged(sigc::mem_fun(this, &LowerRibbon::onParamValueChanged));
 }
 
 int LowerRibbon::posToLedID(int pos) const
 {
   return pos * 2;
-}
-
-void LowerRibbon::onParamSelectionChanged(Parameter *oldOne, Parameter *newOne)
-{
-  reconnect();
-}
-
-void LowerRibbon::reconnect()
-{
-  m_paramConnection.disconnect();
-
-  if(auto p = getResponsibleParameter())
-    m_paramConnection = p->onParameterChanged(sigc::mem_fun(this, &LowerRibbon::onParamValueChanged));
-}
-
-Parameter *LowerRibbon::getResponsibleParameter()
-{
-  return Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
-      HardwareSourcesGroup::getLowerRibbonParameterID());
 }
 
 void LowerRibbon::onParamValueChanged(const Parameter *param)
@@ -72,6 +58,6 @@ void LowerRibbon::indicateBlockingMainThread(bool onOff)
   }
   else
   {
-    onParamValueChanged(getResponsibleParameter());
+    onParamValueChanged(getParameter());
   }
 }

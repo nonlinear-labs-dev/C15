@@ -69,6 +69,8 @@
 #include <parameter_declarations.h>
 #include "UISoftwareVersionEditor.h"
 
+#include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/AnimatedGenericItem.h>
+
 namespace NavTree
 {
   struct InnerNode;
@@ -238,6 +240,74 @@ namespace NavTree
     }
   };
 
+  struct OneShotEntry : EditableLeaf
+  {
+    using CB = std::function<void()>;
+    struct Item : public AnimatedGenericItem
+    {
+      Item(const Rect &rect, const CB &cb)
+          : AnimatedGenericItem("", rect, cb)
+      {
+      }
+
+      bool drawHighlightBorder(FrameBuffer &) override
+      {
+        return false;
+      }
+    };
+
+    Item *theItem = nullptr;
+    CB cb;
+
+    OneShotEntry(InnerNode *p, const std::string &name, const CB &cb)
+        : EditableLeaf(p, name)
+        , cb(cb)
+    {
+    }
+
+    Control *createView() override
+    {
+      theItem = new Item(Rect(0, 0, 0, 0), cb);
+      return theItem;
+    }
+
+    Control *createEditor() override
+    {
+      return nullptr;
+    }
+
+    bool onEditModeEntered() override
+    {
+      if(theItem)
+        theItem->doAction();
+      return true;
+    }
+  };
+
+  struct StoreInitSound : OneShotEntry
+  {
+    StoreInitSound(InnerNode *p)
+        : OneShotEntry(p, "Store Init Sound", [] {
+          auto pm = Application::get().getPresetManager();
+          auto scope = pm->getUndoScope().startTransaction("Store Init Sound");
+          pm->storeInitSound(scope->getTransaction());
+        })
+    {
+    }
+  };
+
+  struct ResetInitSound : OneShotEntry
+  {
+    ResetInitSound(InnerNode *p)
+        : OneShotEntry(p, "Reset Init Sound", [] {
+          auto pm = Application::get().getPresetManager();
+          auto scope = pm->getUndoScope().startTransaction("Reset Init Sound");
+          pm->resetInitSound(scope->getTransaction());
+        })
+    {
+    }
+  };
+
   template <typename tSetting> struct SettingItem : EditableLeaf
   {
    private:
@@ -350,6 +420,8 @@ namespace NavTree
       children.emplace_back(new PedalSettings(this));
       children.emplace_back(new PresetGlitchSuppression(this));
       children.emplace_back(new WiFiSetting(this));
+      children.emplace_back(new StoreInitSound(this));
+      children.emplace_back(new ResetInitSound(this));
     }
   };
 
@@ -793,9 +865,7 @@ SetupLayout::SetupLayout(FocusAndMode focusAndMode)
   buildPage();
 }
 
-SetupLayout::~SetupLayout()
-{
-}
+SetupLayout::~SetupLayout() = default;
 
 void SetupLayout::addBreadcrumb()
 {

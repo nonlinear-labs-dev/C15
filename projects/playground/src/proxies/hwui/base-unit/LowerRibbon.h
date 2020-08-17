@@ -2,13 +2,14 @@
 
 #include "playground.h"
 #include "Ribbon.h"
-#include <sigc++/connection.h>
+
+#include <sigc++/trackable.h>
 
 class Application;
 class Parameter;
 class Setting;
 
-class LowerRibbon : public Ribbon
+class LowerRibbon : public Ribbon, public sigc::trackable
 {
   typedef Ribbon super;
 
@@ -19,12 +20,8 @@ class LowerRibbon : public Ribbon
  private:
   void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne);
   void onParamValueChanged(const Parameter* param);
-  void reconnect();
-
-  static Parameter* getResponsibleParameter();
 
   int posToLedID(int pos) const;
 
-  sigc::connection m_paramConnection;
   bool m_indicateBlockingMainThread = false;
 };

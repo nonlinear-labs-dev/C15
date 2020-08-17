@@ -11,19 +11,27 @@ WiFiSettingEditor::WiFiSettingEditor()
 
 WiFiSettingEditor::~WiFiSettingEditor() = default;
 
-void WiFiSettingEditor::incSetting(int inc)
+void WiFiSettingEditor::incSetting(int)
 {
   auto setting = Application::get().getSettings()->getSetting<WifiSetting>();
-  setting->inc(1, true);
+  auto s = setting->get();
+
+  if(s == WifiSettings::Querying)
+    setting->set(WifiSettings::Disabled);
+  else if(s == WifiSettings::Disabled)
+    setting->set(WifiSettings::Enabled);
+  else if(s == WifiSettings::Enabled)
+    setting->set(WifiSettings::Disabled);
 }
 
 const std::vector<Glib::ustring> &WiFiSettingEditor::getDisplayStrings() const
 {
-  return Application::get().getSettings()->getSetting<WifiSetting>()->enumToDisplayString();
+  static std::vector<Glib::ustring> s { "Disabled", "Enabled" };
+  return s;
 }
 
 int WiFiSettingEditor::getSelectedIndex() const
 {
-  auto enabled = Application::get().getSettings()->getSetting<WifiSetting>()->get();
-  return enabled ? 0 : 1;
+  auto s = Application::get().getSettings()->getSetting<WifiSetting>()->get();
+  return s == WifiSettings::Disabled ? 0 : 1;
 }

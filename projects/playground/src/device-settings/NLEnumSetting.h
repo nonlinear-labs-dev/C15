@@ -75,6 +75,19 @@ template <typename TEnum> class NLEnumSetting : public Setting
     writer.writeTextElement("value", toString(get()), Attribute("changed", changed));
   }
 
+  Glib::ustring getDisplayString() const override
+  {
+    auto v = getAllValues<TEnum>();
+    auto it = std::find(v.begin(), v.end(), get());
+    if(it != v.end())
+    {
+      auto idx = std::distance(v.begin(), it);
+      return getAllStrings<TEnum>().at(idx);
+    }
+
+    return "";
+  }
+
  private:
   NLEnumSetting(const NLEnumSetting &other);
   NLEnumSetting &operator=(const NLEnumSetting &);

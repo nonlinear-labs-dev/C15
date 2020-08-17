@@ -64,11 +64,27 @@ move_files(){
 }
 
 update(){
+    systemctl status accesspoint
+    ACCESSPOINT_RUNNING=$?
+
     mkdir /update/BBB/rootfs \
     && gzip -dc /update/BBB/rootfs.tar.gz | tar -C /update/BBB/rootfs -xf - \
     && LD_LIBRARY_PATH=/update/utilities /update/utilities/rsync -cax --exclude '/etc/hostapd.conf' --exclude '/var/log/journal' --exclude '/update' --delete /update/BBB/rootfs/ / \
     && chown -R root.root /update
-    if [ $? -ne 0 ]; then report_and_quit "E58 BBB update: Syncing rootfs failed ..." "58"; fi
+
+    UPDATE_RESULT=$?
+
+    if [ $ACCESSPOINT_RUNNING -eq 3 ]; then
+        systemctl stop accesspoint
+        systemctl disable accesspoint
+        systemctl mask accesspoint
+    else
+        systemctl unmask accesspoint
+        systemctl enable accesspoint
+        systemctl start accesspoint
+    fi
+
+    if [ $UPDATE_RESULT -ne 0 ]; then report_and_quit "E58 BBB update: Syncing rootfs failed ..." "58"; fi
     mkdir /var/log/journal/$(cat /etc/machine-id)
     mv /var/log/journal/$OLD_MACHINE_ID/* /var/log/journal/$(cat /etc/machine-id)
     rm -rf /var/log/journal/$OLD_MACHINE_ID

@@ -377,7 +377,8 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	private boolean isInLoadToPartMode() {
-		return (LoadToPartMode) getCustomPresetSelection() != null;
+		CustomPresetSelector cps = getCustomPresetSelection();
+		return cps != null && cps instanceof LoadToPartMode;
 	}
 
 	private Control clickBehaviour() {

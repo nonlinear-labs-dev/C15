@@ -25,6 +25,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/SelectVoiceGroupLayout.h>
 #include <tools/StringTools.h>
 #include <presets/PresetPartSelection.h>
+#include <parameter_declarations.h>
+#include <presets/PresetParameter.h>
 
 constexpr static auto s_saveInterval = std::chrono::seconds(5);
 
@@ -570,7 +572,14 @@ void PresetManager::setOrderNumber(UNDO::Transaction *transaction, const Uuid &b
 
 void PresetManager::resetInitSound(UNDO::Transaction *transaction)
 {
-  auto cleanPreset = std::make_unique<Preset>(this);
+  auto eb = getEditBuffer();
+  auto cleanPreset = std::make_unique<Preset>(this, *eb);
+
+  cleanPreset->forEachParameter([&](PresetParameter *p) {
+    auto src = eb->findParameterByID(p->getID());
+    p->setValue(transaction, src->getValue().getFactoryDefaultValue());
+  });
+
   auto swap = UNDO::createSwapData(std::move(cleanPreset));
 
   transaction->addSimpleCommand([swap, this](auto) {
@@ -719,11 +728,10 @@ void PresetManager::stress(int numTransactions)
 {
   Glib::MainContext::get_default()->signal_timeout().connect_once(
       [=]() {
-        int parameterId = g_random_int_range(0, 200);
-
         {
           auto transactionScope = getUndoScope().startTransaction("Stressing Undo System");
-          m_editBuffer->undoableSelectParameter(transactionScope->getTransaction(), { parameterId, VoiceGroup::I });
+          m_editBuffer->undoableSelectParameter(transactionScope->getTransaction(),
+                                                { C15::PID::FB_Mix_FX_Src, VoiceGroup::I });
 
           if(auto p = m_editBuffer->getSelected(VoiceGroup::I))
           {
@@ -746,7 +754,7 @@ void PresetManager::stress(int numTransactions)
           stress(numTransactions - 1);
         }
       },
-      20);
+      0);
 }
 
 void PresetManager::stressParam(UNDO::Transaction *trans, Parameter *param)
@@ -755,7 +763,7 @@ void PresetManager::stressParam(UNDO::Transaction *trans, Parameter *param)
   {
     m_editBuffer->undoableSelectParameter(trans, param);
   }
-  param->stepCPFromHwui(trans, g_random_boolean() ? -1 : 1, ButtonModifiers {});
+  param->stepCPFromHwui(trans, g_random_boolean() ? -1 : 1, ButtonModifiers{});
 }
 
 void PresetManager::stressAllParams(int numParamChangedForEachParameter)
@@ -771,7 +779,7 @@ void PresetManager::stressAllParams(int numParamChangedForEachParameter)
               for(auto i = 0; i < numParamChangedForEachParameter; i++)
                 stressParam(trans, param);
       },
-      20);
+      0);
 }
 
 void PresetManager::stressBlocking(int numTransactions)
@@ -821,7 +829,7 @@ void PresetManager::stressLoad(int numTransactions)
           });
         }
       },
-      20);
+      0);
 }
 
 void PresetManager::incAllParamsFine()
@@ -834,9 +842,9 @@ void PresetManager::incAllParamsFine()
         for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
           for(auto &group : m_editBuffer->getParameterGroups(vg))
             for(auto &param : group->getParameters())
-              param->stepCPFromHwui(trans, 1, ButtonModifiers { ButtonModifier::FINE });
+              param->stepCPFromHwui(trans, 1, ButtonModifiers{ ButtonModifier::FINE });
       },
-      20);
+      0);
 }
 
 const Preset *PresetManager::getSelectedPreset() const

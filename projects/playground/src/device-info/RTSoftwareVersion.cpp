@@ -24,5 +24,5 @@ void RTSoftwareVersion::writeDocument(Writer &writer, UpdateDocumentContributor:
 
 Glib::ustring RTSoftwareVersion::get() const
 {
-  return to_string(Application::get().getLPCProxy()->getLPCSoftwareVersion());
+  return Application::get().getLPCProxy()->getLPCSoftwareVersion();
 }
