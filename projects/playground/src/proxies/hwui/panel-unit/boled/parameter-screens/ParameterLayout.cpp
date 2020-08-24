@@ -27,6 +27,7 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/VoiceGroupIndicator.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterNotAvailableInSoundInfo.h>
 #include <glibmm/main.h>
+#include <proxies/hwui/HWUI.h>
 
 ParameterLayout2::ParameterLayout2()
     : super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
@@ -231,7 +232,9 @@ bool ParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modi
       case Buttons::BUTTON_A:
         if(auto button = findControlOfType<SwitchVoiceGroupButton>())
         {
-          Application::get().getHWUI()->toggleCurrentVoiceGroup();
+          if(SwitchVoiceGroupButton::allowToggling(getCurrentParameter(),
+                                                   Application::get().getPresetManager()->getEditBuffer()))
+            Application::get().getHWUI()->toggleCurrentVoiceGroup();
           return true;
         }
         break;

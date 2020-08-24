@@ -3,39 +3,34 @@
     "SplitVoiceGroupII": {
       "PaddingLeft": {
         "Class": "Bar",
-        "Rect": "84, 1, 2, 27"
+        "Rect": "59, 1, 2, 27"
       },
       "VoiceGroupIdentifier": {
         "Class": "Text",
-        "Rect": "86, 1, 8, 27",
+        "Rect": "61, 1, 8, 27",
         "Tag": "ident"
       },
       "Border": {
         "Class": "Border",
-        "Rect": "0, 0, 95, 29"
+        "Rect": "0, 0, 70, 29"
       },
       "Background1": {
         "Class": "Bar",
-        "Rect": "2,1,83,27",
-        "Tag": "Background"
-      },
-      "Background2": {
-        "Class": "Bar",
-        "Rect": "1,1,1,27",
+        "Rect": "1,1,59,27",
         "Tag": "Background"
       },
       "MiddleLine": {
         "Class": "Bar",
-        "Rect": "1, 14, 84, 1"
+        "Rect": "1, 14, 58, 1"
       },
       "UpperText": {
         "Class": "Text",
-        "Rect": "0, 0, 84, 15",
+        "Rect": "0, 0, 60, 15",
         "Tag": "ParamText"
       },
       "LowerText": {
         "Class": "Text",
-        "Rect": "0, 14, 84, 15",
+        "Rect": "0, 14, 60, 15",
         "Tag": "ParamText"
       }
     }

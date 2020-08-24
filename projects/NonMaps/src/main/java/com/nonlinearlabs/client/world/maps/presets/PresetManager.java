@@ -75,12 +75,12 @@ public class PresetManager extends MapsLayout {
 		return ret;
 	}
 
-	private void saveView() {
+	public void saveView() {
 		if (NonMaps.theMaps.getNonLinearWorld() != null && NonMaps.theMaps.getNonLinearWorld().getViewport() != null)
 			oldView = NonMaps.theMaps.getNonLinearWorld().getViewport().getNonPosition().copy();
 	}
 
-	private void resetView() {
+	public void resetView() {
 		if (NonMaps.theMaps.getNonLinearWorld() != null && oldView != null)
 			NonMaps.theMaps.getNonLinearWorld().animateViewport(oldView, true);
 
@@ -89,6 +89,10 @@ public class PresetManager extends MapsLayout {
 
 	public void resetStoredViewportPosition() {
 		oldView = null;
+	}
+
+	public boolean hasStoredViewportPosition() {
+		return oldView != null;
 	}
 
 	public PresetManager(NonLinearWorld parent) {
@@ -671,6 +675,10 @@ public class PresetManager extends MapsLayout {
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_ESCAPE) {
 			NonMaps.get().getNonLinearWorld().getViewport().getOverlay().removeExistingContextMenus();
 			NonMaps.get().getNonLinearWorld().getViewport().getOverlay().collapseGlobalMenu();
+			closeMultiSelection();
+		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_M
+				&& NonMaps.get().getNonLinearWorld().isCtrlDown()) {
+			Window.open("/NonMaps/MCView/index.html", "", "");
 		} else {
 			return null;
 		}
@@ -927,7 +935,6 @@ public class PresetManager extends MapsLayout {
 
 	@Override
 	public Control click(Position eventPoint) {
-		NonMaps.get().getNonLinearWorld().setShiftDown(false);
 
 		if (moveAllBanks != null) {
 			toggleMoveAllBanks();

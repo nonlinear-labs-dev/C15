@@ -33,6 +33,24 @@ html, body {
   font-family: "CanvasFont";
 }
 
+#connection-dead {
+	z-index: 2001;
+    background-color: white;
+    border: black solid 3px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
+	margin-bottom: auto;
+	width: 560px;
+	height: 24px;
+    padding: 10px;
+}
+
 html {
 	height: 100%;
 	-webkit-touch-callout: none;

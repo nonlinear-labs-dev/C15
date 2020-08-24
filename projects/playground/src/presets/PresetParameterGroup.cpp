@@ -66,16 +66,37 @@ void PresetParameterGroup::writeDiff(Writer &writer, const GroupId &groupId, con
 {
   if(!other)
   {
-    nltools::Log::error(groupId.toString(), "cant diff without other!");
+    writer.writeTag("group", Attribute("name", groupId.getName()), Attribute("afound", "true"),
+                    Attribute("bfound", "false"), [&] {});
     return;
   }
-  auto name = Application::get().getPresetManager()->getEditBuffer()->getParameterGroupByID(groupId)->getLongName();
 
-  writer.writeTag("group", Attribute("name", name), [&] {
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  auto group = eb->getParameterGroupByID(groupId);
+  auto name = group->getLongName();
+
+  writer.writeTag("group", Attribute("name", name), Attribute("afound", "true"), Attribute("bfound", "true"), [&] {
+    std::vector<int> writtenParameters;
+
     for(auto &parameter : m_parameters)
     {
       auto otherParameter = other->findParameterByID({ parameter.first.getNumber(), other->getVoiceGroup() });
       parameter.second->writeDiff(writer, parameter.first, otherParameter);
+      writtenParameters.emplace_back(parameter.first.getNumber());
+    }
+
+    for(auto &parameter : other->getParameters())
+    {
+      if(std::find(writtenParameters.begin(), writtenParameters.end(), parameter.first.getNumber())
+         == writtenParameters.end())
+      {
+        if(auto ebParam = eb->findParameterByID(parameter.first))
+        {
+          auto paramName = ebParam->getLongName();
+          writer.writeTag("parameter", Attribute("name", paramName), Attribute("afound", "false"),
+                          Attribute("bfound", "true"), [] {});
+        }
+      }
     }
   });
 }

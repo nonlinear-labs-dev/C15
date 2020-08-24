@@ -6,6 +6,7 @@
 #include <Application.h>
 #include <device-settings/Settings.h>
 #include <device-settings/PedalType.h>
+#include <proxies/hwui/HWUI.h>
 
 namespace
 {
@@ -48,6 +49,10 @@ Glib::ustring WebUISupport::getPrefix() const
   return getBasePath().substr(1);
 }
 
-void WebUISupport::writeDocument(Writer &, UpdateDocumentContributor::tUpdateID) const
+void WebUISupport::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID) const
 {
+  writer.writeTag("webui-helper", [&]() {
+    auto selectedVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+    writer.writeTextElement("selected-part", toString(selectedVG));
+  });
 }

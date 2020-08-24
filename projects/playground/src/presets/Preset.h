@@ -42,6 +42,7 @@ class Preset : public PresetDualParameterGroups
   void copyFrom(UNDO::Transaction *transaction, const AttributesOwner *other) override;
   void clear(UNDO::Transaction *transaction) override;
   void invalidate();
+  size_t getNumGroups(const VoiceGroup &vg) const;
 
   SoundType getType() const;
   Glib::ustring getVoiceGroupName(VoiceGroup vg) const;
@@ -65,6 +66,8 @@ class Preset : public PresetDualParameterGroups
 
   void forEachParameter(const std::function<void(PresetParameter *)> &cb);
   void forEachParameter(const std::function<void(const PresetParameter *)> &cb) const;
+
+  std::vector<std::pair<GroupId, const PresetParameterGroup *>> getGroups(const VoiceGroup &vg) const;
 
   // transactions
   void copyFrom(UNDO::Transaction *transaction, const Preset *other, bool ignoreUuid);

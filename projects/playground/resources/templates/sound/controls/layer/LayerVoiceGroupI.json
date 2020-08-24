@@ -8,7 +8,7 @@
       },
       "Background": {
         "Class": "Bar",
-        "Rect": "11, 1, 157, 13",
+        "Rect": "11, 1, 129, 13",
         "Tag": "Background"
       },
       "Border-Fake": {
@@ -18,46 +18,51 @@
       },
       "Border-Fake2": {
         "Class": "Bar",
-        "Rect": "168, 2, 2, 13",
+        "Rect": "140, 2, 2, 13",
         "Tag": "bar-l"
       },
       "Border-pixel": {
         "Class": "Bar",
-        "Rect": "167, 1, 1, 1",
+        "Rect": "140, 1, 1, 1",
         "Tag": "pixel"
       },
       "Cover-Right": {
         "Class": "Bar",
-        "Rect": "169, 0, 1, 15",
+        "Rect": "142, 0, 1, 15",
         "Tag": "Cover"
       },
       "Cover-Right2": {
         "Class": "Bar",
-        "Rect": "168, 1, 1, 1",
+        "Rect": "142, 1, 1, 1",
         "Tag": "Cover"
       },
       "Cover-Right3": {
         "Class": "Bar",
-        "Rect": "167, 0, 1, 1",
+        "Rect": "140, 0, 1, 1",
         "Tag": "Cover"
+      },
+      "Cover-Background-R": {
+        "Class": "Bar",
+        "Rect": "140, 2, 1, 12",
+        "Tag": "Background"
       },
       "Border": {
         "Class": "Border",
-        "Rect": "0, 0, 170, 15"
+        "Rect": "0, 0, 142, 15"
       },
       "Master": {
         "Class": "Text",
-        "Rect": "10, 0, 80, 15",
+        "Rect": "15, 0, 50, 15",
         "Tag": "ParamText"
       },
       "Unison": {
         "Class": "Text",
-        "Rect": "90, 0, 80, 15",
+        "Rect": "90, 0, 50, 15",
         "Tag": "ParamText"
       },
       "MuteIndication": {
         "Class": "Text",
-        "Rect": "80, 2, 15, 11",
+        "Rect": "70, 2, 15, 11",
         "Tag": "ParamText"
       }
     }

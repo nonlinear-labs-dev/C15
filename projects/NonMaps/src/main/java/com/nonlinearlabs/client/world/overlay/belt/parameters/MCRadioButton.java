@@ -2,6 +2,7 @@ package com.nonlinearlabs.client.world.overlay.belt.parameters;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
@@ -27,7 +28,8 @@ abstract class MCRadioButton extends SVGImage {
 	@Override
 	public void draw(Context2d ctx, int invalidationMask) {
 		super.draw(ctx, invalidationMask);
-		if (isChanged()) {
+		boolean changedIndicationEnabled = SetupModel.get().systemSettings.highlightChangedParameters.getBool();
+		if (isChanged() && changedIndicationEnabled) {
 			Rect pix = getPixRect().copy();
 			pix = pix.getReducedBy(pix.getWidth() * 0.2);
 			pix.drawRoundedRect(ctx, Rect.ROUNDING_ALL, 5, 1.5, null, RGB.changedBeltBorder());

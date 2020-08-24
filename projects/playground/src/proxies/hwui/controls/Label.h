@@ -64,6 +64,7 @@ class Label : public Control
 
   virtual std::shared_ptr<Font> getFont() const;
   void setFontColor(FrameBufferColors fontColor);
+  void setJustification(const Font::Justification &justification);
 
  protected:
   virtual Font::Justification getJustification() const;
@@ -86,4 +87,5 @@ class Label : public Control
 
   StringAndSuffix m_text;
   FrameBufferColors m_fontColor = FrameBufferColors::Undefined;
+  Font::Justification m_justification = Font::Justification::Center;
 };

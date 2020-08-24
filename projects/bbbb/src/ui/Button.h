@@ -18,11 +18,14 @@ class Button : public Gtk::Button
   bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
   void on_pressed() override;
   void on_released() override;
+  bool on_button_press_event(GdkEventButton* button_event) override;
 
  private:
+  bool m_pressed = false;
   int m_buttonId;
   bool m_state = false;
   std::function<void()> m_cb;
+  Glib::RefPtr<Gtk::CssProvider> m_cssProvider;
 };
 
 #endif

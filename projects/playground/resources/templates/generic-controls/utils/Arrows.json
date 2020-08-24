@@ -1,16 +1,15 @@
 {
   "controls": {
-    "ArrowLeft":
-    {
+    "ArrowLeft": {
       "Background": {
-        "Class":"Bar",
-        "Rect":"0, 0, 7, 9",
+        "Class": "Bar",
+        "Rect": "0, 0, 7, 9",
         "Tag": "Background"
       },
       "s": {
         "Tag": "arrow",
-        "Class":"Bar",
-        "Rect":"1, 4, 2, 1"
+        "Class": "Bar",
+        "Rect": "1, 4, 2, 1"
       },
       "sS": {
         "Tag": "arrow",
@@ -19,26 +18,25 @@
       },
       "S": {
         "Tag": "arrow",
-        "Class":"Bar",
-        "Rect":"3, 2, 1, 5"
+        "Class": "Bar",
+        "Rect": "3, 2, 1, 5"
       },
       "SM": {
         "Tag": "arrow",
-        "Class":"Bar",
+        "Class": "Bar",
         "Rect": "4, 1, 1, 7"
       }
     },
-    "ArrowRight":
-    {
+    "ArrowRight": {
       "Background": {
-        "Class":"Bar",
-        "Rect":"0, 0, 7, 9",
+        "Class": "Bar",
+        "Rect": "0, 0, 7, 9",
         "Tag": "Background"
       },
       "s": {
         "Tag": "arrow",
-        "Class":"Bar",
-        "Rect":"5, 4, 1, 1"
+        "Class": "Bar",
+        "Rect": "5, 4, 1, 1"
       },
       "sS": {
         "Tag": "arrow",
@@ -47,17 +45,257 @@
       },
       "S": {
         "Tag": "arrow",
-        "Class":"Bar",
-        "Rect":"3, 2, 1, 5"
+        "Class": "Bar",
+        "Rect": "3, 2, 1, 5"
       },
       "SM": {
         "Tag": "arrow",
-        "Class":"Bar",
+        "Class": "Bar",
         "Rect": "2, 1, 1, 7"
+      }
+    },
+    "ArrowTipRight": {
+      "s": {
+        "Tag": "arrow",
+        "Class": "Bar",
+        "Rect": "5, 4, 1, 1"
+      },
+      "sS": {
+        "Tag": "arrow",
+        "Class": "Bar",
+        "Rect": "4, 3, 1, 3"
+      },
+      "S": {
+        "Tag": "arrow",
+        "Class": "Bar",
+        "Rect": "3, 2, 1, 5"
+      }
+    },
+    "ArrowLineFB": {
+      "VerticalLine": {
+        "Class": "Bar",
+        "Rect": "0, 0, 1, 16"
+      },
+      "HorizontallLineTop": {
+        "Class": "Bar",
+        "Rect": "0, 0, 6, 1"
+      },
+      "HorizontallLineBottom": {
+        "Class": "Bar",
+        "Rect": "0, 16, 6, 1"
+      }
+    },
+    "StraightLineArrow": {
+      "HorizontalLine": {
+        "Class": "Bar",
+        "Rect": "0, 3, 20, 1"
+      },
+      "ArrowTipSecondRow": {
+        "Class": "Bar",
+        "Rect": "18, 2, 1, 3"
+      },
+      "ArrowTipThirdRow": {
+        "Class": "Bar",
+        "Rect": "17, 1, 1, 5"
+      }
+    },
+    "StraightLineArrowLonger": {
+      "HorizontalLine": {
+        "Class": "Bar",
+        "Rect": "0, 3, 30, 1"
+      },
+      "ArrowTipSecondRow": {
+        "Class": "Bar",
+        "Rect": "28, 2, 1, 3"
+      },
+      "ArrowTipThirdRow": {
+        "Class": "Bar",
+        "Rect": "27, 1, 1, 5"
+      }
+    },
+    "StraightLineArrowLeft": {
+      "HorizontalLine": {
+        "Class": "Bar",
+        "Rect": "0, 3, 15, 1"
+      },
+      "ArrowTipSecondRow": {
+        "Class": "Bar",
+        "Rect": "1, 2, 1, 3"
+      },
+      "ArrowTipThirdRow": {
+        "Class": "Bar",
+        "Rect": "2, 1, 1, 5"
+      }
+    },
+    "StraightLineArrowRight": {
+      "HorizontalLine": {
+        "Class": "Bar",
+        "Rect": "0, 3, 15, 1"
+      },
+      "ArrowTipSecondRow": {
+        "Class": "Bar",
+        "Rect": "13, 2, 1, 3"
+      },
+      "ArrowTipThirdRow": {
+        "Class": "Bar",
+        "Rect": "12, 1, 1, 5"
+      }
+    },
+    "DiagonalDownArrow": {
+      
+      "S3": {
+        "Class": "Bar",
+        "Rect": "2, 5, 1, 1"
+      },
+      "S4": {
+        "Class": "Bar",
+        "Rect": "3, 6, 1, 1"
+      },
+      "S5": {
+        "Class": "Bar",
+        "Rect": "4, 7, 1, 1"
+      },
+      "S6": {
+        "Class": "Bar",
+        "Rect": "5, 8, 1, 1"
+      },
+      "S7": {
+        "Class": "Bar",
+        "Rect": "6, 9, 1, 1"
+      },
+      "S8": {
+        "Class": "Bar",
+        "Rect": "7, 10, 1, 1"
+      },
+      "S9": {
+        "Class": "Bar",
+        "Rect": "8, 11, 1, 1"
+      },
+      "S10": {
+        "Class": "Bar",
+        "Rect": "9, 12, 1, 1"
+      },
+      "S11": {
+        "Class": "Bar",
+        "Rect": "10, 13, 1, 1"
+      },
+      "S12": {
+        "Class": "Bar",
+        "Rect": "11, 14, 1, 1"
+      },
+      "S13": {
+        "Class": "Bar",
+        "Rect": "12, 15, 1, 1"
+      },
+      "S14": {
+        "Class": "Bar",
+        "Rect": "13, 16, 1, 1"
+      },
+      "tip1": {
+        "Class": "Bar",
+        "Rect": "14, 14, 1, 3"
+      },
+      "tip2": {
+        "Class": "Bar",
+        "Rect": "11, 17, 4, 1"
+      }
+    },
+    "DiagonalUpArrow": {
+      "S2": {
+        "Class": "Bar",
+        "Rect": "2, 14, 1, 1"
+      },
+      "S3": {
+        "Class": "Bar",
+        "Rect": "3, 13, 1, 1"
+      },
+      "S4": {
+        "Class": "Bar",
+        "Rect": "4, 12, 1, 1"
+      },
+      "S5": {
+        "Class": "Bar",
+        "Rect": "5, 11, 1, 1"
+      },
+      "S6": {
+        "Class": "Bar",
+        "Rect": "6, 10, 1, 1"
+      },
+      "S7": {
+        "Class": "Bar",
+        "Rect": "7, 9, 1, 1"
+      },
+      "S8": {
+        "Class": "Bar",
+        "Rect": "8, 8, 1, 1"
+      },
+      "S9": {
+        "Class": "Bar",
+        "Rect": "9, 7, 1, 1"
+      },
+      "S10": {
+        "Class": "Bar",
+        "Rect": "10, 6, 1, 1"
+      },
+      "S11": {
+        "Class": "Bar",
+        "Rect": "11, 5, 1, 1"
+      },
+      "S12": {
+        "Class": "Bar",
+        "Rect": "12, 4, 1, 1"
+      },
+      "S13": {
+        "Class": "Bar",
+        "Rect": "13, 3, 1, 1"
+      },
+      "tip1": {
+        "Class": "Bar",
+        "Rect": "14, 3, 1, 3"
+      },
+      "tip2": {
+        "Class": "Bar",
+        "Rect": "11, 2, 4, 1"
       }
     }
   },
   "styles": {
+    "diagonalUp": {
+      "selector":{
+        "ControlClasses": "DiagonalUpArrow"
+      },
+      "styles": {
+        "Color": "C128",
+        "BackgroundColor": "Transparent"
+      }
+    },
+    "diagonalDown": {
+      "selector":{
+        "ControlClasses": "DiagonalDownArrow"
+      },
+      "styles": {
+        "Color": "C128",
+        "BackgroundColor": "Transparent"
+      }
+    },
+    "Str8Arrow": {
+      "selector": {
+        "ControlClasses": "StraightLineArrow"
+      },
+      "styles": {
+        "Color": "C128",
+        "BackgroundColor": "Transparent"
+      }
+    },
+    "ArrowTip": {
+      "selector": {
+        "ControlClasses": "ArrowTipRight"
+      },
+      "styles": {
+        "Color": "C128",
+        "BackgroundColor": "Transparent"
+      }
+    },
     "Default-Arrow-bg": {
       "selector": {
         "PrimitiveClass": "Bar",

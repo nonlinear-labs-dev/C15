@@ -64,7 +64,7 @@ void FileSystem::rename(const Glib::ustring &oldFile, const Glib::ustring &newFi
   }
 
   if(!std::filesystem::exists(newName))
-    nltools::Log::info("Renamed file does still not exist.");
+    nltools::Log::error("Renamed file does still not exist.");
   else
     nltools::Log::info("Successfully renamed file", oldFile, "into", newFile);
 }
@@ -133,8 +133,8 @@ Glib::ustring FileSystem::getFullPath(const Glib::RefPtr<Gio::File> &file)
 
 void FileSystem::syncAll()
 {
-  nltools::Log::warning("Syncing file systems ...");
+  nltools::Log::info("Syncing file systems ...");
   sync();
   nltools::msg::send(nltools::msg::EndPoint::BeagleBone, nltools::msg::FileSystem::Sync());
-  nltools::Log::warning("Syncing file systems done.");
+  nltools::Log::info("Syncing file systems done.");
 }

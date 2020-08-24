@@ -3,6 +3,7 @@ package com.nonlinearlabs.client.world.overlay;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -19,6 +20,7 @@ import com.google.gwt.xml.client.XMLParser;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy;
 import com.nonlinearlabs.client.ServerProxy.DownloadHandler;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
@@ -80,6 +82,11 @@ public class CompareDialog extends GWTDialog {
 			addHeader("Compare Two Presets");
 
 		load(p1, VoiceGroup.I, p2, VoiceGroup.I);
+
+		EditBufferModel.get().loadedPreset.onChange(uuid -> {
+			refresh();
+			return true;
+		});
 	}
 
 	public void downloadPresets(Preset p1, Preset p2) {
@@ -215,6 +222,8 @@ public class CompareDialog extends GWTDialog {
 		order.add("Macro Control");
 		order.add("Scale");
 		order.add("Part");
+		order.add("Split");
+		order.add("Hardware Amount");
 		return order;
 	}
 
@@ -239,27 +248,38 @@ public class CompareDialog extends GWTDialog {
 	}
 
 	public int writeParameterGroup(int row, Node group) {
+		boolean aFound = Boolean.parseBoolean(group.getAttributes().getNamedItem("afound").getNodeValue());
+		boolean bFound = Boolean.parseBoolean(group.getAttributes().getNamedItem("bfound").getNodeValue());		
+		
 		table.setText(row, 0, group.getAttributes().getNamedItem("name").getNodeValue());
-		row++;
-		int startedAtRow = row;
+		
+		if(aFound && bFound) {
+			row++;
+			int startedAtRow = row;
 
-		NodeList params = group.getChildNodes();
-
-		int numParams = params.getLength();
-
-		for (int numParam = 0; numParam < numParams; numParam++) {
-			Node param = params.item(numParam);
-
-			if (param.getNodeType() == Node.ELEMENT_NODE) {
-				row = writeParameter(row, param);
+			NodeList params = group.getChildNodes();
+	
+			int numParams = params.getLength();
+	
+			for (int numParam = 0; numParam < numParams; numParam++) {
+				Node param = params.item(numParam);
+	
+				if (param.getNodeType() == Node.ELEMENT_NODE) {
+					row = writeParameter(row, param);
+				}
 			}
+	
+			if (row == startedAtRow) {
+				table.removeRow(row - 1);
+				row--;
+			}
+			return row;
+		} else {
+			table.setText(row, 1, aFound ? "" : "Missing");
+			table.setText(row, 2, bFound ? "" : "Missing");
+			row++;
+			return row;
 		}
-
-		if (row == startedAtRow) {
-			table.removeRow(row - 1);
-			row--;
-		}
-		return row;
 	}
 
 	public int writeParameter(int row, Node param) {
@@ -275,15 +295,45 @@ public class CompareDialog extends GWTDialog {
 			}
 		}
 
+		String afoundStr = param.getAttributes().getNamedItem("afound").getNodeValue();
+		String bfoundStr = param.getAttributes().getNamedItem("bfound").getNodeValue();
+		boolean aFound = Boolean.parseBoolean(afoundStr);
+		boolean bFound = Boolean.parseBoolean(bfoundStr);
+
+		
 		if (!elements.isEmpty()) {
+			int idNum = Integer.parseInt(param.getAttributes().getNamedItem("id-num").getNodeValue());
+			
+			SoundType type = EditBufferModel.get().soundType.getValue();
+
+			boolean aDisabled = hideParameter(idNum, presetA != null ? presetA.getType() : type);
+			boolean bDisabled = hideParameter(idNum, presetB != null ? presetB.getType() : type);
+			if(aDisabled || bDisabled) {
+				//Ignore Parameter and continue;
+				return row;
+			}
+
 			String paramName = param.getAttributes().getNamedItem("name").getNodeValue();
+
 			table.setWidget(row, 0, new HTMLPanel("span", indent + paramName));
 			table.getWidget(row, 0).getElement().addClassName("indent-1");
 			row++;
 
-			for (Node change : elements)
-				row = writeParameterChange(row, paramName, change);
+			
+			if(aFound && bFound) {
+				for (Node change : elements)
+					row = writeParameterChange(row, paramName, change);
+			} else {
+				row = writeMissingParameter(row, aFound, bFound);
+			}
 		}
+		return row;
+	}
+
+	public int writeMissingParameter(int row, boolean aFound, boolean bFound) {
+		table.setText(row - 1, 1, aFound ? "Present" : "Missing");
+		table.setText(row - 1, 2, bFound ? "Present" : "Missing");
+		row++;
 		return row;
 	}
 
@@ -336,9 +386,13 @@ public class CompareDialog extends GWTDialog {
 	}
 
 	protected void refresh() {
-		VoiceGroup vgA = selectVGA.getSelectedIndex() == 0 ? VoiceGroup.I : VoiceGroup.II;
-		VoiceGroup vgB = selectVGB.getSelectedIndex() == 0 ? VoiceGroup.I : VoiceGroup.II;
-		load(presetA, vgA, presetB, vgB);
+		if(selectVGA != null && selectVGB != null) {
+			VoiceGroup vgA = selectVGA.getSelectedIndex() == 0 ? VoiceGroup.I : VoiceGroup.II;
+			VoiceGroup vgB = selectVGB.getSelectedIndex() == 0 ? VoiceGroup.I : VoiceGroup.II;
+			load(presetA, vgA, presetB, vgB);
+		} else {
+			load(presetA, VoiceGroup.I, presetB, VoiceGroup.I);
+		}
 	}
 
 	public void update() {
@@ -430,6 +484,27 @@ public class CompareDialog extends GWTDialog {
 		selectVGB.addChangeHandler(v -> {
 			refresh();
 		});
+
+		boolean aActive = (presetA != null && presetA.isDual()) || (presetA == null && ebType != SoundType.Single);
+		boolean bActive = (presetB != null && presetB.isDual()) || (presetB == null && ebType != SoundType.Single);
+		selectVGA.setVisible(aActive);
+		selectVGB.setVisible(bActive);
+		if(!aActive)
+			selectVGA.setHeight("0px");
+		if(!bActive)
+			selectVGB.setHeight("0px");
+	}
+
+	private boolean hideParameter(int id, SoundType type) {
+		switch(type) {
+			case Single:
+				return id == 356 || id == 396 || id == 397;
+			case Split:
+				return id == 396 || id == 397;
+			case Layer:
+				return id == 356;
+		}
+		return false;
 	}
 
 	private String translateChangeValue(String paramName, String nodeName, String nodeValue) {

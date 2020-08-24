@@ -21,6 +21,7 @@ class Writer
                         const Attribute &c);
   void writeTextElement(const Glib::ustring &name, const Glib::ustring &text, const Attribute &a, const Attribute &b,
                         const Attribute &c, const Attribute &d);
+  void writeTextElement(const Glib::ustring &name, const Glib::ustring& text, std::initializer_list<Attribute> &&a);
 
   void writeTag(const Glib::ustring &name);
   void writeTag(const Glib::ustring &name, const tTagContentWriter &w);

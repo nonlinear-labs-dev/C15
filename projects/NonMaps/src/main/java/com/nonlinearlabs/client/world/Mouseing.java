@@ -104,10 +104,7 @@ public abstract class Mouseing {
 		KeyDownHandler keypress = new KeyDownHandler() {
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-				if (handleKeyPress(event)) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
+				NonMaps.get().getNonLinearWorld().handleKeyPress(event);
 			}
 		};
 

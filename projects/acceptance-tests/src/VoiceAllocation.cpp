@@ -16,7 +16,7 @@ namespace Tests
     auto preset2 = "119284ae-b3d4-42a7-a155-31f04ed340ac";
     loadTestPreset(synth.get(), "voices-remain-on-preset-load", preset1);
 
-    GIVEN("some notes are played without glitch supression")
+    GIVEN("some notes are played without glitch suppression")
     {
       synth->getDsp()->onSettingGlitchSuppr(false);
       synth->simulateKeyDown(50);
@@ -38,7 +38,7 @@ namespace Tests
       }
     }
 
-    GIVEN("some notes are played with glitch supression")
+    GIVEN("some notes are played with glitch suppression")
     {
       synth->getDsp()->onSettingGlitchSuppr(true);
       synth->simulateKeyDown(50);

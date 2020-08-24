@@ -167,7 +167,12 @@ int Label::getRightMargin() const
   return 0;
 }
 
+void Label::setJustification(const Font::Justification &justification)
+{
+  m_justification = justification;
+}
+
 Font::Justification Label::getJustification() const
 {
-  return Font::Justification::Center;
+  return m_justification;
 }

@@ -13,31 +13,26 @@
       },
       "Border": {
         "Class": "Border",
-        "Rect": "0, 0, 95, 29"
+        "Rect": "0, 0, 70, 29"
       },
       "Background1": {
         "Class": "Bar",
-        "Rect": "10,0,83,29",
-        "Tag": "Background"
-      },
-      "Background2": {
-        "Class": "Bar",
-        "Rect": "93,1,1,27",
+        "Rect": "10,1,59,27",
         "Tag": "Background"
       },
       "MiddleLine": {
         "Class": "Bar",
-        "Rect": "11, 14, 83, 1",
+        "Rect": "11, 14, 58, 1",
         "Tag": "MiddleLine"
       },
       "UpperText": {
         "Class": "Text",
-        "Rect": "10, 0, 84, 15",
+        "Rect": "0, 0, 84, 15",
         "Tag": "ParamText"
       },
       "LowerText": {
         "Class": "Text",
-        "Rect": "10, 14, 84, 15",
+        "Rect": "0, 14, 84, 15",
         "Tag": "ParamText"
       }
     }

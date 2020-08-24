@@ -6,9 +6,11 @@
       <link rel="stylesheet" href="style.css">
       <link rel="shortcut icon" href="favicon.ico">
       <script type="text/javascript" src="polyfill.js"></script>
-		<script type="text/javascript"  src="new.js" ></script>
 	</head>
-  <body id='body' onload="onLoad()">
+  <body id='body'>
+    <div id='connection-dead' style='display: none'>
+      The connection to the Nonlinear Instrument seems to be broken :-(
+    </div>
     <div class="overlay triangle-open" id="settings-opener" onclick='event.stopPropagation(); toggleSettings();'>
     </div>
     <div class='overlay collapsed' id='settings-overlay' onclick="event.stopPropagation(); toggleSettings();">
@@ -39,4 +41,5 @@
     </div>
     <canvas id="canvas"></canvas>
   </body>
+  <script type="text/javascript"  src="new.js" ></script>
 </html>

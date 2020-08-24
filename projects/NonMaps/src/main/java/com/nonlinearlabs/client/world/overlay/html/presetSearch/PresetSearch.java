@@ -74,7 +74,7 @@ public class PresetSearch extends Composite {
 		prev.addClickHandler(b -> getUseCases().highlightPrev());
 		next.addClickHandler(b -> getUseCases().highlightNext());
 
-		Scheduler.get().scheduleFinally((Command) () -> {
+		Scheduler.get().scheduleDeferred((Command)() -> {
 			search.selectAll();
 			search.setFocus(true);
 		});

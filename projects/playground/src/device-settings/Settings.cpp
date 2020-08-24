@@ -43,6 +43,7 @@
 #include "CrashOnError.h"
 #include "LayoutMode.h"
 #include "TuneReference.h"
+#include "SyncVoiceGroupsAcrossUIS.h"
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameter_declarations.h>
@@ -87,6 +88,7 @@ Settings::Settings(UpdateDocumentMaster *master)
   addSetting("ForceHighlightChangedParameters", new ForceHighlightChangedParametersSetting(*this));
   addSetting("CrashOnError", new CrashOnError(*this));
   addSetting("TuneReference", new TuneReference(*this));
+  addSetting("SyncVoiceGroups", new SyncVoiceGroupsAcrossUIS(*this));
 }
 
 Settings::~Settings()

@@ -76,6 +76,16 @@ public class ParameterPresenterProvider extends Notifier<ParameterPresenter> {
 			updatePresenter(p);
 			return true;
 		});
+
+		SetupModel.get().systemSettings.highlightChangedParameters.onChange(highlight -> {
+			updatePresenter(p);
+			return true;
+		});
+
+		SetupModel.get().systemSettings.forceHighlightChangedParameters.onChange(highlight -> {
+			updatePresenter(p);
+			return true;
+		});
 	}
 
 	private boolean isFillFromRightParameter(BasicParameterModel e) {

@@ -10,6 +10,7 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
@@ -183,6 +184,11 @@ class LayerDisplay extends OverlayLayout {
     public Control click(Position eventPoint) {
         if (isVisible()) {
             EditBufferUseCases.get().toggleVoiceGroup();
+            
+            if(SetupModel.get().systemSettings.syncVoiceGroups.isTrue()) {
+                NonMaps.theMaps.getServerProxy().syncVoiceGroup();
+            }
+            
             return this;
         }
 

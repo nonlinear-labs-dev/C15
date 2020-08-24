@@ -1,5 +1,8 @@
 package com.nonlinearlabs.client.world.overlay.html.presetSearch;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.overlay.GWTDialog;
 
@@ -28,6 +31,19 @@ public class PresetSearchDialog extends GWTDialog {
 			theSearch.addHeader("Search Presets for ...");
 			theSearch.initalShow();
 			theSearch.pushDialogToFront();
+			NonMaps.get().getNonLinearWorld().getPresetManager().closeMultiSelection();
+		}
+	}
+
+	@Override
+	protected void onPreviewNativeEvent(NativePreviewEvent event) {
+		super.onPreviewNativeEvent(event);
+		switch (event.getTypeInt()) {
+		case Event.ONKEYDOWN:
+			if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+				hideDialog();
+			}
+			break;
 		}
 	}
 

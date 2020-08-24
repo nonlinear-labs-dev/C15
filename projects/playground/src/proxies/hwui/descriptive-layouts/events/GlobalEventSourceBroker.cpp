@@ -113,6 +113,19 @@ namespace DescriptiveLayouts
 
     m_map[EventSources::MonoButtonText] = std::make_unique<MonoButtonText>();
     m_map[EventSources::UnisonButtonText] = std::make_unique<UnisonButtonText>();
+
+    m_map[EventSources::AnyLayerCrossFB] = std::make_unique<AnyLayerCrossFB>();
+    m_map[EventSources::AnyLayerCrossFBToI] = std::make_unique<AnyLayerCrossFBFromII>();
+    m_map[EventSources::AnyLayerCrossFBToII] = std::make_unique<AnyLayerCrossFBFromI>();
+
+    m_map[EventSources::ToFXIUnder100] = std::make_unique<ToFXIUnder100>();
+    m_map[EventSources::ToFXIOver0] = std::make_unique<ToFXIOver0>();
+    m_map[EventSources::ToFXIIUnder100] = std::make_unique<ToFXIIUnder100>();
+    m_map[EventSources::ToFXIIOver0] = std::make_unique<ToFXIIOver0>();
+    m_map[EventSources::LayerIFBToI] = std::make_unique<LayerOwnFB<VoiceGroup::I>>();
+    m_map[EventSources::LayerIFBToII] = std::make_unique<LayerIIFBFromI>();
+    m_map[EventSources::LayerIIFBToI] = std::make_unique<LayerIFBFromII>();
+    m_map[EventSources::LayerIIFBToII] = std::make_unique<LayerOwnFB<VoiceGroup::II>>();
   }
 
   GlobalEventSourceBroker::~GlobalEventSourceBroker() = default;

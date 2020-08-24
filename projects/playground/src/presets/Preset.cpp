@@ -398,13 +398,26 @@ void Preset::writeDiff(Writer &writer, const Preset *other, VoiceGroup vgOfThis,
     super::writeDiff(writer, other);
 
     writeGroups(writer, other, vgOfThis, vgOfOther);
+    writeGroups(writer, other, VoiceGroup::Global, VoiceGroup::Global);
   });
 }
 
 void Preset::writeGroups(Writer &writer, const Preset *other, VoiceGroup vgOfThis, VoiceGroup vgOfOther) const
 {
+  std::vector<std::string> writtenGroups;
+
   for(auto &g : m_parameterGroups[static_cast<size_t>(vgOfThis)])
+  {
     g.second->writeDiff(writer, g.first, other->findParameterGroup({ g.first.getName(), vgOfOther }));
+    writtenGroups.emplace_back(g.first.getName());
+  }
+
+  for(auto &g : other->getGroups(vgOfOther))
+  {
+    if(std::find(writtenGroups.begin(), writtenGroups.end(), g.first.getName()) == writtenGroups.end())
+      writer.writeTag("group", Attribute("name", g.first.getName()), Attribute("afound", "false"),
+                      Attribute("bfound", "true"), [&] {});
+  }
 }
 
 PresetParameterGroup *Preset::findOrCreateParameterGroup(const GroupId &id)
@@ -464,4 +477,19 @@ bool Preset::isUnisonActive() const
 bool Preset::isDual() const
 {
   return getType() == SoundType::Split || getType() == SoundType::Layer;
+}
+
+size_t Preset::getNumGroups(const VoiceGroup &vg) const
+{
+  return m_parameterGroups[static_cast<size_t>(vg)].size();
+}
+
+std::vector<std::pair<GroupId, const PresetParameterGroup *>> Preset::getGroups(const VoiceGroup &vg) const
+{
+  std::vector<std::pair<GroupId, const PresetParameterGroup *>> ret;
+  for(const auto &g : m_parameterGroups[static_cast<size_t>(vg)])
+  {
+    ret.emplace_back(std::make_pair(g.first, g.second.get()));
+  }
+  return ret;
 }

@@ -11,9 +11,13 @@
 #include <groups/ParameterGroup.h>
 #include <libundo/undo/Scope.h>
 #include <xml/Attribute.h>
+#include <parameter_declarations.h>
+#include <parameters/SplitPointParameter.h>
+#include <parameters/scale-converters/LinearCountScaleConverter.h>
+#include <parameters/scale-converters/dimension/VoicesDimension.h>
 
 PresetParameter::PresetParameter(const ParameterId &id)
-    : m_id{ id }
+    : m_id { id }
 {
 }
 
@@ -70,70 +74,86 @@ void PresetParameter::writeDiff(Writer &writer, ParameterId parameterID, const P
 {
   auto ebParam = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(parameterID);
 
-  if(!ebParam)
-  {
-    nltools::Log::warning("Could not create diff for parameter", parameterID,
-                          "- the parameter does not exist anymore.");
-    return;
-  }
+  bool aFound = ebParam != nullptr;
+  bool bFound = other != nullptr;
+  auto name = aFound ? std::string(ebParam->getLongName()) : getID().toString();
 
-  if(!other)
-  {
-    nltools::Log::warning("Could not create diff for parameter", parameterID,
-                          "- the parameter does not exist in the preset.");
-    return;
-  }
+  writer.writeTag(
+      "parameter", Attribute("name", name), Attribute("afound", aFound ? "true" : "false"),
+      Attribute("bfound", bFound ? "true" : "false"), Attribute("id-num", getID().getNumber()), [&] {
+        if(aFound && bFound)
+        {
+          auto sc = ebParam->getValue().getScaleConverter();
+          auto myString = sc->getDimension().stringize(sc->controlPositionToDisplay(m_value));
+          auto otherString = sc->getDimension().stringize(sc->controlPositionToDisplay(other->m_value));
 
-  writer.writeTag("parameter", Attribute("name", ebParam->getLongName()), [&] {
-    auto sc = ebParam->getValue().getScaleConverter();
-    auto myString = sc->getDimension().stringize(sc->controlPositionToDisplay(m_value));
-    auto otherString = sc->getDimension().stringize(sc->controlPositionToDisplay(other->m_value));
+          if(ebParam->getID() == ParameterId { C15::PID::Split_Split_Point, VoiceGroup::Global })
+          {
+            if(auto split = dynamic_cast<SplitPointParameter *>(ebParam))
+            {
+              myString = split->getDisplayString(VoiceGroup::I, m_value);
+              otherString = split->getDisplayString(VoiceGroup::I, other->m_value);
+            }
+          }
+          else if(ebParam->getID().getNumber() == C15::PID::Unison_Voices)
+          {
+            //we always use the single converter as unison voices get saved in 24 voices format
+            auto singleConverter = ScaleConverter::get<LinearCountScaleConverter<24, VoicesDimension>>();
 
-    if(myString != otherString)
-      writer.writeTextElement("value", "", Attribute("a", myString), Attribute("b", otherString));
+            auto stringize
+                = [](auto sc, auto v) { return sc->getDimension().stringize(sc->controlPositionToDisplay(v)); };
 
-    if(getModulationSource() != other->getModulationSource())
-    {
-      writer.writeTextElement("mc-select", "", Attribute("a", getModulationSource()),
-                              Attribute("b", other->getModulationSource()));
-    }
+            myString = stringize(singleConverter, m_value);
+            otherString = stringize(singleConverter, other->m_value);
+          }
 
-    if(differs(getModulationAmount(), other->getModulationAmount()))
-    {
-      auto c = ScaleConverter::get<LinearBipolar100PercentScaleConverter>();
-      auto currentParameter = c->getDimension().stringize(c->controlPositionToDisplay(getModulationAmount()));
-      auto otherParameter = c->getDimension().stringize(c->controlPositionToDisplay(other->getModulationAmount()));
-      writer.writeTextElement("mc-amount", "", Attribute("a", currentParameter), Attribute("b", otherParameter));
-    }
+          if(myString != otherString)
+            writer.writeTextElement("value", "", Attribute("a", myString), Attribute("b", otherString));
 
-    if(getGivenName() != other->getGivenName())
-    {
-      writer.writeTextElement("name", "", Attribute("a", getGivenName()), Attribute("b", other->getGivenName()));
-    }
+          if(getModulationSource() != other->getModulationSource())
+          {
+            writer.writeTextElement("mc-select", "", Attribute("a", getModulationSource()),
+                                    Attribute("b", other->getModulationSource()));
+          }
 
-    if(getInfo() != other->getInfo())
-    {
-      writer.writeTextElement("info", "", Attribute("a", "changed"), Attribute("b", "changed"));
-    }
+          if(differs(getModulationAmount(), other->getModulationAmount()))
+          {
+            auto c = ScaleConverter::get<LinearBipolar100PercentScaleConverter>();
+            auto currentParameter = c->getDimension().stringize(c->controlPositionToDisplay(getModulationAmount()));
+            auto otherParameter
+                = c->getDimension().stringize(c->controlPositionToDisplay(other->getModulationAmount()));
+            writer.writeTextElement("mc-amount", "", Attribute("a", currentParameter), Attribute("b", otherParameter));
+          }
 
-    if(getRibbonReturnMode() != other->getRibbonReturnMode())
-    {
-      writer.writeTextElement("return-mode", "", Attribute("a", static_cast<int>(getRibbonReturnMode())),
-                              Attribute("b", static_cast<int>(other->getRibbonReturnMode())));
-    }
+          if(getGivenName() != other->getGivenName())
+          {
+            writer.writeTextElement("name", "", Attribute("a", getGivenName()), Attribute("b", other->getGivenName()));
+          }
 
-    if(getRibbonTouchBehaviour() != other->getRibbonTouchBehaviour())
-    {
-      writer.writeTextElement("behaviour", "", Attribute("a", getRibbonTouchBehaviour()),
-                              Attribute("b", other->getRibbonTouchBehaviour()));
-    }
+          if(getInfo() != other->getInfo())
+          {
+            writer.writeTextElement("info", "", Attribute("a", "changed"), Attribute("b", "changed"));
+          }
 
-    if(getPedalMode() != other->getPedalMode())
-    {
-      writer.writeTextElement("return-mode", "", Attribute("a", static_cast<int>(getPedalMode())),
-                              Attribute("b", static_cast<int>(other->getPedalMode())));
-    }
-  });
+          if(getRibbonReturnMode() != other->getRibbonReturnMode())
+          {
+            writer.writeTextElement("return-mode", "", Attribute("a", static_cast<int>(getRibbonReturnMode())),
+                                    Attribute("b", static_cast<int>(other->getRibbonReturnMode())));
+          }
+
+          if(getRibbonTouchBehaviour() != other->getRibbonTouchBehaviour())
+          {
+            writer.writeTextElement("behaviour", "", Attribute("a", getRibbonTouchBehaviour()),
+                                    Attribute("b", other->getRibbonTouchBehaviour()));
+          }
+
+          if(getPedalMode() != other->getPedalMode())
+          {
+            writer.writeTextElement("return-mode", "", Attribute("a", static_cast<int>(getPedalMode())),
+                                    Attribute("b", static_cast<int>(other->getPedalMode())));
+          }
+        }
+      });
 }
 
 MacroControls PresetParameter::getModulationSource() const
@@ -216,9 +236,9 @@ enum PedalModes PresetParameter::getPedalMode() const
 void PresetParameter::writeDocument(Writer &writer) const
 {
   writer.writeTag("param",
-                  { Attribute{ "id", m_id.toString() }, Attribute{ "value", to_string(m_value) },
-                    Attribute{ "mod-src", to_string(static_cast<int>(getModulationSource())) },
-                    Attribute{ "mod-amt", to_string(getModulationAmount()) } },
+                  { Attribute { "id", m_id.toString() }, Attribute { "value", to_string(m_value) },
+                    Attribute { "mod-src", to_string(static_cast<int>(getModulationSource())) },
+                    Attribute { "mod-amt", to_string(getModulationAmount()) } },
                   []() {});
 }
 

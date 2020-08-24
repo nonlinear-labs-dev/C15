@@ -19,6 +19,7 @@ import com.nonlinearlabs.client.WebSocketConnection.ServerListener;
 import com.nonlinearlabs.client.contextStates.StopWatchState;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModelUpdater;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel.ModSource;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -27,7 +28,9 @@ import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerUpdater;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetSearch.SearchQueryCombination;
 import com.nonlinearlabs.client.dataModel.setup.DeviceInfoUpdater;
 import com.nonlinearlabs.client.dataModel.setup.DeviceInformation;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupUpdater;
+import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
 import com.nonlinearlabs.client.world.IPreset;
@@ -91,12 +94,25 @@ public class ServerProxy {
 			webSocket.send(uri.getURI(isOracle));
 	}
 
+	private void updateSyncedPart(Node webuiHelp) {
+		if(SetupModel.get().systemSettings.syncVoiceGroups.isTrue()) {
+			Node selected = getChild(webuiHelp, "selected-part");
+			String vg = getChildText(selected);
+			if(vg != null && !vg.isEmpty()) {
+				EditBufferUseCases.get().selectVoiceGroup(VoiceGroup.valueOf(vg));
+			}
+		}
+	}
+
 	private void applyChanges(String responseText) {
 		try (StopWatchState s = new StopWatchState("ServerProxy::applyChanges")) {
 			
 			Document xml = XMLParser.parse(responseText);
+
+			Node webUIHelper = xml.getElementsByTagName("webui-helper").item(0);
+			updateSyncedPart(webUIHelper);
+
 			Node world = xml.getElementsByTagName("nonlinear-world").item(0);
-				
 			Node editBufferNode = xml.getElementsByTagName("edit-buffer").item(0);
 			Node settingsNode = xml.getElementsByTagName("settings").item(0);
 			Node undoNode = xml.getElementsByTagName("undo").item(0);
@@ -1054,6 +1070,13 @@ public class ServerProxy {
 	public void setMuteForPartAndUnmuteOther(VoiceGroup group) {
 		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "mute-part-unmute-other");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("part", group.toString()));
+		queueJob(uri, false);
+	}
+
+	public void syncVoiceGroup() {
+		VoiceGroup vg = EditBufferModel.get().voiceGroup.getValue();
+		StaticURI.Path path = new StaticURI.Path("presets", "param-editor", "select-part-from-webui");
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("part", vg.toString()));
 		queueJob(uri, false);
 	}
 

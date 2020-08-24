@@ -139,6 +139,7 @@ public class SetupModel {
 		public BooleanDataModelEntity benderOnPressedKeys = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetDragEnabled = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetGlitchSuppression = new BooleanDataModelEntity();
+		public BooleanDataModelEntity syncVoiceGroups = new BooleanDataModelEntity();
 		public EnumDataModelEntity<PresetStoreMode> presetStoreModeSetting = createEnumDataModelEntity(
 				PresetStoreMode.class, PresetStoreMode.append);
 		public ValueDataModelEntity randomizeAmount = new ValueDataModelEntity();

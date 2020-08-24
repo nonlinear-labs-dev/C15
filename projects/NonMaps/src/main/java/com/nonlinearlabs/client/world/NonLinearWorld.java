@@ -468,15 +468,20 @@ public class NonLinearWorld extends MapsLayout {
 			if (event.getNativeKeyCode() == com.google.gwt.event.dom.client.KeyCodes.KEY_T)
 				IntegrationTests.doAllTests();
 
-		isShiftDown = event.isShiftKeyDown();
-		isSpaceDown = event.getNativeKeyCode() == KeyCodes.KEY_SPACE;
-		isCtrlDown = event.isControlKeyDown();
+		if(event.getNativeKeyCode() == KeyCodes.KEY_SHIFT)
+			isShiftDown = true;
+		if(event.getNativeKeyCode() == KeyCodes.KEY_SPACE)
+			isSpaceDown = true;
+		if(event.getNativeKeyCode() == KeyCodes.KEY_CTRL)
+			isCtrlDown = true;
 
 		Control ctrl = recurseChildren(new ControlFinder() {
 
 			@Override
 			public boolean onWayDownFound(Control ctrl) {
 				if (ctrl.onKey(event) != null) {
+					event.stopPropagation();
+					event.preventDefault();
 					return true;
 				}
 
@@ -488,31 +493,16 @@ public class NonLinearWorld extends MapsLayout {
 	}
 
 	public boolean handleKeyUp(final KeyUpEvent event) {
-		isShiftDown = event.isShiftKeyDown();
+		if (event.getNativeKeyCode() == KeyCodes.KEY_SHIFT)
+			isShiftDown = false;
 
 		if (event.getNativeKeyCode() == KeyCodes.KEY_SPACE)
 			isSpaceDown = false;
 
-		isCtrlDown = event.isControlKeyDown();
+		if (event.getNativeKeyCode() == KeyCodes.KEY_CTRL)
+			isCtrlDown = false;
+
 		return true;
-	}
-
-	public boolean handleKey(final KeyDownEvent event) {
-		isShiftDown = event.isShiftKeyDown();
-
-		Control ctrl = recurseChildren(new ControlFinder() {
-
-			@Override
-			public boolean onWayDownFound(Control ctrl) {
-				if (ctrl.onKey(event) != null) {
-					return true;
-				}
-
-				return false;
-			}
-		});
-
-		return (ctrl != null);
 	}
 
 	public boolean zoomTo(NonRect r, boolean animate) {
@@ -536,8 +526,12 @@ public class NonLinearWorld extends MapsLayout {
 
 	@Override
 	public Control doubleClick(Position pos) {
-		zoomTo(parameterEditor);
-		presetManager.resetStoredViewportPosition();
+		if(presetManager.hasStoredViewportPosition()) {
+			presetManager.resetView();
+		} else {
+			zoomTo(parameterEditor);
+			presetManager.saveView();
+		}
 		return this;
 	}
 
@@ -626,10 +620,6 @@ public class NonLinearWorld extends MapsLayout {
 
 	public boolean isShiftDown() {
 		return isShiftDown;
-	}
-
-	public void setShiftDown(boolean b) {
-		isShiftDown = b;
 	}
 
 	public boolean isSpaceDown() {

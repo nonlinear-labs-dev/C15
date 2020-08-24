@@ -49,7 +49,8 @@ public class SetupUpdater extends Updater {
 		m.put("HighlightChangedParameters", SetupModel.get().systemSettings.highlightChangedParameters);
 		m.put("ForceHighlightChangedParameters", SetupModel.get().systemSettings.forceHighlightChangedParameters);
 		m.put("CrashOnError", SetupModel.get().systemSettings.crashOnError);
-
+		m.put("SyncVoiceGroups", SetupModel.get().systemSettings.syncVoiceGroups);
+		
 		return m;
 	}
 

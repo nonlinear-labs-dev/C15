@@ -44,6 +44,12 @@ void Writer::writeTextElement(const Glib::ustring &name, const Glib::ustring &te
   implWriteTextElement(name, text, { a, b, c, d });
 }
 
+void Writer::writeTextElement(const Glib::ustring &name, const Glib::ustring &text,
+                              std::initializer_list<Attribute> &&a)
+{
+  implWriteTextElement(name, text, a);
+}
+
 void Writer::writeTag(const Glib::ustring &name)
 {
   implWriteTag(name, {}, []() {});

@@ -160,7 +160,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 		if (mapsPreset.isSelected())
 			mapsPreset.load();
 		else
-			mapsPreset.select();
+			mapsPreset.selectPreset();
 
 		getParent().scheduleAutoScroll(PresetList.ScrollRequest.Smooth);
 		return this;

@@ -23,9 +23,10 @@ void RecallEditBufferSerializer::writeTagContent(Writer &writer) const
     auto parameter = param.second.get();
 
     writer.writeTextElement("recall-param", to_string(parameter->getRecallValue()),
-                            Attribute("id", parameter->getID().toString()),
-                            Attribute("mod-amt", to_string(parameter->getRecallModulationAmount())),
-                            Attribute("mod-src", to_string(parameter->getRecallModSource())));
+                            { Attribute("id", parameter->getID().toString()),
+                              Attribute("mod-amt", to_string(parameter->getRecallModulationAmount())),
+                              Attribute("mod-src", to_string(parameter->getRecallModSource())),
+                              Attribute("name", parameter->getGivenName()), Attribute("info", parameter->getInfo()) });
   }
 }
 
@@ -39,6 +40,8 @@ void RecallEditBufferSerializer::readTagContent(Reader &reader) const
       param->m_recallValue = std::stod(text);
       param->m_recallModAmount = std::stod(attr.get("mod-amt"));
       param->m_recallModSource = static_cast<MacroControls>(std::stoi(attr.get("mod-src")));
+      param->m_givenName = attr.get("name");
+      param->m_info = attr.get("info");
     }
   });
 }

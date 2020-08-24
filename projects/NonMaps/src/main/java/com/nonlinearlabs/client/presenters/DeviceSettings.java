@@ -22,7 +22,7 @@ public class DeviceSettings {
 		public int selected = 0;
 	}
 
-	static public class PresetGlitchSurpression {
+	static public class PresetGlitchSuppression {
 		static public String[] options = { "On", "Off" };
 		public boolean value = false;
 	}
@@ -37,6 +37,11 @@ public class DeviceSettings {
 		public boolean value = false;
 	}
 
+	static public class SyncPartsAcrossUI {
+		static public String[] options = {"On", "Off"};
+		public boolean value = false;
+	}
+
 	public VelocityCurve velocityCurve = new VelocityCurve();
 	public AftertouchCurve aftertouchCurve = new AftertouchCurve();
 	public BenderCurve benderCurve = new BenderCurve();
@@ -44,10 +49,11 @@ public class DeviceSettings {
 	public Pedal pedal2 = new Pedal();
 	public Pedal pedal3 = new Pedal();
 	public Pedal pedal4 = new Pedal();
-	public PresetGlitchSurpression presetGlitchSurpession = new PresetGlitchSurpression();
+	public PresetGlitchSuppression presetGlitchSuppression = new PresetGlitchSuppression();
 	public EditSmoothingTime editSmoothingTime = new EditSmoothingTime();
 	public String deviceName = "";
 	public HighlightChanged highlightChangedParameters = new HighlightChanged();
+	public SyncPartsAcrossUI syncParts = new SyncPartsAcrossUI();
 
 	public double randomizeAmountValue = 0;
 	public String randomizeAmountDisplayString = "";

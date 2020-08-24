@@ -48,7 +48,7 @@
         },
         "Left": {
           "Class": "SplitVoiceGroupI",
-          "Position": "15, 17",
+          "Position": "42, 17",
           "Init": {
             "VoiceGroupIdentifier[Text]": "I",
             "UpperText[Text]": "+12.00 st",
@@ -59,7 +59,7 @@
         },
         "Right": {
           "Class": "SplitVoiceGroupII",
-          "Position": "145, 17",
+          "Position": "142, 17",
           "Init": {
             "VoiceGroupIdentifier[Text]": "II",
             "UpperText[Text]": "+12.00 st",
@@ -72,6 +72,44 @@
           "Class": "SplitPoint",
           "Position": "116, 18",
           "Events": "SplitPointValue => Text[Text]"
+        },
+        "FX_L": {
+          "Class": "FX_Label_L",
+          "Position": "2, 20",
+          "Init": {
+            "TypeLabel[Text]": "FX",
+            "VGI[Text]": "I",
+            "VGII[Text]": "II"
+          }
+        },
+        "I_TO_I": {
+          "Class": "StraightLineArrowLeft",
+          "Position": "25, 20",
+          "Events": "ToFXIIUnder100 => ANY[Visibility]"
+        },
+        "I_TO_II": {
+          "Class": "StraightLineArrowLeft",
+          "Position": "25, 36",
+          "Events": "ToFXIIOver0 => ANY[Visibility]"
+        },
+        "FX_R": {
+          "Class": "FX_Label_R",
+          "Position": "232, 20",
+          "Init": {
+            "TypeLabel[Text]": "FX",
+            "VGI[Text]": "I",
+            "VGII[Text]": "II"
+          }
+        },
+        "II_TO_I": {
+          "Class": "StraightLineArrowRight",
+          "Position": "215, 20",
+          "Events": "ToFXIOver0 => ANY[Visibility]"
+        },
+        "II_TO_II": {
+          "Class": "StraightLineArrowRight",
+          "Position": "215, 36",
+          "Events": "ToFXIUnder100 => ANY[Visibility]"
         }
       },
       "EventSinks": {

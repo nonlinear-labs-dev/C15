@@ -502,7 +502,7 @@ public class BeltParameterLayout extends OverlayLayout {
 		if (event.getNativeKeyCode() == KeyCodes.KEY_K) {
 			startEdit().inc(event.isShiftKeyDown());
 			return this;
-		} else if (event.getNativeKeyCode() == KeyCodes.KEY_M) {
+		} else if (event.getNativeKeyCode() == KeyCodes.KEY_M && !event.isControlKeyDown()) {
 			startEdit().dec(event.isShiftKeyDown());
 			return this;
 		}

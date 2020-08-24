@@ -256,10 +256,7 @@ namespace DescriptiveLayouts
 
     registerEvent(EventSinks::OpenUnisonParameter, [eb]() {
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
-      if(eb->getType() == SoundType::Split)
-        eb->undoableSelectParameter({ 249, vg });
-      else
-        eb->undoableSelectParameter({ 249, VoiceGroup::I });
+      eb->undoableSelectParameter({ 249, vg });
     });
 
     registerEvent(EventSinks::IncSplitPoint, [hwui, eb]() {

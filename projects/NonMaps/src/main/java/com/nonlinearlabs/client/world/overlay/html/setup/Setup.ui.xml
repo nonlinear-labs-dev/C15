@@ -132,13 +132,25 @@
 
 					<div class="eins-he">
 						<div class="w70p">
-							<p>Preset Glitch Surpression</p>
+							<p>Preset Glitch Suppression</p>
 						</div>
 						<div class="w30p mw-fit-content">
-							<g:RadioButton ui:field="presetGlitchSurpressionOn"
+							<g:RadioButton ui:field="presetGlitchSuppressionOn"
 								name="rad_pgs" value="true"></g:RadioButton>
-							<g:RadioButton ui:field="presetGlitchSurpressionOff"
+							<g:RadioButton ui:field="presetGlitchSuppressionOff"
 								name="rad_pgs" value="false"></g:RadioButton>
+						</div>
+					</div>
+
+					<div class="eins-he">
+						<div class="w70p">
+							<p>Sync Parts across User Interfaces</p>
+						</div>
+						<div class="w30p mw-fit-content">
+							<g:RadioButton ui:field="syncPartsOn"
+								name="rad_syncvg" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="syncPartsOff"
+								name="rad_syncvg" value="false"></g:RadioButton>
 						</div>
 					</div>
 
@@ -189,12 +201,6 @@
 								class="slider-a" min="0" max="1" step="0.0001" value="0"></input>
 						</div>
 					</div>
-
-
-
-
-
-
 				</div>
 			</div>
 

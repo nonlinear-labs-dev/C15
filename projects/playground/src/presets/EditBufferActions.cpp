@@ -299,6 +299,14 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
       httpRequest->respond(hwui->exportBoled());
     }
   });
+
+  addAction("select-part-from-webui", [=](auto request) {
+    auto part = to<VoiceGroup>(request->get("part"));
+    auto hwui = Application::get().getHWUI();
+    auto eb = Application::get().getPresetManager()->getEditBuffer();
+    auto scope = eb->getUndoScope().startTransaction("Select Part " + to_string(part));
+    hwui->setCurrentVoiceGroupAndUpdateParameterSelection(scope->getTransaction(), part);
+  });
 }
 
 IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer)

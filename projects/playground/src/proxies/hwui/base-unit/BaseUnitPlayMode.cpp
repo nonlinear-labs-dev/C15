@@ -70,9 +70,9 @@ void BaseUnitPlayMode::setupBaseUnitMinusButton()
 {
   setupButtonConnection(Buttons::BUTTON_MINUS, [=](auto, auto, auto state) {
     if(state)
-      m_noteShiftState.traverse(NOTE_SHIFT_EVENT_MINUS_PRESSED);
+      m_noteShiftState.traverse(NoteShiftEvents::NOTE_SHIFT_EVENT_MINUS_PRESSED);
     else
-      m_noteShiftState.traverse(NOTE_SHIFT_EVENT_MINUS_RELEASED);
+      m_noteShiftState.traverse(NoteShiftEvents::NOTE_SHIFT_EVENT_MINUS_RELEASED);
 
     return true;
   });
@@ -82,9 +82,9 @@ void BaseUnitPlayMode::setupBaseUnitPlusButton()
 {
   setupButtonConnection(Buttons::BUTTON_PLUS, [=](auto, auto, auto state) {
     if(state)
-      m_noteShiftState.traverse(NOTE_SHIFT_EVENT_PLUS_PRESSED);
+      m_noteShiftState.traverse(NoteShiftEvents::NOTE_SHIFT_EVENT_PLUS_PRESSED);
     else
-      m_noteShiftState.traverse(NOTE_SHIFT_EVENT_PLUS_RELEASED);
+      m_noteShiftState.traverse(NoteShiftEvents::NOTE_SHIFT_EVENT_PLUS_RELEASED);
 
     return true;
   });

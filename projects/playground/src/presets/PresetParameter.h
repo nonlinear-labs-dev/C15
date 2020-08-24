@@ -51,7 +51,7 @@ class PresetParameter
   void copyFrom(UNDO::Transaction *transaction, const ::Parameter *other);
 
   // algorithm
-  void writeDiff(Writer &writer, ParameterId parameterID, const PresetParameter *other) const;
+  void writeDiff(Writer& writer, ParameterId parameterID, const PresetParameter* other) const;
   void writeDocument(Writer &writer) const;
 
  private:

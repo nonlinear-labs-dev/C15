@@ -5,6 +5,7 @@ import com.nonlinearlabs.client.dataModel.Updater;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel.ModSource;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 
 public class EditBufferModelUpdater extends Updater {
 

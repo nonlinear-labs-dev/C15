@@ -56,6 +56,11 @@ public class SystemSettings {
 		NonMaps.theMaps.getServerProxy().setSetting("VelocityCurve", netify(c.name()));
 	}
 
+	public void setSyncParts(BooleanValues v) {
+		SetupModel.get().systemSettings.syncVoiceGroups.setValue(v);
+		NonMaps.theMaps.getServerProxy().setSetting("SyncVoiceGroups", netify(v.name()));
+	}
+
 	public void setAftertouchCurve(AftertouchCurve c) {
 		SetupModel.get().systemSettings.aftertouchCurve.setValue(c);
 		NonMaps.theMaps.getServerProxy().setSetting("AftertouchCurve", netify(c.name()));
@@ -86,7 +91,7 @@ public class SystemSettings {
 		NonMaps.theMaps.getServerProxy().setSetting("Pedal4Type", c.name());
 	}
 
-	public void setPresetGlitchSurpression(BooleanValues c) {
+	public void setPresetGlitchSuppression(BooleanValues c) {
 		SetupModel.get().systemSettings.presetGlitchSuppression.setValue(c);
 		NonMaps.theMaps.getServerProxy().setSetting("PresetGlitchSuppression", netify(c.name()));
 	}

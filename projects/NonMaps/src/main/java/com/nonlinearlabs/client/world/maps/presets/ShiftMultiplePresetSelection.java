@@ -14,7 +14,6 @@ public class ShiftMultiplePresetSelection extends MultiplePresetSelection {
 			super.toggle(p);
 		} else {
 			NonMaps.get().getNonLinearWorld().getPresetManager().closeMultiSelection();
-			p.select();
 		}
 	}
 }
