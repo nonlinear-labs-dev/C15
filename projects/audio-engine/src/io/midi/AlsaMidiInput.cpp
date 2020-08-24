@@ -48,7 +48,7 @@ void AlsaMidiInput::doBackgroundWork()
   uint8_t byte;
 
   snd_midi_event_t *parser = nullptr;
-  snd_midi_event_new(512, &parser);  // a chunk of raw SysEx will at most be this size
+  snd_midi_event_new(512, &parser);  // max. chunk size of MIDI messages for one go
 
   int numPollFDs = snd_rawmidi_poll_descriptors_count(m_handle);
 
@@ -59,7 +59,8 @@ void AlsaMidiInput::doBackgroundWork()
 
   while(true)
   {
-    switch(poll(pollFileDescriptors, numPollFDs + 1, -1))
+  Poll:
+    switch(poll(pollFileDescriptors, numPollFDs + 1, -1))  // blocking poll
     {
       case POLLPRI:
       case POLLRDHUP:
@@ -91,27 +92,31 @@ void AlsaMidiInput::doBackgroundWork()
       if(rawIdx < 3)             // we record raw bytes here because pitchbend event data "event.data.control.*" ...
         e.raw[rawIdx++] = byte;  // ... does not nicely cover the 14 bit value range
 
-      if(snd_midi_event_encode_byte(parser, byte, &event) == 1)
-      {  // have a finished MIDI message
-        switch(event.type)
-        {
-          case SND_SEQ_EVENT_PITCHBEND:  // TCD data (wrapped in PitchBends)
-            printf("\nTCD Data : %02X %02X %02X\n", e.raw[0], e.raw[1], e.raw[2]);
-            fflush(stdout);
-            getCallback()(e);
-            break;
-          case SND_SEQ_EVENT_SYSEX:  // chunck of SysEx data (may not be a complete packet, scan for terminating "0xF7")
-            uint8_t *p = (uint8_t *) event.data.ext.ptr;
-            printf("\nSysEx Data (%i bytes) : ", event.data.ext.len);
-            for(int i = 0; i < event.data.ext.len; i++)
-              printf("%02X ", p[i]);
-            printf("\n");
-            fflush(stdout);
-            break;
-        }
-        rawIdx = 0;
-        break;  // break out of "while(m_run){}" after ANY event, seems to be required to keep thread from stalling ???              }
+      if(snd_midi_event_encode_byte(parser, byte, &event) != 1)
+        continue;  // MIDI message not yet completed
+
+      switch(event.type)
+      {
+        case SND_SEQ_EVENT_PITCHBEND:  // TCD data (wrapped in PitchBends)
+#if 0
+          printf("\nTCD Data : %02X %02X %02X\n", e.raw[0], e.raw[1], e.raw[2]);
+          fflush(stdout);
+#endif
+          getCallback()(e);
+          break;
+        case SND_SEQ_EVENT_SYSEX:  // chunck of SysEx data (may not be a complete packet, scan for delimiting "0xF0" and "0xF7")
+#if 0
+          uint8_t *p = (uint8_t *) event.data.ext.ptr;
+          printf("\nSysEx Data (%i bytes) : ", event.data.ext.len);
+          for(int i = 0; i < event.data.ext.len; i++)
+            printf("%02X ", p[i]);
+          printf("\n");
+          fflush(stdout);
+#endif
+          break;
       }
-    }  // while(m_run)
-  }    // while(true)
+      rawIdx = 0;
+      goto Poll;  // wait for next incoming data
+    }             // while(m_run)
+  }               // while(true)
 }
