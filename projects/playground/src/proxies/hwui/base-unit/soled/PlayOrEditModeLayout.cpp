@@ -13,6 +13,9 @@
 #include <proxies/hwui/controls/VerticalLine.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/lpc/LPCProxy.h>
+#include <presets/PresetManager.h>
+#include <presets/EditBuffer.h>
+#include <parameter_declarations.h>
 
 PlayOrEditModeLayout::PlayOrEditModeLayout()
     : super(Application::get().getHWUI()->getBaseUnit().getPlayPanel().getSOLED())
@@ -31,6 +34,8 @@ PlayOrEditModeLayout::PlayOrEditModeLayout()
                                               Rect(getBehaviourLeft(), 17, 12, 14)));
 
   Application::get().getLPCProxy()->onRibbonTouched(mem_fun(this, &PlayOrEditModeLayout::onLastTouchedRibbonChanged));
+  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
+      mem_fun(this, &PlayOrEditModeLayout::onParameterSelectionChanged), {});
 }
 
 PlayOrEditModeLayout::~PlayOrEditModeLayout()
@@ -40,6 +45,18 @@ PlayOrEditModeLayout::~PlayOrEditModeLayout()
 int PlayOrEditModeLayout::getBehaviourLeft() const
 {
   return 109;
+}
+
+void PlayOrEditModeLayout::onParameterSelectionChanged(const Parameter* old, Parameter* newP)
+{
+  if(newP->getID().getNumber() == C15::PID::Ribbon_1)
+  {
+    onLastTouchedRibbonChanged(C15::PID::Ribbon_1);
+  }
+  else if(newP->getID().getNumber() == C15::PID::Ribbon_2)
+  {
+    onLastTouchedRibbonChanged(C15::PID::Ribbon_2);
+  }
 }
 
 void PlayOrEditModeLayout::onLastTouchedRibbonChanged(int lastTouchedRibbonParameterID)

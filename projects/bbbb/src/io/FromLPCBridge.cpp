@@ -10,7 +10,7 @@ FromLPCBridge::FromLPCBridge()
 void FromLPCBridge::sendRibbonPosition(bool m_upperRibon, double value)
 {
   gint16 messageType = 1024;
-  gint16 ribbonId = static_cast<gint16>(m_upperRibon ? 284 : 289);
+  gint16 ribbonId = static_cast<gint16>(m_upperRibon ? 6 : 7);
   gint16 val = static_cast<gint16>(value);
 
   gint16 data[4];
