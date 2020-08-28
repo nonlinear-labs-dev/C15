@@ -66,7 +66,10 @@ void PedalParameter::setRoutersModeAccordingToReturnMode()
     auto mappings = dynamic_cast<MacroControlMappingGroup *>(eb->getParameterGroupByID({ "MCM", VoiceGroup::Global }));
 
     for(auto router : mappings->getModulationRoutingParametersFor(this))
-      router->getValue().setIsBoolean(routersAreBoolean);
+    {
+      if(router->getValue().setIsBoolean(routersAreBoolean))
+        router->onChange();
+    }
   }
 }
 

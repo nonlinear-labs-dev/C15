@@ -630,6 +630,14 @@ public class NonLinearWorld extends MapsLayout {
 		return isCtrlDown;
 	}
 
+	public void setShiftDown(boolean s) {
+		isShiftDown = s;
+	}
+
+	public void setCtrlDown(boolean s) {
+		isCtrlDown = s;
+	}
+
 	@Override
 	public boolean isDraggingControl() {
 		return false;

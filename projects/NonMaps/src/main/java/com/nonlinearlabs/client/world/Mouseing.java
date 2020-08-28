@@ -44,8 +44,14 @@ public abstract class Mouseing {
 		canvas.addMouseWheelHandler(new NonMapsWheelHandler());
 		canvas.addDoubleClickHandler(new NonMapsMousDoubleClickHandler());
 
+		NonLinearWorld nw = NonMaps.get().getNonLinearWorld();
+
 		canvas.addDomHandler((event) -> {
 			Position p = new Position(event.getNativeEvent());
+
+			nw.setCtrlDown(event.isControlKeyDown());
+			nw.setShiftDown(event.isShiftKeyDown());
+
 			capturePointer(canvas.getCanvasElement(), event.pointerId);
 			touches.add(new Touch(event.pointerId, p));
 

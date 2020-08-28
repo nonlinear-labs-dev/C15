@@ -63,7 +63,10 @@ void RibbonParameter::setupScalingAndDefaultValue()
         = dynamic_cast<MacroControlMappingGroup *>(groups->getParameterGroupByID({ "MCM", VoiceGroup::Global }));
 
     for(auto router : mappings->getModulationRoutingParametersFor(this))
-      router->getValue().setIsBoolean(routersAreBoolean);
+    {
+      if(router->getValue().setIsBoolean(routersAreBoolean))
+        router->onChange();
+    }
   }
 
   ensureExclusiveRoutingIfNeeded();

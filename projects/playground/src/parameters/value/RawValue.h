@@ -28,7 +28,7 @@ class RawValue
   const ScaleConverter *getScaleConverter() const;
   void setScaleConverter(const ScaleConverter *c);
 
-  void setIsBoolean(bool v);
+  bool setIsBoolean(bool v);
 
   virtual void onRawValueChanged(Initiator initiator, tValueType oldRawValue, tValueType newRawValue);
 

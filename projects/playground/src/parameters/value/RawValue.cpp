@@ -77,9 +77,10 @@ bool RawValue::isBiPolar() const
   return m_scaleConverter->isBiPolar();
 }
 
-void RawValue::setIsBoolean(bool v)
+bool RawValue::setIsBoolean(bool v)
 {
-  m_isBoolean = v;
+  auto old = std::exchange(m_isBoolean, v);
+  return old != v;
 }
 
 bool RawValue::isBoolean() const
