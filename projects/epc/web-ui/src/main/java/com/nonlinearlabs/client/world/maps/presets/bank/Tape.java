@@ -23,14 +23,14 @@ public class Tape extends MapsControl {
 
 	public Orientation invertOrientation(Orientation o) {
 		switch (o) {
-		case East:
-			return Orientation.West;
-		case North:
-			return Orientation.South;
-		case South:
-			return Orientation.North;
-		case West:
-			return Orientation.East;
+			case East:
+				return Orientation.West;
+			case North:
+				return Orientation.South;
+			case South:
+				return Orientation.North;
+			case West:
+				return Orientation.East;
 		}
 		return null;
 	}
@@ -154,22 +154,22 @@ public class Tape extends MapsControl {
 
 		switch (getOrientation()) {
 
-		case North:
-			setNonSize(new NonDimension(oldDim.getWidth(), tapeSize));
-			moveTo(new NonPosition(tapeSize, 0));
-			break;
-		case South:
-			setNonSize(new NonDimension(oldDim.getWidth(), tapeSize));
-			moveTo(new NonPosition(tapeSize, oldDim.getHeight() + tapeSize));
-			break;
-		case East:
-			setNonSize(new NonDimension(tapeSize, oldDim.getHeight()));
-			moveTo(new NonPosition(oldDim.getWidth() + tapeSize, 0 + tapeSize));
-			break;
-		case West:
-			setNonSize(new NonDimension(tapeSize, oldDim.getHeight()));
-			moveTo(new NonPosition(0, tapeSize));
-			break;
+			case North:
+				setNonSize(new NonDimension(oldDim.getWidth(), tapeSize));
+				moveTo(new NonPosition(tapeSize, 0));
+				break;
+			case South:
+				setNonSize(new NonDimension(oldDim.getWidth(), tapeSize));
+				moveTo(new NonPosition(tapeSize, oldDim.getHeight() + tapeSize));
+				break;
+			case East:
+				setNonSize(new NonDimension(tapeSize, oldDim.getHeight()));
+				moveTo(new NonPosition(oldDim.getWidth() + tapeSize, 0 + tapeSize));
+				break;
+			case West:
+				setNonSize(new NonDimension(tapeSize, oldDim.getHeight()));
+				moveTo(new NonPosition(0, tapeSize));
+				break;
 		}
 	}
 
@@ -204,8 +204,8 @@ public class Tape extends MapsControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		super.draw(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		super.draw(ctx, overlay, invalidationMask);
 		Rect r = getPixRect().copy();
 		prepareRectForDraw(r);
 		r.fill(ctx, isInsertTape() ? getInsertColor() : getTapeColor());
@@ -213,26 +213,26 @@ public class Tape extends MapsControl {
 
 	private void prepareRectForDraw(Rect r) {
 		switch (orientation) {
-		case East:
-			r.setWidth(r.getWidth() / 2);
-			break;
+			case East:
+				r.setWidth(r.getWidth() / 2);
+				break;
 
-		case North:
-			r.setHeight(r.getHeight() / 2);
-			r.setTop(r.getTop() + r.getHeight());
-			break;
+			case North:
+				r.setHeight(r.getHeight() / 2);
+				r.setTop(r.getTop() + r.getHeight());
+				break;
 
-		case South:
-			r.setHeight(r.getHeight() / 2);
-			break;
+			case South:
+				r.setHeight(r.getHeight() / 2);
+				break;
 
-		case West:
-			r.setWidth(r.getWidth() / 2);
-			r.setLeft(r.getLeft() + r.getWidth());
-			break;
+			case West:
+				r.setWidth(r.getWidth() / 2);
+				r.setLeft(r.getLeft() + r.getWidth());
+				break;
 
-		default:
-			break;
+			default:
+				break;
 
 		}
 	}

@@ -31,10 +31,10 @@ class BankTitle extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect pix = getPixRect();
 		pix.fill(ctx, new Gray(51));
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override

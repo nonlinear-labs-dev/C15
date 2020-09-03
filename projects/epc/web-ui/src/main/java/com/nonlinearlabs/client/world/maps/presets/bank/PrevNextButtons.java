@@ -85,8 +85,8 @@ class PrevNextButtons extends LayoutResizingHorizontal {
 		}
 
 		@Override
-		public void draw(Context2d ctx, int invalidationMask) {
-			super.draw(ctx, invalidationMask);
+		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+			super.draw(ctx, overlay, invalidationMask);
 
 			RGB bg = getBackgroundColor();
 			RGB arrow = getArrowColor();
@@ -118,8 +118,8 @@ class PrevNextButtons extends LayoutResizingHorizontal {
 		}
 
 		@Override
-		public void draw(Context2d ctx, int invalidationMask) {
-			super.draw(ctx, invalidationMask);
+		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+			super.draw(ctx, overlay, invalidationMask);
 
 			Rect r = getPixRect();
 			Position p = r.getCenterPoint();
@@ -152,8 +152,8 @@ class PrevNextButtons extends LayoutResizingHorizontal {
 		}
 
 		@Override
-		public void draw(Context2d ctx, int invalidationMask) {
-			super.draw(ctx, invalidationMask);
+		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+			super.draw(ctx, overlay, invalidationMask);
 
 			Rect r = getPixRect();
 			Position p = r.getCenterPoint();
@@ -201,7 +201,7 @@ class PrevNextButtons extends LayoutResizingHorizontal {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect pix = getPixRect();
 
 		RGB colorContour = new RGB(0, 0, 0);
@@ -211,7 +211,7 @@ class PrevNextButtons extends LayoutResizingHorizontal {
 
 		pix.fillAndStroke(ctx, colorFill, cp, colorContour);
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 
 		Rect highlighRect = getPixRect().getReducedBy(cp / 2);
 		highlighRect.stroke(ctx, cp, getParent().getColorBankInnerBorder());

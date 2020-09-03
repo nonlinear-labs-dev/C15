@@ -39,7 +39,7 @@ public class SliderHorizontal extends Slider {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (!isVisible)
 			return;
 

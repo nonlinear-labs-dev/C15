@@ -47,7 +47,6 @@ public class ModulateableSmallNumericalControl extends LayoutResizingVertical {
 
 		addChild(new Spacer(this, 80, 8));
 
-
 		modControls = addChild(new NumericalControlsModulation(this, parameterID) {
 			@Override
 			public double getLevelOfDetailForFullVisibility() {
@@ -65,7 +64,7 @@ public class ModulateableSmallNumericalControl extends LayoutResizingVertical {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect pixRect = getPixRect().copy();
 
 		pixRect.reduceWidthBy(toXPixels(10));
@@ -73,7 +72,7 @@ public class ModulateableSmallNumericalControl extends LayoutResizingVertical {
 		pixRect.setBottom(modControls.getPixRect().getBottom());
 		pixRect.fillAndStroke(ctx, getColorSliderBackground(), toXPixels(1), getColorObjectContour());
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	public double getXMargin() {

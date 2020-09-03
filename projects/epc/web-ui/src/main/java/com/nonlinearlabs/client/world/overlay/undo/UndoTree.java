@@ -319,10 +319,10 @@ public class UndoTree extends OverlayLayout implements TransitionDamper.Client {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ClipContext c = new ClipContext(ctx, this)) {
 			getPixRect().fill(ctx, new Gray(26));
-			super.draw(ctx, invalidationMask);
+			super.draw(ctx, overlay, invalidationMask);
 
 			setupContext(ctx);
 

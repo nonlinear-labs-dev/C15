@@ -32,7 +32,6 @@ public class Overlay extends OverlayLayout {
 
 	private class PartMuteDisplay extends SVGImage {
 
-
 		private boolean isMuted = false;
 		private boolean inLayer = false;
 
@@ -55,7 +54,8 @@ public class Overlay extends OverlayLayout {
 				return true;
 			});
 
-			setVisible(mute.value.value.getValue() > 0 && EditBufferModel.get().soundType.getValue() == SoundType.Layer);
+			setVisible(
+					mute.value.value.getValue() > 0 && EditBufferModel.get().soundType.getValue() == SoundType.Layer);
 		}
 
 		@Override
@@ -126,29 +126,29 @@ public class Overlay extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (layoutRequested) {
 			layoutRequested = false;
 			doLayout(0, 0, getRelativePosition().getWidth(), getRelativePosition().getHeight());
 		}
 
-		buttons.drawInactiveButton(ctx, invalidationMask);
+		buttons.drawInactiveButton(ctx, overlay, invalidationMask);
 		drawBackground(ctx);
-		buttons.drawActiveButton(ctx, invalidationMask);
+		buttons.drawActiveButton(ctx, overlay, invalidationMask);
 
 		if (EditBufferModel.get().soundType.getValue() != SoundType.Single)
 			drawDualSoundIndication(ctx);
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	private void drawDualSoundIndication(Context2d ctx) {
 		Rect r = getPixRect().copy();
-		if(belt.isHidden())
+		if (belt.isHidden())
 			r.setBottom(belt.getPixRect().getTop() - 1);
 		else
 			r.setBottom(belt.getPixRect().getTop());
-		
+
 		Rect gbr = buttons.getPixRect();
 		Rect soundTypeDisplayRect = layerDisplay.getPixRect().copy();
 		soundTypeDisplayRect.setTop(soundTypeDisplayRect.getTop() + 1);
@@ -262,12 +262,14 @@ public class Overlay extends OverlayLayout {
 		layerDisplay.doLayout((w - layerDisplayWidth) / 2, 0, layerDisplayWidth, layerDisplayHeight);
 
 		Rect layerDisplayPos = layerDisplay.getRelativePosition();
-		
+
 		double muteHeight = layerDisplayPos.getHeight() / 3;
 		double muteYMargin = muteHeight / 2;
 
-		partMuteDisplayI.doLayout(layerDisplayPos.getLeft() - Millimeter.toPixels(0.2), layerDisplayPos.getTop() + muteYMargin, layerDisplayPos.getWidth(), muteHeight);
-		partMuteDisplayII.doLayout(layerDisplayPos.getLeft() - Millimeter.toPixels(0.2), layerDisplayPos.getTop() + muteHeight + (muteYMargin), layerDisplayPos.getWidth(), muteHeight);
+		partMuteDisplayI.doLayout(layerDisplayPos.getLeft() - Millimeter.toPixels(0.2),
+				layerDisplayPos.getTop() + muteYMargin, layerDisplayPos.getWidth(), muteHeight);
+		partMuteDisplayII.doLayout(layerDisplayPos.getLeft() - Millimeter.toPixels(0.2),
+				layerDisplayPos.getTop() + muteHeight + (muteYMargin), layerDisplayPos.getWidth(), muteHeight);
 
 		double beltHeight = Millimeter.toPixels(40);
 		belt.doLayout(0, h - beltHeight, w, beltHeight);

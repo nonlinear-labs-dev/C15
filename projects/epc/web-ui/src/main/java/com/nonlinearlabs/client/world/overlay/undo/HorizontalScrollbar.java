@@ -10,8 +10,8 @@ public class HorizontalScrollbar extends Scrollbar {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		super.draw(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		super.draw(ctx, overlay, invalidationMask);
 
 		double width = getParent().getScrollPaneWidth();
 		double visibleWidth = getParent().getPaneRect().getWidth();

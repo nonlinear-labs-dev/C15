@@ -46,9 +46,8 @@ public abstract class MacroControlParameter extends Parameter implements Renamea
 
 			@Override
 			protected String getDisplayText() {
-				MacroControlParameter mc = (MacroControlParameter)(getParent());
-				if(mc != null)
-				{
+				MacroControlParameter mc = (MacroControlParameter) (getParent());
+				if (mc != null) {
 					return mc.getTitleName();
 				}
 				return super.getDisplayText();
@@ -60,8 +59,8 @@ public abstract class MacroControlParameter extends Parameter implements Renamea
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		super.draw(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		super.draw(ctx, overlay, invalidationMask);
 
 		if (isSelected())
 			getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), toXPixels(1), null,

@@ -10,8 +10,8 @@ public class VerticalScrollbar extends Scrollbar {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		super.draw(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		super.draw(ctx, overlay, invalidationMask);
 
 		double height = getParent().getScrollPaneHeight();
 		double visibleHeight = getParent().getPaneRect().getHeight();

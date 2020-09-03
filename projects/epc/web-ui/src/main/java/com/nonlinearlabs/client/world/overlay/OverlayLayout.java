@@ -81,16 +81,16 @@ public abstract class OverlayLayout extends OverlayControl implements ILayout<Ov
 	}
 
 	@Override
-	public void drawChildren(Context2d ctx, int invalidationMask) {
+	public void drawChildren(Context2d ctx, Context2d overlay, int invalidationMask) {
 		double op = getOpacity();
 
 		if (op == 1.0) {
-			children.draw(ctx, invalidationMask);
+			children.draw(ctx, overlay, invalidationMask);
 		} else if (op != 0.0) {
 			ctx.save();
 			ctx.setGlobalCompositeOperation(Composite.SOURCE_OVER);
 			ctx.setGlobalAlpha(op);
-			children.draw(ctx, invalidationMask);
+			children.draw(ctx, overlay, invalidationMask);
 			ctx.restore();
 		}
 	}
@@ -142,8 +142,8 @@ public abstract class OverlayLayout extends OverlayControl implements ILayout<Ov
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		drawChildren(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		drawChildren(ctx, overlay, invalidationMask);
 	}
 
 	@Override

@@ -17,9 +17,9 @@ public class KeyTrackParameter extends NumericalControlSmall {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (isVisible)
-			super.draw(ctx, invalidationMask);
+			super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override

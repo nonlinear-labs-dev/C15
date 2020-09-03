@@ -17,9 +17,9 @@ public abstract class PrevNextBank extends SVGImage {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		getPixRect().fill(ctx, new Gray(77));
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 }

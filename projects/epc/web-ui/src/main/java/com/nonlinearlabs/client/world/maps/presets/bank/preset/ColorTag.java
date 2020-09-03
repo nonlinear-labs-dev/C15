@@ -14,21 +14,21 @@ public class ColorTag extends ZoomReactingControl {
 
 		public RGB toRGB() {
 			switch (this) {
-			case green:
-				return new RGB(82, 173, 69);
-			case blue:
-				return new RGB(75, 105, 213);
-			case yellow:
-				return new RGB(204, 197, 54);
-			case orange:
-				return new RGB(221, 149, 55);
-			case purple:
-				return new RGB(183, 95, 174);
-			case red:
-				return new RGB(207, 43, 59);
-			case none:
-			default:
-				return new RGBA(0, 0, 0, 0);
+				case green:
+					return new RGB(82, 173, 69);
+				case blue:
+					return new RGB(75, 105, 213);
+				case yellow:
+					return new RGB(204, 197, 54);
+				case orange:
+					return new RGB(221, 149, 55);
+				case purple:
+					return new RGB(183, 95, 174);
+				case red:
+					return new RGB(207, 43, 59);
+				case none:
+				default:
+					return new RGBA(0, 0, 0, 0);
 			}
 		}
 
@@ -69,7 +69,7 @@ public class ColorTag extends ZoomReactingControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		RGB color = calcColor();
 		if (color == null)
 			return;

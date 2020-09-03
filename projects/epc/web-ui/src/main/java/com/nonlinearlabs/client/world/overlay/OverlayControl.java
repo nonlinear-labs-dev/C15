@@ -52,7 +52,7 @@ public abstract class OverlayControl extends Control {
 	}
 
 	@Override
-	public abstract void draw(Context2d ctx, int invalidationMask);
+	public abstract void draw(Context2d ctx, Context2d overlay, int invalidationMask);
 
 	void center() {
 		Rect myPos = getRelativePosition();

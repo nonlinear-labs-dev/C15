@@ -86,9 +86,9 @@ public class PresetList extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ClipContext clip = new ClipContext(ctx, this)) {
-			super.draw(ctx, invalidationMask);
+			super.draw(ctx, overlay, invalidationMask);
 
 			ctx.setFillStyle("rgba(255, 0, 0, 0.5)");
 
@@ -97,20 +97,20 @@ public class PresetList extends OverlayLayout {
 					BeltPreset e = (BeltPreset) c;
 
 					switch (e.getDropPosition()) {
-					case TOP:
-						drawDropIndicator(ctx, e.getPixRect(), -0.1, 0.2);
-						break;
+						case TOP:
+							drawDropIndicator(ctx, e.getPixRect(), -0.1, 0.2);
+							break;
 
-					case MIDDLE:
-						drawDropIndicator(ctx, e.getPixRect(), 0.1, 0.8);
-						break;
+						case MIDDLE:
+							drawDropIndicator(ctx, e.getPixRect(), 0.1, 0.8);
+							break;
 
-					case BOTTOM:
-						drawDropIndicator(ctx, e.getPixRect(), 0.9, 0.2);
-						break;
+						case BOTTOM:
+							drawDropIndicator(ctx, e.getPixRect(), 0.9, 0.2);
+							break;
 
-					default:
-						break;
+						default:
+							break;
 					}
 				}
 			}
@@ -214,7 +214,6 @@ public class PresetList extends OverlayLayout {
 		if (scrollRequest == ScrollRequest.None)
 			return;
 
-
 		double target = getChildren().get(0).getRelativePosition().getTop() - p.getRelativePosition().getTop()
 				+ getChildHeight();
 
@@ -283,8 +282,8 @@ public class PresetList extends OverlayLayout {
 		for (OverlayControl c : getChildren()) {
 			BeltPreset p = (BeltPreset) c;
 
-			if(isInLoadToPartMode()) {
-				if(getLoadToPartMode().getSelectedPreset() == p.getMapsPreset())
+			if (isInLoadToPartMode()) {
+				if (getLoadToPartMode().getSelectedPreset() == p.getMapsPreset())
 					return p;
 			} else {
 				if (p.getMapsPreset().isSelected())

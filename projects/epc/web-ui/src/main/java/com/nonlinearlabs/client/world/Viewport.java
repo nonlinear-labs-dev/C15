@@ -48,9 +48,9 @@ public class Viewport extends MapsLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		super.draw(ctx, invalidationMask);
-		overlay.draw(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d o, int invalidationMask) {
+		super.draw(ctx, o, invalidationMask);
+		overlay.draw(o, null, invalidationMask);
 	}
 
 	@Override

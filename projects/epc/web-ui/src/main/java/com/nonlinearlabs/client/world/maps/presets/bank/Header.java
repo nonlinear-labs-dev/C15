@@ -59,11 +59,11 @@ public class Header extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect r = getPixRect();
 		r.drawRoundedRect(ctx, Rect.ROUNDING_TOP, toXPixels(6), toXPixels(1), getBackgroundColor(), null);
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 
 		if (isDropTarget) {
 			drawTooth(ctx);

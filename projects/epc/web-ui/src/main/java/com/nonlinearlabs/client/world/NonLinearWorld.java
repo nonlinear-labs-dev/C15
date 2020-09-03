@@ -227,7 +227,7 @@ public class NonLinearWorld extends MapsLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ContextState state = new ContextState(ctx)) {
 			try (StopWatchState s = new StopWatchState("NonlinearWorld::draw")) {
 				ctx.save();
@@ -235,11 +235,11 @@ public class NonLinearWorld extends MapsLayout {
 				ctx.setLineCap(LineCap.BUTT);
 				ctx.translate(-0.5, -0.5);
 				viewport.drawBackground(ctx);
-				drawChildren(ctx, invalidationMask);
-				viewport.draw(ctx, invalidationMask);
+				drawChildren(ctx, overlay, invalidationMask);
+				viewport.draw(ctx, overlay, invalidationMask);
 
 				if (getPresetManager().hasMultipleRectangle())
-					getPresetManager().getMoveSomeBanks().draw(ctx, invalidationMask);
+					getPresetManager().getMoveSomeBanks().draw(ctx, overlay, invalidationMask);
 
 				ctx.restore();
 			}
@@ -473,11 +473,11 @@ public class NonLinearWorld extends MapsLayout {
 			if (event.getNativeKeyCode() == com.google.gwt.event.dom.client.KeyCodes.KEY_T)
 				IntegrationTests.doAllTests();
 
-		if(event.getNativeKeyCode() == KeyCodes.KEY_SHIFT)
+		if (event.getNativeKeyCode() == KeyCodes.KEY_SHIFT)
 			isShiftDown = true;
-		if(event.getNativeKeyCode() == KeyCodes.KEY_SPACE)
+		if (event.getNativeKeyCode() == KeyCodes.KEY_SPACE)
 			isSpaceDown = true;
-		if(event.getNativeKeyCode() == KeyCodes.KEY_CTRL)
+		if (event.getNativeKeyCode() == KeyCodes.KEY_CTRL)
 			isCtrlDown = true;
 
 		Control ctrl = recurseChildren(new ControlFinder() {
@@ -531,7 +531,7 @@ public class NonLinearWorld extends MapsLayout {
 
 	@Override
 	public Control doubleClick(Position pos) {
-		if(presetManager.hasStoredViewportPosition()) {
+		if (presetManager.hasStoredViewportPosition()) {
 			presetManager.resetView();
 		} else {
 			zoomTo(parameterEditor);

@@ -4,10 +4,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
+import com.nonlinearlabs.client.WebSocketConnection;
 import com.nonlinearlabs.client.world.maps.NonPosition;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.WebSocketConnection;
+import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 
 public class OracleTests extends TestWithSteps {
 
@@ -17,7 +17,7 @@ public class OracleTests extends TestWithSteps {
     PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
     boolean documentReceived = false;
     int lastDocumentID = -1;
-    
+
     OracleTests(Runnable after) {
         super(after);
 
@@ -44,7 +44,8 @@ public class OracleTests extends TestWithSteps {
     private void selectPresetViaNewWebSocket() {
         addStep(() -> {
             documentReceived = false;
-            webSocket.send("/presets/banks/select-preset?uuid=" + findBank().getPreset(0).getUUID().toString() + "&isOracle=true");
+            webSocket.send("/presets/banks/select-preset?uuid=" + findBank().getPreset(0).getUUID().toString()
+                    + "&isOracle=true");
         }, () -> {
             boolean wasOracleOfServer = server.lastDocumentCouldOmitOracles();
             return !wasOracleOfServer && documentReceived;
@@ -61,7 +62,8 @@ public class OracleTests extends TestWithSteps {
         }, () -> {
             boolean wasOracleOfServer = server.lastDocumentCouldOmitOracles();
             boolean updateIsNewer = lastDocumentID < server.getLastUpdateID();
-            GWT.log("update was Oracle: " + wasOracleOfServer + " is newer: " + updateIsNewer + " received on ws: " + documentReceived); 
+            GWT.log("update was Oracle: " + wasOracleOfServer + " is newer: " + updateIsNewer + " received on ws: "
+                    + documentReceived);
             return wasOracleOfServer && documentReceived && updateIsNewer;
         });
 
@@ -70,17 +72,17 @@ public class OracleTests extends TestWithSteps {
 
     private void createWebSocket() {
         webSocket = new WebSocketConnection();
-		webSocket.connectToServer(new WebSocketConnection.ServerListener() {
+        webSocket.connectToServer(new WebSocketConnection.ServerListener() {
 
-			@Override
-			public void onServerUpdate(String text) {
+            @Override
+            public void onServerUpdate(String text) {
                 documentReceived = true;
-			}
+            }
 
-			@Override
-			public void onServerConnectionOpened() {
-			}
-		});        
+            @Override
+            public void onServerConnectionOpened() {
+            }
+        });
     }
 
     private void createBank() {

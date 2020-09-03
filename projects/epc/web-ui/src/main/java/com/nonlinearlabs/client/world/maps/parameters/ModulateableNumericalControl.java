@@ -62,7 +62,7 @@ public class ModulateableNumericalControl extends LayoutResizingVertical {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect pixRect = getPixRect().copy();
 
 		pixRect.reduceWidthBy(toXPixels(10));
@@ -70,7 +70,7 @@ public class ModulateableNumericalControl extends LayoutResizingVertical {
 		pixRect.setBottom(modControls.getPixRect().getBottom());
 		pixRect.fillAndStroke(ctx, getColorSliderBackground(), toXPixels(1), getColorObjectContour());
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	public double getXMargin() {

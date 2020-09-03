@@ -248,7 +248,7 @@ public class SplitSoundLayout extends SoundLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 			double margin = Millimeter.toPixels(1);
 			EditBufferPresenter presenter = EditBufferPresenterProvider.getPresenter();
 			RGB bgColor = (group == VoiceGroup.I) ? presenter.voiceGroupI_BackgroundColor
@@ -276,7 +276,7 @@ public class SplitSoundLayout extends SoundLayout {
 				getPixRect().getReducedBy(1).drawRoundedArea(ctx, margin, 1, RGBA.transparent(), RGB.red());
 			}
 
-			super.draw(ctx, invalidationMask);
+			super.draw(ctx, overlay, invalidationMask);
 		}
 
 		@Override
@@ -349,6 +349,7 @@ public class SplitSoundLayout extends SoundLayout {
 			}
 
 			@Override
+
 			public Control doubleClick(Position p) {
 				RenameDialog.open(new Renameable() {
 
@@ -379,9 +380,9 @@ public class SplitSoundLayout extends SoundLayout {
 			}
 
 			@Override
-			public void draw(Context2d ctx, int invalidationMask) {
+			public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 				getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(0.5), 1, new Gray(68), new Gray(86));
-				super.draw(ctx, invalidationMask);
+				super.draw(ctx, overlay, invalidationMask);
 			}
 		}
 

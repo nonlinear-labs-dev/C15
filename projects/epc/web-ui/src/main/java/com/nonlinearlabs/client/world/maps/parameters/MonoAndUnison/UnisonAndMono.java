@@ -77,9 +77,9 @@ public class UnisonAndMono extends LayoutResizingVertical {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		fillBackground(ctx);
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 		getPixRect().drawRoundedRect(ctx, Rect.ROUNDING_ALL, toXPixels(6), toXPixels(2), null,
 				getColorModuleHeaderBackground());
 	}

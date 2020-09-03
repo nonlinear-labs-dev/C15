@@ -11,9 +11,9 @@ public class Label extends LabelLarge {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ClipContext clipper = new ClipContext(ctx, this)) {
-			super.draw(ctx, invalidationMask);
+			super.draw(ctx, overlay, invalidationMask);
 		}
 	}
 

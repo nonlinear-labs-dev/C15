@@ -25,9 +25,9 @@ class UnisonAndMonoControls extends LayoutResizingHorizontal {
     }
 
     @Override
-    public void draw(Context2d ctx, int invalidationMask) {
+    public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
         fillBackground(ctx);
-        super.draw(ctx, invalidationMask);
+        super.draw(ctx, overlay, invalidationMask);
     }
 
     @Override

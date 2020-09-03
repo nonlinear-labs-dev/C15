@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.world.maps.settings;
 
-import com.google.gwt.user.client.Window;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
@@ -15,8 +14,8 @@ public class ExportBoled extends Setting {
 
 	@Override
 	public Control onValueButtonMouseDown(Position eventPoint) {
-        NonMaps.get().getServerProxy().exportBoled();
-        return this;
+		NonMaps.get().getServerProxy().exportBoled();
+		return this;
 	}
 
 	@Override
@@ -27,5 +26,5 @@ public class ExportBoled extends Setting {
 	@Override
 	public void setDefault() {
 	}
-    
+
 }

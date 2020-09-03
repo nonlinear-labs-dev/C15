@@ -29,14 +29,14 @@ public abstract class MCSomething extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 
 		boolean drawArrows = middle.getPixRect().getWidth() >= Millimeter.toPixels(50);
 
 		if (middle.getPixRect().getWidth() > Millimeter.toPixels(25))
 			middle.getPixRect().drawValueEditSliderBackgound(ctx, drawArrows, getColorFont());
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 
 		if (shouldDrawShadow()) {
 			getPixRect().fill(ctx, new RGBA(getColorModuleBackground(), 0.5));

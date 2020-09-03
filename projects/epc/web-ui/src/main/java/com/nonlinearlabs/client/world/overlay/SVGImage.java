@@ -109,11 +109,11 @@ public abstract class SVGImage extends OverlayControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		SVGImagePhase phase = getSelectedImage();
 
 		if (phase != null) {
-			phase.draw(ctx, invalidationMask);
+			phase.draw(ctx, overlay, invalidationMask);
 		}
 	}
 

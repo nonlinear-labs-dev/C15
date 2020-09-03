@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.google.gwt.core.client.GWT;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.AftertouchParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;

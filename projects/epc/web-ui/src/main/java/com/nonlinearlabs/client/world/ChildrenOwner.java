@@ -55,10 +55,10 @@ public class ChildrenOwner<TChild extends Control> {
 			removeChild(m_children.get(0));
 	}
 
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		for (TChild c : getChildren()) {
 			if (c.isVisible()) {
-				c.draw(ctx, invalidationMask | c.resetPendingInvalidations());
+				c.draw(ctx, overlay, invalidationMask | c.resetPendingInvalidations());
 				// c.getPixRect().stroke(ctx, 1, RGB.red()); // debug feature
 			} else {
 				c.addPendingInvalidations(invalidationMask);

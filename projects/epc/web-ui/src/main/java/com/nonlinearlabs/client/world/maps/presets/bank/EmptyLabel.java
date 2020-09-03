@@ -28,7 +28,7 @@ final class EmptyLabel extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect rect = getPixRect();
 
 		if (dropping) {
@@ -37,7 +37,7 @@ final class EmptyLabel extends Label {
 			rect.fill(ctx, new Gray(25));
 		}
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override

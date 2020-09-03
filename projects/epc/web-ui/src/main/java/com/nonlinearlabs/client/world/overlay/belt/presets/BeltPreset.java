@@ -63,7 +63,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 			requestLayout();
 		}
 
-		if(hasCustomPresetSelection()) {
+		if (hasCustomPresetSelection()) {
 
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
 
@@ -105,7 +105,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 	}
 
 	private CustomPresetSelector getLoadPartMode() {
-		return (LoadToPartMode)getCustomPresetSelection();
+		return (LoadToPartMode) getCustomPresetSelection();
 	}
 
 	private boolean isInLoadPartMode() {
@@ -119,7 +119,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		boolean loaded = isLoaded() && !mapsPreset.isInStoreSelectMode();
 		boolean selected = isSelected() || mapsPreset.isContextMenuActiveOnMe();
 		boolean isOriginalPreset = false;
@@ -137,7 +137,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 
 		getPixRect().fill(ctx, colorFill);
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 	public Control mouseUp(Position eventPoint) {
 
 		if (hasCustomPresetSelection()) {
-			if(getCustomPresetSelection().getSelectedPreset() == mapsPreset) {
+			if (getCustomPresetSelection().getSelectedPreset() == mapsPreset) {
 				mapsPreset.load();
 			} else {
 				getCustomPresetSelection().setSelectedPreset(mapsPreset);

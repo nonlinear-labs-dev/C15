@@ -21,8 +21,8 @@ public class ABSlider extends SliderVertical {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		super.draw(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		super.draw(ctx, overlay, invalidationMask);
 
 		Rect pixRect = getPixRect();
 		Rect sliderRect = getSliderRect();

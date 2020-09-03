@@ -3,7 +3,6 @@ package com.nonlinearlabs.client.world.maps.presets.bank.preset;
 import java.util.HashMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
@@ -284,7 +283,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 
 		PresetColorPack currentPresetColorPack = getActiveColorPack();
 
@@ -299,7 +298,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 		r.reduceWidthBy(2 * cp);
 		r.stroke(ctx, cp, currentPresetColorPack.contour);
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 		r.fill(ctx, currentPresetColorPack.overlay);
 	}
 

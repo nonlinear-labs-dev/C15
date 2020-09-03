@@ -14,9 +14,9 @@ class SetupHeader extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		getPixRect().fill(ctx, getParent().getColorFont());
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override

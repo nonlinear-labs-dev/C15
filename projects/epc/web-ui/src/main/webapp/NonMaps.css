@@ -1,10 +1,10 @@
-
 @font-face {
   font-family: 'SSP-LW25';
   src: url('./SSP-LW25-Regular.otf');
 }
 
-html,body {
+html,
+body {
   background-color: #000000;
   font-family: "SSP-LW25";
   font-size: 16px;
@@ -24,7 +24,7 @@ html,body {
 }
 
 html * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -49,8 +49,11 @@ h1 {
 }
 
 
-body,table td,select,button {
-/*
+body,
+table td,
+select,
+button {
+  /*
   font-family: SSP-LW25, Arial Unicode MS, Arial, sans-serif;
   font-size: 14px;
 */
@@ -62,11 +65,11 @@ pre {
 }
 
 body {
-/*   color: black; */
+  /*   color: black; */
   margin: 0px;
   border: 0px;
   padding: 0px;
-/*   background: #fff; */
+  /*   background: #fff; */
   direction: ltr;
 }
 
@@ -211,7 +214,7 @@ select {
 }
 
 .gwt-DialogBox .dialogContent {
-	 background-color: #1d233b;
+  background-color: #1d233b;
 }
 
 .dialog-box-container {
@@ -292,7 +295,7 @@ select {
 
 .gwt-Label {
   padding: 7px 5px;
-/*   color: #bbb; */
+  /*   color: #bbb; */
 }
 
 .gwt-MenuBar {
@@ -1303,7 +1306,7 @@ input[type="checkbox"]+label {
   background: url("checkbox-unchecked.png") left center no-repeat;
   background-origin: padding-box;
   cursor: pointer;
-/*   color: #eee; */
+  /*   color: #eee; */
 }
 
 input[type="checkbox"]:checked+label {
@@ -1318,7 +1321,7 @@ input[type="radio"]+label {
   display: inline-block;
   vertical-align: middle;
   cursor: pointer;
-/*   color: #bbb; */
+  /*   color: #bbb; */
 }
 
 .serverResponseLabelError {
@@ -1338,6 +1341,31 @@ canvas {
   top: 0%;
   margin: 0px;
   padding: 0px;
+  z-index: 1;
+}
+
+#overlay {
+  position: fixed;
+  width: 100%;
+  left: 0%;
+  height: 100%;
+  top: 0%;
+  margin: 0px;
+  padding: 0px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+#preset-manager {
+  position: fixed;
+  width: 100%;
+  left: 0%;
+  height: 100%;
+  top: 0%;
+  margin: 0px;
+  padding: 0px;
+  z-index: 2;
+  pointer-events: none;
 }
 
 #cm {
@@ -1361,37 +1389,37 @@ canvas {
 
 
 .dialog-header>button {
-	flex-grow: 0;
+  flex-grow: 0;
 
-	border: none;
-	width: 26px;
-	height: 26px;
-	vertical-align: middle;
-	background: url(close.png);
-	background-position: right 26px;
-	cursor: pointer;
-	position: absolute;
-	top: 4px;
-	right: 4px;
+  border: none;
+  width: 26px;
+  height: 26px;
+  vertical-align: middle;
+  background: url(close.png);
+  background-position: right 26px;
+  cursor: pointer;
+  position: absolute;
+  top: 4px;
+  right: 4px;
 }
 
 .dialog-header>button:active {
   flex-grow: 0;
 
-	border: none;
-	width: 26px;
-	height: 26px;
-	vertical-align: middle;
-	background: url(close.png);
-	cursor: pointer;
-	position: absolute;
-	top: 4px;
-	right: 4px;
+  border: none;
+  width: 26px;
+  height: 26px;
+  vertical-align: middle;
+  background: url(close.png);
+  cursor: pointer;
+  position: absolute;
+  top: 4px;
+  right: 4px;
 }
 
 .dialog-header>.headline {
-	padding: 5px 5px;
-	width: 24em;
+  padding: 5px 5px;
+  width: 24em;
 }
 
 .dialog-caption>button:active {
@@ -1471,7 +1499,7 @@ textarea {
 
 .flex-div {
   display: flex;
-  align-items:center;
+  align-items: center;
 }
 
 .centered-text {
@@ -1564,27 +1592,27 @@ select[disabled='disabled'] {
 }
 
 .dialogContent textarea.editable {
-    min-height: 4em;
-    max-height: 10em;
+  min-height: 4em;
+  max-height: 10em;
 }
 
 .dialogContent textarea.editable.txt-oneline {
-    min-height: initial;
-    max-height: initial;
+  min-height: initial;
+  max-height: initial;
 }
 
 .modal-button-button {
-	display: inline-block;
+  display: inline-block;
 }
 
 .modal-button-div {
-	text-align: center;
+  text-align: center;
 }
 
 input.param-name-edit {
   align-self: right;
   margin: 3px;
-  flex-grow:1;
+  flex-grow: 1;
 }
 
 .flex-4-col .td {
@@ -1612,7 +1640,7 @@ input.param-name-edit {
 .gwt-DialogBox .dialogContent {
   max-height: 80vh;
   overflow-y: auto;
-/*   border: solid 1px rgb(99, 99, 99); */
+  /*   border: solid 1px rgb(99, 99, 99); */
   border-radius: 6px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -1657,18 +1685,18 @@ input.param-name-edit {
 }
 
 .colortaggingfield-none {
-/*
+  /*
   background-color: #414141;
   line-height: 15px;
   color: #838383;
 */
   background: url(close.png);
-    background-size: cover;
+  background-size: cover;
 
 }
 
 .colortag-current {
-/*
+  /*
   vertical-align: middle;
   outline-color: #bbb;
   outline-offset: 3px;
@@ -1710,10 +1738,10 @@ input.param-name-edit {
 }
 
 .prev-next-button-div {
-	margin: auto;
-    margin-bottom: 5px;
-    display: inline-block;
-    width:100%;
+  margin: auto;
+  margin-bottom: 5px;
+  display: inline-block;
+  width: 100%;
 }
 
 .gwt-Button.next-button {
@@ -1776,7 +1804,7 @@ button {
   border-bottom: 1px solid rgb(99, 99, 99);
 }
 
-.preset-info-dialog .dialogContent tr:nth-child(4) td:nth-child(2){
+.preset-info-dialog .dialogContent tr:nth-child(4) td:nth-child(2) {
   display: table-cell;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -1793,7 +1821,7 @@ button {
 }
 
 .prev-next-wrapper {
-	text-align: center;
+  text-align: center;
 }
 
 .preset-info-dialog .tab.selected {
@@ -1843,27 +1871,27 @@ button {
 }
 
 .rename-dialog {
-	width: auto;
+  width: auto;
 }
 
 .setup-dialog {
-	width: auto;
+  width: auto;
 }
 
 .selectable-text {
-	user-select: text;
-	-moz-user-select: text;
-	-khtml-user-select: text;
-	-webkit-user-select: text;
-	-o-user-select: text;
+  user-select: text;
+  -moz-user-select: text;
+  -khtml-user-select: text;
+  -webkit-user-select: text;
+  -o-user-select: text;
 }
 
 .search-dialog {
-	width: auto;
+  width: auto;
 }
 
 .rename-dialog .dialogContent {
-	padding: 0.25em;
+  padding: 0.25em;
 }
 
 .dialogcontainer button.randomize-button {

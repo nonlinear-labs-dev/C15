@@ -30,8 +30,11 @@ public class NonMaps extends Mouseing implements EntryPoint {
 
 	private ArrayList<ScreenResizeListener> screenResizeListeners = new ArrayList<ScreenResizeListener>();
 
-	private Canvas canvas;
-	private Context2d context;
+	private Canvas worldCanvas;
+	private Canvas overlayCanvas;
+
+	public Context2d world;
+	public Context2d overlay;
 
 	private NonLinearWorld nonlinearWorld;
 	private final ServerProxy server = new ServerProxy(this);
@@ -100,7 +103,7 @@ public class NonMaps extends Mouseing implements EntryPoint {
 			e.printStackTrace();
 		}
 
-		initHandlers(canvas);
+		initHandlers(worldCanvas);
 		setupTimer();
 
 		server.startPolling();
@@ -108,21 +111,21 @@ public class NonMaps extends Mouseing implements EntryPoint {
 
 	private boolean setScaling(DisplayScaling s) {
 		switch (s) {
-		case percent_100:
-			setPixelFactor(1.0);
-			break;
-		case percent_125:
-			setPixelFactor(1.25);
-			break;
-		case percent_150:
-			setPixelFactor(1.5);
-			break;
-		case percent_50:
-			setPixelFactor(0.5);
-			break;
-		case percent_75:
-			setPixelFactor(0.75);
-			break;
+			case percent_100:
+				setPixelFactor(1.0);
+				break;
+			case percent_125:
+				setPixelFactor(1.25);
+				break;
+			case percent_150:
+				setPixelFactor(1.5);
+				break;
+			case percent_50:
+				setPixelFactor(0.5);
+				break;
+			case percent_75:
+				setPixelFactor(0.75);
+				break;
 		}
 
 		return true;
@@ -141,7 +144,7 @@ public class NonMaps extends Mouseing implements EntryPoint {
 	}
 
 	public Canvas getCanvas() {
-		return canvas;
+		return worldCanvas;
 	}
 
 	public void setPixelFactor(double f) {
@@ -174,9 +177,14 @@ public class NonMaps extends Mouseing implements EntryPoint {
 	}
 
 	private void createCanvases() throws Exception {
-		canvas = Canvas.createIfSupported();
-		RootPanel.get("canvasholder").add(canvas);
-		context = canvas.getContext2d();
+
+		worldCanvas = Canvas.createIfSupported();
+		RootPanel.get("canvasholder").add(worldCanvas);
+		world = worldCanvas.getContext2d();
+
+		overlayCanvas = Canvas.createIfSupported();
+		RootPanel.get("overlay").add(overlayCanvas);
+		overlay = overlayCanvas.getContext2d();
 	}
 
 	private void createWorld() {
@@ -185,8 +193,8 @@ public class NonMaps extends Mouseing implements EntryPoint {
 	}
 
 	private void doUpdate() {
-		int width = (int) Math.ceil(canvas.getCanvasElement().getClientWidth() * devicePixelRatio);
-		int height = (int) Math.ceil(canvas.getCanvasElement().getClientHeight() * devicePixelRatio);
+		int width = (int) Math.ceil(worldCanvas.getCanvasElement().getClientWidth() * devicePixelRatio);
+		int height = (int) Math.ceil(worldCanvas.getCanvasElement().getClientHeight() * devicePixelRatio);
 		mmToPixel = pixelFactor * devicePixelRatio * pixPerCM.getWidth() / 10;
 
 		boolean initial = viewportHeight == 0;
@@ -211,8 +219,11 @@ public class NonMaps extends Mouseing implements EntryPoint {
 			viewportHeight = height;
 			screenRatio = (double) width / height;
 
-			canvas.setCoordinateSpaceWidth(width);
-			canvas.setCoordinateSpaceHeight(height);
+			worldCanvas.setCoordinateSpaceWidth(width);
+			worldCanvas.setCoordinateSpaceHeight(height);
+
+			overlayCanvas.setCoordinateSpaceWidth(width);
+			overlayCanvas.setCoordinateSpaceHeight(height);
 
 			nonlinearWorld.setScreenSize(width, height);
 
@@ -243,7 +254,7 @@ public class NonMaps extends Mouseing implements EntryPoint {
 		int invalidationMask = nonlinearWorld.getAndResetInvalid();
 
 		if (invalidationMask != 0) {
-			nonlinearWorld.draw(context, invalidationMask);
+			nonlinearWorld.draw(world, overlay, invalidationMask);
 
 			if (refreshBitmapCaches == null) {
 				refreshBitmapCaches = new ScheduledCommand() {
@@ -282,7 +293,7 @@ public class NonMaps extends Mouseing implements EntryPoint {
 
 	@Override
 	public void captureFocus() {
-		canvas.setFocus(true);
+		worldCanvas.setFocus(true);
 	}
 
 	public void captureMouse() {

@@ -39,7 +39,7 @@ class LineWrappingLabel extends OverlayControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect pixRect = getPixRect();
 
 		double fontHeightInPixels = getFontHeight();

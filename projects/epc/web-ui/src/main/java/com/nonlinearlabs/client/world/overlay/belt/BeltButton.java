@@ -47,7 +47,7 @@ abstract public class BeltButton extends SVGImage implements IActivatable {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (!isActive() || belt.isHidden()) {
 			double corner = Millimeter.toPixels(1);
 
@@ -74,7 +74,7 @@ abstract public class BeltButton extends SVGImage implements IActivatable {
 			ctx.stroke();
 		}
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	public abstract boolean isActive();

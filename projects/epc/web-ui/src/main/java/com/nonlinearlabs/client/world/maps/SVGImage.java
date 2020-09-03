@@ -8,7 +8,6 @@ import com.nonlinearlabs.client.world.maps.RenderedSVGImageStore.SVGRenderHandle
 import com.nonlinearlabs.client.world.maps.parameters.ZoomReactingControl;
 
 public abstract class SVGImage extends ZoomReactingControl implements SVGRenderHandler {
-
 	private String[] imageNames;
 	private ImageElement img;
 
@@ -53,7 +52,7 @@ public abstract class SVGImage extends ZoomReactingControl implements SVGRenderH
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		getSelectedImage();
 
 		if (img != null) {

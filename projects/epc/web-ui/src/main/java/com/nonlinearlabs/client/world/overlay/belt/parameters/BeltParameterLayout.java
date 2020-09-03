@@ -190,9 +190,9 @@ public class BeltParameterLayout extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(final Context2d ctx, final int invalidationMask) {
+	public void draw(final Context2d ctx, Context2d overlay, final int invalidationMask) {
 		fixMode();
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	private void fixMode() {

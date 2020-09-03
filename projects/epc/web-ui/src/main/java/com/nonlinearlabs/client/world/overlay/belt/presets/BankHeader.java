@@ -59,13 +59,13 @@ class BankHeader extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect r = new Rect(prev.getPixRect().getLeft(), prev.getPixRect().getTop(),
 				next.getPixRect().getRight() - prev.getPixRect().getLeft(),
 				next.getPixRect().getBottom() - prev.getPixRect().getTop());
 		r.reduceHeightBy(-2);
 		r.drawRoundedArea(ctx, 0, 1, new Gray(106), new Gray(106));
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 
 		if (isDropTarget)
 			drawTeeth(ctx);

@@ -7,7 +7,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.GroupId;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
-import com.nonlinearlabs.client.dataModel.editBuffer.ParameterGroupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.SelectionAutoScroll;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.LocalSettingsProvider;
@@ -16,7 +15,6 @@ import com.nonlinearlabs.client.world.NonLinearWorld;
 import com.nonlinearlabs.client.world.maps.LayoutResizingHorizontal;
 import com.nonlinearlabs.client.world.maps.LayoutResizingVertical;
 import com.nonlinearlabs.client.world.maps.NonDimension;
-import com.nonlinearlabs.client.world.maps.parameters.Parameter;
 import com.nonlinearlabs.client.world.maps.parameters.Cabinet.Cabinet;
 import com.nonlinearlabs.client.world.maps.parameters.CombFilter.CombFilter;
 import com.nonlinearlabs.client.world.maps.parameters.Echo.Echo;
@@ -27,6 +25,7 @@ import com.nonlinearlabs.client.world.maps.parameters.FBMixer.FBMixer;
 import com.nonlinearlabs.client.world.maps.parameters.Flanger.Flanger;
 import com.nonlinearlabs.client.world.maps.parameters.GapFilter.GapFilter;
 import com.nonlinearlabs.client.world.maps.parameters.Master.Master;
+import com.nonlinearlabs.client.world.maps.parameters.MonoAndUnison.UnisonAndMono;
 import com.nonlinearlabs.client.world.maps.parameters.OscA.OscA;
 import com.nonlinearlabs.client.world.maps.parameters.OscB.OscB;
 import com.nonlinearlabs.client.world.maps.parameters.OutputMixer.OutputMixer;
@@ -37,7 +36,6 @@ import com.nonlinearlabs.client.world.maps.parameters.SVFilter.SVFilter;
 import com.nonlinearlabs.client.world.maps.parameters.Scale.Scale;
 import com.nonlinearlabs.client.world.maps.parameters.ShapeA.ShapeA;
 import com.nonlinearlabs.client.world.maps.parameters.ShapeB.ShapeB;
-import com.nonlinearlabs.client.world.maps.parameters.MonoAndUnison.UnisonAndMono;
 import com.nonlinearlabs.client.world.maps.parameters.VoiceGroupMaster.VoiceGroupMaster;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
@@ -224,7 +222,7 @@ public class ParameterEditor extends LayoutResizingVertical {
 			boolean autoScroll = LocalSettingsProvider.get().getSettings().selectionAutoScroll
 					.isOneOf(SelectionAutoScroll.parameter, SelectionAutoScroll.parameter_and_preset);
 
-			BasicParameterModel param = EditBufferModel.get().getAnyParameter(i);					
+			BasicParameterModel param = EditBufferModel.get().getAnyParameter(i);
 			if (autoScroll && param != null) {
 				scrollToSelectedParameter(param.id);
 			}
@@ -250,9 +248,9 @@ public class ParameterEditor extends LayoutResizingVertical {
 	}
 
 	private void scrollToSelectedParameter(ParameterId id) {
-		if(NonMaps.get() != null && NonMaps.get().getNonLinearWorld() != null) {
+		if (NonMaps.get() != null && NonMaps.get().getNonLinearWorld() != null) {
 			Parameter param = NonMaps.get().getNonLinearWorld().getParameterEditor().findParameter(id.getNumber());
-			if(param != null)
+			if (param != null)
 				param.scrollToMakeFullyVisible();
 		}
 	}

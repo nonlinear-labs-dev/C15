@@ -24,7 +24,7 @@ public class ModulationAmountSlider extends OverlayControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ClipContext c = new ClipContext(ctx, this)) {
 			ParameterPresenter p = EditBufferPresenterProvider.getPresenter().selectedParameter;
 			if (p.modulation.isModulated)

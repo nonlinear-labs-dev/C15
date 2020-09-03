@@ -17,7 +17,7 @@ public class ParameterClippingLabel extends Label {
 	}
 
 	public boolean isClipping() {
-		if(mMode == Mode.mcLower)
+		if (mMode == Mode.mcLower)
 			return EditBufferPresenterProvider.getPresenter().selectedParameter.modulation.lowerClipping;
 
 		return EditBufferPresenterProvider.getPresenter().selectedParameter.modulation.upperClipping;
@@ -29,10 +29,10 @@ public class ParameterClippingLabel extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (isClipping()) {
 			getPixRect().fill(ctx, new RGB(51, 51, 51));
-			super.draw(ctx, invalidationMask);
+			super.draw(ctx, overlay, invalidationMask);
 		}
 	}
 

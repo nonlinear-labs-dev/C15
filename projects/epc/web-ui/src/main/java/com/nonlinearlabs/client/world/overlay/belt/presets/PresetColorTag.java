@@ -25,7 +25,7 @@ public class PresetColorTag extends OverlayControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect pixRect = getPixRect().copy();
 		double padding = getRelativePosition().getHeight() / 10;
 		pixRect.applyPadding(0, padding, 0, padding);

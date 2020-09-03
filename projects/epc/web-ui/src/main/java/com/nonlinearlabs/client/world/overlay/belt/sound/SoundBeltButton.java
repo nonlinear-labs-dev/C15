@@ -17,7 +17,7 @@ public abstract class SoundBeltButton extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		RGB strokeColor = new Gray(86);
 
 		if (PointerState.get().isCurrentReceiver(this)) {
@@ -26,7 +26,7 @@ public abstract class SoundBeltButton extends Label {
 
 		getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(2.5), 1, new Gray(68), strokeColor);
 
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override

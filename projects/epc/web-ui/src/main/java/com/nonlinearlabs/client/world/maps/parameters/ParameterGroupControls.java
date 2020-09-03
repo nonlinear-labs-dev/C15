@@ -13,10 +13,10 @@ public class ParameterGroupControls extends LayoutResizingHorizontal {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect pixRect = getPixRect();
 		pixRect.drawRoundedRect(ctx, Rect.ROUNDING_BOTTOM, toXPixels(8), toXPixels(2), new Gray(26), null);
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override

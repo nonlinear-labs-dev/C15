@@ -71,7 +71,7 @@ public class DragProxy extends OverlayControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ContextState state = new AlphaContextState(ctx, 0.5)) {
 			bmp.setCoordinateSpaceWidth((int) (origin.getPixRect().getWidth() + 1));
 			bmp.setCoordinateSpaceHeight((int) (origin.getPixRect().getHeight() + 1));
@@ -79,7 +79,7 @@ public class DragProxy extends OverlayControl {
 			bgCtx.save();
 			bgCtx.translate(-origin.getPixRect().getLeft(), -origin.getPixRect().getTop());
 			origin.forceVisibility(true);
-			origin.draw(bgCtx, invalidationMask);
+			origin.draw(bgCtx, overlay, invalidationMask);
 			origin.forceVisibility(false);
 
 			Rect r = getPixRect();

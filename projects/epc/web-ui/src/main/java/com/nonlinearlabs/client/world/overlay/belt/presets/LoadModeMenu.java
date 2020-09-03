@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
@@ -33,14 +32,13 @@ public class LoadModeMenu extends OverlayLayout {
         public int getSelectedPhase() {
             return isDirectLoadActive() ? 1 : 0;
         }
-        
+
         @Override
         public Control click(Position eventPoint) {
             EditBufferUseCases.get().toggleDirectLoad();
             return this;
         }
     }
-
 
     public static boolean isDualEditBuffer() {
         return EditBufferPresenterProvider.getPresenter().soundType != SoundType.Single;
@@ -53,12 +51,12 @@ public class LoadModeMenu extends OverlayLayout {
 
         @Override
         public int getSelectedPhase() {
-            if(!isDualEditBuffer()) {
+            if (!isDualEditBuffer()) {
                 return 0;
             } else {
-                if(isLoadToPartActive()) {
+                if (isLoadToPartActive()) {
                     return 2;
-                } else if(NonMaps.get().getNonLinearWorld().getPresetManager().isEmpty()) {
+                } else if (NonMaps.get().getNonLinearWorld().getPresetManager().isEmpty()) {
                     return 0;
                 } else {
                     return 1;
@@ -72,8 +70,8 @@ public class LoadModeMenu extends OverlayLayout {
 
         @Override
         public Control click(Position eventPosition) {
-            if(isDualEditBuffer()) {
-                if(isLoadToPartActive()) {
+            if (isDualEditBuffer()) {
+                if (isLoadToPartActive()) {
                     NonMaps.get().getNonLinearWorld().getPresetManager().endLoadToPartMode();
                 } else {
                     NonMaps.get().getNonLinearWorld().getPresetManager().startLoadToPartMode();
@@ -97,9 +95,9 @@ public class LoadModeMenu extends OverlayLayout {
         });
 
         EditBufferModel.get().voiceGroup.onChange((vg) -> {
-			invalidate(INVALIDATION_FLAG_UI_CHANGED);
-			return true;
-		});
+            invalidate(INVALIDATION_FLAG_UI_CHANGED);
+            return true;
+        });
 
         addChild(loadButton = new DirectLoadButton(this));
         addChild(partButton = new LoadToPartButton(this));
@@ -107,7 +105,7 @@ public class LoadModeMenu extends OverlayLayout {
 
     @Override
     public void doLayout(double x, double y, double w, double h) {
-        if(isDualEditBuffer())
+        if (isDualEditBuffer())
             doLayoutDual(x, y, w, h);
         else
             doLayoutSingle(x, y, w, h);
@@ -129,7 +127,7 @@ public class LoadModeMenu extends OverlayLayout {
 
         double width = w - margin;
         double buttonHeight = getSmallButtonWidth();
-        
+
         super.doLayout(x, y, w, h);
         loadButton.doLayout(0, h / 2 - buttonHeight / 2, width, buttonHeight);
         partButton.doLayout(0, 0, 0, 0);

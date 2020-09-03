@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.world.maps.settings;
 
-import com.google.gwt.user.client.Window;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
@@ -27,5 +26,5 @@ public class ExportSoled extends Setting {
 	@Override
 	public void setDefault() {
 	}
-    
+
 }

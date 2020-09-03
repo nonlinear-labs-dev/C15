@@ -3,14 +3,12 @@ package com.nonlinearlabs.client.world.overlay;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
-import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
-import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
@@ -38,7 +36,7 @@ class LayerDisplay extends OverlayLayout {
     }
 
     @Override
-    public void draw(Context2d ctx, int invalidationMask) {
+    public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
         double colorFactor = 0.43;
         RGB c = EditBufferPresenterProvider.getPresenter().voiceGroupIndicationColor.adjust(colorFactor);
 
@@ -184,11 +182,11 @@ class LayerDisplay extends OverlayLayout {
     public Control click(Position eventPoint) {
         if (isVisible()) {
             EditBufferUseCases.get().toggleVoiceGroup();
-            
-            if(SetupModel.get().systemSettings.syncVoiceGroups.isTrue()) {
+
+            if (SetupModel.get().systemSettings.syncVoiceGroups.isTrue()) {
                 NonMaps.theMaps.getServerProxy().syncVoiceGroup();
             }
-            
+
             return this;
         }
 
@@ -200,5 +198,4 @@ class LayerDisplay extends OverlayLayout {
         return this;
     }
 
-    
 }

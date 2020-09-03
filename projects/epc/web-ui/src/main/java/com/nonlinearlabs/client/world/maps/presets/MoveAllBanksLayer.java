@@ -25,8 +25,8 @@ public class MoveAllBanksLayer extends MapsControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
-		super.draw(ctx, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		super.draw(ctx, overlay, invalidationMask);
 
 		double twoMM = Millimeter.toPixels(2);
 		Rect minRect = getPixRect().copy();

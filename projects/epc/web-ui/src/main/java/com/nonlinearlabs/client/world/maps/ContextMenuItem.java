@@ -57,7 +57,7 @@ public class ContextMenuItem extends MapsControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 
 		double fontHeightInPixels = toYPixels(getNonPosition().getHeight() / 2);
 
@@ -74,7 +74,7 @@ public class ContextMenuItem extends MapsControl {
 		ctx.setFont(fontHeightInPixels + "px 'SSP-LW25'");
 
 		ctx.fillText(text, r.getLeft() + toXPixels(2), r.getCenterPoint().getY());
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	@Override

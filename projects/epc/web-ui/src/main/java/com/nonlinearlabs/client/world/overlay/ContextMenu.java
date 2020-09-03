@@ -43,12 +43,12 @@ public class ContextMenu extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ContextState fade = new AlphaContextState(ctx, opacity)) {
 			Rect r = getPixRect();
 			r.drawRoundedArea(ctx, Millimeter.toPixels(1), Millimeter.toPixels(0.7), RGB.black(), RGB.black());
 			r.drawRoundedArea(ctx, Millimeter.toPixels(1), Millimeter.toPixels(0.25), new Gray(77), new Gray(128));
-			super.draw(ctx, invalidationMask);
+			super.draw(ctx, overlay, invalidationMask);
 		}
 	}
 

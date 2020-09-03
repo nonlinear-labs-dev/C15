@@ -64,23 +64,25 @@ public class TypeLabel extends OverlayLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 			LoadToPartMode mode = getLoadToPart();
-			if(mode != null) {
+			if (mode != null) {
 				EditBufferModel ebm = EditBufferModel.get();
 				VoiceGroup currentVG = ebm.voiceGroup.getValue();
 				Preset thisPreset = getTypeLabel().getParent().getMapsPreset();
-				String currentOriginUUID = currentVG == VoiceGroup.I ? ebm.sourceUUIDI.getValue() : ebm.sourceUUIDII.getValue();
-				VoiceGroup currentOriginVG = currentVG == VoiceGroup.I ? ebm.sourceVGI.getValue() : ebm.sourceVGII.getValue();
-	
+				String currentOriginUUID = currentVG == VoiceGroup.I ? ebm.sourceUUIDI.getValue()
+						: ebm.sourceUUIDII.getValue();
+				VoiceGroup currentOriginVG = currentVG == VoiceGroup.I ? ebm.sourceVGI.getValue()
+						: ebm.sourceVGII.getValue();
+
 				boolean isLoaded = thisPreset.getUUID() == currentOriginUUID;
 				boolean iLoaded = isLoaded && currentOriginVG == VoiceGroup.I;
 				boolean iiLoaded = isLoaded && currentOriginVG == VoiceGroup.II;
-	
+
 				boolean isPresetSelected = mode.getSelectedPreset() == getTypeLabel().getParent().getMapsPreset();
 				boolean iSelected = isPresetSelected && mode.getSelectedPart() == VoiceGroup.I;
 				boolean iiSelected = isPresetSelected && mode.getSelectedPart() == VoiceGroup.II;
-	
+
 				switch (getTypeLabel().getParent().getMapsPreset().getType()) {
 					case Single:
 					default:
@@ -100,7 +102,8 @@ public class TypeLabel extends OverlayLayout {
 			return NonMaps.get().getNonLinearWorld().getPresetManager().getLoadToPartMode();
 		}
 
-		private void drawLayer(Context2d ctx, boolean iLoaded, boolean iiLoaded, boolean iSelected, boolean iiSelected) {
+		private void drawLayer(Context2d ctx, boolean iLoaded, boolean iiLoaded, boolean iSelected,
+				boolean iiSelected) {
 			Rect pix = getParent().getPixRect().copy();
 			double height = pix.getHeight() / 2;
 			double width = pix.getWidth();
@@ -115,10 +118,10 @@ public class TypeLabel extends OverlayLayout {
 			ctx.setFillStyle(iiLoaded ? loadedColor : unloadedColor);
 			ctx.fillRect(pix.getLeft(), pix.getTop() + height, width, height);
 
-			if(iSelected) {
+			if (iSelected) {
 				ctx.setStrokeStyle(selectedColor);
 				ctx.strokeRect(pix.getLeft(), pix.getTop(), width, height);
-			} else if(iiSelected) {
+			} else if (iiSelected) {
 				ctx.setStrokeStyle(selectedColor);
 				ctx.strokeRect(pix.getLeft(), pix.getTop() + height, width, height);
 			}
@@ -142,14 +145,15 @@ public class TypeLabel extends OverlayLayout {
 			ctx.setFillStyle(loaded ? getLoadedPresetPartColor().toString() : getUnloadedPresetPartColor().toString());
 			ctx.fillRect(pix.getLeft(), pix.getTop(), pix.getWidth(), pix.getHeight());
 
-			if(selected) {
+			if (selected) {
 				ctx.setStrokeStyle(getSelectionIndicationColor().toString());
 				ctx.setLineWidth(2);
 				ctx.strokeRect(pix.getLeft(), pix.getTop(), pix.getWidth(), pix.getHeight());
 			}
 		}
 
-		private void drawSplit(Context2d ctx, boolean iLoaded, boolean iiLoaded, boolean iSelected, boolean iiSelected) {
+		private void drawSplit(Context2d ctx, boolean iLoaded, boolean iiLoaded, boolean iSelected,
+				boolean iiSelected) {
 
 			String loadedColor = getLoadedPresetPartColor().toString();
 			String unloadedColor = getUnloadedPresetPartColor().toString();
@@ -165,10 +169,10 @@ public class TypeLabel extends OverlayLayout {
 			ctx.setFillStyle(iiLoaded ? loadedColor : unloadedColor);
 			ctx.fillRect(pix.getLeft() + width, pix.getTop(), width, height);
 
-			if(iSelected) {
+			if (iSelected) {
 				ctx.setStrokeStyle(selectedColor);
 				ctx.strokeRect(pix.getLeft(), pix.getTop(), width, height);
-			} else if(iiSelected) {
+			} else if (iiSelected) {
 				ctx.setStrokeStyle(selectedColor);
 				ctx.strokeRect(pix.getLeft() + width, pix.getTop(), width, height);
 			}
@@ -193,12 +197,12 @@ public class TypeLabel extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (dualControl != null)
-			dualControl.draw(ctx, invalidationMask);
+			dualControl.draw(ctx, overlay, invalidationMask);
 
 		if (singleControl != null)
-			singleControl.draw(ctx, invalidationMask);
+			singleControl.draw(ctx, overlay, invalidationMask);
 	}
 
 	public void bruteForce() {
@@ -222,10 +226,10 @@ public class TypeLabel extends OverlayLayout {
 	public void doLayout(double x, double y, double w, double h) {
 		super.doLayout(x, y, w, h);
 
-		if(dualControl != null)
+		if (dualControl != null)
 			dualControl.doLayout(0, 0, w, h);
 
-		if(singleControl != null)
+		if (singleControl != null)
 			singleControl.doLayout(0, 0, w, h);
 	}
 }

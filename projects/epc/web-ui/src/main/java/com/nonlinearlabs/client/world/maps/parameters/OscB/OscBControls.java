@@ -2,7 +2,6 @@ package com.nonlinearlabs.client.world.maps.parameters.OscB;
 
 import com.nonlinearlabs.client.world.maps.MapsLayout;
 import com.nonlinearlabs.client.world.maps.parameters.ParameterGroupControls;
-import com.nonlinearlabs.client.world.maps.parameters.OscB.PhaseColumn;
 
 class OscBControls extends ParameterGroupControls {
 

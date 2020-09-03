@@ -31,7 +31,7 @@ public abstract class Label extends OverlayControl {
 	public abstract String getDrawText(Context2d ctx);
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		try (ClipContext clipper = new ClipContext(ctx, this)) {
 			drawClipped(ctx);
 		}
@@ -49,20 +49,20 @@ public abstract class Label extends OverlayControl {
 		Position left = pixRect.getCenterPoint();
 
 		switch (getAlignment()) {
-		case LEFT:
-			left.setX(pixRect.getLeft());
-			break;
+			case LEFT:
+				left.setX(pixRect.getLeft());
+				break;
 
-		case CENTER:
-			left.setX(pixRect.getLeft() + (pixRect.getWidth() - ctx.measureText(text).getWidth()) / 2);
-			break;
+			case CENTER:
+				left.setX(pixRect.getLeft() + (pixRect.getWidth() - ctx.measureText(text).getWidth()) / 2);
+				break;
 
-		case RIGHT:
-			left.setX(pixRect.getRight() - ctx.measureText(text).getWidth());
-			break;
+			case RIGHT:
+				left.setX(pixRect.getRight() - ctx.measureText(text).getWidth());
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 
 		ctx.setTextBaseline(TextBaseline.MIDDLE);

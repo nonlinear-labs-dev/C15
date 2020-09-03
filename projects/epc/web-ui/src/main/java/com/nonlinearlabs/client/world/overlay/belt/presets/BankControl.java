@@ -35,7 +35,7 @@ public class BankControl extends OverlayLayout implements IBank {
 		}
 
 		@Override
-		public void draw(Context2d ctx, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 			Rect presetPixrect = getPresetList().getPixRect().copy();
 			Rect r = getRelativePosition().copy();
 			r.setTop(presetPixrect.getTop() + presetPixrect.getHeight() / 3);
@@ -59,13 +59,13 @@ public class BankControl extends OverlayLayout implements IBank {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		Rect r = getPixRect();
 		RGB black = new Gray(0);
 		r.drawRoundedArea(ctx, 0, 1, new Gray(102), black);
 		r = r.getReducedBy(2 * inset);
 		r.drawRoundedArea(ctx, 0, 0, black, black);
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 	}
 
 	public Bank getBankInCharge() {
@@ -117,7 +117,8 @@ public class BankControl extends OverlayLayout implements IBank {
 
 	public void update(Node pmNode) {
 		if (pmNode != null) {
-			if (ServerProxy.didChange(pmNode) || NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode()) {
+			if (ServerProxy.didChange(pmNode)
+					|| NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode()) {
 				Bank b = getBankInCharge();
 				if (b != null)
 					showEmptyLabel(b.getPresetList().getPresetCount() == 0);

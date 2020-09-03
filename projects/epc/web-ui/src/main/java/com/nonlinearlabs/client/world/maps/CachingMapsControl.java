@@ -118,7 +118,7 @@ public class CachingMapsControl extends MapsLayout {
 			bgCtx.save();
 			bgCtx.translate(-r.getLeft(), -r.getTop());
 			isRedrawingInBackground = true;
-			child.draw(bgCtx, invalidationMask);
+			child.draw(bgCtx, null, invalidationMask);
 			isRedrawingInBackground = false;
 			bgCtx.restore();
 
@@ -128,11 +128,11 @@ public class CachingMapsControl extends MapsLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (shouldCache())
 			drawFromCache(ctx, invalidationMask);
 		else
-			child.draw(ctx, invalidationMask);
+			child.draw(ctx, overlay, invalidationMask);
 	}
 
 	protected void drawFromCache(Context2d ctx, int invalidationMask) {

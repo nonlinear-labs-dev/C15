@@ -85,7 +85,7 @@ public class LabelSmall extends ZoomReactingControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		if (isVisible) {
 			Rect pixRect = getPixRect();
 
@@ -100,16 +100,16 @@ public class LabelSmall extends ZoomReactingControl {
 			Position center = pixRect.getCenterPoint();
 
 			switch (align) {
-			case LEFT:
-				center.setX(pixRect.getLeft());
-				break;
+				case LEFT:
+					center.setX(pixRect.getLeft());
+					break;
 
-			case RIGHT:
-				center.setX(pixRect.getRight());
-				break;
+				case RIGHT:
+					center.setX(pixRect.getRight());
+					break;
 
-			default:
-				break;
+				default:
+					break;
 			}
 
 			ctx.setTextBaseline(TextBaseline.MIDDLE);

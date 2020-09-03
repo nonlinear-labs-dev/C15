@@ -41,9 +41,9 @@ public class ContextMenu extends LayoutResizingVertical implements IContextMenu 
 	}
 
 	@Override
-	public void draw(Context2d ctx, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
 		ctx.setGlobalAlpha(opacity);
-		super.draw(ctx, invalidationMask);
+		super.draw(ctx, overlay, invalidationMask);
 		ctx.setGlobalAlpha(1.0);
 	}
 
