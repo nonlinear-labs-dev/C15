@@ -231,6 +231,7 @@ select {
   border-radius: 2mm;
   padding: 4px;
   box-shadow: black 0 0 0 0.5mm;
+  z-index: 2000;
 }
 
 .gwt-DialogBox .dialogTopLeftInner {
@@ -1900,4 +1901,8 @@ button {
 
 .voicegroup-menu {
   min-width: 7em;
+}
+
+.bank {
+  position: absolute;
 }

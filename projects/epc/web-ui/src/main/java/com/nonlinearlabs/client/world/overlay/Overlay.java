@@ -132,6 +132,8 @@ public class Overlay extends OverlayLayout {
 			doLayout(0, 0, getRelativePosition().getWidth(), getRelativePosition().getHeight());
 		}
 
+		ctx.clearRect(0, 0, getPixRect().getWidth(), getPixRect().getHeight());
+
 		buttons.drawInactiveButton(ctx, overlay, invalidationMask);
 		drawBackground(ctx);
 		buttons.drawActiveButton(ctx, overlay, invalidationMask);

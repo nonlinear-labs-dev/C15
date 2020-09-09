@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.nonlinearlabs.client.NonMaps;
@@ -55,6 +57,8 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	private String attatchDirection = "";
 	private String m_saveState = "";
 
+	public HTMLPanel html;
+
 	public boolean isInCluster() {
 		return masterLeft != null || masterTop != null || slaveBottom != null || slaveRight != null;
 	}
@@ -72,6 +76,11 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 
 	public Bank(PresetManager parent, String uuid) {
 		super(parent);
+
+		this.html = new HTMLPanel("");
+		this.html.getElement().addClassName("bank");
+		parent.html.add(html);
+
 		this.uuid = uuid;
 		addChild(header);
 		addChild(presetList = new PresetList(this));
@@ -95,6 +104,27 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 				return getMasterLeft() != null;
 		}
 		return false;
+	}
+
+	@Override
+	public void calcPixRect(Position parentsReference, double currentZoom) {
+		super.calcPixRect(parentsReference, currentZoom);
+		syncHtmlElement();
+	}
+
+	private void syncHtmlElement() {
+		Rect r = getPixRect();
+		html.getElement().getStyle().setLeft(r.getLeft(), Unit.PX);
+		html.getElement().getStyle().setTop(r.getTop(), Unit.PX);
+		
+		html.getElement().getStyle().setProperty("transformOrigin", "0 0");
+		html.getElement().getStyle().setProperty("transform", "scale(" + getCurrentZoom() + ")");
+	}
+
+	@Override
+	public void movePixRect(double x, double y) {
+		super.movePixRect(x, y);
+		syncHtmlElement();
 	}
 
 	@Override
@@ -126,22 +156,23 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 
 	@Override
 	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		getPixRect().stroke(ctx, 1, RGB.red());
+		// if (isDraggingControl() && !isVisibilityForced())
+		// return;
 
-		if (isDraggingControl() && !isVisibilityForced())
-			return;
+		// super.draw(ctx, overlay, invalidationMask);
 
-		super.draw(ctx, overlay, invalidationMask);
+		// Rect r = getPixRect().copy();
+		// double reduce = toXPixels(getAttachArea());
+		// r = r.getReducedBy(2 * reduce);
+		// r.drawRoundedRect(ctx, Rect.ROUNDING_TOP, toXPixels(6), toXPixels(3), null,
+		// getColorBankSelect());
 
-		Rect r = getPixRect().copy();
-		double reduce = toXPixels(getAttachArea());
-		r = r.getReducedBy(2 * reduce);
-		r.drawRoundedRect(ctx, Rect.ROUNDING_TOP, toXPixels(6), toXPixels(3), null, getColorBankSelect());
+		// for (Control c : presetList.getChildren()) {
+		// c.drawPost(ctx, invalidationMask);
+		// }
 
-		for (Control c : presetList.getChildren()) {
-			c.drawPost(ctx, invalidationMask);
-		}
-
-		drawDropIndicator(ctx);
+		// drawDropIndicator(ctx);
 	}
 
 	protected void drawDropIndicator(Context2d ctx) {

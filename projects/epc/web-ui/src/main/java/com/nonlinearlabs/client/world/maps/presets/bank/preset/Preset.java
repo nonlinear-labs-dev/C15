@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.nonlinearlabs.client.CustomPresetSelector;
@@ -56,6 +57,8 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	private boolean isCurrentFilterMatch = false;
 	private SoundType type = SoundType.Single;
 
+	public HTMLPanel html;
+
 	private static final PresetColorPack loadedColor = new PresetColorPack(new Gray(0), RGB.blue(), new Gray(77));
 	private static final PresetColorPack standardColor = new PresetColorPack(new Gray(0), new Gray(25), new Gray(77));
 	private static final PresetColorPack renamedColor = new PresetColorPack(new Gray(0), new Gray(77), new Gray(77));
@@ -72,6 +75,11 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 
 	public Preset(Bank parent) {
 		super(parent);
+
+		this.html = new HTMLPanel("<div class='preset'></div>");
+		this.html.getElement().addClassName("preset");
+		parent.html.add(html);
+		html.add(new HTMLPanel("PresetName"));
 
 		tag = addChild(new ColorTag(this));
 		number = addChild(new Number(this, ""));

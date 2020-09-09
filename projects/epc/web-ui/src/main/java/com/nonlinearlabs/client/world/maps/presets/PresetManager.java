@@ -9,6 +9,8 @@ import java.util.function.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.nonlinearlabs.client.CustomPresetSelector;
@@ -70,6 +72,8 @@ public class PresetManager extends MapsLayout {
 	private static NonRect oldView = null;
 
 	private Bank midiSelectedBank = null;
+	public HTMLPanel html;
+
 
 	public List<Bank> getBanks() {
 		List<Bank> ret = new ArrayList<>();
@@ -103,6 +107,10 @@ public class PresetManager extends MapsLayout {
 
 	public PresetManager(NonLinearWorld parent) {
 		super(parent);
+
+		this.html = new HTMLPanel("");
+		this.html.getElement().addClassName("pm");
+		RootPanel.get("preset-manager").add(html);
 
 		PresetSearch.get().searchActive.onChange(b -> {
 			if (b == BooleanValues.on) {
