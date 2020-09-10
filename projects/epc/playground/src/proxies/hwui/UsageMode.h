@@ -33,8 +33,6 @@ class UsageMode : public Uncopyable, public sigc::trackable
 #endif
 
  private:
-  void connectToVoiceGroupSignal();
-
   static const int num_buttons = 128;
 
   std::map<Buttons, tAction> m_actions;

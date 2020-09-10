@@ -3,6 +3,7 @@ package com.nonlinearlabs.client.world.maps.presets.bank;
 import java.util.ArrayList;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.contextStates.ClipContext;
@@ -54,8 +55,15 @@ public class Header extends Label {
 	private String bankName = "";
 	private DoubleClickWaiter doubleClickWaiter;
 
+	public HTMLPanel html;
+
 	public Header(Bank parent) {
 		super(parent, "");
+
+		this.html = new HTMLPanel("");
+		this.html.getElement().addClassName("header");
+		parent.html.add(html);
+		html.add(new HTMLPanel("BankName"));
 	}
 
 	@Override

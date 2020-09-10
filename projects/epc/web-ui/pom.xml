@@ -19,6 +19,7 @@
 
     <!-- Don't let your Mac use a crazy non-standard encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.directory>/tmp/${project.build.finalName}</project.build.directory>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 

@@ -39,7 +39,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	private DropAction currentDropAction;
 	private IPreset currentDropPreset;
 	private String uuid = "";
-	final Header header = new Header(this);
+	final Header header;
 	private boolean collapsed = false;
 	private Label emptyLabel = null;
 	private PrevNextButtons prevNext;
@@ -82,6 +82,8 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		parent.html.add(html);
 
 		this.uuid = uuid;
+
+		header = new Header(this);
 		addChild(header);
 		addChild(presetList = new PresetList(this));
 		prevNext = addChild(new PrevNextButtons(this));
@@ -116,7 +118,7 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 		Rect r = getPixRect();
 		html.getElement().getStyle().setLeft(r.getLeft(), Unit.PX);
 		html.getElement().getStyle().setTop(r.getTop(), Unit.PX);
-		
+
 		html.getElement().getStyle().setProperty("transformOrigin", "0 0");
 		html.getElement().getStyle().setProperty("transform", "scale(" + getCurrentZoom() + ")");
 	}

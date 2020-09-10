@@ -76,7 +76,7 @@ public class Preset extends LayoutResizingHorizontal implements Renameable, IPre
 	public Preset(Bank parent) {
 		super(parent);
 
-		this.html = new HTMLPanel("<div class='preset'></div>");
+		this.html = new HTMLPanel("");
 		this.html.getElement().addClassName("preset");
 		parent.html.add(html);
 		html.add(new HTMLPanel("PresetName"));
