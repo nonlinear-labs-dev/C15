@@ -9,8 +9,6 @@ import java.util.function.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.nonlinearlabs.client.CustomPresetSelector;
@@ -44,6 +42,7 @@ import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.maps.presets.bank.Tape;
 import com.nonlinearlabs.client.world.maps.presets.bank.Updater;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
+import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI;
 import com.nonlinearlabs.client.world.overlay.BankInfoDialog;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.ParameterInfoDialog;
@@ -72,7 +71,7 @@ public class PresetManager extends MapsLayout {
 	private static NonRect oldView = null;
 
 	private Bank midiSelectedBank = null;
-	public HTMLPanel html;
+	private PresetManagerUI theHtmlUI = new PresetManagerUI();
 
 
 	public List<Bank> getBanks() {
@@ -107,10 +106,6 @@ public class PresetManager extends MapsLayout {
 
 	public PresetManager(NonLinearWorld parent) {
 		super(parent);
-
-		this.html = new HTMLPanel("");
-		this.html.getElement().addClassName("pm");
-		RootPanel.get("preset-manager").add(html);
 
 		PresetSearch.get().searchActive.onChange(b -> {
 			if (b == BooleanValues.on) {
@@ -266,6 +261,14 @@ public class PresetManager extends MapsLayout {
 			scrollToSelectedPresetScheduled = false;
 			scrollToSelectedPreset();
 		}
+
+		theHtmlUI.syncPosition();
+	}
+
+	@Override
+	public void movePixRect(double x, double y) {
+		super.movePixRect(x, y);
+		theHtmlUI.syncPosition();
 	}
 
 	public void update(Node presetManagerNode) {

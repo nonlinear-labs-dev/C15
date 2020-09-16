@@ -10,8 +10,10 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.pointer.PointerState;
 import com.nonlinearlabs.client.world.pointer.Touch;
@@ -41,8 +43,10 @@ public abstract class Mouseing {
 
 	public void initHandlers(Canvas canvas) {
 		Window.addResizeHandler(new NonMapsResizeHandler(this));
-		canvas.addMouseWheelHandler(new NonMapsWheelHandler());
+
 		canvas.addDoubleClickHandler(new NonMapsMousDoubleClickHandler());
+
+		RootPanel.get().addDomHandler(new NonMapsWheelHandler(), MouseWheelEvent.getType());
 
 		NonLinearWorld nw = NonMaps.get().getNonLinearWorld();
 

@@ -1,11 +1,12 @@
 package com.nonlinearlabs.client.dataModel.presetManager;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class PresetManagerModel {
 
 	static PresetManagerModel thePresetManager = new PresetManagerModel();
-	private BankMapDataModelEntity banks = new BankMapDataModelEntity(new HashMap<String, Bank>());
+
+	private BankMapDataModelEntity banks = new BankMapDataModelEntity(new ArrayList<String>());
 
 	static public PresetManagerModel get() {
 		return thePresetManager;

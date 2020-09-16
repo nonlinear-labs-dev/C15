@@ -1905,4 +1905,70 @@ button {
 
 .bank {
   position: absolute;
+  margin: 10mm;
+  font-size: 4mm;
+  line-height: 8mm;
+  width: calc(60mm + 2px);
+  border-top-right-radius: 5mm;
+  border-top-left-radius: 5mm;
+  background-color:#9cf;
+}
+
+.bank .header {
+  display: block;
+  width: calc(60mm + 2px);
+  color: black;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bank .preset {
+  display: inline-block;
+  position: relative;
+  color:white;
+  background-color: #202020;
+  border: 1px solid white;
+  margin-top: -1px;
+  pointer-events: all;
+  line-height: 8mm;
+  width: max-content;
+}
+
+.bank .preset .number {
+  text-align: left;
+  display: inline-block;
+  width: 15mm;
+  vertical-align: middle;
+}
+
+.bank .preset .name {
+  text-align: left;
+  display: inline-block;
+  width: 45mm;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.bank .preset .gwt-Label {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.bank .preset.loaded {
+  border-color: red;
+  z-index: 3;
+}
+
+.bank .preset.selected.loaded {
+  border-color: red;
+  z-index: 5;
+}
+
+.bank .preset.selected {
+  border-color: green;
+  z-index: 4;
 }

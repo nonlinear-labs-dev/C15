@@ -7,7 +7,6 @@ import com.nonlinearlabs.client.dataModel.Updater;
 
 public class BankUpdater extends Updater {
 
-	private int pos = 0;
 	private Bank bank;
 	private String selectedMidiUuid;
 
@@ -21,29 +20,42 @@ public class BankUpdater extends Updater {
 	public void doUpdate() {
 		bank.name.setValue(getAttributeValue(root, "name"));
 		bank.uuid.setValue(getAttributeValue(root, "uuid"));
+
 		bank.isMidiBank.setValue(selectedMidiUuid.equals(bank.uuid.getValue()));
 
 		if (bank.isMidiBank.isTrue()) {
 			bank.name.setValue(bank.name.getValue() + " ^");
 		}
 
-		ArrayList<Preset> existingPresets = new ArrayList<Preset>(bank.getPresets().getValue());
-		existingPresets.forEach(p -> p.setDoomed());
+		bank.selectedPreset.setValue(getAttributeValue(root, "selected-preset"));
+		bank.x.setValue(Integer.parseInt(getAttributeValue(root, "x")));
+		bank.y.setValue(Integer.parseInt(getAttributeValue(root, "y")));
+
+		Presets.get().preUpdate(bank.uuid.getValue());
+		ArrayList<String> existingPresets = new ArrayList<String>();
 		super.processChildrenElements(root, "preset", p -> updatePreset(existingPresets, p));
-		existingPresets.removeIf(p -> p.isDoomed());
-		bank.getPresets().setValue(existingPresets);
+		bank.presets.setValue(existingPresets);
+		Presets.get().postUpdate(bank.uuid.getValue());
 	}
 
-	private void updatePreset(ArrayList<Preset> existingPresets, Node p) {
-		if (existingPresets.size() <= pos)
-			existingPresets.add(new Preset());
+	private void updatePreset(ArrayList<String> existingPresets, Node presetNode) {
+		String uuid = getAttributeValue(presetNode, "uuid");
+		existingPresets.add(uuid);
+		boolean dirty = didChange(presetNode);
+		Preset preset = Presets.get().find(uuid);
 
-		String uuid = getAttributeValue(p, "uuid");
-		Preset preset = existingPresets.get(pos);
+		if (preset == null) {
+			preset = Presets.get().put(uuid);
+			dirty = true;
+		}
+
+		preset.bankUuid.setValue(bank.uuid.getValue());
+		preset.number.setValue(existingPresets.size());
+
 		preset.revive();
 
-		if (didChange(p) || !preset.uuid.getValue().equals(uuid)) {
-			PresetUpdater updater = new PresetUpdater(p, preset);
+		if (dirty) {
+			PresetUpdater updater = new PresetUpdater(presetNode, preset);
 			updater.doUpdate();
 		}
 	}

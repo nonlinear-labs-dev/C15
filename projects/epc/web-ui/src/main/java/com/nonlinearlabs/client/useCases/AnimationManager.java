@@ -57,7 +57,7 @@ public class AnimationManager {
         runningAnimations.remove(m.id);
     }
 
-    public void startDelayedAnimation(PhysicalControlParameterModel p,  int delay) {
+    public void startDelayedAnimation(PhysicalControlParameterModel p, int delay) {
         if (recursionGuard)
             return;
 
