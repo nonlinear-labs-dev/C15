@@ -71,6 +71,7 @@
 #include "UISoftwareVersionEditor.h"
 #include "ScreenSaverTimeControls.h"
 #include "SetupInfoTexts.h"
+#include "SetupInfoLayout.h"
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/AnimatedGenericItem.h>
 
 namespace NavTree
@@ -110,18 +111,7 @@ namespace NavTree
     Glib::ustring name;
   };
 
-  struct PlaceHolderInfo : public ControlWithChildren
-  {
-    explicit PlaceHolderInfo(SetupInfoEntries entry)
-        : ControlWithChildren(Rect(0, 0, 256, 96))
-    {
-      addControl(new Label({ SetupInfoHeaders.at(entry), 0 }, Rect(0, 0, 256, 12)));
-      m_content = addControl(new MultiLineLabel(Rect(0, 12, 256, 84), SetupInfoContent.at(entry)));
-    }
 
-   private:
-    MultiLineLabel *m_content;
-  };
 
   struct Leaf : Node
   {
@@ -175,7 +165,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::VelocityCurve);
+      return new SetupInfoLayout(SetupInfoEntries::VelocityCurve);
     }
   };
 
@@ -198,7 +188,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::AftertouchCurve);
+      return new SetupInfoLayout(SetupInfoEntries::AftertouchCurve);
     }
   };
 
@@ -221,7 +211,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::BenderCurve);
+      return new SetupInfoLayout(SetupInfoEntries::BenderCurve);
     }
   };
 
@@ -252,7 +242,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::PedalSetting);
+      return new SetupInfoLayout(SetupInfoEntries::PedalSetting);
     }
 
     PedalParameter *param;
@@ -277,7 +267,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::WiFiSetting);
+      return new SetupInfoLayout(SetupInfoEntries::WiFiSetting);
     }
   };
 
@@ -299,7 +289,7 @@ namespace NavTree
 
       Control *createInfo() override
       {
-        return new PlaceHolderInfo(m_entry);
+        return new SetupInfoLayout(m_entry);
       }
 
      private:
@@ -336,7 +326,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(m_entry);
+      return new SetupInfoLayout(m_entry);
     }
 
    private:
@@ -404,7 +394,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SettingToSetupInfoEntry<tSetting>());
+      return new SetupInfoLayout(SettingToSetupInfoEntry<tSetting>());
     }
   };
 
@@ -427,7 +417,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::PresetGlitchSuppression);
+      return new SetupInfoLayout(SetupInfoEntries::PresetGlitchSuppression);
     }
   };
 
@@ -450,7 +440,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::EditSmoothingTime);
+      return new SetupInfoLayout(SetupInfoEntries::EditSmoothingTime);
     }
   };
 
@@ -467,7 +457,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::Pedals);
+      return new SetupInfoLayout(SetupInfoEntries::Pedals);
     }
   };
 
@@ -492,7 +482,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::DeviceSettings);
+      return new SetupInfoLayout(SetupInfoEntries::DeviceSettings);
     }
   };
 
@@ -515,7 +505,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::DeviceName);
+      return new SetupInfoLayout(SetupInfoEntries::DeviceName);
     }
 
     virtual bool onEditModeEntered()
@@ -540,7 +530,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::SSID);
+      return new SetupInfoLayout(SetupInfoEntries::SSID);
     }
   };
 
@@ -558,7 +548,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::Passphrase);
+      return new SetupInfoLayout(SetupInfoEntries::Passphrase);
     }
 
     virtual Control *createEditor() override
@@ -581,7 +571,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::UpdateAvailable);
+      return new SetupInfoLayout(SetupInfoEntries::UpdateAvailable);
     }
 
     virtual Control *createEditor() override
@@ -607,7 +597,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::FreeMemory);
+      return new SetupInfoLayout(SetupInfoEntries::FreeMemory);
     }
   };
 
@@ -620,7 +610,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::SoftwareVersion);
+      return new SetupInfoLayout(SetupInfoEntries::SoftwareVersion);
     }
 
     virtual Control *createView() override
@@ -650,7 +640,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::DateTime);
+      return new SetupInfoLayout(SetupInfoEntries::DateTime);
     }
 
     virtual Control *createEditor() override
@@ -671,7 +661,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::WebsiteAddress);
+      return new SetupInfoLayout(SetupInfoEntries::WebsiteAddress);
     }
 
     WebUIAdress(InnerNode *parent)
@@ -702,7 +692,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::SystemInfo);
+      return new SetupInfoLayout(SetupInfoEntries::SystemInfo);
     }
   };
 
@@ -715,7 +705,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::About);
+      return new SetupInfoLayout(SetupInfoEntries::About);
     }
 
     virtual Control *createView() override
@@ -745,7 +735,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::EncoderAcceleration);
+      return new SetupInfoLayout(SetupInfoEntries::EncoderAcceleration);
     }
 
     virtual Control *createView() override
@@ -768,7 +758,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::RibbonRelativeFactor);
+      return new SetupInfoLayout(SetupInfoEntries::RibbonRelativeFactor);
     }
 
     virtual Control *createView() override
@@ -796,7 +786,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::SignalFlowIndicator);
+      return new SetupInfoLayout(SetupInfoEntries::SignalFlowIndicator);
     }
 
     virtual Control *createEditor() override
@@ -814,7 +804,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::ScreenSaverTimeout);
+      return new SetupInfoLayout(SetupInfoEntries::ScreenSaverTimeout);
     }
 
     Control *createView() override
@@ -841,7 +831,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::HardwareUI);
+      return new SetupInfoLayout(SetupInfoEntries::HardwareUI);
     }
   };
 
@@ -859,7 +849,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::USBAvailable);
+      return new SetupInfoLayout(SetupInfoEntries::USBAvailable);
     }
   };
 
@@ -882,7 +872,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::SaveAllBanks);
+      return new SetupInfoLayout(SetupInfoEntries::SaveAllBanks);
     }
   };
 
@@ -895,7 +885,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::RestoreAllBanks);
+      return new SetupInfoLayout(SetupInfoEntries::RestoreAllBanks);
     }
 
     virtual Control *createView() override
@@ -921,7 +911,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::Backup);
+      return new SetupInfoLayout(SetupInfoEntries::Backup);
     }
   };
 
@@ -940,7 +930,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new PlaceHolderInfo(SetupInfoEntries::Setup);
+      return new SetupInfoLayout(SetupInfoEntries::Setup);
     }
 
     Glib::ustring getName() const override

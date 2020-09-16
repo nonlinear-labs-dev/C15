@@ -2,51 +2,13 @@
 
 #include <device-settings/TransitionTime.h>
 #include <device-settings/TuneReference.h>
-enum class SetupInfoEntries
-{
-  SettingItem,
-  VelocityCurve,
-  AftertouchCurve,
-  BenderCurve,
-  PedalSetting,
-  WiFiSetting,
-  PresetGlitchSuppression,
-  EditSmoothingTime,
-  Pedals,
-  DeviceSettings,
-  DeviceName,
-  SSID,
-  Passphrase,
-  UpdateAvailable,
-  FreeMemory,
-  SoftwareVersion,
-  DateTime,
-  WebsiteAddress,
-  SystemInfo,
-  About,
-  EncoderAcceleration,
-  RibbonRelativeFactor,
-  SignalFlowIndicator,
-  ScreenSaverTimeout,
-  HardwareUI,
-  USBAvailable,
-  SaveAllBanks,
-  RestoreAllBanks,
-  Backup,
-  Setup,
-  TransitionTime,
-  TuneReference,
-  RandomizePart,
-  RandomizeSound,
-  InitPart,
-  InitSound,
-  ConvertToSingle,
-  ConvertToSplit,
-  ConvertToLayer,
-  PartLabel,
-  StoreInitSound,
-  ResetInitSound
-};
+#include <device-settings/SyncVoiceGroupsAcrossUIS.h>
+ENUM(SetupInfoEntries, int, SettingItem, VelocityCurve, AftertouchCurve, BenderCurve, PedalSetting, WiFiSetting,
+     PresetGlitchSuppression, EditSmoothingTime, Pedals, DeviceSettings, DeviceName, SSID, Passphrase, UpdateAvailable,
+     FreeMemory, SoftwareVersion, DateTime, WebsiteAddress, SystemInfo, About, EncoderAcceleration,
+     RibbonRelativeFactor, SignalFlowIndicator, ScreenSaverTimeout, HardwareUI, USBAvailable, SaveAllBanks,
+     RestoreAllBanks, Backup, Setup, TransitionTime, TuneReference, RandomizePart, RandomizeSound, InitPart, InitSound,
+     ConvertToSingle, ConvertToSplit, ConvertToLayer, PartLabel, StoreInitSound, ResetInitSound, SyncVoiceGroups);
 
 template <typename tSetting> SetupInfoEntries SettingToSetupInfoEntry()
 {
@@ -57,6 +19,10 @@ template <typename tSetting> SetupInfoEntries SettingToSetupInfoEntry()
   else if constexpr(std::is_same_v<tSetting, TuneReference>)
   {
     return SetupInfoEntries::TuneReference;
+  }
+  else if constexpr(std::is_same_v<tSetting, SyncVoiceGroupsAcrossUIS>)
+  {
+    return SetupInfoEntries::SyncVoiceGroups;
   }
 }
 
@@ -101,7 +67,9 @@ static std::map<SetupInfoEntries, const char*> SetupInfoHeaders {
   { SetupInfoEntries::PartLabel, "Dual Sound Part Name" },
   { SetupInfoEntries::StoreInitSound, "Store Init Sound" },
   { SetupInfoEntries::ResetInitSound, "Reset Init Sound" },
-  { SetupInfoEntries::ScreenSaverTimeout, "Screen Saver Timeout" }
+  { SetupInfoEntries::ScreenSaverTimeout, "Screen Saver Timeout" },
+  { SetupInfoEntries::SyncVoiceGroups, "Sync Parts across UI's" },
+  { SetupInfoEntries::DeviceName, "Device Name" }
 };
 
 static std::map<SetupInfoEntries, const char*> SetupInfoContent {
@@ -165,5 +133,7 @@ static std::map<SetupInfoEntries, const char*> SetupInfoContent {
   { SetupInfoEntries::StoreInitSound, "Store Init Sound TEXT" },
   { SetupInfoEntries::ResetInitSound, "Reset Init Sound TEXT" },
   { SetupInfoEntries::ScreenSaverTimeout,
-    "Time after last HWUI interaction / editbuffer change til screen starts saving" }
+    "Time after last HWUI interaction / editbuffer change til screen starts saving" },
+  { SetupInfoEntries::SyncVoiceGroups, "Sync Parts across UI's TEXT" },
+  { SetupInfoEntries::DeviceName, "Device Name Text" }
 };
