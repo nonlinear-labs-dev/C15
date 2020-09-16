@@ -8,6 +8,7 @@ class RandomizeItem : public EditorItem
   RandomizeItem(const Rect& rect);
   ~RandomizeItem() override;
   MenuOverlay* createOverlay() override;
+Control * createInfo() override;
 };
 
 class RandomizePart : public EditorItem
@@ -17,4 +18,5 @@ class RandomizePart : public EditorItem
   ~RandomizePart() override;
 
   MenuOverlay* createOverlay() override;
+Control * createInfo() override;
 };

@@ -3,12 +3,18 @@
 #include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/RenameVoiceGroupLayout.h>
-
+#include <proxies/hwui/panel-unit/boled/setup/SetupInfoTexts.h>
+#include <proxies/hwui/panel-unit/boled/sound-screens/controls/SoundEditInfoLayout.h>
 #include "PartLabelItem.h"
 
 inline EditBuffer* getEditBuffer()
 {
   return Application::get().getPresetManager()->getEditBuffer();
+}
+
+Control* PartLabelItem::createInfo()
+{
+  return new SoundEditInfoLayout(SetupInfoEntries::PartLabel);
 }
 
 VoiceGroup currentVoiceGroup()

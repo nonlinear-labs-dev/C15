@@ -19,6 +19,7 @@
 #include <proxies/hwui/controls/SwitchVoiceGroupButton.h>
 #include <Application.h>
 #include <device-settings/Settings.h>
+#include <proxies/hwui/panel-unit/boled/undo/UndoLayout.h>
 
 namespace DescriptiveLayouts
 {
@@ -93,6 +94,9 @@ namespace DescriptiveLayouts
         }
       }
     });
+
+    registerEvent(EventSinks::OpenUndoScreen,
+                  [hwui] { hwui->getPanelUnit().getEditPanel().getBoled().reset(new UndoLayout()); });
 
     registerEvent(EventSinks::ToggleVoiceGroupWithParameterSelection, [hwui]() { hwui->toggleCurrentVoiceGroup(); });
 

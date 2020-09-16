@@ -1,0 +1,30 @@
+{
+  "layouts": {
+    "Undo-Info-Layout": {
+      "Selector": {
+        "UIFocus": "Undo",
+        "UIMode": "Info",
+        "UIDetail": "Init"
+      },
+      "Controls": {
+        "Header": {
+          "Class": "InvertedLabel",
+          "Position": "0, 0",
+          "Init": {
+            "Text[Text]": "Undo Info"
+          }
+        },
+        "Name": {
+          "Class": "WideHighlightLabel",
+          "Position": "64, 0",
+          "Init": {
+            "Text[Text]": "Undo Info goes here!"
+          }
+        }
+      },
+      "EventSinks": {
+        "BUTTON_INFO": "OpenUndoScreen"
+      }
+    }
+  }
+}

@@ -687,7 +687,7 @@ FocusAndMode HWUI::removeInvalidsFromSound(FocusAndMode in)
 {
   if(in.focus == UIFocus::Sound)
   {
-    if(in.mode == UIMode::Store || in.mode == UIMode::Info)
+    if(in.mode == UIMode::Store)
     {
       in.mode = UIMode::Select;
     }

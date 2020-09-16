@@ -70,7 +70,7 @@
 #include <device-settings/SyncVoiceGroupsAcrossUIS.h>
 #include "UISoftwareVersionEditor.h"
 #include "ScreenSaverTimeControls.h"
-
+#include "SetupInfoTexts.h"
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/AnimatedGenericItem.h>
 
 namespace NavTree
@@ -104,9 +104,23 @@ namespace NavTree
 
     InnerNode *parent;
     virtual Control *createView() = 0;
+    virtual Control *createInfoView() = 0;
 
    protected:
     Glib::ustring name;
+  };
+
+  struct PlaceHolderInfo : public ControlWithChildren
+  {
+    explicit PlaceHolderInfo(SetupInfoEntries entry)
+        : ControlWithChildren(Rect(0, 0, 256, 96))
+    {
+      addControl(new Label({ SetupInfoHeaders.at(entry), 0 }, Rect(0, 0, 256, 12)));
+      m_content = addControl(new MultiLineLabel(Rect(0, 12, 256, 84), SetupInfoContent.at(entry)));
+    }
+
+   private:
+    MultiLineLabel *m_content;
   };
 
   struct Leaf : Node
@@ -158,6 +172,11 @@ namespace NavTree
     {
       return new VelocityEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::VelocityCurve);
+    }
   };
 
   struct Aftertouch : EditableLeaf
@@ -176,6 +195,11 @@ namespace NavTree
     {
       return new AftertouchEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::AftertouchCurve);
+    }
   };
 
   struct BenderCurveSetting : EditableLeaf
@@ -193,6 +217,11 @@ namespace NavTree
     virtual Control *createEditor() override
     {
       return new BenderCurveEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::BenderCurve);
     }
   };
 
@@ -221,6 +250,11 @@ namespace NavTree
       return new PedalSelectionControl(param);
     }
 
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::PedalSetting);
+    }
+
     PedalParameter *param;
   };
 
@@ -240,6 +274,11 @@ namespace NavTree
     {
       return new WiFiSettingEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::WiFiSetting);
+    }
   };
 
   struct OneShotEntry : EditableLeaf
@@ -247,8 +286,9 @@ namespace NavTree
     using CB = std::function<void()>;
     struct Item : public AnimatedGenericItem
     {
-      Item(const Rect &rect, const CB &cb)
+      Item(const Rect &rect, const CB &cb, SetupInfoEntries e)
           : AnimatedGenericItem("", rect, cb)
+          , m_entry { e }
       {
       }
 
@@ -256,20 +296,29 @@ namespace NavTree
       {
         return false;
       }
+
+      Control *createInfo() override
+      {
+        return new PlaceHolderInfo(m_entry);
+      }
+
+     private:
+      SetupInfoEntries m_entry;
     };
 
     Item *theItem = nullptr;
     CB cb;
 
-    OneShotEntry(InnerNode *p, const std::string &name, const CB &cb)
+    OneShotEntry(InnerNode *p, const std::string &name, const CB &cb, SetupInfoEntries e)
         : EditableLeaf(p, name)
         , cb(cb)
+        , m_entry { e }
     {
     }
 
     Control *createView() override
     {
-      theItem = new Item(Rect(0, 0, 0, 0), cb);
+      theItem = new Item(Rect(0, 0, 0, 0), cb, m_entry);
       return theItem;
     }
 
@@ -284,16 +333,26 @@ namespace NavTree
         theItem->doAction();
       return true;
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(m_entry);
+    }
+
+   private:
+    SetupInfoEntries m_entry;
   };
 
   struct StoreInitSound : OneShotEntry
   {
     StoreInitSound(InnerNode *p)
-        : OneShotEntry(p, "Store Init Sound", [] {
-          auto pm = Application::get().getPresetManager();
-          auto scope = pm->getUndoScope().startTransaction("Store Init Sound");
-          pm->storeInitSound(scope->getTransaction());
-        })
+        : OneShotEntry(p, "Store Init Sound",
+                       [] {
+                         auto pm = Application::get().getPresetManager();
+                         auto scope = pm->getUndoScope().startTransaction("Store Init Sound");
+                         pm->storeInitSound(scope->getTransaction());
+                       },
+                       SetupInfoEntries::StoreInitSound)
     {
     }
   };
@@ -301,11 +360,13 @@ namespace NavTree
   struct ResetInitSound : OneShotEntry
   {
     ResetInitSound(InnerNode *p)
-        : OneShotEntry(p, "Reset Init Sound", [] {
-          auto pm = Application::get().getPresetManager();
-          auto scope = pm->getUndoScope().startTransaction("Reset Init Sound");
-          pm->resetInitSound(scope->getTransaction());
-        })
+        : OneShotEntry(p, "Reset Init Sound",
+                       [] {
+                         auto pm = Application::get().getPresetManager();
+                         auto scope = pm->getUndoScope().startTransaction("Reset Init Sound");
+                         pm->resetInitSound(scope->getTransaction());
+                       },
+                       SetupInfoEntries::ResetInitSound)
     {
     }
   };
@@ -340,6 +401,11 @@ namespace NavTree
         return new NumericSettingEditor<tSetting>();
       }
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SettingToSetupInfoEntry<tSetting>());
+    }
   };
 
   struct PresetGlitchSuppression : EditableLeaf
@@ -357,6 +423,11 @@ namespace NavTree
     Control *createEditor() override
     {
       return new PresetGlitchSuppressionEditor();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::PresetGlitchSuppression);
     }
   };
 
@@ -376,6 +447,11 @@ namespace NavTree
     {
       return new EditSmoothingTimeEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::EditSmoothingTime);
+    }
   };
 
   struct PedalSettings : InnerNode
@@ -387,6 +463,11 @@ namespace NavTree
       children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal2ParameterID().getNumber()));
       children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal3ParameterID().getNumber()));
       children.emplace_back(new PedalSetting(this, HardwareSourcesGroup::getPedal4ParameterID().getNumber()));
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::Pedals);
     }
   };
 
@@ -408,6 +489,11 @@ namespace NavTree
       children.emplace_back(new StoreInitSound(this));
       children.emplace_back(new ResetInitSound(this));
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::DeviceSettings);
+    }
   };
 
   struct DeviceName : EditableLeaf
@@ -425,6 +511,11 @@ namespace NavTree
     virtual Control *createEditor() override
     {
       return nullptr;
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::DeviceName);
     }
 
     virtual bool onEditModeEntered()
@@ -446,6 +537,11 @@ namespace NavTree
     {
       return new SSIDView();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::SSID);
+    }
   };
 
   struct Passphrase : EditableLeaf
@@ -458,6 +554,11 @@ namespace NavTree
     virtual Control *createView() override
     {
       return new PassphraseView();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::Passphrase);
     }
 
     virtual Control *createEditor() override
@@ -476,6 +577,11 @@ namespace NavTree
     virtual Control *createView() override
     {
       return new UpdateAvailableView();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::UpdateAvailable);
     }
 
     virtual Control *createEditor() override
@@ -498,6 +604,11 @@ namespace NavTree
     {
       return new FreeInternalMemoryView();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::FreeMemory);
+    }
   };
 
   struct UISoftwareVersion : EditableLeaf
@@ -505,6 +616,11 @@ namespace NavTree
     UISoftwareVersion(InnerNode *parent)
         : EditableLeaf(parent, "Software Version")
     {
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::SoftwareVersion);
     }
 
     virtual Control *createView() override
@@ -532,6 +648,11 @@ namespace NavTree
       return new DeviceInfoItemView(info, std::chrono::milliseconds(500));
     }
 
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::DateTime);
+    }
+
     virtual Control *createEditor() override
     {
       return new DateTimeEditor();
@@ -547,10 +668,17 @@ namespace NavTree
       {
       }
     };
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::WebsiteAddress);
+    }
+
     WebUIAdress(InnerNode *parent)
         : Leaf(parent, "Website Address:")
     {
     }
+
     virtual Control *createView() override
     {
       return new AddressLabel();
@@ -571,6 +699,11 @@ namespace NavTree
       children.emplace_back(new DateTime(this));
       children.emplace_back(new UpdateAvailable(this));
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::SystemInfo);
+    }
   };
 
   struct About : EditableLeaf
@@ -578,6 +711,11 @@ namespace NavTree
     About(InnerNode *parent)
         : EditableLeaf(parent, "About")
     {
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::About);
     }
 
     virtual Control *createView() override
@@ -605,6 +743,11 @@ namespace NavTree
     {
     }
 
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::EncoderAcceleration);
+    }
+
     virtual Control *createView() override
     {
       return new EncoderAccelerationView();
@@ -621,6 +764,11 @@ namespace NavTree
     RibbonRelativeFactorSetting(InnerNode *parent)
         : EditableLeaf(parent, "Ribbon Relative Factor")
     {
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::RibbonRelativeFactor);
     }
 
     virtual Control *createView() override
@@ -646,6 +794,11 @@ namespace NavTree
       return new SignalFlowIndicationView();
     }
 
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::SignalFlowIndicator);
+    }
+
     virtual Control *createEditor() override
     {
       return new SignalFlowIndicatorEditor();
@@ -657,6 +810,11 @@ namespace NavTree
     ScreenSaverTime(InnerNode *parent)
         : EditableLeaf(parent, "Screensaver Timeout")
     {
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::ScreenSaverTimeout);
     }
 
     Control *createView() override
@@ -680,6 +838,11 @@ namespace NavTree
       children.emplace_back(new SignalFlowIndicationSetting(this));
       children.emplace_back(new ScreenSaverTime(this));
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::HardwareUI);
+    }
   };
 
   struct USBStickAvailable : Leaf
@@ -692,6 +855,11 @@ namespace NavTree
     virtual Control *createView() override
     {
       return new USBStickAvailableView();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::USBAvailable);
     }
   };
 
@@ -711,6 +879,11 @@ namespace NavTree
     {
       return new ExportBackupEditor();
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::SaveAllBanks);
+    }
   };
 
   struct BackupImport : EditableLeaf
@@ -718,6 +891,11 @@ namespace NavTree
     BackupImport(InnerNode *parent)
         : EditableLeaf(parent, "Restore all Banks...")
     {
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::RestoreAllBanks);
     }
 
     virtual Control *createView() override
@@ -740,6 +918,11 @@ namespace NavTree
       children.emplace_back(new BackupExport(this));
       children.emplace_back(new BackupImport(this));
     }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::Backup);
+    }
   };
 
   struct Setup : InnerNode
@@ -753,6 +936,11 @@ namespace NavTree
       children.emplace_back(new About(this));
       children.emplace_back(new Backup(this));
       focus = children.begin();
+    }
+
+    Control *createInfoView() override
+    {
+      return new PlaceHolderInfo(SetupInfoEntries::Setup);
     }
 
     Glib::ustring getName() const override
@@ -908,13 +1096,6 @@ void SetupLayout::addSelectionEntries()
   }
 }
 
-bool SetupLayout::isInSelectionMode() const
-{
-  auto focus = m_tree->focus->get();
-  auto focusEditable = dynamic_cast<const NavTree::Leaf *>(focus);
-  return m_focusAndMode.mode == UIMode::Select || !focusEditable;
-}
-
 void SetupLayout::addValueViews()
 {
   auto focus = m_tree->focus->get();
@@ -968,6 +1149,12 @@ void SetupLayout::diveUp()
 
 bool SetupLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
+  if(i == Buttons::BUTTON_INFO && down)
+  {
+    toggleInfo();
+    return true;
+  }
+
   if(down)
   {
     if(i == Buttons::BUTTON_PRESET)
@@ -1104,10 +1291,26 @@ bool SetupLayout::redraw(FrameBuffer &fb)
 {
   ControlOwner::redraw(fb);
 
-  if(m_focusAndMode.mode == UIMode::Select)
+  if(m_focusAndMode.mode == UIMode::Select && m_infoLayout == nullptr)
   {
     fb.setColor(FrameBufferColors::C179);
     fb.drawRect(Rect(0, 28, 256, 12));
   }
   return true;
+}
+
+void SetupLayout::toggleInfo()
+{
+  if(m_infoLayout)
+  {
+    remove(m_infoLayout);
+    m_infoLayout = nullptr;
+  }
+  else
+  {
+    if(*m_tree->focus)
+    {
+      m_infoLayout = addControl(m_tree->focus->get()->createInfoView());
+    }
+  }
 }

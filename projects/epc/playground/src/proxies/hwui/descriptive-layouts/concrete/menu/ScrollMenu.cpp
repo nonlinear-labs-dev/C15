@@ -17,6 +17,21 @@ void ScrollMenu::scroll(int direction)
 
 bool ScrollMenu::onButton(Buttons i, bool down, ButtonModifiers mod)
 {
+  if(i == Buttons::BUTTON_INFO && down)
+  {
+    if(m_infoOverlay)
+    {
+      remove(m_infoOverlay);
+      m_infoOverlay = nullptr;
+      return true;
+    }
+    else if(auto selected = m_items.at(m_selectedItem))
+    {
+      m_infoOverlay = addControl(selected->createInfo());
+      return true;
+    }
+  }
+
   if(m_overlay)
   {
     return onButtonOverlay(i, down, mod);

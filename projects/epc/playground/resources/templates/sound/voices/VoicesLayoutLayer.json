@@ -115,8 +115,7 @@
       "EventSinks": {
         "BUTTON_B": "OpenMonoParameterScreen",
         "BUTTON_C": "SwitchToInitDetail",
-        "BUTTON_D": "OpenUnisonParameter",
-        "BUTTON_INFO": "Swallow"
+        "BUTTON_D": "OpenUnisonParameter"
       }
     }
   }

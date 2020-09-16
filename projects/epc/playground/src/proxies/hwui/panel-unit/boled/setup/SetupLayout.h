@@ -37,7 +37,6 @@ class SetupLayout : public Layout
   void addSelectionEntries();
   void addValueViews();
   bool addEditor();
-  bool isInSelectionMode() const;
   bool isInEditMode() const;
   void finishLists();
   void onEnterInSelectionMode(ButtonModifiers modifiers);
@@ -45,5 +44,7 @@ class SetupLayout : public Layout
 
   std::unique_ptr<NavTree::Setup> m_tree;
   FocusAndMode m_focusAndMode;
-  SetupEditor *m_editor;
+  SetupEditor *m_editor = nullptr;
+  Control *m_infoLayout = nullptr;
+  void toggleInfo();
 };

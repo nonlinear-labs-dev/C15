@@ -7,4 +7,5 @@ class PartLabelItem : public BasicItemWithValueText
  public:
   PartLabelItem(const Rect& r);
   void doAction() override;
+Control * createInfo() override;
 };
