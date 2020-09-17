@@ -19,4 +19,11 @@ public class BankUseCases {
         b.selectedPreset.setValue(uuid);
         NonMaps.get().getServerProxy().selectPreset(uuid);
     }
+
+    public void move(String uuid, int x, int y) {
+        Bank b = Banks.get().find(uuid);
+        b.x.setValue(x);
+        b.y.setValue(y);
+        // TODO: send to server
+    }
 }

@@ -10,6 +10,5 @@ class NonMapsWheelHandler implements MouseWheelHandler {
 	public void onMouseWheel(final MouseWheelEvent event) {
 		Position pos = new Position(event);
 		PointerState.get().onWheel(pos, event.getDeltaY(), event.isShiftKeyDown());
-		event.preventDefault();
 	}
 }

@@ -1366,7 +1366,6 @@ canvas {
   margin: 0px;
   padding: 0px;
   z-index: 2;
-  pointer-events: none;
 }
 
 #cm {
@@ -1903,25 +1902,36 @@ button {
   min-width: 7em;
 }
 
+.pm {
+  pointer-events: all;
+}
+
 .bank {
   position: absolute;
   margin: 10mm;
   font-size: 4mm;
   line-height: 8mm;
   width: calc(60mm + 2px);
-  border-top-right-radius: 5mm;
-  border-top-left-radius: 5mm;
+  border: 2px solid white;
+  border-top-right-radius: 2mm;
+  border-top-left-radius: 2mm;
+  box-sizing: content-box;
   background-color:#9cf;
+  z-index: 10;
+  overflow: hidden;
 }
 
 .bank .header {
   display: block;
+  border-top-right-radius: 2mm;
+  border-top-left-radius: 2mm;
   width: calc(60mm + 2px);
   color: black;
   text-align: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  background-color: #69e;
 }
 
 .bank .preset {
@@ -1931,7 +1941,6 @@ button {
   background-color: #202020;
   border: 1px solid white;
   margin-top: -1px;
-  pointer-events: all;
   line-height: 8mm;
   width: max-content;
 }
@@ -1939,14 +1948,14 @@ button {
 .bank .preset .number {
   text-align: left;
   display: inline-block;
-  width: 15mm;
+  width: 10mm;
   vertical-align: middle;
 }
 
 .bank .preset .name {
   text-align: left;
   display: inline-block;
-  width: 45mm;
+  width: 50mm;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1972,3 +1981,37 @@ button {
   border-color: green;
   z-index: 4;
 }
+
+.bank .header.drop-target {
+  background-color: red;
+}
+
+.bank .preset.drop-target {
+  background-color: red;
+}
+
+.bank .preset > .drop-zone.drop-target {
+  background-color: red;
+}
+
+.bank .preset > .drop-zone.above {
+  position: absolute;
+  width: 100%;
+  height: calc(25% + 1px);
+  top:-1px;
+}
+
+.bank .preset > .drop-zone.middle {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  top: 25%;
+}
+
+.bank .preset > .drop-zone.below {
+  position: absolute;
+  width: 100%;
+  height: calc(25% + 1px);
+  top: 75%;
+}
+
