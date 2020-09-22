@@ -23,6 +23,7 @@
 #include <giomm.h>
 #include <proxies/usb/USBChangeListener.h>
 #include <http/WebUISupport.h>
+#include <proxies/hwui/panel-unit/boled/setup/SetupInfoTexts.h>
 
 using namespace std::chrono_literals;
 
@@ -85,6 +86,8 @@ Application::Application(int numArgs, char **argv)
 #ifdef _PROFILING
   Profiler::get().enable(true);
 #endif
+
+  SetupInfoTexts::loadInfos();
 
   m_settings->init();
   m_hwui->init();

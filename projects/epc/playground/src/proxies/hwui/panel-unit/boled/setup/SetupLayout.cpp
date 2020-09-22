@@ -111,8 +111,6 @@ namespace NavTree
     Glib::ustring name;
   };
 
-
-
   struct Leaf : Node
   {
     Leaf(InnerNode *parent, Glib::ustring name)
@@ -394,7 +392,7 @@ namespace NavTree
 
     Control *createInfoView() override
     {
-      return new SetupInfoLayout(SettingToSetupInfoEntry<tSetting>());
+      return new SetupInfoLayout(SetupInfoTexts::SettingToSetupInfoEntry<tSetting>());
     }
   };
 

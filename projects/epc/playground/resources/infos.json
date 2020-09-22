@@ -1,0 +1,174 @@
+{
+  "SettingItem": {
+    "Header": "Settings",
+    "Content": "Foo"
+  },
+  "VelocityCurve": {
+    "Header": "Velocity Curve",
+    "Content": "Foo"
+  },
+  "AftertouchCurve": {
+    "Header": "Aftertouch Curve",
+    "Content": "Foo"
+  },
+  "BenderCurve": {
+    "Header": "Bender Curve",
+    "Content": "Foo"
+  },
+  "PedalSetting": {
+    "Header": "Pedal Setting",
+    "Content": "Foo"
+  },
+  "WiFiSetting": {
+    "Header": "WiFi Setting",
+    "Content": "Foo"
+  },
+  "PresetGlitchSuppression": {
+    "Header": "Preset Glitch Suppression",
+    "Content": "Foo"
+  },
+  "EditSmoothingTime": {
+    "Header": "Edit Smoothing Time",
+    "Content": "Foo"
+  },
+  "Pedals": {
+    "Header": "Pedals",
+    "Content": "Foo"
+  },
+  "DeviceSettings": {
+    "Header": "DeviceSettings",
+    "Content": "Foo"
+  },
+  "DeviceName": {
+    "Header": "Device Name",
+    "Content": "Foo"
+  },
+  "SSID": {
+    "Header": "SSID",
+    "Content": "Foo"
+  },
+  "Passphrase": {
+    "Header": "Passphrase",
+    "Content": "Foo"
+  },
+  "UpdateAvailable": {
+    "Header": "Update Available",
+    "Content": "Foo"
+  },
+  "FreeMemory": {
+    "Header": "Free Memory",
+    "Content": "Foo"
+  },
+  "SoftwareVersion": {
+    "Header": "Software Version",
+    "Content": "Foo"
+  },
+  "DateTime": {
+    "Header": "Date/Time",
+    "Content": "Foo"
+  },
+  "WebsiteAddress": {
+    "Header": "IP Address",
+    "Content": "Foo"
+  },
+  "SystemInfo": {
+    "Header": "System Info",
+    "Content": "Foo"
+  },
+  "About": {
+    "Header": "About",
+    "Content": "Foo"
+  },
+  "EncoderAcceleration": {
+    "Header": "Encoder Acceleration",
+    "Content": "Foo"
+  },
+  "RibbonRelativeFactor": {
+    "Header": "Ribbon Rel. Factor",
+    "Content": "Foo"
+  },
+  "SignalFlowIndicator": {
+    "Header": "Signal Flow Indication",
+    "Content": "Foo"
+  },
+  "ScreenSaverTimeout": {
+    "Header": "Screen Saver Timeout",
+    "Content": "Foo"
+  },
+  "HardwareUI": {
+    "Header": "Hardware UI",
+    "Content": "Foo"
+  },
+  "USBAvailable": {
+    "Header": "USB Available",
+    "Content": "Foo"
+  },
+  "SaveAllBanks": {
+    "Header": "Save all Banks",
+    "Content": "Foo"
+  },
+  "RestoreAllBanks": {
+    "Header": "Restore Banks",
+    "Content": "Foo"
+  },
+  "Backup": {
+    "Header": "Backup",
+    "Content": "Foo"
+  },
+  "Setup": {
+    "Header": "Setup",
+    "Content": "Foo"
+  },
+  "TransitionTime": {
+    "Header": "Transition Time",
+    "Content": "Foo"
+  },
+  "TuneReference": {
+    "Header": "Tune Reference",
+    "Content": "Foo"
+  },
+  "RandomizePart": {
+    "Header": "Randomize Part",
+    "Content": "Foo"
+  },
+  "RandomizeSound": {
+    "Header": "Randomize Sound",
+    "Content": "Foo"
+  },
+  "InitPart": {
+    "Header": "Init Part",
+    "Content": "Foo"
+  },
+  "InitSound": {
+    "Header": "Init Sound",
+    "Content": "Foo"
+  },
+  "ConvertToSingle": {
+    "Header": "Convert To Single",
+    "Content": "Foo"
+  },
+  "ConvertToSplit": {
+    "Header": "Convert To Split",
+    "Content": "Foo"
+  },
+  "ConvertToLayer": {
+    "Header": "Convert To Layer",
+    "Content": "Foo"
+  },
+  "PartLabel": {
+    "Header": "Part Label",
+    "Content": "Foo"
+  },
+  "StoreInitSound": {
+    "Header": "Store Init Sound",
+    "Content": "Foo"
+  },
+  "ResetInitSound": {
+    "Header": "Reset stored Init Sound",
+    "Content": "Foo"
+  },
+  "SyncVoiceGroups": {
+    "Header": "Sync Part across UI's",
+    "Content": "Foo"
+  }
+}

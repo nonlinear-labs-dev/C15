@@ -7,7 +7,7 @@ TEST_CASE("Map has all Info Texts")
   {
     try
     {
-      SetupInfoContent.at(e);
+      SetupInfoTexts::getInfoContent(e);
     }
     catch(...)
     {
@@ -16,7 +16,7 @@ TEST_CASE("Map has all Info Texts")
 
     try
     {
-      SetupInfoHeaders.at(e);
+      SetupInfoTexts::getInfoHeader(e);
     }
     catch(...)
     {
