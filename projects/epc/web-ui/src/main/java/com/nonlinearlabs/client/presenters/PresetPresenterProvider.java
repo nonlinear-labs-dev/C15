@@ -23,6 +23,7 @@ public class PresetPresenterProvider extends Notifier<PresetPresenter> {
 
         p.number.onChange(v -> {
             thePresenter.number = NumberFormat.getFormat("#000").format(v);
+            notifyChanges();
             return true;
         });
 

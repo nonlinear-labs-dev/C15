@@ -13,8 +13,10 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.maps.NonRect;
 
 /*
@@ -59,9 +61,29 @@ Prio 3
 */
 
 public class PresetManagerUI extends HTMLPanel {
+    static private PresetManagerUI thePresetManagerUI;
+
+    class DragDropData {
+        public DragDropData() {
+            this.type = "";
+            this.data = "";
+        }
+
+        public DragDropData(String type, String data) {
+            this.type = type;
+            this.data = data;
+        }
+
+        String type;
+        String data;
+    }
+
+    DragDropData dragDropData = new DragDropData();
 
     public PresetManagerUI() {
         super("");
+
+        thePresetManagerUI = this;
 
         getElement().addClassName("pm");
         getElement().setAttribute("draggable", "true");
@@ -75,9 +97,9 @@ public class PresetManagerUI extends HTMLPanel {
         Widget parent = getParent();
 
         parent.addDomHandler(e -> {
-            boolean isBank = !e.getData("bank").isEmpty();
-            boolean isPreset = !e.getData("preset").isEmpty();
-            boolean isPresets = !e.getData("presets").isEmpty();
+            boolean isBank = getDragDropData().type == "bank";
+            boolean isPreset = getDragDropData().type == "preset";
+            boolean isPresets = getDragDropData().type == "presets";
 
             if (isBank || isPreset || isPresets)
                 getElement().addClassName("drop-target");
@@ -104,6 +126,20 @@ public class PresetManagerUI extends HTMLPanel {
             e.preventDefault();
             e.stopPropagation();
             GWT.log("DragEndEvent PM");
+
+            boolean isBank = getDragDropData().type == "bank";
+
+            if (isBank) {
+                NonRect viewPortRect = NonMaps.get().getNonLinearWorld().getViewport().getNonPosition();
+                double z = NonMaps.get().getNonLinearWorld().getCurrentZoom();
+                double x = z * viewPortRect.getLeft() / NonMaps.devicePixelRatio;
+                double y = z * viewPortRect.getTop() / NonMaps.devicePixelRatio;
+                double bx = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientX() + x) / z;
+                double by = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientY() + y) / z;
+                // TODO: margin is buggy
+                double margin = Millimeter.toPixels(10) * z / NonMaps.devicePixelRatio;
+                BankUseCases.get().move(getDragDropData().data, bx - margin, by - margin);
+            }
         }, DragEndEvent.getType());
 
         parent.addDomHandler(e -> {
@@ -119,7 +155,10 @@ public class PresetManagerUI extends HTMLPanel {
             e.stopPropagation();
             GWT.log("DragEvent PM");
         }, DragEvent.getType());
+    }
 
+    public static PresetManagerUI get() {
+        return thePresetManagerUI;
     }
 
     private void sync(ArrayList<String> banks) {
@@ -151,5 +190,17 @@ public class PresetManagerUI extends HTMLPanel {
 
         getElement().getStyle().setProperty("transformOrigin", "0 0");
         getElement().getStyle().setProperty("transform", "translate(" + -x + "px, " + -y + "px) scale(" + z + ")");
+    }
+
+    public void setDragDropData(String type, String data) {
+        dragDropData = new DragDropData(type, data);
+    }
+
+    public void resetDragDropData() {
+        dragDropData = new DragDropData();
+    }
+
+    public DragDropData getDragDropData() {
+        return dragDropData;
     }
 }

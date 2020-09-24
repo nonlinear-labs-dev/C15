@@ -20,10 +20,25 @@ public class BankUseCases {
         NonMaps.get().getServerProxy().selectPreset(uuid);
     }
 
-    public void move(String uuid, int x, int y) {
+    public void move(String uuid, double x, double y) {
         Bank b = Banks.get().find(uuid);
         b.x.setValue(x);
         b.y.setValue(y);
-        // TODO: send to server
+        NonMaps.get().getServerProxy().setBankPosition(uuid, x, y);
+    }
+
+    public void dropBelow(String presetUUID, String droppedType, String droppedData) {
+        if (droppedType == "preset")
+            NonMaps.get().getServerProxy().movePresetBelow(droppedData, presetUUID);
+    }
+
+    public void dropOn(String presetUUID, String droppedType, String droppedData) {
+        if (droppedType == "preset")
+            NonMaps.get().getServerProxy().overwritePresetWith(droppedData, presetUUID);
+    }
+
+    public void dropAbove(String presetUUID, String droppedType, String droppedData) {
+        if (droppedType == "preset")
+            NonMaps.get().getServerProxy().movePresetAbove(droppedData, presetUUID);
     }
 }

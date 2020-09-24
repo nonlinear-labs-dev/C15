@@ -24,13 +24,16 @@ class PresetListUI extends HTMLPanel {
             }
         }
 
+        widgets.forEach((k, v) -> remove(v));
+
         for (String uuid : presets) {
             if (!widgets.containsKey(uuid))
                 add(new PresetUI(uuid));
+            else
+                add(widgets.get(uuid));
 
             widgets.remove(uuid);
         }
 
-        widgets.forEach((k, v) -> remove(v));
     }
 }

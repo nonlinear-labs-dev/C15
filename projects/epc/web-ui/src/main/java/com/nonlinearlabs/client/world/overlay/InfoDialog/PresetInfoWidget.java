@@ -173,13 +173,14 @@ public class PresetInfoWidget {
 						targetPos = Math.min(targetPos, presetCount);
 
 						if (targetPos == presetCount)
-							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset, bank.getLast());
+							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset.getUUID(),
+									bank.getLast().getUUID());
 						else if (targetPos > oldNumber)
-							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset,
-									bank.getPreset(targetPos - 1));
+							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset.getUUID(),
+									bank.getPreset(targetPos - 1).getUUID());
 						else
-							NonMaps.theMaps.getServerProxy().movePresetAbove(m_currentShownPreset,
-									bank.getPreset(targetPos - 1));
+							NonMaps.theMaps.getServerProxy().movePresetAbove(m_currentShownPreset.getUUID(),
+									bank.getPreset(targetPos - 1).getUUID());
 					}
 				}
 			}

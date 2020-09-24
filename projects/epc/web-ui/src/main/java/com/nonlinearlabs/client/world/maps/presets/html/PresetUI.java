@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.useCases.BankUseCases;
+import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDropData;
 
 class PresetUI extends HTMLPanel {
     class DropZone extends HTMLPanel {
@@ -20,9 +21,10 @@ class PresetUI extends HTMLPanel {
             getElement().addClassName("drop-zone");
 
             addDomHandler(e -> {
-                boolean isBank = !e.getData("bank").isEmpty();
-                boolean isPreset = !e.getData("preset").isEmpty();
-                boolean isPresets = !e.getData("presets").isEmpty();
+                String type = PresetManagerUI.get().getDragDropData().type;
+                boolean isBank = type == "bank";
+                boolean isPreset = type == "preset";
+                boolean isPresets = type == "presets";
 
                 if (isBank || isPreset || isPresets)
                     getElement().addClassName("drop-target");
@@ -36,13 +38,6 @@ class PresetUI extends HTMLPanel {
                 GWT.log("DragOverEvent Preset");
 
             }, DragOverEvent.getType());
-
-            addDomHandler(e -> {
-                getElement().removeClassName("drop-target");
-                e.preventDefault();
-                e.stopPropagation();
-                GWT.log("DropEvent Preset");
-            }, DropEvent.getType());
 
             addDomHandler(e -> {
                 getElement().removeClassName("drop-target");
@@ -71,18 +66,42 @@ class PresetUI extends HTMLPanel {
 
         public Above(String uuid) {
             getElement().addClassName("above");
+
+            addDomHandler(e -> {
+                getElement().removeClassName("drop-target");
+                e.preventDefault();
+                e.stopPropagation();
+                DragDropData dnd = PresetManagerUI.get().getDragDropData();
+                BankUseCases.get().dropAbove(uuid, dnd.type, dnd.data);
+            }, DropEvent.getType());
         }
     }
 
     class Middle extends DropZone {
         public Middle(String uuid) {
             getElement().addClassName("middle");
+
+            addDomHandler(e -> {
+                getElement().removeClassName("drop-target");
+                e.preventDefault();
+                e.stopPropagation();
+                DragDropData dnd = PresetManagerUI.get().getDragDropData();
+                BankUseCases.get().dropOn(uuid, dnd.type, dnd.data);
+            }, DropEvent.getType());
         }
     }
 
     class Below extends DropZone {
         public Below(String uuid) {
             getElement().addClassName("below");
+
+            addDomHandler(e -> {
+                getElement().removeClassName("drop-target");
+                e.preventDefault();
+                e.stopPropagation();
+                DragDropData dnd = PresetManagerUI.get().getDragDropData();
+                BankUseCases.get().dropBelow(uuid, dnd.type, dnd.data);
+            }, DropEvent.getType());
         }
     }
 
@@ -118,7 +137,11 @@ class PresetUI extends HTMLPanel {
         }, ClickEvent.getType());
 
         addDomHandler(e -> {
-            e.setData("preset", getElement().getId());
+            GWT.log("DragStartEvent Preset");
+            e.getDataTransfer().setData("preset", getElement().getId());
+            e.getDataTransfer().setDragImage(getElement(), 10, 10);
+            e.stopPropagation();
+            PresetManagerUI.get().setDragDropData("preset", getElement().getId());
         }, DragStartEvent.getType());
 
     }

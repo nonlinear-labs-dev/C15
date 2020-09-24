@@ -576,7 +576,6 @@ public class PresetManager extends MapsLayout {
 			np.snapTo(getSnapGridResolution());
 			b.getNonPosition().moveTo(np);
 			b.requestLayout();
-			getNonMaps().getServerProxy().onBankPositionChanged(b);
 
 			return this;
 		} else if (dragProxy.getOrigin() instanceof IPreset) {

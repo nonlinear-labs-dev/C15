@@ -1366,6 +1366,7 @@ canvas {
   margin: 0px;
   padding: 0px;
   z-index: 2;
+  pointer-events: none;
 }
 
 #cm {

@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.world.maps.presets.html;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -26,16 +25,14 @@ class BankUI extends HTMLPanel {
 
             getElement().getStyle().setLeft(presenter.x / NonMaps.devicePixelRatio, Unit.PX);
             getElement().getStyle().setTop(presenter.y / NonMaps.devicePixelRatio, Unit.PX);
-
             return true;
         });
 
         addDomHandler(e -> {
-            e.setData("bank", getElement().getId());
-            GWT.log("DragStartEvent Bank");
-
             e.getDataTransfer().setData("bank", getElement().getId());
-            e.getDataTransfer().setDragImage(getElement(), 10, 10);
+            e.getDataTransfer().setDragImage(getElement(), 0, 0);
+            e.stopPropagation();
+            PresetManagerUI.get().setDragDropData("bank", getElement().getId());
         }, DragStartEvent.getType());
 
     }

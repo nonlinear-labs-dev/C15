@@ -316,12 +316,11 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void onBankPositionChanged(Bank bank) {
-		NonPosition bankPos = bank.getNonPosition().getPosition();
+	public void setBankPosition(String bankUuid, double xPos, double yPos) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "set-position");
-		StaticURI.KeyValue x = new StaticURI.KeyValue("x", bankPos.getX());
-		StaticURI.KeyValue y = new StaticURI.KeyValue("y", bankPos.getY());
-		StaticURI.KeyValue uuid = new StaticURI.KeyValue("uuid", bank.getUUID());
+		StaticURI.KeyValue x = new StaticURI.KeyValue("x", xPos);
+		StaticURI.KeyValue y = new StaticURI.KeyValue("y", yPos);
+		StaticURI.KeyValue uuid = new StaticURI.KeyValue("uuid", bankUuid);
 		StaticURI uri = new StaticURI(path, x, y, uuid);
 		queueJob(uri, true);
 	}
@@ -357,24 +356,24 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void movePresetAbove(IPreset p, IPreset actionAnchor) {
+	public void movePresetAbove(String presetToMove, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "move-preset-above");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToMove", p.getUUID()),
-				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToMove", presetToMove),
+				new StaticURI.KeyValue("anchor", anchor));
 		queueJob(uri, false);
 	}
 
-	public void movePresetBelow(IPreset p, IPreset actionAnchor) {
+	public void movePresetBelow(String presetToMove, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "move-preset-below");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToMove", p.getUUID()),
-				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToMove", presetToMove),
+				new StaticURI.KeyValue("anchor", anchor));
 		queueJob(uri, false);
 	}
 
-	public void overwritePresetWith(IPreset p, IPreset actionAnchor) {
+	public void overwritePresetWith(String presetToMove, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "overwrite-preset");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToOverwrite", actionAnchor.getUUID()),
-				new StaticURI.KeyValue("overwriteWith", p.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToOverwrite", anchor),
+				new StaticURI.KeyValue("overwriteWith", presetToMove));
 		queueJob(uri, false);
 	}
 
@@ -645,7 +644,7 @@ public class ServerProxy {
 	public void dropPresetOnBank(IPreset p, Bank b) {
 		boolean foundInBank = b.getPresetList().findPreset(p.getUUID()) != null;
 		if (foundInBank)
-			movePresetBelow(p, b.getLast());
+			movePresetBelow(p.getUUID(), b.getLast().getUUID());
 		else
 			appendPreset(p, b);
 	}

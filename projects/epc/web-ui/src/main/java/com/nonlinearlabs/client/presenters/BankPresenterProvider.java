@@ -11,11 +11,8 @@ public class BankPresenterProvider extends Notifier<BankPresenter> {
     public BankPresenterProvider(String uuid) {
         Bank b = Banks.get().find(uuid);
 
-        b.name.onChange(v -> {
-            thePresenter.name = v;
-            notifyChanges();
-            return true;
-        });
+        b.name.onChange(v -> updateName(b));
+        b.orderNumber.onChange(v -> updateName(b));
 
         b.x.onChange(x -> {
             thePresenter.x = x;
@@ -36,9 +33,14 @@ public class BankPresenterProvider extends Notifier<BankPresenter> {
         });
     }
 
+    private boolean updateName(Bank b) {
+        thePresenter.name = b.orderNumber.getValue() + " - " + b.name.getValue();
+        notifyChanges();
+        return true;
+    }
+
     @Override
     public BankPresenter getValue() {
         return thePresenter;
     }
-
 }

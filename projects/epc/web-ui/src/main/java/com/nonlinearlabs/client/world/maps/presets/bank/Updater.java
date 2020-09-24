@@ -125,9 +125,6 @@ public class Updater {
 
 		if (this.bank.getNonPosition().moveTo(bankPos))
 			this.bank.requestLayout();
-
-		if (updateServersBankPos)
-			this.bank.getNonMaps().getServerProxy().onBankPositionChanged(this.bank);
 	}
 
 	private void removeObsoletePresets(ArrayList<MapsControl> currentChildren) {
