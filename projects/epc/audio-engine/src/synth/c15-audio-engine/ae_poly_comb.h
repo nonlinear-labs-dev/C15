@@ -15,8 +15,6 @@
 
 #define COMB_BUFFER_SIZE 8192
 
-#define COMB_FIX_2206 1
-
 namespace Engine
 {
   class PolyCombFilter

@@ -228,33 +228,18 @@ void Engine::PolyCombFilter::set(PolySignals &_signals, const float _samplerate,
   }
   // lp influence
   frequency *= m_sampleInterval;
-#if COMB_FIX_2206
-  float stateVar_r = NlToolbox::Math::sinP3_wrap(frequency - 0.25f);
-  float stateVar_i = NlToolbox::Math::sinP3_wrap(frequency);
-#else
   float stateVar_r = NlToolbox::Math::sinP3_wrap(frequency);
   float stateVar_i = NlToolbox::Math::sinP3_wrap(frequency + 0.25f);
-#endif
   stateVar_r = stateVar_r * m_lpCoeff[_voiceId];
   stateVar_i = stateVar_i * -m_lpCoeff[_voiceId] + 1.0f;
   tmpVar = NlToolbox::Math::arctan(stateVar_r / stateVar_i) * -0.159155f;  // (1.f / -6.28318f)
   m_delaySamples[_voiceId] = m_delaySamples[_voiceId] * tmpVar + m_delaySamples[_voiceId];
   // ap influence
-#if COMB_FIX_2206
-  stateVar_i = NlToolbox::Math::sinP3_wrap(frequency - 0.25f) * -1.0f * m_apCoeff_1[_voiceId];
-  stateVar_r = NlToolbox::Math::sinP3_wrap(frequency) * m_apCoeff_1[_voiceId];
-#else
   stateVar_i = NlToolbox::Math::sinP3_wrap(frequency) * -1.0f * m_apCoeff_1[_voiceId];
   stateVar_r = NlToolbox::Math::sinP3_wrap(frequency + 0.25f) * m_apCoeff_1[_voiceId];
-#endif
   frequency += frequency;
-#if COMB_FIX_2206
-  float stateVar2_i = NlToolbox::Math::sinP3_wrap(frequency - 0.25f);
-  float stateVar2_r = NlToolbox::Math::sinP3_wrap(frequency);
-#else
   float stateVar2_i = NlToolbox::Math::sinP3_wrap(frequency);
   float stateVar2_r = NlToolbox::Math::sinP3_wrap(frequency + 0.25f);
-#endif
   float var1_i = stateVar_i - stateVar2_i;
   float var2_i = (stateVar_i - (m_apCoeff_2[_voiceId] * stateVar2_i)) * -1.0f;
   float var1_r = stateVar_r + stateVar2_r + m_apCoeff_2[_voiceId];
