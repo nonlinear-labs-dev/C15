@@ -56,6 +56,7 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
 #endif
   m_out = tmpHP;
   m_out += m_decayStateVar;
+#if 1  // excluding LP and AP still produces offset...
   // 1-pole lp
   m_out *= (1.0f - m_lpCoeff);
   m_out += (m_lpCoeff * m_lpStateVar);
@@ -79,6 +80,7 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   m_apStateVar_1 = tmpOut;
   m_apStateVar_4 = m_apStateVar_3;
   m_apStateVar_3 = m_out;
+#endif
 #if POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1
   // POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1: provide a parallel implementation for "para d"
   auto para_d = std::abs(m_out);
@@ -145,6 +147,7 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   /// hier kommt voicestealing hin!!
   tmpSmooth -= 1.0f;
   tmpSmooth = std::clamp(tmpSmooth, 1.0f, 8189.f);
+  m_debug_delay = tmpSmooth;
   auto ind_t0 = std::round<int32_t>(tmpSmooth - 0.5f);
   tmpSmooth = tmpSmooth - static_cast<PolyValue>(ind_t0);
   auto ind_tm1 = ind_t0 - 1;

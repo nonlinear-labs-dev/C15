@@ -280,6 +280,19 @@ void dsp_host_dual::logStatus()
     nltools::Log::info("-output(left:", m_mainOut_L, ", right:", m_mainOut_R, ", mute:", m_fade.getValue(), ")");
     nltools::Log::info("-dsp(dx:", m_time.m_sample_inc, ", ms:", m_time.m_millisecond, ")");
   }
+  else if(LOG_COMB)
+  {
+    nltools::Log::info("comb status:");
+    for(auto event = m_alloc.m_traversal.first(); m_alloc.m_traversal.running(); event = m_alloc.m_traversal.next())
+    {
+      nltools::Log::info("voice:", event->m_voiceId, event->m_localIndex);
+      auto dec
+          = m_poly[event->m_localIndex].m_signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_Decay, event->m_voiceId),
+          dly = m_poly[event->m_localIndex].m_combfilter.m_debug_delay[event->m_voiceId];
+      nltools::Log::info("dly:", dly);
+      nltools::Log::info("dec:", dec);
+    }
+  }
   else if(LOG_ENGINE_EDITS)
   {
     nltools::Log::info("Engine Param Status - - - - - - - - - - - - - - - \n\n");
@@ -2571,7 +2584,7 @@ void dsp_host_dual::PotentialImprovements_RunNumericTests()
   nltools::Log::info(__PRETTY_FUNCTION__, "starting tests (proposal_enabled:", __POTENTIAL_IMPROVEMENT_PROPOSAL__, ")");
   const float TestGroup_Pattern_data[12]
       = { -1.0f, -0.99f, -0.75f, -0.5f, -0.3f, -0.0f, 0.0f, 0.3f, 0.5f, 0.75f, 0.99f, 1.0f };
-  const PolyValue TestGroup_Pattern { TestGroup_Pattern_data };
+  const PolyValue TestGroup_Pattern{ TestGroup_Pattern_data };
   const size_t TestGroups = 4;
   const char* RunInfo[TestGroups] = { "big", "unclamped", "clamped", "small" };
   const PolyValue TestGroup[TestGroups]

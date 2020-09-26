@@ -48,6 +48,7 @@ inline constexpr bool LOG_RESET = false;
 inline constexpr bool LOG_HW = false;
 // more detailed logging of specific parameters
 inline constexpr bool LOG_ENGINE_STATUS = false;
+inline constexpr bool LOG_COMB = true;
 inline constexpr bool LOG_ENGINE_EDITS = false;
 inline constexpr uint32_t LOG_PARAMS_LENGTH = 3;
 // use tcd ids here (currently: Split Point, Unison Detune)

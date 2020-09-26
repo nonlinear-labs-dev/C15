@@ -20,7 +20,7 @@ namespace Engine
   class PolyCombFilter
   {
    public:
-    PolyValue m_out = {};
+    PolyValue m_out = {}, m_debug_delay = {};
     PolyCombFilter();
     void init(const float _samplerate, const uint32_t _upsampleFactor);
     void apply(PolySignals &_signals, const PolyValue &_sampleA, const PolyValue &_sampleB);

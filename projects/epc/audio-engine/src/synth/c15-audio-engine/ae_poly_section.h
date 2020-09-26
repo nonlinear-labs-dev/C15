@@ -31,6 +31,7 @@ class PolySection
         m_millisecond = 0.0f;
   uint32_t m_uVoice = 0, m_key_active = 0;
   int32_t m_fadeStart = 0, m_fadeEnd = 0, m_fadeIncrement = 0;
+  Engine::PolyCombFilter m_combfilter;
   PolySection();
   void init(GlobalSignals *_globalsignals, exponentiator *_convert, Engine::Handle::Time_Handle *_time,
             LayerSignalCollection *_z_self, float *_reference, const float _ms, const float _gateRelease,
@@ -71,7 +72,6 @@ class PolySection
   Engine::Envelopes::RetriggerEnvelope<C15::Config::local_polyphony> m_env_c;
   Engine::Envelopes::GateEnvelope<C15::Config::local_polyphony> m_env_g;
   Engine::PolySoundGenerator m_soundgenerator;
-  Engine::PolyCombFilter m_combfilter;
   Engine::PolyStateVariableFilter m_svfilter;
   Engine::PolyFeedbackMixer m_feedbackmixer;
   Engine::PolyOutputMixer m_outputmixer;
