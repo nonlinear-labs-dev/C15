@@ -80,7 +80,7 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   m_apStateVar_1 = tmpOut;
   m_apStateVar_4 = m_apStateVar_3;
   m_apStateVar_3 = m_out;
-#endif
+#endif  // (excl. LP, AP end)
 #if POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1
   // POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1: provide a parallel implementation for "para d"
   auto para_d = std::abs(m_out);
@@ -144,6 +144,22 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
     m_buffer[m_buffer_indx][v] = m_out[v];
   }
 #endif
+  // debugging saturation
+  m_debug_sat_max *= 0.999999f;
+  m_debug_sat_min *= 0.999999f;
+  for(uint32_t v = 0; v < C15::Config::local_polyphony; v++)
+  {
+    if(m_out[v] > 0.0f)
+    {
+      if(m_out[v] > m_debug_sat_max[v])
+        m_debug_sat_max[v] = m_out[v];
+    }
+    else
+    {
+      if(m_out[v] < m_debug_sat_min[v])
+        m_debug_sat_min[v] = m_out[v];
+    }
+  }
   /// hier kommt voicestealing hin!!
   tmpSmooth -= 1.0f;
   tmpSmooth = std::clamp(tmpSmooth, 1.0f, 8189.f);

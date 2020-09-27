@@ -291,6 +291,8 @@ void dsp_host_dual::logStatus()
           dly = m_poly[event->m_localIndex].m_combfilter.m_debug_delay[event->m_voiceId];
       nltools::Log::info("dly:", dly);
       nltools::Log::info("dec:", dec);
+      nltools::Log::info("sat (min, max):", m_poly[event->m_localIndex].m_combfilter.m_debug_sat_min[event->m_voiceId],
+                         ", ", m_poly[event->m_localIndex].m_combfilter.m_debug_sat_max[event->m_voiceId]);
     }
   }
   else if(LOG_ENGINE_EDITS)
