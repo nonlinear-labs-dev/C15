@@ -164,6 +164,7 @@ void Engine::PolyCombFilter::apply(PolySignals &_signals, const PolyValue &_samp
   tmpSmooth -= 1.0f;
   tmpSmooth = std::clamp(tmpSmooth, 1.0f, 8189.f);
   m_debug_delay = tmpSmooth;
+  // int/fract ??
   auto ind_t0 = std::round<int32_t>(tmpSmooth - 0.5f);
   tmpSmooth = tmpSmooth - static_cast<PolyValue>(ind_t0);
   m_debug_fract = tmpSmooth;  // fractional: checked range [0 ... 1] OK

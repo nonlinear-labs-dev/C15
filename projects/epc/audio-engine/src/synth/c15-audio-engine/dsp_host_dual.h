@@ -173,4 +173,5 @@ class dsp_host_dual
 #if __POTENTIAL_IMPROVEMENT_NUMERIC_TESTS__
   void PotentialImprovements_RunNumericTests();
 #endif
+  void TestCommonFunctions();
 };

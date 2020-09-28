@@ -244,6 +244,7 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
     //nltools::Log::info("dsp_host_dual::init - engine dsp status: global");
     //nltools::Log::info("missing: nltools::msg - reference, initial:", m_reference.m_scaled);
   }
+  TestCommonFunctions();
 }
 
 C15::ParameterDescriptor dsp_host_dual::getParameter(const int _id)
@@ -2856,3 +2857,19 @@ void dsp_host_dual::PotentialImprovements_RunNumericTests()
   nltools::Log::info(__PRETTY_FUNCTION__, "finished tests");
 }
 #endif
+
+void dsp_host_dual::TestCommonFunctions()
+{
+  nltools::Log::info("testing common functions");
+  for(int32_t i = -50; i < 51; i++)
+  {
+    const float normed = 1000.0f + (static_cast<float>(i) * 0.1f);
+    const int32_t round = std::round<int32_t>(normed - 0.5f);
+    const float fract = normed - static_cast<float>(round);
+    const PolyValue normed2 = 1000.0f + (static_cast<float>(i) * 0.1f);
+    const PolyInt round2 = std::round<int32_t>(normed2 - 0.5f);
+    const PolyValue fract2 = normed - static_cast<PolyValue>(round2);
+    nltools::Log::info("\t", normed, "\t", round, "\t", fract, "\t", normed2[0], "\t", round2[0], "\t", fract2[0]);
+  }
+  nltools::Log::info("done testing common functions");
+}
