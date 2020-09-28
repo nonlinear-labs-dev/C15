@@ -14,6 +14,8 @@
 #include "pe_defines_config.h"
 #include "nltoolbox.h"
 
+#define EXPON_PREC 1
+
 struct exponentiator
 {
   /* table position variables */
@@ -38,12 +40,13 @@ struct exponentiator
   const float m_time_from = dsp_expon_time_from;
   const float m_time_to = dsp_expon_time_range + dsp_expon_time_from;
   /* conversion tables (constructed on initialization) */  // (note: the additional table element (size + 1) prevents interpolation issues)
-  float m_linear_pitch_table[dsp_expon_lin_pitch_range + 1];  // linear pitch table: [-150, 150] semitones
-  float m_oscillator_pitch_table[dsp_expon_osc_pitch_range
+  float m_linear_pitch_table[dsp_expon_lin_pitch_range * EXPON_PREC + 1];  // linear pitch table: [-150, 150] semitones
+  float m_oscillator_pitch_table[dsp_expon_osc_pitch_range * EXPON_PREC
                                  + 1];  // nonlinear pitch table for oscillators: [-20, 130] semitones
-  float
-      m_level_table[dsp_expon_level_range + 1];  // level conversion table: [-300, 100] decibel (first element is zero)
-  float m_time_table[dsp_expon_time_range + 1];  // time conversion table: [-20, 90] decibel (first element is zero)
+  float m_level_table[dsp_expon_level_range * EXPON_PREC
+                      + 1];  // level conversion table: [-300, 100] decibel (first element is zero)
+  float m_time_table[dsp_expon_time_range * EXPON_PREC
+                     + 1];  // time conversion table: [-20, 90] decibel (first element is zero)
   /* proper init */
   void init();  // perform construction of all four conversion tables
   /* hyperbolic osc pitch function (nonlinear pitch floor) */

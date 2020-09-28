@@ -630,8 +630,9 @@ void PolySection::postProcess_poly_slow(const uint32_t _voiceId)
       = m_signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_Freq)[_voiceId];  // decay now fully formed as min/max
   m_comb_decay_times[0][_voiceId]
       = m_combfilter.calcDecayGain(m_convert->eval_level(unitPitch + (unitMod * envMod)) * unitSign, unitValue);
-  m_comb_decay_times[1][_voiceId]
-      = m_combfilter.calcDecayGain(m_convert->eval_level(unitPitch + unitMod) * unitSign, unitValue);
+  auto tmp = m_convert->eval_level(unitPitch + unitMod) * unitSign;
+  m_combfilter.m_debug_dt[_voiceId] = tmp;
+  m_comb_decay_times[1][_voiceId] = m_combfilter.calcDecayGain(tmp, unitValue);
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_KT);
   unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_Tune);
   envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
@@ -732,8 +733,9 @@ void PolySection::postProcess_poly_key(const uint32_t _voiceId)
       = m_signals.get(C15::Signals::Truepoly_Signals::Comb_Flt_Freq)[_voiceId];  // decay now fully formed as min/max
   m_comb_decay_times[0][_voiceId]
       = m_combfilter.calcDecayGain(m_convert->eval_level(unitPitch + (unitMod * envMod)) * unitSign, unitValue);
-  m_comb_decay_times[1][_voiceId]
-      = m_combfilter.calcDecayGain(m_convert->eval_level(unitPitch + unitMod) * unitSign, unitValue);
+  auto tmp = m_convert->eval_level(unitPitch + unitMod) * unitSign;
+  m_combfilter.m_debug_dt[_voiceId] = tmp;
+  m_comb_decay_times[1][_voiceId] = m_combfilter.calcDecayGain(tmp, unitValue);
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_KT);
   unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_AP_Tune);
   envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
