@@ -2866,10 +2866,15 @@ void dsp_host_dual::TestCommonFunctions()
     const float normed = 1000.0f + (static_cast<float>(i) * 0.1f);
     const int32_t round = std::round<int32_t>(normed - 0.5f);
     const float fract = normed - static_cast<float>(round);
-    const PolyValue normed2 = 1000.0f + (static_cast<float>(i) * 0.1f);
-    const PolyInt round2 = std::round<int32_t>(normed2 - 0.5f);
-    const PolyValue fract2 = normed - static_cast<PolyValue>(round2);
-    nltools::Log::info("\t", normed, "\t", round, "\t", fract, "\t", normed2[0], "\t", round2[0], "\t", fract2[0]);
+    //    const PolyValue normed2 = 1000.0f + (static_cast<float>(i) * 0.1f);
+    //    const PolyInt round2 = std::round<int32_t>(normed2 - 0.5f);
+    //    const PolyValue fract2 = normed - static_cast<PolyValue>(round2);
+    //    nltools::Log::info("\t", normed, "\t", round, "\t", fract, "\t", normed2[0], "\t", round2[0], "\t", fract2[0]);
+    /* still used in Mono Section: */
+    const int32_t round3 = static_cast<int32_t>(std::round(normed - 0.5f));
+    const float fract3 = normed - static_cast<float>(round3);
+    nltools::Log::info("\t", normed, "\t", round, "\t", fract, "\t", round3, "\t", fract3);
+    /* result: mono fractionals seem to be within valid range [0 ... 1] */
   }
   nltools::Log::info("done testing common functions");
 }
