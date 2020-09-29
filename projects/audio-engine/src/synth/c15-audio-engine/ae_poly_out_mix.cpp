@@ -82,6 +82,7 @@ void Engine::PolyOutputMixer::filter_level(PolySignals &_signals)
   m_hp_stateVar_L1 = m_out_l + NlToolbox::Constants::DNC_const;
   m_hp_stateVar_L2 = tmpVar + NlToolbox::Constants::DNC_const;
 #endif
+  m_out_l = tmpVar * _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
   // HP R
   tmpVar = m_hp_b0 * m_out_r;
   tmpVar += m_hp_b1 * m_hp_stateVar_R1;
@@ -93,8 +94,7 @@ void Engine::PolyOutputMixer::filter_level(PolySignals &_signals)
   m_hp_stateVar_R1 = m_out_r + NlToolbox::Constants::DNC_const;
   m_hp_stateVar_R2 = tmpVar + NlToolbox::Constants::DNC_const;
 #endif
-  m_out_l *= _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
-  m_out_r *= _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
+  m_out_r = tmpVar * _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
 }
 
 void Engine::PolyOutputMixer::resetDSP()
