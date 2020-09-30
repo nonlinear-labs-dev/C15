@@ -305,6 +305,7 @@ template <typename Owner, typename Element> class UndoableVector : private Undoa
           [=](auto) {
             auto it = std::next(m_elements.begin(), pos);
             m_elements.insert(it, ElementPtr(theElement));
+            theElement->adopt(&m_owner);
             invalidateAllChildren();
           });
 
@@ -322,6 +323,7 @@ template <typename Owner, typename Element> class UndoableVector : private Undoa
         [=](auto) {
           auto it = std::next(m_elements.begin(), pos);
           m_elements.insert(it, ElementPtr(p));
+          p->adopt(&m_owner);
           invalidateAllChildren();
         },
         [=](auto) {

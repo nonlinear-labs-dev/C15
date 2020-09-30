@@ -36,7 +36,12 @@ public class BankUpdater extends Updater {
 		ArrayList<String> existingPresets = new ArrayList<String>();
 		super.processChildrenElements(root, "preset", p -> updatePreset(existingPresets, p));
 		bank.presets.setValue(existingPresets);
-		Presets.get().postUpdate(bank.uuid.getValue());
+
+		int presetNumber = 1;
+		for (String uuid : existingPresets) {
+			Preset preset = Presets.get().find(uuid);
+			preset.number.setValue(presetNumber++);
+		}
 	}
 
 	private void updatePreset(ArrayList<String> existingPresets, Node presetNode) {
@@ -51,8 +56,6 @@ public class BankUpdater extends Updater {
 		}
 
 		preset.bankUuid.setValue(bank.uuid.getValue());
-		preset.number.setValue(existingPresets.size());
-
 		preset.revive();
 
 		if (dirty) {

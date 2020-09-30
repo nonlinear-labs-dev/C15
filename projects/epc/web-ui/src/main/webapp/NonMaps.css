@@ -1357,18 +1357,6 @@ canvas {
   pointer-events: none;
 }
 
-#preset-manager {
-  position: fixed;
-  width: 100%;
-  left: 0%;
-  height: 100%;
-  top: 0%;
-  margin: 0px;
-  padding: 0px;
-  z-index: 2;
-  pointer-events: none;
-}
-
 #cm {
   width: 100cm;
   height: 100cm;
@@ -1903,7 +1891,19 @@ button {
   min-width: 7em;
 }
 
-.pm {
+.preset-manager {
+  position: fixed;
+  width: 100%;
+  left: 0%;
+  height: 100%;
+  top: 0%;
+  margin: 0px;
+  padding: 0px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.preset-manager.maybe-drop-target {
   pointer-events: all;
 }
 
@@ -1920,6 +1920,7 @@ button {
   background-color:#9cf;
   z-index: 10;
   overflow: hidden;
+  pointer-events: all;
 }
 
 .bank .header {

@@ -338,7 +338,6 @@ public class ServerProxy {
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presets", csv),
 				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
 		queueJob(uri, false);
-
 	}
 
 	public void dropPresetsBelow(String csv, IPreset actionAnchor) {
@@ -346,7 +345,6 @@ public class ServerProxy {
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presets", csv),
 				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
 		queueJob(uri, false);
-
 	}
 
 	public void dropPresetsTo(String csv, IPreset actionAnchor) {
@@ -384,24 +382,24 @@ public class ServerProxy {
 		RenameDialog.awaitNewPreset(NonMaps.get().getNonLinearWorld().getPresetManager().getSelectedPresetUUID());
 	}
 
-	public void movePresetTo(IPreset p, IPreset actionAnchor) {
+	public void movePresetTo(String p, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "move-preset-to");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToOverwrite", actionAnchor.getUUID()),
-				new StaticURI.KeyValue("overwriteWith", p.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToOverwrite", anchor),
+				new StaticURI.KeyValue("overwriteWith", p));
 		queueJob(uri, false);
 	}
 
-	public void insertPresetCopyAbove(IPreset p, IPreset preset) {
+	public void insertPresetCopyAbove(String p, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "copy-preset-above");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToCopy", p.getUUID()),
-				new StaticURI.KeyValue("anchor", preset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToCopy", p),
+				new StaticURI.KeyValue("anchor", anchor));
 		queueJob(uri, false);
 	}
 
-	public void insertPresetCopyBelow(IPreset p, IPreset actionAnchor) {
+	public void insertPresetCopyBelow(String p, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "copy-preset-below");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToCopy", p.getUUID()),
-				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToCopy", p),
+				new StaticURI.KeyValue("anchor", anchor));
 		queueJob(uri, false);
 	}
 
@@ -452,10 +450,10 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void appendPreset(IPreset srcPreset, Bank targetBank) {
+	public void appendPreset(String preset, String bank) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "append-preset-to-bank");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank-uuid", targetBank.getUUID()),
-				new StaticURI.KeyValue("preset-uuid", srcPreset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank-uuid", bank),
+				new StaticURI.KeyValue("preset-uuid", preset));
 		queueJob(uri, false);
 	}
 
@@ -641,19 +639,6 @@ public class ServerProxy {
 				+ "&vg1=" + vgOfPreset1 + "&vg2=" + vgOfPreset2, handler);
 	}
 
-	public void dropPresetOnBank(IPreset p, Bank b) {
-		boolean foundInBank = b.getPresetList().findPreset(p.getUUID()) != null;
-		if (foundInBank)
-			movePresetBelow(p.getUUID(), b.getLast().getUUID());
-		else
-			appendPreset(p, b);
-	}
-
-	public void dropPresetOnBankIfNotInBank(IPreset p, Bank b) {
-		if (b.getPresetList().findPreset(p.getUUID()) == null)
-			appendPreset(p, b);
-	}
-
 	public void dropPresetsOnBank(String csv, Bank targetBank) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "drop-presets-on-bank");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", targetBank.getUUID()),
@@ -665,10 +650,10 @@ public class ServerProxy {
 		appendEditBuffer(b);
 	}
 
-	public void dropBankOnBank(IBank dragged, IBank b) {
+	public void dropBankOnBank(String draggedBankUuid, String targetUuid) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "drop-bank-on-bank");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("receiver", b.getUUID()),
-				new StaticURI.KeyValue("bank", dragged.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("receiver", targetUuid),
+				new StaticURI.KeyValue("bank", draggedBankUuid));
 		queueJob(uri, false);
 	}
 

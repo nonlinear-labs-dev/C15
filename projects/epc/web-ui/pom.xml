@@ -14,9 +14,11 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
 
+    <outDir>${project.build.directory}/${project.build.finalName}</outDir>
+
     <!-- Don't let your Mac use a crazy non-standard encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.build.directory>/tmp/${project.build.finalName}</project.build.directory>
+    <project.build.directory>${outDir}/build</project.build.directory>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
@@ -54,7 +56,7 @@
 
   <build>
     <!-- Output classes directly into the webapp, so that IDEs and "mvn process-classes" update them in DevMode -->
-    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+    <outputDirectory>${outDir}</outputDirectory>
 
     <plugins>
 
@@ -76,14 +78,25 @@
           <moduleShortName>NonMaps</moduleShortName>
           <failOnError>true</failOnError>
           <sourceLevel>11</sourceLevel>
-          <warDir>${project.build.directory}/${project.build.finalName}</warDir>
           <classpathScope>compile+runtime</classpathScope>
+
           <devmodeArgs>
             <arg>-style</arg>
             <arg>DETAILED</arg>
             <arg>-bindAddress</arg>
             <arg>0.0.0.0</arg>
+            <arg>-war</arg>
+            <arg>${outDir}/war</arg>
           </devmodeArgs>
+
+          <compilerArgs>
+            <arg>-war</arg>
+            <arg>${outDir}/war</arg>
+          </compilerArgs>
+
+          <buildOutputDirectory>${outDir}/build</buildOutputDirectory>
+          <deploy>${outDir}/deploy</deploy>
+
           <startupUrls>
             <startupUrl>NonMaps.html</startupUrl>
           </startupUrls>

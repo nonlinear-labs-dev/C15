@@ -9,7 +9,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 public abstract class Notifier<T> {
 
-	static boolean debug = false;
+	static boolean debug = true;
 
 	private LinkedList<Function<T, Boolean>> consumers = new LinkedList<Function<T, Boolean>>();
 	private boolean scheduled = false;
@@ -49,9 +49,14 @@ public abstract class Notifier<T> {
 			@Override
 			public boolean test(Function<T, Boolean> listener) {
 				Boolean needsFurtherUpdates = listener.apply(v);
+				if (!needsFurtherUpdates)
+					onListenerRemoval(listener);
 				return !needsFurtherUpdates;
 			}
 		});
+	}
+
+	protected void onListenerRemoval(Function<T, Boolean> listener) {
 	}
 
 	public abstract T getValue();

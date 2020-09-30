@@ -279,7 +279,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 	protected void copyPreset(Preset p, IPreset newPreset) {
 		switch (dropPosition) {
 			case TOP:
-				getNonMaps().getServerProxy().insertPresetCopyAbove(newPreset, p);
+				getNonMaps().getServerProxy().insertPresetCopyAbove(newPreset.getUUID(), p.getUUID());
 				break;
 
 			case MIDDLE:
@@ -287,7 +287,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 				break;
 
 			case BOTTOM:
-				getNonMaps().getServerProxy().insertPresetCopyBelow(newPreset, p);
+				getNonMaps().getServerProxy().insertPresetCopyBelow(newPreset.getUUID(), p.getUUID());
 				break;
 
 			default:
@@ -302,7 +302,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 				break;
 
 			case MIDDLE:
-				getNonMaps().getServerProxy().movePresetTo(newPreset, p);
+				getNonMaps().getServerProxy().movePresetTo(newPreset.getUUID(), p.getUUID());
 				break;
 
 			case BOTTOM:

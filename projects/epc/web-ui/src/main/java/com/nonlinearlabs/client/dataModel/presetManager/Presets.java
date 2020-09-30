@@ -26,8 +26,8 @@ public class Presets {
         });
     }
 
-    public void postUpdate(String bankUuid) {
-        db.values().removeIf(v -> v.isDoomed() && v.bankUuid.getValue() == bankUuid);
+    public void postUpdate() {
+        db.values().removeIf(v -> v.isDoomed());
     }
 
     public void onBankRemoved(String bankUuid) {

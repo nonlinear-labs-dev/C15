@@ -47,12 +47,11 @@ class UpdateDocumentContributor : public IntrusiveListItem<UpdateDocumentContrib
 
   void propagateChangeDownstream();
   void orphan();
+  void adopt(UpdateDocumentContributor *parent);
 
  protected:
   void setUpdateID(tUpdateID id);
   void incUpdateID();
-
-  void adopt(UpdateDocumentContributor *parent);
 
  private:
   using super::getNext;

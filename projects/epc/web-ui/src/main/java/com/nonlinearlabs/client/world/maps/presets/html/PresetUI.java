@@ -4,9 +4,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DragEndEvent;
-import com.google.gwt.event.dom.client.DragEvent;
-import com.google.gwt.event.dom.client.DragLeaveEvent;
-import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -15,53 +12,6 @@ import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDropData;
 
 class PresetUI extends HTMLPanel {
-    class DropZone extends HTMLPanel {
-        DropZone() {
-            super("");
-            getElement().addClassName("drop-zone");
-
-            addDomHandler(e -> {
-                String type = PresetManagerUI.get().getDragDropData().type;
-                boolean isBank = type == "bank";
-                boolean isPreset = type == "preset";
-                boolean isPresets = type == "presets";
-
-                if (isBank || isPreset || isPresets)
-                    getElement().addClassName("drop-target");
-                else
-                    getElement().removeClassName("drop-target");
-
-                e.preventDefault();
-                e.stopPropagation();
-                e.getDataTransfer().setDropEffect(DropEffect.MOVE);
-
-                GWT.log("DragOverEvent Preset");
-
-            }, DragOverEvent.getType());
-
-            addDomHandler(e -> {
-                getElement().removeClassName("drop-target");
-                e.preventDefault();
-                e.stopPropagation();
-                GWT.log("DragEndEvent Preset");
-            }, DragEndEvent.getType());
-
-            addDomHandler(e -> {
-                getElement().removeClassName("drop-target");
-                e.preventDefault();
-                e.stopPropagation();
-                GWT.log("DragLeaveEvent Preset");
-            }, DragLeaveEvent.getType());
-
-            addDomHandler(e -> {
-                getElement().removeClassName("drop-target");
-                e.preventDefault();
-                e.stopPropagation();
-                GWT.log("DragEvent Preset");
-            }, DragEvent.getType());
-        }
-    }
-
     class Above extends DropZone {
 
         public Above(String uuid) {
@@ -72,7 +22,9 @@ class PresetUI extends HTMLPanel {
                 e.preventDefault();
                 e.stopPropagation();
                 DragDropData dnd = PresetManagerUI.get().getDragDropData();
-                BankUseCases.get().dropAbove(uuid, dnd.type, dnd.data);
+                boolean ctrl = e.getNativeEvent().getCtrlKey();
+                DropEffect effect = ctrl ? DropEffect.COPY : DropEffect.MOVE;
+                BankUseCases.get().dropAbove(uuid, dnd.type, dnd.data, effect);
             }, DropEvent.getType());
         }
     }
@@ -86,7 +38,9 @@ class PresetUI extends HTMLPanel {
                 e.preventDefault();
                 e.stopPropagation();
                 DragDropData dnd = PresetManagerUI.get().getDragDropData();
-                BankUseCases.get().dropOn(uuid, dnd.type, dnd.data);
+                boolean ctrl = e.getNativeEvent().getCtrlKey();
+                DropEffect effect = ctrl ? DropEffect.COPY : DropEffect.MOVE;
+                BankUseCases.get().dropOn(uuid, dnd.type, dnd.data, effect);
             }, DropEvent.getType());
         }
     }
@@ -100,7 +54,9 @@ class PresetUI extends HTMLPanel {
                 e.preventDefault();
                 e.stopPropagation();
                 DragDropData dnd = PresetManagerUI.get().getDragDropData();
-                BankUseCases.get().dropBelow(uuid, dnd.type, dnd.data);
+                boolean ctrl = e.getNativeEvent().getCtrlKey();
+                var effect = ctrl ? DropEffect.COPY : DropEffect.MOVE;
+                BankUseCases.get().dropBelow(uuid, dnd.type, dnd.data, effect);
             }, DropEvent.getType());
         }
     }
@@ -129,7 +85,7 @@ class PresetUI extends HTMLPanel {
             switchClassName("selected", presenter.selected);
             switchClassName("loaded", presenter.loaded);
 
-            return true;
+            return isAttached();
         });
 
         addDomHandler(c -> {
@@ -144,6 +100,10 @@ class PresetUI extends HTMLPanel {
             PresetManagerUI.get().setDragDropData("preset", getElement().getId());
         }, DragStartEvent.getType());
 
+        addDomHandler(e -> {
+            e.stopPropagation();
+            PresetManagerUI.get().resetDragDropData();
+        }, DragEndEvent.getType());
     }
 
     void switchClassName(String name, boolean set) {

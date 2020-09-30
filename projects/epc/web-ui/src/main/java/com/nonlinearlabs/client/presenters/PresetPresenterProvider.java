@@ -43,8 +43,9 @@ public class PresetPresenterProvider extends Notifier<PresetPresenter> {
                 return true;
 
             b.selectedPreset.onChange(selPreset -> {
-                if (bankUuid != p.bankUuid.getValue())
+                if (bankUuid != p.bankUuid.getValue()) {
                     return false;
+                }
 
                 boolean isSelected = selPreset == uuid;
                 if (thePresenter.selected != isSelected) {

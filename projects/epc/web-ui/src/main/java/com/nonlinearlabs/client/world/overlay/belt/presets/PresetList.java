@@ -9,6 +9,7 @@ import com.nonlinearlabs.client.LoadToPartMode;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
+import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
 import com.nonlinearlabs.client.world.IPreset;
@@ -147,14 +148,16 @@ public class PresetList extends OverlayLayout {
 	public Control drop(Position pos, DragProxy dragProxy) {
 		Bank b = getParent().getBankInCharge();
 
-		if (dragProxy.getOrigin() instanceof IPreset)
-			getNonMaps().getServerProxy().dropPresetOnBankIfNotInBank((IPreset) dragProxy.getOrigin(), b);
-		else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
+		if (dragProxy.getOrigin() instanceof IPreset) {
+			var preset = (IPreset) dragProxy.getOrigin();
+			BankUseCases.get().dropOnBank(b.getUUID(), "preset", preset.getUUID());
+		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
 			getNonMaps().getServerProxy().dropEditBufferOnBank(b);
 		else if (dragProxy.getOrigin() instanceof IBank) {
 			Bank draggedBank = (Bank) dragProxy.getOrigin();
 			if (!draggedBank.hasSlaves()) {
-				getNonMaps().getServerProxy().dropBankOnBank((IBank) dragProxy.getOrigin(), b);
+				var bank = (IBank) dragProxy.getOrigin();
+				getNonMaps().getServerProxy().dropBankOnBank(bank.getUUID(), b.getUUID());
 			}
 		}
 

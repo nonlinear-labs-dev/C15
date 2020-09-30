@@ -15,12 +15,15 @@ public class PresetManagerUpdater extends Updater {
 	}
 
 	public void doUpdate() {
-		if (didChange(root))
+		if (didChange(root)) {
+			Banks.get().preUpdate();
 			processChangedChildrenElements(root, "banks", t -> updateBanks(t));
+			Banks.get().postUpdate();
+			Presets.get().postUpdate();
+		}
 	}
 
 	private void updateBanks(PresetManagerModel pm, Node banks) {
-		Banks.get().preUpdate();
 		String midiSelectedBank = banks.getAttributes().getNamedItem("selected-midi-bank").getNodeValue();
 		BankMapDataModelEntity existingBanksEntity = pm.getBanks();
 		Map<String, Bank> existingBanks = new HashMap<String, Bank>(existingBanksEntity.getValue());
@@ -28,7 +31,6 @@ public class PresetManagerUpdater extends Updater {
 		processChildrenElements(banks, "preset-bank", t -> updateBank(existingBanks, t, midiSelectedBank));
 		existingBanks.entrySet().removeIf(e -> e.getValue().isDoomed());
 		existingBanksEntity.setValue(existingBanks);
-		Banks.get().postUpdate();
 	}
 
 	private void updateBank(ArrayList<String> existingBanks, Node bankNode, String midiUuid) {

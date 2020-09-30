@@ -3,6 +3,7 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
+import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.IBank;
@@ -144,12 +145,14 @@ class BankHeader extends OverlayLayout {
 				getNonMaps().getServerProxy().dropPresetsOnBank(pm.getMultiSelection().getCSV(), b);
 				pm.getMultiSelection().clear();
 			} else {
-				getNonMaps().getServerProxy().dropPresetOnBank((IPreset) dragProxy.getOrigin(), b);
+				var preset = (IPreset) dragProxy.getOrigin();
+				BankUseCases.get().dropOnBank(b.getUUID(), "preset", preset.getUUID());
 			}
 		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
 			getNonMaps().getServerProxy().dropEditBufferOnBank(b);
 		} else if (dragProxy.getOrigin() instanceof IBank) {
-			getNonMaps().getServerProxy().dropBankOnBank((IBank) dragProxy.getOrigin(), b);
+			var bank = (IBank) dragProxy.getOrigin();
+			getNonMaps().getServerProxy().dropBankOnBank(bank.getUUID(), b.getUUID());
 		}
 
 		setIsDropTarget(false);

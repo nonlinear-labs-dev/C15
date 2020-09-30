@@ -49,7 +49,7 @@ final class EmptyLabel extends Label {
 	public Control drop(Position pos, DragProxy dragProxy) {
 		if (dragProxy.getOrigin() instanceof IPreset) {
 			IPreset p = (IPreset) dragProxy.getOrigin();
-			getNonMaps().getServerProxy().appendPreset(p, this.bank);
+			getNonMaps().getServerProxy().appendPreset(p.getUUID(), this.bank.getUUID());
 			return this;
 		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
 			getNonMaps().getServerProxy().appendEditBuffer(this.bank);
