@@ -30,6 +30,7 @@ import com.nonlinearlabs.client.dataModel.setup.DeviceInfoUpdater;
 import com.nonlinearlabs.client.dataModel.setup.DeviceInformation;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupUpdater;
+import com.nonlinearlabs.client.useCases.BankUseCases.TapePosition;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
@@ -964,13 +965,12 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void dockBanks(Bank droppedOnto, Orientation droppedAt, Bank dragged, NonPosition pos) {
+	public void dockBanks(String droppedOnto, TapePosition droppedAt, String dragged, NonPosition pos) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "dock-banks");
 
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("droppedOntoBank", droppedOnto.getUUID()),
-				new StaticURI.KeyValue("draggedBank", dragged.getUUID()),
-				new StaticURI.KeyValue("droppedAt", droppedAt.name()), new StaticURI.KeyValue("x", pos.getX()),
-				new StaticURI.KeyValue("y", pos.getY()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("droppedOntoBank", droppedOnto),
+				new StaticURI.KeyValue("draggedBank", dragged), new StaticURI.KeyValue("droppedAt", droppedAt.name()),
+				new StaticURI.KeyValue("x", pos.getX()), new StaticURI.KeyValue("y", pos.getY()));
 
 		queueJob(uri, false);
 

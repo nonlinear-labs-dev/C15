@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import com.nonlinearlabs.client.dataModel.DataModelEntity;
 
-public class BankMapDataModelEntity extends DataModelEntity<ArrayList<String>> {
+public class BanksDataModelEntity extends DataModelEntity<ArrayList<String>> {
 
-	public BankMapDataModelEntity(ArrayList<String> def) {
-		super(def);
+	public BanksDataModelEntity() {
+		super(new ArrayList<String>());
 	}
 
 	@Override

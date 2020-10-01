@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.function.Function;
 
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
+
 public class PresetManagerPresenterProvider {
 	public static PresetManagerPresenterProvider theInstance = new PresetManagerPresenterProvider();
 
@@ -17,8 +19,13 @@ public class PresetManagerPresenterProvider {
 	public PresetManagerPresenterProvider() {
 		pm = new PresetManagerPresenter();
 		clients = new LinkedList<Function<PresetManagerPresenter, Boolean>>();
-		com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.get().getBanks()
-				.onChange(b -> onBanksChanged(b));
+		PresetManagerModel.get().banks.onChange(b -> onBanksChanged(b));
+
+		PresetManagerModel.get().positions.onChange(p -> {
+			pm.bankPositions = p;
+			notifyClients();
+			return true;
+		});
 	}
 
 	private Boolean onBanksChanged(ArrayList<String> dmBanks) {

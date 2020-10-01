@@ -11,7 +11,6 @@ class PresetListUI extends HTMLPanel {
     public PresetListUI() {
         super("");
         getElement().addClassName("presets");
-
     }
 
     public void syncPresets(ArrayList<String> presets) {

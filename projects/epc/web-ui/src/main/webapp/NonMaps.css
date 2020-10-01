@@ -1909,7 +1909,11 @@ button {
 
 .bank {
   position: absolute;
-  margin: 10mm;
+}
+
+.bank .content {
+  display: block;
+  position: relative;
   font-size: 4mm;
   line-height: 8mm;
   width: calc(60mm + 2px);
@@ -1923,7 +1927,7 @@ button {
   pointer-events: all;
 }
 
-.bank .header {
+.bank .content .header {
   display: block;
   border-top-right-radius: 2mm;
   border-top-left-radius: 2mm;
@@ -1936,7 +1940,7 @@ button {
   background-color: #69e;
 }
 
-.bank .preset {
+.bank .content .preset {
   display: inline-block;
   position: relative;
   color:white;
@@ -1947,14 +1951,14 @@ button {
   width: max-content;
 }
 
-.bank .preset .number {
+.bank .content .preset .number {
   text-align: left;
   display: inline-block;
   width: 10mm;
   vertical-align: middle;
 }
 
-.bank .preset .name {
+.bank .content .preset .name {
   text-align: left;
   display: inline-block;
   width: 50mm;
@@ -1964,56 +1968,88 @@ button {
   vertical-align: middle;
 }
 
-.bank .preset .gwt-Label {
+.bank .content .preset .gwt-Label {
   padding-top: 0;
   padding-bottom: 0;
 }
 
-.bank .preset.loaded {
+.bank .content .preset.loaded {
   border-color: red;
   z-index: 3;
 }
 
-.bank .preset.selected.loaded {
+.bank .content .preset.selected.loaded {
   border-color: red;
   z-index: 5;
 }
 
-.bank .preset.selected {
+.bank .content .preset.selected {
   border-color: green;
   z-index: 4;
 }
 
-.bank .header.drop-target {
+.bank .content .header.drop-target {
   background-color: red;
 }
 
-.bank .preset.drop-target {
+.bank .content .preset.drop-target {
   background-color: red;
 }
 
-.bank .preset > .drop-zone.drop-target {
+.bank .content .preset > .drop-zone.drop-target {
   background-color: red;
 }
 
-.bank .preset > .drop-zone.above {
+.bank .content .preset > .drop-zone.above {
   position: absolute;
   width: 100%;
   height: calc(25% + 1px);
   top:-1px;
 }
 
-.bank .preset > .drop-zone.middle {
+.bank .content .preset > .drop-zone.middle {
   position: absolute;
   width: 100%;
   height: 50%;
   top: 25%;
 }
 
-.bank .preset > .drop-zone.below {
+.bank .content .preset > .drop-zone.below {
   position: absolute;
   width: 100%;
   height: calc(25% + 1px);
   top: 75%;
+}
+
+.bank .tape {
+  display:  block;
+  position: relative;
+}
+
+.preset-manager.maybe-drop-target .bank .tape  {
+  box-shadow: 0mm 0mm 5mm white;
+}
+
+.bank .horizontal > .tape {
+  display:table-cell;
+  min-width: 10mm;  
+}
+
+.bank .vertical > .tape {
+  width: 100%;
+  height: 10mm;
+}
+
+.bank  .horizontal {
+  display: table;
+  position: relative;
+}
+
+.bank  .content .presets {
+  position: relative;
+}
+
+.bank.nested.horizontally {
+  margin-top: -10mm;
 }
 

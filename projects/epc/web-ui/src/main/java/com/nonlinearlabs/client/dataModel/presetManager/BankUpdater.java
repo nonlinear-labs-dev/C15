@@ -28,9 +28,13 @@ public class BankUpdater extends Updater {
 		}
 
 		bank.selectedPreset.setValue(getAttributeValue(root, "selected-preset"));
+
+		bank.orderNumber.setValue(Integer.parseInt(getAttributeValue(root, "order-number")));
+
 		bank.x.setValue(Double.parseDouble(getAttributeValue(root, "x")));
 		bank.y.setValue(Double.parseDouble(getAttributeValue(root, "y")));
-		bank.orderNumber.setValue(Integer.parseInt(getAttributeValue(root, "order-number")));
+		bank.attachedToBank.setValue(getChildText(root, "attached-to"));
+		bank.attachDirection.setValue(getChildText(root, "attached-direction"));
 
 		Presets.get().preUpdate(bank.uuid.getValue());
 		ArrayList<String> existingPresets = new ArrayList<String>();

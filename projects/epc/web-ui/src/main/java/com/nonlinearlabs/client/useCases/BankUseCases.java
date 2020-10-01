@@ -6,7 +6,11 @@ import com.nonlinearlabs.client.ServerProxy;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank;
 import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerUpdater;
 import com.nonlinearlabs.client.dataModel.presetManager.Presets;
+import com.nonlinearlabs.client.world.maps.NonPosition;
+import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
 
 public class BankUseCases {
     private static BankUseCases theInstance = new BankUseCases();
@@ -27,27 +31,29 @@ public class BankUseCases {
         Bank b = Banks.get().find(uuid);
         b.x.setValue(x);
         b.y.setValue(y);
+        PresetManagerUpdater u = new PresetManagerUpdater(null, PresetManagerModel.get());
+        u.updateBankPositions();
         server.setBankPosition(uuid, x, y);
     }
 
-    public void dropBelow(String presetUUID, String droppedType, String droppedData, DropEffect effect) {
-        if (droppedType == "preset")
+    public void dropBelow(String presetUUID, DragDataType type, String droppedData, DropEffect effect) {
+        if (type == DragDataType.Preset)
             if (effect == DropEffect.MOVE)
                 server.movePresetBelow(droppedData, presetUUID);
             else if (effect == DropEffect.COPY)
                 server.insertPresetCopyBelow(droppedData, presetUUID);
     }
 
-    public void dropOn(String presetUUID, String droppedType, String droppedData, DropEffect effect) {
-        if (droppedType == "preset")
+    public void dropOn(String presetUUID, DragDataType type, String droppedData, DropEffect effect) {
+        if (type == DragDataType.Preset)
             if (effect == DropEffect.MOVE)
                 server.movePresetTo(droppedData, presetUUID);
             else if (effect == DropEffect.COPY)
                 server.overwritePresetWith(droppedData, presetUUID);
     }
 
-    public void dropAbove(String presetUUID, String droppedType, String droppedData, DropEffect effect) {
-        if (droppedType == "preset")
+    public void dropAbove(String presetUUID, DragDataType type, String droppedData, DropEffect effect) {
+        if (type == DragDataType.Preset)
             if (effect == DropEffect.MOVE)
                 server.movePresetAbove(droppedData, presetUUID);
             else if (effect == DropEffect.COPY)
@@ -55,8 +61,8 @@ public class BankUseCases {
 
     }
 
-    public void dropOnBank(String bankUuid, String type, String data) {
-        if (type == "preset") {
+    public void dropOnBank(String bankUuid, DragDataType type, String data) {
+        if (type == DragDataType.Preset) {
             var preset = Presets.get().find(data);
             if (preset.bankUuid.getValue() == bankUuid) {
                 var bank = Banks.get().find(bankUuid);
@@ -66,12 +72,19 @@ public class BankUseCases {
             } else {
                 server.appendPreset(data, bankUuid);
             }
-        } else if (type == "bank") {
+        } else if (type == DragDataType.Bank) {
             if (bankUuid != data) {
                 server.dropBankOnBank(data, bankUuid);
             }
         }
+    }
 
+    public enum TapePosition {
+        West, East, North, South
+    }
+
+    public void dock(String client, String master, TapePosition tapePosition, NonPosition pos) {
+        server.dockBanks(master, tapePosition, client, pos);
     }
 
 }

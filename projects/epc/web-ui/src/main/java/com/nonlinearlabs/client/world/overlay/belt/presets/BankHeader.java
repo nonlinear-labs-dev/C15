@@ -13,6 +13,7 @@ import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
+import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -146,7 +147,7 @@ class BankHeader extends OverlayLayout {
 				pm.getMultiSelection().clear();
 			} else {
 				var preset = (IPreset) dragProxy.getOrigin();
-				BankUseCases.get().dropOnBank(b.getUUID(), "preset", preset.getUUID());
+				BankUseCases.get().dropOnBank(b.getUUID(), DragDataType.Preset, preset.getUUID());
 			}
 		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
 			getNonMaps().getServerProxy().dropEditBufferOnBank(b);

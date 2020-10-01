@@ -6,8 +6,12 @@ import java.util.HashMap;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.presetManager.Bank.AbsolutePosition;
+import com.nonlinearlabs.client.dataModel.presetManager.Bank.Position;
+import com.nonlinearlabs.client.dataModel.presetManager.Bank.RelativePosition;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.maps.NonRect;
+import com.nonlinearlabs.client.world.maps.presets.html.BankUI.Nesting;
 
 class PresetManagerPane extends HTMLPanel {
 
@@ -16,12 +20,38 @@ class PresetManagerPane extends HTMLPanel {
 
         PresetManagerPresenterProvider.get().register(p -> {
             sync(p.banks);
+            setPositions(p.bankPositions);
             return isAttached();
         });
     }
 
-    private void sync(ArrayList<String> banks) {
-        HashMap<String, BankUI> widgets = new HashMap<String, BankUI>();
+    private void setPositions(ArrayList<Position> bankPositions) {
+        var widgets = getBankWidgets();
+
+        for (var pos : bankPositions) {
+            if (pos instanceof RelativePosition) {
+                var a = (RelativePosition) pos;
+                var bank = widgets.get(a.bank);
+                var master = widgets.get(a.attachedTo);
+
+                if (bank != null && master != null) {
+                    var tape = master.getTape(a.direction);
+                    var nesting = a.direction == "left" ? Nesting.Horizontally : Nesting.Vertically;
+                    bank.attachTo(tape, 0, 0, nesting);
+                    continue;
+                }
+            }
+
+            var a = (AbsolutePosition) pos;
+            var bank = widgets.get(a.bank);
+            if (bank != null) {
+                bank.attachTo(this, a.x, a.y, Nesting.None);
+            }
+        }
+    }
+
+    private HashMap<String, BankUI> getBankWidgets() {
+        var widgets = new HashMap<String, BankUI>();
 
         for (Widget w : this.getChildren()) {
             if (w instanceof BankUI) {
@@ -29,6 +59,12 @@ class PresetManagerPane extends HTMLPanel {
                 widgets.put(b.getElement().getAttribute("id"), b);
             }
         }
+
+        return widgets;
+    }
+
+    private void sync(ArrayList<String> banks) {
+        var widgets = getBankWidgets();
 
         for (String uuid : banks) {
             if (!widgets.containsKey(uuid))

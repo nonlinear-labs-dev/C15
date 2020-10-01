@@ -42,7 +42,7 @@ create_update_tar() {
 
 create_update() {
     echo "Creating update..."
-    
+
     mkdir -p /update-scratch/update
 
     if copy_running_os && calc_checksum && create_update_tar; then

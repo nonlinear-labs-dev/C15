@@ -325,30 +325,6 @@ public class Tape extends MapsControl {
 		return super.drag(pos, dragProxy);
 	}
 
-	@Override
-	public Control drop(Position pos, DragProxy dragProxy) {
-		if (isActiveInsertTape())
-			return insertTapeDrop(pos, dragProxy);
-
-		if (dragProxy.getOrigin() instanceof Bank) {
-			Bank other = (Bank) dragProxy.getOrigin();
-			Bank clusterMaster = other.getClusterMaster();
-			DragProxy dragProxyForClusterMaster = NonMaps.get().getNonLinearWorld().getViewport().getOverlay()
-					.getDragProxyFor(clusterMaster);
-			Position dropPosition = dragProxyForClusterMaster != null
-					? dragProxyForClusterMaster.getPixRect().getPosition()
-					: pos;
-			NonPosition nonPos = NonMaps.get().getNonLinearWorld().toNonPosition(dropPosition);
-			nonPos.snapTo(PresetManager.getSnapGridResolution());
-			NonMaps.get().getServerProxy().dockBanks(getParent(), orientation, other, nonPos);
-			other.getClusterMaster().moveTo(nonPos);
-
-			requestLayout();
-			return this;
-		}
-		return super.drop(pos, dragProxy);
-	}
-
 	private void setShouldInsert(Bank b) {
 		prospectBank = b;
 		invalidate(INVALIDATION_FLAG_UI_CHANGED);

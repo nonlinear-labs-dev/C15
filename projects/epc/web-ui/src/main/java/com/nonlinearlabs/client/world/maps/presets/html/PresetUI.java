@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.useCases.BankUseCases;
+import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
 import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDropData;
 
 class PresetUI extends HTMLPanel {
@@ -97,7 +98,7 @@ class PresetUI extends HTMLPanel {
             e.getDataTransfer().setData("preset", getElement().getId());
             e.getDataTransfer().setDragImage(getElement(), 10, 10);
             e.stopPropagation();
-            PresetManagerUI.get().setDragDropData("preset", getElement().getId());
+            PresetManagerUI.get().setDragDropData(DragDataType.Preset, getElement().getId());
         }, DragStartEvent.getType());
 
         addDomHandler(e -> {

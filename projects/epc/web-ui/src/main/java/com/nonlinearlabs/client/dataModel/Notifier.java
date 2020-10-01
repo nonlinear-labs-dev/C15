@@ -9,7 +9,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 public abstract class Notifier<T> {
 
-	static boolean debug = true;
+	static boolean debug = false;
 
 	private LinkedList<Function<T, Boolean>> consumers = new LinkedList<Function<T, Boolean>>();
 	private boolean scheduled = false;

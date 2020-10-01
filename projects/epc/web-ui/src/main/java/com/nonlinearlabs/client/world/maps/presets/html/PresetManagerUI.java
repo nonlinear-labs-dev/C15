@@ -53,19 +53,23 @@ Prio 3
 public class PresetManagerUI extends DropZone {
     static private PresetManagerUI thePresetManagerUI;
 
+    public enum DragDataType {
+        None, Preset, Bank, Presets
+    }
+
     private PresetManagerPane thePane;
 
     class DragDropData {
         public DragDropData() {
         }
 
-        public DragDropData(String type, String data) {
+        public DragDropData(DragDataType type, String data) {
             this.type = type;
             this.data = data;
         }
 
-        public String type = "";
         public String data = "";
+        public DragDataType type = DragDataType.None;
     }
 
     DragDropData dragDropData = new DragDropData();
@@ -85,7 +89,7 @@ public class PresetManagerUI extends DropZone {
             e.preventDefault();
             e.stopPropagation();
 
-            boolean isBank = getDragDropData().type == "bank";
+            boolean isBank = getDragDropData().type == DragDataType.Bank;
 
             if (isBank) {
                 NonRect viewPortRect = NonMaps.get().getNonLinearWorld().getViewport().getNonPosition();
@@ -94,7 +98,6 @@ public class PresetManagerUI extends DropZone {
                 double y = z * viewPortRect.getTop() / NonMaps.devicePixelRatio;
                 double bx = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientX() + x) / z;
                 double by = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientY() + y) / z;
-                // TODO: margin is buggy
                 double margin = Millimeter.toPixels(10) * z / NonMaps.devicePixelRatio;
                 BankUseCases.get().move(getDragDropData().data, bx - margin, by - margin);
             }
@@ -105,7 +108,7 @@ public class PresetManagerUI extends DropZone {
         return thePresetManagerUI;
     }
 
-    public void setDragDropData(String type, String data) {
+    public void setDragDropData(DragDataType type, String data) {
         dragDropData = new DragDropData(type, data);
         getElement().addClassName("maybe-drop-target");
     }

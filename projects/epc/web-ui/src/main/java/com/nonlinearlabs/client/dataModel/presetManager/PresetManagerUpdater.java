@@ -23,14 +23,21 @@ public class PresetManagerUpdater extends Updater {
 		}
 	}
 
-	private void updateBanks(PresetManagerModel pm, Node banks) {
-		String midiSelectedBank = banks.getAttributes().getNamedItem("selected-midi-bank").getNodeValue();
-		BankMapDataModelEntity existingBanksEntity = pm.getBanks();
-		Map<String, Bank> existingBanks = new HashMap<String, Bank>(existingBanksEntity.getValue());
-		existingBanks.forEach((uuid, bank) -> bank.setDoomed());
-		processChildrenElements(banks, "preset-bank", t -> updateBank(existingBanks, t, midiSelectedBank));
-		existingBanks.entrySet().removeIf(e -> e.getValue().isDoomed());
-		existingBanksEntity.setValue(existingBanks);
+	public void updateBankPositions() {
+		target.positions.setValue(Banks.get().updatePositions());
+	}
+
+	private void updateBanks(Node banks) {
+		if (didChange(banks)) {
+			String midiSelectedBank = banks.getAttributes().getNamedItem("selected-midi-bank").getNodeValue();
+			GWT.log("updating Banks with midi uuid: " + midiSelectedBank);
+			BankMapDataModelEntity existingBanksEntity = pm.getBanks();
+			Map<String, Bank> existingBanks = new HashMap<String, Bank>(existingBanksEntity.getValue());
+			existingBanks.forEach((uuid, bank) -> bank.setDoomed());
+			processChildrenElements(banks, "preset-bank", t -> updateBank(existingBanks, t, midiSelectedBank));
+			existingBanks.entrySet().removeIf(e -> e.getValue().isDoomed());
+			existingBanksEntity.setValue(existingBanks);
+		}
 	}
 
 	private void updateBank(ArrayList<String> existingBanks, Node bankNode, String midiUuid) {

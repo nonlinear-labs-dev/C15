@@ -14,18 +14,6 @@ public class BankPresenterProvider extends Notifier<BankPresenter> {
         b.name.onChange(v -> updateName(b));
         b.orderNumber.onChange(v -> updateName(b));
 
-        b.x.onChange(x -> {
-            thePresenter.x = x;
-            notifyChanges();
-            return true;
-        });
-
-        b.y.onChange(y -> {
-            thePresenter.y = y;
-            notifyChanges();
-            return true;
-        });
-
         b.presets.onChange(presets -> {
             thePresenter.presets = presets;
             notifyChanges();

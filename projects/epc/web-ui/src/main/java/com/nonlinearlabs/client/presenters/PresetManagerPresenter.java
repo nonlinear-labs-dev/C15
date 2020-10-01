@@ -6,6 +6,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
+import com.nonlinearlabs.client.dataModel.presetManager.Bank.Position;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
 public class PresetManagerPresenter {
@@ -47,6 +48,8 @@ public class PresetManagerPresenter {
 	public boolean loadModeButtonState = false;
 	public boolean directLoadActive = false;
 	public boolean loadToPartActive = false;
+
+	public ArrayList<Position> bankPositions = new ArrayList<Position>();
 
 	public PresetManagerPresenter() {
 		banks = new ArrayList<Bank>();
