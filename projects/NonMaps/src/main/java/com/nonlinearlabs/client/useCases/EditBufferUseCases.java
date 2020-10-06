@@ -16,6 +16,8 @@ import com.nonlinearlabs.client.dataModel.editBuffer.PhysicalControlParameterMod
 import com.nonlinearlabs.client.dataModel.editBuffer.RibbonParameterModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.tools.NLMath;
+import com.nonlinearlabs.client.world.maps.parameters.ModulationRoutingParameter;
+
 
 public class EditBufferUseCases {
 	private static EditBufferUseCases theInstance = new EditBufferUseCases();
@@ -222,10 +224,12 @@ public class EditBufferUseCases {
 		ParameterId id = toParamId(paramNumber);
 		BasicParameterModel p = EditBufferModel.get().getParameter(id);
 
+		boolean isOracle = !(p instanceof ModulationRouterParameterModel);
+
 		if (p.value.getQuantizedAndClipped(true) != 0.0)
-			setParameterValue(id, 0, true);
+			setParameterValue(id, 0, isOracle);
 		else
-			setParameterValue(id, 1, true);
+			setParameterValue(id, 1, isOracle);
 	}
 
 	public void decModulationAmount(ParameterId id, boolean fine) {
