@@ -5,15 +5,17 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
 
 class PresetListUI extends HTMLPanel {
 
-    public PresetListUI() {
+    public PresetListUI(String bankUuid) {
         super("");
         getElement().addClassName("presets");
+        BankPresenterProviders.get().register(bankUuid, p -> syncPresets(p.presets));
     }
 
-    public void syncPresets(ArrayList<String> presets) {
+    private boolean syncPresets(ArrayList<String> presets) {
         HashMap<String, PresetUI> widgets = new HashMap<String, PresetUI>();
 
         for (Widget w : getChildren()) {
@@ -33,6 +35,6 @@ class PresetListUI extends HTMLPanel {
 
             widgets.remove(uuid);
         }
-
+        return isAttached();
     }
 }

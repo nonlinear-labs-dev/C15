@@ -5,20 +5,13 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.GWTDialog;
 
 public class PresetDeleter extends GWTDialog {
 
 	public static PresetDeleter instance = null;
 	private Button m_no, m_yes, m_cancel;
-	private Preset thePreset;
 	private String presetCSV = "";
-
-	protected PresetDeleter(Preset p) {
-		this();
-		thePreset = p;
-	}
 
 	protected PresetDeleter(String s) {
 		this();
@@ -48,25 +41,15 @@ public class PresetDeleter extends GWTDialog {
 		instance.show();
 	}
 
-	public static void open(Preset p) {
-		instance = new PresetDeleter(p);
-		instance.show();
-	}
-
 	private void delete(boolean withBank) {
 		if (!presetCSV.isEmpty()) {
 			NonMaps.get().getServerProxy().deletePresets(presetCSV, withBank);
-		} else {
-			NonMaps.get().getServerProxy().deletePreset(thePreset, withBank);
-		}
+		} 
 		commit();
 	}
 
-	public boolean isPresetInSelection(Preset p) {
-		if (thePreset == p)
-			return true;
-
-		return presetCSV.contains(p.getUUID());
+	public boolean isPresetInSelection(String p) {
+		return presetCSV.contains(p);
 	}
 
 	private void cancel() {
@@ -89,7 +72,6 @@ public class PresetDeleter extends GWTDialog {
 
 	@Override
 	protected void commit() {
-		thePreset = null;
 		presetCSV = "";
 		NonMaps.get().getNonLinearWorld().invalidate(Control.INVALIDATION_FLAG_UI_CHANGED);
 		hide();

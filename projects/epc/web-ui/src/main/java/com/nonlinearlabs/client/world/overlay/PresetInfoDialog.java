@@ -3,6 +3,7 @@ package com.nonlinearlabs.client.world.overlay;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.InfoDialog.PresetInfoWidget;
 
@@ -45,7 +46,7 @@ public class PresetInfoDialog extends GWTDialog {
 		content.add(presetInfoPage.panel);
 		setWidget(pane);
 
-		presetInfoPage.updateInfo(getCurrentPreset(), false);
+		presetInfoPage.updateInfo(getCurrentPreset().getUUID(), false);
 	}
 
 	@Override
@@ -69,13 +70,13 @@ public class PresetInfoDialog extends GWTDialog {
 		return theDialog != null;
 	}
 
-	public static void update(Preset preset) {
+	public static void update(String preset) {
 		if (theDialog != null) {
 			theDialog.updateInfo(preset);
 		}
 	}
 
-	private void updateInfo(Preset preset) {
+	private void updateInfo(String preset) {
 		presetInfoPage.updateInfo(preset, true);
 		centerIfOutOfView();
 	}
@@ -100,6 +101,6 @@ public class PresetInfoDialog extends GWTDialog {
 	}
 
 	public static void update() {
-		update(NonMaps.theMaps.getNonLinearWorld().getPresetManager().getSelectedPreset());
+		update(PresetManagerPresenterProvider.get().getPresenter().selectedPresetOfSelectedBank);
 	}
 }

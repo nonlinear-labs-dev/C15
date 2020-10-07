@@ -1937,6 +1937,19 @@ button {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  background-color:gray;
+}
+
+.bank .content .header.selected {
+  display: block;
+  border-top-right-radius: 2mm;
+  border-top-left-radius: 2mm;
+  width: calc(60mm + 2px);
+  color: black;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   background-color: #69e;
 }
 
@@ -2040,16 +2053,23 @@ button {
   height: 10mm;
 }
 
-.bank  .horizontal {
+.bank .horizontal {
   display: table;
   position: relative;
 }
 
-.bank  .content .presets {
+.bank .content .presets {
   position: relative;
 }
 
 .bank.nested.horizontally {
   margin-top: -10mm;
+}
+
+#hidden {
+  position: absolute;
+  left: -10000cm;
+  top: -10000cm;
+  z-index: 100;
 }
 

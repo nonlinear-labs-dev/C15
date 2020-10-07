@@ -2,27 +2,33 @@ package com.nonlinearlabs.client.world.maps.presets.html;
 
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.Label;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
 import com.nonlinearlabs.client.useCases.BankUseCases;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDropData;
 
 class BankHeaderUI extends DropZone {
-    Label text;
 
-    BankHeaderUI(String bankUuid) {
+    BankHeaderUI(String uuid) {
         getElement().addClassName("header");
-        add(text = new Label());
+        var text = new Label();
+        add(text);
 
         addDomHandler(e -> {
             getElement().removeClassName("drop-target");
             e.preventDefault();
             e.stopPropagation();
-            DragDropData dnd = PresetManagerUI.get().getDragDropData();
-            BankUseCases.get().dropOnBank(bankUuid, dnd.type, dnd.data);
-            e.getDataTransfer().clearData();
+            BankUseCases.get().dropOnBank(uuid);
         }, DropEvent.getType());
+
+        BankPresenterProviders.get().register(uuid, presenter -> {
+            text.setText(presenter.name);
+
+            if (presenter.isSelected)
+                getElement().addClassName("selected");
+            else
+                getElement().removeClassName("selected");
+
+            return isAttached();
+        });
     }
 
-    public void setText(String text) {
-        this.text.setText(text);
-    }
 }

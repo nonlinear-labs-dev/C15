@@ -1,12 +1,15 @@
 package com.nonlinearlabs.client.world.maps.presets.html;
 
+import java.util.HashMap;
+
 import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.user.client.ui.Widget;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.maps.NonPosition;
 import com.nonlinearlabs.client.world.maps.NonRect;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDropData;
 
 class Tape extends DropZone {
 
@@ -24,8 +27,9 @@ class Tape extends DropZone {
         addDomHandler(e -> {
             getElement().removeClassName("drop-target");
 
-            DragDropData dnd = PresetManagerUI.get().getDragDropData();
-            if (dnd.type == DragDataType.Bank) {
+            var dndType = PresetManagerPresenterProvider.get().getPresenter().dndType;
+
+            if (dndType == DragDataType.Bank) {
                 e.preventDefault();
                 e.stopPropagation();
                 NonRect viewPortRect = NonMaps.get().getNonLinearWorld().getViewport().getNonPosition();
@@ -34,7 +38,7 @@ class Tape extends DropZone {
                 double y = z * viewPortRect.getTop() / NonMaps.devicePixelRatio;
                 double bx = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientX() + x) / z;
                 double by = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientY() + y) / z;
-                BankUseCases.get().dock(dnd.data, uuid, position, new NonPosition(bx, by));
+                BankUseCases.get().dropDock(uuid, position, new NonPosition(bx, by));
             }
         }, DropEvent.getType());
     }
@@ -53,5 +57,15 @@ class Tape extends DropZone {
 
     public void removeDropTargetClass() {
         getElement().removeClassName("maybe-drop-target");
+    }
+
+    public void addNestedBanks(HashMap<String, BankUI> widgets) {
+        for (Widget w : this.getChildren()) {
+            if (w instanceof BankUI) {
+                BankUI b = (BankUI) w;
+                widgets.put(b.getElement().getAttribute("id"), b);
+                b.addNestedBanks(widgets);
+            }
+        }
     }
 }

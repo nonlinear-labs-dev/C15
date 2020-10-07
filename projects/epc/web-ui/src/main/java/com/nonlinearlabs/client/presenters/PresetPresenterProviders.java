@@ -17,4 +17,11 @@ public class PresetPresenterProviders {
 
         consumers.get(uuid).onChange(cb);
     }
+
+    public PresetPresenter getPresenter(String uuid) {
+        if (!consumers.containsKey(uuid))
+            consumers.put(uuid, new PresetPresenterProvider(uuid));
+
+        return consumers.get(uuid).getValue();
+    }
 }

@@ -17,4 +17,11 @@ public class BankPresenterProviders {
 
         consumers.get(uuid).onChange(cb);
     }
+
+    public BankPresenter getPresenter(String uuid) {
+        if (!consumers.containsKey(uuid))
+            consumers.put(uuid, new BankPresenterProvider(uuid));
+
+        return consumers.get(uuid).getValue();
+    }
 }

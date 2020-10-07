@@ -1,16 +1,22 @@
 package com.nonlinearlabs.client.world.maps.presets.html;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DragEndEvent;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.useCases.BankUseCases;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDropData;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
+import com.nonlinearlabs.client.useCases.PresetUseCases;
+import com.nonlinearlabs.client.world.Position;
+import com.nonlinearlabs.client.world.overlay.Overlay;
+import com.nonlinearlabs.client.world.overlay.belt.presets.PresetContextMenu;
 
 class PresetUI extends HTMLPanel {
     class Above extends DropZone {
@@ -22,10 +28,9 @@ class PresetUI extends HTMLPanel {
                 getElement().removeClassName("drop-target");
                 e.preventDefault();
                 e.stopPropagation();
-                DragDropData dnd = PresetManagerUI.get().getDragDropData();
                 boolean ctrl = e.getNativeEvent().getCtrlKey();
                 DropEffect effect = ctrl ? DropEffect.COPY : DropEffect.MOVE;
-                BankUseCases.get().dropAbove(uuid, dnd.type, dnd.data, effect);
+                BankUseCases.get().dropAbove(uuid, effect);
             }, DropEvent.getType());
         }
     }
@@ -38,10 +43,9 @@ class PresetUI extends HTMLPanel {
                 getElement().removeClassName("drop-target");
                 e.preventDefault();
                 e.stopPropagation();
-                DragDropData dnd = PresetManagerUI.get().getDragDropData();
                 boolean ctrl = e.getNativeEvent().getCtrlKey();
                 DropEffect effect = ctrl ? DropEffect.COPY : DropEffect.MOVE;
-                BankUseCases.get().dropOn(uuid, dnd.type, dnd.data, effect);
+                BankUseCases.get().dropOn(uuid, effect);
             }, DropEvent.getType());
         }
     }
@@ -54,10 +58,9 @@ class PresetUI extends HTMLPanel {
                 getElement().removeClassName("drop-target");
                 e.preventDefault();
                 e.stopPropagation();
-                DragDropData dnd = PresetManagerUI.get().getDragDropData();
                 boolean ctrl = e.getNativeEvent().getCtrlKey();
                 var effect = ctrl ? DropEffect.COPY : DropEffect.MOVE;
-                BankUseCases.get().dropBelow(uuid, dnd.type, dnd.data, effect);
+                BankUseCases.get().dropBelow(uuid, effect);
             }, DropEvent.getType());
         }
     }
@@ -80,7 +83,7 @@ class PresetUI extends HTMLPanel {
         add(new Below(uuid));
 
         PresetPresenterProviders.get().register(uuid, presenter -> {
-            number.setText(presenter.number);
+            number.setText(presenter.paddedNumber);
             name.setText(presenter.name);
 
             switchClassName("selected", presenter.selected);
@@ -90,21 +93,46 @@ class PresetUI extends HTMLPanel {
         });
 
         addDomHandler(c -> {
-            BankUseCases.get().selectPreset(uuid);
+            if (c.isControlKeyDown())
+                PresetManagerUseCases.get().toggleMultipleSelection(uuid);
+            else
+                BankUseCases.get().selectPreset(uuid);
         }, ClickEvent.getType());
 
         addDomHandler(e -> {
-            GWT.log("DragStartEvent Preset");
-            e.getDataTransfer().setData("preset", getElement().getId());
-            e.getDataTransfer().setDragImage(getElement(), 10, 10);
-            e.stopPropagation();
-            PresetManagerUI.get().setDragDropData(DragDataType.Preset, getElement().getId());
+            var dnd = PresetUseCases.get().startDrag(uuid);
+            if (dnd != null) {
+                e.getDataTransfer().setData(dnd.type.toString(), dnd.data);
+                e.getDataTransfer().setDragImage(getElement(), 10, 10);
+                e.stopPropagation();
+            }
         }, DragStartEvent.getType());
 
         addDomHandler(e -> {
             e.stopPropagation();
-            PresetManagerUI.get().resetDragDropData();
+            PresetManagerUseCases.get().resetDragDropData();
         }, DragEndEvent.getType());
+
+        addDomHandler(e -> {
+            e.stopPropagation();
+            e.preventDefault();
+
+            // TODO!
+            // if (isInStoreSelectMode())
+            // return null;
+
+            boolean showContextMenus = SetupModel.get().localSettings.contextMenus.getValue() == BooleanValues.on;
+
+            if (showContextMenus) {
+                Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
+
+                // boolean isInMultiSel = isSelectedInMultiplePresetSelectionMode();
+
+                // if (isInMultiSel || (!isInMultiSel && !isInMultiplePresetSelectionMode()))
+                o.setContextMenu(new Position(e.getNativeEvent()), new PresetContextMenu(o, uuid));
+            }
+
+        }, ContextMenuEvent.getType());
     }
 
     void switchClassName(String name, boolean set) {

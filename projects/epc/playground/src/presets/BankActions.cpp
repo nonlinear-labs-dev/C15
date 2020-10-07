@@ -239,10 +239,12 @@ BankActions::BankActions(PresetManager &presetManager)
     auto uuid = request->get("uuid");
     auto x = request->get("x");
     auto y = request->get("y");
+    auto undock = request->get("undock");
+
     if(auto bank = m_presetManager.findBank(uuid))
     {
       BankUseCases useCase(bank);
-      useCase.moveBank(x, y);
+      useCase.moveBank(x, y, undock == "1");
     }
   });
 

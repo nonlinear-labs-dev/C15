@@ -23,9 +23,9 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.maps.parameters.PhysicalControlParameter.ReturnMode;
 import com.nonlinearlabs.client.world.maps.parameters.PlayControls.MacroControls.Macros.MacroControls;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
 public class CompareDialog extends GWTDialog {
 
@@ -39,30 +39,30 @@ public class CompareDialog extends GWTDialog {
 	private String indent = "&#9492 ";
 	private Button refresh;
 
-	private Preset presetA;
-	private Preset presetB;
+	private String presetA;
+	private String presetB;
 	private ListBox selectVGA;
 	private ListBox selectVGB;
 
-	public static void open(Preset p1) {
+	public static void open(String p1) {
 		new CompareDialog(p1);
 		NonMaps.get().getNonLinearWorld().getPresetManager().closeMultiSelection();
 	}
 
-	public static void open(Preset p1, Preset p2) {
+	public static void open(String p1, String p2) {
 		new CompareDialog(p1, p2);
 		NonMaps.get().getNonLinearWorld().getPresetManager().closeMultiSelection();
 	}
 
-	private CompareDialog(Preset p) {
+	private CompareDialog(String p) {
 		init(p, null);
 	}
 
-	private CompareDialog(Preset p1, Preset p2) {
+	private CompareDialog(String p1, String p2) {
 		init(p1, p2);
 	}
 
-	private void init(Preset p1, Preset p2) {
+	private void init(String p1, String p2) {
 		NonMaps.get().getNonLinearWorld().getViewport().getOverlay().addCompareDialog(this);
 
 		RootPanel.get().add(this);
@@ -88,11 +88,11 @@ public class CompareDialog extends GWTDialog {
 		});
 	}
 
-	public void downloadPresets(Preset p1, Preset p2) {
+	public void downloadPresets(String p1, String p2) {
 		presetA = p1;
 		presetB = p2;
 
-		NonMaps.theMaps.getServerProxy().downloadPreset(p1 != null ? p1.getUUID() : "", new DownloadHandler() {
+		NonMaps.theMaps.getServerProxy().downloadPreset(p1 != null ? p1 : "", new DownloadHandler() {
 			@Override
 			public void onFileDownloaded(String text) {
 				presetAXml = XMLParser.parse(text);
@@ -104,7 +104,7 @@ public class CompareDialog extends GWTDialog {
 			}
 		});
 
-		NonMaps.theMaps.getServerProxy().downloadPreset(p2 != null ? p2.getUUID() : "", new DownloadHandler() {
+		NonMaps.theMaps.getServerProxy().downloadPreset(p2 != null ? p2 : "", new DownloadHandler() {
 			@Override
 			public void onFileDownloaded(String text) {
 				presetBXml = XMLParser.parse(text);
@@ -117,7 +117,7 @@ public class CompareDialog extends GWTDialog {
 		});
 	}
 
-	private void load(Preset p1, VoiceGroup vgOfPreset1, Preset p2, VoiceGroup vgOfPreset2) {
+	private void load(String p1, VoiceGroup vgOfPreset1, String p2, VoiceGroup vgOfPreset2) {
 		NonMaps.theMaps.getServerProxy().getDiff(p1, vgOfPreset1, p2, vgOfPreset2, new DownloadHandler() {
 			@Override
 			public void onFileDownloaded(String text) {
@@ -326,8 +326,11 @@ public class CompareDialog extends GWTDialog {
 
 			SoundType type = EditBufferModel.get().soundType.getValue();
 
-			boolean aDisabled = hideParameter(idNum, presetA != null ? presetA.getType() : type);
-			boolean bDisabled = hideParameter(idNum, presetB != null ? presetB.getType() : type);
+			var aPresenter = PresetPresenterProviders.get().getPresenter(presetA);
+			var bPresenter = PresetPresenterProviders.get().getPresenter(presetB);
+
+			boolean aDisabled = hideParameter(idNum, presetA != null ? aPresenter.type : type);
+			boolean bDisabled = hideParameter(idNum, presetB != null ? bPresenter.type : type);
 			if (aDisabled || bDisabled) {
 				// Ignore Parameter and continue;
 				return row;
@@ -474,12 +477,15 @@ public class CompareDialog extends GWTDialog {
 
 		SoundType ebType = EditBufferPresenterProvider.getPresenter().soundType;
 
-		if (presetA != null && presetA.getType() != SoundType.Single)
+		var aPresenter = PresetPresenterProviders.get().getPresenter(presetA);
+		var bPresenter = PresetPresenterProviders.get().getPresenter(presetB);
+
+		if (presetA != null && aPresenter.type != SoundType.Single)
 			selectVGA.addItem("Part II");
 		if (presetA == null && ebType != SoundType.Single)
 			selectVGA.addItem("Part II");
 
-		if (presetB != null && presetB.getType() != SoundType.Single)
+		if (presetB != null && bPresenter.type != SoundType.Single)
 			selectVGB.addItem("Part II");
 		if (presetB == null && ebType != SoundType.Single)
 			selectVGB.addItem("Part II");
@@ -504,8 +510,8 @@ public class CompareDialog extends GWTDialog {
 			refresh();
 		});
 
-		boolean aActive = (presetA != null && presetA.isDual()) || (presetA == null && ebType != SoundType.Single);
-		boolean bActive = (presetB != null && presetB.isDual()) || (presetB == null && ebType != SoundType.Single);
+		boolean aActive = (presetA != null && aPresenter.isDual) || (presetA == null && ebType != SoundType.Single);
+		boolean bActive = (presetB != null && bPresenter.isDual) || (presetB == null && ebType != SoundType.Single);
 		selectVGA.setVisible(aActive);
 		selectVGB.setVisible(bActive);
 		if (!aActive)

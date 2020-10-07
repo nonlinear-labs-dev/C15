@@ -28,7 +28,7 @@ public class MenuAreaPresetButton extends SVGImage {
 
 		if (p != null) {
 			Position po = getPixRect().getLeftTop();
-			PresetContextMenu pm = new PresetContextMenu(o, p);
+			PresetContextMenu pm = new PresetContextMenu(o, p.getUUID());
 			po.moveBy(3, -pm.getDesiredHeight() + 4);
 			return o.setContextMenu(po, pm);
 		}

@@ -20,12 +20,12 @@ class PresetManagerPane extends HTMLPanel {
 
         PresetManagerPresenterProvider.get().register(p -> {
             sync(p.banks);
-            setPositions(p.bankPositions);
+            setPositions(p.bankPositions, p.selectedBank);
             return isAttached();
         });
     }
 
-    private void setPositions(ArrayList<Position> bankPositions) {
+    private void setPositions(ArrayList<Position> bankPositions, String selectedBank) {
         var widgets = getBankWidgets();
 
         for (var pos : bankPositions) {
@@ -40,14 +40,43 @@ class PresetManagerPane extends HTMLPanel {
                     bank.attachTo(tape, 0, 0, nesting);
                     continue;
                 }
-            }
-
-            var a = (AbsolutePosition) pos;
-            var bank = widgets.get(a.bank);
-            if (bank != null) {
-                bank.attachTo(this, a.x, a.y, Nesting.None);
+            } else {
+                var a = (AbsolutePosition) pos;
+                var bank = widgets.get(a.bank);
+                if (bank != null) {
+                    bank.attachTo(this, a.x, a.y, Nesting.None);
+                }
             }
         }
+
+        makeSelectedClusterTopMost(bankPositions, selectedBank, widgets);
+    }
+
+    private void makeSelectedClusterTopMost(ArrayList<Position> bankPositions, String selectedBank,
+            HashMap<String, BankUI> widgets) {
+        var rootOfSelectedPosition = findRootOfBank(bankPositions, selectedBank);
+        if (rootOfSelectedPosition != null) {
+            var rootOfSelected = widgets.get(rootOfSelectedPosition.bank);
+
+            if (rootOfSelected != null) {
+                rootOfSelected.removeFromParent();
+                rootOfSelected.attachTo(this, rootOfSelectedPosition.x, rootOfSelectedPosition.y, Nesting.None);
+            }
+        }
+    }
+
+    private AbsolutePosition findRootOfBank(ArrayList<Position> bankPositions, String bank) {
+        for (var p : bankPositions) {
+            if (p.bank == bank) {
+                if (p instanceof RelativePosition) {
+                    var r = (RelativePosition) p;
+                    return findRootOfBank(bankPositions, r.attachedTo);
+                } else if (p instanceof AbsolutePosition) {
+                    return (AbsolutePosition) p;
+                }
+            }
+        }
+        return null;
     }
 
     private HashMap<String, BankUI> getBankWidgets() {
@@ -57,6 +86,8 @@ class PresetManagerPane extends HTMLPanel {
             if (w instanceof BankUI) {
                 BankUI b = (BankUI) w;
                 widgets.put(b.getElement().getAttribute("id"), b);
+
+                b.addNestedBanks(widgets);
             }
         }
 
@@ -73,7 +104,7 @@ class PresetManagerPane extends HTMLPanel {
             widgets.remove(uuid);
         }
 
-        widgets.forEach((k, v) -> remove(v));
+        widgets.forEach((k, v) -> v.removeFromParent());
     }
 
     public void syncPosition() {

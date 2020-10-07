@@ -1,6 +1,6 @@
 package com.nonlinearlabs.client.dataModel;
 
-public abstract class DataModelEntity<T> extends Notifier<T> implements DataModelEntityBase {
+public class DataModelEntity<T> extends Notifier<T> implements DataModelEntityBase {
 	private T value;
 
 	public DataModelEntity(T def) {
@@ -8,6 +8,15 @@ public abstract class DataModelEntity<T> extends Notifier<T> implements DataMode
 	}
 
 	public boolean setValue(T v) {
+		if (v == null) {
+			if (value != null) {
+				value = v;
+				notifyChanges();
+				return true;
+			}
+			return false;
+		}
+
 		if (!v.equals(value)) {
 			value = v;
 			notifyChanges();
@@ -19,5 +28,9 @@ public abstract class DataModelEntity<T> extends Notifier<T> implements DataMode
 	@Override
 	public T getValue() {
 		return value;
+	}
+
+	@Override
+	public void fromString(String str) {
 	}
 }

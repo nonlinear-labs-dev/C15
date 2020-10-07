@@ -3,7 +3,6 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
-import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.IBank;
@@ -13,7 +12,6 @@ import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -143,11 +141,9 @@ class BankHeader extends OverlayLayout {
 
 		if (dragProxy.getOrigin() instanceof IPreset) {
 			if (pm.hasMultiplePresetSelection()) {
-				getNonMaps().getServerProxy().dropPresetsOnBank(pm.getMultiSelection().getCSV(), b);
 				pm.getMultiSelection().clear();
 			} else {
-				var preset = (IPreset) dragProxy.getOrigin();
-				BankUseCases.get().dropOnBank(b.getUUID(), DragDataType.Preset, preset.getUUID());
+
 			}
 		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
 			getNonMaps().getServerProxy().dropEditBufferOnBank(b);

@@ -117,7 +117,7 @@ public class PresetList extends LayoutResizingVertical {
 	public void selectPreset(String uuid, boolean sendToServer) {
 		selectedPreset = uuid;
 
-		if(sendToServer) {
+		if (sendToServer) {
 			getNonMaps().getServerProxy().selectPreset(uuid);
 		}
 
@@ -128,7 +128,7 @@ public class PresetList extends LayoutResizingVertical {
 					.getPresetList().scheduleAutoScroll(ScrollRequest.Jump);
 		}
 
-		getParent().getParent().onPresetSelectionChanged(findPreset(selectedPreset));
+		getParent().getParent().onPresetSelectionChanged(selectedPreset);
 	}
 
 	public boolean hasSelectedPreset() {

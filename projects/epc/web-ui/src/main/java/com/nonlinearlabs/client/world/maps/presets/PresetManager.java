@@ -289,8 +289,8 @@ public class PresetManager extends MapsLayout {
 
 			Preset newPresetSelection = getSelectedPreset();
 
-			if (oldPresetSelection != newPresetSelection) {
-				onPresetSelectionChanged(newPresetSelection);
+			if (oldPresetSelection != newPresetSelection && newPresetSelection != null) {
+				onPresetSelectionChanged(newPresetSelection.getUUID());
 			}
 
 			RenameDialog.onPresetManagerUpdate(this);
@@ -313,7 +313,7 @@ public class PresetManager extends MapsLayout {
 		return currentFileVersion;
 	}
 
-	public void onPresetSelectionChanged(Preset newPresetSelection) {
+	public void onPresetSelectionChanged(String newPresetSelection) {
 		if (PresetInfoDialog.isShown())
 			PresetInfoDialog.update(newPresetSelection);
 
@@ -589,14 +589,6 @@ public class PresetManager extends MapsLayout {
 				}
 			}
 
-			if (hasMultiplePresetSelection()) {
-				getNonMaps().getServerProxy().createNewBankFromPresets(toNonPosition(pos),
-						getMultiSelection().getCSV());
-
-			} else {
-				getNonMaps().getServerProxy().createNewBankFromPreset(toNonPosition(pos), p);
-			}
-
 			return this;
 		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
 			getNonMaps().getServerProxy().newBankFromEditBuffer(toNonPosition(pos));
@@ -689,7 +681,8 @@ public class PresetManager extends MapsLayout {
 			}
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_DELETE) {
 			PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-			PresetContextMenu.deletePresetWithBankModal(pm.hasMultiplePresetSelection(), pm, getSelectedPreset());
+			PresetContextMenu.deletePresetWithBankModal(pm.hasMultiplePresetSelection(), pm,
+					getSelectedPreset().getUUID());
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_Z
 				&& NonMaps.get().getNonLinearWorld().isCtrlDown()) {
 			NonMaps.get().getServerProxy().undo();

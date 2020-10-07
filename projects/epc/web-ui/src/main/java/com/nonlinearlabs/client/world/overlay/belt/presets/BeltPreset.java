@@ -239,15 +239,15 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 
 		switch (dropPosition) {
 			case TOP:
-				getNonMaps().getServerProxy().insertBankAbove(bank, p);
+				getNonMaps().getServerProxy().insertBankAbove(bank.getUUID(), p.getUUID());
 				break;
 
 			case MIDDLE:
-				getNonMaps().getServerProxy().overwritePresetWithBank(bank, p);
+				getNonMaps().getServerProxy().overwritePresetWithBank(bank.getUUID(), p.getUUID());
 				break;
 
 			case BOTTOM:
-				getNonMaps().getServerProxy().insertBankBelow(bank, p);
+				getNonMaps().getServerProxy().insertBankBelow(bank.getUUID(), p.getUUID());
 				break;
 
 			default:
@@ -326,7 +326,7 @@ public class BeltPreset extends OverlayLayout implements IPreset {
 
 		if (mapsPreset != null) {
 			Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
-			return o.setContextMenu(pos, new PresetContextMenu(o, mapsPreset));
+			return o.setContextMenu(pos, new PresetContextMenu(o, mapsPreset.getUUID()));
 		}
 		return super.onContextMenu(pos);
 	}

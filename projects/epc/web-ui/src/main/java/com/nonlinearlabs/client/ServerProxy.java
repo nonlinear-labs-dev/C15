@@ -42,7 +42,6 @@ import com.nonlinearlabs.client.world.maps.NonPosition;
 import com.nonlinearlabs.client.world.maps.parameters.ModulatableParameter;
 import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.maps.presets.bank.Tape.Orientation;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
 public class ServerProxy {
 
@@ -294,19 +293,19 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void createNewBankFromPreset(NonPosition nonPosition, IPreset p) {
+	public void createNewBankFromPreset(double x, double y, String p) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "create-new-bank-from-preset");
-		StaticURI.KeyValue x = new StaticURI.KeyValue("x", nonPosition.getX());
-		StaticURI.KeyValue y = new StaticURI.KeyValue("y", nonPosition.getY());
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", p.getUUID()), x, y);
+		StaticURI.KeyValue kx = new StaticURI.KeyValue("x", x);
+		StaticURI.KeyValue ky = new StaticURI.KeyValue("y", y);
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", p), kx, ky);
 		queueJob(uri, false);
 	}
 
-	public void createNewBankFromPresets(NonPosition nonPosition, String csv) {
+	public void createNewBankFromPresets(double x, double y, String csv) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "create-new-bank-from-presets");
-		StaticURI.KeyValue x = new StaticURI.KeyValue("x", nonPosition.getX());
-		StaticURI.KeyValue y = new StaticURI.KeyValue("y", nonPosition.getY());
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presets", csv), x, y);
+		StaticURI.KeyValue kx = new StaticURI.KeyValue("x", x);
+		StaticURI.KeyValue ky = new StaticURI.KeyValue("y", y);
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presets", csv), kx, ky);
 		queueJob(uri, false);
 	}
 
@@ -317,12 +316,13 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void setBankPosition(String bankUuid, double xPos, double yPos) {
+	public void setBankPosition(String bankUuid, double xPos, double yPos, boolean undockIfDocked) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "set-position");
 		StaticURI.KeyValue x = new StaticURI.KeyValue("x", xPos);
 		StaticURI.KeyValue y = new StaticURI.KeyValue("y", yPos);
 		StaticURI.KeyValue uuid = new StaticURI.KeyValue("uuid", bankUuid);
-		StaticURI uri = new StaticURI(path, x, y, uuid);
+		StaticURI.KeyValue undock = new StaticURI.KeyValue("undock", undockIfDocked);
+		StaticURI uri = new StaticURI(path, x, y, uuid, undock);
 		queueJob(uri, true);
 	}
 
@@ -334,24 +334,24 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void dropPresetsAbove(String csv, IPreset actionAnchor) {
+	public void dropPresetsAbove(String csv, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "drop-presets-above");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presets", csv),
-				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
+				new StaticURI.KeyValue("anchor", anchor));
 		queueJob(uri, false);
 	}
 
-	public void dropPresetsBelow(String csv, IPreset actionAnchor) {
+	public void dropPresetsBelow(String csv, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "drop-presets-below");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presets", csv),
-				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
+				new StaticURI.KeyValue("anchor", anchor));
 		queueJob(uri, false);
 	}
 
-	public void dropPresetsTo(String csv, IPreset actionAnchor) {
+	public void dropPresetsTo(String csv, String anchor) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "drop-presets-to");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presets", csv),
-				new StaticURI.KeyValue("anchor", actionAnchor.getUUID()));
+				new StaticURI.KeyValue("anchor", anchor));
 		queueJob(uri, false);
 	}
 
@@ -431,9 +431,9 @@ public class ServerProxy {
 			RenameDialog.awaitNewPreset(actionAnchor.getUUID());
 	}
 
-	public void deletePreset(IPreset preset, boolean withBank) {
+	public void deletePreset(String preset, boolean withBank) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "delete-preset");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", preset.getUUID()),
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", preset),
 				new StaticURI.KeyValue("delete-bank", withBank ? "true" : "false"));
 		queueJob(uri, false);
 	}
@@ -631,18 +631,18 @@ public class ServerProxy {
 		downloadFile("/presets/find-unique-preset-name?based-on=" + URL.encodeQueryString(currentName), handler);
 	}
 
-	public void getDiff(Preset presetA, VoiceGroup vgOfPreset1, Preset presetB, VoiceGroup vgOfPreset2,
+	public void getDiff(String presetA, VoiceGroup vgOfPreset1, String presetB, VoiceGroup vgOfPreset2,
 			DownloadHandler handler) {
-		String aUUID = presetA != null ? presetA.getUUID() : "";
-		String bUUID = presetB != null ? presetB.getUUID() : "";
+		String aUUID = presetA != null ? presetA : "";
+		String bUUID = presetB != null ? presetB : "";
 
 		downloadFile("/presets/get-diff?p1=" + URL.encodeQueryString(aUUID) + "&p2=" + URL.encodeQueryString(bUUID)
 				+ "&vg1=" + vgOfPreset1 + "&vg2=" + vgOfPreset2, handler);
 	}
 
-	public void dropPresetsOnBank(String csv, Bank targetBank) {
+	public void dropPresetsOnBank(String csv, String bank) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "drop-presets-on-bank");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", targetBank.getUUID()),
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank),
 				new StaticURI.KeyValue("presets", csv));
 		queueJob(uri, false);
 	}
@@ -658,24 +658,24 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void insertBankAbove(IBank bank, IPreset preset) {
+	public void insertBankAbove(String bank, String preset) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "insert-bank-above");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank.getUUID()),
-				new StaticURI.KeyValue("anchor", preset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank),
+				new StaticURI.KeyValue("anchor", preset));
 		queueJob(uri, false);
 	}
 
-	public void insertBankBelow(IBank bank, IPreset preset) {
+	public void insertBankBelow(String bank, String preset) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "insert-bank-below");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank.getUUID()),
-				new StaticURI.KeyValue("anchor", preset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank),
+				new StaticURI.KeyValue("anchor", preset));
 		queueJob(uri, false);
 	}
 
-	public void overwritePresetWithBank(IBank bank, IPreset preset) {
+	public void overwritePresetWithBank(String bank, String preset) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "overwrite-preset-with-bank");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank.getUUID()),
-				new StaticURI.KeyValue("anchor", preset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank),
+				new StaticURI.KeyValue("anchor", preset));
 		queueJob(uri, false);
 	}
 
@@ -831,9 +831,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void setPresetAttribute(Preset thePreset, String key, String value) {
+	public void setPresetAttribute(String thePreset, String key, String value) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "set-preset-attribute");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", thePreset.getUUID()),
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", thePreset),
 				new StaticURI.KeyValue("key", key), new StaticURI.KeyValue("value", value));
 		queueJob(uri, false);
 	}
@@ -854,9 +854,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void copyPreset(Preset preset) {
+	public void copyPreset(String preset) {
 		StaticURI.Path path = new StaticURI.Path("clipboard", "copy-preset");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", preset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", preset));
 		queueJob(uri, false);
 	}
 
@@ -866,9 +866,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void pasteOnPreset(Preset preset) {
+	public void pasteOnPreset(String preset) {
 		StaticURI.Path path = new StaticURI.Path("clipboard", "paste-on-preset");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", preset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", preset));
 		queueJob(uri, false);
 	}
 
@@ -891,9 +891,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void cutPreset(Preset preset) {
+	public void cutPreset(String preset) {
 		StaticURI.Path path = new StaticURI.Path("clipboard", "cut-preset");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", preset.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("preset", preset));
 		queueJob(uri, false);
 	}
 

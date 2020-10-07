@@ -6,7 +6,8 @@ import com.google.gwt.event.dom.client.DragEvent;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 
 class DropZone extends HTMLPanel {
     DropZone() {
@@ -14,7 +15,7 @@ class DropZone extends HTMLPanel {
         getElement().addClassName("drop-zone");
 
         addDomHandler(e -> {
-            var type = PresetManagerUI.get().getDragDropData().type;
+            var type  = PresetManagerPresenterProvider.get().getPresenter().dndType;
             var isBank = type == DragDataType.Bank;
             var isPreset = type == DragDataType.Preset;
             var isPresets = type == DragDataType.Presets;

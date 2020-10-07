@@ -7,49 +7,23 @@ import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank.Position;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
 public class PresetManagerPresenter {
-	public static class Bank {
 
-		public static class Preset {
-			public String uuid = "";
-			public String name = "";
-		}
-
-		public Bank(com.nonlinearlabs.client.dataModel.presetManager.Bank bank) {
-			bank.name.onChange(n -> {
-				name = n;
-				return true;
-			});
-
-			bank.uuid.onChange(u -> {
-				uuid = u;
-				return true;
-			});
-
-			bank.isMidiBank.onChange(midi -> {
-				isMidi = midi.equals(SetupModel.BooleanValues.on);
-				return true;
-			});
-		}
-
-		public String name = "";
-		public String uuid = "";
-		public boolean isMidi = false;
-		public float worldPositionX = 0;
-		public float worldPositionY = 0;
-		public int orderNumber = 0;
-		public boolean isEmpty = true;
-	}
-
-	public ArrayList<Bank> banks;
 	public String[] loadModeMenuEntries = { "", "", "" };
+	public ArrayList<String> banks;
 	public boolean loadModeButtonState = false;
-	public boolean directLoadActive = false;
-	public boolean loadToPartActive = false;
-
+	public PresetManagerModel.DragDataType dndType = PresetManagerModel.DragDataType.None;
 	public ArrayList<Position> bankPositions = new ArrayList<Position>();
+
+	public String selectedBank = "";
+	public String selectedPresetOfSelectedBank = "";
+
+	public boolean multiSelection = false;
+	public int numSelectedPresetsInMultiSelection = 0;
+	public ArrayList<String> currentMultiSelection = new ArrayList<String>();
 
 	public PresetManagerPresenter() {
 		banks = new ArrayList<Bank>();

@@ -9,7 +9,6 @@ import com.nonlinearlabs.client.LoadToPartMode;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
-import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IBank;
 import com.nonlinearlabs.client.world.IPreset;
@@ -19,7 +18,6 @@ import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.MapsControl;
 import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -150,8 +148,7 @@ public class PresetList extends OverlayLayout {
 		Bank b = getParent().getBankInCharge();
 
 		if (dragProxy.getOrigin() instanceof IPreset) {
-			var preset = (IPreset) dragProxy.getOrigin();
-			BankUseCases.get().dropOnBank(b.getUUID(), DragDataType.Preset, preset.getUUID());
+			
 		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
 			getNonMaps().getServerProxy().dropEditBufferOnBank(b);
 		else if (dragProxy.getOrigin() instanceof IBank) {

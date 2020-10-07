@@ -11,16 +11,13 @@ import com.nonlinearlabs.client.dataModel.IntegerDataModelEntity;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.StringDataModelEntity;
 import com.nonlinearlabs.client.dataModel.editBuffer.ModulateableParameterModel.ModSource;
+import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
 
 public class EditBufferModel extends Notifier<EditBufferModel> {
 	private static EditBufferModel theModel = new EditBufferModel();
 
 	public static EditBufferModel get() {
 		return theModel;
-	}
-
-	public static enum Color {
-		green, blue, yellow, orange, purple, red, none;
 	}
 
 	public static enum SoundType {

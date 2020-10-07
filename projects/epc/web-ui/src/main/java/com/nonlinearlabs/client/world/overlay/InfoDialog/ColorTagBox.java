@@ -4,8 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.ColorTag;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.ColorTag.Color;
+import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
 
 public abstract class ColorTagBox {
 
@@ -25,9 +24,9 @@ public abstract class ColorTagBox {
 		return panel;
 	}
 
-	private Button addColorButton(ColorTag.Color c) {
+	private Button addColorButton(Color c) {
 		Button b = new Button();
-		if (c == ColorTag.Color.none)
+		if (c == Color.none)
 			b.setHTML("<div style=\"font-size: smaller;\">✕</div>");
 		b.getElement().addClassName("colortaggingfield-" + c.name());
 		b.getElement().addClassName("colortaggingfield-template");

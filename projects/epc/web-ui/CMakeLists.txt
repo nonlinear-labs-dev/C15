@@ -25,7 +25,7 @@ add_custom_command(
   OUTPUT ${OUTFILE}
   COMMAND /usr/bin/java -Xmx512m -classpath ${NONMAPS_ROOT}/src/main/java:${CMAKE_CURRENT_BINARY_DIR}/gwt-${GWT_VERSION}/gwt-user.jar:${CMAKE_CURRENT_BINARY_DIR}/gwt-${GWT_VERSION}/gwt-dev.jar com.google.gwt.dev.Compiler -sourceLevel 11 -optimize 9 -gen ${OBJDIR} -logLevel WARN -style OBF -war ./war -localWorkers 4 com.nonlinearlabs.NonMaps
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/gwt-${GWT_VERSION}/gwt-dev.jar
-  DEPENDS ${SOURCE_FILES}
+ # DEPENDS ${SOURCE_FILES}
   )
 
 add_custom_target(NonMaps ALL SOURCES ${OUTFILE})

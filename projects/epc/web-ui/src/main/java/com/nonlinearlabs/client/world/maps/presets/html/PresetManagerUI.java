@@ -4,75 +4,17 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.useCases.BankUseCases;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.maps.NonRect;
-
-/*
-Features we have to support:
-
-Done:
-- move bank by dragging header
-- drag preset
-- drop preset above/on/below for move/copy
-- drop preset/bank on header
-
-Prio 1
-- Select multiple presets
-- Attach/group banks
-- StoreSelectMode
-- next/prev bank/preset
-- search
-- grid
-
-- drop presets above/on/below for move/copy
-- drop bank above/on/below 
-
-- bank context menu
-- preset context menu
-- bank selection state
-- preset selection state
-- preset loaded state
-- preset sound type
-- preset color tag
-- compare presets
-- multiple presets drag 
-
-Prio 2
-- highlight presets matching a search
-- drop "Store"-button above/on/below 
-- drop "Store"-button on header
-
-Prio 3
-- Move all banks
-- move to selected preset
-- collapse/expand bank
-- collapse/expand all banks
-- multiple presets drag with fancy graphic
-*/
 
 public class PresetManagerUI extends DropZone {
     static private PresetManagerUI thePresetManagerUI;
 
-    public enum DragDataType {
-        None, Preset, Bank, Presets
-    }
-
     private PresetManagerPane thePane;
-
-    class DragDropData {
-        public DragDropData() {
-        }
-
-        public DragDropData(DragDataType type, String data) {
-            this.type = type;
-            this.data = data;
-        }
-
-        public String data = "";
-        public DragDataType type = DragDataType.None;
-    }
-
-    DragDropData dragDropData = new DragDropData();
+    private PresetManagerPresenter presenter;
 
     public PresetManagerUI() {
         super();
@@ -86,40 +28,34 @@ public class PresetManagerUI extends DropZone {
 
         addDomHandler(e -> {
             getElement().removeClassName("drop-target");
+
             e.preventDefault();
             e.stopPropagation();
 
-            boolean isBank = getDragDropData().type == DragDataType.Bank;
+            NonRect viewPortRect = NonMaps.get().getNonLinearWorld().getViewport().getNonPosition();
+            double z = NonMaps.get().getNonLinearWorld().getCurrentZoom();
+            double x = z * viewPortRect.getLeft() / NonMaps.devicePixelRatio;
+            double y = z * viewPortRect.getTop() / NonMaps.devicePixelRatio;
+            double bx = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientX() + x) / z;
+            double by = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientY() + y) / z;
+            double margin = Millimeter.toPixels(10) * z / NonMaps.devicePixelRatio;
 
-            if (isBank) {
-                NonRect viewPortRect = NonMaps.get().getNonLinearWorld().getViewport().getNonPosition();
-                double z = NonMaps.get().getNonLinearWorld().getCurrentZoom();
-                double x = z * viewPortRect.getLeft() / NonMaps.devicePixelRatio;
-                double y = z * viewPortRect.getTop() / NonMaps.devicePixelRatio;
-                double bx = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientX() + x) / z;
-                double by = NonMaps.devicePixelRatio * (e.getNativeEvent().getClientY() + y) / z;
-                double margin = Millimeter.toPixels(10) * z / NonMaps.devicePixelRatio;
-                BankUseCases.get().move(getDragDropData().data, bx - margin, by - margin);
-            }
+            PresetManagerUseCases.get().drop(bx - margin, by - margin);
+
         }, DropEvent.getType());
+
+        PresetManagerPresenterProvider.get().register(presenter -> {
+            this.presenter = presenter;
+            if (presenter.dndType == DragDataType.None)
+                getElement().removeClassName("maybe-drop-target");
+            else
+                getElement().addClassName("maybe-drop-target");
+            return true;
+        });
     }
 
     public static PresetManagerUI get() {
         return thePresetManagerUI;
-    }
-
-    public void setDragDropData(DragDataType type, String data) {
-        dragDropData = new DragDropData(type, data);
-        getElement().addClassName("maybe-drop-target");
-    }
-
-    public void resetDragDropData() {
-        dragDropData = new DragDropData();
-        getElement().removeClassName("maybe-drop-target");
-    }
-
-    public DragDropData getDragDropData() {
-        return dragDropData;
     }
 
     public void syncPosition() {

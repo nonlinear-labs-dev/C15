@@ -7,12 +7,12 @@ import com.nonlinearlabs.client.dataModel.presetManager.Bank;
 import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerUpdater;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
 import com.nonlinearlabs.client.dataModel.presetManager.Presets;
 import com.nonlinearlabs.client.world.maps.NonPosition;
-import com.nonlinearlabs.client.world.maps.presets.html.PresetManagerUI.DragDataType;
 
 public class BankUseCases {
+
     private static BankUseCases theInstance = new BankUseCases();
     private static ServerProxy server = NonMaps.get().getServerProxy();
 
@@ -21,61 +21,86 @@ public class BankUseCases {
     }
 
     public void selectPreset(String uuid) {
+        PresetManagerUseCases.get().finishMultipleSelection();
         Preset p = Presets.get().find(uuid);
         Bank b = Banks.get().find(p.bankUuid.getValue());
         b.selectedPreset.setValue(uuid);
         server.selectPreset(uuid);
     }
 
-    public void move(String uuid, double x, double y) {
-        Bank b = Banks.get().find(uuid);
-        b.x.setValue(x);
-        b.y.setValue(y);
-        PresetManagerUpdater u = new PresetManagerUpdater(null, PresetManagerModel.get());
-        u.updateBankPositions();
-        server.setBankPosition(uuid, x, y);
-    }
+    public void dropBelow(String presetUUID, DropEffect effect) {
+        var dnd = PresetManagerModel.get().dnd.getValue();
+        if (dnd == null)
+            return;
 
-    public void dropBelow(String presetUUID, DragDataType type, String droppedData, DropEffect effect) {
-        if (type == DragDataType.Preset)
+        if (dnd.type == DragDataType.Preset) {
             if (effect == DropEffect.MOVE)
-                server.movePresetBelow(droppedData, presetUUID);
+                server.movePresetBelow(dnd.data, presetUUID);
             else if (effect == DropEffect.COPY)
-                server.insertPresetCopyBelow(droppedData, presetUUID);
+                server.insertPresetCopyBelow(dnd.data, presetUUID);
+        } else if (dnd.type == DragDataType.Presets) {
+            server.dropPresetsBelow(dnd.data, presetUUID);
+        } else if (dnd.type == DragDataType.Bank) {
+            server.insertBankBelow(dnd.data, presetUUID);
+        }
     }
 
-    public void dropOn(String presetUUID, DragDataType type, String droppedData, DropEffect effect) {
-        if (type == DragDataType.Preset)
+    public void dropOn(String presetUUID, DropEffect effect) {
+        var dnd = PresetManagerModel.get().dnd.getValue();
+        if (dnd == null)
+            return;
+
+        if (dnd.type == DragDataType.Preset) {
             if (effect == DropEffect.MOVE)
-                server.movePresetTo(droppedData, presetUUID);
+                server.movePresetTo(dnd.data, presetUUID);
             else if (effect == DropEffect.COPY)
-                server.overwritePresetWith(droppedData, presetUUID);
+                server.overwritePresetWith(dnd.data, presetUUID);
+        } else if (dnd.type == DragDataType.Presets) {
+            server.dropPresetsTo(dnd.data, presetUUID);
+        } else if (dnd.type == DragDataType.Bank) {
+            server.overwritePresetWithBank(dnd.data, presetUUID);
+        }
     }
 
-    public void dropAbove(String presetUUID, DragDataType type, String droppedData, DropEffect effect) {
-        if (type == DragDataType.Preset)
+    public void dropAbove(String presetUUID, DropEffect effect) {
+        var dnd = PresetManagerModel.get().dnd.getValue();
+        if (dnd == null)
+            return;
+
+        if (dnd.type == DragDataType.Preset) {
             if (effect == DropEffect.MOVE)
-                server.movePresetAbove(droppedData, presetUUID);
+                server.movePresetAbove(dnd.data, presetUUID);
             else if (effect == DropEffect.COPY)
-                server.insertPresetCopyAbove(droppedData, presetUUID);
+                server.insertPresetCopyAbove(dnd.data, presetUUID);
+        } else if (dnd.type == DragDataType.Presets) {
+            server.dropPresetsAbove(dnd.data, presetUUID);
+        } else if (dnd.type == DragDataType.Bank) {
+            server.insertBankAbove(dnd.data, presetUUID);
+        }
 
     }
 
-    public void dropOnBank(String bankUuid, DragDataType type, String data) {
-        if (type == DragDataType.Preset) {
-            var preset = Presets.get().find(data);
+    public void dropOnBank(String bankUuid) {
+        var dnd = PresetManagerModel.get().dnd.getValue();
+        if (dnd == null)
+            return;
+
+        if (dnd.type == DragDataType.Preset) {
+            var preset = Presets.get().find(dnd.data);
             if (preset.bankUuid.getValue() == bankUuid) {
                 var bank = Banks.get().find(bankUuid);
                 var presets = bank.presets.getValue();
                 var lastPreset = presets.isEmpty() ? "" : presets.get(presets.size() - 1);
-                server.movePresetBelow(data, lastPreset);
+                server.movePresetBelow(dnd.data, lastPreset);
             } else {
-                server.appendPreset(data, bankUuid);
+                server.appendPreset(dnd.data, bankUuid);
             }
-        } else if (type == DragDataType.Bank) {
-            if (bankUuid != data) {
-                server.dropBankOnBank(data, bankUuid);
+        } else if (dnd.type == DragDataType.Bank) {
+            if (bankUuid != dnd.data) {
+                server.dropBankOnBank(dnd.data, bankUuid);
             }
+        } else if (dnd.type == DragDataType.Presets) {
+            server.dropPresetsOnBank(dnd.data, bankUuid);
         }
     }
 
@@ -85,6 +110,12 @@ public class BankUseCases {
 
     public void dock(String client, String master, TapePosition tapePosition, NonPosition pos) {
         server.dockBanks(master, tapePosition, client, pos);
+    }
+
+    public void dropDock(String master, TapePosition tapePosition, NonPosition pos) {
+        var dnd = PresetManagerModel.get().dnd.getValue();
+        if (dnd != null && dnd.type == DragDataType.Bank)
+            dock(dnd.data, master, tapePosition, pos);
     }
 
 }

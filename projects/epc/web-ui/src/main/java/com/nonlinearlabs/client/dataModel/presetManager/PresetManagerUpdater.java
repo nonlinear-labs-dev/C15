@@ -37,6 +37,7 @@ public class PresetManagerUpdater extends Updater {
 			processChildrenElements(banks, "preset-bank", t -> updateBank(existingBanks, t, midiSelectedBank));
 			existingBanks.entrySet().removeIf(e -> e.getValue().isDoomed());
 			existingBanksEntity.setValue(existingBanks);
+			target.selectedBank.setValue(getAttributeValue(banks, "selected-bank"));
 		}
 	}
 

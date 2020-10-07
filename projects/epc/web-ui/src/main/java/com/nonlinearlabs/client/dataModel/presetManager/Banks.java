@@ -17,6 +17,13 @@ public class Banks {
         return db.get(uuid);
     }
 
+    public Bank findOrPut(String v) {
+        var b = find(v);
+        if (b != null)
+            return b;
+        return put(v);
+    }
+
     public Bank put(String uuid) {
         db.put(uuid, new Bank());
         return find(uuid);
@@ -53,4 +60,5 @@ public class Banks {
         positions.sort((a, b) -> a.bank.compareTo(b.bank));
         return positions;
     }
+
 }
