@@ -95,4 +95,13 @@ public class PresetManagerUseCases {
         u.updateBankPositions();
         server.setBankPosition(uuid, x, y, true);
     }
+
+    public void selectBank(String uuid) {
+        if (hasMultipleSelection()) {
+            return;
+        }
+
+        PresetManagerModel.get().selectedBank.setValue(uuid);
+        server.selectBank(uuid);
+    }
 }

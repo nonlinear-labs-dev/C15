@@ -5,7 +5,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.maps.NonRect;
@@ -14,7 +13,6 @@ public class PresetManagerUI extends DropZone {
     static private PresetManagerUI thePresetManagerUI;
 
     private PresetManagerPane thePane;
-    private PresetManagerPresenter presenter;
 
     public PresetManagerUI() {
         super();
@@ -24,6 +22,7 @@ public class PresetManagerUI extends DropZone {
         RootPanel.get().add(this);
 
         getElement().addClassName("preset-manager");
+        getElement().setId("preset-manager");
         add(thePane = new PresetManagerPane());
 
         addDomHandler(e -> {
@@ -45,7 +44,6 @@ public class PresetManagerUI extends DropZone {
         }, DropEvent.getType());
 
         PresetManagerPresenterProvider.get().register(presenter -> {
-            this.presenter = presenter;
             if (presenter.dndType == DragDataType.None)
                 getElement().removeClassName("maybe-drop-target");
             else

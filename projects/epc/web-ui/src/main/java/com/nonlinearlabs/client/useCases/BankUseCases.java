@@ -25,6 +25,7 @@ public class BankUseCases {
         Preset p = Presets.get().find(uuid);
         Bank b = Banks.get().find(p.bankUuid.getValue());
         b.selectedPreset.setValue(uuid);
+        PresetManagerModel.get().selectedBank.setValue(b.uuid.getValue());
         server.selectPreset(uuid);
     }
 
@@ -77,7 +78,6 @@ public class BankUseCases {
         } else if (dnd.type == DragDataType.Bank) {
             server.insertBankAbove(dnd.data, presetUUID);
         }
-
     }
 
     public void dropOnBank(String bankUuid) {

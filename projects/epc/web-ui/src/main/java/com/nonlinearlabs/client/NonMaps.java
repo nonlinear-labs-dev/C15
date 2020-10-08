@@ -103,7 +103,7 @@ public class NonMaps extends Mouseing implements EntryPoint {
 			e.printStackTrace();
 		}
 
-		initHandlers(worldCanvas);
+		initHandlers(overlayCanvas);
 		setupTimer();
 
 		server.startPolling();

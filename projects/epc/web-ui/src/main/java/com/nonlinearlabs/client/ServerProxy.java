@@ -284,7 +284,7 @@ public class ServerProxy {
 	public void selectBank(String uuid) {
 		StaticURI.Path path = new StaticURI.Path("presets", "select-bank");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", uuid));
-		queueJob(uri, false);
+		queueJob(uri, true);
 	}
 
 	public void loadPreset(String presetuuid) {

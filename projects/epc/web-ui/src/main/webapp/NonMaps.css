@@ -1333,7 +1333,7 @@ input[type="radio"]+label {
   margin: 15px 6px 6px;
 }
 
-#canvasholder,
+#canvasholder, 
 canvas {
   position: fixed;
   width: 100%;
@@ -1343,6 +1343,11 @@ canvas {
   margin: 0px;
   padding: 0px;
   z-index: 1;
+  pointer-events: none;
+}
+
+#overlay > canvas {
+  pointer-events: all;
 }
 
 #overlay {
@@ -1354,7 +1359,7 @@ canvas {
   margin: 0px;
   padding: 0px;
   z-index: 3;
-  pointer-events: none;
+  pointer-events: all;
 }
 
 #cm {
@@ -2059,6 +2064,10 @@ button {
 }
 
 .bank .content .presets {
+  position: relative;
+}
+
+.bank.nested {
   position: relative;
 }
 

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -15,6 +18,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.world.PointerEvent.GwtPointerEvent;
 import com.nonlinearlabs.client.world.pointer.PointerState;
 import com.nonlinearlabs.client.world.pointer.Touch;
 
@@ -27,6 +31,8 @@ public abstract class Mouseing {
 	ArrayList<Touch> touches = new ArrayList<Touch>();
 
 	public Mouseing() {
+		Window.addResizeHandler(new NonMapsResizeHandler(this));
+		RootPanel.get().addDomHandler(new NonMapsWheelHandler(), MouseWheelEvent.getType());
 	}
 
 	public abstract void invalidate(int flags);
@@ -41,18 +47,59 @@ public abstract class Mouseing {
 																	return e.pointerType;
 																	}-*/;
 
+	private static native NativeEvent clone(JavaScriptObject event) /*-{
+																	return new event.constructor(event.type, event);																	
+																	}-*/;
+
+	private static native boolean isEventInside(JavaScriptObject element, JavaScriptObject event) /*-{
+																									var rect =  element.getBoundingClientRect();
+																									if(rect.left < event.clientX && rect.right > event.clientX)
+																										if(rect.top < event.clientY && rect.bottom > event.clientY)
+																											return true;
+																									
+																									return false;
+																									}-*/;
+
+	private boolean bubble(Element pm, Element element, GwtPointerEvent event) {
+		for (var c = element.getLastChild(); c != null; c = c.getPreviousSibling()) {
+			var child = (Element) c;
+			var isEmpty = child.getClientHeight() == 0 || child.getClientWidth() == 0;
+			if (isEmpty || isEventInside(child, event.getNativeEvent())) {
+				if (bubble(pm, child, event))
+					return true;
+			}
+		}
+
+		if (element.getClientHeight() == 0 || element.getClientWidth() == 0) {
+			return false;
+		}
+
+		if (pm == element)
+			return false;
+
+		element.dispatchEvent(clone(event.getNativeEvent()));
+		return true;
+	}
+
 	public void initHandlers(Canvas canvas) {
-		Window.addResizeHandler(new NonMapsResizeHandler(this));
 
 		canvas.addDoubleClickHandler(new NonMapsMousDoubleClickHandler());
 
-		RootPanel.get().addDomHandler(new NonMapsWheelHandler(), MouseWheelEvent.getType());
-
 		NonLinearWorld nw = NonMaps.get().getNonLinearWorld();
 
-		canvas.addDomHandler((event) -> {
-			Position p = new Position(event.getNativeEvent());
+		Event.addNativePreviewHandler((e) -> {
 
+		});
+
+		canvas.addDomHandler((event) -> {
+			var pm = Document.get().getElementById("preset-manager");
+			var orig = event.getRelativeElement();
+			event.setRelativeElement(pm);
+			if (bubble(pm, pm, event))
+				return;
+
+			event.setRelativeElement(orig);
+			Position p = new Position(event.getNativeEvent());
 			nw.setCtrlDown(event.isControlKeyDown());
 			nw.setShiftDown(event.isShiftKeyDown());
 
