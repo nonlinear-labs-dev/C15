@@ -1,6 +1,7 @@
 add_subdirectory(bbb)
 add_subdirectory(epc)
 add_subdirectory(playcontroller)
+add_subdirectory(midibridge)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
@@ -13,6 +14,8 @@ add_custom_command(
     DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
     DEPENDS playcontroller-blobs
     DEPENDS ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin
+    DEPENDS midibridge-blobs
+    DEPENDS ${CMAKE_BINARY_DIR}/build-tools/midibridge/projects/midibridge/firmware/src/main/main.bin
     DEPENDS ${SOURCE_FILES}
     COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
         ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar

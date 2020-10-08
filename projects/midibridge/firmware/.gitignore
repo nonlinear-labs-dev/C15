@@ -1,0 +1,20 @@
+# Blacklist files/folders in same directory as the .gitignore file
+
+# Whitelist some files
+!src/main/.cproject
+!src/main/.project
+!src/co-proc/.cproject
+!src/co-proc/.project
+
+# Blacklist files/folders
+.metadata/
+src/main/.settings
+src/main/Release
+src/main/Debug
+src/co-proc/.settings
+src/co-proc/Release
+src/co-proc/Debug
+
+# Whitelist our folders we want to sync
+# trailing "/" is optional for folders, may match file though.
+# "/" is NOT optional when followed by a *
