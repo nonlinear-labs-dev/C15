@@ -5,7 +5,6 @@
 *******************************************************************************/
 #include "sys/nl_coos.h"
 #include "drv/nl_dbg.h"
-#include "sys/nl_status.h"
 #include "ipc/emphase_ipc.h"
 
 #define COOS_MAX_TASKS 16  // max number of task the COOS should handle (memory size)
@@ -129,8 +128,6 @@ void COOS_Dispatch(void)
       (*COOS_taskArray[index].pTask)();  // run the task
       COOS_taskArray[index].run--;       // decrease the run flag, so postponed tasks will also be handled
       taskTime = s.ticker - taskTime;
-      if (taskTime > NL_systemStatus.COOS_maxTaskTime)
-        NL_systemStatus.COOS_maxTaskTime = taskTime;
 #if LOG_TASK_TIME
       if (taskTime > COOS_taskArray[index].max_time)
         COOS_taskArray[index].max_time = taskTime;
@@ -142,17 +139,6 @@ void COOS_Dispatch(void)
         COOS_Task_Delete(index);
       }
     }
-  }
-  if (tasks > NL_systemStatus.COOS_maxTasksPerSlice)
-    NL_systemStatus.COOS_maxTasksPerSlice = tasks;
-  dispatchTime = s.ticker - dispatchTime;
-  if (dispatchTime > NL_systemStatus.COOS_maxDispatchTime)
-    NL_systemStatus.COOS_maxDispatchTime = dispatchTime;
-
-  if (taskOverflow)
-  {
-    DBG_Led_Warning_TimedOn(3);
-    taskOverflow = 0;
   }
 }
 
@@ -175,8 +161,6 @@ void COOS_Update(void)
         if (COOS_taskArray[index].run > 1)  // any task pending more than once ?
         {
           taskOverflow = 1;
-          if (NL_systemStatus.COOS_totalOverruns < 0xFFFF)
-            NL_systemStatus.COOS_totalOverruns++;
         }
         if (COOS_taskArray[index].period >= 1)
         {  // schedule periodic task to run again

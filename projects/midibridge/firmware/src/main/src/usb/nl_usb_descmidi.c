@@ -10,7 +10,7 @@
 
 #include "usb/nl_usbd.h"
 #include "usb/nl_usb_core.h"
-#include "usb/nl_usb_midi.h"
+//#include "usb/nl_usb_midi.h"
 #include "usb/nl_usb_descmidi.h"
 
 /* USB Standard Device Descriptor */
@@ -260,13 +260,13 @@ const uint8_t USB_MIDI_HSConfigDescriptor[] = {
 };
 
 /* USB String Descriptor (optional) */
-const uint8_t USB_MIDI_StringDescriptor[] = {
+const uint8_t USBA_MIDI_StringDescriptor[] = {
   /* Index 0x00: LANGID Codes */
   0x04,                           /* bLength */
   USB_STRING_DESCRIPTOR_TYPE,     /* bDescriptorType */
   WBVAL(0x0409), /* US English */ /* wLANGID */
   /* Index 0x01: Manufacturer */
-  (13 * 2 + 2),               /* bLength (13 Char + Type + lenght) */
+  (13 * 2 + 2),               /* bLength (13 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
   'N', 0,
   'o', 0,
@@ -282,15 +282,59 @@ const uint8_t USB_MIDI_StringDescriptor[] = {
   'b', 0,
   's', 0,
   /* Index 0x02: Product */
-  (7 * 2 + 2),                /* bLength ( 7 Char + Type + lenght) */
+  (12 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
-  'E', 0,
-  'M', 0,
-  'P', 0,
-  'H', 0,
+  'N', 0,
+  'L', 0,
+  ' ', 0,
+  'B', 0,
+  'r', 0,
+  'i', 0,
+  'd', 0,
+  'g', 0,
+  'e', 0,
+  ' ', 0,
   'A', 0,
-  'S', 0,
-  'E', 0
+  0, 0
+
+};
+
+const uint8_t USBB_MIDI_StringDescriptor[] = {
+  /* Index 0x00: LANGID Codes */
+  0x04,                           /* bLength */
+  USB_STRING_DESCRIPTOR_TYPE,     /* bDescriptorType */
+  WBVAL(0x0409), /* US English */ /* wLANGID */
+  /* Index 0x01: Manufacturer */
+  (13 * 2 + 2),               /* bLength (13 Char + Type + length) */
+  USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
+  'N', 0,
+  'o', 0,
+  'n', 0,
+  'l', 0,
+  'i', 0,
+  'n', 0,
+  'e', 0,
+  'a', 0,
+  'r', 0,
+  'L', 0,
+  'a', 0,
+  'b', 0,
+  's', 0,
+  /* Index 0x02: Product */
+  (12 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
+  USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
+  'N', 0,
+  'L', 0,
+  ' ', 0,
+  'B', 0,
+  'r', 0,
+  'i', 0,
+  'd', 0,
+  'g', 0,
+  'e', 0,
+  ' ', 0,
+  'B', 0,
+  0, 0
 };
 
 /* USB Device Qualifier */

@@ -9,16 +9,6 @@
 #pragma once
 
 #include "usb/nl_usbd.h"
-#include "globals.h"
-
-/** USB controller used by this driver */
-#if USB_PORT_FOR_MIDI == 0
-#define LPC_USB LPC_USB0
-void USB0_IRQHandler(void);
-#else
-#define LPC_USB LPC_USB1
-void USB1_IRQHandler(void);
-#endif
 
 /** Total number of interfaces*/
 #define USB_IF_NUM 3
@@ -218,32 +208,3 @@ typedef volatile struct
 /** Interrupt on complete */
 #define TD_IOC (1 << 15)
 /** @} */
-
-/* USB Core Functions */
-void     USB_Core_Init(void);
-void     USB_Core_Endpoint_Callback_Set(uint8_t ep, EndpointCallback cb);
-uint8_t  USB_Core_IsConfigured(void);
-uint8_t  USB_Core_ReadyToWrite(uint8_t epnum);
-uint32_t USB_Core_BytesToSend(uint32_t endbuff, uint32_t ep);
-void     USB_Core_ForceFullSpeed(void);
-
-void USB_Core_Interface_Event_Handler_Set(InterfaceEventHandler ievh);
-void USB_Core_Class_Request_Handler_Set(ClassRequestHandler csrqh);
-void USB_Core_SOF_Event_Handler_Set(SOFHandler sofh);
-
-/* Assigning descriptors to the driver */
-void USB_Core_Device_Descriptor_Set(const uint8_t* ddesc);
-void USB_Core_Device_FS_Descriptor_Set(const uint8_t* fsdesc);
-void USB_Core_Device_HS_Descriptor_Set(const uint8_t* hsdesc);
-void USB_Core_Device_String_Descriptor_Set(const uint8_t* strdesc);
-void USB_Core_Device_Device_Quali_Descriptor_Set(const uint8_t* dqdesc);
-
-uint32_t USB_WriteEP(uint32_t EPNum, uint8_t* pData, uint32_t cnt);
-uint32_t USB_ReadEP(uint32_t EPNum, uint8_t* pData);
-uint32_t USB_ReadReqEP(uint32_t EPNum, uint8_t* pData, uint32_t len);
-void     USB_ResetEP(uint32_t EPNum);
-
-void USB_DataInStage(void);
-void USB_DataOutStage(void);
-void USB_StatusInStage(void);
-void USB_StatusOutStage(void);

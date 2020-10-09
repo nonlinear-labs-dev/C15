@@ -9,13 +9,15 @@
 *******************************************************************************/
 
 #include "io/pins.h"
-#include "sys/nl_status.h"
 #include "globals.h"
 
 static uint16_t errorTimer          = 0;
 static uint16_t warningTimer        = 0;
 static uint16_t errorTimerFlicker   = 0;
 static uint16_t warningTimerFlicker = 0;
+
+#define WARNING_LED pinGPIO_3_3  // ledWarning
+#define ERROR_LED   ledError
 
 void DBG_Led_Error_TimedOn(int16_t time)
 {
@@ -26,7 +28,7 @@ void DBG_Led_Error_TimedOn(int16_t time)
     time = -time;
   if (time >= errorTimer)
     errorTimer = time;
-  ledError = !errorTimerFlicker;
+  ERROR_LED = !errorTimerFlicker;
 }
 
 void DBG_Led_Warning_TimedOn(int16_t time)
@@ -38,7 +40,7 @@ void DBG_Led_Warning_TimedOn(int16_t time)
     time = -time;
   if (time >= warningTimer)
     warningTimer = time;
-  ledWarning = !warningTimerFlicker;
+  WARNING_LED = !warningTimerFlicker;
 }
 
 /******************************************************************************/
@@ -64,23 +66,23 @@ void DBG_Process(void)
   if (errorTimerFlicker)
   {
     if (!--errorTimerFlicker)
-      ledError = 1;
+      ERROR_LED = 1;
   }
   else if (errorTimer)
   {
     if (!--errorTimer)
-      ledError = 0;
+      ERROR_LED = 0;
   }
 
   // Warning LED
   if (warningTimerFlicker)
   {
     if (!--warningTimerFlicker)
-      ledWarning = 1;
+      WARNING_LED = 1;
   }
   else if (warningTimer)
   {
     if (!--warningTimer)
-      ledWarning = 0;
+      WARNING_LED = 0;
   }
 }
