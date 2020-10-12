@@ -23,6 +23,7 @@ void USB1_IRQHandler(void);
 
 /* USB Core Functions */
 void     USBB_Core_Init(void);
+void     USBB_Core_DeInit(void);
 void     USBB_Core_Endpoint_Callback_Set(uint8_t ep, EndpointCallback cb);
 uint8_t  USBB_Core_IsConfigured(void);
 uint8_t  USBB_Core_ReadyToWrite(uint8_t epnum);

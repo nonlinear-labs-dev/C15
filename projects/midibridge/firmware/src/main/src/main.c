@@ -13,11 +13,11 @@
 #include "sys/nl_watchdog.h"
 //#include "sys/delays.h"
 #include "CPU_clock.h"
-#include "usb/nl_usba_midi.h"
-#include "usb/nl_usbb_midi.h"
 #include "drv/nl_dbg.h"
 #include "drv/nl_cgu.h"
 #include "io/pins.h"
+#include "usb/nl_usba_midi.h"
+#include "usb/nl_usbb_midi.h"
 #include "midi/nl_midi_proxy.h"
 #include "sys/nl_version.h"
 #include "version.h"
@@ -59,10 +59,6 @@ void Init(void)
   /* I/O pins */
   PINS_Init();
 
-  /* USB */
-  USBA_MIDI_Init();
-  USBB_MIDI_Init();
-
   /* MIDI Proxy */
   MIDI_PROXY_Init();
 
@@ -71,8 +67,9 @@ void Init(void)
 
   COOS_Task_Add(SYS_WatchDogClear, 0, 1);  // every 125 us
 
-#define TS (10)                                     // 1.25 ms time slice
-  COOS_Task_Add(DBG_Process, 1 * TS + 0, 40 * TS);  // every 50 ms, processes error and warning LEDs
+#define TS (10)                                            // 1.25 ms time slice
+  COOS_Task_Add(MIDI_PROXY_Process, 1 * TS + 0, 40 * TS);  // every 50 ms, processes error and warning LEDs
+  COOS_Task_Add(DBG_Process, 2 * TS + 1, 40 * TS);         // every 50 ms, check USB connection status etc
 
   /* M0 init  */
   // cr_start_m0(SLAVE_M0APP, &__core_m0app_START__);
@@ -93,14 +90,11 @@ void main(void)
   while (waitForFirstSysTick)
     ;
 
-  ledAudioOk = 0;
-  ledWarning = 0;
-  ledError   = 0;
-
   while (1)
-  {                    // Since M0 handles key events in ~20us turnaround time, we want to ...
-    USBA_MIDI_Poll();  // Send/receive MIDI data, may do callbacks, also from within interrupt ?
-    USBB_MIDI_Poll();  // Send/receive MIDI data, may do callbacks, also from within interrupt ?
+  {
+    MIDI_PROXY_ProcessFast();
+    USBA_MIDI_Poll();  // Send/receive MIDI data, may do callbacks
+    USBB_MIDI_Poll();  // Send/receive MIDI data, may do callbacks
     COOS_Dispatch();   // Standard dispatching of the slower stuff
   }
 }
@@ -122,11 +116,6 @@ void M4SysTick_Init(void)
 
 void SysTick_Handler(void)
 {
-  static uint16_t cntr = 25;  // 25 * 5us = 125us time slice
-  if (!--cntr)
-  {
-    cntr                = 25;
-    waitForFirstSysTick = 0;
-    COOS_Update();
-  }
+  waitForFirstSysTick = 0;
+  COOS_Update();
 }

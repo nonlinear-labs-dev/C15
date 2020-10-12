@@ -10,7 +10,7 @@
 
 #include "usb/nl_usbd.h"
 #include "usb/nl_usb_core.h"
-//#include "usb/nl_usb_midi.h"
+#include "globals.h"
 #include "usb/nl_usb_descmidi.h"
 
 /* USB Standard Device Descriptor */
@@ -282,23 +282,29 @@ const uint8_t USBA_MIDI_StringDescriptor[] = {
   'b', 0,
   's', 0,
   /* Index 0x02: Product */
-  (12 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
+  (14 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
   'N', 0,
   'L', 0,
-  ' ', 0,
+  'L', 0,
+  '-', 0,
   'B', 0,
   'r', 0,
   'i', 0,
   'd', 0,
   'g', 0,
   'e', 0,
-  ' ', 0,
-  'A', 0,
+  '(', 0,
+#if USBA_PORT_FOR_MIDI == 0
+  'H', 0,
+#else
+  'F', 0,
+#endif
+  'S', 0,
+  ')', 0,
   0, 0
 
 };
-
 const uint8_t USBB_MIDI_StringDescriptor[] = {
   /* Index 0x00: LANGID Codes */
   0x04,                           /* bLength */
@@ -321,20 +327,28 @@ const uint8_t USBB_MIDI_StringDescriptor[] = {
   'b', 0,
   's', 0,
   /* Index 0x02: Product */
-  (12 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
+  (14 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
   'N', 0,
   'L', 0,
-  ' ', 0,
+  'L', 0,
+  '-', 0,
   'B', 0,
   'r', 0,
   'i', 0,
   'd', 0,
   'g', 0,
   'e', 0,
-  ' ', 0,
-  'B', 0,
+  '(', 0,
+#if USBB_PORT_FOR_MIDI == 0
+  'H', 0,
+#else
+  'F', 0,
+#endif
+  'S', 0,
+  ')', 0,
   0, 0
+
 };
 
 /* USB Device Qualifier */

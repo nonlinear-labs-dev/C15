@@ -11,78 +11,53 @@
 #include "io/pins.h"
 #include "globals.h"
 
-static uint16_t errorTimer          = 0;
-static uint16_t warningTimer        = 0;
-static uint16_t errorTimerFlicker   = 0;
-static uint16_t warningTimerFlicker = 0;
+typedef struct
+{
+  uint16_t           timer;
+  uint16_t           flicker;
+  volatile uint32_t *led;
+} LED_t;
 
-#define WARNING_LED pinGPIO_3_3  // ledWarning
-#define ERROR_LED   ledError
+static LED_t leds[6] = {
+  { 0, 0, LED_REDA },
+  { 0, 0, LED_REDB },
+  { 0, 0, LED_YELLOWA },
+  { 0, 0, LED_YELLOWB },
+  { 0, 0, LED_GREENA },
+  { 0, 0, LED_GREENB },
+};
 
-void DBG_Led_Error_TimedOn(int16_t time)
+#define ON  0
+#define OFF 1
+
+void DBG_Led_TimedOn(uint8_t const ledId, int16_t time)
 {
   if (time == 0)
     return;
-  errorTimerFlicker = errorTimer != 0 && time > 0;
+  leds[ledId].flicker = leds[ledId].timer != 0 && time > 0;
   if (time < 0)
     time = -time;
-  if (time >= errorTimer)
-    errorTimer = time;
-  ERROR_LED = !errorTimerFlicker;
-}
-
-void DBG_Led_Warning_TimedOn(int16_t time)
-{
-  if (time == 0)
-    return;
-  warningTimerFlicker = warningTimer != 0 && time > 0;
-  if (time < 0)
-    time = -time;
-  if (time >= warningTimer)
-    warningTimer = time;
-  WARNING_LED = !warningTimerFlicker;
+  if (time >= leds[ledId].timer)
+    leds[ledId].timer = time;
+  *leds[ledId].led = leds[ledId].flicker;
 }
 
 /******************************************************************************/
-/** @brief    	Handling the M4 LEDs (HeartBeat, Warning, Error), every 100ms
- *              Also checks for missed keybed events and displays them as
- *              a 200ms warning LED blink every 500ms. Of course also set
- *              during playing when keys actually are pressed.
+/** @brief    	Handling the M4 LEDs every 500ms
 *******************************************************************************/
 void DBG_Process(void)
 {
-  static int HB_Timer = 5;  // 500ms on/off times
-  if (!--HB_Timer)
+  for (int id = 0; id < 6; id++)
   {
-#if LPC_KEYBED_DIAG
-    if (NL_STAT_CheckMissedKeybedEvents())
-      DBG_Led_Warning_TimedOn(2);
-#endif
-    HB_Timer       = 5;
-    ledM4heartbeat = ~ledM4heartbeat;
-  }
-
-  // Error LED
-  if (errorTimerFlicker)
-  {
-    if (!--errorTimerFlicker)
-      ERROR_LED = 1;
-  }
-  else if (errorTimer)
-  {
-    if (!--errorTimer)
-      ERROR_LED = 0;
-  }
-
-  // Warning LED
-  if (warningTimerFlicker)
-  {
-    if (!--warningTimerFlicker)
-      WARNING_LED = 1;
-  }
-  else if (warningTimer)
-  {
-    if (!--warningTimer)
-      WARNING_LED = 0;
+    if (leds[id].flicker)
+    {
+      if (!--leds[id].flicker)
+        *leds[id].led = ON;
+    }
+    else if (leds[id].timer)
+    {
+      if (!--leds[id].timer)
+        *leds[id].led = OFF;
+    }
   }
 }

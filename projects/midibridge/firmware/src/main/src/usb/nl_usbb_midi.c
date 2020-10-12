@@ -103,6 +103,11 @@ void USBB_MIDI_Init(void)
   USBB_Core_Init();
 }
 
+void USBB_MIDI_DeInit(void)
+{
+  USBB_Core_DeInit();
+}
+
 /******************************************************************************/
 /** @brief    Function that configures the USB MIDI driver
  *  @param[in]	midircv		Pointer to the callback function for

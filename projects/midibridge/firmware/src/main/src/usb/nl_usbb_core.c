@@ -233,9 +233,9 @@ void USBB_Core_Init(void)
       | USBMODE_SLOM;
 
 #if USBB_PORT_FOR_MIDI == 0
-  /* set OTG transcever in proper state, device is present
-	on the port(CCS=1), port enable/disable status change(PES=1). */
-  LPC_USBB->OTGSC = (1 << 3) | (1 << 0) /*| (1<<16)| (1<<24)| (1<<25)| (1<<26)| (1<<27)| (1<<28)| (1<<29)| (1<<30)*/;
+  /* set OTG transceiver in proper state */
+  /*                VBUS=1     MODE=DEVICE */
+  LPC_USBB->OTGSC = (1 << 1) | (1 << 3);
 #endif
 
 #if USBB_PORT_FOR_MIDI == 0
@@ -260,6 +260,17 @@ void USBB_Core_Init(void)
 #if !USB_POLLING
   while (!USB_Configuration)
     ;
+#endif
+}
+
+void USBB_Core_DeInit(void)
+{
+  /* Turn off the phy */
+#if USBB_PORT_FOR_MIDI == 0
+  LPC_CREG->CREG0 |= (1 << 5);
+#else
+  /*                USB_AIM    USB_ESEA   USB_EPD    USB_EPWR   USB_VBUS */
+  LPC_SCU->SFSUSB = (0 << 0) | (0 << 1) | (0 << 2) | (1 << 4) | (0 << 5);
 #endif
 }
 

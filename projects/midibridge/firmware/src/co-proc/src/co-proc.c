@@ -34,6 +34,8 @@ void main(void)
   dummyFunction(GetC15Version());
   dummyFunction(GetC15Build());
 
+  RIT_Init_IntervalInHz(M0_FREQ_HZ);
+
   while (1)
     ;
 }

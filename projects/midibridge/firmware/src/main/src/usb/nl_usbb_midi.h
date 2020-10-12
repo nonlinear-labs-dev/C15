@@ -22,6 +22,7 @@ typedef void (*MidiRcvCallback)(uint8_t* buff, uint32_t len);
 
 /* USB MIDI functions */
 void USBB_MIDI_Init(void);
+void USBB_MIDI_DeInit(void);
 void USBB_MIDI_Config(MidiRcvCallback midircv);
 void USBB_MIDI_Poll(void);
 

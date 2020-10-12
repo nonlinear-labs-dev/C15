@@ -6,11 +6,12 @@
 *******************************************************************************/
 #pragma once
 
-#define NL_LPC_CLK              (204000000ul)
+// #define NL_LPC_CLK              (204000000ul)  // 204MHz
+#define NL_LPC_CLK              (48000000ul)  // 48MHz
 #define NL_LPC_CLK_PERIOD_100PS (10000000000ul / NL_LPC_CLK)
 #define NL_LPC_AUDIO_CLK        (12288000ul)
 
-#define M4_PERIOD_US (5ul)  // M4 ticker interrupt period in 1us multiples
+#define M4_PERIOD_US (125ul)  // M4 ticker interrupt period in 1us multiples
 #define M4_FREQ_HZ   (1000000 / M4_PERIOD_US)
 
 // M0 interrupt period in 62.5ns multiples
