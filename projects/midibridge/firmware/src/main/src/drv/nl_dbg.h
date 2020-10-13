@@ -21,7 +21,7 @@
 #define LED_GREENB  5
 #define LED_DUMMY   6  // will be discarded as out of range
 
-// LED meanings, EV board, left to rigth
+// LED meanings, EV board, left to right
 // persistent/latching
 #define LED_CONNECTED     LED_GREENA
 #define LED_TRAFFIC_STALL LED_YELLOWA
