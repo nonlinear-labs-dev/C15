@@ -30,22 +30,5 @@ void CheckSizeAtCompileTime(void)
 *******************************************************************************/
 void Emphase_IPC_Init(void)
 {
-  s.keyBufferWritePos = 0;
-  s.keyBufferReadPos  = 0;
-
-  for (int i = 0; i < EMPHASE_IPC_KEYBUFFER_SIZE; i++)
-    s.keyBufferData[i] = 0;
-
-  for (int i = 0; i < IPC_ADC_NUMBER_OF_CHANNELS; i++)
-  {
-    for (int k = 0; k < IPC_ADC_BUFFER_SIZE; k++)
-      s.adcBufferData.values[i][k] = IPC_ADC_DEFAULT;
-    s.adcBufferData.sum[i] = IPC_ADC_DEFAULT * IPC_ADC_BUFFER_SIZE;
-  }
-  s.adcConfigData       = 0;
-  s.adcBufferReadIndex  = 0;
-  s.adcBufferWriteIndex = 0;
-  s.ticker              = 0;
-  s.ADCTicks            = 0;
-  s.RitCrtlReg          = 0;
+  s.dummy = 0;
 }

@@ -5,11 +5,8 @@
 *******************************************************************************/
 #include "sys/nl_coos.h"
 #include "drv/nl_dbg.h"
-#include "ipc/emphase_ipc.h"
 
-#define COOS_MAX_TASKS 16  // max number of task the COOS should handle (memory size)
-
-#define LOG_TASK_TIME (1)
+#define COOS_MAX_TASKS 4  // max number of task the COOS should handle (memory size)
 
 typedef struct
 {
@@ -17,9 +14,6 @@ typedef struct
   int32_t countDown;    // delay (ticks) until the function will (next) be run
   int32_t period;       // interval (ticks) between subsequent run
   int32_t run;          // incremented by the scheduler when task is due to execute
-#if LOG_TASK_TIME
-  int32_t max_time;  // maximum time in systicks this task did take;
-#endif
 } sTask;
 
 sTask COOS_taskArray[COOS_MAX_TASKS];  // array for the tasks
@@ -69,10 +63,7 @@ int32_t COOS_Task_Add(void (*taskName)(), uint32_t phase, uint32_t period)
   COOS_taskArray[index].countDown = phase + 1;
   COOS_taskArray[index].period    = period;
   COOS_taskArray[index].run       = 0;
-#if LOG_TASK_TIME
-  COOS_taskArray[index].max_time = 0;
-#endif
-  COOS_taskArray[index].pTask = taskName;
+  COOS_taskArray[index].pTask     = taskName;
   return index;  // so task can be deleted
 }
 
@@ -96,9 +87,6 @@ int32_t COOS_Task_Delete(const uint8_t taskIndex)
     COOS_taskArray[taskIndex].countDown = 0;
     COOS_taskArray[taskIndex].period    = 0;
     COOS_taskArray[taskIndex].run       = 0;
-#if LOG_TASK_TIME
-    COOS_taskArray[taskIndex].max_time = 0;
-#endif
     return 0;  // everything ok
   }
 }
@@ -118,20 +106,12 @@ void COOS_Dispatch(void)
   uint16_t index;
   uint16_t tasks = 0;
 
-  uint32_t dispatchTime = s.ticker;
-
   for (index = 0; index < COOS_MAX_TASKS; index++)  // run the next task (if one is ready)
   {
     if (COOS_taskArray[index].run > 0)
     {
-      uint32_t taskTime = s.ticker;
       (*COOS_taskArray[index].pTask)();  // run the task
       COOS_taskArray[index].run--;       // decrease the run flag, so postponed tasks will also be handled
-      taskTime = s.ticker - taskTime;
-#if LOG_TASK_TIME
-      if (taskTime > COOS_taskArray[index].max_time)
-        COOS_taskArray[index].max_time = taskTime;
-#endif
       tasks++;
 
       if (COOS_taskArray[index].period == 0)  // if one shot task: remove from taskArray
