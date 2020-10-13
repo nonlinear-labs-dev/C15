@@ -260,7 +260,7 @@ const uint8_t USB_MIDI_HSConfigDescriptor[] = {
 };
 
 /* USB String Descriptor (optional) */
-const uint8_t USBA_MIDI_StringDescriptor[] = {
+uint8_t USBA_MIDI_StringDescriptor[] = {
   /* Index 0x00: LANGID Codes */
   0x04,                           /* bLength */
   USB_STRING_DESCRIPTOR_TYPE,     /* bDescriptorType */
@@ -282,7 +282,7 @@ const uint8_t USBA_MIDI_StringDescriptor[] = {
   'b', 0,
   's', 0,
   /* Index 0x02: Product */
-  (14 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
+  (22 * 2 + 2),               /* bLength ( 22 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
   'N', 0,
   'L', 0,
@@ -302,10 +302,19 @@ const uint8_t USBA_MIDI_StringDescriptor[] = {
 #endif
   'S', 0,
   ')', 0,
+  // UUID hash
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
   0, 0
 
 };
-const uint8_t USBB_MIDI_StringDescriptor[] = {
+uint8_t USBB_MIDI_StringDescriptor[] = {
   /* Index 0x00: LANGID Codes */
   0x04,                           /* bLength */
   USB_STRING_DESCRIPTOR_TYPE,     /* bDescriptorType */
@@ -327,7 +336,7 @@ const uint8_t USBB_MIDI_StringDescriptor[] = {
   'b', 0,
   's', 0,
   /* Index 0x02: Product */
-  (14 * 2 + 2),               /* bLength ( 12 Char + Type + length) */
+  (22 * 2 + 2),               /* bLength ( 22 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
   'N', 0,
   'L', 0,
@@ -347,8 +356,16 @@ const uint8_t USBB_MIDI_StringDescriptor[] = {
 #endif
   'S', 0,
   ')', 0,
+  // UUID hash
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
+  '0', 0,
   0, 0
-
 };
 
 /* USB Device Qualifier */
@@ -363,3 +380,18 @@ const uint8_t USB_MIDI_DeviceQualifier[] = {
   0x01,                                 /* bNumOtherSpeedConfigurations */
   0x00                                  /* bReserved */
 };
+
+void USB_MIDI_setStringDescriptorHash(uint32_t hash)
+{
+  uint16_t hashPos = sizeof(USBA_MIDI_StringDescriptor) - 2 - 2 * 8;
+  for (int i = 0; i < 8; i++)  // 8 nibbles
+  {
+    char c = '0';
+    c += hash & 0xF;  // isolate nibble
+    if (c > '9')
+      c += 'a' - '9' - 1;
+    USBA_MIDI_StringDescriptor[hashPos] = USBB_MIDI_StringDescriptor[hashPos] = c;
+    hashPos += 2;
+    hash >>= 4;
+  }
+}

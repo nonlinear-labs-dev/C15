@@ -1,6 +1,7 @@
 #include "nl_midi_proxy.h"
 #include "usb/nl_usba_midi.h"
 #include "usb/nl_usbb_midi.h"
+#include "usb/nl_usb_descmidi.h"
 #include "drv/nl_dbg.h"
 #include "io/pins.h"
 
@@ -201,6 +202,7 @@ void MIDI_PROXY_Process(void)
 
   if (armA || armB)
   {
+    USB_MIDI_setStringDescriptorHash(0);  // TODO : get some true(!) random number
     USBA_MIDI_Init();
     USBB_MIDI_Init();
   }
