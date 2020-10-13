@@ -146,7 +146,7 @@ uint32_t USBB_MIDI_IsConfigured(void)
     @param[in]	imm		Immediate only
     @return		Number of bytes written - Success ; 0 - Failure
 *******************************************************************************/
-uint32_t USBB_MIDI_Send(uint8_t *buff, uint32_t cnt, uint8_t imm)
+uint32_t USBB_MIDI_Send(uint8_t const *const buff, uint32_t const cnt, uint8_t const imm)
 {
 
   if (midiDropMessages)
@@ -156,13 +156,13 @@ uint32_t USBB_MIDI_Send(uint8_t *buff, uint32_t cnt, uint8_t imm)
 
   if (USBB_Core_ReadyToWrite(0x82))
   {
-    USBB_WriteEP(0x82, buff, cnt);
+    USBB_WriteEP(0x82, (uint8_t *) buff, (uint32_t) cnt);
     endOfBuffer = (uint32_t) buff + cnt;
     return cnt;
   }
   else if (!imm)
   {
-    return USBB_MIDI_SendDelayed(buff, cnt);
+    return USBB_MIDI_SendDelayed((uint8_t *) buff, (uint32_t) cnt);
   }
   return 0;
 }
