@@ -11,6 +11,7 @@
 #include "usb/nl_usbd.h"
 #include "usb/nl_usbb_core.h"
 #include "sys/nl_stdlib.h"
+#include "drv/nl_dbg.h"
 
 #ifdef __CC_ARM
 #pragma diag_suppress 111, 177, 1441
@@ -1313,6 +1314,7 @@ void USB1_IRQHandler(void)
 #endif
 {
   uint32_t disr, val, n;
+  uint8_t  activity = 0;
 
   disr               = LPC_USBB->USBSTS_D; /* Device Interrupt Status */
   LPC_USBB->USBSTS_D = disr;
@@ -1322,15 +1324,18 @@ void USB1_IRQHandler(void)
   {
     USB_Reset();
     USBB_ResetCore();
+    DBG_Led_TimedOn(LED_GENERAL_ACTIVITY, -2);
     return;
   }
 
   if (disr & USBSTS_SLI) /* Suspend */
   {
+    activity = 1;
   }
 
   if (disr & USBSTS_PCI) /* Resume */
   {
+    activity = 1;
     /* check if device is operating in HS mode or full speed */
     if (LPC_USBB->PORTSC1_D & (1 << 9))
       DevStatusFS2HS = TRUE;
@@ -1341,6 +1346,7 @@ void USB1_IRQHandler(void)
   /* Only EP0 will have setup packets so call EP0 handler */
   if (val)
   {
+    activity = 1;
     /* Clear the endpoint complete CTRL OUT & IN when */
     /* a Setup is received */
     LPC_USBB->ENDPTCOMPLETE = 0x00010001;
@@ -1354,6 +1360,7 @@ void USB1_IRQHandler(void)
   val = LPC_USBB->ENDPTCOMPLETE;
   if (val)
   {
+    activity           = 1;
     LPC_USBB->ENDPTNAK = val;
 
     /* EP 0 - OUT */
@@ -1398,6 +1405,7 @@ void USB1_IRQHandler(void)
     /* handle NAK interrupts */
     if (val)
     {
+      activity           = 1;
       LPC_USBB->ENDPTNAK = val;
       for (n = 0; n < EP_NUM_MAX / 2; n++)
       {
@@ -1419,8 +1427,11 @@ void USB1_IRQHandler(void)
   /* Error Interrupt */
   if (disr & USBSTS_UEI)
   {
+    activity = 1;
   }
 
+  if (activity)
+    DBG_Led_TimedOn(LED_GENERAL_ACTIVITY, -2);
   return;
 }
 

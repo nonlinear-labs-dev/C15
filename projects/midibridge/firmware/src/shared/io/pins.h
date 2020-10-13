@@ -24,12 +24,12 @@
 #define LED_F          pGPIO_Word(1,  9)
 
 // LED assignments :
-#define LED_REDB    LED_A
-#define LED_REDA    LED_D
-#define LED_YELLOWB LED_B
-#define LED_YELLOWA LED_E
-#define LED_GREENB  LED_C
-#define LED_GREENA  LED_F
+#define pLED_REDB    LED_A
+#define pLED_REDA    LED_D
+#define pLED_YELLOWB LED_B
+#define pLED_YELLOWA LED_E
+#define pLED_GREENB  LED_C
+#define pLED_GREENA  LED_F
 
 static inline void debugPinsInit(void)
 {

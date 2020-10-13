@@ -9,19 +9,24 @@ static void ReceiveA(uint8_t *buff, uint32_t len)
   if (USBB_MIDI_IsConfigured())
   {
     if (USBB_MIDI_BytesToSend())
-      DBG_Led_TimedOn(YELLOWB, -10);  // pending write
+    {
+      DBG_Led(LED_TRAFFIC_STALL, 1);
+      DBG_Led(LED_DATA_LOSS, 1);
+    }
     else
     {
       if (USBB_MIDI_Send(buff, len, 0))
-        DBG_Led_TimedOn(GREENB, -10);  // success
+        DBG_Led_TimedOn(LED_MIDI_TRAFFIC, -2);  // success
       else
-        DBG_Led_TimedOn(REDB, -10);  // send failure
+      {
+        DBG_Led(LED_DATA_LOSS, 1);
+        DBG_Led_TimedOn(LED_ERROR, -10);  // send failure
+      }
     }
     return;
   }
-  DBG_Led_TimedOn(REDB, -10);
-  DBG_Led_TimedOn(YELLOWB, -10);
-  DBG_Led_TimedOn(GREENB, -10);
+  DBG_Led(LED_DATA_LOSS, 1);
+  DBG_Led_TimedOn(LED_ERROR, -10);  // send failure
 }
 
 static void ReceiveB(uint8_t *buff, uint32_t len)
@@ -29,19 +34,24 @@ static void ReceiveB(uint8_t *buff, uint32_t len)
   if (USBA_MIDI_IsConfigured())
   {
     if (USBA_MIDI_BytesToSend())
-      DBG_Led_TimedOn(YELLOWA, -10);  // pending write
+    {
+      DBG_Led(LED_TRAFFIC_STALL, 1);
+      DBG_Led(LED_DATA_LOSS, 1);
+    }
     else
     {
       if (USBA_MIDI_Send(buff, len, 0))
-        DBG_Led_TimedOn(GREENA, -10);  // success
+        DBG_Led_TimedOn(LED_MIDI_TRAFFIC, -2);  // success
       else
-        DBG_Led_TimedOn(REDA, -10);  // send failure
+      {
+        DBG_Led(LED_DATA_LOSS, 1);
+        DBG_Led_TimedOn(LED_ERROR, -10);  // send failure
+      }
     }
     return;
   }
-  DBG_Led_TimedOn(REDB, -10);
-  DBG_Led_TimedOn(YELLOWB, -10);
-  DBG_Led_TimedOn(GREENB, -10);
+  DBG_Led(LED_DATA_LOSS, 1);
+  DBG_Led_TimedOn(LED_ERROR, -10);  // send failure
 }
 
 void MIDI_PROXY_Init(void)
@@ -49,6 +59,8 @@ void MIDI_PROXY_Init(void)
   USBA_MIDI_Config(ReceiveA);
   USBB_MIDI_Config(ReceiveB);
 }
+
+// ------------------------------------------------------------------
 
 #if USBA_PORT_FOR_MIDI == 0
 #define pinUSBA_VBUS pinUSB0_VBUS
@@ -86,6 +98,7 @@ void MIDI_PROXY_ProcessFast(void)
     }
     USBB_NotConnected = 3;
   }
+  DBG_Led(LED_CONNECTED, (!USBA_NotConnected && !USBB_NotConnected && USBA_MIDI_IsConfigured() && USBB_MIDI_IsConfigured()));
 }
 
 void MIDI_PROXY_Process(void)
