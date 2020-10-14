@@ -27,4 +27,12 @@ public class ClipboardUseCases {
         if (PresetManagerUseCases.get().hasMultipleSelection())
             server.copyPresets(PresetManagerUseCases.get().getSelectedPresetsCSV());
     }
+
+    public void copyBank(String uuid) {
+        server.copyBank(uuid);
+    }
+
+    public void pasteOnBank(String uuid) {
+        server.pasteOnBank(uuid);
+    }
 }

@@ -12,7 +12,7 @@
 
 RecallParameterGroups::RecallParameterGroups(EditBuffer *editBuffer)
     : UpdateDocumentContributor(editBuffer)
-    , m_editBuffer { editBuffer }
+    , m_editBuffer{ editBuffer }
 {
   for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
   {
@@ -65,7 +65,7 @@ void RecallParameterGroups::writeDocument(Writer &writer, UpdateDocumentContribu
   auto changed = getUpdateIDOfLastChange() > knownRevision;
   if(changed)
   {
-    writer.writeTag("recall-data", Attribute { "changed", changed }, [this, &writer, knownRevision] {
+    writer.writeTag("recall-data", Attribute{ "changed", changed }, [this, &writer, knownRevision] {
       for(auto &parameterpair : getParameters())
         parameterpair.second->writeDocument(writer, knownRevision);
     });

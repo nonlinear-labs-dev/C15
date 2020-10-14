@@ -120,7 +120,7 @@ public class OracleTests extends TestWithSteps {
     private void deleteBank() {
         addStep(() -> {
             Bank b = findBank();
-            server.deleteBank(b);
+            server.deleteBank(b.getUUID());
         }, () -> {
             return findBank() == null;
         });

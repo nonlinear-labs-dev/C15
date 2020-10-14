@@ -35,7 +35,7 @@ class PresetManagerPane extends HTMLPanel {
                 var master = widgets.get(a.attachedTo);
 
                 if (bank != null && master != null) {
-                    var tape = master.getTape(a.direction);
+                    var tape = master.getNestedBanks(a.direction);
                     var nesting = a.direction == "left" ? Nesting.Horizontally : Nesting.Vertically;
                     bank.attachTo(tape, 0, 0, nesting);
                     continue;

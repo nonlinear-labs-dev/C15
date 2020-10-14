@@ -445,9 +445,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void deleteBank(Bank b) {
+	public void deleteBank(String b) {
 		StaticURI.Path path = new StaticURI.Path("presets", "delete-bank");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", b.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", b));
 		queueJob(uri, false);
 	}
 
@@ -847,9 +847,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void moveBy(Bank bank, String dir) {
+	public void moveBy(String bank, String dir) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "move");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank.getUUID()),
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank),
 				new StaticURI.KeyValue("direction", dir));
 		queueJob(uri, false);
 	}
@@ -860,9 +860,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void copyBank(Bank bank) {
+	public void copyBank(String uuid) {
 		StaticURI.Path path = new StaticURI.Path("clipboard", "copy-bank");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", uuid));
 		queueJob(uri, false);
 	}
 
@@ -872,9 +872,9 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void pasteOnBank(Bank bank) {
+	public void pasteOnBank(String uuid) {
 		StaticURI.Path path = new StaticURI.Path("clipboard", "paste-on-bank");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", bank.getUUID()));
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", uuid));
 		queueJob(uri, false);
 	}
 

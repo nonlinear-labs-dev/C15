@@ -2,23 +2,16 @@ package com.nonlinearlabs.client.world;
 
 import java.util.ArrayList;
 
-import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.world.PointerEvent.GwtPointerEvent;
 import com.nonlinearlabs.client.world.pointer.PointerState;
 import com.nonlinearlabs.client.world.pointer.Touch;
 
@@ -51,59 +44,18 @@ public abstract class Mouseing {
 																	return new event.constructor(event.type, event);																	
 																	}-*/;
 
-	private static native boolean isEventInside(JavaScriptObject element, JavaScriptObject event) /*-{
-																									var rect =  element.getBoundingClientRect();
-																									if(rect.left < event.clientX && rect.right > event.clientX)
-																										if(rect.top < event.clientY && rect.bottom > event.clientY)
-																											return true;
-																									
-																									return false;
-																									}-*/;
+	public void initHandlers(FocusWidget widget) {
 
-	private boolean bubble(Element pm, Element element, GwtPointerEvent event) {
-		for (var c = element.getLastChild(); c != null; c = c.getPreviousSibling()) {
-			var child = (Element) c;
-			var isEmpty = child.getClientHeight() == 0 || child.getClientWidth() == 0;
-			if (isEmpty || isEventInside(child, event.getNativeEvent())) {
-				if (bubble(pm, child, event))
-					return true;
-			}
-		}
-
-		if (element.getClientHeight() == 0 || element.getClientWidth() == 0) {
-			return false;
-		}
-
-		if (pm == element)
-			return false;
-
-		element.dispatchEvent(clone(event.getNativeEvent()));
-		return true;
-	}
-
-	public void initHandlers(Canvas canvas) {
-
-		canvas.addDoubleClickHandler(new NonMapsMousDoubleClickHandler());
+		widget.addDoubleClickHandler(new NonMapsMouseDoubleClickHandler());
 
 		NonLinearWorld nw = NonMaps.get().getNonLinearWorld();
 
-		Event.addNativePreviewHandler((e) -> {
-
-		});
-
-		canvas.addDomHandler((event) -> {
-			var pm = Document.get().getElementById("preset-manager");
-			var orig = event.getRelativeElement();
-			event.setRelativeElement(pm);
-			if (bubble(pm, pm, event))
-				return;
-
-			event.setRelativeElement(orig);
+		widget.addDomHandler((event) -> {
 			Position p = new Position(event.getNativeEvent());
 			nw.setCtrlDown(event.isControlKeyDown());
 			nw.setShiftDown(event.isShiftKeyDown());
 
-			capturePointer(canvas.getCanvasElement(), event.pointerId);
+			capturePointer(widget.getElement(), event.pointerId);
 			touches.add(new Touch(event.pointerId, p));
 
 			if (getPointerType(event.getNativeEvent()) == "touch") {
@@ -117,7 +69,7 @@ public abstract class Mouseing {
 			NonMaps.theMaps.captureFocus();
 		}, pointerDown.eventType);
 
-		canvas.addDomHandler((event) -> {
+		widget.addDomHandler((event) -> {
 			event.preventDefault();
 			Position p = new Position(event.getNativeEvent());
 
@@ -133,7 +85,7 @@ public abstract class Mouseing {
 			}
 		}, pointerMove.eventType);
 
-		canvas.addDomHandler((event) -> {
+		widget.addDomHandler((event) -> {
 			Position p = new Position(event.getNativeEvent());
 
 			touches.removeIf(t -> {
@@ -150,33 +102,15 @@ public abstract class Mouseing {
 			}
 		}, pointerUp.eventType);
 
-		canvas.addHandler(new ContextMenuHandler() {
-			@Override
-			public void onContextMenu(ContextMenuEvent event) {
-				event.preventDefault();
-				event.stopPropagation();
-			}
+		widget.addHandler(e -> {
+			e.preventDefault();
+			e.stopPropagation();
 		}, ContextMenuEvent.getType());
 
-		KeyDownHandler keypress = new KeyDownHandler() {
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				NonMaps.get().getNonLinearWorld().handleKeyPress(event);
-			}
-		};
-
-		KeyUpHandler keyUpHandler = new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				NonMaps.get().getNonLinearWorld().handleKeyUp(event);
-
-			}
-		};
-
-		canvas.sinkEvents(Event.ONCONTEXTMENU | Event.KEYEVENTS | Event.MOUSEEVENTS);
-		canvas.addKeyDownHandler(keypress);
-		canvas.addKeyUpHandler(keyUpHandler);
-		canvas.setFocus(true);
+		widget.sinkEvents(Event.ONCONTEXTMENU | Event.KEYEVENTS | Event.MOUSEEVENTS);
+		widget.addKeyDownHandler(e -> NonMaps.get().getNonLinearWorld().handleKeyPress(e));
+		widget.addKeyUpHandler(e -> NonMaps.get().getNonLinearWorld().handleKeyUp(e));
+		widget.setFocus(true);
 	}
 
 	protected abstract boolean handleKeyPress(KeyDownEvent event);

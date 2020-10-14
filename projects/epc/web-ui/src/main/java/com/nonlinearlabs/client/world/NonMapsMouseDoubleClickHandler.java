@@ -4,7 +4,7 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.nonlinearlabs.client.world.pointer.PointerState;
 
-class NonMapsMousDoubleClickHandler implements DoubleClickHandler {
+class NonMapsMouseDoubleClickHandler implements DoubleClickHandler {
 
 	@Override
 	public void onDoubleClick(DoubleClickEvent event) {

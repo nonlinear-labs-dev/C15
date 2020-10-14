@@ -15,13 +15,14 @@ import com.nonlinearlabs.client.dataModel.presetManager.Presets;
 public class PresetManagerUseCases {
     private static PresetManagerUseCases theInstance = new PresetManagerUseCases();
     private static ServerProxy server = NonMaps.get().getServerProxy();
+    private static PresetManagerModel model = PresetManagerModel.get();
 
     public static PresetManagerUseCases get() {
         return theInstance;
     }
 
     public void toggleMultipleSelection(String uuid) {
-        var presets = PresetManagerModel.get().selectedPresets.getValue();
+        var presets = model.selectedPresets.getValue();
         if (presets == null) {
 
             var preset = Presets.get().find(uuid);
@@ -33,28 +34,28 @@ public class PresetManagerUseCases {
             if (selPresetUuid != uuid)
                 presets.add(uuid);
 
-            PresetManagerModel.get().selectedPresets.setValue(presets);
+            model.selectedPresets.setValue(presets);
         } else {
             if (presets.contains(uuid) && presets.size() > 1)
                 presets.remove(uuid);
             else
                 presets.add(uuid);
 
-            PresetManagerModel.get().selectedPresets.notifyChanges();
+            model.selectedPresets.notifyChanges();
         }
     }
 
     public void finishMultipleSelection() {
-        PresetManagerModel.get().selectedPresets.setValue(null);
+        model.selectedPresets.setValue(null);
     }
 
     public boolean hasMultipleSelection() {
-        return PresetManagerModel.get().selectedPresets.getValue() != null;
+        return model.selectedPresets.getValue() != null;
     }
 
     public String getSelectedPresetsCSV() {
         String csv = "";
-        for (var a : PresetManagerModel.get().selectedPresets.getValue()) {
+        for (var a : model.selectedPresets.getValue()) {
             if (!csv.isEmpty())
                 csv += ",";
             csv += a;
@@ -63,16 +64,16 @@ public class PresetManagerUseCases {
     }
 
     public void resetDragDropData() {
-        PresetManagerModel.get().dnd.setValue(null);
+        model.dnd.setValue(null);
     }
 
     public DragDropData setDragDropData(DragDataType type, String data) {
-        PresetManagerModel.get().dnd.setValue(new DragDropData(type, data));
-        return PresetManagerModel.get().dnd.getValue();
+        model.dnd.setValue(new DragDropData(type, data));
+        return model.dnd.getValue();
     }
 
     public void drop(double x, double y) {
-        var dnd = PresetManagerModel.get().dnd.getValue();
+        var dnd = model.dnd.getValue();
         if (dnd != null) {
             if (dnd.type == DragDataType.Bank)
                 moveBank(dnd.data, x, y);
@@ -91,7 +92,7 @@ public class PresetManagerUseCases {
         b.y.setValue(y);
         b.attachedToBank.setValue("");
         b.attachDirection.setValue("");
-        PresetManagerUpdater u = new PresetManagerUpdater(null, PresetManagerModel.get());
+        PresetManagerUpdater u = new PresetManagerUpdater(null, model);
         u.updateBankPositions();
         server.setBankPosition(uuid, x, y, true);
     }
@@ -101,7 +102,37 @@ public class PresetManagerUseCases {
             return;
         }
 
-        PresetManagerModel.get().selectedBank.setValue(uuid);
+        model.selectedBank.setValue(uuid);
         server.selectBank(uuid);
+    }
+
+    public void moveBankBy(String uuid, String string) {
+        server.moveBy(uuid, "LeftByOne");
+    }
+
+    public void deleteBank(String uuid) {
+        server.deleteBank(uuid);
+    }
+
+    public void selectPreviousBank() {
+        var sel = model.selectedBank.getValue();
+        var banks = model.banks.getValue();
+        var idx = banks.indexOf(sel);
+        if (idx > 0) {
+            var prevBank = banks.get(idx - 1);
+            model.selectedBank.setValue(prevBank);
+            server.selectBank(prevBank);
+        }
+    }
+
+    public void selectNextBank() {
+        var sel = model.selectedBank.getValue();
+        var banks = model.banks.getValue();
+        var idx = banks.indexOf(sel);
+        if (idx + 1 < banks.size()) {
+            var nextBank = banks.get(idx + 1);
+            model.selectedBank.setValue(nextBank);
+            server.selectBank(nextBank);
+        }
     }
 }

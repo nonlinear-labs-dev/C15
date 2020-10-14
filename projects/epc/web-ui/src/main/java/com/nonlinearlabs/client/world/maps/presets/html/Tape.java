@@ -1,9 +1,6 @@
 package com.nonlinearlabs.client.world.maps.presets.html;
 
-import java.util.HashMap;
-
 import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.user.client.ui.Widget;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
@@ -59,13 +56,4 @@ class Tape extends DropZone {
         getElement().removeClassName("maybe-drop-target");
     }
 
-    public void addNestedBanks(HashMap<String, BankUI> widgets) {
-        for (Widget w : this.getChildren()) {
-            if (w instanceof BankUI) {
-                BankUI b = (BankUI) w;
-                widgets.put(b.getElement().getAttribute("id"), b);
-                b.addNestedBanks(widgets);
-            }
-        }
-    }
 }

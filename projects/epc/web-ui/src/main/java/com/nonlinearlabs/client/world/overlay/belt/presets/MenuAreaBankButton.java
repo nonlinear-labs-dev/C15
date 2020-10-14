@@ -4,7 +4,6 @@ import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
 
@@ -28,8 +27,7 @@ public class MenuAreaBankButton extends SVGImage {
 		}
 
 		if (bankUUID != null) {
-			Bank bank = pm.findBank(bankUUID);
-			CombinedBankContextMenu cm = new CombinedBankContextMenu(o, bank);
+			CombinedBankContextMenu cm = new CombinedBankContextMenu(o, bankUUID);
 			Position p = getPixRect().getLeftTop();
 			p.moveBy(3, -cm.getDesiredHeight() + 4);
 			return o.setContextMenu(p, cm);

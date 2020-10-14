@@ -27,6 +27,7 @@ import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.presenters.LocalSettingsProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.NonLinearWorld;
@@ -763,14 +764,14 @@ public class PresetManager extends MapsLayout {
 		if (hasCustomPresetSelection())
 			getCustomPresetSelection().selectPreviousBank();
 		else
-			selectBankWithOrdernumberOffset(-1);
+			PresetManagerUseCases.get().selectPreviousBank();
 	}
 
 	public void selectNextBank(boolean userInteraction) {
 		if (hasCustomPresetSelection())
 			getCustomPresetSelection().selectNextBank();
 		else
-			selectBankWithOrdernumberOffset(1);
+			PresetManagerUseCases.get().selectNextBank();
 	}
 
 	public boolean canSelectPreviousBank() {
@@ -804,28 +805,6 @@ public class PresetManager extends MapsLayout {
 			}
 		}
 		return false;
-	}
-
-	protected void selectBankWithOrdernumberOffset(int off) {
-		String sel = getSelectedBank();
-		Bank b = findBank(sel);
-
-		if (b == null)
-			selectBankWithOrderNumber(1);
-		else
-			selectBankWithOrderNumber(b.getOrderNumber() + off);
-	}
-
-	private void selectBankWithOrderNumber(int i) {
-		for (Control c : getChildren()) {
-			if (c instanceof Bank) {
-				Bank b = (Bank) c;
-				if (b.getOrderNumber() == i) {
-					b.selectBank(true);
-					return;
-				}
-			}
-		}
 	}
 
 	public void loadSelectedPreset() {

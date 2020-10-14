@@ -16,7 +16,6 @@ public class PresetManagerUpdater extends Updater {
 
 	public void doUpdate() {
 		if (didChange(root)) {
-			Banks.get().preUpdate();
 			processChangedChildrenElements(root, "banks", t -> updateBanks(t));
 			Banks.get().postUpdate();
 			Presets.get().postUpdate();
@@ -29,14 +28,14 @@ public class PresetManagerUpdater extends Updater {
 
 	private void updateBanks(Node banks) {
 		if (didChange(banks)) {
+			var banksDB = Banks.get();
+			banksDB.preUpdate();
 			String midiSelectedBank = banks.getAttributes().getNamedItem("selected-midi-bank").getNodeValue();
-			GWT.log("updating Banks with midi uuid: " + midiSelectedBank);
-			BankMapDataModelEntity existingBanksEntity = pm.getBanks();
-			Map<String, Bank> existingBanks = new HashMap<String, Bank>(existingBanksEntity.getValue());
-			existingBanks.forEach((uuid, bank) -> bank.setDoomed());
-			processChildrenElements(banks, "preset-bank", t -> updateBank(existingBanks, t, midiSelectedBank));
-			existingBanks.entrySet().removeIf(e -> e.getValue().isDoomed());
-			existingBanksEntity.setValue(existingBanks);
+			ArrayList<String> existingBanks = new ArrayList<String>();
+			processChildrenElements(banks, "preset-bank", t -> updateBank(existingBanks, t));
+			existingBanks
+					.sort((a, b) -> banksDB.find(a).orderNumber.getValue() - banksDB.find(b).orderNumber.getValue());
+			target.banks.setValue(existingBanks);
 			target.selectedBank.setValue(getAttributeValue(banks, "selected-bank"));
 		}
 	}

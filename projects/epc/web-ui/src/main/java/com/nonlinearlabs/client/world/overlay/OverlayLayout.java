@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.Composite;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.ChildrenOwner;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.ILayout;
@@ -13,11 +19,49 @@ import com.nonlinearlabs.client.world.pointer.Gesture;
 
 public abstract class OverlayLayout extends OverlayControl implements ILayout<OverlayControl> {
 
+	FocusWidget htmlProxy;
+
 	protected OverlayLayout(Control parent) {
 		super(parent);
+
+		if (parent instanceof Overlay) {
+			var overlay = Document.get().getElementById("overlay-proxies");
+			var overlayWidget = HTMLPanel.wrap(overlay);
+			overlayWidget.add(htmlProxy = new Anchor());
+			htmlProxy.getElement().addClassName("overlay-proxy");
+			getNonMaps().initHandlers(htmlProxy);
+		}
 	}
 
-	// private Animator opacityAnimator;
+	@Override
+	public void setPixRect(Rect rect) {
+		super.setPixRect(rect);
+		syncPosition();
+	}
+
+	@Override
+	public void movePixRect(double x, double y) {
+		super.movePixRect(x, y);
+		syncPosition();
+	}
+
+	@Override
+	public void onRemoved() {
+		if (htmlProxy != null)
+			htmlProxy.removeFromParent();
+	}
+
+	private void syncPosition() {
+		if (htmlProxy == null)
+			return;
+
+		var s = htmlProxy.getElement().getStyle();
+		s.setLeft(getPixRect().getLeft() / NonMaps.devicePixelRatio, Unit.PX);
+		s.setTop(getPixRect().getTop() / NonMaps.devicePixelRatio, Unit.PX);
+		s.setWidth(getPixRect().getWidth() / NonMaps.devicePixelRatio, Unit.PX);
+		s.setHeight(getPixRect().getHeight() / NonMaps.devicePixelRatio, Unit.PX);
+	}
+
 	private double opacity = 1.0;
 	private ChildrenOwner<OverlayControl> children = new ChildrenOwner<OverlayControl>();
 

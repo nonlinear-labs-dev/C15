@@ -7,4 +7,5 @@ public class BankPresenter {
     public String uuid = "";
     public ArrayList<String> presets = new ArrayList<String>();
     public boolean isSelected = false;
+    public int orderNumber = 0;
 }

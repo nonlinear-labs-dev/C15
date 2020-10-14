@@ -1343,10 +1343,6 @@ canvas {
   margin: 0px;
   padding: 0px;
   z-index: 1;
-  pointer-events: none;
-}
-
-#overlay > canvas {
   pointer-events: all;
 }
 
@@ -1359,7 +1355,11 @@ canvas {
   margin: 0px;
   padding: 0px;
   z-index: 3;
-  pointer-events: all;
+  pointer-events: none;
+}
+
+#overlay > canvas {
+  pointer-events: none;
 }
 
 #cm {
@@ -2045,7 +2045,7 @@ button {
 }
 
 .preset-manager.maybe-drop-target .bank .tape  {
-  box-shadow: 0mm 0mm 5mm white;
+  background-color:#69e ;
 }
 
 .bank .horizontal > .tape {
@@ -2067,18 +2067,25 @@ button {
   position: relative;
 }
 
-.bank.nested {
-  position: relative;
+.horizontal > .nested {
+  position: absolute;
 }
 
-.bank.nested.horizontally {
-  margin-top: -10mm;
+.bank.nested {
+  position: relative;
 }
 
 #hidden {
   position: absolute;
   left: -10000cm;
   top: -10000cm;
+  z-index: 100;
+}
+
+.overlay-proxy {
+  display: block;
+  position: absolute;
+  pointer-events: all;
   z-index: 100;
 }
 

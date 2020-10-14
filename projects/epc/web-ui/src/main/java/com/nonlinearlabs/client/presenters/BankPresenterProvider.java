@@ -13,7 +13,11 @@ public class BankPresenterProvider extends Notifier<BankPresenter> {
         Bank b = Banks.get().find(uuid);
 
         b.name.onChange(v -> updateName(b));
-        b.orderNumber.onChange(v -> updateName(b));
+        b.orderNumber.onChange(v -> {
+            thePresenter.orderNumber = v;
+            updateName(b);
+            return true;
+        });
 
         b.presets.onChange(presets -> {
             thePresenter.presets = presets;

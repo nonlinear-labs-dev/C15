@@ -118,4 +118,9 @@ public class BankUseCases {
             dock(dnd.data, master, tapePosition, pos);
     }
 
+    public void rename(String uuid, String newName) {
+        Banks.get().find(uuid).name.setValue(newName);
+        server.renameBank(uuid, newName);
+    }
+
 }

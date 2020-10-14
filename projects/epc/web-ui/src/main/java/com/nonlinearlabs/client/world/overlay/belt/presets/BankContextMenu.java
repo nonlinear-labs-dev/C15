@@ -8,6 +8,12 @@ import com.nonlinearlabs.client.ClipboardManager.ClipboardContent;
 import com.nonlinearlabs.client.presenters.DeviceSettingsProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.Renameable;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.BankUseCases;
+import com.nonlinearlabs.client.useCases.ClipboardUseCases;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RenameDialog;
@@ -21,17 +27,21 @@ import com.nonlinearlabs.client.world.overlay.belt.presets.TextUpload.TextUpload
 
 public abstract class BankContextMenu extends ContextMenu {
 
-	protected Bank m_bank = null;
+	protected String uuid = "";
 
 	@Override
 	public void fadeOut() {
-		m_bank = null;
+		uuid = "";
 		super.fadeOut();
 	}
 
-	public BankContextMenu(OverlayLayout parent, final Bank bank) {
+	public BankContextMenu(OverlayLayout parent, final String uuid) {
 		super(parent);
-		m_bank = bank;
+		this.uuid = uuid;
+
+		var bankPresenter = BankPresenterProviders.get().getPresenter(uuid);
+		var pmPresenter = PresetManagerPresenterProvider.get().getPresenter();
+
 		if (hasBankCreationRights()) {
 			addChild(new ContextMenuItem(this, "Create New Bank") {
 				@Override
@@ -70,7 +80,28 @@ public abstract class BankContextMenu extends ContextMenu {
 
 		}
 
-		if (bank != null) {
+
+		if (!uuid.isEmpty()) {
+			if (DeviceSettingsProvider.get().getPresenter().externalMidiEnabled) {
+				if (!bank.isMidiBank()) {
+					addChild(new ContextMenuItem(this, "Select Bank as Midi PC Receiver") {
+						@Override
+						public Control click(Position eventPoint) {
+							EditBufferUseCases.get().selectMidiBank(bank);
+							return super.click(eventPoint);
+						}
+					});
+				} else {
+					addChild(new ContextMenuItem(this, "Remove Bank as Midi PC Receiver") {
+						@Override
+						public Control click(Position eventPoint) {
+							EditBufferUseCases.get().selectMidiBank(null);
+							return super.click(eventPoint);
+						}
+					});
+				}
+			}
+
 			addChild(new ContextMenuItem(this, "Export Bank as File ...") {
 				@Override
 				public Control click(Position eventPoint) {
@@ -86,7 +117,7 @@ public abstract class BankContextMenu extends ContextMenu {
 				addChild(new ContextMenuItem(this, bankInfoText) {
 					@Override
 					public Control click(Position eventPoint) {
-						bank.selectBank(true);
+						PresetManagerUseCases.get().selectBank(uuid);
 						BankInfoDialog.toggle();
 						invalidate(INVALIDATION_FLAG_UI_CHANGED);
 						return super.click(eventPoint);
@@ -97,7 +128,29 @@ public abstract class BankContextMenu extends ContextMenu {
 			addChild(new ContextMenuItem(this, "Rename ...") {
 				@Override
 				public Control click(Position eventPoint) {
-					RenameDialog.open(bank);
+					RenameDialog.open(new Renameable() {
+
+						@Override
+						public String getCurrentName() {
+							return bankPresenter.name;
+						}
+
+						@Override
+						public String getTitleName() {
+							return bankPresenter.name;
+						}
+
+						@Override
+						public String getEntityName() {
+							return "Bank";
+						}
+
+						@Override
+						public void setName(String newName) {
+							BankUseCases.get().rename(uuid, newName);
+						}
+
+					});
 					return super.click(eventPoint);
 				}
 			});
@@ -105,7 +158,7 @@ public abstract class BankContextMenu extends ContextMenu {
 			addChild(new ContextMenuItem(this, "Copy") {
 				@Override
 				public Control click(Position eventPoint) {
-					getNonMaps().getServerProxy().copyBank(bank);
+					ClipboardUseCases.get().copyBank(uuid);
 					return super.click(eventPoint);
 				}
 			});
@@ -116,28 +169,28 @@ public abstract class BankContextMenu extends ContextMenu {
 					addChild(new ContextMenuItem(this, "Paste") {
 						@Override
 						public Control click(Position eventPoint) {
-							getNonMaps().getServerProxy().pasteOnBank(bank);
+							ClipboardUseCases.get().pasteOnBank(uuid);
 							return super.click(eventPoint);
 						}
 					});
 				}
 			}
 
-			if (bank.getParent().canSelectBankWithOrdernumberOffset(bank, -1)) {
+			if (bankPresenter.orderNumber > 1) {
 				addChild(new ContextMenuItem(this, "Move Left") {
 					@Override
 					public Control click(Position eventPoint) {
-						getNonMaps().getServerProxy().moveBy(bank, "LeftByOne");
+						PresetManagerUseCases.get().moveBankBy(uuid, "LeftByOne");
 						return super.click(eventPoint);
 					}
 				});
 			}
 
-			if (bank.getParent().canSelectBankWithOrdernumberOffset(bank, 1)) {
+			if (bankPresenter.orderNumber < pmPresenter.banks.size()) {
 				addChild(new ContextMenuItem(this, "Move Right") {
 					@Override
 					public Control click(Position eventPoint) {
-						getNonMaps().getServerProxy().moveBy(bank, "RightByOne");
+						PresetManagerUseCases.get().moveBankBy(uuid, "RightByOne");
 						return super.click(eventPoint);
 					}
 				});
@@ -146,20 +199,20 @@ public abstract class BankContextMenu extends ContextMenu {
 			addChild(new ContextMenuItem(this, "Delete") {
 				@Override
 				public Control click(Position eventPoint) {
-					getNonMaps().getServerProxy().deleteBank(bank);
+					PresetManagerUseCases.get().deleteBank(uuid);
 					return super.click(eventPoint);
 				}
 			});
 
-			if (hasCollapse()) {
-				addChild(new ContextMenuItem(this, bank.isCollapsed() ? "Expand" : "Collapse") {
-					@Override
-					public Control click(Position eventPoint) {
-						bank.toggleMinMax();
-						return super.click(eventPoint);
-					}
-				});
-			}
+			addChild(new ContextMenuItem(this, "Export as File ...") {
+				@Override
+				public Control click(Position eventPoint) {
+					String bankName = URL.encodePathSegment(bankPresenter.name);
+					String uri = "/presets/banks/download-bank/" + bankName + ".xml?uuid=" + bankPresenter.uuid;
+					Window.open(uri, "", "");
+					return super.click(eventPoint);
+				}
+			});
 
 			if (DeviceSettingsProvider.get().getPresenter().externalMidiEnabled) {
 				if (!bank.isMidiBank()) {
@@ -191,10 +244,6 @@ public abstract class BankContextMenu extends ContextMenu {
 		}
 	}
 
-	public Bank getBank() {
-		return m_bank;
-	}
-
 	private NonPosition calcualteBankPosition() {
 		List<Bank> banks = NonMaps.get().getNonLinearWorld().getPresetManager().getBanks();
 
@@ -221,4 +270,8 @@ public abstract class BankContextMenu extends ContextMenu {
 	protected abstract boolean hasPaste();
 
 	protected abstract boolean hasBankCreationRights();
+
+	public String getBank() {
+		return uuid;
+	}
 }

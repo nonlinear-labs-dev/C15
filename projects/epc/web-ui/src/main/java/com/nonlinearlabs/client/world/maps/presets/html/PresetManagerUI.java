@@ -18,7 +18,6 @@ public class PresetManagerUI extends DropZone {
         super();
 
         thePresetManagerUI = this;
-
         RootPanel.get().add(this);
 
         getElement().addClassName("preset-manager");

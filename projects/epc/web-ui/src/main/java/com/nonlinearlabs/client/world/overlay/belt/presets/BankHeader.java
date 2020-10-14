@@ -20,7 +20,7 @@ import com.nonlinearlabs.client.world.overlay.belt.EditBufferDraggingButton;
 class BankHeader extends OverlayLayout {
 
 	private class OverlayBankContextMenu extends BankContextMenu {
-		private OverlayBankContextMenu(OverlayLayout parent, Bank bank) {
+		private OverlayBankContextMenu(OverlayLayout parent, String bank) {
 			super(parent, bank);
 		}
 
@@ -164,7 +164,7 @@ class BankHeader extends OverlayLayout {
 		Bank b = getParent().getBankInCharge();
 		if (b != null) {
 			Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
-			return o.setContextMenu(pos, new OverlayBankContextMenu(o, b));
+			return o.setContextMenu(pos, new OverlayBankContextMenu(o, b.getUUID()));
 		}
 		return super.onContextMenu(pos);
 	}

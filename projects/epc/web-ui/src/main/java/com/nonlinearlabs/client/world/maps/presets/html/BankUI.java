@@ -6,10 +6,12 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DragEndEvent;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
 import com.nonlinearlabs.client.useCases.BankUseCases.TapePosition;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
+import com.nonlinearlabs.client.world.PointerEvent;
 
 class BankUI extends HTMLPanel {
 
@@ -22,41 +24,58 @@ class BankUI extends HTMLPanel {
         }
     }
 
+    class NestedBanks extends HTMLPanel {
+        NestedBanks() {
+            super("");
+            getElement().addClassName("nested");
+        }
+
+        public void addNestedBanks(HashMap<String, BankUI> widgets) {
+            for (Widget w : this.getChildren()) {
+                if (w instanceof BankUI) {
+                    BankUI b = (BankUI) w;
+                    widgets.put(b.getElement().getAttribute("id"), b);
+                    b.addNestedBanks(widgets);
+                }
+            }
+        }
+    }
+
     class HorizontalLayout extends HTMLPanel {
-        private Tape east;
+        private NestedBanks nested;
 
         public HorizontalLayout(String uuid) {
             super("");
             getElement().addClassName("horizontal");
 
-            add(new Tape(uuid, TapePosition.West));
             add(new BankContent(uuid));
-            add(east = new Tape(uuid, TapePosition.East));
+            add(new Tape(uuid, TapePosition.East));
+            add(nested = new NestedBanks());
         }
 
-        public Tape getRightTape() {
-            return east;
+        public NestedBanks getNestedBanks() {
+            return nested;
         }
     }
 
     class VerticalLayout extends HTMLPanel {
 
-        private Tape south;
         private HorizontalLayout layout;
+        private NestedBanks nested;
 
         public VerticalLayout(String uuid) {
             super("");
             getElement().addClassName("vertical");
-            add(new Tape(uuid, TapePosition.North));
             add(layout = new HorizontalLayout(uuid));
-            add(south = new Tape(uuid, TapePosition.South));
+            add(new Tape(uuid, TapePosition.South));
+            add(nested = new NestedBanks());
         }
 
-        public Tape getTape(String direction) {
+        public NestedBanks getNestedBanks(String direction) {
             if (direction == "top")
-                return south;
+                return nested;
 
-            return layout.getRightTape();
+            return layout.getNestedBanks();
         }
     }
 
@@ -84,6 +103,12 @@ class BankUI extends HTMLPanel {
             e.stopPropagation();
             PresetManagerUseCases.get().resetDragDropData();
         }, DragEndEvent.getType());
+
+        PointerEvent pointerDown = new PointerEvent("pointerdown");
+
+        addDomHandler(c -> {
+            NonMaps.get().getNonLinearWorld().getViewport().getOverlay().removeExistingContextMenus();
+        }, pointerDown.eventType);
     }
 
     enum Nesting {
@@ -116,12 +141,12 @@ class BankUI extends HTMLPanel {
 
     }
 
-    public Tape getTape(String direction) {
-        return layout.getTape(direction);
+    public void addNestedBanks(HashMap<String, BankUI> widgets) {
+        layout.nested.addNestedBanks(widgets);
+        layout.layout.nested.addNestedBanks(widgets);
     }
 
-    public void addNestedBanks(HashMap<String, BankUI> widgets) {
-        layout.south.addNestedBanks(widgets);
-        layout.layout.east.addNestedBanks(widgets);
+    public NestedBanks getNestedBanks(String direction) {
+        return layout.getNestedBanks(direction);
     }
 }

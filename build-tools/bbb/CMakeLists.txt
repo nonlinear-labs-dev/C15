@@ -59,12 +59,15 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_SOURCE_DIR}
         " "
+        "set -x"
         "git config --global user.email bob@the-builder.com"
         "mkdir -p /fs"
         "mount -o loop /workdir/fs.ext4 /fs"
         "cd /fs/nonlinux"
         "rm -f .gitattributes"
         "git fetch origin"
+        "bash"
+        'git fetch https://github.com/nonlinear-labs-dev/nonlinux.git || true'
         "git checkout -f ${NONLINUX}"
         "git pull origin ${NONLINUX}"
 )

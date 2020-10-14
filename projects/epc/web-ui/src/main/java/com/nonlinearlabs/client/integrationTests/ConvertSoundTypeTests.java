@@ -157,7 +157,7 @@ class ConvertSoundTypeTests extends TestWithSteps {
         addStep(250, () -> {
             Bank b = findBank();
             ServerProxy p = NonMaps.get().getServerProxy();
-            p.deleteBank(b);
+            p.deleteBank(b.getUUID());
         }, () -> {
             return findBank() == null;
         });
