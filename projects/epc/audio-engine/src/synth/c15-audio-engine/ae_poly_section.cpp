@@ -830,11 +830,11 @@ void PolySection::startEnvelopes(const uint32_t _voiceId, const float _pitch, co
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_A_Dec_1) * m_env_a.m_timeFactor[_voiceId][1];
   m_env_a.setSegmentDx(_voiceId, 2, 1.0f / (time + 1.0f));
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_BP);
-  m_env_a.setSegmentDest(_voiceId, 2, true, peak);
+  m_env_a.setSegmentDest(_voiceId, 2, true, dest);
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_A_Dec_2) * m_env_a.m_timeFactor[_voiceId][2];
   m_env_a.setSegmentDx(_voiceId, 3, 1.0f / (time + 1.0f));
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_A_Sus);
-  m_env_a.setSegmentDest(_voiceId, 3, true, peak);
+  m_env_a.setSegmentDest(_voiceId, 3, true, dest);
   // env b
   timeKT = -0.5f * m_smoothers.get(C15::Smoothers::Poly_Sync::Env_B_Time_KT) * _pitch;
   levelVel = m_smoothers.get(C15::Smoothers::Poly_Sync::Env_B_Lvl_Vel);
@@ -863,11 +863,11 @@ void PolySection::startEnvelopes(const uint32_t _voiceId, const float _pitch, co
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_B_Dec_1) * m_env_b.m_timeFactor[_voiceId][1];
   m_env_b.setSegmentDx(_voiceId, 2, 1.0f / (time + 1.0f));
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_B_BP);
-  m_env_b.setSegmentDest(_voiceId, 2, true, peak);
+  m_env_b.setSegmentDest(_voiceId, 2, true, dest);
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_B_Dec_2) * m_env_b.m_timeFactor[_voiceId][2];
   m_env_b.setSegmentDx(_voiceId, 3, 1.0f / (time + 1.0f));
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_B_Sus);
-  m_env_b.setSegmentDest(_voiceId, 3, true, peak);
+  m_env_b.setSegmentDest(_voiceId, 3, true, dest);
   // env c
   timeKT = -0.5f * m_smoothers.get(C15::Smoothers::Poly_Sync::Env_C_Time_KT) * _pitch;
   levelVel = m_smoothers.get(C15::Smoothers::Poly_Sync::Env_C_Lvl_Vel);
@@ -895,11 +895,11 @@ void PolySection::startEnvelopes(const uint32_t _voiceId, const float _pitch, co
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_C_Dec_1) * m_env_c.m_timeFactor[_voiceId][1];
   m_env_c.setSegmentDx(_voiceId, 2, 1.0f / (time + 1.0f));
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_C_BP);
-  m_env_c.setSegmentDest(_voiceId, 2, peak);
+  m_env_c.setSegmentDest(_voiceId, 2, dest);
   time = m_smoothers.get(C15::Smoothers::Poly_Slow::Env_C_Dec_2) * m_env_c.m_timeFactor[_voiceId][2];
   m_env_c.setSegmentDx(_voiceId, 3, 1.0f / (time + 1.0f));
   dest = peak * m_smoothers.get(C15::Smoothers::Poly_Fast::Env_C_Sus);
-  m_env_c.setSegmentDest(_voiceId, 3, peak);
+  m_env_c.setSegmentDest(_voiceId, 3, dest);
   // start envelopes
   m_env_a.start(_voiceId);
   m_env_b.start(_voiceId);
