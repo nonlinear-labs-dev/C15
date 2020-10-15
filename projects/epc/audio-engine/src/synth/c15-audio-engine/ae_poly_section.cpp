@@ -534,6 +534,9 @@ void PolySection::postProcess_poly_audio(const uint32_t _voiceId, const float _m
 void PolySection::postProcess_poly_fast(const uint32_t _voiceId)
 {
   updateEnvLevels(_voiceId);
+#if Process_Pitch_Fast == 1
+  postProcess_poly_pitch(_voiceId);
+#endif
   // temporary variables
   const uint32_t uIndex = m_unison_index[_voiceId];
   const float basePitch = m_base_pitch[_voiceId], notePitch = m_note_pitch[_voiceId];
@@ -585,42 +588,45 @@ void PolySection::postProcess_poly_slow(const uint32_t _voiceId)
 {
   // envelopes
   updateEnvTimes(_voiceId);
+#if Process_Pitch_Fast == 0
+  postProcess_poly_pitch(_voiceId);
+#endif
   // temporary variables
   const float notePitch = m_note_pitch[_voiceId];
   float keyTracking, unitPitch, envMod, unitSign, unitSpread, unitMod, unitValue;
   // osc a
-  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_KT);
-  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch);
-  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
-      * m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_Env_C);
-  m_signals.set(
-      C15::Signals::Truepoly_Signals::Osc_A_Freq, _voiceId,
-      evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_KT);
+  //  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch);
+  //  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
+  //      * m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_Env_C);
+  //  m_signals.set(
+  //      C15::Signals::Truepoly_Signals::Osc_A_Freq, _voiceId,
+  //      evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
   envMod = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Fluct_Env_C);
   m_signals.set(C15::Signals::Truepoly_Signals::Osc_A_Fluct_Env_C, _voiceId,
                 m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Fluct)
                     * NlToolbox::Crossfades::unipolarCrossFade(
                           1.0f, m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId), envMod));
   // osc b
-  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch_KT);
-  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch);
-  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
-      * m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch_Env_C);
-  m_signals.set(
-      C15::Signals::Truepoly_Signals::Osc_B_Freq, _voiceId,
-      evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
-  envMod = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Fluct_Env_C);
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch_KT);
+  //  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch);
+  //  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
+  //      * m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch_Env_C);
+  //  m_signals.set(
+  //      C15::Signals::Truepoly_Signals::Osc_B_Freq, _voiceId,
+  //      evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
+  //  envMod = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Fluct_Env_C);
   m_signals.set(C15::Signals::Truepoly_Signals::Osc_B_Fluct_Env_C, _voiceId,
                 m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Fluct)
                     * NlToolbox::Crossfades::unipolarCrossFade(
                           1.0f, m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId), envMod));
   // comb filter
-  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch_KT);
-  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch);
-  m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Freq, _voiceId,
-                evalNyquist((*m_reference) * unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking))));
-  m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Bypass, _voiceId,
-                unitPitch > dsp_comb_max_freqFactor ? 1.0f : 0.0f);
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch_KT);
+  //  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch);
+  //  m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Freq, _voiceId,
+  //                evalNyquist((*m_reference) * unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking))));
+  //  m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Bypass, _voiceId,
+  //                unitPitch > dsp_comb_max_freqFactor ? 1.0f : 0.0f);
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay_KT);
   unitSign = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay) < 0 ? -0.001f : 0.001f;
   envMod = 1.0f - m_comb_decayCurve.applyCurve(m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay_Gate));
@@ -647,20 +653,20 @@ void PolySection::postProcess_poly_slow(const uint32_t _voiceId)
       C15::Signals::Truepoly_Signals::Comb_Flt_LP_Freq, _voiceId,
       evalNyquist(440.0f * unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod)));
   // state variable filter
-  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_KT);
-  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
-      * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_Env_C);
-  unitPitch = (*m_reference) * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut);
-  unitSpread = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Spread);
-  unitMod = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_FM);
-  unitValue
-      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod + unitSpread));
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_Cut, _voiceId, unitValue);
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_FM, _voiceId, unitValue * unitMod);
-  unitValue
-      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod - unitSpread));
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_Cut, _voiceId, unitValue);
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_FM, _voiceId, unitValue * unitMod);
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_KT);
+  //  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
+  //      * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_Env_C);
+  //  unitPitch = (*m_reference) * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut);
+  //  unitSpread = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Spread);
+  //  unitMod = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_FM);
+  //  unitValue
+  //      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod + unitSpread));
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_Cut, _voiceId, unitValue);
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_FM, _voiceId, unitValue * unitMod);
+  //  unitValue
+  //      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod - unitSpread));
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_Cut, _voiceId, unitValue);
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_FM, _voiceId, unitValue * unitMod);
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Res_KT) * m_svf_resFactor;
   envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId)
       * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Res_Env_C);
@@ -684,12 +690,10 @@ void PolySection::postProcess_mono_slow()
                 evalNyquist(m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Chirp) * 440.0f));
 }
 
-void PolySection::postProcess_poly_key(const uint32_t _voiceId)
+void PolySection::postProcess_poly_pitch(const uint32_t _voiceId)
 {
-  // pitch, unison, temporary variables
-  const uint32_t uIndex = m_unison_index[_voiceId];
-  const float basePitch = m_base_pitch[_voiceId], notePitch = m_note_pitch[_voiceId];
-  float keyTracking, unitPitch, envMod, unitSign, unitSpread, unitMod, unitValue, tmp_lvl, tmp_pan;
+  const float notePitch = m_note_pitch[_voiceId];
+  float keyTracking, unitPitch, envMod, unitValue, unitSpread, unitMod;
   // osc a
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_KT);
   unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch);
@@ -698,11 +702,6 @@ void PolySection::postProcess_poly_key(const uint32_t _voiceId)
   m_signals.set(
       C15::Signals::Truepoly_Signals::Osc_A_Freq, _voiceId,
       evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
-  envMod = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Fluct_Env_C);
-  m_signals.set(C15::Signals::Truepoly_Signals::Osc_A_Fluct_Env_C, _voiceId,
-                m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Fluct)
-                    * NlToolbox::Crossfades::unipolarCrossFade(
-                          1.0f, m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId), envMod));
   // osc b
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch_KT);
   unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch);
@@ -711,11 +710,6 @@ void PolySection::postProcess_poly_key(const uint32_t _voiceId)
   m_signals.set(
       C15::Signals::Truepoly_Signals::Osc_B_Freq, _voiceId,
       evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
-  envMod = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Fluct_Env_C);
-  m_signals.set(C15::Signals::Truepoly_Signals::Osc_B_Fluct_Env_C, _voiceId,
-                m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Fluct)
-                    * NlToolbox::Crossfades::unipolarCrossFade(
-                          1.0f, m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId), envMod));
   // comb filter
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch_KT);
   unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch);
@@ -723,6 +717,63 @@ void PolySection::postProcess_poly_key(const uint32_t _voiceId)
                 evalNyquist((*m_reference) * unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking))));
   m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Bypass, _voiceId,
                 unitPitch > dsp_comb_max_freqFactor ? 1.0f : 0.0f);
+  // state variable filter
+  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_KT);
+  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
+      * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_Env_C);
+  unitPitch = (*m_reference) * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut);
+  unitSpread = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Spread);
+  unitMod = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_FM);
+  unitValue
+      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod + unitSpread));
+  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_Cut, _voiceId, unitValue);
+  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_FM, _voiceId, unitValue * unitMod);
+  unitValue
+      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod - unitSpread));
+  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_Cut, _voiceId, unitValue);
+  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_FM, _voiceId, unitValue * unitMod);
+}
+
+void PolySection::postProcess_poly_key(const uint32_t _voiceId)
+{
+  postProcess_poly_pitch(_voiceId);
+  // pitch, unison, temporary variables
+  const uint32_t uIndex = m_unison_index[_voiceId];
+  const float basePitch = m_base_pitch[_voiceId], notePitch = m_note_pitch[_voiceId];
+  float keyTracking, unitPitch, envMod, unitSign, unitSpread, unitMod, unitValue, tmp_lvl, tmp_pan;
+  // osc a
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_KT);
+  //  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch);
+  //  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
+  //      * m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Pitch_Env_C);
+  //  m_signals.set(
+  //      C15::Signals::Truepoly_Signals::Osc_A_Freq, _voiceId,
+  //      evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
+  envMod = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Fluct_Env_C);
+  m_signals.set(C15::Signals::Truepoly_Signals::Osc_A_Fluct_Env_C, _voiceId,
+                m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_A_Fluct)
+                    * NlToolbox::Crossfades::unipolarCrossFade(
+                          1.0f, m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId), envMod));
+  // osc b
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch_KT);
+  //  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch);
+  //  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
+  //      * m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Pitch_Env_C);
+  //  m_signals.set(
+  //      C15::Signals::Truepoly_Signals::Osc_B_Freq, _voiceId,
+  //      evalNyquist((*m_reference) * m_convert->eval_osc_pitch(unitPitch + (notePitch * keyTracking) + envMod)));
+  envMod = m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Fluct_Env_C);
+  m_signals.set(C15::Signals::Truepoly_Signals::Osc_B_Fluct_Env_C, _voiceId,
+                m_smoothers.get(C15::Smoothers::Poly_Slow::Osc_B_Fluct)
+                    * NlToolbox::Crossfades::unipolarCrossFade(
+                          1.0f, m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId), envMod));
+  // comb filter
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch_KT);
+  //  unitPitch = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Pitch);
+  //  m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Freq, _voiceId,
+  //                evalNyquist((*m_reference) * unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking))));
+  //  m_signals.set(C15::Signals::Truepoly_Signals::Comb_Flt_Bypass, _voiceId,
+  //                unitPitch > dsp_comb_max_freqFactor ? 1.0f : 0.0f);
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay_KT);
   unitSign = m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay) < 0 ? -0.001f : 0.001f;
   envMod = 1.0f - m_comb_decayCurve.applyCurve(m_smoothers.get(C15::Smoothers::Poly_Slow::Comb_Flt_Decay_Gate));
@@ -749,20 +800,20 @@ void PolySection::postProcess_poly_key(const uint32_t _voiceId)
       C15::Signals::Truepoly_Signals::Comb_Flt_LP_Freq, _voiceId,
       evalNyquist(440.0f * unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod)));
   // state variable filter
-  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_KT);
-  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
-      * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_Env_C);
-  unitPitch = (*m_reference) * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut);
-  unitSpread = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Spread);
-  unitMod = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_FM);
-  unitValue
-      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod + unitSpread));
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_Cut, _voiceId, unitValue);
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_FM, _voiceId, unitValue * unitMod);
-  unitValue
-      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod - unitSpread));
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_Cut, _voiceId, unitValue);
-  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_FM, _voiceId, unitValue * unitMod);
+  //  keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_KT);
+  //  envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Uncl, _voiceId)
+  //      * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut_Env_C);
+  //  unitPitch = (*m_reference) * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Cut);
+  //  unitSpread = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Spread);
+  //  unitMod = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_FM);
+  //  unitValue
+  //      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod + unitSpread));
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_Cut, _voiceId, unitValue);
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F1_FM, _voiceId, unitValue * unitMod);
+  //  unitValue
+  //      = evalNyquist(unitPitch * m_convert->eval_lin_pitch(69.0f + (notePitch * keyTracking) + envMod - unitSpread));
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_Cut, _voiceId, unitValue);
+  //  m_signals.set(C15::Signals::Truepoly_Signals::SV_Flt_F2_FM, _voiceId, unitValue * unitMod);
   keyTracking = m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Res_KT) * m_svf_resFactor;
   envMod = m_signals.get(C15::Signals::Truepoly_Signals::Env_C_Clip, _voiceId)
       * m_smoothers.get(C15::Smoothers::Poly_Slow::SV_Flt_Res_Env_C);
