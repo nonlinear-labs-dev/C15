@@ -282,7 +282,7 @@ uint8_t USBA_MIDI_StringDescriptor[] = {
   'b', 0,
   's', 0,
   /* Index 0x02: Product */
-  (22 * 2 + 2),               /* bLength ( 22 Char + Type + length) */
+  (14 * 2 + 2),               /* ???? bLength ( 22 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
   'N', 0,
   'L', 0,
@@ -336,7 +336,7 @@ uint8_t USBB_MIDI_StringDescriptor[] = {
   'b', 0,
   's', 0,
   /* Index 0x02: Product */
-  (22 * 2 + 2),               /* bLength ( 22 Char + Type + length) */
+  (14 * 2 + 2),               /* ???? bLength ( 22 Char + Type + length) */
   USB_STRING_DESCRIPTOR_TYPE, /* bDescriptorType */
   'N', 0,
   'L', 0,

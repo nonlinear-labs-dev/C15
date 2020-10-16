@@ -116,7 +116,8 @@ static inline void checkSends(uint8_t const which)
 
   if (!MIDI_isConfigured(which) || bytesToSend(which))
   {  // not config'd or last transfer still in progress
-    DBG_Led_TimedOn(LED_TRAFFIC_STALL, -2);
+    // DBG_Led_TimedOn(LED_TRAFFIC_STALL, -2);
+	DBG_Led(LED_TRAFFIC_STALL, 1);
     return;
   }
 
