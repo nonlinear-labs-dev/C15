@@ -16,15 +16,20 @@ Engine::PolyOutputMixer::PolyOutputMixer()
 void Engine::PolyOutputMixer::init(const float _samplerate, const uint32_t _numOfVoices)
 {
   m_out_l = m_out_r = 0.0f;
-  m_hp30hz_b0 = (6.28319f / _samplerate) * 30.0f;
-  m_hp30hz_b0 = std::min(m_hp30hz_b0, 0.8f);
+  const float norm_omega = NlToolbox::Constants::twopi / _samplerate;
+  m_hp30hz_b0 = norm_omega * 30.0f;  // 30 Hz - no clipping needed
   m_hp30hz_stateVar_L = m_hp30hz_stateVar_R = 0.0f;
-  float omega = NlToolbox::Math::tan(12.978f * NlToolbox::Constants::pi / static_cast<float>(_samplerate));
+#if OutMix_SimpleHP == 0
+  float omega = NlToolbox::Math::tan(12.978f * NlToolbox::Constants::pi / _samplerate);
   float denom = 1.0f / (1.0f + omega);
   m_hp_a1 = (1.0f - omega) * denom;
   m_hp_b0 = denom;
   m_hp_b1 = -denom;
   m_hp_stateVar_L1 = m_hp_stateVar_L2 = m_hp_stateVar_R1 = m_hp_stateVar_R2 = 0.0f;
+#elif OutMix_SimpleHP == 1
+  m_hp_b0 = norm_omega * 12.978f;  // 8 ST (12.978 Hz) - no clipping needed
+  m_hp_stateVar_L = m_hp_stateVar_R = 0.0f;
+#endif
 }
 
 void Engine::PolyOutputMixer::combine(PolySignals &_signals, const PolyValue &_voiceLevel, const PolyValue &_sampleA,
@@ -71,6 +76,7 @@ void Engine::PolyOutputMixer::combine(PolySignals &_signals, const PolyValue &_v
 
 void Engine::PolyOutputMixer::filter_level(PolySignals &_signals)
 {
+#if OutMix_SimpleHP == 0
   // HP L
   float tmpVar = m_hp_b0 * m_out_l;
   tmpVar += m_hp_b1 * m_hp_stateVar_L1;
@@ -82,6 +88,8 @@ void Engine::PolyOutputMixer::filter_level(PolySignals &_signals)
   m_hp_stateVar_L1 = m_out_l + NlToolbox::Constants::DNC_const;
   m_hp_stateVar_L2 = tmpVar + NlToolbox::Constants::DNC_const;
 #endif
+  // Out L
+  m_out_l = tmpVar * _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
   // HP R
   tmpVar = m_hp_b0 * m_out_r;
   tmpVar += m_hp_b1 * m_hp_stateVar_R1;
@@ -93,12 +101,37 @@ void Engine::PolyOutputMixer::filter_level(PolySignals &_signals)
   m_hp_stateVar_R1 = m_out_r + NlToolbox::Constants::DNC_const;
   m_hp_stateVar_R2 = tmpVar + NlToolbox::Constants::DNC_const;
 #endif
-  m_out_l *= _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
-  m_out_r *= _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
+  // Out R
+  m_out_r = tmpVar * _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
+#elif OutMix_SimpleHP == 1
+  // HP L
+  float tmpVar = m_out_l - m_hp_stateVar_L;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+  m_hp_stateVar_L = tmpVar * m_hp_b0 + m_hp_stateVar_L;
+#else
+  m_hp_stateVar_L = tmpVar * m_hp_b0 + m_hp_stateVar_L + NlToolbox::Constants::DNC_const;
+#endif
+  // Out L
+  m_out_l = tmpVar * _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
+  // HP R
+  tmpVar = m_out_r - m_hp_stateVar_R;
+#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
+  m_hp_stateVar_R = tmpVar * m_hp_b0 + m_hp_stateVar_R;
+#else
+  m_hp_stateVar_R = tmpVar * m_hp_b0 + m_hp_stateVar_R + NlToolbox::Constants::DNC_const;
+#endif
+  // Out R
+  m_out_r = tmpVar * _signals.get(C15::Signals::Quasipoly_Signals::Out_Mix_Lvl);
+#endif
 }
 
 void Engine::PolyOutputMixer::resetDSP()
 {
-  m_out_l = m_out_r = m_hp_stateVar_L1 = m_hp_stateVar_L2 = m_hp_stateVar_R1 = m_hp_stateVar_R2 = 0.0f;
+  m_out_l = m_out_r = 0.0f;
   m_hp30hz_stateVar_L = m_hp30hz_stateVar_R = 0.0f;
+#if OutMix_SimpleHP == 0
+  m_hp_stateVar_L1 = m_hp_stateVar_L2 = m_hp_stateVar_R1 = m_hp_stateVar_R2 = 0.0f;
+#elif OutMix_SimpleHP == 1
+  m_hp_stateVar_L = m_hp_stateVar_R = 0.0f;
+#endif
 }

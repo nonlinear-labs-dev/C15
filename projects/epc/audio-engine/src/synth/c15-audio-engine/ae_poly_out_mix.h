@@ -13,6 +13,8 @@
 #include <vector>
 #include "ae_info.h"
 
+#define OutMix_SimpleHP 0
+
 namespace Engine
 {
   class PolyOutputMixer
@@ -28,7 +30,12 @@ namespace Engine
 
    private:
     PolyValue m_hp30hz_stateVar_L = {}, m_hp30hz_stateVar_R = {};
-    float m_hp30hz_b0 = 0.0f, m_hp_b0 = 0.0f, m_hp_b1 = 0.0f, m_hp_a1 = 0.0f, m_hp_stateVar_L1 = 0.0f,
-          m_hp_stateVar_R1 = 0.0f, m_hp_stateVar_L2 = 0.0f, m_hp_stateVar_R2 = 0.0f;
+    float m_hp30hz_b0 = 0.0f;
+#if OutMix_SimpleHP == 0
+    float m_hp_b0 = 0.0f, m_hp_b1 = 0.0f, m_hp_a1 = 0.0f, m_hp_stateVar_L1 = 0.0f, m_hp_stateVar_R1 = 0.0f,
+          m_hp_stateVar_L2 = 0.0f, m_hp_stateVar_R2 = 0.0f;
+#elif OutMix_SimpleHP == 1
+    float m_hp_b0 = 0.0f, m_hp_stateVar_L = 0.0f, m_hp_stateVar_R = 0.0f;
+#endif
   };
 }  // namespace Engine
