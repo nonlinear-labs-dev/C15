@@ -103,8 +103,8 @@ public abstract class BankContextMenu extends ContextMenu {
 			addChild(new ContextMenuItem(this, "Export Bank as File ...") {
 				@Override
 				public Control click(Position eventPoint) {
-					String bankName = URL.encodePathSegment(bank.getCurrentName());
-					String uri = "/presets/banks/download-bank/" + bankName + ".xml?uuid=" + bank.getUUID();
+					String bankName = URL.encodePathSegment(bankPresenter.name);
+					String uri = "/presets/banks/download-bank/" + bankName + ".xml?uuid=" + bankPresenter.uuid;
 					Window.open(uri, "", "");
 					return super.click(eventPoint);
 				}

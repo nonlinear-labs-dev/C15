@@ -4,24 +4,23 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Navigator;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.ClipboardManager.ClipboardContent;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Renameable;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RenameDialog;
 import com.nonlinearlabs.client.world.maps.NonPosition;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.overlay.ContextMenu;
 import com.nonlinearlabs.client.world.overlay.ContextMenuItem;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
-import com.google.gwt.http.client.URL;
 
 public class PresetManagerContextMenu extends ContextMenu {
 
@@ -63,10 +62,14 @@ public class PresetManagerContextMenu extends ContextMenu {
 			}
 		});
 
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var selectedBank = pm.selectedBank;
+		var bank = BankPresenterProviders.get().getPresenter(selectedBank);
 
 		PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
 
-		if(!pm.getBanks().isEmpty()) {
+
+		if (!pm.banks.isEmpty()) {
 			addChild(new ContextMenuItem(this, "Save all Banks as Backup File ...") {
 				@Override
 				public Control click(Position eventPoint) {
@@ -116,9 +119,6 @@ public class PresetManagerContextMenu extends ContextMenu {
 
 		});
 
-
-		PresetManager pm = getNonMaps().getNonLinearWorld().getPresetManager();
-
 		addChild(new ContextMenuItem(this, "Sort Bank Numbers") {
 			@Override
 			public Control click(Position eventPoint) {
@@ -127,14 +127,13 @@ public class PresetManagerContextMenu extends ContextMenu {
 			}
 		});
 
-			addChild(new ContextMenuItem(this, "Sort Bank Numbers") {
-				@Override
-				public Control click(Position eventPoint) {
-					getNonMaps().getServerProxy().sortBankNumbers();
-					return super.click(eventPoint);
-				}
-			});
-		}
+		addChild(new ContextMenuItem(this, "Sort Bank Numbers") {
+			@Override
+			public Control click(Position eventPoint) {
+				getNonMaps().getServerProxy().sortBankNumbers();
+				return super.click(eventPoint);
+			}
+		});
 	}
 
 	public static void createNewBank(final NonPosition pos) {

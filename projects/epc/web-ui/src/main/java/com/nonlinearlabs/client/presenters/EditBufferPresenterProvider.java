@@ -2,10 +2,10 @@ package com.nonlinearlabs.client.presenters;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.MacroControlParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterFactory;
@@ -14,7 +14,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.ScaleOffsetParameterModel;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.RGBA;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 
 public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     private static EditBufferPresenterProvider theProvider = new EditBufferPresenterProvider();
@@ -128,14 +127,15 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
     }
 
     private boolean isPartLabelChanged(VoiceGroup vg) {
-        if (model.soundType.getValue() != SoundType.Single) {
-            Preset origin = NonMaps.get().getNonLinearWorld().getPresetManager()
-                    .findPreset(model.loadedPreset.getValue());
-            if (origin != null) {
-                String ogName = origin.getPartName(vg);
-                return !model.getPresetNameOfVoiceGroup(vg).equals(ogName);
-            }
-        }
+        // TODO
+        // if (model.soundType.getValue() != SoundType.Single) {
+        //     Preset origin = NonMaps.get().getNonLinearWorld().getPresetManager()
+        //             .findPreset(model.loadedPreset.getValue());
+        //     if (origin != null) {
+        //         String ogName = origin.getPartName(vg);
+        //         return !model.getPresetNameOfVoiceGroup(vg).equals(ogName);
+        //     }
+        // }
         return false;
     }
 
