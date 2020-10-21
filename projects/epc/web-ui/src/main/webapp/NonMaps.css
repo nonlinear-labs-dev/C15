@@ -1992,18 +1992,21 @@ button {
 }
 
 .bank .content .preset.loaded {
-  border-color: red;
+  border-color:white;
   z-index: 3;
+  background-color: #69e;
 }
 
 .bank .content .preset.selected.loaded {
-  border-color: red;
+  border-color:white;
   z-index: 5;
+  background-color: #69e;
 }
 
 .bank .content .preset.selected {
-  border-color: green;
+  border-color: white;
   z-index: 4;
+  background-color: lightgray;
 }
 
 .bank .content .header.drop-target {

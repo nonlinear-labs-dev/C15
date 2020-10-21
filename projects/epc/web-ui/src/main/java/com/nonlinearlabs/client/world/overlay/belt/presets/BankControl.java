@@ -1,23 +1,22 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.ServerProxy;
+import com.nonlinearlabs.client.presenters.BankPresenter;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
-import com.nonlinearlabs.client.world.IBank;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 
-public class BankControl extends OverlayLayout implements IBank {
+public class BankControl extends OverlayLayout {
 
 	private class PresetSelectionRectangle extends OverlayControl {
 		public PresetSelectionRectangle(OverlayLayout parent) {
@@ -50,12 +49,29 @@ public class BankControl extends OverlayLayout implements IBank {
 	private PresetList presets;
 	private EmptyBeltPreset emptyLabel;
 	private static double inset = 4;
+	private BankPresenter bank;
+	private int bankSubscription = 0;
 
 	BankControl(OverlayLayout parent) {
 		super(parent);
 		addChild(header = new BankHeader(this));
 		addChild(presets = new PresetList(this));
 		addChild(selRectangle = new PresetSelectionRectangle(this));
+
+		PresetManagerPresenterProvider.get().register(p -> {
+			int s = ++bankSubscription;
+
+			BankPresenterProviders.get().register(p.selectedBank, b -> {
+				if (s != bankSubscription)
+					return false;
+
+				bank = b;
+				invalidate(INVALIDATION_FLAG_UI_CHANGED);
+				return true;
+			});
+
+			return true;
+		});
 	}
 
 	@Override
@@ -68,16 +84,9 @@ public class BankControl extends OverlayLayout implements IBank {
 		super.draw(ctx, overlay, invalidationMask);
 	}
 
-	public Bank getBankInCharge() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		String selectedBankUuid = pm.getSelectedBank();
-		Bank bank = pm.findBank(selectedBankUuid);
-		return bank;
-	}
-
 	void showEmptyLabel(boolean bankEmpty) {
 		if (bankEmpty && emptyLabel == null) {
-			emptyLabel = prependChild(new EmptyBeltPreset(this, getBankInCharge()));
+			emptyLabel = prependChild(new EmptyBeltPreset(this));
 		} else if (!bankEmpty && emptyLabel != null) {
 			removeChild(emptyLabel);
 			emptyLabel = null;
@@ -110,36 +119,12 @@ public class BankControl extends OverlayLayout implements IBank {
 		return super.mouseDrag(oldPoint, newPoint, fine);
 	}
 
-	@Override
-	public String getUUID() {
-		return getBankInCharge().getUUID();
-	}
-
-	public void update(Node pmNode) {
-		if (pmNode != null) {
-			if (ServerProxy.didChange(pmNode)
-					|| NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode()) {
-				Bank b = getBankInCharge();
-				if (b != null)
-					showEmptyLabel(b.getPresetList().getPresetCount() == 0);
-				else
-					showEmptyLabel(true);
-				update();
-			}
-		}
-	}
-
-	public void update() {
-		presets.update();
-	}
-
 	public void setHeaderTitleFontHeightInMM(int mm) {
 		header.setFontHeightInMM(mm);
 	}
 
 	public PresetList getPresetList() {
 		return presets;
-
 	}
 
 	public double getHorizontalCenterLinePosition() {
@@ -148,25 +133,21 @@ public class BankControl extends OverlayLayout implements IBank {
 
 	@Override
 	public Control wheel(Position eventPoint, double amount, boolean fine) {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
+		var uc = PresetManagerUseCases.get();
 
-		if (pm.hasCustomPresetSelection())
+		if (uc.hasCustomPresetSelection())
 			return this;
 
 		if (amount > 0)
-			pm.selectPreviousPreset();
+			uc.selectPreviousPreset();
 		else if (amount < 0)
-			pm.selectNextPreset();
+			uc.selectNextPreset();
 
 		return this;
 	}
 
-	public boolean isInStoreSelectMode() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		return pm.isInStoreSelectMode();
+	public BankPresenter getBankPresenter() {
+		return bank;
 	}
 
-	public void renameCurrentPreset() {
-		getPresetList().renameCurrentPreset();
-	}
 }

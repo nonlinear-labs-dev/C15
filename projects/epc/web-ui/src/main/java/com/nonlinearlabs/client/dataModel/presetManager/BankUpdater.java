@@ -28,13 +28,30 @@ public class BankUpdater extends Updater {
 		}
 
 		bank.selectedPreset.setValue(getAttributeValue(root, "selected-preset"));
-
 		bank.orderNumber.setValue(Integer.parseInt(getAttributeValue(root, "order-number")));
 
 		bank.x.setValue(Double.parseDouble(getAttributeValue(root, "x")));
 		bank.y.setValue(Double.parseDouble(getAttributeValue(root, "y")));
 		bank.attachedToBank.setValue(getChildText(root, "attached-to"));
 		bank.attachDirection.setValue(getChildText(root, "attached-direction"));
+		bank.dateOfLastChange.setValue(getChildText(root, "date-of-last-change"));
+		bank.importExportState.setValue(getChildText(root, "state"));
+
+		processChildrenElements(root, "attribute", v -> {
+			var key = getAttributeValue(v, "key");
+			var value = getText(v);
+
+			if (key == "Comment")
+				bank.comment.setValue(value);
+			else if (key == "Date of Export File")
+				bank.dateOfExportFile.setValue(value);
+			else if (key == "Date of Import File")
+				bank.dateOfImportFile.setValue(value);
+			else if (key == "Name of Export File")
+				bank.nameOfExportFile.setValue(value);
+			else if (key == "Name of Import File")
+				bank.nameOfImportFile.setValue(value);
+		});
 
 		Presets.get().preUpdate(bank.uuid.getValue());
 		ArrayList<String> existingPresets = new ArrayList<String>();

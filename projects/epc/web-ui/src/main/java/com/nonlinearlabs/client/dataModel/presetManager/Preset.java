@@ -40,6 +40,8 @@ public class Preset extends Doomable {
 	}
 
 	public StringDataModelEntity name = new StringDataModelEntity();
+	public StringDataModelEntity partNameVGI = new StringDataModelEntity();
+	public StringDataModelEntity partNameVGII = new StringDataModelEntity();
 	public StringDataModelEntity uuid = new StringDataModelEntity();
 	public StringDataModelEntity bankUuid = new StringDataModelEntity();
 	public IntegerDataModelEntity number = new IntegerDataModelEntity();

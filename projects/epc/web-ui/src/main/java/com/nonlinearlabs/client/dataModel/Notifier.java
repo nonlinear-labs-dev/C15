@@ -20,7 +20,11 @@ public abstract class Notifier<T> {
 	}
 
 	public boolean notifyChanges() {
-		if (debug) {
+		return notifyChanges(false);
+	}
+
+	public boolean notifyChanges(boolean immediate) {
+		if (immediate || debug) {
 			notifyNow();
 			return true;
 		}

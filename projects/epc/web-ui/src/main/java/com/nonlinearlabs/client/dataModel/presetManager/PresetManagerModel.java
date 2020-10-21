@@ -1,6 +1,7 @@
 package com.nonlinearlabs.client.dataModel.presetManager;
 
 import com.nonlinearlabs.client.dataModel.DataModelEntity;
+import com.nonlinearlabs.client.dataModel.IntegerDataModelEntity;
 import com.nonlinearlabs.client.dataModel.StringDataModelEntity;
 
 public class PresetManagerModel {
@@ -30,6 +31,11 @@ public class PresetManagerModel {
 	public StringDataModelEntity selectedBank = new StringDataModelEntity();
 	public SelectedPresets selectedPresets = new SelectedPresets();
 	public DataModelEntity<DragDropData> dnd = new DataModelEntity<DragDropData>(null);
+
+	public DataModelEntity<CustomPresetSelection> customPresetSelection = new DataModelEntity<CustomPresetSelection>(
+			null);
+
+	public IntegerDataModelEntity fileVersion = new IntegerDataModelEntity();
 
 	static public PresetManagerModel get() {
 		return thePresetManager;

@@ -4,7 +4,6 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.Label;
 
 class BankTitle extends Label {
@@ -21,13 +20,8 @@ class BankTitle extends Label {
 
 	@Override
 	public String getDrawText(Context2d ctx) {
-		Bank bank = getParent().getParent().getBankInCharge();
-
-		if (bank != null) {
-			return bank.getOrderNumber() + " - " + bank.getCurrentName() + (bank.isMidiBank() ? " ^" : "");
-		} else {
-			return "---";
-		}
+	// TODO: add midi flag
+		return getParent().getParent().getBankPresenter().name;
 	}
 
 	@Override

@@ -1,27 +1,22 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
-import java.util.Iterator;
-
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Animator;
 import com.nonlinearlabs.client.Animator.DoubleClientData.Client;
-import com.nonlinearlabs.client.LoadToPartMode;
 import com.nonlinearlabs.client.Millimeter;
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.presenters.BankPresenter;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
-import com.nonlinearlabs.client.world.IBank;
-import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.MapsControl;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
-import com.nonlinearlabs.client.world.overlay.belt.EditBufferDraggingButton;
 import com.nonlinearlabs.client.world.pointer.PointerState;
 
 public class PresetList extends OverlayLayout {
@@ -34,10 +29,66 @@ public class PresetList extends OverlayLayout {
 	private double scrollPosition = 0;
 	private Animator animation;
 	private ScrollRequest scrollRequest = ScrollRequest.None;
-	private Bank currentBank;
+
+	private String selectedBank = "";
+	private String selectedPreset = "";
+	private VoiceGroup selectedPart = VoiceGroup.Global;
+
+	private PresetManagerPresenter pmPresenter = new PresetManagerPresenter();
+	private BankPresenter bankPresenter = new BankPresenter();
 
 	protected PresetList(BankControl parent) {
 		super(parent);
+
+		PresetManagerPresenterProvider.get().register(p -> {
+			pmPresenter = p;
+			select(p.selectedBank, p.selectedPreset, p.selectedPart);
+			return true;
+		});
+	}
+
+	private void select(String selectedBank, String selectedPreset, VoiceGroup selectedPart) {
+		if (selectedBank != this.selectedBank) {
+			this.selectedBank = selectedBank;
+
+			BankPresenterProviders.get().register(this.selectedBank, b -> {
+				if (b.uuid != this.selectedBank)
+					return false;
+
+				bankPresenter = b;
+				select(selectedPreset, selectedPart);
+				scheduleAutoScroll(ScrollRequest.Jump);
+				return true;
+			});
+		}
+
+		syncPresets();
+		select(selectedPreset, selectedPart);
+	}
+
+	private void syncPresets() {
+		var numDesiredPresets = bankPresenter.presets.size();
+		var numExistingPresets = getChildren().size();
+
+		while (numDesiredPresets > numExistingPresets) {
+			addChild(new BeltPreset(this));
+			numExistingPresets++;
+		}
+
+		while (numDesiredPresets < numExistingPresets) {
+			removeChild(getChildren().get(0));
+			numExistingPresets--;
+		}
+
+		for (int i = 0; i < numDesiredPresets; i++)
+			((BeltPreset) getChildren().get(i)).setOrigin(bankPresenter.presets.get(i));
+	}
+
+	private void select(String selectedPreset, VoiceGroup selectedPart) {
+		if (this.selectedPreset != selectedPreset) {
+			this.selectedPreset = selectedPreset;
+			scheduleAutoScroll(ScrollRequest.Smooth);
+		}
 	}
 
 	@Override
@@ -122,11 +173,13 @@ public class PresetList extends OverlayLayout {
 		if (!getPixRect().contains(pos))
 			return null;
 
-		if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin() instanceof EditBufferDraggingButton
-				|| dragProxy.getOrigin() instanceof IBank) {
-			setIsDropTarget(true);
-			return this;
-		}
+		// TODO
+		// if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin()
+		// instanceof EditBufferDraggingButton
+		// || dragProxy.getOrigin() instanceof IBank) {
+		// setIsDropTarget(true);
+		// return this;
+		// }
 		return super.drag(pos, dragProxy);
 	}
 
@@ -145,21 +198,20 @@ public class PresetList extends OverlayLayout {
 
 	@Override
 	public Control drop(Position pos, DragProxy dragProxy) {
-		Bank b = getParent().getBankInCharge();
+		// TODO
 
-		if (dragProxy.getOrigin() instanceof IPreset) {
-			
-		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
-			getNonMaps().getServerProxy().dropEditBufferOnBank(b);
-		else if (dragProxy.getOrigin() instanceof IBank) {
-			Bank draggedBank = (Bank) dragProxy.getOrigin();
-			if (!draggedBank.hasSlaves()) {
-				var bank = (IBank) dragProxy.getOrigin();
-				getNonMaps().getServerProxy().dropBankOnBank(bank.getUUID(), b.getUUID());
-			}
-		}
+		// if (dragProxy.getOrigin() instanceof IPreset) {
+		// } else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
+		// getNonMaps().getServerProxy().dropEditBufferOnBank(bank);
+		// else if (dragProxy.getOrigin() instanceof IBank) {
+		// Bank draggedBank = (Bank) dragProxy.getOrigin();
+		// if (!draggedBank.hasSlaves()) {
+		// var bank = (IBank) dragProxy.getOrigin();
+		// getNonMaps().getServerProxy().dropBankOnBank(bank.getUUID(), bank);
+		// }
+		// }
 
-		setIsDropTarget(false);
+		// setIsDropTarget(false);
 		return this;
 	}
 
@@ -180,35 +232,19 @@ public class PresetList extends OverlayLayout {
 		ctx.stroke();
 	}
 
-	public void update() {
-		Bank bank = getParent().getBankInCharge();
-		boolean bankChanged = bank != currentBank;
-
-		if (bankChanged)
-			currentBank = bank;
-
-		if (bank == null) {
-			removeAllPresets();
-		} else {
-			Iterator<MapsControl> source = bank.getPresetList().getChildren().iterator();
-			Iterator<OverlayControl> target = getChildren().iterator();
-
-			updateExistingPresets(source, target);
-			removeRemainders(target);
-			addMissingPresets(source);
-		}
-
-		if (bankChanged) {
-			scheduleAutoScroll(ScrollRequest.Jump);
-		} else {
-			scheduleAutoScroll(ScrollRequest.Smooth);
-		}
-	}
-
 	public void autoScrollToSelected() {
 		BeltPreset p = findSelectedPreset();
 		if (p != null)
 			scrollTo(p);
+	}
+
+	private BeltPreset findSelectedPreset() {
+		for (var a : getChildren()) {
+			BeltPreset p = (BeltPreset) a;
+			if (p.getUuid() == selectedPreset)
+				return p;
+		}
+		return null;
 	}
 
 	private void scrollTo(BeltPreset p) {
@@ -271,63 +307,6 @@ public class PresetList extends OverlayLayout {
 		scrollRequest = ScrollRequest.None;
 	}
 
-	private boolean isInLoadToPartMode() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
-	}
-
-	private LoadToPartMode getLoadToPartMode() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().getLoadToPartMode();
-	}
-
-	private BeltPreset findSelectedPreset() {
-		for (OverlayControl c : getChildren()) {
-			BeltPreset p = (BeltPreset) c;
-
-			if (isInLoadToPartMode()) {
-				if (getLoadToPartMode().getSelectedPreset() == p.getMapsPreset())
-					return p;
-			} else {
-				if (p.getMapsPreset().isSelected())
-					return p;
-			}
-		}
-		return null;
-	}
-
-	private void addMissingPresets(Iterator<MapsControl> source) {
-		while (source.hasNext()) {
-			MapsControl sourceCtrl = source.next();
-			if (sourceCtrl instanceof Preset) {
-				Preset sourcePreset = (Preset) sourceCtrl;
-				addChild(new BeltPreset(this, sourcePreset));
-			}
-		}
-	}
-
-	private void removeRemainders(Iterator<OverlayControl> target) {
-		while (target.hasNext()) {
-			BeltPreset targetPreset = (BeltPreset) target.next();
-			target.remove();
-			targetPreset.onRemoved();
-		}
-	}
-
-	private void updateExistingPresets(Iterator<MapsControl> source, Iterator<OverlayControl> target) {
-		while (source.hasNext() && target.hasNext()) {
-			MapsControl sourceCtrl = source.next();
-			if (sourceCtrl instanceof Preset) {
-				Preset sourcePreset = (Preset) sourceCtrl;
-				BeltPreset targetPreset = (BeltPreset) target.next();
-				targetPreset.setOrigin(sourcePreset);
-				targetPreset.invalidate(INVALIDATION_FLAG_UI_CHANGED);
-			}
-		}
-	}
-
-	private void removeAllPresets() {
-		removeAll();
-	}
-
 	@Override
 	public boolean isVisible() {
 		if (isIntendedVisible()) {
@@ -346,13 +325,4 @@ public class PresetList extends OverlayLayout {
 	public double getHorizontalCenterLinePosition() {
 		return getRelativePosition().getCenterPoint().getY();
 	}
-
-	public void renameCurrentPreset() {
-		BeltPreset p = findSelectedPreset();
-
-		if (p != null)
-			p.rename();
-
-	}
-
 }

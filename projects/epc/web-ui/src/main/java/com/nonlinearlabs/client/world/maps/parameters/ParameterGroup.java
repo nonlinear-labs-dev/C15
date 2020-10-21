@@ -74,7 +74,8 @@ public abstract class ParameterGroup extends LayoutResizingVertical {
 			NonMaps.theMaps.getNonLinearWorld().animateViewport(m_viewportPosAtClick, true);
 			m_viewportPosAtClick = null;
 		}
-		getNonMaps().getNonLinearWorld().getPresetManager().resetStoredViewportPosition();
+		// TODO
+		// getNonMaps().getNonLinearWorld().getPresetManager().resetStoredViewportPosition();
 		return this;
 	}
 

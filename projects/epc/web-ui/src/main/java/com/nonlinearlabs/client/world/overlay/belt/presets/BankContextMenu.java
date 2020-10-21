@@ -1,7 +1,5 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
-import java.util.List;
-
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.nonlinearlabs.client.ClipboardManager.ClipboardContent;
@@ -18,7 +16,6 @@ import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RenameDialog;
 import com.nonlinearlabs.client.world.maps.NonPosition;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.BankInfoDialog;
 import com.nonlinearlabs.client.world.overlay.ContextMenu;
 import com.nonlinearlabs.client.world.overlay.ContextMenuItem;
@@ -46,7 +43,8 @@ public abstract class BankContextMenu extends ContextMenu {
 			addChild(new ContextMenuItem(this, "Create New Bank") {
 				@Override
 				public Control click(Position eventPoint) {
-					createNewBank();
+					NonPosition pos = getNonMaps().getNonLinearWorld().toNonPosition(eventPoint);
+					PresetManagerUseCases.get().createNewBank(pos);
 					return super.click(eventPoint);
 				}
 			});
@@ -242,27 +240,6 @@ public abstract class BankContextMenu extends ContextMenu {
 				}
 			});
 		}
-	}
-
-	private NonPosition calcualteBankPosition() {
-		List<Bank> banks = NonMaps.get().getNonLinearWorld().getPresetManager().getBanks();
-
-		if (!banks.isEmpty()) {
-			Bank rightMost = banks.get(0);
-			for (Bank b : banks) {
-				double currentX = b.getNonPosition().getLeft();
-				double rightMostX = rightMost.getNonPosition().getLeft();
-				if (currentX > rightMostX)
-					rightMost = b;
-			}
-			return new NonPosition(rightMost.getNonPosition().getLeft() + 300, rightMost.getNonPosition().getTop());
-		}
-		return new NonPosition(0, 0);
-	}
-
-	private void createNewBank() {
-		NonPosition bankPosition = calcualteBankPosition();
-		PresetManagerContextMenu.createNewBank(bankPosition);
 	}
 
 	protected abstract boolean hasCollapse();

@@ -1,7 +1,6 @@
 package com.nonlinearlabs.client.world.overlay.belt;
 
 import com.nonlinearlabs.client.world.Control;
-import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -30,14 +29,15 @@ public class PresetBeltButton extends BeltButton {
 
 	@Override
 	public Control drag(Position p, DragProxy dragProxy) {
-		if(getPixRect().contains(p) && dragProxy.getOrigin() instanceof IPreset)
+		// todo
+		// if(getPixRect().contains(p) && dragProxy.getOrigin() instanceof IPreset)
 		{
-			if(belt.isHidden())
+			if (belt.isHidden())
 				belt.toggle();
-				
+
 			belt.openTab(BeltTab.Preset);
 			return this;
 		}
-		return super.drag(p, dragProxy);
+		// return super.drag(p, dragProxy);
 	}
 }

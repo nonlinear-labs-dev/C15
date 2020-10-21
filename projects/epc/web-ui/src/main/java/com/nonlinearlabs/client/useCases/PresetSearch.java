@@ -11,9 +11,9 @@ import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetSearch.SearchQueryCombination;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetSearchUpdater;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
+import com.nonlinearlabs.client.presenters.PresetPresenter;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
 public class PresetSearch {
 	private static PresetSearch theSearch = new PresetSearch();
@@ -121,18 +121,9 @@ public class PresetSearch {
 
 			@Override
 			public int compare(String uuid1, String uuid2) {
-				Preset p1 = pm.findPreset(uuid1);
-				Preset p2 = pm.findPreset(uuid2);
-				if (p1 != null && p1 != null) {
-					Bank b1 = p1.getParent();
-					Bank b2 = p2.getParent();
-
-					if (b1 == b2)
-						return p1.getNumber() - p2.getNumber();
-
-					return b1.getOrderNumber() - b2.getOrderNumber();
-				}
-				return 0;
+				PresetPresenter p1 = PresetPresenterProviders.get().getPresenter(uuid1);
+				PresetPresenter p2 = PresetPresenterProviders.get().getPresenter(uuid1);
+				return p1.compare(p2);
 			}
 		});
 		return presets;

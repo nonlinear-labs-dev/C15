@@ -123,4 +123,14 @@ public class BankUseCases {
         server.renameBank(uuid, newName);
     }
 
+    public void setComment(String uuid, String text) {
+        Banks.get().find(uuid).comment.setValue(text);
+        server.setBankAttribute(uuid, "Comment", text);
+    }
+
+    public void setOrderNumber(String uuid, int v) {
+        Banks.get().find(uuid).orderNumber.setValue(v);
+        server.setBankOrderNumber(uuid, v);
+    }
+
 }

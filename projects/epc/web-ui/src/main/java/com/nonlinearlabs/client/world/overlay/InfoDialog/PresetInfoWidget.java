@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
 import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetPresenter;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 
 public class PresetInfoWidget {
@@ -25,12 +27,12 @@ public class PresetInfoWidget {
 	private Label bankName;
 	private IntegerBox position;
 	private FocusWidget haveFocus = null;
-	private String m_currentShownPreset = null;
+	private PresetPresenter m_currentShownPreset = null;
 
 	private ColorTagBox colorBox = new ColorTagBox() {
 		@Override
 		public void onBoxClick(Color c) {
-			NonMaps.get().getServerProxy().setPresetAttribute(PresetInfoWidget.get().m_currentShownPreset, "color",
+			NonMaps.get().getServerProxy().setPresetAttribute(PresetInfoWidget.get().m_currentShownPreset.uuid, "color",
 					c.toString());
 		}
 	};
@@ -43,20 +45,18 @@ public class PresetInfoWidget {
 		return instance;
 	}
 
-	public void updateInfo(String preset, boolean force) {
-		if (m_currentShownPreset != preset) {
+	public void updateInfo(PresetPresenter presetPresenter, boolean force) {
+		if (m_currentShownPreset != presetPresenter) {
 			saveContent();
-			m_currentShownPreset = preset;
+			m_currentShownPreset = presetPresenter;
 		}
 
-		var presenter = PresetPresenterProviders.get().getPresenter(preset);
-
-		if (preset != null) {
-			String presetName = presenter.name;
-			deviceName.setText(presenter.deviceName);
-			softwareVersion.setText(presenter.softwareVersion);
-			storeTime.setText(presenter.storeTime);
-			String commentText = presenter.comment;
+		if (presetPresenter != null) {
+			String presetName = presetPresenter.name;
+			deviceName.setText(presetPresenter.deviceName);
+			softwareVersion.setText(presetPresenter.softwareVersion);
+			storeTime.setText(presetPresenter.storeTime);
+			String commentText = presetPresenter.comment;
 
 			if (force || haveFocus != comment) {
 				comment.setText(commentText);
@@ -75,11 +75,11 @@ public class PresetInfoWidget {
 			}
 
 			if (force || haveFocus != position) {
-				position.setText(presenter.paddedNumber);
+				position.setText(presetPresenter.paddedNumber);
 			}
 
-			bankName.setText(presenter.bankName);
-			colorBox.updateCurrentHighlight(presenter.color);
+			bankName.setText(presetPresenter.bankName);
+			colorBox.updateCurrentHighlight(presetPresenter.color);
 		}
 	}
 
@@ -110,11 +110,10 @@ public class PresetInfoWidget {
 			haveFocus = null;
 
 			if (m_currentShownPreset != null) {
-				var presenter = PresetPresenterProviders.get().getPresenter(m_currentShownPreset);
-				String oldInfo = presenter.comment;
+				String oldInfo = m_currentShownPreset.comment;
 
 				if (!oldInfo.equals(comment.getText())) {
-					NonMaps.theMaps.getServerProxy().setPresetAttribute(m_currentShownPreset, "Comment",
+					NonMaps.theMaps.getServerProxy().setPresetAttribute(m_currentShownPreset.uuid, "Comment",
 							comment.getText());
 				}
 			}
@@ -126,11 +125,10 @@ public class PresetInfoWidget {
 			haveFocus = null;
 
 			if (m_currentShownPreset != null) {
-				var presenter = PresetPresenterProviders.get().getPresenter(m_currentShownPreset);
-				String oldName = presenter.name;
+				String oldName = m_currentShownPreset.name;
 
 				if (!oldName.equals(name.getText())) {
-					NonMaps.theMaps.getServerProxy().renamePreset(m_currentShownPreset, name.getText());
+					NonMaps.theMaps.getServerProxy().renamePreset(m_currentShownPreset.uuid, name.getText());
 				}
 			}
 		});
@@ -148,30 +146,29 @@ public class PresetInfoWidget {
 			haveFocus = null;
 
 			if (m_currentShownPreset != null) {
-				var presenter = PresetPresenterProviders.get().getPresenter(m_currentShownPreset);
-				var oldNumber = presenter.rawNumber;
+				var oldNumber = m_currentShownPreset.rawNumber;
 				Integer newPos = position.getValue();
 				if (newPos != null) {
 					if (!newPos.equals(oldNumber)) {
-						var bank = BankPresenterProviders.get().getPresenter(presenter.bankUuid);
+						var bank = BankPresenterProviders.get().getPresenter(m_currentShownPreset.bankUuid);
 
 						int targetPos = newPos;
 						targetPos = Math.max(targetPos, 1);
 						targetPos = Math.min(targetPos, bank.presets.size());
 
 						if (targetPos == bank.presets.size())
-							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset,
+							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset.uuid,
 									bank.presets.get(bank.presets.size() - 1));
 						else if (targetPos > oldNumber)
-							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset,
+							NonMaps.theMaps.getServerProxy().movePresetBelow(m_currentShownPreset.uuid,
 									bank.presets.get(targetPos - 1));
 						else
-							NonMaps.theMaps.getServerProxy().movePresetAbove(m_currentShownPreset,
+							NonMaps.theMaps.getServerProxy().movePresetAbove(m_currentShownPreset.uuid,
 									bank.presets.get(targetPos - 1));
 					}
 				}
 
-				position.setText(presenter.paddedNumber);
+				position.setText(m_currentShownPreset.paddedNumber);
 			}
 		});
 
@@ -183,7 +180,9 @@ public class PresetInfoWidget {
 		});
 		this.panel = panel;
 
-		updateInfo(NonMaps.get().getNonLinearWorld().getPresetManager().getSelectedPreset().getUUID(), false);
+		var uuid = PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+		var presenter = PresetPresenterProviders.get().getPresenter(uuid);
+		updateInfo(presenter, false);
 	}
 
 	private void addRow(FlexTable panel, String name, Widget content) {

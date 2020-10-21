@@ -108,8 +108,14 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
 
   addAction("move-cluster", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto csv = request->get("csv");
+
     std::vector<std::string> uuids;
     boost::split(uuids, csv, boost::is_any_of(","));
+
+    // move that into moveBankCluster
+    if(firstBank)
+        selBank->attachBank(transaction, Uuid::none(), Bank::AttachmentDirection::none);
+
     pmUseCases.moveBankCluster(uuids);
   });
 

@@ -3,18 +3,16 @@ package com.nonlinearlabs.client.world.overlay;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
+import com.nonlinearlabs.client.presenters.PresetPresenter;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.overlay.InfoDialog.PresetInfoWidget;
 
 public class PresetInfoDialog extends GWTDialog {
 
 	public static PresetInfoDialog theDialog;
 	public static PresetInfoWidget presetInfoPage = null;
-
-	public Preset getCurrentPreset() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().getSelectedPreset();
-	}
 
 	private PresetInfoDialog() {
 		RootPanel.get().add(this);
@@ -29,8 +27,14 @@ public class PresetInfoDialog extends GWTDialog {
 		super.pushDialogToFront();
 	}
 
-	public static Preset getEditBuffer() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().getLoadedPreset();
+	public PresetPresenter getCurrentPreset() {
+		var uuid = PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+		return PresetPresenterProviders.get().getPresenter(uuid);
+	}
+
+	public PresetPresenter getEditBuffer() {
+		var uuid = EditBufferPresenterProvider.getPresenter().loadedPresetUUID;
+		return PresetPresenterProviders.get().getPresenter(uuid);
 	}
 
 	private void addContent() {
@@ -46,7 +50,7 @@ public class PresetInfoDialog extends GWTDialog {
 		content.add(presetInfoPage.panel);
 		setWidget(pane);
 
-		presetInfoPage.updateInfo(getCurrentPreset().getUUID(), false);
+		presetInfoPage.updateInfo(getCurrentPreset(), false);
 	}
 
 	@Override
@@ -61,7 +65,7 @@ public class PresetInfoDialog extends GWTDialog {
 		if (theDialog != null) {
 			theDialog.commit();
 		} else {
-			if (!NonMaps.theMaps.getNonLinearWorld().getPresetManager().isEmpty())
+			if (PresetManagerPresenterProvider.get().getPresenter().hasPresets)
 				theDialog = new PresetInfoDialog();
 		}
 	}
@@ -76,8 +80,8 @@ public class PresetInfoDialog extends GWTDialog {
 		}
 	}
 
-	private void updateInfo(String preset) {
-		presetInfoPage.updateInfo(preset, true);
+	private void updateInfo(String uuid) {
+		presetInfoPage.updateInfo(PresetPresenterProviders.get().getPresenter(uuid), true);
 		centerIfOutOfView();
 	}
 
@@ -101,6 +105,6 @@ public class PresetInfoDialog extends GWTDialog {
 	}
 
 	public static void update() {
-		update(PresetManagerPresenterProvider.get().getPresenter().selectedPresetOfSelectedBank);
+		update(PresetManagerPresenterProvider.get().getPresenter().selectedPreset);
 	}
 }

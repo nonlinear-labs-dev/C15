@@ -7,10 +7,10 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
+import com.nonlinearlabs.client.dataModel.presetManager.Bank;
+import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.maps.NonPosition;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 
 class ConvertSoundTypeTests extends TestWithSteps {
 
@@ -136,28 +136,23 @@ class ConvertSoundTypeTests extends TestWithSteps {
     private void appendAndAwaitPreset(int n) {
         addStep(() -> {
             ServerProxy p = NonMaps.get().getServerProxy();
-            p.appendEditBuffer(findBank());
+            p.appendEditBuffer(findBank().uuid.getValue());
         }, () -> {
-            return findBank().getPreset(n) != null;
+            return findBank().presets.getValue().size() >= n;
         });
 
         setStepName("appendAndAwaitPreset " + n);
     }
 
     private Bank findBank() {
-        PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-        for (Bank b : pm.getBanks())
-            if (b.getCurrentName() == bankName)
-                return b;
-
-        return null;
+        return Banks.get().findByName(bankName);
     }
 
     private void deleteBank() {
         addStep(250, () -> {
             Bank b = findBank();
             ServerProxy p = NonMaps.get().getServerProxy();
-            p.deleteBank(b.getUUID());
+            p.deleteBank(b.uuid.getValue());
         }, () -> {
             return findBank() == null;
         });

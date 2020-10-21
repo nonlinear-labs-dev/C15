@@ -3,8 +3,8 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.nonlinearlabs.client.Millimeter;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.Label;
 
 public class PresetName extends Label {
@@ -20,13 +20,9 @@ public class PresetName extends Label {
 
 	@Override
 	public String getDrawText(Context2d ctx) {
-		Preset p = getParent().getMapsPreset();
-
-		if (p != null) {
-			return p.getDisplayNameWithSuffix();
-		}
-
-		return "";
+		var p = PresetPresenterProviders.get().getPresenter(getParent().getUuid());
+		// TODO: does the name have the suffix?
+		return p.name;
 	}
 
 	protected TextAlign getAlignment() {

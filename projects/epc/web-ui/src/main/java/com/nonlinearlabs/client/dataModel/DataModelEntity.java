@@ -8,10 +8,14 @@ public class DataModelEntity<T> extends Notifier<T> implements DataModelEntityBa
 	}
 
 	public boolean setValue(T v) {
+		return setValue(v, false);
+	}
+
+	public boolean setValue(T v, boolean immediate) {
 		if (v == null) {
 			if (value != null) {
 				value = v;
-				notifyChanges();
+				notifyChanges(immediate);
 				return true;
 			}
 			return false;
@@ -19,7 +23,7 @@ public class DataModelEntity<T> extends Notifier<T> implements DataModelEntityBa
 
 		if (!v.equals(value)) {
 			value = v;
-			notifyChanges();
+			notifyChanges(immediate);
 			return true;
 		}
 		return false;

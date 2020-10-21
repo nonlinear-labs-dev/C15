@@ -116,34 +116,16 @@ public class PresetManagerContextMenu extends ContextMenu {
 
 		});
 
-		if(!pm.getBanks().isEmpty()) {
-			addChild(new ContextMenuItem(this, !pm.isInMoveAllBanks() ? "Move all Banks" : "Disable Move all Banks") {
-				@Override
-				public Control click(Position eventPoint) {
-					getNonMaps().getNonLinearWorld().getPresetManager().toggleMoveAllBanks();
-					return super.click(eventPoint);
-				}
-			});
 
-			if (!pm.areAllBanksCollapsed()) {
-				addChild(new ContextMenuItem(this, "Collapse all Banks") {
-					@Override
-					public Control click(Position eventPoint) {
-						pm.setAllBanksCollapseState(true);
-						return super.click(eventPoint);
-					}
-				});
-			}
+		PresetManager pm = getNonMaps().getNonLinearWorld().getPresetManager();
 
-			if (pm.isAnyBankCollapsed()) {
-				addChild(new ContextMenuItem(this, "Expand all Banks") {
-					@Override
-					public Control click(Position eventPoint) {
-						pm.setAllBanksCollapseState(false);
-						return super.click(eventPoint);
-					}
-				});
+		addChild(new ContextMenuItem(this, "Sort Bank Numbers") {
+			@Override
+			public Control click(Position eventPoint) {
+				getNonMaps().getServerProxy().sortBankNumbers();
+				return super.click(eventPoint);
 			}
+		});
 
 			addChild(new ContextMenuItem(this, "Sort Bank Numbers") {
 				@Override

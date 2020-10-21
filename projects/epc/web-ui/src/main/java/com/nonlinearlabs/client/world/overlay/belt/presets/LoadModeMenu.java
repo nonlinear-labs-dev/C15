@@ -1,12 +1,13 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.nonlinearlabs.client.Millimeter;
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -54,9 +55,10 @@ public class LoadModeMenu extends OverlayLayout {
             if (!isDualEditBuffer()) {
                 return 0;
             } else {
-                if (isLoadToPartActive()) {
+                var pm = PresetManagerPresenterProvider.get().getPresenter();
+                if (PresetManagerUseCases.get().isInLoadToPartMode()) {
                     return 2;
-                } else if (NonMaps.get().getNonLinearWorld().getPresetManager().isEmpty()) {
+                } else if (pm.banks.isEmpty()) {
                     return 0;
                 } else {
                     return 1;
@@ -64,17 +66,13 @@ public class LoadModeMenu extends OverlayLayout {
             }
         }
 
-        private boolean isLoadToPartActive() {
-            return NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
-        }
-
         @Override
         public Control click(Position eventPosition) {
             if (isDualEditBuffer()) {
-                if (isLoadToPartActive()) {
-                    NonMaps.get().getNonLinearWorld().getPresetManager().endLoadToPartMode();
+                if (PresetManagerUseCases.get().isInLoadToPartMode()) {
+                    PresetManagerUseCases.get().endLoadToPartMode();
                 } else {
-                    NonMaps.get().getNonLinearWorld().getPresetManager().startLoadToPartMode();
+                    PresetManagerUseCases.get().startLoadToPartMode();
                 }
                 return this;
             } else {

@@ -24,6 +24,7 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.maps.parameters.PhysicalControlParameter.ReturnMode;
 import com.nonlinearlabs.client.world.maps.parameters.PlayControls.MacroControls.Macros.MacroControls;
 
@@ -46,12 +47,12 @@ public class CompareDialog extends GWTDialog {
 
 	public static void open(String p1) {
 		new CompareDialog(p1);
-		NonMaps.get().getNonLinearWorld().getPresetManager().closeMultiSelection();
+		PresetManagerUseCases.get().finishMultipleSelection();
 	}
 
 	public static void open(String p1, String p2) {
 		new CompareDialog(p1, p2);
-		NonMaps.get().getNonLinearWorld().getPresetManager().closeMultiSelection();
+		PresetManagerUseCases.get().finishMultipleSelection();
 	}
 
 	private CompareDialog(String p) {

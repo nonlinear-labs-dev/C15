@@ -4,9 +4,9 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.BankInfoDialog;
 import com.nonlinearlabs.client.world.overlay.Label;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
@@ -105,27 +105,13 @@ class MenuArea extends OverlayLayout {
 	}
 
 	boolean hasBank() {
-		PresetManager pm = getPresetManager();
-		String bankUUID = pm.getSelectedBank();
-
-		if (bankUUID != null) {
-			return pm.findBank(bankUUID) != null;
-		}
-		return false;
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		return !pm.banks.isEmpty();
 	}
 
 	boolean hasPreset() {
-		PresetManager pm = getPresetManager();
-		String bankUUID = pm.getSelectedBank();
-
-		if (bankUUID != null) {
-			Bank bank = pm.findBank(bankUUID);
-			if (bank != null) {
-				String presetUUID = bank.getPresetList().getSelectedPreset();
-				return bank.getPresetList().findPreset(presetUUID) != null;
-			}
-		}
-		return false;
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		return pm.hasPresets;
 	}
 
 	MenuArea(BeltPresetLayout parent) {

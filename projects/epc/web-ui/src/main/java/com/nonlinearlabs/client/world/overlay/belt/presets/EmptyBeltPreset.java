@@ -3,27 +3,22 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
-import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Label;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
-import com.nonlinearlabs.client.world.overlay.belt.EditBufferDraggingButton;
 
 public class EmptyBeltPreset extends OverlayLayout {
 
 	private class EmptyLabel extends Label {
 
 		private boolean dropping = false;
-		private Bank bank;
 
-		public EmptyLabel(OverlayLayout parent, Bank bank) {
+		public EmptyLabel(EmptyBeltPreset parent) {
 			super(parent);
-			this.bank = bank;
 		}
 
 		@Override
@@ -51,24 +46,27 @@ public class EmptyBeltPreset extends OverlayLayout {
 
 		@Override
 		public Control drop(Position pos, DragProxy dragProxy) {
-			if (dragProxy.getOrigin() instanceof IPreset) {
-				IPreset p = (IPreset) dragProxy.getOrigin();
-				getNonMaps().getServerProxy().appendPreset(p.getUUID(), this.bank.getUUID());
-				return this;
-			} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
-				getNonMaps().getServerProxy().appendEditBuffer(this.bank);
-				return this;
-			}
+			// TODO
+			// if (dragProxy.getOrigin() instanceof IPreset) {
+			// IPreset p = (IPreset) dragProxy.getOrigin();
+			// getNonMaps().getServerProxy().appendPreset(p.getUUID(), this.bank);
+			// return this;
+			// } else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
+			// getNonMaps().getServerProxy().appendEditBuffer(this.bank);
+			// return this;
+			// }
 
 			return null;
 		}
 
 		@Override
 		public Control drag(Position pos, DragProxy dragProxy) {
-			if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
-				dropping = true;
-				return this;
-			}
+			// TODO
+			// if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin()
+			// instanceof EditBufferDraggingButton) {
+			// dropping = true;
+			// return this;
+			// }
 			return super.drag(pos, dragProxy);
 		}
 
@@ -92,9 +90,9 @@ public class EmptyBeltPreset extends OverlayLayout {
 
 	Label emptyLabel;
 
-	public EmptyBeltPreset(OverlayLayout parent, Bank bank) {
+	public EmptyBeltPreset(OverlayLayout parent) {
 		super(parent);
-		emptyLabel = addChild(new EmptyLabel(this, bank));
+		emptyLabel = addChild(new EmptyLabel(this));
 	}
 
 	@Override

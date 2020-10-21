@@ -148,8 +148,11 @@ public class GlobalMenu extends OverlayLayout {
 
 			@Override
 			public String getCheckText() {
-				return (getNonMaps().getNonLinearWorld().getPresetManager().getPresetsVisible() ? "\uE0A4 "
-						: "\uE0A3 ");
+				// TODO
+				// return
+				// (getNonMaps().getNonLinearWorld().getPresetManager().getPresetsVisible() ?
+				// "\uE0A4 " : "\uE0A3 ");
+				return "";
 			}
 
 			@Override

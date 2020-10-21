@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.overlay.GWTDialog;
 
 public class PresetSearchDialog extends GWTDialog {
@@ -31,7 +32,7 @@ public class PresetSearchDialog extends GWTDialog {
 			theSearch.addHeader("Search Presets for ...");
 			theSearch.initalShow();
 			theSearch.pushDialogToFront();
-			NonMaps.get().getNonLinearWorld().getPresetManager().closeMultiSelection();
+			PresetManagerUseCases.get().finishMultipleSelection();
 		}
 	}
 

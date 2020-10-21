@@ -318,15 +318,14 @@ BankActions::BankActions(PresetManager &presetManager)
   });
 
   addAction("set-preset-attribute", [&](std::shared_ptr<NetworkRequest> request) mutable {
-    auto presetUUID = request->get("uuid");
-    auto key = request->get("key");
+    auto csv = request->get("csv");
     auto value = request->get("value");
 
-    if(auto preset = m_presetManager.findPreset(presetUUID))
-    {
-      PresetUseCases useCase(preset);
-      useCase.setAttribute(key, value);
-    }
+    std::vector<std::string> strs;
+    boost::split(strs, csv, boost::is_any_of(","));
+
+    PresetUseCases useCase(preset);
+    useCase.setAttribute(strs, value);
   });
 
   addAction("set-bank-attribute", [&](std::shared_ptr<NetworkRequest> request) mutable {

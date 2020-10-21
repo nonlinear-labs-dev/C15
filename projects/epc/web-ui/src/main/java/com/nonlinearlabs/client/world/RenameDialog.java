@@ -17,10 +17,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Renameable;
+import com.nonlinearlabs.client.dataModel.presetManager.Preset;
 import com.nonlinearlabs.client.presenters.EditBufferPresenter;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
 public class RenameDialog extends DialogBox {
 
@@ -99,13 +99,13 @@ public class RenameDialog extends DialogBox {
 	protected void onPreviewNativeEvent(NativePreviewEvent event) {
 		super.onPreviewNativeEvent(event);
 		switch (event.getTypeInt()) {
-		case Event.ONKEYDOWN:
-			if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-				hide();
-			} else if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-				commit();
-			}
-			break;
+			case Event.ONKEYDOWN:
+				if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+					hide();
+				} else if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+					commit();
+				}
+				break;
 		}
 	}
 
@@ -124,11 +124,12 @@ public class RenameDialog extends DialogBox {
 
 	public static void onPresetManagerUpdate(PresetManager presetManager) {
 		if (!presetToWaitFor.isEmpty()) {
-			Preset p = presetManager.findPreset(presetToWaitFor);
-			if (p != null) {
-				presetToWaitFor = "";
-				RenameDialog.open(p);
-			}
+			// TODO
+			// Preset p = presetManager.findPreset(presetToWaitFor);
+			// if (p != null) {
+			presetToWaitFor = "";
+
+			// RenameDialog.open(presetToWaitFor);
 		}
 	}
 

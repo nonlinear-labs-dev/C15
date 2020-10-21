@@ -8,6 +8,7 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
@@ -25,14 +26,16 @@ class LayerDisplay extends OverlayLayout {
             return true;
         });
 
-        NonMaps.get().getNonLinearWorld().getPresetManager().onLoadToPartModeToggled((x) -> {
-            invalidate(INVALIDATION_FLAG_UI_CHANGED);
-            return true;
-        });
+        // TODO
+        // NonMaps.get().getNonLinearWorld().getPresetManager().onLoadToPartModeToggled((x)
+        // -> {
+        // invalidate(INVALIDATION_FLAG_UI_CHANGED);
+        // return true;
+        // });
     }
 
     public boolean isLoadIntoPartEnabled() {
-        return NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
+        return PresetManagerPresenterProvider.get().getPresenter().inLoadToPartMode;
     }
 
     @Override

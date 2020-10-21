@@ -1,11 +1,11 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
 
@@ -18,7 +18,7 @@ public class MenuAreaPresetButton extends SVGImage {
 
 	@Override
 	public Control mouseDown(Position pos) {
-		Preset p = getPreset();
+		var p = getPreset();
 		Overlay o = getOverlay();
 
 		if (o.getContextMenu() instanceof PresetContextMenu) {
@@ -28,7 +28,7 @@ public class MenuAreaPresetButton extends SVGImage {
 
 		if (p != null) {
 			Position po = getPixRect().getLeftTop();
-			PresetContextMenu pm = new PresetContextMenu(o, p.getUUID());
+			PresetContextMenu pm = new PresetContextMenu(o, p);
 			po.moveBy(3, -pm.getDesiredHeight() + 4);
 			return o.setContextMenu(po, pm);
 		}
@@ -44,18 +44,8 @@ public class MenuAreaPresetButton extends SVGImage {
 		return mouseDown(pos);
 	}
 
-	Preset getPreset() {
-		PresetManager pm = getPresetManager();
-		String bankUUID = pm.getSelectedBank();
-
-		if (bankUUID != null) {
-			Bank bank = pm.findBank(bankUUID);
-			if (bank != null) {
-				String presetUUID = bank.getPresetList().getSelectedPreset();
-				return bank.getPresetList().findPreset(presetUUID);
-			}
-		}
-		return null;
+	String getPreset() {
+		return PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
 	}
 
 	private PresetManager getPresetManager() {
@@ -63,17 +53,9 @@ public class MenuAreaPresetButton extends SVGImage {
 	}
 
 	boolean hasPreset() {
-		PresetManager pm = getPresetManager();
-		String bankUUID = pm.getSelectedBank();
-
-		if (bankUUID != null) {
-			Bank bank = pm.findBank(bankUUID);
-			if (bank != null) {
-				String presetUUID = bank.getPresetList().getSelectedPreset();
-				return bank.getPresetList().findPreset(presetUUID) != null;
-			}
-		}
-		return false;
+		var bankUuid = PresetManagerPresenterProvider.get().getPresenter().selectedBank;
+		var bank = BankPresenterProviders.get().getPresenter(bankUuid);
+		return !bank.presets.isEmpty();
 	}
 
 	@Override

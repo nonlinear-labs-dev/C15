@@ -2,8 +2,6 @@ package com.nonlinearlabs.client.world.overlay.belt.sound;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
-import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.Renameable;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -14,14 +12,12 @@ import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
-import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.RenameDialog;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.ChoosePresetPartDialog;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Label;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -403,10 +399,11 @@ public class SplitSoundLayout extends SoundLayout {
 			if (!getPixRect().contains(pos))
 				return null;
 
-			if (dragProxy.getOrigin() instanceof IPreset) {
-				setIsDropTarget(true);
-				return this;
-			}
+			// TODO
+			// if (dragProxy.getOrigin() instanceof IPreset) {
+			// setIsDropTarget(true);
+			// return this;
+			// }
 			return super.drag(pos, dragProxy);
 		}
 
@@ -430,17 +427,16 @@ public class SplitSoundLayout extends SoundLayout {
 		@Override
 		public Control drop(Position pos, DragProxy dragProxy) {
 
-			if (dragProxy.getOrigin() instanceof IPreset)
-				if (dragProxy.getOrigin() instanceof Preset) {
-					Preset p = (Preset) dragProxy.getOrigin();
-					if (p.isDual()) {
-						choosePresetPart = new ChoosePresetPartDialog(p, group);
-					} else {
-						NonMaps.get().getServerProxy().loadPresetPartIntoPart(p.getUUID(), VoiceGroup.I, group);
-					}
-				}
-
-			setIsDropTarget(false);
+			// TODO
+			/*
+			 * if (dragProxy.getOrigin() instanceof IPreset) if (dragProxy.getOrigin()
+			 * instanceof Preset) { Preset p = (Preset) dragProxy.getOrigin(); if
+			 * (p.isDual()) { choosePresetPart = new ChoosePresetPartDialog(p, group); }
+			 * else { NonMaps.get().getServerProxy().loadPresetPartIntoPart(p.getUUID(),
+			 * VoiceGroup.I, group); } }
+			 * 
+			 * setIsDropTarget(false);
+			 */
 			return this;
 		}
 	}

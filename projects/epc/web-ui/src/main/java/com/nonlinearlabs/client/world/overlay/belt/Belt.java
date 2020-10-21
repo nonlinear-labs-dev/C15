@@ -10,7 +10,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
-import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
@@ -211,7 +210,8 @@ public class Belt extends OverlayLayout {
 			EditBufferUseCases.get().toggleDirectLoad();
 			return this;
 		} else if (event.getNativeKeyCode() == KeyCodes.KEY_R) {
-			getPresetLayout().renameCurrentPreset();
+			// TODO open rename dialog
+			// PresetUseCases.get().rename(uuid, newName);
 			return this;
 		} else if (event.getNativeKeyCode() == KeyCodes.KEY_S && !event.isControlKeyDown()) {
 			if (!isPresetView())
@@ -280,16 +280,20 @@ public class Belt extends OverlayLayout {
 
 	@Override
 	public Control drag(Position pos, DragProxy dragProxy) {
-		if (dragProxy.getOrigin() instanceof EditBufferDraggingButton || dragProxy.getOrigin() instanceof IPreset)
-			return this;
+		// TODO
+		// if (dragProxy.getOrigin() instanceof EditBufferDraggingButton ||
+		// dragProxy.getOrigin() instanceof IPreset)
+		// return this;
 
 		return super.drag(pos, dragProxy);
 	}
 
 	@Override
 	public Control drop(Position pos, DragProxy dragProxy) {
-		if (dragProxy.getOrigin() instanceof EditBufferDraggingButton || dragProxy.getOrigin() instanceof IPreset)
-			return this;
+		// todo
+		// if (dragProxy.getOrigin() instanceof EditBufferDraggingButton ||
+		// dragProxy.getOrigin() instanceof IPreset)
+		// return this;
 
 		return super.drop(pos, dragProxy);
 	}

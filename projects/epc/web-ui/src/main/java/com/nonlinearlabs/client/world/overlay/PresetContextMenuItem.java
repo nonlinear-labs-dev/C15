@@ -1,10 +1,9 @@
 package com.nonlinearlabs.client.world.overlay;
 
 import com.nonlinearlabs.client.Millimeter;
-import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 
 public class PresetContextMenuItem extends ContextMenuItem {
 
@@ -13,8 +12,7 @@ public class PresetContextMenuItem extends ContextMenuItem {
 	}
 
 	private void endMultiplePresetSelection() {
-		PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-		pm.closeMultiSelection();
+		PresetManagerUseCases.get().finishMultipleSelection();
 	}
 
 	@Override

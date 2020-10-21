@@ -1,9 +1,9 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
-import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 
 class NextBank extends PrevNextBank {
 
@@ -13,16 +13,13 @@ class NextBank extends PrevNextBank {
 
 	@Override
 	public Control click(Position eventPoint) {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		pm.selectNextBank(true);
+		PresetManagerUseCases.get().selectNextBank();
 		return this;
 	}
 
 	@Override
 	public int getSelectedPhase() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-
-		if (!pm.canSelectNextBank())
+		if(!PresetManagerPresenterProvider.get().getPresenter().canSelectNextBank)
 			return drawStates.disabled.ordinal();
 
 		return super.getSelectedPhase();

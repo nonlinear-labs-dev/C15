@@ -29,6 +29,30 @@ public class PresetPresenterProvider extends Notifier<PresetPresenter> {
             return true;
         });
 
+        preset.uuid.onChange(v -> {
+            if (v != thePresenter.uuid) {
+                thePresenter.uuid = v;
+                notifyChanges();
+            }
+            return true;
+        });
+
+        preset.partNameVGI.onChange(v -> {
+            if (thePresenter.partNameVGI != v) {
+                thePresenter.partNameVGI = v;
+                notifyChanges();
+            }
+            return true;
+        });
+
+        preset.partNameVGII.onChange(v -> {
+            if (thePresenter.partNameVGII != v) {
+                thePresenter.partNameVGII = v;
+                notifyChanges();
+            }
+            return true;
+        });
+
         preset.number.onChange(v -> {
             thePresenter.rawNumber = v;
             thePresenter.paddedNumber = NumberFormat.getFormat("#000").format(v);

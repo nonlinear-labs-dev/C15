@@ -1,6 +1,6 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
-import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
@@ -24,7 +24,7 @@ public class MenuAreaSearchButton extends SVGImage {
 
 	@Override
 	public int getSelectedPhase() {
-		if (NonMaps.get().getNonLinearWorld().getPresetManager().isEmpty())
+		if (PresetManagerPresenterProvider.get().getPresenter().hasPresets)
 			return drawStates.disabled.ordinal();
 
 		return PresetSearchDialog.isShown() ? drawStates.active.ordinal() : drawStates.normal.ordinal();

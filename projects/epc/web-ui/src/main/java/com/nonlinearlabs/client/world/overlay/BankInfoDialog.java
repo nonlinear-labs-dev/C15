@@ -1,7 +1,5 @@
 package com.nonlinearlabs.client.world.overlay;
 
-import java.util.Date;
-
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -12,8 +10,6 @@ import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
@@ -25,10 +21,11 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.nonlinearlabs.client.GMTTimeZone;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
+import com.nonlinearlabs.client.presenters.BankPresenter;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.BankUseCases;
 
 public class BankInfoDialog extends GWTDialog {
 
@@ -45,7 +42,7 @@ public class BankInfoDialog extends GWTDialog {
 	private Label importFileName;
 	private Label stateLabel, exportFileName, exportFileDate;
 
-	Bank theBank;
+	private BankPresenter bankPresenter;
 
 	private Widget haveFocus = null;
 
@@ -73,8 +70,9 @@ public class BankInfoDialog extends GWTDialog {
 	}
 
 	private void initialSetup() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		updateInfo(pm.findBank(pm.getSelectedBank()));
+		var pmPresenter = PresetManagerPresenterProvider.get().getPresenter();
+		var bankPresenter = BankPresenterProviders.get().getPresenter(pmPresenter.selectedBank);
+		updateInfo(bankPresenter);
 	}
 
 	private void addRow(FlexTable panel, String name, Widget content) {
@@ -160,11 +158,11 @@ public class BankInfoDialog extends GWTDialog {
 			public void onBlur(BlurEvent event) {
 				haveFocus = null;
 
-				if (theBank != null) {
-					String oldInfo = theBank.getAttribute("Comment");
+				if (bankPresenter != null) {
+					String oldInfo = bankPresenter.comment;
 
 					if (!oldInfo.equals(comment.getText())) {
-						NonMaps.theMaps.getServerProxy().setBankAttribute(theBank, "Comment", comment.getText());
+						BankUseCases.get().setComment(bankPresenter.uuid, comment.getText());
 					}
 				}
 			}
@@ -195,12 +193,13 @@ public class BankInfoDialog extends GWTDialog {
 			public void onBlur(BlurEvent event) {
 				haveFocus = null;
 
-				if (theBank != null) {
-					int oldNumber = theBank.getOrderNumber();
+				if (bankPresenter != null) {
+					int oldNumber = bankPresenter.orderNumber;
 					int currentValue = position.getValue();
 
 					if (oldNumber != currentValue) {
-						NonMaps.get().getServerProxy().setBankOrderNumber(theBank, currentValue);
+						BankUseCases.get().setOrderNumber(bankPresenter.uuid, currentValue);
+
 					}
 				}
 			}
@@ -220,11 +219,11 @@ public class BankInfoDialog extends GWTDialog {
 			public void onBlur(BlurEvent event) {
 				haveFocus = null;
 
-				if (theBank != null) {
-					String oldName = theBank.getCurrentName();
+				if (bankPresenter != null) {
+					String oldName = bankPresenter.name;
 
 					if (!oldName.equals(name.getText())) {
-						NonMaps.theMaps.getServerProxy().renameBank(theBank.getUUID(), name.getText());
+						BankUseCases.get().rename(bankPresenter.uuid, name.getText());
 					}
 				}
 			}
@@ -257,7 +256,8 @@ public class BankInfoDialog extends GWTDialog {
 		if (theDialog != null) {
 			theDialog.commit();
 		} else {
-			if (NonMaps.theMaps.getNonLinearWorld().getPresetManager().getSelectedBank() != null)
+			var presenter = PresetManagerPresenterProvider.get().getPresenter();
+			if (!presenter.selectedBank.isEmpty())
 				theDialog = new BankInfoDialog();
 		}
 	}
@@ -266,16 +266,16 @@ public class BankInfoDialog extends GWTDialog {
 		return theDialog != null;
 	}
 
-	public static void update(Bank bank) {
+	public static void update(BankPresenter bank) {
 		if (theDialog != null)
 			theDialog.updateInfo(bank);
 	}
 
-	private void updateInfo(Bank bank) {
-		if (bank != null) {
-			String bankName = bank.getCurrentName();
-			String commentText = bank.getAttribute("Comment");
-			int bankPos = bank.getOrderNumber();
+	private void updateInfo(BankPresenter bankPresenter) {
+		if (bankPresenter != null) {
+			String bankName = bankPresenter.name;
+			String commentText = bankPresenter.comment;
+			int bankPos = bankPresenter.orderNumber;
 
 			if (haveFocus != comment) {
 				if (!commentText.equals(comment.getText())) {
@@ -303,52 +303,41 @@ public class BankInfoDialog extends GWTDialog {
 				}
 			}
 
-			size.setText(Integer.toString(bank.getPresetList().getPresetCount()));
+			size.setText(Integer.toString(bankPresenter.presets.size()));
 
 			try {
-				lastChange.setText(localizeTime(bank.getDateOfLastChange()));
+				lastChange.setText(bankPresenter.dateOfLastChange);
 			} catch (Exception e) {
 				lastChange.setText("---");
 			}
 
 			try {
-				importFileDate.setText(localizeTime(bank.getAttribute("Date of Import File")));
+				importFileDate.setText(bankPresenter.dateOfImportFile);
 			} catch (Exception e) {
 				importFileDate.setText("---");
 			}
 
 			try {
-				exportFileDate.setText(localizeTime(bank.getAttribute("Date of Export File")));
+				exportFileDate.setText(bankPresenter.dateOfExportFile);
 			} catch (Exception e) {
 				exportFileDate.setText("---");
 			}
 
 			try {
-				exportFileName.setText(localizeTime(bank.getAttribute("Name of Export File")));
+				exportFileName.setText(bankPresenter.nameOfExportFile);
 			} catch (Exception e) {
 				exportFileName.setText("---");
 			}
 
 			try {
-				stateLabel.setText(bank.getImportExportState());
+				stateLabel.setText(bankPresenter.importExportState);
 			} catch (Exception e) {
 				stateLabel.setText("---");
 			}
 
-			importFileName.setText(bank.getAttribute("Name of Import File"));
+			importFileName.setText(bankPresenter.nameOfImportFile);
 
 			centerIfOutOfView();
-		}
-	}
-
-	private String localizeTime(String iso) {
-		try {
-			DateTimeFormat f = DateTimeFormat.getFormat("yyyy-MM-ddTHH:mm:ssZZZZ");
-			Date d = f.parse(iso);
-			DateTimeFormat locale = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
-			return locale.format(d, new GMTTimeZone());
-		} catch (Exception e) {
-			return iso;
 		}
 	}
 
@@ -373,12 +362,13 @@ public class BankInfoDialog extends GWTDialog {
 
 	private void setFocus(Widget w) {
 		haveFocus = w;
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		theBank = pm.findBank(pm.getSelectedBank());
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		bankPresenter = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 	}
 
 	public static void update() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		update(pm.findBank(pm.getSelectedBank()));
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var bankPresenter = BankPresenterProviders.get().getPresenter(pm.selectedBank);
+		update(bankPresenter);
 	}
 }

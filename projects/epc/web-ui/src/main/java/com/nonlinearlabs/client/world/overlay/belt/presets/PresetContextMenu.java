@@ -1,6 +1,7 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.nonlinearlabs.client.ClipboardManager.ClipboardContent;
 import com.nonlinearlabs.client.NonMaps;
@@ -8,6 +9,7 @@ import com.nonlinearlabs.client.Renameable;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetPresenter;
@@ -19,7 +21,6 @@ import com.nonlinearlabs.client.useCases.PresetUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RenameDialog;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.overlay.CompareDialog;
 import com.nonlinearlabs.client.world.overlay.ContextMenu;
 import com.nonlinearlabs.client.world.overlay.ContextMenuItem;
@@ -62,6 +63,7 @@ public class PresetContextMenu extends ContextMenu {
 			if (!PresetInfoDialog.isShown()) {
 				String presetInfoText = "Preset Info ...";
 				addChild(new PresetContextMenuItem(this, presetInfoText) {
+
 					@Override
 					public Control click(Position eventPoint) {
 						BankUseCases.get().selectPreset(uuid);
@@ -128,7 +130,9 @@ public class PresetContextMenu extends ContextMenu {
 					}
 				});
 			}
-		} else {
+		} else
+
+		{
 			addChild(new PresetContextMenuItem(this, "Copy") {
 				@Override
 				public Control click(Position eventPoint) {
@@ -141,8 +145,7 @@ public class PresetContextMenu extends ContextMenu {
 		addChild(new PresetContextMenuItem(this, "Delete") {
 			@Override
 			public Control click(Position eventPoint) {
-				deletePresetWithBankModal(presetManagerPresenter.multiSelection,
-						getNonMaps().getNonLinearWorld().getPresetManager(), uuid);
+				deletePresetWithBankModal(uuid);
 				return super.click(eventPoint);
 			}
 		});
@@ -182,23 +185,42 @@ public class PresetContextMenu extends ContextMenu {
 		return new Position(right, bottom - height);
 	}
 
-	public static void deletePresetWithBankModal(boolean hasMultipleSelection, PresetManager pm, String preset) {
-		if (hasMultipleSelection) {
-			String csv = pm.getMultiSelection().getCSV();
-			if (pm.getMultiSelection().selectionContainsSolePresets()) {
+	public static void deletePresetWithBankModal(String uuid) {
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var uc = PresetManagerUseCases.get();
+		if (uc.hasMultipleSelection()) {
+			String csv = uc.getSelectedPresetsCSV();
+			if (selectionContainsSolePresets(pm.currentMultiSelection)) {
 				PresetDeleter.open(csv);
 			} else {
-				NonMaps.get().getServerProxy().deletePresets(csv, false);
+				uc.deletePresets(csv, false);
 			}
 
 			pm.closeMultiSelection();
 		} else {
-			var presetPresenter = PresetPresenterProviders.get().getPresenter(preset);
+			var presetPresenter = PresetPresenterProviders.get().getPresenter(uuid);
 			if (presetPresenter.isLastPresetInBank)
-				PresetDeleter.open(preset);
+				PresetDeleter.open(uuid);
 			else
-				NonMaps.get().getServerProxy().deletePreset(preset, false);
+				NonMaps.get().getServerProxy().deletePreset(uuid, false);
 		}
+	}
+
+	public static boolean selectionContainsSolePresets(ArrayList<String> currentMultiSelection) {
+		HashSet<String> banks = new HashSet<String>();
+
+		for (var s : currentMultiSelection) {
+			var p = PresetPresenterProviders.get().getPresenter(s);
+			banks.add(p.bankUuid);
+		}
+
+		for (var u : banks) {
+			var b = BankPresenterProviders.get().getPresenter(u);
+			if (currentMultiSelection.containsAll(b.presets))
+				return true;
+		}
+
+		return false;
 	}
 
 	public String getPreset() {

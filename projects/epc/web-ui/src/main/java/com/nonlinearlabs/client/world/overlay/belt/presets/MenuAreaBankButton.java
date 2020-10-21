@@ -1,6 +1,7 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
@@ -17,17 +18,16 @@ public class MenuAreaBankButton extends SVGImage {
 	@Override
 	public Control mouseDown(Position pos) {
 		Overlay o = getOverlay();
-		PresetManager pm = getPresetManager();
 
-		String bankUUID = pm.getSelectedBank();
+		var selectedBank = PresetManagerPresenterProvider.get().getPresenter().selectedBank;
 
 		if (o.getContextMenu() instanceof CombinedBankContextMenu) {
 			o.removeExistingContextMenus();
 			return this;
 		}
 
-		if (bankUUID != null) {
-			CombinedBankContextMenu cm = new CombinedBankContextMenu(o, bankUUID);
+		if (!selectedBank.isEmpty()) {
+			CombinedBankContextMenu cm = new CombinedBankContextMenu(o, selectedBank);
 			Position p = getPixRect().getLeftTop();
 			p.moveBy(3, -cm.getDesiredHeight() + 4);
 			return o.setContextMenu(p, cm);
@@ -49,13 +49,7 @@ public class MenuAreaBankButton extends SVGImage {
 	}
 
 	boolean hasBank() {
-		PresetManager pm = getPresetManager();
-		String bankUUID = pm.getSelectedBank();
-
-		if (bankUUID != null) {
-			return pm.findBank(bankUUID) != null;
-		}
-		return false;
+		return !PresetManagerPresenterProvider.get().getPresenter().banks.isEmpty();
 	}
 
 	@Override

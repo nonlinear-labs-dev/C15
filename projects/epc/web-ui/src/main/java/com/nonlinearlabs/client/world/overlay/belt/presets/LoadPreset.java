@@ -1,14 +1,13 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
 
@@ -19,14 +18,9 @@ class LoadPreset extends SVGImage {
 	}
 
 	public boolean isSelectedBankEmpty() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		String b = pm.getSelectedBank();
-		Bank bank = pm.findBank(b);
-		if (bank != null) {
-			if (bank.getPresetList().getPresetCount() != 0)
-				return false;
-		}
-		return true;
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var bank = BankPresenterProviders.get().getPresenter(pm.selectedBank);
+		return bank.presets.isEmpty();
 	}
 
 	@Override
@@ -35,7 +29,7 @@ class LoadPreset extends SVGImage {
 			return drawStates.disabled.ordinal();
 		} else if (!isEnabled()) {
 			return drawStates.disabled.ordinal();
-		} else if (NonMaps.get().getNonLinearWorld().getPresetManager().isInStoreSelectMode()) {
+		} else if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode) {
 			return drawStates.disabled.ordinal();
 		} else if (isCaptureControl()) {
 			return drawStates.active.ordinal();
@@ -48,10 +42,11 @@ class LoadPreset extends SVGImage {
 
 	@Override
 	public Control click(Position eventPoint) {
-		if (NonMaps.get().getNonLinearWorld().getPresetManager().isInStoreSelectMode())
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		if (pm.inStoreSelectMode)
 			return this;
 
-		if(isEnabled() && NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode()) {
+		if (isEnabled() && pm.inLoadToPartMode) {
 			loadPart();
 			return this;
 		}
@@ -65,7 +60,7 @@ class LoadPreset extends SVGImage {
 
 	boolean isEnabled() {
 		boolean isDL = SetupModel.get().systemSettings.directLoad.getBool();
-		
+
 		if (!isSelectedPresetLoaded() && !isDL)
 			return true;
 
@@ -73,38 +68,22 @@ class LoadPreset extends SVGImage {
 	}
 
 	protected boolean isSelectedPresetLoaded() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		boolean isLoadToPartActive = pm.isInLoadToPartMode();
+		boolean isLoadToPartActive = PresetManagerUseCases.get().isInLoadToPartMode();
 
-		if(isLoadToPartActive) {
+		if (isLoadToPartActive) {
 			return false;
 		}
 
-		String loadedPresetUUID = EditBufferModel.get().loadedPreset.getValue();
-
-		String b = pm.getSelectedBank();
-		if (b != null) {
-			Bank bank = pm.findBank(b);
-			if (bank != null) {
-				String p = bank.getPresetList().getSelectedPreset();
-				if (p != null) {
-					Preset preset = bank.getPresetList().findPreset(p);
-					if (preset != null) {
-						return preset.getUUID().equals(loadedPresetUUID);
-					}
-				}
-			}
-		}
-		return false;
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var eb = EditBufferPresenterProvider.getPresenter();
+		return pm.selectedPreset == eb.loadedPresetUUID;
 	}
 
 	public void load() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		pm.loadSelectedPreset();
+		PresetManagerUseCases.get().loadSelectedPreset();
 	}
 
 	public void loadPart() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
-		pm.loadSelectedPresetPart();
+		PresetManagerUseCases.get().loadSelectedPresetPart();
 	}
 }

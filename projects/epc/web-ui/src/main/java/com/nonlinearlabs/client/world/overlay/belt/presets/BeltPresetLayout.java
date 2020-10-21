@@ -57,16 +57,11 @@ public class BeltPresetLayout extends OverlayLayout {
 	}
 
 	public void update(Node settingsNode, Node editBufferNode, Node presetManagerNode) {
-		bank.update(presetManagerNode);
 		store.update(settingsNode, presetManagerNode);
 	}
 
 	public BankControl getBankControl() {
 		return bank.getBankControl();
-	}
-
-	public void renameCurrentPreset() {
-		bank.renameCurrentPreset();
 	}
 
 	public void toggleStoreSelect() {

@@ -2,35 +2,50 @@ package com.nonlinearlabs.client.dataModel.presetManager;
 
 import java.util.HashMap;
 
-public class Presets {
+import com.nonlinearlabs.client.dataModel.DataModelEntity;
+
+public class Presets extends DataModelEntity<HashMap<String, Preset>> {
     private static Presets theInstance = new Presets();
-    private HashMap<String, Preset> db = new HashMap<String, Preset>();
+
+    public Presets() {
+        super(new HashMap<String, Preset>());
+    }
 
     public static Presets get() {
         return theInstance;
     }
 
     public Preset find(String uuid) {
-        return db.get(uuid);
+        return getValue().get(uuid);
     }
 
     public Preset put(String uuid) {
-        db.put(uuid, new Preset());
+        var v = getValue();
+        v.put(uuid, new Preset());
+        setValue(v);
         return find(uuid);
     }
 
     public void preUpdate(String bank) {
-        db.forEach((k, v) -> {
+        getValue().forEach((k, v) -> {
             if (v.bankUuid.getValue() == bank)
                 v.setDoomed();
         });
     }
 
     public void postUpdate() {
-        db.values().removeIf(v -> v.isDoomed());
+        var old = getValue();
+        old.values().removeIf(v -> v.isDoomed());
+        setValue(old);
     }
 
     public void onBankRemoved(String bankUuid) {
-        db.values().removeIf(v -> v.bankUuid.getValue() == bankUuid);
+        var old = getValue();
+        old.values().removeIf(v -> v.bankUuid.getValue() == bankUuid);
+        setValue(old);
+    }
+
+    public boolean isEmpty() {
+        return getValue().isEmpty();
     }
 }

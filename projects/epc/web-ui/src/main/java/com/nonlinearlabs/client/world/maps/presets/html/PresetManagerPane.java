@@ -3,17 +3,24 @@ package com.nonlinearlabs.client.world.maps.presets.html;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank.AbsolutePosition;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank.Position;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank.RelativePosition;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
+import com.nonlinearlabs.client.presenters.LocalSettingsProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.maps.NonRect;
 import com.nonlinearlabs.client.world.maps.presets.html.BankUI.Nesting;
+import com.nonlinearlabs.client.world.overlay.PresetInfoDialog;
 
 class PresetManagerPane extends HTMLPanel {
+
+    private String selectedPreset = "";
 
     public PresetManagerPane() {
         super("");
@@ -21,8 +28,33 @@ class PresetManagerPane extends HTMLPanel {
         PresetManagerPresenterProvider.get().register(p -> {
             sync(p.banks);
             setPositions(p.bankPositions, p.selectedBank);
+
+            if (selectedPreset != p.selectedPreset) {
+                selectedPreset = p.selectedPreset;
+
+                if (PresetInfoDialog.isShown())
+                    PresetInfoDialog.update(selectedPreset);
+
+                if (LocalSettingsProvider.get().getSettings().selectionAutoScroll.isOneOf(
+                        SetupModel.SelectionAutoScroll.parameter_and_preset, SetupModel.SelectionAutoScroll.preset))
+                    scrollToSelectedPreset();
+            }
+
             return isAttached();
         });
+    }
+
+    private void scrollToSelectedPreset() {
+        var p = Document.get().getElementById(selectedPreset);
+
+        if (p != null) {
+            var rect = PositionMappers.getElementsNonRect(p);
+            var z = NonMaps.get().getNonLinearWorld().getCurrentZoom();
+            double margin = Millimeter.toPixels(10) * z / NonMaps.devicePixelRatio;
+            rect.enlargeBy(margin);
+            rect.moveBy(-margin / 2, -margin / 2);
+            NonMaps.get().getNonLinearWorld().scrollToShow(rect);
+        }
     }
 
     private void setPositions(ArrayList<Position> bankPositions, String selectedBank) {
@@ -79,7 +111,7 @@ class PresetManagerPane extends HTMLPanel {
         return null;
     }
 
-    private HashMap<String, BankUI> getBankWidgets() {
+    public HashMap<String, BankUI> getBankWidgets() {
         var widgets = new HashMap<String, BankUI>();
 
         for (Widget w : this.getChildren()) {

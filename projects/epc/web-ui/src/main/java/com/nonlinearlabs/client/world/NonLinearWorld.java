@@ -238,9 +238,6 @@ public class NonLinearWorld extends MapsLayout {
 				drawChildren(ctx, overlay, invalidationMask);
 				viewport.draw(ctx, overlay, invalidationMask);
 
-				if (getPresetManager().hasMultipleRectangle())
-					getPresetManager().getMoveSomeBanks().draw(ctx, overlay, invalidationMask);
-
 				ctx.restore();
 			}
 		}
@@ -305,19 +302,6 @@ public class NonLinearWorld extends MapsLayout {
 	@Override
 	public Control mouseDrag(Position oldPoint, Position newPoint, boolean fine) {
 
-		if (isShiftDown()) {
-			if (getPresetManager().hasMultipleRectangle()) {
-				getPresetManager().updateMultipleRectangle(newPoint);
-			} else {
-				getPresetManager().startMultipleRectangle(newPoint);
-			}
-			return this;
-		} else {
-			if (getPresetManager().hasMultipleRectangle()) {
-				getPresetManager().endMultipleRectangle();
-			}
-		}
-
 		double xDiff = newPoint.getX() - oldPoint.getX();
 		double yDiff = newPoint.getY() - oldPoint.getY();
 
@@ -328,17 +312,12 @@ public class NonLinearWorld extends MapsLayout {
 
 		scroll(xDiff, yDiff);
 		scrollAnimation.activate(xDiff, yDiff);
-		presetManager.resetStoredViewportPosition();
 		return this;
 	}
 
 	@Override
 	public Control mouseUp(Position eventPoint) {
 		scrollAnimation.run();
-
-		if (getPresetManager().hasMultipleRectangle()) {
-			getPresetManager().endMultipleRectangle();
-		}
 
 		return this;
 	}
@@ -381,7 +360,6 @@ public class NonLinearWorld extends MapsLayout {
 
 			requestLayout();
 			invalidate(INVALIDATION_FLAG_ZOOMED);
-			presetManager.resetStoredViewportPosition();
 		}
 	}
 
@@ -531,24 +509,13 @@ public class NonLinearWorld extends MapsLayout {
 
 	@Override
 	public Control doubleClick(Position pos) {
-		if (presetManager.hasStoredViewportPosition()) {
-			presetManager.resetView();
-		} else {
-			zoomTo(parameterEditor);
-			presetManager.saveView();
-		}
+		// stored view position still needed?
+
 		return this;
 	}
 
 	public boolean animateViewport(final NonRect target, boolean animate) {
 		theAnimation = null;
-
-		double widthDiff = Math.abs(viewport.getNonPosition().getWidth() - target.getWidth());
-		double leftDiff = Math.abs(viewport.getNonPosition().getLeft() - target.getLeft());
-		double topDiff = Math.abs(viewport.getNonPosition().getTop() - target.getTop());
-
-		if (toXPixels(widthDiff + leftDiff + topDiff) < 20)
-			return false;
 
 		if (!animate) {
 			viewport.getNonPosition().set(target);
@@ -586,23 +553,28 @@ public class NonLinearWorld extends MapsLayout {
 		Rect controlPos = mapsControl.getPixRect().getReducedBy(-margin);
 		NonPosition leftTop = toNonPosition(controlPos.getLeftTop());
 		NonPosition rightBottom = toNonPosition(controlPos.getRightBottom());
+		scrollToShow(new NonRect(leftTop,
+				new NonDimension(rightBottom.getX() - leftTop.getX(), rightBottom.getY() - leftTop.getY())));
+	}
+
+	public void scrollToShow(NonRect r) {
 		Rect vpPixRect = getViewport().getPixRectWithoutBelt();
 		NonRect vpRect = new NonRect(toNonPosition(vpPixRect.getPosition()), toNonDimension(vpPixRect.getDimension()));
 
 		double xOffset = 0;
 		double yOffset = 0;
 
-		if (leftTop.getX() < vpRect.getLeft())
-			xOffset = leftTop.getX() - vpRect.getLeft();
+		if (r.getLeft() < vpRect.getLeft())
+			xOffset = r.getLeft() - vpRect.getLeft();
 
-		if (rightBottom.getX() > vpRect.getRight())
-			xOffset = rightBottom.getX() - vpRect.getRight();
+		if (r.getRight() > vpRect.getRight())
+			xOffset = r.getRight() - vpRect.getRight();
 
-		if (leftTop.getY() < vpRect.getTop())
-			yOffset = leftTop.getY() - vpRect.getTop();
+		if (r.getTop() < vpRect.getTop())
+			yOffset = r.getTop() - vpRect.getTop();
 
-		if (rightBottom.getY() > vpRect.getBottom())
-			yOffset = rightBottom.getY() - vpRect.getBottom();
+		if (r.getBottom() > vpRect.getBottom())
+			yOffset = r.getBottom() - vpRect.getBottom();
 
 		if (xOffset != 0 || yOffset != 0) {
 			vpRect.moveBy(new NonDimension(xOffset, yOffset));
@@ -612,8 +584,9 @@ public class NonLinearWorld extends MapsLayout {
 
 	@Override
 	public Control onContextMenu(Position pos) {
-		if (getPresetManager().isInStoreSelectMode())
-			return null;
+		// Todo
+		// if (getPresetManager().isInStoreSelectMode())
+		// return null;
 
 		boolean showContextMenus = SetupModel.get().localSettings.contextMenus.getValue() == BooleanValues.on;
 		if (showContextMenus) {
@@ -647,4 +620,5 @@ public class NonLinearWorld extends MapsLayout {
 	public boolean isDraggingControl() {
 		return false;
 	}
+
 }

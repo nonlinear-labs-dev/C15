@@ -61,4 +61,11 @@ public class Banks {
         return positions;
     }
 
+    public Bank findByName(String bankName) {
+        for (var b : db.values())
+            if (b.name.getValue() == bankName)
+                return b;
+        return null;
+    }
+
 }

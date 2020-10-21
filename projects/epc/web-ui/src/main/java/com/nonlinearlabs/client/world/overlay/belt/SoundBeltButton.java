@@ -1,11 +1,9 @@
 package com.nonlinearlabs.client.world.overlay.belt;
 
 import com.nonlinearlabs.client.world.Control;
-import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
-import com.nonlinearlabs.client.world.overlay.belt.Belt.BeltTab;
 
 public class SoundBeltButton extends BeltButton {
 
@@ -34,13 +32,14 @@ public class SoundBeltButton extends BeltButton {
 
 	@Override
 	public Control drag(Position p, DragProxy dragProxy) {
-		if (getPixRect().contains(p) && dragProxy.getOrigin() instanceof IPreset) {
-			if (belt.isHidden())
-				belt.toggle();
+		// todo 
+		// if (getPixRect().contains(p) && dragProxy.getOrigin() instanceof IPreset) {
+		// 	if (belt.isHidden())
+		// 		belt.toggle();
 
-			belt.openTab(BeltTab.Sound);
-			return this;
-		}
+		// 	belt.openTab(BeltTab.Sound);
+		// 	return this;
+		// }
 		return super.drag(p, dragProxy);
 	}
 }

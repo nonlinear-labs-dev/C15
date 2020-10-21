@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.overlay.GWTDialog;
 
@@ -15,29 +16,30 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
     static int modalPopupLeft = 0;
     static int modalPopupTop = 0;
-    Preset preset = null;
 
-    public ChoosePresetPartDialog(Preset p, VoiceGroup target) {
+    public ChoosePresetPartDialog(String p, VoiceGroup target) {
         setModal(true);
         setWidth("20em");
         addHeader("Part of Dual Preset?");
 
-        preset = p;
-
         HTMLPanel panel = new HTMLPanel("");
         HTMLPanel buttons = new HTMLPanel("");
-        panel.add(new Label("Which part of the dual preset do you want to load into EditBuffer part " + target.toString() + "?", true));
+        panel.add(new Label(
+                "Which part of the dual preset do you want to load into EditBuffer part " + target.toString() + "?",
+                true));
 
         Button part1, part2, cancelButton;
-        
-        String I = p.getPartName(VoiceGroup.I);
-        String II = p.getPartName(VoiceGroup.II);
+
+        var presenter = PresetPresenterProviders.get().getPresenter(p);
+
+        String I = presenter.partNameVGI;
+        String II = presenter.partNameVGII;
 
         buttons.add(part1 = new Button(I.isEmpty() ? "Part I" : "Part I: " + I, new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                EditBufferUseCases.get().loadPresetPartIntoPart(preset.getUUID(), VoiceGroup.I, target);
+                EditBufferUseCases.get().loadPresetPartIntoPart(p, VoiceGroup.I, target);
                 commit();
             }
         }));
@@ -46,7 +48,7 @@ public class ChoosePresetPartDialog extends GWTDialog {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                EditBufferUseCases.get().loadPresetPartIntoPart(preset.getUUID(), VoiceGroup.II, target);
+                EditBufferUseCases.get().loadPresetPartIntoPart(p, VoiceGroup.II, target);
                 commit();
             }
         }));
@@ -66,8 +68,8 @@ public class ChoosePresetPartDialog extends GWTDialog {
         panel.add(buttons);
         add(panel);
 
-
-        setPopupPosition(Window.getClientWidth() / 2 - panel.getOffsetWidth(), Window.getClientHeight() / 2 - panel.getOffsetHeight());
+        setPopupPosition(Window.getClientWidth() / 2 - panel.getOffsetWidth(),
+                Window.getClientHeight() / 2 - panel.getOffsetHeight());
         show();
     }
 

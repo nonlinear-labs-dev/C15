@@ -6,6 +6,7 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.ServerProxy;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.Position;
@@ -93,62 +94,11 @@ class StorePreset extends SVGImage {
 	}
 
 	private void fire() {
-		boolean hasSelectedBank = getPresetManager().hasSelectedBank();
-
-		if (getPresetManager().isInStoreSelectMode())
-			hasSelectedBank = getPresetManager().getStoreSelectMode().getSelectedBank() != null;
-
-		if (!hasSelectedBank)
-			createNewBank();
-		else
-			storeToBank();
-
-		getPresetManager().endStoreSelectMode();
+		PresetManagerUseCases.get().storePreset();
 	}
 
 	protected PresetManager getPresetManager() {
 		return getNonMaps().getNonLinearWorld().getPresetManager();
-	}
-
-	public void storeToBank() {
-		switch (action) {
-			case APPEND:
-				if (getPresetManager().isInStoreSelectMode()) {
-					getNonMaps().getServerProxy()
-							.appendEditBuffer(getPresetManager().getStoreSelectMode().getSelectedBank());
-				} else {
-					getNonMaps().getServerProxy().appendPreset();
-				}
-				break;
-
-			case INSERT:
-				if (getPresetManager().isInStoreSelectMode()) {
-					getNonMaps().getServerProxy()
-							.insertPreset(getPresetManager().getStoreSelectMode().getSelectedPreset());
-				} else {
-					getNonMaps().getServerProxy().insertPreset(getPresetManager().getSelectedPreset());
-				}
-				break;
-
-			case OVERWRITE:
-				if (getPresetManager().isInStoreSelectMode()
-						&& getPresetManager().getStoreSelectMode().getSelectedPreset() != null) {
-					getNonMaps().getServerProxy()
-							.overwritePresetWithEditBuffer(getPresetManager().getStoreSelectMode().getSelectedPreset());
-				} else if (getPresetManager().getSelectedPreset() != null) {
-					getNonMaps().getServerProxy().overwritePresetWithEditBuffer(getPresetManager().getSelectedPreset());
-				} else {
-					getNonMaps().getServerProxy().overwritePreset();
-				}
-				break;
-			default:
-				break;
-		}
-	}
-
-	protected void createNewBank() {
-		getNonMaps().getServerProxy()
-				.newBankFromEditBuffer(getNonMaps().getNonLinearWorld().getNonPosition().getCenterPoint());
 	}
 
 	@Override
@@ -171,7 +121,7 @@ class StorePreset extends SVGImage {
 	@Override
 	public Control onKey(KeyDownEvent event) {
 		if (event.getNativeKeyCode() == com.google.gwt.event.dom.client.KeyCodes.KEY_S && event.isControlKeyDown()) {
-			storeToBank();
+			PresetManagerUseCases.get().storeToBank();
 			return this;
 		}
 		return super.onKey(event);

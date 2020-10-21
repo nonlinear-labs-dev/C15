@@ -3,19 +3,16 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Gray;
-import com.nonlinearlabs.client.world.IBank;
-import com.nonlinearlabs.client.world.IPreset;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGBA;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
-import com.nonlinearlabs.client.world.overlay.belt.EditBufferDraggingButton;
 
 class BankHeader extends OverlayLayout {
 
@@ -112,11 +109,13 @@ class BankHeader extends OverlayLayout {
 		if (!getPixRect().contains(pos))
 			return null;
 
-		if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin() instanceof EditBufferDraggingButton
-				|| dragProxy.getOrigin() instanceof IBank) {
-			setIsDropTarget(true);
-			return this;
-		}
+		// todo
+		// if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin()
+		// instanceof EditBufferDraggingButton
+		// || dragProxy.getOrigin() instanceof IBank) {
+		// setIsDropTarget(true);
+		// return this;
+		// }
 		return super.drag(pos, dragProxy);
 	}
 
@@ -135,38 +134,17 @@ class BankHeader extends OverlayLayout {
 
 	@Override
 	public Control drop(Position pos, DragProxy dragProxy) {
-		Bank b = getParent().getBankInCharge();
-
-		PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-
-		if (dragProxy.getOrigin() instanceof IPreset) {
-			if (pm.hasMultiplePresetSelection()) {
-				pm.getMultiSelection().clear();
-			} else {
-
-			}
-		} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton) {
-			getNonMaps().getServerProxy().dropEditBufferOnBank(b);
-		} else if (dragProxy.getOrigin() instanceof IBank) {
-			var bank = (IBank) dragProxy.getOrigin();
-			getNonMaps().getServerProxy().dropBankOnBank(bank.getUUID(), b.getUUID());
-		}
-
-		setIsDropTarget(false);
+		BankUseCases.get().dropOnBank(getParent().getBankPresenter().uuid);
 		return this;
 	}
 
 	@Override
 	public Control onContextMenu(Position pos) {
-		if (getParent().isInStoreSelectMode())
+		if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode)
 			return null;
 
-		Bank b = getParent().getBankInCharge();
-		if (b != null) {
-			Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
-			return o.setContextMenu(pos, new OverlayBankContextMenu(o, b.getUUID()));
-		}
-		return super.onContextMenu(pos);
+		Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
+		return o.setContextMenu(pos, new OverlayBankContextMenu(o, getParent().getBankPresenter().uuid));
 	}
 
 	public void setFontHeightInMM(int mm) {

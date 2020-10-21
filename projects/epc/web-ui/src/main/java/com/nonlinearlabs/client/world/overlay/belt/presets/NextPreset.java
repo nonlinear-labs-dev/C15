@@ -1,10 +1,11 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
 
 class NextPreset extends SVGImage {
@@ -49,14 +50,13 @@ class NextPreset extends SVGImage {
 
 	@Override
 	public int getSelectedPhase() {
-		PresetManager pm = NonMaps.theMaps.getNonLinearWorld().getPresetManager();
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var bank = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 
-		Bank b = pm.findBank(pm.getSelectedBank());
-		if (b != null)
-			if (b.getPresetList().getPresetCount() == 0)
-				return drawStates.disabled.ordinal();
+		if (bank.presets.isEmpty())
+			return drawStates.disabled.ordinal();
 
-		if (!pm.canNext())
+		if (!bank.canSelectNextPreset)
 			return drawStates.disabled.ordinal();
 
 		return super.getSelectedPhase();

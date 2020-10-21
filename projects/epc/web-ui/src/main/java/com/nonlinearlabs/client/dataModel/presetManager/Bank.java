@@ -51,8 +51,11 @@ public class Bank extends Doomable {
 	public StringDataModelEntity attachedToBank = new StringDataModelEntity();
 	public StringDataModelEntity attachDirection = new StringDataModelEntity();
 
-	public PresetListDataModelEntity getPresets() {
-		return presets;
-	}
-
+	public StringDataModelEntity comment = new StringDataModelEntity();
+	public StringDataModelEntity dateOfExportFile = new StringDataModelEntity();
+	public StringDataModelEntity dateOfImportFile = new StringDataModelEntity();
+	public StringDataModelEntity nameOfExportFile = new StringDataModelEntity();
+	public StringDataModelEntity nameOfImportFile = new StringDataModelEntity();
+	public StringDataModelEntity dateOfLastChange = new StringDataModelEntity();
+	public StringDataModelEntity importExportState = new StringDataModelEntity();
 }

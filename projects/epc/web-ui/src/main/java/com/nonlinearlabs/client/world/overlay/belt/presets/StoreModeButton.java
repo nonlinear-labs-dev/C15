@@ -1,10 +1,10 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.xml.client.Node;
-import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
 
@@ -14,15 +14,12 @@ public class StoreModeButton extends SVGImage {
 		super(parent, "Select_Enabled.svg", "Select_Active.svg", "Select_Disabled.svg");
 	}
 
-	private PresetManager getPresetManager() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager();
-	}
-
 	@Override
 	public int getSelectedPhase() {
-		if (getPresetManager().isEmpty()) {
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		if (!pm.hasPresets) {
 			return drawStates.disabled.ordinal();
-		} else if (getPresetManager().isInStoreSelectMode()) {
+		} else if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode) {
 			return drawStates.active.ordinal();
 		} else {
 			return drawStates.normal.ordinal();
@@ -51,15 +48,10 @@ public class StoreModeButton extends SVGImage {
 	}
 
 	public void toggle() {
-		if (getPresetManager().isInStoreSelectMode()) {
-			getPresetManager().endStoreSelectMode();
-		} else {
-			getPresetManager().startStoreSelectMode();
-		}
+		PresetManagerUseCases.get().toggleStoreSelectMode();
 	}
 
 	public void storeSelectOff() {
-		if (getPresetManager().isInStoreSelectMode())
-			getPresetManager().endStoreSelectMode();
+		PresetManagerUseCases.get().endStoreSelectMode();
 	}
 }

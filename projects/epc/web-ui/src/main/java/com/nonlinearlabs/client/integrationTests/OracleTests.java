@@ -5,9 +5,10 @@ import com.google.gwt.user.client.DOM;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy;
 import com.nonlinearlabs.client.WebSocketConnection;
+import com.nonlinearlabs.client.dataModel.presetManager.Bank;
+import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.world.maps.NonPosition;
 import com.nonlinearlabs.client.world.maps.presets.PresetManager;
-import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 
 public class OracleTests extends TestWithSteps {
 
@@ -44,8 +45,8 @@ public class OracleTests extends TestWithSteps {
     private void selectPresetViaNewWebSocket() {
         addStep(() -> {
             documentReceived = false;
-            webSocket.send("/presets/banks/select-preset?uuid=" + findBank().getPreset(0).getUUID().toString()
-                    + "&isOracle=true");
+            webSocket.send(
+                    "/presets/banks/select-preset?uuid=" + findBank().presets.getValue().get(0) + "&isOracle=true");
         }, () -> {
             boolean wasOracleOfServer = server.lastDocumentCouldOmitOracles();
             return !wasOracleOfServer && documentReceived;
@@ -58,7 +59,7 @@ public class OracleTests extends TestWithSteps {
         addStep(() -> {
             documentReceived = false;
             lastDocumentID = server.getLastUpdateID();
-            server.selectPreset(findBank().getPreset(1).getUUID());
+            server.selectPreset(findBank().presets.getValue().get(1));
         }, () -> {
             boolean wasOracleOfServer = server.lastDocumentCouldOmitOracles();
             boolean updateIsNewer = lastDocumentID < server.getLastUpdateID();
@@ -98,29 +99,24 @@ public class OracleTests extends TestWithSteps {
     private void createPresets() {
         addStep(() -> {
             Bank b = findBank();
-            server.appendEditBuffer(b);
-            server.appendEditBuffer(b);
-            server.appendEditBuffer(b);
+            server.appendEditBuffer(b.uuid.getValue());
+            server.appendEditBuffer(b.uuid.getValue());
+            server.appendEditBuffer(b.uuid.getValue());
         }, () -> {
-            return findBank().getPresetList().getPresetCount() == 3;
+            return findBank().presets.getValue().size() == 3;
         });
 
         setStepName("Create Presets");
     }
 
     private Bank findBank() {
-        PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-        for (Bank b : pm.getBanks())
-            if (b.getCurrentName() == bankName)
-                return b;
-
-        return null;
+        return Banks.get().findByName(bankName);
     }
 
     private void deleteBank() {
         addStep(() -> {
             Bank b = findBank();
-            server.deleteBank(b.getUUID());
+            server.deleteBank(b.uuid.getValue());
         }, () -> {
             return findBank() == null;
         });

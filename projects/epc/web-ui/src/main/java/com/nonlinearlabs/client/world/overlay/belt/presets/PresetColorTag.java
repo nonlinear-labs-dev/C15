@@ -1,7 +1,7 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
@@ -18,9 +18,8 @@ public class PresetColorTag extends OverlayControl {
 	}
 
 	protected RGB calcColor() {
-		String color = getParent().getMapsPreset().getAttribute("color");
-		Color c = Color.toEnum(color);
-		return c.toRGB();
+		var p = PresetPresenterProviders.get().getPresenter(getParent().getUuid());
+		return p.color.toRGB();
 	}
 
 	@Override

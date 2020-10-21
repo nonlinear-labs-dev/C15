@@ -2,14 +2,14 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
-import com.nonlinearlabs.client.LoadToPartMode;
 import com.nonlinearlabs.client.Millimeter;
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 import com.nonlinearlabs.client.world.overlay.Label;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
@@ -23,11 +23,16 @@ public class TypeLabel extends OverlayLayout {
 		}
 
 		@Override
+		public TypeLabel getParent() {
+			return (TypeLabel) super.getParent();
+		}
+
+		@Override
 		public String getDrawText(Context2d ctx) {
-			Preset p = TypeLabel.this.getParent().getMapsPreset();
+			var p = PresetPresenterProviders.get().getPresenter(getParent().getParent().getUuid());
 
 			if (p != null) {
-				switch (p.getType()) {
+				switch (p.type) {
 					case Single:
 						return "";
 					case Split:
@@ -59,31 +64,31 @@ public class TypeLabel extends OverlayLayout {
 			super(parent);
 		}
 
-		private TypeLabel getTypeLabel() {
+		@Override
+		public TypeLabel getParent() {
 			return (TypeLabel) super.getParent();
 		}
 
 		@Override
 		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-			LoadToPartMode mode = getLoadToPart();
-			if (mode != null) {
+			if (presenter.inLoadToPartMode) {
 				EditBufferModel ebm = EditBufferModel.get();
 				VoiceGroup currentVG = ebm.voiceGroup.getValue();
-				Preset thisPreset = getTypeLabel().getParent().getMapsPreset();
+				String thisPreset = getParent().getParent().getUuid();
 				String currentOriginUUID = currentVG == VoiceGroup.I ? ebm.sourceUUIDI.getValue()
 						: ebm.sourceUUIDII.getValue();
 				VoiceGroup currentOriginVG = currentVG == VoiceGroup.I ? ebm.sourceVGI.getValue()
 						: ebm.sourceVGII.getValue();
 
-				boolean isLoaded = thisPreset.getUUID() == currentOriginUUID;
+				boolean isLoaded = thisPreset == currentOriginUUID;
 				boolean iLoaded = isLoaded && currentOriginVG == VoiceGroup.I;
 				boolean iiLoaded = isLoaded && currentOriginVG == VoiceGroup.II;
 
-				boolean isPresetSelected = mode.getSelectedPreset() == getTypeLabel().getParent().getMapsPreset();
-				boolean iSelected = isPresetSelected && mode.getSelectedPart() == VoiceGroup.I;
-				boolean iiSelected = isPresetSelected && mode.getSelectedPart() == VoiceGroup.II;
+				boolean isPresetSelected = presenter.selectedPreset == thisPreset;
+				boolean iSelected = isPresetSelected && presenter.selectedPart == VoiceGroup.I;
+				boolean iiSelected = isPresetSelected && presenter.selectedPart == VoiceGroup.II;
 
-				switch (getTypeLabel().getParent().getMapsPreset().getType()) {
+				switch (PresetPresenterProviders.get().getPresenter(thisPreset).type) {
 					case Single:
 					default:
 						drawSingle(ctx, iLoaded, iSelected);
@@ -96,10 +101,6 @@ public class TypeLabel extends OverlayLayout {
 						break;
 				}
 			}
-		}
-
-		LoadToPartMode getLoadToPart() {
-			return NonMaps.get().getNonLinearWorld().getPresetManager().getLoadToPartMode();
 		}
 
 		private void drawLayer(Context2d ctx, boolean iLoaded, boolean iiLoaded, boolean iSelected,
@@ -181,19 +182,16 @@ public class TypeLabel extends OverlayLayout {
 
 	private SingleTypeLabel singleControl = null;
 	private DualTypeLabel dualControl = null;
+	private PresetManagerPresenter presenter;
 
 	public TypeLabel(BeltPreset parent) {
 		super(parent);
-		bruteForce();
 
-		NonMaps.get().getNonLinearWorld().getPresetManager().onLoadToPartModeToggled((v) -> {
+		PresetManagerPresenterProvider.get().register(p -> {
+			presenter = p;
 			bruteForce();
 			return true;
 		});
-	}
-
-	private boolean isLoadToPartEnabled() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
 	}
 
 	@Override
@@ -210,7 +208,7 @@ public class TypeLabel extends OverlayLayout {
 		dualControl = null;
 		singleControl = null;
 
-		if (isLoadToPartEnabled()) {
+		if (presenter.inLoadToPartMode) {
 			addChild(dualControl = new DualTypeLabel(this));
 		} else {
 			addChild(singleControl = new SingleTypeLabel(this));

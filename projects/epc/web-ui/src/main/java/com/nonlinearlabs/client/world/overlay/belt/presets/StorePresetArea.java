@@ -2,9 +2,8 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.Millimeter;
-import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.world.Control;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 
 public class StorePresetArea extends OverlayLayout {
@@ -55,14 +54,10 @@ public class StorePresetArea extends OverlayLayout {
 	}
 
 	public Control handleEnterKey() {
-		if (getPresetManager().isInStoreSelectMode()) {
+		if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode) {
 			return m_commitButton.handleEnterKey();
 		}
 		return null;
-	}
-
-	private PresetManager getPresetManager() {
-		return NonMaps.get().getNonLinearWorld().getPresetManager();
 	}
 
 	public void storeSelectOff() {

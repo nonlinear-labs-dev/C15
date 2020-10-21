@@ -80,9 +80,11 @@ class BankUI extends HTMLPanel {
     }
 
     private VerticalLayout layout;
+    private String uuid;
 
     public BankUI(String uuid) {
         super("");
+        this.uuid = uuid;
 
         getElement().addClassName("bank");
         getElement().setAttribute("draggable", "true");
@@ -113,6 +115,10 @@ class BankUI extends HTMLPanel {
 
     enum Nesting {
         None, Horizontally, Vertically
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public void attachTo(HTMLPanel newParent, double x, double y, Nesting nesting) {

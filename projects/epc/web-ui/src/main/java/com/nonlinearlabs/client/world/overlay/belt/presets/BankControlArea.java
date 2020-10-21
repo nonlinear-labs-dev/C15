@@ -1,6 +1,5 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
-import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 
@@ -25,15 +24,7 @@ public class BankControlArea extends OverlayLayout {
 		return bank;
 	}
 
-	public void update(Node presetManagerNode) {
-		bank.update(presetManagerNode);
-	}
-
 	public double getHorizontalCenterLinePosition() {
 		return bank.getHorizontalCenterLinePosition() + getRelativePosition().getTop();
-	}
-
-	public void renameCurrentPreset() {
-		bank.renameCurrentPreset();
 	}
 }

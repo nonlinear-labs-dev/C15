@@ -1,7 +1,6 @@
 package com.nonlinearlabs.client.world.maps.presets.bank.preset;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.maps.MapsLayout;
@@ -9,18 +8,12 @@ import com.nonlinearlabs.client.world.maps.parameters.ZoomReactingControl;
 
 public class ColorTag extends ZoomReactingControl {
 
-	
 	public ColorTag(MapsLayout parent) {
 		super(parent);
 	}
 
 	protected RGB calcColor() {
-		return Color.toEnum(getParent().getAttribute("color")).toRGB();
-	}
-
-	@Override
-	public Preset getParent() {
-		return (Preset) super.getParent();
+		return RGB.red();// Color.toEnum(getParent().getAttribute("color")).toRGB();
 	}
 
 	@Override

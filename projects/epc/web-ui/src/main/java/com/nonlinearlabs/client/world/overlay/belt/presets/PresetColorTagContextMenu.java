@@ -4,10 +4,10 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.Rect;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.overlay.ContextMenu;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.PresetContextMenuItem;
@@ -17,16 +17,7 @@ public class PresetColorTagContextMenu extends ContextMenu {
 	private final String preset;
 
 	private void setColor(Color color) {
-		final PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-		final boolean hasMultipleSelection = pm.hasMultiplePresetSelection();
-
-		if (hasMultipleSelection) {
-			for (String uuid : pm.getMultiSelection().getSelectedPresets()) {
-				NonMaps.get().getServerProxy().setPresetAttribute(uuid, "color", color.toString());
-			}
-		} else {
-			NonMaps.get().getServerProxy().setPresetAttribute(preset, "color", color.toString());
-		}
+		PresetManagerUseCases.get().setPresetColor(preset, color);
 	}
 
 	public PresetColorTagContextMenu(OverlayLayout parent, final String p) {

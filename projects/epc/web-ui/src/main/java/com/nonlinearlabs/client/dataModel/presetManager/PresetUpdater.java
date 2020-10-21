@@ -16,6 +16,8 @@ public class PresetUpdater extends Updater {
 	public void doUpdate() {
 		target.name.setValue(getAttributeValue(root, "name"));
 		target.uuid.setValue(getAttributeValue(root, "uuid"));
+		target.partNameVGI.setValue(getAttributeValue(root, "part-I-name"));
+		target.partNameVGII.setValue(getAttributeValue(root, "part-II-name"));
 
 		try {
 			target.type.setValue(SoundType.valueOf(getAttributeValue(root, "type")));

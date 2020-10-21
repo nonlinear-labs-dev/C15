@@ -16,6 +16,7 @@ public class PresetManagerUpdater extends Updater {
 
 	public void doUpdate() {
 		if (didChange(root)) {
+			target.fileVersion.setValue(Integer.parseInt(getAttributeValue(root, "file-version")));
 			processChangedChildrenElements(root, "banks", t -> updateBanks(t));
 			Banks.get().postUpdate();
 			Presets.get().postUpdate();
@@ -23,7 +24,7 @@ public class PresetManagerUpdater extends Updater {
 	}
 
 	public void updateBankPositions() {
-		target.positions.setValue(Banks.get().updatePositions());
+		target.positions.setValue(Banks.get().updatePositions(), true);
 	}
 
 	private void updateBanks(Node banks) {
