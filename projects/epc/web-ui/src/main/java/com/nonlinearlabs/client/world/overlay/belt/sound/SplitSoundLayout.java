@@ -67,7 +67,7 @@ public class SplitSoundLayout extends SoundLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, int flags) {
+		public void draw(Context2d ctx, Context2d overlayCtx, int flags) {
 			if (SetupModel.get().systemSettings.syncSplit.isFalse()) {
 				SplitPoint splits = (SplitPoint) getChildren().get(2);
 				Rect left = splits.getRectOfVG(VoiceGroup.I);
@@ -93,7 +93,7 @@ public class SplitSoundLayout extends SoundLayout {
 					ctx.fillRect(left.getCenterPoint().getX() - 2, startY, 4, endY - startY);
 				}
 			}
-			super.draw(ctx, flags);
+			super.draw(ctx, overlayCtx, flags);
 		}
 	}
 

@@ -4,8 +4,14 @@ import java.util.ArrayList;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.Composite;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.DragEndEvent;
+import com.google.gwt.event.dom.client.DragEvent;
+import com.google.gwt.event.dom.client.DragLeaveEvent;
+import com.google.gwt.event.dom.client.DragOverEvent;
+import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -22,15 +28,60 @@ public abstract class OverlayLayout extends OverlayControl implements ILayout<Ov
 	FocusWidget htmlProxy;
 
 	protected OverlayLayout(Control parent) {
+		this(parent, false, false);
+	}
+
+	protected OverlayLayout(Control parent, boolean draggable, boolean droppable) {
 		super(parent);
 
-		if (parent instanceof Overlay) {
+		if (draggable || droppable || parent instanceof Overlay) {
 			var overlay = Document.get().getElementById("overlay-proxies");
 			var overlayWidget = HTMLPanel.wrap(overlay);
 			overlayWidget.add(htmlProxy = new Anchor());
 			htmlProxy.getElement().addClassName("overlay-proxy");
 			getNonMaps().initHandlers(htmlProxy);
+
+			if (droppable) {
+				htmlProxy.addDomHandler(e -> {
+					e.preventDefault();
+					e.stopPropagation();
+					GWT.log("drop on overlay");
+					drop(getPixRect().getCenterPoint(), null);
+					dragLeave();
+				}, DropEvent.getType());
+
+				htmlProxy.addDomHandler(e -> {
+					e.preventDefault();
+					e.stopPropagation();
+					drag(getPixRect().getCenterPoint(), null);
+					GWT.log("drag over on overlay");
+				}, DragOverEvent.getType());
+			}
+
+			if (draggable) {
+				htmlProxy.addDomHandler(e -> {
+					e.preventDefault();
+					e.stopPropagation();
+					drag(getPixRect().getCenterPoint(), null);
+					GWT.log("drag on overlay");
+				}, DragEvent.getType());
+
+				htmlProxy.addDomHandler(e -> {
+					e.preventDefault();
+					e.stopPropagation();
+					dragLeave();
+					GWT.log("drag end overlay");
+				}, DragEndEvent.getType());
+
+				htmlProxy.addDomHandler(e -> {
+					e.preventDefault();
+					e.stopPropagation();
+					dragLeave();
+					GWT.log("drag leave overlay");
+				}, DragLeaveEvent.getType());
+			}
 		}
+
 	}
 
 	@Override

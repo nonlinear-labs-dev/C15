@@ -1918,31 +1918,29 @@ button {
 
 .bank .content {
   display: block;
-  position: relative;
-  font-size: 4mm;
-  line-height: 8mm;
-  width: calc(60mm + 2px);
-  border: 2px solid white;
-  border-top-right-radius: 2mm;
-  border-top-left-radius: 2mm;
-  box-sizing: content-box;
-  background-color:#9cf;
-  z-index: 10;
-  overflow: hidden;
-  pointer-events: all;
+	position: relative;
+	font-size: 4mm;
+	line-height: 8mm;
+	width: calc(60mm + 2px);
+	border: 2px solid #999;
+	box-sizing: content-box;
+	background-color: #9cf;
+	z-index: 10;
+	overflow: hidden;
+	pointer-events: all;
 }
 
 .bank .content .header {
   display: block;
-  border-top-right-radius: 2mm;
-  border-top-left-radius: 2mm;
-  width: calc(60mm + 2px);
-  color: black;
-  text-align: center;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  background-color:gray;
+	border-top-right-radius: 0mm;
+	border-top-left-radius: 0mm;
+	width: calc(60mm + 2px);
+	color: black;
+	text-align: center;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	background-color: #999;
 }
 
 .bank .content .header.selected {
@@ -1959,14 +1957,14 @@ button {
 }
 
 .bank .content .preset {
-  display: inline-block;
   position: relative;
-  color:white;
-  background-color: #202020;
-  border: 1px solid white;
-  margin-top: -1px;
-  line-height: 8mm;
-  width: max-content;
+	color: #ddd;
+	background-color: #202020;
+	border: 1px solid #999;
+	margin-top: -1px;
+	line-height: 8mm;
+	width: auto;
+	display: flex;
 }
 
 .bank .content .preset .number {
@@ -2004,9 +2002,12 @@ button {
 }
 
 .bank .content .preset.selected {
-  border-color: white;
-  z-index: 4;
-  background-color: lightgray;
+  border-color: #fff;
+	border-width: 2px;
+	z-index: 4;
+	background-color: #777;
+	color: #fff;
+
 }
 
 .bank .content .header.drop-target {
@@ -2092,3 +2093,8 @@ button {
   z-index: 100;
 }
 
+.header .gwt-Label {
+	padding: 0.7mm;
+	font-weight: 600;
+	font-size: 4.5mm;
+}

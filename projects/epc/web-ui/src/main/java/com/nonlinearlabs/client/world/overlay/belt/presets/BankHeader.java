@@ -3,6 +3,7 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
+import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
@@ -44,7 +45,7 @@ class BankHeader extends OverlayLayout {
 	private boolean isDropTarget = false;
 
 	BankHeader(BankControl parent) {
-		super(parent);
+		super(parent, true, true);
 		addChild(prev = new PreviousBank(this));
 		addChild(next = new NextBank(this));
 		addChild(title = new BankTitle(this));
@@ -66,7 +67,6 @@ class BankHeader extends OverlayLayout {
 
 		if (isDropTarget)
 			drawTeeth(ctx);
-
 	}
 
 	protected void drawTeeth(Context2d ctx) {
@@ -109,14 +109,9 @@ class BankHeader extends OverlayLayout {
 		if (!getPixRect().contains(pos))
 			return null;
 
-		// todo
-		// if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin()
-		// instanceof EditBufferDraggingButton
-		// || dragProxy.getOrigin() instanceof IBank) {
-		// setIsDropTarget(true);
-		// return this;
-		// }
-		return super.drag(pos, dragProxy);
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		setIsDropTarget(pm.dndType != DragDataType.None);
+		return this;
 	}
 
 	@Override

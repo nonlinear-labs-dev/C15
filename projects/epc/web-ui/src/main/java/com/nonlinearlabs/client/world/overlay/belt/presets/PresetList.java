@@ -1,6 +1,7 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.core.client.GWT;
 import com.nonlinearlabs.client.Animator;
 import com.nonlinearlabs.client.Animator.DoubleClientData.Client;
 import com.nonlinearlabs.client.Millimeter;
@@ -10,6 +11,7 @@ import com.nonlinearlabs.client.presenters.BankPresenter;
 import com.nonlinearlabs.client.presenters.BankPresenterProviders;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
@@ -56,6 +58,7 @@ public class PresetList extends OverlayLayout {
 					return false;
 
 				bankPresenter = b;
+				GWT.log("call select ln 61 with " + selectedPreset);
 				select(selectedPreset, selectedPart);
 				scheduleAutoScroll(ScrollRequest.Jump);
 				return true;
@@ -63,6 +66,7 @@ public class PresetList extends OverlayLayout {
 		}
 
 		syncPresets();
+		GWT.log("call select ln 69 with " + selectedPreset);
 		select(selectedPreset, selectedPart);
 	}
 
@@ -85,8 +89,14 @@ public class PresetList extends OverlayLayout {
 	}
 
 	private void select(String selectedPreset, VoiceGroup selectedPart) {
-		if (this.selectedPreset != selectedPreset) {
+		if (this.selectedPreset != selectedPreset || this.selectedPart != selectedPart) {
 			this.selectedPreset = selectedPreset;
+			this.selectedPart = selectedPart;
+
+			GWT.log("Selected Preset is: " + this.selectedPreset);
+			GWT.log("Selected Preset Name is: "
+					+ PresetPresenterProviders.get().getPresenter(this.selectedPreset).name);
+
 			scheduleAutoScroll(ScrollRequest.Smooth);
 		}
 	}

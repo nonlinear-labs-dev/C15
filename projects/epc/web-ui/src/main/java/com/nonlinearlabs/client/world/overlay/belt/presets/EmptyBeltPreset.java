@@ -46,6 +46,7 @@ public class EmptyBeltPreset extends OverlayLayout {
 
 		@Override
 		public Control drop(Position pos, DragProxy dragProxy) {
+
 			// TODO
 			// if (dragProxy.getOrigin() instanceof IPreset) {
 			// IPreset p = (IPreset) dragProxy.getOrigin();

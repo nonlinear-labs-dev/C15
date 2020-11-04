@@ -13,7 +13,6 @@ import com.nonlinearlabs.client.dataModel.presetManager.PresetSearchUpdater;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.presenters.PresetPresenter;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 
 public class PresetSearch {
 	private static PresetSearch theSearch = new PresetSearch();
@@ -114,8 +113,6 @@ public class PresetSearch {
 	}
 
 	public String[] getSortedMatchingPresets() {
-		PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-
 		String presets[] = getModel().results.getValue().toArray(new String[0]);
 		Arrays.sort(presets, new Comparator<String>() {
 
