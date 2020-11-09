@@ -6,8 +6,8 @@ BBB_IP=192.168.10.11
 
 # general Messages
 MSG_DO_NOT_SWITCH_OFF="DO NOT SWITCH OFF C15!"
-MSG_STARTING_UPDATE="Starting C15 update..."
-MSG_UPDATING_C15="Updating C15"
+MSG_STARTING_UPDATE="Starting the C15 update..."
+MSG_UPDATING_C15="Updating the C15"
 MSG_UPDATING_EPC="1/3 Updating..."
 MSG_UPDATING_BBB="2/3 Updating..."
 MSG_UPDATING_RT_FIRMWARE="3/3 Updating..."
@@ -103,9 +103,8 @@ wait4epc() {
 }
 
 check_preconditions() {
-    [ $UPDATE_EPC == 0 ] && return 0
     if ! wait4epc 10; then
-        if [ -z "$EPC_IP" ]; then report "" "E81: Usage: $EPC_IP <IP-of-ePC> wrong ..." "Please retry update!" && return 1; fi
+        if [ -z "$EPC_IP" ]; then report "" "E81: ePC IP usage wrong ..." "Please retry update!" && return 1; fi
         if ! ping -c1 $EPC_IP 1>&2 > /dev/null; then  report "" "E82: Cannot ping ePC on $EPC_IP ..." "Please retry update!" && return 1; fi
         if executeOnWin "mountvol p: /s & p: & DIR P:\nonlinear"; then
             report "" "E84: Upgrade OS first!" "Please contact NLL!" && return 1
@@ -117,18 +116,19 @@ check_preconditions() {
         fi
         report "" "Something went wrong!" "Please retry update!" && return 1
     fi
+    if [ -z "$BBB_IP" ]; then report "" "E86: BBB IP usage wrong ..." "Please retry update!" && return 1; fi
     return 0
 }
 
 epc_push_update() {
     chmod +x /update/EPC/epc_push_update.sh
-    /bin/sh /update/EPC/epc_push_update.sh $EPC_IP
+    /bin/sh /update/EPC/epc_push_update.sh $EPC_IP $BBB_IP
     return $?
 }
 
 epc_pull_update() {
     chmod +x /update/EPC/epc_pull_update.sh
-    /bin/sh /update/EPC/epc_pull_update.sh $EPC_IP
+    /bin/sh /update/EPC/epc_pull_update.sh $EPC_IP $BBB_IP
     return $?
 }
 
@@ -140,6 +140,8 @@ epc_fix() {
 
 epc_update() {
     pretty "" "$MSG_UPDATING_EPC" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_UPDATING_EPC" "$MSG_DO_NOT_SWITCH_OFF"
+
+    check_preconditions || determine_termination
 
     if ! epc_push_update; then
         epc_pull_update
@@ -171,11 +173,7 @@ epc_update() {
 bbb_update() {
     pretty "" "$MSG_UPDATING_BBB" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_UPDATING_BBB" "$MSG_DO_NOT_SWITCH_OFF"
     chmod +x /update/BBB/bbb_update.sh
-    if [ $UPDATE_EPC -eq 1 ]; then
-        /bin/sh /update/BBB/bbb_update.sh $EPC_IP $BBB_IP
-    else
-        /bin/sh /update/BBB/bbb_update.sh
-    fi
+    /bin/sh /update/BBB/bbb_update.sh
 
     # error codes 50...59
     return_code=$?
@@ -226,8 +224,6 @@ main() {
     chmod +x /update/utilities/*
 
     configure_ssh
-    check_preconditions || determine_termination
-
     pretty "" "$MSG_STARTING_UPDATE" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_STARTING_UPDATE" "$MSG_DO_NOT_SWITCH_OFF"
     sleep 2
 

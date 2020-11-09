@@ -16,4 +16,4 @@ ConditionKernelCommandLine=|rd.modules-load
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=@C15_INSTALL_PATH@/text2soled/text2soled multitext "Starting C15...@SC1" "Welcome,@BC2" "those who love to play keys!@BC4"
+ExecStart=@C15_INSTALL_PATH@/text2soled/text2soled multitext "Starting the C15...@SC1" "Welcome,@BC2" "those who love to play keys!@BC4"

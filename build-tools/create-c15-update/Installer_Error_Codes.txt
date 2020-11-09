@@ -29,11 +29,12 @@ List of current Error Messages
 - 59 :: "E59 BBB update: Files on BBB present, but conditions are bad ..." ==> Update from 1.5 to 1.7: If we don't stop here, we will wipe everything (presets/settings/calirbation!)
 
 8. General
-- 81 :: "E81: Usage: $EPC_IP <IP-of-ePC> wrong ..."
+- 81 :: "E81: ePC IP usage wrong ..."
 - 82 :: "E82: Can't ping ePC on $EPC_IP ..."
 - 83 :: "E83: Can't logon to ePC OS ..."
 - 84 :: "E84: Upgrade OS first!"
 - 85 :: "E85: OS too old for update!"
+- 86 :: "E81: BBB IP usage wrong ..."
 
 ------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------

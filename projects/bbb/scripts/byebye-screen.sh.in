@@ -1,3 +1,3 @@
 #!/bin/sh
 
-@C15_INSTALL_PATH@/text2soled/text2soled multitext "Shutting C15 down...@SC1" "Bye, Bye!@BC3"
+@C15_INSTALL_PATH@/text2soled/text2soled multitext "Shutting the C15 down...@SC1" "Bye, Bye!@BC3"
