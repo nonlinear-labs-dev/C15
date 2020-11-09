@@ -60,35 +60,46 @@ update(){
     return 0
 }
 
-move_files(){
+save_and_move_files(){
+    mkdir /mnt/usb-stick/C15_user_files
     executeAsRoot "systemctl stop playground"
 
     if [ -d /internalstorage/preset-manager ] && [ "$(ls -A /internalstorage/preset-manager/)" ]; then
-        executeAsRoot "scp -r root@$BBB_IP:/internalstorage/preset-manager/ /persistent" \
+        cp -r /internalstorage/preset-manager/ /mnt/usb-stick/C15_user_files/ \
+        && executeAsRoot "scp -r root@$BBB_IP:/internalstorage/preset-manager/ /persistent" \
         && rm -rf /internalstorage/preset-manager/* \
         && rm -rf /internalstorage/preset-manager
         if [ $? -ne 0 ]; then report_and_quit "E55 BBB update: Moving presets to ePC failed ..." "55"; fi
     fi
 
     if [ -e /settings.xml ]; then
-        executeAsRoot "scp root@$BBB_IP:/settings.xml /persistent/settings.xml" \
+        cp /settings.xml /mnt/usb-stick/C15_user_files/ \
+        && executeAsRoot "scp root@$BBB_IP:/settings.xml /persistent/settings.xml" \
         && rm /settings.xml
         if [ $? -ne 0 ]; then report_and_quit "E56 BBB update: Moving settings to ePC failed ..." "56"; fi
     fi
 
     if [ -d /internalstorage/calibration ] && [ "$(ls -A /internalstorage/calibration/)" ]; then
-        executeAsRoot "scp -r root@$BBB_IP:/internalstorage/calibration/ /persistent" \
+        cp -r /internalstorage/calibration/ /mnt/usb-stick/C15_user_files/ \
+        && executeAsRoot "scp -r root@$BBB_IP:/internalstorage/calibration/ /persistent" \
         && rm -rf /internalstorage/calibration/* \
         && rm -rf /internalstorage/calibration
         if [ $? -ne 0 ]; then report_and_quit "E57 BBB update: Moving calibration settings to ePC failed ..." "57"; fi
     fi
+
+    if [ "$(ls -A /mnt/usb-stick/C15_user_files/)" ]; then
+        cd /mnt/usb-stick/C15_user_files &&
+        tar -cvf ../C15_user_files.tar * &&
+        cd ~
+    fi
+    rm -rf /mnt/usb-stick/C15_user_files
 
     return 0
 }
 
 main () {
     update
-    move_files
+    save_and_move_files
     return 0
 }
 

@@ -15,31 +15,6 @@ report_and_quit(){
     exit $2
 }
 
-save_user_files_if_present(){
-    mkdir /mnt/usb-stick/C15_user_files
-
-    if [ -d /internalstorage/preset-manager ] && [ "$(ls -A /internalstorage/preset-manager/)" ]; then
-        cp -r /internalstorage/preset-manager/ /mnt/usb-stick/C15_user_files/
-    fi
-
-    if [ -e /settings.xml ]; then
-        cp /settings.xml /mnt/usb-stick/C15_user_files/
-    fi
-
-    if [ -d /internalstorage/calibration ] && [ "$(ls -A /internalstorage/calibration/)" ]; then
-        cp -r /internalstorage/calibration/ /mnt/usb-stick/C15_user_files/
-    fi
-
-    if [ "$(ls -A /mnt/usb-stick/C15_user_files/)" ]; then
-        cd /mnt/usb-stick/C15_user_files &&
-        tar -cvf ../C15_user_files.tar * &&
-        cd ~
-    fi
-    rm -rf /mnt/usb-stick/C15_user_files
-
-    return 0
-}
-
 update(){
     systemctl status accesspoint
     ACCESSPOINT_RUNNING=$?
@@ -69,11 +44,8 @@ update(){
     rm -rf /update/BBB/rootfs
 }
 
-main() {
-    
-    save_user_files_if_present
+main() {    
     update
-
     return 0
 }
 
