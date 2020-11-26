@@ -7,7 +7,6 @@ import com.nonlinearlabs.client.dataModel.DataModelEntityBase;
 import com.nonlinearlabs.client.dataModel.Updater;
 import com.nonlinearlabs.client.dataModel.ValueDataModelEntity;
 import com.nonlinearlabs.client.dataModel.ValueUpdater;
-import com.nonlinearlabs.client.presenters.DeviceInformationProvider;
 
 public class SetupUpdater extends Updater {
 	private final HashMap<String, DataModelEntityBase> xmlNodeNameToSetting = createSettingMap();
@@ -54,7 +53,7 @@ public class SetupUpdater extends Updater {
 		m.put("TotalRAM", DeviceInformation.get().totalRam);
 		m.put("UsedRAM", DeviceInformation.get().usedRam);
 		m.put("SyncSplit", SetupModel.get().systemSettings.syncSplit);
-		
+		m.put("ExternalMidi", SetupModel.get().systemSettings.externalMidi);
 		return m;
 	}
 

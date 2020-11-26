@@ -9,6 +9,7 @@ class AudioEngineOptions
   AudioEngineOptions(int &argc, char **&argv);
 
   bool areXRunsFatal() const;
+  bool isExternalMidiEnabled() const;
   int getSampleRate() const;
   int getPolyphony() const;
   bool doMeasurePerformance();
@@ -29,7 +30,9 @@ class AudioEngineOptions
   std::string getMidiBridgeHost() const;
   int getNumCpuBurningSines() const;
 
+  void enableDisableExternalMidi(bool midiEnabled);
  private:
+  bool m_externalMidiEnabled = false;
   bool m_fatalXRuns = false;
   int m_rate = 48000;
   int m_polyphony = 20;

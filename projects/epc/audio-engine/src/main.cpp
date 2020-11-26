@@ -54,7 +54,7 @@ void setupMessaging(const AudioEngineOptions *o)
   nltools::msg::init(conf);
 }
 
-std::unique_ptr<Synth> createSynth(const AudioEngineOptions *options)
+std::unique_ptr<Synth> createSynth(AudioEngineOptions *options)
 {
   if(options->getNumCpuBurningSines())
     return std::make_unique<CPUBurningSynth>(options);

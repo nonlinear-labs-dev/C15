@@ -41,7 +41,7 @@ namespace nltools
 
          NotifyHardwareSourceChanged,
 
-         MidiSimpleMessage, MidiAck, MidiProgramChange,
+         MidiSimpleMessage, MidiAck, MidiProgramChange, MidiEnable,
 
          SyncFS);
 
