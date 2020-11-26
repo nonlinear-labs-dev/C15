@@ -109,13 +109,16 @@ void C15Synth::syncExternalMidiBridge()
 {
   while(!m_externalMidiOutBuffer.empty())
   {
-    auto msg = m_externalMidiOutBuffer.pop();
-    send(nltools::msg::EndPoint::ExternalMidiOverIPBridge, msg);
-    if(LOG_MIDI_OUT)
+    if(m_options->isExternalMidiEnabled())
     {
-      nltools::Log::info("midiOut(status: ", static_cast<uint16_t>(msg.rawBytes[0]),
-                         ", data0: ", static_cast<uint16_t>(msg.rawBytes[1]),
-                         ", data1: ", static_cast<uint16_t>(msg.rawBytes[2]), ")");
+      auto msg = m_externalMidiOutBuffer.pop();
+      send(nltools::msg::EndPoint::ExternalMidiOverIPBridge, msg);
+      if(LOG_MIDI_OUT)
+      {
+        nltools::Log::info("midiOut(status: ", static_cast<uint16_t>(msg.rawBytes[0]),
+                           ", data0: ", static_cast<uint16_t>(msg.rawBytes[1]),
+                           ", data1: ", static_cast<uint16_t>(msg.rawBytes[2]), ")");
+      }
     }
   }
 }
