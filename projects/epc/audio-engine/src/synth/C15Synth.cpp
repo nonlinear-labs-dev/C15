@@ -344,8 +344,11 @@ void C15Synth::onHWSourceMessage(const nltools::msg::HWSourceChangedMessage& msg
 
 void C15Synth::queueExternalMidiOut(const dsp_host_dual::SimpleRawMidiMessage& m)
 {
-  m_externalMidiOutBuffer.push(m);
-  m_syncExternalsWaiter.notify_all();
+  if(m_options->isExternalMidiEnabled())
+  {
+    m_externalMidiOutBuffer.push(m);
+    m_syncExternalsWaiter.notify_all();
+  }
 }
 
 void C15Synth::onSplitPresetMessage(const nltools::msg::SplitPresetMessage& msg)
