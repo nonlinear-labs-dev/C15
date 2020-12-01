@@ -17,7 +17,7 @@ void ExternalMidiEnabledSetting::onSettingChanged()
   using namespace nltools;
   msg::Setting::MidiEnabled m;
   m.enable = get();
-  send(msg::EndPoint::ExternalMidiOverIPBridge, m);
+  send(msg::EndPoint::ExternalMidiOverIPBridgeSettings, m);
 }
 
 void ExternalMidiEnabledSetting::setSetting(Initiator initiator, const Glib::ustring& text)
