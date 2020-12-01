@@ -9,7 +9,7 @@
 #include <glibmm.h>
 
 static bool quitApp = false;
-static bool enableMidi = false;
+static bool enableMidi = true;
 static Glib::RefPtr<Glib::MainLoop> loop;
 static int cancelPipe[2];
 
@@ -113,7 +113,7 @@ void configureMessaging(const Options &options, bool hasInput, bool hasOutput)
 
   conf.offerEndpoints.emplace_back(
       ChannelConfiguration { EndPoint::ExternalMidiOverIPBridgeSettings, Priority::Normal });
-  
+
   nltools::Log::error("Offering EndPoint ExternalMidiOverIPBridgeSettings");
   nltools::msg::init(conf);
 }
