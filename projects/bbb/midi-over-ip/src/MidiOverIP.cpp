@@ -9,7 +9,7 @@
 #include <glibmm.h>
 
 static bool quitApp = false;
-static bool enableMidi = true;
+static bool enableMidi = false;
 static Glib::RefPtr<Glib::MainLoop> loop;
 static int cancelPipe[2];
 
@@ -182,7 +182,7 @@ int main(int args, char *argv[])
 
   receive<Setting::MidiEnabled>(EndPoint::ExternalMidiOverIPBridgeSettings, [&](const Setting::MidiEnabled &msg) {
     enableMidi = msg.enable;
-    nltools::Log::warning(msg.enable ? "Enabled External Midi" : "Disabled External Midi");
+    nltools::Log::error(msg.enable ? "Enabled External Midi" : "Disabled External Midi");
   });
 
   if(outputHandle)
