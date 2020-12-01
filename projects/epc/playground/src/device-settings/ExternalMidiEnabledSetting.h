@@ -6,7 +6,7 @@ class ExternalMidiEnabledSetting : public BooleanSetting
  public:
   explicit ExternalMidiEnabledSetting(UpdateDocumentContributor& s);
   const std::vector<Glib::ustring>& enumToString() const override;
-  void setSetting(Initiator initiator, const Glib::ustring& text) override;
+  bool set(tEnum m) override;
 
  private:
   void onSettingChanged();

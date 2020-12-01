@@ -45,7 +45,7 @@ void setupMessaging(const Options *options)
   conf.offerEndpoints = { EndPoint::Playground };
 #endif
   conf.useEndpoints = {
-    { EndPoint::Playcontroller, bbbb }, { EndPoint::Oled, bbbb },      { EndPoint::ExternalMidiOverIPBridge, bbbb },
+    { EndPoint::Playcontroller, bbbb }, { EndPoint::Oled, bbbb },      { EndPoint::ExternalMidiOverIPBridgeSettings, bbbb },
 #ifdef _DEVELOPMENT_PC
     { EndPoint::TestEndPoint },
 #endif

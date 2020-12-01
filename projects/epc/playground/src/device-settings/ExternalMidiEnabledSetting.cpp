@@ -12,16 +12,17 @@ ExternalMidiEnabledSetting::ExternalMidiEnabledSetting(UpdateDocumentContributor
 {
 }
 
+bool ExternalMidiEnabledSetting::set(BooleanSettings m)
+{
+  auto ret = EnumSetting::set(m);
+  onSettingChanged();
+  return ret;
+}
+
 void ExternalMidiEnabledSetting::onSettingChanged()
 {
   using namespace nltools;
   msg::Setting::MidiEnabled m;
   m.enable = get();
   send(msg::EndPoint::ExternalMidiOverIPBridgeSettings, m);
-}
-
-void ExternalMidiEnabledSetting::setSetting(Initiator initiator, const Glib::ustring& text)
-{
-  Setting::setSetting(initiator, text);
-  onSettingChanged();
 }
