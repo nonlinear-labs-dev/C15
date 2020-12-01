@@ -9,6 +9,7 @@
 #include <glibmm.h>
 
 static bool quitApp = false;
+static bool enableMidi = true;
 static Glib::RefPtr<Glib::MainLoop> loop;
 static int cancelPipe[2];
 
@@ -75,9 +76,12 @@ void readMidi(int cancelHandle, snd_rawmidi_t *inputHandle)
           {
             if(event.type != SND_SEQ_EVENT_NONE)
             {
-              Midi::SimpleMessage msg;
-              msg.numBytesUsed = snd_midi_event_decode(decoder, msg.rawBytes.data(), 3, &event);
-              send(EndPoint::ExternalMidiOverIPClient, msg);
+              if(enableMidi)
+              {
+                Midi::SimpleMessage msg;
+                msg.numBytesUsed = snd_midi_event_decode(decoder, msg.rawBytes.data(), 3, &event);
+                send(EndPoint::ExternalMidiOverIPClient, msg);
+              }
               break;
             }
           }
@@ -107,11 +111,15 @@ void configureMessaging(const Options &options, bool hasInput, bool hasOutput)
   if(hasInput)
     conf.useEndpoints = { { EndPoint::ExternalMidiOverIPClient, aeHost, Priority::AlmostRealtime } };
 
+  conf.offerEndpoints.emplace_back(EndPoint::ExternalMidiOverIPBridgeSettings);
   nltools::msg::init(conf);
 }
 
 void sendToExternalDevice(snd_rawmidi_t *outputHandle, const nltools::msg::Midi::SimpleMessage &msg)
 {
+  if(!enableMidi)
+    return;
+
   if(auto res = snd_rawmidi_write(outputHandle, msg.rawBytes.data(), msg.numBytesUsed))
     if(size_t(res) != msg.numBytesUsed)
       nltools::Log::error("Could not write message into midi output device");
@@ -171,6 +179,11 @@ int main(int args, char *argv[])
   constexpr auto endPoint = EndPoint::ExternalMidiOverIPBridge;
 
   std::thread sender;
+
+  receive<Setting::MidiEnabled>(EndPoint::ExternalMidiOverIPBridgeSettings, [&](const Setting::MidiEnabled &msg) {
+    enableMidi = msg.enable;
+    nltools::Log::warning(msg.enable ? "Enabled External Midi" : "Disabled External Midi");
+  });
 
   if(outputHandle)
   {

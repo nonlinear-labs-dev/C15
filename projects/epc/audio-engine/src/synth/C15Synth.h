@@ -56,7 +56,6 @@ class C15Synth : public Synth, public sigc::trackable
   void onTransitionTimeMessage(const nltools::msg::Setting::TransitionTimeMessage& msg);
   void onEditSmoothingTimeMessage(const nltools::msg::Setting::EditSmoothingTimeMessage& msg);
   void onTuneReferenceMessage(const nltools::msg::Setting::TuneReference& msg);
-  void onMidiEnableMessage(const nltools::msg::Setting::MidiEnabled& msg);
 
   void simulateKeyDown(int key);
   void simulateKeyUp(int key);

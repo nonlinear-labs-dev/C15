@@ -18,7 +18,7 @@ namespace nltools
     using SerializedMessage = Glib::RefPtr<Glib::Bytes>;
 
     ENUM(EndPoint, uint16_t, None, Playcontroller, Oled, PanelLed, RibbonLed, AudioEngine, Playground, BeagleBone,
-         ExternalMidiOverIPBridge, ExternalMidiOverIPClient, TestEndPoint);
+         ExternalMidiOverIPBridge, ExternalMidiOverIPBridgeSettings, ExternalMidiOverIPClient, TestEndPoint);
 
     uint getPortFor(EndPoint p);
 
@@ -105,7 +105,7 @@ namespace nltools
 
     void init(const Configuration &conf);
     void deInit();
-    const Configuration& getConfig();
+    const Configuration &getConfig();
 
     // wait at most timeOut for the sigc::connection to be established
     // return true if there is a sigc::connection to receiver

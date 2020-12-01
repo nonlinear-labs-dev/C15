@@ -40,8 +40,6 @@ C15Synth::C15Synth(AudioEngineOptions* options)
 
   receive<Setting::TuneReference>(EndPoint::AudioEngine, sigc::mem_fun(this, &C15Synth::onTuneReferenceMessage));
 
-  receive<Setting::MidiEnabled>(EndPoint::AudioEngine, sigc::mem_fun(this, &C15Synth::onMidiEnableMessage));
-
   receive<Keyboard::NoteUp>(EndPoint::AudioEngine, [this](const Keyboard::NoteUp& noteUp) {
     m_dsp->onMidiMessage(0, static_cast<uint32_t>(noteUp.m_keyPos), 0);
     m_syncExternalsWaiter.notify_all();
@@ -54,28 +52,22 @@ C15Synth::C15Synth(AudioEngineOptions* options)
 
   // receive program changes from playground and dispatch it to midi-over-ip
   receive<nltools::msg::Midi::ProgramChangeMessage>(EndPoint::AudioEngine, [this](const auto& pc) {
-    if(m_options->isExternalMidiEnabled())
-    {
-      m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage { 0xC0, pc.program });
-      m_syncExternalsWaiter.notify_all();
-    }
+    m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage { 0xC0, pc.program });
+    m_syncExternalsWaiter.notify_all();
   });
 
   receive<nltools::msg::Midi::SimpleMessage>(EndPoint::ExternalMidiOverIPClient, [&](const auto& msg) {
-    if(m_options->isExternalMidiEnabled())
-    {
-      MidiEvent e;
-      std::copy(msg.rawBytes.data(), msg.rawBytes.data() + msg.numBytesUsed, e.raw);
+    MidiEvent e;
+    std::copy(msg.rawBytes.data(), msg.rawBytes.data() + msg.numBytesUsed, e.raw);
 
-      if((e.raw[0] & 0xF0) == 0xC0)
-      {
-        // receive program changes midi-over-ip and dispatch it to playground
-        send(nltools::msg::EndPoint::Playground, nltools::msg::Midi::ProgramChangeMessage { e.raw[1] });
-      }
-      else
-      {
-        pushMidiEvent(e);
-      }
+    if((e.raw[0] & 0xF0) == 0xC0)
+    {
+      // receive program changes midi-over-ip and dispatch it to playground
+      send(nltools::msg::EndPoint::Playground, nltools::msg::Midi::ProgramChangeMessage { e.raw[1] });
+    }
+    else
+    {
+      pushMidiEvent(e);
     }
   });
 }
@@ -109,16 +101,13 @@ void C15Synth::syncExternalMidiBridge()
 {
   while(!m_externalMidiOutBuffer.empty())
   {
-    if(m_options->isExternalMidiEnabled())
+    auto msg = m_externalMidiOutBuffer.pop();
+    send(nltools::msg::EndPoint::ExternalMidiOverIPBridge, msg);
+    if(LOG_MIDI_OUT)
     {
-      auto msg = m_externalMidiOutBuffer.pop();
-      send(nltools::msg::EndPoint::ExternalMidiOverIPBridge, msg);
-      if(LOG_MIDI_OUT)
-      {
-        nltools::Log::info("midiOut(status: ", static_cast<uint16_t>(msg.rawBytes[0]),
-                           ", data0: ", static_cast<uint16_t>(msg.rawBytes[1]),
-                           ", data1: ", static_cast<uint16_t>(msg.rawBytes[2]), ")");
-      }
+      nltools::Log::info("midiOut(status: ", static_cast<uint16_t>(msg.rawBytes[0]),
+                         ", data0: ", static_cast<uint16_t>(msg.rawBytes[1]),
+                         ", data1: ", static_cast<uint16_t>(msg.rawBytes[2]), ")");
     }
   }
 }
@@ -344,11 +333,8 @@ void C15Synth::onHWSourceMessage(const nltools::msg::HWSourceChangedMessage& msg
 
 void C15Synth::queueExternalMidiOut(const dsp_host_dual::SimpleRawMidiMessage& m)
 {
-  if(m_options->isExternalMidiEnabled())
-  {
-    m_externalMidiOutBuffer.push(m);
-    m_syncExternalsWaiter.notify_all();
-  }
+  m_externalMidiOutBuffer.push(m);
+  m_syncExternalsWaiter.notify_all();
 }
 
 void C15Synth::onSplitPresetMessage(const nltools::msg::SplitPresetMessage& msg)
@@ -389,9 +375,4 @@ void C15Synth::onEditSmoothingTimeMessage(const nltools::msg::Setting::EditSmoot
 void C15Synth::onTuneReferenceMessage(const nltools::msg::Setting::TuneReference& msg)
 {
   m_dsp->onSettingTuneReference(static_cast<float>(msg.m_tuneReference));
-}
-
-void C15Synth::onMidiEnableMessage(const nltools::msg::Setting::MidiEnabled& msg)
-{
-  m_options->enableDisableExternalMidi(msg.enable);
 }

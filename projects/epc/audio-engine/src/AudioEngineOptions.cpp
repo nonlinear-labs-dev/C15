@@ -151,13 +151,3 @@ int AudioEngineOptions::getNumCpuBurningSines() const
 {
   return m_cpuBurningSines;
 }
-
-bool AudioEngineOptions::isExternalMidiEnabled() const
-{
-  return m_externalMidiEnabled;
-}
-
-void AudioEngineOptions::enableDisableExternalMidi(bool midiEnabled)
-{
-  m_externalMidiEnabled = midiEnabled;
-}
