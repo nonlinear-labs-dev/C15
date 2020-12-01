@@ -8,7 +8,7 @@ const std::vector<Glib::ustring>& ExternalMidiEnabledSetting::enumToString() con
 
 ExternalMidiEnabledSetting::ExternalMidiEnabledSetting(UpdateDocumentContributor& s)
     : BooleanSetting(s, false)
-    , m_enumToStringMap { "On", "Off" }
+    , m_enumToStringMap { "true", "false" }
 {
 }
 
@@ -17,6 +17,12 @@ bool ExternalMidiEnabledSetting::set(BooleanSettings m)
   auto ret = EnumSetting::set(m);
   onSettingChanged();
   return ret;
+}
+
+void ExternalMidiEnabledSetting::load(const Glib::ustring& text, Initiator initiator)
+{
+  EnumSetting::load(text, initiator);
+  onSettingChanged();
 }
 
 void ExternalMidiEnabledSetting::onSettingChanged()

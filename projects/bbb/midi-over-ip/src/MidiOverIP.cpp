@@ -114,7 +114,6 @@ void configureMessaging(const Options &options, bool hasInput, bool hasOutput)
   conf.offerEndpoints.emplace_back(
       ChannelConfiguration { EndPoint::ExternalMidiOverIPBridgeSettings, Priority::Normal });
 
-  nltools::Log::error("Offering EndPoint ExternalMidiOverIPBridgeSettings");
   nltools::msg::init(conf);
 }
 
