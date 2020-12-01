@@ -40,7 +40,7 @@ Options::Options(int &argc, char **&argv)
   midiBridge.set_short_name('m');
   midiBridge.set_description("Where to find the Midi Bridge");
   mainGroup.add_entry(midiBridge, m_midiBridge);
-  
+
   Glib::OptionEntry ae;
   ae.set_long_name("audio-engine-host");
   ae.set_short_name('a');
@@ -169,9 +169,4 @@ const Glib::ustring &Options::getLayoutFolder() const
 bool Options::sendBBBBTurnaroundTimestamps() const
 {
   return m_sendBBBTurnaroundTimes;
-}
-
-const Glib::ustring &Options::getMidiBridge() const
-{
-  return m_midiBridge;
 }
