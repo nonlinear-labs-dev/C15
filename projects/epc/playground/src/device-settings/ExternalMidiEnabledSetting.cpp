@@ -25,4 +25,5 @@ void ExternalMidiEnabledSetting::onSettingChanged()
   msg::Setting::MidiEnabled m;
   m.enable = get();
   send(msg::EndPoint::ExternalMidiOverIPBridgeSettings, m);
+  nltools::Log::warning("Set MidiEnabled setting to:", m.enable ? "true" : "false");
 }

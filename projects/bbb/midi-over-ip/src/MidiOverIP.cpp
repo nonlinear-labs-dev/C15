@@ -111,7 +111,10 @@ void configureMessaging(const Options &options, bool hasInput, bool hasOutput)
   if(hasInput)
     conf.useEndpoints = { { EndPoint::ExternalMidiOverIPClient, aeHost, Priority::AlmostRealtime } };
 
-  conf.offerEndpoints.emplace_back(EndPoint::ExternalMidiOverIPBridgeSettings);
+  conf.offerEndpoints.emplace_back(
+      ChannelConfiguration { EndPoint::ExternalMidiOverIPBridgeSettings, Priority::Normal });
+  
+  nltools::Log::error("Offering EndPoint ExternalMidiOverIPBridgeSettings");
   nltools::msg::init(conf);
 }
 
