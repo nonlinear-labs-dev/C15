@@ -1,7 +1,16 @@
-add_subdirectory(bbb)
-add_subdirectory(epc)
-add_subdirectory(epc2)
-add_subdirectory(playcontroller)
+
+IF(BUILD_ACCEPTANCE_TESTS OR BUILD_AUDIOENGINE OR BUILD_ONLINEHELP OR BUILD_PLAYGROUND OR BUILD_WEBUI OR BUILD_EPC_SCRIPTS)
+    add_subdirectory(epc)
+    add_subdirectory(epc2)
+ENDIF()
+
+IF(BUILD_BRIDGE OR BUILD_ESPI_DRIVER OR BUILD_PLAYCONTROLLER_DRIVER OR BUILD_TEXT2SOLED OR BUILD_BBB_SCRIPTS)
+    add_subdirectory(bbb)
+ENDIF()
+
+IF(BUILD_PLAYCONTROLLER OR BUILD_PLAYCONTROLLER_TOOLS)
+    add_subdirectory(playcontroller)
+ENDIF()
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
