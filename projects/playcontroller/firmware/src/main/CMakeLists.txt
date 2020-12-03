@@ -28,8 +28,11 @@ set_target_properties(${BLOBNAME} PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(${BLOBNAME} PROPERTIES LINK_FLAGS "-TC15_LPC4337_main.ld")
 set_target_properties(${BLOBNAME} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS}")
 
-add_custom_target(${BLOBNAME}.bin 
+add_custom_command(
     COMMENT "Create ${BLOBNAME}.bin" 
-    DEPENDS ${BLOBNAME}
-    BYPRODUCTS ${BLOBNAME}.bin
-    COMMAND arm-none-eabi-objcopy -Obinary ${BLOBNAME} ${BLOBNAME}.bin)
+    DEPENDS src/${BLOBNAME}.c
+    OUTPUT ${BLOBNAME}.bin
+    COMMAND arm-none-eabi-objcopy -Obinary ${BLOBNAME} ${BLOBNAME}.bin
+)
+
+add_custom_target(${BLOBNAME}.bin DEPENDS ${BLOBNAME}.bin)
