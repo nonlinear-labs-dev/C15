@@ -5,6 +5,8 @@ Description=persistent storage
 What=/dev/sda4
 Where=/persistent
 Type=ext4
+Options=user,rw
+ExecPre=chmod 777 /persistent
 
 [Install]
 WantedBy=multi-user.target
