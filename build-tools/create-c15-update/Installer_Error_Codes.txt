@@ -6,12 +6,12 @@ unless something is really wrong like a corrupt/wrong install package ("by desig
 
 List of current Error Messages
 ------------
-3. RT (playcontroller)
-- 31 :: "E31 RT update: no argument" ==> call to playcontroller_update.sh didn't pass a parameter
-- 32 :: "E32 RT update: no file" ==> parameter passed to playcontroller_update.sh didn't is not a file
-- 33 :: "E33 RT update: cannot connect to playcontroller, details:" ==> the "mxli" progging tool could find the chip or failed programming it
+3. Playcontroller
+- 31 :: "E31 PC update: no argument" ==> call to playcontroller_update.sh didn't pass a parameter
+- 32 :: "E32 PC update: no file" ==> parameter passed to playcontroller_update.sh didn't is not a file
+- 33 :: "E33 PC update: cannot connect to playcontroller, details:" ==> the "mxli" progging tool could find the chip or failed programming it
         (can happen occasionally when the playcontroller doesn't run because the clock oscillator didn't start up for some reason)
-- 34 :: "E34 RT update: no response after reset" ==> playcontroller does not respond after reset (with a number of retries), something has gone wrong
+- 34 :: "E34 PC update: no response after reset" ==> playcontroller does not respond after reset (with a number of retries), something has gone wrong
 
 4. ePC
 - 45 :: "E45 ePC update: Reboot taking too long... timed out"
@@ -21,7 +21,6 @@ List of current Error Messages
 - 49 :: "E49 ePC update: pushing update failed ..."
 
 5. BBB
-- 54 :: "E54 BBB update: User partition not mounted om ePC ..."
 - 55 :: "E55 BBB update: Moving presets to ePC failed ..."
 - 56 :: "E56 BBB update: Moving Settings to ePC failed ..."
 - 57 :: "E57 BBB update: Moving calibration settings to ePC failed ..."

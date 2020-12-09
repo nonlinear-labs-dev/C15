@@ -8,9 +8,7 @@ BBB_IP=192.168.10.11
 MSG_DO_NOT_SWITCH_OFF="DO NOT SWITCH OFF C15!"
 MSG_STARTING_UPDATE="Starting the C15 update..."
 MSG_UPDATING_C15="Updating the C15"
-MSG_UPDATING_EPC="1/3 Updating..."
-MSG_UPDATING_BBB="2/3 Updating..."
-MSG_UPDATING_RT_FIRMWARE="3/3 Updating..."
+MSG_UPDATING="UPDATE_NUMBER/NUMBER_OF_UPDATES Updating..."
 MSG_DONE="DONE!"
 MSG_FAILED="FAILED!"
 MSG_FAILED_WITH_ERROR_CODE="FAILED! Error code:"
@@ -23,24 +21,31 @@ ASPECTS="TO_BE_REPLACED_BY_CREATE_C15_UPDATE"
 UPDATE_BBB=0
 UPDATE_PLAYCONTROLLER=0
 UPDATE_EPC=0
+NUMBER_OF_UPDATES=0
+UPDATE_NUMBER=0
 
 if [[ $ASPECTS = *epc* ]]
 then
     UPDATE_EPC=1
+    MSG_UPDATING="${MSG_UPDATING/NUMBER_OF_UPDATES/$((NUMBER_OF_UPDATES+=1))}"
     echo "will update epc"
 fi
 
 if [[ $ASPECTS = *playcontroller* ]]
 then
     UPDATE_PLAYCONTROLLER=1
+    MSG_UPDATING="${MSG_UPDATING/NUMBER_OF_UPDATES/$((NUMBER_OF_UPDATES+=1))}"
     echo "will update playcontroller"
 fi
 
 if [[ $ASPECTS = *bbb* ]]
 then
     UPDATE_BBB=1
+    ((NUMBER_OF_UPDATES+=1))
     echo "will update bbb"
 fi
+
+MSG_UPDATING="${MSG_UPDATING/NUMBER_OF_UPDATES/$NUMBER_OF_UPDATES}"
 
 t2s() {
     /update/utilities/text2soled multitext "$1" "$2" "$3" "$4" "$5" "$6"
@@ -122,13 +127,13 @@ check_preconditions() {
 
 epc_push_update() {
     chmod +x /update/EPC/epc_push_update.sh
-    /bin/sh /update/EPC/epc_push_update.sh $EPC_IP $BBB_IP
+    /bin/sh /update/EPC/epc_push_update.sh $EPC_IP
     return $?
 }
 
 epc_pull_update() {
     chmod +x /update/EPC/epc_pull_update.sh
-    /bin/sh /update/EPC/epc_pull_update.sh $EPC_IP $BBB_IP
+    /bin/sh /update/EPC/epc_pull_update.sh $EPC_IP
     return $?
 }
 
@@ -139,9 +144,8 @@ epc_fix() {
 }
 
 epc_update() {
-    pretty "" "$MSG_UPDATING_EPC" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_UPDATING_EPC" "$MSG_DO_NOT_SWITCH_OFF"
-
-    check_preconditions || determine_termination
+    pretty "" "${MSG_UPDATING/UPDATE_NUMBER/$((UPDATE_NUMBER+=1))}" "$MSG_DO_NOT_SWITCH_OFF" \
+        "${MSG_UPDATING/UPDATE_NUMBER/$((UPDATE_NUMBER+=1))}" "$MSG_DO_NOT_SWITCH_OFF"
 
     if ! epc_push_update; then
         epc_pull_update
@@ -171,9 +175,19 @@ epc_update() {
 }
 
 bbb_update() {
-    pretty "" "$MSG_UPDATING_BBB" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_UPDATING_BBB" "$MSG_DO_NOT_SWITCH_OFF"
+    pretty "" "${MSG_UPDATING/UPDATE_NUMBER/$((UPDATE_NUMBER+=1))}" "$MSG_DO_NOT_SWITCH_OFF" \
+        "${MSG_UPDATING/UPDATE_NUMBER/$((UPDATE_NUMBER+=1))}" "$MSG_DO_NOT_SWITCH_OFF"
+
+    [ $UPDATE_EPC == 1 ] && move_files
+    return_code=$?
+    if [ $return_code -ne 0 ]; then
+        pretty "" "$MSG_UPDATING_BBB" "$MSG_FAILED_WITH_ERROR_CODE $return_code" "$MSG_UPDATING_BBB" "$MSG_FAILED_WITH_ERROR_CODE $return_code"
+        sleep 2
+        return 1;
+    fi
+
     chmod +x /update/BBB/bbb_update.sh
-    /bin/sh /update/BBB/bbb_update.sh
+    bin/sh /update/BBB/bbb_update.sh
 
     # error codes 50...59
     return_code=$?
@@ -191,7 +205,9 @@ bbb_update() {
 }
 
 playcontroller_update() {
-    pretty "" "$MSG_UPDATING_RT_FIRMWARE" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_UPDATING_RT_FIRMWARE" "$MSG_DO_NOT_SWITCH_OFF"
+    pretty "" "${MSG_UPDATING/UPDATE_NUMBER/$((UPDATE_NUMBER+=1))}" "$MSG_DO_NOT_SWITCH_OFF" \
+        "${MSG_UPDATING/UPDATE_NUMBER/$((UPDATE_NUMBER+=1))}" "$MSG_DO_NOT_SWITCH_OFF"
+
     chmod +x /update/playcontroller/playcontroller_update.sh
     chmod +x /update/playcontroller/playcontroller_check.sh
     rm -f /update/mxli.log
@@ -211,6 +227,36 @@ playcontroller_update() {
     return 0
 }
 
+move_files(){
+    if [ -e /settings.xml ] && ! ( ping -c1 $EPC_IP 1>&2 > /dev/null &&
+        executeAsRoot "exit" && executeAsRoot "mountpoint -q /persistent" ); then
+        report "" "E59 BBB update: Files on BBB present, but conditions are bad ..." "" && return "59"
+    fi
+
+    executeAsRoot "systemctl stop playground"
+
+    if [ -d /internalstorage/preset-manager ] && [ "$(ls -A /internalstorage/preset-manager/)" ]; then
+        executeAsRoot "scp -r root@$BBB_IP:/internalstorage/preset-manager/ /persistent" \
+        && rm -rf /internalstorage/preset-manager/* \
+        && rm -rf /internalstorage/preset-manager
+        if [ $? -ne 0 ]; then report "" "E55 BBB update: Moving presets to ePC failed ..." "" && return "55"; fi
+    fi
+
+    if [ -e /settings.xml ]; then
+        executeAsRoot "scp root@$BBB_IP:/settings.xml /persistent/settings.xml" \
+        && rm /settings.xml
+        if [ $? -ne 0 ]; then report "" "E56 BBB update: Moving settings to ePC failed ..." "" && return "56"; fi
+    fi
+
+    if [ -d /internalstorage/calibration ] && [ "$(ls -A /internalstorage/calibration/)" ]; then
+        executeAsRoot "scp -r root@$BBB_IP:/internalstorage/calibration/ /persistent" \
+        && rm -rf /internalstorage/calibration/* \
+        && rm -rf /internalstorage/calibration
+        if [ $? -ne 0 ]; then report "" "E57 BBB update: Moving calibration settings to ePC failed ..." "" && return "57"; fi
+    fi
+    return 0
+}
+
 stop_services() {
     systemctl stop playground > /dev/null || executeAsRoot "systemctl stop playground"
     systemctl stop bbbb > /dev/null
@@ -224,6 +270,8 @@ main() {
     chmod +x /update/utilities/*
 
     configure_ssh
+    check_preconditions || determine_termination
+
     pretty "" "$MSG_STARTING_UPDATE" "$MSG_DO_NOT_SWITCH_OFF" "$MSG_STARTING_UPDATE" "$MSG_DO_NOT_SWITCH_OFF"
     sleep 2
 
