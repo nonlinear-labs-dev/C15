@@ -30,12 +30,6 @@ wait4playground() {
     return 1
 }
 
-check_preconditions(){
-    [ -z "$EPC_IP" ] && report_and_quit "E81: Usage: $EPC_IP <IP-of-ePC> wrong ..." "81"
-    ping -c1 $EPC_IP 1>&2 > /dev/null || report_and_quit "E82: Can't ping ePC on $EPC_IP ..." "82"
-    executeAsRoot "exit" || report_and_quit "E83: Can't logon to ePC OS ..." "83"
-}
-
 update(){
     /update/utilities/sshpass -p 'sscl' scp /update/EPC/update.tar sscl@$EPC_IP:/tmp
 
@@ -54,9 +48,7 @@ update(){
 }
 
 main () {
-    check_preconditions
     update
-
     executeAsRoot "reboot"
     if ! wait4playground; then
         report_and_quit "E45: ePC update: Reboot taking too long... timed out" "45"
