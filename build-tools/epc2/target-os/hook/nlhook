@@ -1,0 +1,169 @@
+#!/usr/bin/ash
+
+IP=192.168.10.11
+
+clean_up() {
+    echo "Clean up..."
+    rm -rf /nloverlay/runtime-overlay/*
+    rm -rf /nloverlay/update-scratch/*
+    echo "Clean up done."
+}
+
+set_up() {
+    echo "Set up..."
+    OVERLAY_PARTITION=$(lsblk -o RM,PATH | grep "^ 0" | grep -o "/dev/sd.3")
+
+    mkdir -p /nloverlay
+    mount ${OVERLAY_PARTITION} /nloverlay
+    mkdir -p /nloverlay/os-overlay
+    mkdir -p /nloverlay/update-scratch
+    mkdir -p /nloverlay/runtime-overlay
+    mkdir -p /nloverlay/work
+    mkdir -p /mnt/usb
+
+    USB_DELAY_FILE=/sys/module/usb_storage/parameters/delay_use
+
+    if [ ! -f ${USB_DELAY_FILE} ]; then
+        modprobe usb_storage delay_use=0
+    else
+        echo "0" >${USB_DELAY_FILE}
+    fi
+
+    udevadm settle
+    echo "Set up done."
+}
+
+try_update_from_network() {
+    echo "Try update from network..."
+    if wget http://${IP}:8000/update.tar --timeout=3 -O /nloverlay/update-scratch/update.tar; then
+        if try_apply_update; then
+            echo "Try update from network done."
+            return 0
+        fi
+    fi
+    
+    echo "Try update from network failed."
+    return 1
+}
+
+try_update_from_usb() {
+    echo "Try update from usb..."
+    devices=$(lsblk -o RM,PATH | grep "^ 1" | grep -o "/dev/sd.[0-9]")
+
+    for device in ${devices}; do
+        if mount_and_try_applying_update ${device}; then
+            echo "Try update from usb done."
+            return 0
+        fi
+    done
+
+    echo "Try update from usb failed."
+    return 1
+}
+
+mount_and_try_applying_update() {
+    echo "Trying mount and update from usb $1..."
+
+    if mount $1 /mnt/usb; then
+        if [ -f /mnt/usb/update.tar ]; then
+            echo "Found update file"
+            cp /mnt/usb/update.tar /nloverlay/update-scratch/update.tar
+            if try_apply_update; then
+                echo "Applied USB update successfully."
+                umount -f /mnt/usb
+                return 0
+            fi
+        fi
+        umount -f /mnt/usb
+    fi
+
+    echo "Trying mount and update from usb finished."
+    return 1
+}
+
+try_apply_update() {
+    echo "Try apply update..."
+    if [ -f /nloverlay/update-scratch/update.tar ]; then
+        if tar -C /nloverlay/update-scratch -xf /nloverlay/update-scratch/update.tar; then
+            if try_open_backdoor; then
+                echo "Executed backdoor."
+                return 0
+            fi
+
+            if try_replace_overlayfs; then
+                echo "Replaced overlay fs with archive content."
+                return 0
+            fi
+        fi
+    fi
+
+    echo "Trying apply update failed."
+    return 1
+}
+
+try_open_backdoor() {
+    echo "Try open backdoor..."
+
+    if [ -f /nloverlay/update-scratch/update/backdoor.sh ]; then
+        echo "Backdoor found."
+        checksum=$(sha256sum /nloverlay/update-scratch/update/backdoor.sh | cut -d " " -f 1)
+        checksumFile=/nloverlay/update-scratch/update/${checksum}.sign
+
+        if [ -f ${checksumFile} ]; then
+            echo "Checksum verified."
+            chmod +x /nloverlay/update-scratch/update/backdoor.sh
+            if cd /nloverlay/update-scratch/update/ && /usr/bin/ash ./backdoor.sh; then
+                echo "Backdoor opened."
+                return 0
+            fi
+        fi
+    fi
+
+    echo "Open backdoor failed."
+    return 1
+}
+
+try_replace_overlayfs() {
+    echo "Try replacing overlayfs..."
+
+    if [ -f /nloverlay/update-scratch/update/NonLinuxOverlay.tar.gz ]; then
+        echo "Source update tar found."
+        checksum=$(sha256sum /nloverlay/update-scratch/update/NonLinuxOverlay.tar.gz | cut -d " " -f 1)
+        checksumFile=/nloverlay/update-scratch/update/${checksum}.sign
+
+        if [ -f ${checksumFile} ]; then
+            echo "Checksum verified."
+
+            rm -rf /nloverlay/os-overlay/*
+
+            if tar -C /nloverlay/os-overlay -xzf /nloverlay/update-scratch/update/NonLinuxOverlay.tar.gz; then
+                echo "Replaced overlayfs."
+                return 0
+            fi
+        fi
+    fi
+
+    echo "Replacing overlayfs failed."
+    return 1
+}
+
+run_hook() {
+    echo "Running hook..."
+
+    set_up
+    clean_up
+
+    if try_update_from_network; then
+        echo "Network update applied successfully!"
+        clean_up
+        return 0
+    elif try_update_from_usb; then
+        echo "USB update applied successfully!"
+        clean_up
+        return 0
+    fi
+
+    echo "Running hook finished without success."
+    clean_up
+    return 1
+}

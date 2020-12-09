@@ -155,6 +155,7 @@ public class SetupModel {
 		public BooleanDataModelEntity forceHighlightChangedParameters = new BooleanDataModelEntity();
 		public BooleanDataModelEntity crashOnError = new BooleanDataModelEntity();
 		public BooleanDataModelEntity syncSplit = new BooleanDataModelEntity();
+		public BooleanDataModelEntity externalMidi = new BooleanDataModelEntity();
 	};
 
 	public class LocalSettings {

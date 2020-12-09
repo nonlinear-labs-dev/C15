@@ -8,6 +8,8 @@ class CaptionLabelBase
   CaptionLabelBase(bool changeHighlight, bool changeBackground);
   virtual ~CaptionLabelBase();
 
+  virtual void setText(const std::string& s) = 0;
+
  protected:
   int getXOffset() const;
   void setFontColor(FrameBuffer& fb) const;
@@ -24,6 +26,11 @@ template <typename tLabelType> class CaptionLabel : public tLabelType, public Ca
       : tLabelType(caption, rect)
       , CaptionLabelBase(changeHighlight, changeBackground)
   {
+  }
+
+  void setText(const std::string& s) override
+  {
+    tLabelType::setText({ s });
   }
 
  protected:

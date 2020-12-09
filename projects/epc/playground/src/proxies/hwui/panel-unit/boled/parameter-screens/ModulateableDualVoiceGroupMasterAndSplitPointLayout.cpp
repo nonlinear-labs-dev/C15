@@ -5,13 +5,13 @@
 #include <proxies/hwui/controls/Button.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterValueLabel.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/ParameterNameLabel.h>
-#include <proxies/hwui/panel-unit/boled/preset-screens/controls/SplitPointOverlapIndicator.h>
 #include "ModulateableDualVoiceGroupMasterAndSplitPointLayout.h"
 #include <proxies/hwui/controls/Slider.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/SplitPointEditMenu.h>
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/SplitParameterValue.h>
 #include <Application.h>
 #include <proxies/hwui/controls/SelectedParameterValue.h>
+#include <sigc++/adaptors/hide.h>
 #include "device-settings/Settings.h"
 #include "device-settings/SplitPointSyncParameters.h"
 
@@ -38,14 +38,64 @@ ModuleCaption *UnmodulateableDualVoiceGroupMasterAndSplitPointLayout::createModu
 SplitPointParameterLayout::SplitPointParameterLayout()
     : ModulateableDualVoiceGroupMasterAndSplitPointLayout()
 {
-  addControl(new SplitPointOverlapIndicator({ BIG_SLIDER_X - 4, 23, 1, 8 }));
   setMode(Mode::ParameterValue);
+
+  auto sync = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
+  m_connection = sync->onChange([this](const Setting *s) { fixValueControl(); });
+}
+
+SplitPointParameterLayout::~SplitPointParameterLayout()
+{
+  m_connection.disconnect();
 }
 
 SplitPointParameterEditLayout::SplitPointParameterEditLayout()
 {
-  m_settingConnection = Application::get().getSettings()->getSetting<SplitPointSyncParameters>()->onChange(
-      [this](const Setting *s) { fixValueControl(); });
+  auto sync = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
+  m_connection = sync->onChange([this](const Setting *s) { fixValueControl(); });
+}
+
+void SplitPointParameterLayout::setMode(ModulateableParameterSelectLayout2::Mode desiredMode)
+{
+  ModulateableParameterSelectLayout2::setMode(desiredMode);
+  if(desiredMode == Mode::ParameterValue)
+  {
+    fixValueControl();
+  }
+  else
+  {
+    if(auto selectedSynced = findControlOfType<SelectedParameterValue>())
+      remove(selectedSynced.get());
+
+    if(auto selectedNonSynced = findControlOfType<SplitParameterValue>())
+      remove(selectedNonSynced.get());
+  }
+}
+
+Control *SplitPointParameterLayout::createParameterValueControl()
+{
+  auto setting = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
+
+  if(!setting->get() && getMode() == Mode::ParameterValue)
+    return new SplitParameterValue(Rect(90, 33, 76, 12));
+  else
+    return ParameterLayout2::createParameterValueControl();
+}
+
+void SplitPointParameterLayout::fixValueControl()
+{
+  auto selectedSynced = findControlOfType<SelectedParameterValue>();
+  auto selectedNonSynced = findControlOfType<SplitParameterValue>();
+
+  if(selectedSynced)
+    remove(selectedSynced.get());
+
+  if(selectedNonSynced)
+    remove(selectedNonSynced.get());
+
+  addControl(createParameterValueControl());
+
+  setDirty();
 }
 
 void SplitPointParameterEditLayout::fixValueControl()
@@ -60,16 +110,8 @@ void SplitPointParameterEditLayout::fixValueControl()
     remove(selectedNonSynced.get());
 
   addControl(createParameterValueControl());
-}
 
-Control *SplitPointParameterLayout::createParameterValueControl()
-{
-  auto setting = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
-
-  if(!setting->get())
-    return new SplitParameterValue(Rect(90, 33, 76, 12));
-  else
-    return ParameterLayout2::createParameterValueControl();
+  setDirty();
 }
 
 ButtonMenu *SplitPointParameterEditLayout::createMenu(const Rect &rect)
@@ -94,5 +136,5 @@ Control *SplitPointParameterEditLayout::createParameterValueControl()
 
 SplitPointParameterEditLayout::~SplitPointParameterEditLayout()
 {
-  m_settingConnection.disconnect();
+  m_connection.disconnect();
 }

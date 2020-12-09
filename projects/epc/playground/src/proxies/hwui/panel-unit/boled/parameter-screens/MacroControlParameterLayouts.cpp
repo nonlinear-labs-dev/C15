@@ -238,7 +238,7 @@ void MacroControlParameterLayout2::setMode(Mode desiredMode)
   {
     case Mode::MacroControlValue:
       m_modeOverlay->addControl(createParameterValueControl());
-      m_modeOverlay->addControl(new MCAssignedIndicator(Rect(35, 15, 38, 24), getCurrentParameter()));
+      m_modeOverlay->addControl(createMCAssignmentIndicator());
       setButtonAText(isDual ? "I / II" : "");
       setButtonText(Buttons::BUTTON_B, "HW Sel");
       setButtonText(Buttons::BUTTON_C, "more..");
@@ -307,6 +307,11 @@ void MacroControlParameterLayout2::selectSmoothingParameterForMC()
   {
     eb->undoableSelectParameter(mc->getSmoothingParameter());
   }
+}
+
+Control *MacroControlParameterLayout2::createMCAssignmentIndicator()
+{
+  return new MCAssignedIndicator(Rect(25, 15, 52, 24), getCurrentParameter());
 }
 
 MacroControlParameterSelectLayout2::MacroControlParameterSelectLayout2()
@@ -390,6 +395,11 @@ void MacroControlParameterEditLayout2::setMode(Mode desiredMode)
 
   if(auto vgIndi = findControlOfType<VoiceGroupIndicator>())
     remove(vgIndi.get());
+}
+
+Control *MacroControlParameterEditLayout2::createMCAssignmentIndicator()
+{
+  return nullptr;
 }
 
 bool MacroControlParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)

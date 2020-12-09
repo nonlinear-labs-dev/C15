@@ -79,7 +79,7 @@ class Bank : public AttributesOwner
   void copyFrom(UNDO::Transaction *transaction, const Bank *other, bool ignoreUuids);
   void setName(UNDO::Transaction *transaction, const std::string &name);
   void setUuid(UNDO::Transaction *transaction, const Uuid &uuid);
-  void selectPreset(UNDO::Transaction* transaction, const Uuid& uuid);
+  void selectPreset(UNDO::Transaction *transaction, const Uuid &uuid);
   void selectPreset(UNDO::Transaction *transaction, size_t pos);
   void selectNextPreset(UNDO::Transaction *transaction);
   void selectPreviousPreset(UNDO::Transaction *transaction);
@@ -117,7 +117,9 @@ class Bank : public AttributesOwner
 
   const Preset *getFirstPreset() const;
 
-  private:
+  PresetManager *getPresetManager() const;
+
+ private:
   using Attributes = std::map<std::string, std::string>;
 
   uint64_t loadMetadata(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> bankFolder);

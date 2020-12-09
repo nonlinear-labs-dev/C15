@@ -152,52 +152,28 @@ BankActions::BankActions(PresetManager &presetManager)
   addAction("overwrite-preset", [&](std::shared_ptr<NetworkRequest> request) {
     auto presetToOverwrite = request->get("presetToOverwrite");
     auto overwriteWith = request->get("overwriteWith");
-    auto scope = m_presetManager.getUndoScope().startTransaction("Overwrite preset");
-    auto transaction = scope->getTransaction();
 
-    if(presetToOverwrite.empty())
+    auto useCases = Application::get().getPresetManagerUseCases();
+
+    //TODO refactor either overwrite preset with preset or with editbuffer
+
+    auto sourcePreset = m_presetManager.findPreset(overwriteWith);
+    auto targetPreset = m_presetManager.findPreset(presetToOverwrite);
+
+    if(targetPreset)
     {
-      if(!m_presetManager.getSelectedBank())
+      if(sourcePreset)
       {
-        nltools_assertAlways(m_presetManager.getNumBanks() == 0);
-        auto b = m_presetManager.addBank(transaction);
-        m_presetManager.selectBank(transaction, b->getUuid());
+        useCases->overwritePresetWithPreset(targetPreset, sourcePreset);
       }
-
-      auto selectedBank = m_presetManager.getSelectedBank();
-      if(!selectedBank->getSelectedPreset())
+      else
       {
-        nltools_assertAlways(selectedBank->getNumPresets() == 0);
-        auto p = selectedBank->appendPreset(transaction);
-        selectedBank->selectPreset(transaction, p->getUuid());
-      }
-
-      if(presetToOverwrite.empty())
-        presetToOverwrite = selectedBank->getSelectedPresetUuid().raw();
-    }
-
-    if(overwriteWith.empty())
-    {
-      if(auto tgtPreset = m_presetManager.findPreset(presetToOverwrite))
-      {
-        tgtPreset->copyFrom(transaction, m_presetManager.getEditBuffer());
-        auto bank = dynamic_cast<Bank *>(tgtPreset->getParent());
-        bank->selectPreset(transaction, tgtPreset->getUuid());
-        m_presetManager.selectBank(transaction, bank->getUuid());
+        useCases->overwritePreset(targetPreset);
       }
     }
     else
     {
-      auto srcPreset = m_presetManager.findPreset(overwriteWith);
-      auto tgtPreset = m_presetManager.findPreset(presetToOverwrite);
-
-      if(srcPreset && tgtPreset)
-      {
-        tgtPreset->copyFrom(transaction, srcPreset, true);
-        auto bank = dynamic_cast<Bank *>(tgtPreset->getParent());
-        bank->selectPreset(transaction, tgtPreset->getUuid());
-        m_presetManager.selectBank(transaction, bank->getUuid());
-      }
+      useCases->createBankAndStoreEditBuffer();
     }
   });
 
@@ -320,43 +296,22 @@ BankActions::BankActions(PresetManager &presetManager)
     auto bankToAppendTo = request->get("bank-uuid", fallBack);
     auto uuid = request->get("uuid");
 
+    auto useCases = Application::get().getPresetManagerUseCases();
+
     if(auto bank = m_presetManager.findBank(bankToAppendTo))
     {
-      auto &undoScope = m_presetManager.getUndoScope();
-      auto scope = undoScope.startTransaction("Append Preset to Bank '%0'", bank->getName(true));
-      auto transaction = scope->getTransaction();
-      auto newName = guessNameBasedOnEditBuffer();
-      auto newPreset = std::make_unique<Preset>(bank, *m_presetManager.getEditBuffer());
-      auto tgtPreset = bank->appendAndLoadPreset(transaction, std::move(newPreset));
-
-      tgtPreset->setName(transaction, newName);
-
-      if(!uuid.empty())
-        tgtPreset->setUuid(transaction, uuid);
-
-      bank->selectPreset(transaction, tgtPreset->getUuid());
-      m_presetManager.selectBank(transaction, bank->getUuid());
+      useCases->appendPresetWithUUID(bank, uuid);
     }
   });
 
   addAction("append-preset-to-bank", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto bankUuid = request->get("bank-uuid");
     auto presetUuid = request->get("preset-uuid");
+    auto useCases = Application::get().getPresetManagerUseCases();
 
     if(auto bank = m_presetManager.findBank(bankUuid))
     {
-      if(auto srcPreset = m_presetManager.findPreset(presetUuid))
-      {
-        auto &undoScope = m_presetManager.getUndoScope();
-        auto scope = undoScope.startTransaction("Append Preset to Bank '%0'", bank->getName(true));
-        auto transaction = scope->getTransaction();
-
-        auto newPreset = std::make_unique<Preset>(bank, *srcPreset, true);
-        auto tgtPreset = bank->appendPreset(transaction, std::move(newPreset));
-
-        bank->selectPreset(transaction, tgtPreset->getUuid());
-        m_presetManager.selectBank(transaction, bank->getUuid());
-      }
+      useCases->appendPreset(bank);
     }
   });
 
@@ -373,23 +328,12 @@ BankActions::BankActions(PresetManager &presetManager)
 
   addAction("insert-preset", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto selUuid = request->get("seluuid");
+    auto useCases = Application::get().getPresetManagerUseCases();
+
     if(auto bank = m_presetManager.findBankWithPreset(selUuid))
     {
-      auto uuid = request->get("uuid");
-      auto newName = guessNameBasedOnEditBuffer();
-
-      auto scope = m_presetManager.getUndoScope().startTransaction("Insert preset");
-      auto transaction = scope->getTransaction();
       auto desiredPresetPos = bank->getPresetPosition(selUuid) + 1;
-      auto newPreset = bank->insertAndLoadPreset(transaction, desiredPresetPos,
-                                                 std::make_unique<Preset>(bank, *m_presetManager.getEditBuffer()));
-
-      if(!uuid.empty())
-        newPreset->setUuid(transaction, uuid);
-
-      newPreset->setName(transaction, newName);
-      bank->selectPreset(transaction, newPreset->getUuid());
-      m_presetManager.selectBank(transaction, bank->getUuid());
+      useCases->insertPreset(bank, desiredPresetPos);
     }
   });
 
@@ -470,7 +414,7 @@ BankActions::BankActions(PresetManager &presetManager)
       {
         auto scope = m_presetManager.getUndoScope().startTransaction(preset->buildUndoTransactionTitle("Load"));
         auto transaction = scope->getTransaction();
-        m_presetManager.getEditBuffer()->undoableLoad(transaction, preset);
+        m_presetManager.getEditBuffer()->undoableLoad(transaction, preset, true);
         bank->selectPreset(transaction, preset->getUuid());
       }
     }

@@ -1,6 +1,7 @@
 #include "SettingsActions.h"
 #include "Settings.h"
 #include "Setting.h"
+#include "SyncSplitSettingUseCases.h"
 #include <device-settings/DebugLevel.h>
 #include <Application.h>
 #include <proxies/hwui/HWUI.h>
@@ -15,6 +16,13 @@ SettingsActions::SettingsActions(Settings &settings)
     Glib::ustring value = request->get("value");
 
     DebugLevel::warning("Setting: ", key, " changed to: ", value);
+
+    if(key == "SyncSplit")
+    {
+      auto useCases = SyncSplitSettingUseCases::get();
+      useCases.updateFromWebUI(value);
+      return;
+    }
 
     if(auto s = settings.getSetting(key))
     {

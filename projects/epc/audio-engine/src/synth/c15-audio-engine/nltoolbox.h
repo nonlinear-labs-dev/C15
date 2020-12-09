@@ -12,7 +12,6 @@
 #include <cmath>
 #include <stdint.h>
 #include <algorithm>
-#include "ae_potential_improvements.h"
 
 namespace NlToolbox
 {
@@ -27,16 +26,9 @@ namespace NlToolbox
   namespace Constants
   {
 
-    const float pi = 3.14159265f;    // PI as a (single precision) float
-    const float twopi = 2.f * pi;    // two PI as a (single precision) float
-    const float halfpi = 0.5f * pi;  // half PI as a (single precision) float
-#if POTENTIAL_IMPROVEMENT_DNC_CONST_OF_ZERO
-    // POTENTIAL_IMPROVEMENT_DNC_CONST_OF_ZERO: just testing, if omitting the constant re-introduces trouble
-    const float DNC_const = 0.0f;
-    // as long as the "global" canceling of denormals is applied (C15Synth.cpp: doAudio), no x-run avalanches observed so far
-#else
-    const float DNC_const = 1.e-18f;  // the DNC contant as a (single precision) float
-#endif
+    const float pi = 3.14159265f;         // PI as a (single precision) float
+    const float twopi = 2.f * pi;         // two PI as a (single precision) float
+    const float halfpi = 0.5f * pi;       // half PI as a (single precision) float
     const float sqrt_two = 1.414213562f;  // squareroot of two as a (single precision) float;
 
   }  // namespace Constants

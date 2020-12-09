@@ -105,6 +105,8 @@ namespace nltools
         pthread_setname_np(pthread_self(), "WebSockOut");
         threading::setThisThreadPrio(p);
 
+        auto mainContext = Glib::MainContext::get_default();
+
         auto m = Glib::MainContext::create();
         g_main_context_push_thread_default(m->gobj());
 
@@ -112,7 +114,7 @@ namespace nltools
         m_messageLoop = Glib::MainLoop::create(m);
         m_backgroundContextQueue->pushMessage(std::bind(&WebSocketOutChannel::connect, this));
 
-        auto c = m->signal_timeout().connect_seconds(sigc::mem_fun(this, &WebSocketOutChannel::ping), 2);
+        auto c = mainContext->signal_timeout().connect_seconds(sigc::mem_fun(this, &WebSocketOutChannel::ping), 2);
         m_messageLoop->run();
         c.disconnect();
       }

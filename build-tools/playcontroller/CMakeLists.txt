@@ -31,32 +31,29 @@ add_custom_command(
         "chown -R ${USER_ID}.${GROUP_ID} /workdir/*"
 )
 
-IF(BUILD_BBB) # we need the BBB utilities
+add_custom_command(
+    COMMENT "Build playcontroller update"
+    OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-playcontroller-update.tar
+    DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+    DEPENDS ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin
+    DEPENDS ${ALL_FILES_IN_PROJECT}
+    COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
+        "unused-epc"
+        ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+        ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin
+        ${CMAKE_BINARY_DIR}
+        ${CMAKE_SOURCE_DIR}
+        nonlinear-playcontroller-update
+        playcontroller
+)
 
-    add_custom_command(
-        COMMENT "Build playcontroller update"
-        OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-playcontroller-update.tar
-        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
-        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin
-        DEPENDS ${ALL_FILES_IN_PROJECT}
-        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
-            "unused-epc"
-            ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
-            ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin
-            ${CMAKE_BINARY_DIR}
-            ${CMAKE_SOURCE_DIR}
-            nonlinear-playcontroller-update
-            playcontroller
+add_custom_target(playcontroller-ota-update
+    DEPENDS ${CMAKE_BINARY_DIR}/nonlinear-playcontroller-update.tar
+    COMMAND ${CMAKE_SOURCE_DIR}/build-tools/c15-ota-update.sh
+        ${CMAKE_BINARY_DIR}/nonlinear-playcontroller-update.tar
+        \${UNIT_NAME}
+        \${UNIT_PASSWORD}
     )
-
-    add_custom_target(playcontroller-ota-update
-        DEPENDS ${CMAKE_BINARY_DIR}/nonlinear-playcontroller-update.tar
-        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/c15-ota-update.sh
-            ${CMAKE_BINARY_DIR}/nonlinear-playcontroller-update.tar
-            \${UNIT_NAME}
-            \${UNIT_PASSWORD}
-        )
-ENDIF()
 
 add_custom_target(playcontroller-blobs
     DEPENDS ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin

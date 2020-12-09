@@ -527,9 +527,6 @@ public class ServerProxy {
 
 	public void setSetting(final String key, final String value) {
 		boolean oracle = false;
-		if (key.equals("syncSplit"))
-			oracle = true;
-
 		setSetting(key, value, oracle);
 	}
 

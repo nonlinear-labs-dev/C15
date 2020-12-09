@@ -20,7 +20,7 @@ class VelocityCurve : public EnumSetting<VelocityCurves>
   VelocityCurve(UpdateDocumentContributor &settings);
   virtual ~VelocityCurve();
 
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
 

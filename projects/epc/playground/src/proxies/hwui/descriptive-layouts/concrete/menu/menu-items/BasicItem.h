@@ -18,6 +18,7 @@ class BasicItem : public MenuItem
 
  protected:
   virtual bool drawHighlightBorder(FrameBuffer& fb);
+  bool drawEnterIndication(FrameBuffer& buffer);
 
  private:
   void init();

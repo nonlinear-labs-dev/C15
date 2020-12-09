@@ -50,7 +50,7 @@ void TransitionTime::setDefault()
   set(m_time.getDefaultValue());
 }
 
-void TransitionTime::sendToPlaycontroller(SendReason reason) const
+void TransitionTime::syncExternals(SendReason reason) const
 {
   nltools::msg::Setting::TransitionTimeMessage msg { static_cast<float>(m_time.getRawValue()) };
   Application::get().getAudioEngineProxy()->sendSettingMessage<nltools::msg::Setting::TransitionTimeMessage>(msg);
@@ -75,7 +75,7 @@ void TransitionTime::incDec(int incs, ButtonModifiers mods)
     incs++;
   }
 
-  sendToPlaycontroller(SendReason::SettingChanged);
+  syncExternals(SendReason::SettingChanged);
   notify();
 }
 

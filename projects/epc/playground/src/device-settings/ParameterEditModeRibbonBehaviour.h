@@ -20,7 +20,7 @@ class ParameterEditModeRibbonBehaviour : public EnumSetting<ParameterEditModeRib
   virtual bool set(ParameterEditModeRibbonBehaviours m) override;
   void sendRelatedSettingToPlaycontroller() const;
 
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
  private:
   ParameterEditModeRibbonBehaviour(const ParameterEditModeRibbonBehaviour &other);

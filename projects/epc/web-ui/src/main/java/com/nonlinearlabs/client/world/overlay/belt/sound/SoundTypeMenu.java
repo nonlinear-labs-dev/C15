@@ -16,7 +16,7 @@ public class SoundTypeMenu extends SVGImage {
 	public class SoundTypeMenuContextMenu extends ContextMenu {
 
 		private void addSingleChild() {
-			addChild(new ContextMenuItem(this, "Single") {
+			addChild(new ContextMenuItem(this, "Convert to Single") {
 				@Override
 				public Control click(Position eventPoint) {
 					EditBufferUseCases.get().convertToSingleSound();
@@ -26,7 +26,7 @@ public class SoundTypeMenu extends SVGImage {
 		} 
 
 		private void addLayerChild() {
-			addChild(new ContextMenuItem(this, "Layer") {
+			addChild(new ContextMenuItem(this, "Convert to Layer") {
 				@Override
 				public Control click(Position eventPoint) {
 					EditBufferUseCases.get().convertToLayerSound();
@@ -36,7 +36,7 @@ public class SoundTypeMenu extends SVGImage {
 		}
 
 		private void addSplitChild() {
-			addChild(new ContextMenuItem(this, "Split") {
+			addChild(new ContextMenuItem(this, "Convert to Split") {
 				@Override
 				public Control click(Position eventPoint) {
 					EditBufferUseCases.get().convertToSplitSound();

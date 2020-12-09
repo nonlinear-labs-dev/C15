@@ -88,7 +88,7 @@ report() {
 }
 
 executeAsRoot() {
-    echo "sscl" | /update/utilities/sshpass -p 'sscl' ssh -o ConnectionAttempts=1 -o ConnectTimeout=1 -o StrictHostKeyChecking=no sscl@$EPC_IP "sudo -S /bin/bash -c '$1' 1>&2 > /dev/null"
+    echo "sscl" | /update/utilities/sshpass -p 'sscl' ssh -o ConnectionAttempts=1 -o ConnectTimeout=1 -o StrictHostKeyChecking=no sscl@$EPC_IP "sudo -S /bin/bash -c '$1'"
     return $?
 }
 
@@ -121,7 +121,26 @@ check_preconditions() {
         fi
         report "" "Something went wrong!" "Please retry update!" && return 1
     fi
+
     if [ -z "$BBB_IP" ]; then report "" "E86: BBB IP usage wrong ..." "Please retry update!" && return 1; fi
+
+    rm /update/EPC/update.tar
+
+    if [[ "$(executeAsRoot "uname -r")" == "4.9.9-rt6-1-rt" ]]; then
+        if ! ln -s /update/EPC/update_5-7i3.tar /update/EPC/update.tar; then
+            report "E87: ePC update missing" "Please retry download!" && return 1
+        fi
+        FIX_EPC=true
+    else
+        if ! ln -s /update/EPC/update_10i3.tar /update/EPC/update.tar; then
+            report "E87: ePC update missing" "Please retry download!" && return 1
+        fi
+        FIX_EPC=false
+    fi
+
+    [ -f "/update/BBB/rootfs.tar.gz" ] || (report "E88: BBB update missing" "Please retry download!" && return 1)
+    [ -f "/update/playcontroller/main.bin" ] || (report "E89: playcontroller update missing" "Please retry download!" && return 1)
+
     return 0
 }
 
@@ -157,17 +176,18 @@ epc_update() {
         fi
     fi
 
-    epc_fix
-    return_code=$?
-    if [ $return_code -ne 0 ]; then
-        /update/utilities/sshpass -p "sscl" scp -r sscl@192.168.10.10:/tmp/fix_error.log /dev/stdout | cat - >> /update/errors.log
-        pretty "" "$MSG_UPDATING_EPC" "$MSG_FAILED_WITH_ERROR_CODE $return_code" "$MSG_UPDATING_EPC" "$MSG_FAILED_WITH_ERROR_CODE $return_code"
-        sleep 2
-        return 1
+    if [[ "$FIX_EPC" == "true" ]]; then
+        epc_fix
+        return_code=$?
+        if [ $return_code -ne 0 ]; then
+            /update/utilities/sshpass -p "sscl" scp -r sscl@192.168.10.10:/tmp/fix_error.log /dev/stdout | cat - >> /update/errors.log
+            pretty "" "$MSG_UPDATING_EPC" "$MSG_FAILED_WITH_ERROR_CODE $return_code" "$MSG_UPDATING_EPC" "$MSG_FAILED_WITH_ERROR_CODE $return_code"
+            sleep 2
+            return 1
+        fi
+        executeAsRoot "reboot"
+        wait4epc 60
     fi
-
-    executeAsRoot "reboot"
-    wait4epc 60
 
     pretty "" "$MSG_UPDATING_EPC" "$MSG_DONE" "$MSG_UPDATING_EPC" "$MSG_DONE"
     sleep 2

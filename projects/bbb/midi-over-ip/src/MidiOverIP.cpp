@@ -5,18 +5,13 @@
 #include <alsa/asoundlib.h>
 #include <stdlib.h>
 #include <thread>
-#include <chrono>
 #include <array>
 #include <glibmm.h>
 
 static bool quitApp = false;
+static bool enableMidi = false;
 static Glib::RefPtr<Glib::MainLoop> loop;
 static int cancelPipe[2];
-static std::array<std::chrono::high_resolution_clock::time_point, 32> sendTime;
-static size_t sendTimeIdx = 0;
-
-static std::chrono::microseconds minRTT = std::chrono::microseconds::max();
-static std::chrono::microseconds maxRTT = std::chrono::microseconds::min();
 
 void quit(int)
 {
@@ -81,12 +76,12 @@ void readMidi(int cancelHandle, snd_rawmidi_t *inputHandle)
           {
             if(event.type != SND_SEQ_EVENT_NONE)
             {
-              Midi::SimpleMessage msg;
-              snd_midi_event_decode(decoder, msg.rawBytes, sizeof(msg.rawBytes), &event);
-              auto idx = sendTimeIdx++ % sendTime.size();
-              sendTime[idx] = std::chrono::high_resolution_clock::now();
-              msg.id = idx;
-              send(EndPoint::ExternalMidiOverIPClient, msg);
+              if(enableMidi)
+              {
+                Midi::SimpleMessage msg;
+                msg.numBytesUsed = snd_midi_event_decode(decoder, msg.rawBytes.data(), 3, &event);
+                send(EndPoint::ExternalMidiOverIPClient, msg);
+              }
               break;
             }
           }
@@ -110,8 +105,7 @@ void configureMessaging(const Options &options, bool hasInput, bool hasOutput)
 
   Configuration conf;
 
-  if(hasOutput)
-    conf.offerEndpoints = { { EndPoint::ExternalMidiOverIPBridge, Priority::AlmostRealtime } };
+  conf.offerEndpoints = { { EndPoint::ExternalMidiOverIPBridge, Priority::AlmostRealtime } };
 
   if(hasInput)
     conf.useEndpoints = { { EndPoint::ExternalMidiOverIPClient, aeHost, Priority::AlmostRealtime } };
@@ -121,19 +115,14 @@ void configureMessaging(const Options &options, bool hasInput, bool hasOutput)
 
 void sendToExternalDevice(snd_rawmidi_t *outputHandle, const nltools::msg::Midi::SimpleMessage &msg)
 {
-  if(auto res = snd_rawmidi_write(outputHandle, msg.rawBytes, sizeof(msg.rawBytes)))
-    if(size_t(res) != sizeof(msg.rawBytes))
+  if(!enableMidi)
+    return;
+
+  if(auto res = snd_rawmidi_write(outputHandle, msg.rawBytes.data(), msg.numBytesUsed))
+    if(size_t(res) != msg.numBytesUsed)
       nltools::Log::error("Could not write message into midi output device");
 
   snd_rawmidi_drain(outputHandle);
-}
-
-void measureRoundTripTime(const nltools::msg::Midi::MessageAcknowledge &msg)
-{
-  auto flightTime = std::chrono::high_resolution_clock::now() - sendTime[msg.id];
-  auto us = std::chrono::duration_cast<std::chrono::microseconds>(flightTime);
-  minRTT = std::min(minRTT, us);
-  maxRTT = std::max(maxRTT, us);
 }
 
 void runMainLoop()
@@ -189,6 +178,9 @@ int main(int args, char *argv[])
 
   std::thread sender;
 
+  receive<Setting::MidiBridgeSettings>(EndPoint::ExternalMidiOverIPBridge,
+                                       [&](const Setting::MidiBridgeSettings &msg) { enableMidi = msg.enable; });
+
   if(outputHandle)
   {
     receive<SimpleMessage>(endPoint, [=](const auto &msg) { sendToExternalDevice(outputHandle, msg); });
@@ -198,7 +190,6 @@ int main(int args, char *argv[])
 
   if(inputHandle)
   {
-    receive<MessageAcknowledge>(endPoint, [](const auto &msg) { measureRoundTripTime(msg); });
     sender = std::thread([&] { readMidi(cancelPipe[0], inputHandle); });
   }
 
@@ -211,8 +202,6 @@ int main(int args, char *argv[])
 
     snd_rawmidi_close(outputHandle);
     snd_rawmidi_close(inputHandle);
-
-    nltools::Log::warning("MidiOverIP, round trip time:", minRTT.count(), " ... ", maxRTT.count(), "us");
   }
 
   return EXIT_SUCCESS;

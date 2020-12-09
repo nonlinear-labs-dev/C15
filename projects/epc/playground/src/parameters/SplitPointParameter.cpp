@@ -19,41 +19,6 @@ SplitPointParameter::SplitPointParameter(ParameterGroup* group, const ParameterI
                                               ScaleConverter::get<LinearBipolar60StScaleConverter>(),
                                               id.getVoiceGroup() == VoiceGroup::I ? 0.5 : 0.516666667, 60, 60)
 {
-  Application::get().getSettings()->getSetting<SplitPointSyncParameters>()->onChange(
-      sigc::mem_fun(this, &SplitPointParameter::onSyncSettingChanged));
-}
-
-void SplitPointParameter::onSyncSettingChanged(const Setting* s)
-{
-  if(!m_settingGuard.isLocked())
-  {
-    if(getVoiceGroup() == VoiceGroup::I)
-    {
-      if(auto sync = dynamic_cast<const SplitPointSyncParameters*>(s))
-      {
-        if(sync->get())
-        {
-          auto scope = getUndoScope().startTransaction("Enable Split Sync");
-          auto transaction = scope->getTransaction();
-          auto myCP = getControlPositionValue();
-          getSibling()->setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC,
-                                   getValue().getNextStepValue(myCP, 1, {}), true);
-          transaction->addSimpleCommand(
-              [this](UNDO::Transaction::State s) {
-                if(s == UNDO::Transaction::State::REDOING)
-                {
-                  auto l = m_settingGuard.lock();
-                  Application::get().getSettings()->getSetting<SplitPointSyncParameters>()->setState(true);
-                }
-              },
-              [this](UNDO::Transaction::State) {
-                auto l = m_settingGuard.lock();
-                Application::get().getSettings()->getSetting<SplitPointSyncParameters>()->setState(false);
-              });
-        }
-      }
-    }
-  }
 }
 
 Layout* SplitPointParameter::createLayout(FocusAndMode focusAndMode) const
@@ -96,6 +61,7 @@ void SplitPointParameter::setCpValue(UNDO::Transaction* transaction, Initiator i
     preventNegativeOverlap(transaction, value, dosendToPlaycontroller);
   }
 }
+
 void SplitPointParameter::clampToExtremes(UNDO::Transaction* transaction, bool dosendToPlaycontroller)
 {
   auto other = getSibling();
@@ -186,4 +152,35 @@ bool SplitPointParameter::isAtExtremes(tControlPositionValue value)
   }
 
   return false;
+}
+
+bool SplitPointParameter::hasOverlap()
+{
+  if(getVoiceGroup() == VoiceGroup::I)
+  {
+    return getControlPositionValue() >= getSibling()->getControlPositionValue();
+  }
+  else
+  {
+    return getSibling()->hasOverlap();
+  }
+}
+
+bool SplitPointParameter::inDefaultSplitBehaviour() const
+{
+  auto sib = getSibling();
+  if(getVoiceGroup() == VoiceGroup::I)
+  {
+    auto sibPrev = sib->getNextStepValue(-1, {});
+    return getValue().getQuantizedClipped() == sibPrev;
+  }
+  else
+  {
+    return sib->inDefaultSplitBehaviour();
+  }
+}
+
+void SplitPointParameter::updateCPFromSyncChange(UNDO::Transaction* transaction, double cp)
+{
+  setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC, cp, true);
 }

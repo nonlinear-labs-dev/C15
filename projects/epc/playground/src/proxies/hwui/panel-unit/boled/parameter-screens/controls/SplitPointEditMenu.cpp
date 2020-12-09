@@ -3,6 +3,7 @@
 #include <device-settings/SplitPointSyncParameters.h>
 #include <Application.h>
 #include <sigc++/adaptors/hide.h>
+#include <device-settings/SyncSplitSettingUseCases.h>
 
 void SplitPointEditMenu::addActions()
 {
@@ -10,11 +11,11 @@ void SplitPointEditMenu::addActions()
 
   if(m_syncSetting->get())
   {
-    addButton("Disable Sync", [this]() { m_syncSetting->setState(false); });
+    addButton("Unlink Splitp.", [this]() { SyncSplitSettingUseCases::get().disableSyncSetting(); });
   }
   else
   {
-    addButton("Enable Sync", [this]() { m_syncSetting->setState(true); });
+    addButton("Link Splitp.", [this]() { SyncSplitSettingUseCases::get().enableSyncSetting(); });
   }
 }
 

@@ -145,12 +145,12 @@ void ModAspectRecallOverlay::undoRecall()
       break;
     case Mode::MC_AMT:
       recall.leftRecallValue = m_modParam->getModulationAmount();
-      m_modParam->undoableUndoRecallMCAmount(std::get<float>(old));
+      m_modParam->undoableUndoRecallMCAmount(std::get<double>(old));
       recall.rightRecallValue = m_modParam->getModulationAmount();
       break;
     case Mode::MC_POS:
       recall.leftRecallValue = m_modParam->getMacroControl()->getControlPositionValue();
-      m_modParam->undoableUndoRecallMCPos(std::get<float>(old));
+      m_modParam->undoableUndoRecallMCPos(std::get<double>(old));
       recall.rightRecallValue = m_modParam->getMacroControl()->getControlPositionValue();
       break;
   }
@@ -221,8 +221,8 @@ void ModAspectRecallOverlay::updateUI()
       arrowsEnabled = isMCAmtChanged() || isMCSelChanged() || m_oldRecallValues[MC_AMT].anyRecallHappened
           || m_oldRecallValues[MC_SEL].anyRecallHappened;
       m_labelA->setText("MC Position");
-      m_labelB->setText({ stringizeMCPos(std::get<float>(recall.leftRecallValue)), 0 });
-      m_labelC->setText({ stringizeMCPos(std::get<float>(recall.rightRecallValue)), 0 });
+      m_labelB->setText({ stringizeMCPos(std::get<double>(recall.leftRecallValue)), 0 });
+      m_labelC->setText({ stringizeMCPos(std::get<double>(recall.rightRecallValue)), 0 });
       break;
     case MC_SEL:
       arrowsEnabled = isMCAmtChanged() || isMCAssignedAndChanged() || m_oldRecallValues[MC_AMT].anyRecallHappened
@@ -235,8 +235,8 @@ void ModAspectRecallOverlay::updateUI()
       arrowsEnabled = isMCAssignedAndChanged() || isMCSelChanged() || m_oldRecallValues[MC_SEL].anyRecallHappened
           || m_oldRecallValues[MC_POS].anyRecallHappened;
       m_labelA->setText("MC Amount");
-      m_labelB->setText({ m_modParam->stringizeModulationAmount(std::get<float>(recall.leftRecallValue)), 0 });
-      m_labelC->setText({ m_modParam->stringizeModulationAmount(std::get<float>(recall.rightRecallValue)), 0 });
+      m_labelB->setText({ m_modParam->stringizeModulationAmount(std::get<double>(recall.leftRecallValue)), 0 });
+      m_labelC->setText({ m_modParam->stringizeModulationAmount(std::get<double>(recall.rightRecallValue)), 0 });
       break;
   }
 

@@ -18,7 +18,7 @@ class BenderCurve : public EnumSetting<BenderCurves>
   BenderCurve(UpdateDocumentContributor &settings);
   virtual ~BenderCurve();
 
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
 

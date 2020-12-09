@@ -43,6 +43,8 @@ void AlsaMidiInput::close()
 
 void AlsaMidiInput::doBackgroundWork()
 {
+  pthread_setname_np(pthread_self(), "MidiIn");
+
   uint8_t byte;
 
   snd_midi_event_t *encoder = nullptr;

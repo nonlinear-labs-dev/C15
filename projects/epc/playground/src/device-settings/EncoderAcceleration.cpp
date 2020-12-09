@@ -46,7 +46,7 @@ void EncoderAcceleration::set(tControlPositionValue amount)
   }
 }
 
-void EncoderAcceleration::sendToPlaycontroller(SendReason reason) const
+void EncoderAcceleration::syncExternals(SendReason reason) const
 {
 }
 
@@ -75,7 +75,7 @@ void EncoderAcceleration::incDec(int incs, ButtonModifiers modifiers)
   }
 
   notify();
-  sendToPlaycontroller(SendReason::SettingChanged);
+  syncExternals(SendReason::SettingChanged);
 }
 
 Glib::ustring EncoderAcceleration::getDisplayString() const

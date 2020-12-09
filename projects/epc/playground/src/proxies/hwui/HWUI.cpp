@@ -579,6 +579,7 @@ void HWUI::setCurrentVoiceGroup(VoiceGroup v)
       m_voiceGoupSignal.send(m_currentVoiceGroup);
       auto eb = Application::get().getPresetManager()->getEditBuffer();
       eb->fakeParameterSelectionSignal(oldGroup, m_currentVoiceGroup);
+      eb->onChange(UpdateDocumentContributor::ChangeFlags::Generic);
     }
 }
 
@@ -598,6 +599,15 @@ void HWUI::undoableUpdateParameterSelection(UNDO::Transaction *transaction)
   {
     eb->undoableSelectParameter(transaction, { id.getNumber(), m_currentVoiceGroup });
   }
+}
+
+void HWUI::toggleCurrentVoiceGroupAndUpdateParameterSelection()
+{
+  auto currentVG = getCurrentVoiceGroup();
+  auto partName = currentVG == VoiceGroup::I ? "II" : "I";
+  auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction("Select Part "
+                                                                                      + std::to_string(partName));
+  toggleCurrentVoiceGroupAndUpdateParameterSelection(scope->getTransaction());
 }
 
 void HWUI::toggleCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *transaction)

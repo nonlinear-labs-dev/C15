@@ -54,6 +54,10 @@
           },
           "Events": "isCurrentVGI => ANY[Highlight], VGIMasterTuneText => Unison[Text], VGIMasterVolumeText => Master[Text], VGIMuted => MuteIndication[Text]"
         },
+        "UpperFade": {
+          "Class": "FadeIndicatorI",
+          "Position": "128, 20"
+        },
         "Lower": {
           "Class": "LayerVoiceGroupII",
           "Position": "57, 32",
@@ -64,17 +68,21 @@
           },
           "Events": "isCurrentVGII => ANY[Highlight], VGIIMasterTuneText => Unison[Text], VGIIMasterVolumeText => Master[Text], VGIIMuted => MuteIndication[Text]"
         },
+        "LowerFade": {
+          "Class": "FadeIndicatorII",
+          "Position": "128, 36"
+        },
         "FBBoth": {
           "Class": "LayerFBImageLarge",
           "Position": "29, 19",
           "Init": {
             "Image[ImagePath]": ""
           },
-          "Events": "LayerFBState => Image[ImagePath], LayerFBOffset => Image[ImageOffset]"
+          "Events": "LayerFBState => Image[ImagePath]"
         },
         "FX": {
           "Class": "LayerFBImageLarge",
-          "Position": "202, 21",
+          "Position": "201, 21",
           "Init": {
             "Image[ImagePath]": ""
           },

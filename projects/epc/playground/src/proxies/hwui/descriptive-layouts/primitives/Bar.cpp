@@ -17,22 +17,24 @@ namespace DescriptiveLayouts
 
   bool Bar::redraw(FrameBuffer &fb)
   {
-    auto color = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor)
-                                        : (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
+    if(isVisible())
+    {
+      auto color = Control::isHighlight() ? (FrameBuffer::Colors) getStyleValue(StyleKey::HighlightColor)
+                                          : (FrameBuffer::Colors) getStyleValue(StyleKey::Color);
+      Rect r = getPosition();
 
-    Rect r = getPosition();
+      auto from = std::min(m_range.first, m_range.second);
+      auto to = std::max(m_range.first, m_range.second);
 
-    auto from = std::min(m_range.first, m_range.second);
-    auto to = std::max(m_range.first, m_range.second);
+      auto left = round(r.getLeft() + from * r.getWidth());
+      auto right = round(r.getLeft() + to * r.getWidth());
+      r.setLeft(static_cast<int>(left));
+      r.setWidth(static_cast<int>(right - left));
+      r.normalize();
 
-    auto left = round(r.getLeft() + from * r.getWidth());
-    auto right = round(r.getLeft() + to * r.getWidth());
-    r.setLeft(static_cast<int>(left));
-    r.setWidth(static_cast<int>(right - left));
-    r.normalize();
-
-    fb.setColor(color);
-    fb.fillRect(r);
+      fb.setColor(color);
+      fb.fillRect(r);
+    }
 
     return true;
   }
@@ -48,7 +50,10 @@ namespace DescriptiveLayouts
       fb.setColor((FrameBuffer::Colors) getStyleValue(StyleKey::BackgroundColor));
     }
 
-    fb.fillRect(getPosition());
+    if(isVisible())
+    {
+      fb.fillRect(getPosition());
+    }
   }
 
   void Bar::setDirty()

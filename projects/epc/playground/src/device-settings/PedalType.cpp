@@ -43,7 +43,7 @@ const std::vector<Glib::ustring> &PedalType::getDisplayStrings() const
 
 PedalType::~PedalType() = default;
 
-void PedalType::sendToPlaycontroller(SendReason reason) const
+void PedalType::syncExternals(SendReason reason) const
 {
   auto reset = reason == SendReason::SettingChanged;
   Application::get().getPlaycontrollerProxy()->sendPedalSetting(m_playcontrollerKey, get(), reset);

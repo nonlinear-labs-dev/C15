@@ -13,7 +13,7 @@
 #include <groups/MacroControlsGroup.h>
 #include <groups/ParameterGroup.h>
 
-int MacroControlEditButtonMenu::s_lastAction = 1;
+int MacroControlEditButtonMenu::s_lastAction = 0;
 
 MacroControlEditButtonMenu::MacroControlEditButtonMenu(const Rect &rect)
     : super(rect)

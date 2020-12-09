@@ -18,7 +18,7 @@ class PedalType : public NLEnumSetting<PedalTypes>
   bool set(tEnum m) override;
 
  private:
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
   void load(const Glib::ustring &text, Initiator) override;
 
   uint16_t m_playcontrollerKey;

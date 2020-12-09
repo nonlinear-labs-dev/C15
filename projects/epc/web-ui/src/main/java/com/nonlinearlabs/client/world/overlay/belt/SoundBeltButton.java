@@ -16,7 +16,7 @@ public class SoundBeltButton extends BeltButton {
 
 	@Override
 	public Control click(Position eventPoint) {
-		if (!isActive()) {
+		if (!isSoundActive()) {
 			belt.setSoundView(true);
 		} else {
 			belt.toggle();
@@ -24,9 +24,13 @@ public class SoundBeltButton extends BeltButton {
 		return this;
 	}
 
+	public boolean isSoundActive() {
+		return belt.isSoundView();
+	}
+
 	@Override
 	public boolean isActive() {
-		return belt.isSoundView();
+		return isSoundActive() || belt.isFadeView();
 	}
 
 

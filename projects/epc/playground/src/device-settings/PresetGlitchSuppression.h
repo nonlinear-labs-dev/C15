@@ -11,5 +11,5 @@ class PresetGlitchSuppression : public BooleanSetting
   PresetGlitchSuppression(UpdateDocumentContributor &settings);
   virtual ~PresetGlitchSuppression();
 
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 };

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+  <defs>
+    <style>
+      .a {
+        fill: #4d4d4d;
+      }
+
+      .b {
+        fill: #666;
+      }
+
+      .c {
+        fill: gray;
+      }
+
+      .d {
+        fill: #333;
+      }
+
+      .e {
+        fill: #999;
+      }
+
+      .f {
+        fill: #e6e6e6;
+      }
+    </style>
+  </defs>
+  <title>Select_Enabled_B</title>
+  <g>
+    <rect class="a" x="0.5" y="0.5" width="37" height="37" rx="3.5" ry="3.5"/>
+    <path class="b" d="M34,1a3.00338,3.00338,0,0,1,3,3V34a3.00338,3.00338,0,0,1-3,3H4a3.00337,3.00337,0,0,1-3-3V4A3.00337,3.00337,0,0,1,4,1H34m0-1H4A4,4,0,0,0,0,4V34a4,4,0,0,0,4,4H34a4,4,0,0,0,4-4V4a4,4,0,0,0-4-4Z"/>
+  </g>
+  <rect class="c" x="12" y="6" width="20" height="26"/>
+  <rect class="d" x="13" y="7" width="18" height="4"/>
+  <rect class="d" x="13" y="17" width="18" height="4"/>
+  <g>
+    <rect class="b" x="12.5" y="11.5" width="19" height="5"/>
+    <path class="e" d="M31,12v4H13V12H31m1-1H12v6H32V11Z"/>
+  </g>
+  <rect class="d" x="13" y="27" width="18" height="4"/>
+  <rect class="d" x="13" y="22" width="18" height="4"/>
+  <polygon class="f" points="20.1 13.9 5.5 18.4 10.2 21.2 6 25.4 8.6 28 12.8 23.8 15.6 28.5 20.1 13.9"/>
+  <rect class="f" x="6" y="18" width="1" height="1"/>
+  <rect class="f" x="15" y="27" width="1" height="1"/>
+  <rect class="f" x="19" y="14" width="1" height="1"/>
+</svg>

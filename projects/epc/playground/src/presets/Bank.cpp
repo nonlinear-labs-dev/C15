@@ -410,32 +410,40 @@ void Bank::updateLastModifiedTimestamp(UNDO::Transaction *transaction)
 Preset *Bank::appendPreset(UNDO::Transaction *transaction)
 {
   updateLastModifiedTimestamp(transaction);
-  return m_presets.append(transaction, std::make_unique<Preset>(this));
+  auto newPreset = m_presets.append(transaction, std::make_unique<Preset>(this));
+  getPresetManager()->onPresetStored();
+  return newPreset;
 }
 
 Preset *Bank::appendPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset)
 {
   updateLastModifiedTimestamp(transaction);
-  return m_presets.append(transaction, std::move(preset));
+  auto newPreset = m_presets.append(transaction, std::move(preset));
+  getPresetManager()->onPresetStored();
+  return newPreset;
 }
 
 Preset *Bank::appendAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset)
 {
   auto newPreset = appendPreset(transaction, std::move(preset));
-  getEditBuffer()->undoableLoad(transaction, newPreset);
+  getEditBuffer()->undoableLoad(transaction, newPreset, false);
+  getPresetManager()->onPresetStored();
   return newPreset;
 }
 
 Preset *Bank::prependPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset)
 {
   updateLastModifiedTimestamp(transaction);
-  return m_presets.prepend(transaction, std::move(preset));
+  auto newPreset = m_presets.prepend(transaction, std::move(preset));
+  getPresetManager()->onPresetStored();
+  return newPreset;
 }
 
 Preset *Bank::prependAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset)
 {
   auto newPreset = prependPreset(transaction, std::move(preset));
-  getEditBuffer()->undoableLoad(transaction, newPreset);
+  getEditBuffer()->undoableLoad(transaction, newPreset, false);
+  getPresetManager()->onPresetStored();
   return newPreset;
 }
 
@@ -448,7 +456,8 @@ Preset *Bank::insertPreset(UNDO::Transaction *transaction, size_t pos, std::uniq
 Preset *Bank::insertAndLoadPreset(UNDO::Transaction *transaction, size_t pos, std::unique_ptr<Preset> preset)
 {
   auto newPreset = insertPreset(transaction, pos, std::move(preset));
-  getEditBuffer()->undoableLoad(transaction, newPreset);
+  getEditBuffer()->undoableLoad(transaction, newPreset, false);
+  getPresetManager()->onPresetStored();
   return newPreset;
 }
 
@@ -485,6 +494,11 @@ void Bank::deletePreset(UNDO::Transaction *transaction, const Uuid &uuid)
 sigc::connection Bank::onBankChanged(sigc::slot<void> cb)
 {
   return m_sigBankChanged.connectAndInit(cb);
+}
+
+PresetManager *Bank::getPresetManager() const
+{
+  return static_cast<PresetManager *>(getParent());
 }
 
 void Bank::writeDocument(Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const

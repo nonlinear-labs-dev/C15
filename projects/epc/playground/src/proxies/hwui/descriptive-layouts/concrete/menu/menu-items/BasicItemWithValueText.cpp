@@ -13,8 +13,8 @@ BasicItemWithValueText::BasicItemWithValueText(const Glib::ustring &label, const
   rightHalf.setTop(r.getTop() + 1);
   rightHalf.setWidth(labelWidth);
   rightHalf.setLeft(r.getLeft() + labelWidth + indicationWidth);
-  addControl(new CaptionLabel<LeftAligned9pxCaptionLabel>(value, rightHalf, true, false));
+  m_valueLabel = addControl(new CaptionLabel<LeftAligned9pxCaptionLabel>(value, rightHalf, true, false));
 
   auto indicationPos = Rect { rightHalf.getRight(), rightHalf.getTop(), indicationWidth, rightHalf.getHeight() - 1 };
-  addControl(new Label("...", indicationPos));
+  m_enterLabel = addControl(new Label("...", indicationPos));
 }

@@ -2,6 +2,7 @@
 
 #include "MidiOutput.h"
 #include <alsa/asoundlib.h>
+#include <string>
 
 class AlsaMidiOutput : public MidiOutput
 {

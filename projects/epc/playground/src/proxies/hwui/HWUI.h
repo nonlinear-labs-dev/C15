@@ -57,6 +57,7 @@ class HWUI
   void setCurrentVoiceGroup(VoiceGroup v);
   void setCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *transaction, VoiceGroup v);
 
+  void toggleCurrentVoiceGroupAndUpdateParameterSelection();
   void toggleCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction *transaction);
   void toggleCurrentVoiceGroup();
 

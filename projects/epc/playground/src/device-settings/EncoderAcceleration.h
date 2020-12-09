@@ -26,5 +26,5 @@ class EncoderAcceleration : public Setting
  private:
   QuantizedValue m_acceleration;
 
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 };

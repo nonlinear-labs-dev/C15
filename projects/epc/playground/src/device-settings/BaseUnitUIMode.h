@@ -19,7 +19,7 @@ class BaseUnitUIMode : public EnumSetting<BaseUnitUIModes>
   explicit BaseUnitUIMode(Settings &settings);
   ~BaseUnitUIMode() override;
 
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
  private:
   BaseUnitUIMode(const BaseUnitUIMode &other);

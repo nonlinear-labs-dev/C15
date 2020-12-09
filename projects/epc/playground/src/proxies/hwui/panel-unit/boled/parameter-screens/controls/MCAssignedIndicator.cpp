@@ -7,40 +7,37 @@
 #include <Application.h>
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
+#include <proxies/hwui/HWUI.h>
 
 MCAssignedIndicator::MCAssignedIndicator(const Rect& r, const Parameter* p)
     : ControlWithChildren(r)
     , m_parameter { dynamic_cast<const MacroControlParameter*>(p) }
 {
   auto pos = r;
-  pos.setWidth(25);
+  pos.setWidth(40);
   pos.setLeft(r.getLeft());
+  pos.setTop(pos.getTop() + 9);
   pos.setHeight(8);
 
-  auto offset = 0;
-
-  m_topRowLabel = addControl(new LabelRegular8(pos));
   m_middleRowLabel = addControl(new LabelRegular8(pos));
-  m_bottomRowLabel = addControl(new LabelRegular8(pos));
+  m_middleRowLabel->setJustification(Font::Justification::Right);
 
-  for(auto l : { m_topRowLabel, m_middleRowLabel, m_bottomRowLabel })
-  {
-    pos.setTop(r.getTop() + offset);
-    l->setPosition(pos);
-    l->setJustification(Font::Justification::Right);
-    offset += 8;
-  }
+  Application::get().getHWUI()->onCurrentVoiceGroupChanged(
+      sigc::mem_fun(this, &MCAssignedIndicator::onVoiceGroupChanged));
 }
 
 bool MCAssignedIndicator::redraw(FrameBuffer& fb)
 {
-  if(m_parameter && m_parameter->getTargets().empty())
+  if(m_parameter)
   {
     drawBackground(fb);
-    return false;
   }
 
-  drawNonLEDTargets(fb);
+  if(!m_parameter->getTargets().empty())
+  {
+    drawNonLEDTargets(fb);
+  }
+
   return true;
 }
 
@@ -82,9 +79,6 @@ void MCAssignedIndicator::drawSingle(FrameBuffer& fb, const AffectedGroups& mods
   if(mods.master)
     indicator += "M ";
 
-  if(!indicator.empty())
-    indicator.pop_back();
-
   m_middleRowLabel->setText({ indicator, 0 });
   m_middleRowLabel->redraw(fb);
 
@@ -96,51 +90,27 @@ void MCAssignedIndicator::drawSingle(FrameBuffer& fb, const AffectedGroups& mods
 
 void MCAssignedIndicator::drawSplit(FrameBuffer& fb, const AffectedGroups& mods)
 {
-  std::string globalIndicator;
-  std::string partIIndicator;
-  std::string partIIIndicator;
+  std::string text;
 
-  if(mods.mono[0])
-    partIIndicator += "\uE040 ";
+  int partIdx = mods.currentHWUIVG == VoiceGroup::I ? 0 : 1;
 
-  if(mods.mono[1])
-    partIIIndicator += "\uE040 ";
+  if(mods.part[partIdx])
+    text += "P ";
 
-  if(mods.unison[0])
-    partIIndicator += "\uE041 ";
+  if(mods.mono[partIdx])
+    text += "\uE040 ";
 
-  if(mods.unison[1])
-    partIIIndicator += "\uE041 ";
+  if(mods.unison[partIdx])
+    text += "\uE041 ";
 
   if(mods.scale)
-    globalIndicator += "S ";
+    text += "S ";
 
   if(mods.master)
-    globalIndicator += "M ";
+    text += "M ";
 
-  if(mods.part[0])
-    partIIndicator += "P ";
-
-  if(mods.part[1])
-    partIIIndicator += "P ";
-
-  if(!partIIndicator.empty())
-    partIIndicator.pop_back();
-
-  if(!partIIIndicator.empty())
-    partIIIndicator.pop_back();
-
-  if(!globalIndicator.empty())
-    globalIndicator.pop_back();
-
-  m_topRowLabel->setText({ partIIndicator, 0 });
-  m_topRowLabel->redraw(fb);
-
-  m_middleRowLabel->setText({ globalIndicator, 0 });
+  m_middleRowLabel->setText({ text, 0 });
   m_middleRowLabel->redraw(fb);
-
-  m_bottomRowLabel->setText({ partIIIndicator, 0 });
-  m_bottomRowLabel->redraw(fb);
 
   if(mods.affected(SoundType::Split))
   {
@@ -148,9 +118,19 @@ void MCAssignedIndicator::drawSplit(FrameBuffer& fb, const AffectedGroups& mods)
   }
 }
 
+void MCAssignedIndicator::drawBackground(FrameBuffer& fb)
+{
+  fb.setColor(FrameBufferColors::C43);
+  fb.fillRect(getPosition());
+}
+
 void MCAssignedIndicator::drawLayer(FrameBuffer& fb, const AffectedGroups& mods)
 {
   std::string indicaton;
+  int idx = mods.currentHWUIVG == VoiceGroup::I ? 0 : 1;
+
+  if(mods.part[idx])
+    indicaton += "P ";
 
   if(mods.mono[0])
     indicaton += "\uE040 ";
@@ -163,21 +143,6 @@ void MCAssignedIndicator::drawLayer(FrameBuffer& fb, const AffectedGroups& mods)
 
   if(mods.master)
     indicaton += "M ";
-
-  if(mods.part[0])
-  {
-    m_topRowLabel->setText({ "P", 0 });
-    m_topRowLabel->redraw(fb);
-  }
-
-  if(mods.part[1])
-  {
-    m_bottomRowLabel->setText({ "P", 0 });
-    m_bottomRowLabel->redraw(fb);
-  }
-
-  if(!indicaton.empty())
-    indicaton.pop_back();
 
   m_middleRowLabel->setText({ indicaton, 0 });
   m_middleRowLabel->redraw(fb);
@@ -194,13 +159,12 @@ void MCAssignedIndicator::drawNonLEDTargets(FrameBuffer& fb)
 
   AffectedGroups mods {};
 
+  mods.currentHWUIVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+
   auto color = isHighlight() ? FrameBufferColors::C128 : FrameBufferColors::C204;
 
-  for(auto l : { m_topRowLabel, m_middleRowLabel, m_bottomRowLabel })
-  {
-    l->setText({ "", 0 });
-    l->setFontColor(color);
-  }
+  m_middleRowLabel->setText({ "", 0 });
+  m_middleRowLabel->setFontColor(color);
 
   for(auto& t : targets)
   {
@@ -210,10 +174,11 @@ void MCAssignedIndicator::drawNonLEDTargets(FrameBuffer& fb)
 
     if(t->getID().getVoiceGroup() != VoiceGroup::Global)
     {
-      auto index = static_cast<int>(t->getID().getVoiceGroup());
+      auto index = t->getID().getVoiceGroup() == VoiceGroup::I ? 0 : 1;
       mods.unison.at(index) |= groupName == "Unison";
       mods.mono.at(index) |= groupName == "Mono";
       mods.part.at(index) |= groupName == "Part";
+      mods.part.at(index) |= groupName == "Split";
     }
   }
 
@@ -225,8 +190,14 @@ void MCAssignedIndicator::drawNonLEDTargets(FrameBuffer& fb)
     case SoundType::Layer:
       drawLayer(fb, mods);
       break;
+    default:
     case SoundType::Single:
       drawSingle(fb, mods);
       break;
   }
+}
+
+void MCAssignedIndicator::onVoiceGroupChanged(VoiceGroup vg)
+{
+  setDirty();
 }

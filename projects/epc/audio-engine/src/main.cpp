@@ -1,5 +1,4 @@
 #include "AudioEngineOptions.h"
-#include "synth/SimpleSynth.h"
 #include "synth/C15Synth.h"
 #include "synth/CPUBurningSynth.h"
 #include "ui/CommandlinePerformanceWatch.h"
@@ -55,7 +54,7 @@ void setupMessaging(const AudioEngineOptions *o)
   nltools::msg::init(conf);
 }
 
-std::unique_ptr<Synth> createSynth(const AudioEngineOptions *options)
+std::unique_ptr<Synth> createSynth(AudioEngineOptions *options)
 {
   if(options->getNumCpuBurningSines())
     return std::make_unique<CPUBurningSynth>(options);
@@ -75,6 +74,9 @@ int main(int args, char *argv[])
 {
   Glib::init();
   connectSignals();
+
+  testParallelData();
+
   theOptions = std::make_unique<AudioEngineOptions>(args, argv);
   setupMessaging(theOptions.get());
 

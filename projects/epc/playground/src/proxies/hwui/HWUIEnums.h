@@ -100,9 +100,9 @@ struct FocusAndMode
       detail = other.detail;
   }
 
-  UIFocus focus;
-  UIMode mode;
-  UIDetail detail;
+  UIFocus focus = UIFocus::Unchanged;
+  UIMode mode = UIMode::Unchanged;
+  UIDetail detail = UIDetail::Unchanged;
 
   std::string toString()
   {

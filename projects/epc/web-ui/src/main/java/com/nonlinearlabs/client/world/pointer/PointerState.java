@@ -140,6 +140,10 @@ public class PointerState {
 		setGesture(new Identity());
 	}
 
+	public void removeReceiver() {
+		resetReceiver();
+	}
+
 	private void resetReceiver() {
 		if (currentReceiver != null)
 			currentReceiver.gestureFocusLost();

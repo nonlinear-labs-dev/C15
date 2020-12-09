@@ -29,11 +29,6 @@ namespace Engine
    private:
     PolyValue m_hp30hz_stateVar_L = {}, m_hp30hz_stateVar_R = {};
     float m_hp30hz_b0 = 0.0f;
-#if POTENTIAL_IMPROVEMENT_OUTMIX_SIMPLE_HP == __POTENTIAL_IMPROVEMENT_DISABLED__
-    float m_hp_b0 = 0.0f, m_hp_b1 = 0.0f, m_hp_a1 = 0.0f, m_hp_stateVar_L1 = 0.0f, m_hp_stateVar_R1 = 0.0f,
-          m_hp_stateVar_L2 = 0.0f, m_hp_stateVar_R2 = 0.0f;
-#elif POTENTIAL_IMPROVEMENT_OUTMIX_SIMPLE_HP == __POTENTIAL_IMPROVEMENT_ENABLED__
     float m_hp_b0 = 0.0f, m_hp_stateVar_L = 0.0f, m_hp_stateVar_R = 0.0f;
-#endif
   };
 }  // namespace Engine

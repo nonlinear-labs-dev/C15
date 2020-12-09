@@ -6,6 +6,8 @@
 #include <giomm.h>
 #include <nltools/ErrorCodes.h>
 
+bool Options::s_acceptanceTests = false;
+
 Options::Options(int &argc, char **&argv)
 {
   setDefaults();
@@ -32,6 +34,12 @@ Options::Options(int &argc, char **&argv)
   bbbb.set_short_name('b');
   bbbb.set_description("Where to find the bbbb");
   mainGroup.add_entry(bbbb, m_bbbb);
+
+  Glib::OptionEntry midiBridge;
+  midiBridge.set_long_name("midi-bridge");
+  midiBridge.set_short_name('m');
+  midiBridge.set_description("Where to find the Midi Bridge");
+  mainGroup.add_entry(midiBridge, m_midiBridge);
 
   Glib::OptionEntry ae;
   ae.set_long_name("audio-engine-host");
@@ -136,6 +144,11 @@ const Glib::ustring &Options::getBBBB() const
 const Glib::ustring &Options::getAudioEngineHost() const
 {
   return m_audioEngineHost;
+}
+
+const Glib::ustring &Options::getMidiBridge() const
+{
+  return m_midiBridge;
 }
 
 const Glib::ustring &Options::getSettingsFile() const

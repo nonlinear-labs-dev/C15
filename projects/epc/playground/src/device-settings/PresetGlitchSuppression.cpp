@@ -13,7 +13,7 @@ PresetGlitchSuppression::~PresetGlitchSuppression()
 {
 }
 
-void PresetGlitchSuppression::sendToPlaycontroller(SendReason reason) const
+void PresetGlitchSuppression::syncExternals(SendReason reason) const
 {
   nltools::msg::Setting::PresetGlitchMessage msg { get() };
   Application::get().getAudioEngineProxy()->sendSettingMessage<nltools::msg::Setting::PresetGlitchMessage>(msg);

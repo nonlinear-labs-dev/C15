@@ -34,7 +34,7 @@ TEST_CASE("Store Presets With Part Names", "[Preset][Store]")
       CHECK(singlePreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(singlePreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, singlePreset);
+      eb->undoableLoad(trans, singlePreset, true);
 
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
@@ -46,7 +46,7 @@ TEST_CASE("Store Presets With Part Names", "[Preset][Store]")
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, storedPreset);
+      eb->undoableLoad(trans, storedPreset, true);
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
     }
@@ -57,7 +57,7 @@ TEST_CASE("Store Presets With Part Names", "[Preset][Store]")
       CHECK(layerPreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(layerPreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, layerPreset);
+      eb->undoableLoad(trans, layerPreset, true);
 
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
@@ -69,7 +69,7 @@ TEST_CASE("Store Presets With Part Names", "[Preset][Store]")
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, storedPreset);
+      eb->undoableLoad(trans, storedPreset, true);
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
     }

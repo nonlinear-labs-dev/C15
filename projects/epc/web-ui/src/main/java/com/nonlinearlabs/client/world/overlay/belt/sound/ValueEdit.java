@@ -2,6 +2,7 @@ package com.nonlinearlabs.client.world.overlay.belt.sound;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
+import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.presenters.ParameterPresenter;
 import com.nonlinearlabs.client.presenters.ParameterPresenterProviders;
@@ -71,10 +72,12 @@ public class ValueEdit extends OverlayLayout {
 
 		@Override
 		public Control click(Position eventPoint) {
+			boolean fine = NonMaps.get().getNonLinearWorld().isShiftDown();
+
 			if (isLeft) {
-				EditBufferUseCases.get().decParameter(parameter, false);
+				EditBufferUseCases.get().decParameter(parameter, fine);
 			} else {
-				EditBufferUseCases.get().incParameter(parameter, false);
+				EditBufferUseCases.get().incParameter(parameter, fine);
 			}
 			return this;
 		}

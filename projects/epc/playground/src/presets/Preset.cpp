@@ -44,6 +44,15 @@ Preset::Preset(UpdateDocumentContributor *parent, const EditBuffer &editBuffer, 
     m_uuid.generate();
 }
 
+Preset::Preset(UpdateDocumentContributor *parent, const EditBuffer &editBuffer, Uuid uuid)
+    : super(parent, editBuffer)
+{
+  m_name = editBuffer.getName();
+  m_voiceGroupLabels[0] = editBuffer.getVoiceGroupName(VoiceGroup::I);
+  m_voiceGroupLabels[1] = editBuffer.getVoiceGroupName(VoiceGroup::II);
+  m_uuid = uuid;
+}
+
 Preset::~Preset()
 {
   if(auto pm = dynamic_cast<PresetManager *>(getParent()))

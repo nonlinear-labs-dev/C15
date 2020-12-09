@@ -2,8 +2,8 @@
 
 /******************************************************************************/
 /** @file       parameter_info.h
-    @date       2020-10-07, 13:22
-    @version	1.7B-7
+    @date       2020-12-05, 14:53
+    @version    1.7B-8
     @author     M. Seeber
     @brief      parameter-related details outside of the parameter definition
     @todo

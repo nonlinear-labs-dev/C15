@@ -3,6 +3,7 @@
 #include <nltools/messaging/Message.h>
 #include <parameters/messaging/ParameterMessageFactory.h>
 #include <groups/MonoGroup.h>
+#include <tools/RecursionGuard.h>
 #include "playground.h"
 
 namespace UNDO
@@ -43,7 +44,7 @@ class AudioEngineProxy : public sigc::trackable
   void sendEditBuffer();
 
   void freezeParameterMessages();
-  void thawParameterMessages();
+  void thawParameterMessages(bool send);
 
   static nltools::msg::LayerPresetMessage createLayerEditBufferMessage(const EditBuffer& eb);
   static nltools::msg::SplitPresetMessage createSplitEditBufferMessage(const EditBuffer& eb);
@@ -58,4 +59,5 @@ class AudioEngineProxy : public sigc::trackable
 
   uint m_suppressParamChanges = 0;
   sigc::connection m_presetSelectionConnection;
+  RecursionGuard m_programChangeRecursion;
 };

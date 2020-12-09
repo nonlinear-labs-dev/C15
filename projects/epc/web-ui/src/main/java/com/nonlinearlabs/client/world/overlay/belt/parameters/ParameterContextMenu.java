@@ -28,7 +28,7 @@ public class ParameterContextMenu extends ContextMenu {
 
 		if(param.getParameterNumber() == 356) {
 			boolean state = SetupModel.get().systemSettings.syncSplit.getBool();
-			addChild(new ContextMenuItem(this, state ? "Disable Sync" : "Enable Sync") {
+			addChild(new ContextMenuItem(this, state ? "Unlink Splitpoints" : "Link Splitpoints") {
 				@Override
 				public Control click(Position eventPoint) {
 					EditBufferUseCases.get().toggleSyncSplit();

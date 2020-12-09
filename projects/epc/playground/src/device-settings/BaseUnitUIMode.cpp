@@ -25,7 +25,7 @@ const std::vector<Glib::ustring> &BaseUnitUIMode::enumToDisplayString() const
   return s_modeNames;
 }
 
-void BaseUnitUIMode::sendToPlaycontroller(SendReason reason) const
+void BaseUnitUIMode::syncExternals(SendReason reason) const
 {
   auto m = get();
   if(m != BaseUnitUIModes::ParameterEdit)

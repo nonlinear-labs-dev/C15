@@ -56,7 +56,7 @@ void TuneReference::writeDocument(Writer& writer, tUpdateID knownRevision) const
   }
 }
 
-void TuneReference::sendToPlaycontroller(SendReason reason) const
+void TuneReference::syncExternals(SendReason reason) const
 {
   nltools::msg::Setting::TuneReference msg { m_value.getRawValue() };
   Application::get().getAudioEngineProxy()->sendSettingMessage<nltools::msg::Setting::TuneReference>(msg);

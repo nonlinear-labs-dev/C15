@@ -624,6 +624,11 @@ void ModulateableParameterSelectLayout2::cleanMode()
   }
 }
 
+ModulateableParameterSelectLayout2::Mode ModulateableParameterSelectLayout2::getMode() const
+{
+  return m_mode;
+}
+
 ModulateableParameterEditLayout2::ModulateableParameterEditLayout2()
     : super1()
     , super2()

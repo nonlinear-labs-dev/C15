@@ -190,17 +190,10 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_hp_b0 * m_hp_stateVar_L2;
   tmpVar += m_hp_a1 * m_hp_stateVar_L3;
   tmpVar += m_hp_a2 * m_hp_stateVar_L4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_hp_stateVar_L2 = m_hp_stateVar_L1;
   m_hp_stateVar_L1 = sample_L;
   m_hp_stateVar_L4 = m_hp_stateVar_L3;
   m_hp_stateVar_L3 = tmpVar;
-#else
-  m_hp_stateVar_L2 = m_hp_stateVar_L1 + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_L1 = sample_L + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_L4 = m_hp_stateVar_L3 + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_L3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_L = tmpVar;
   // biquad hp r
   tmpVar = m_hp_b0 * sample_R;
@@ -208,17 +201,10 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_hp_b0 * m_hp_stateVar_R2;
   tmpVar += m_hp_a1 * m_hp_stateVar_R3;
   tmpVar += m_hp_a2 * m_hp_stateVar_R4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_hp_stateVar_R2 = m_hp_stateVar_R1;
   m_hp_stateVar_R1 = sample_R;
   m_hp_stateVar_R4 = m_hp_stateVar_R3;
   m_hp_stateVar_R3 = tmpVar;
-#else
-  m_hp_stateVar_R2 = m_hp_stateVar_R1 + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_R1 = sample_R + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_R4 = m_hp_stateVar_R3 + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_R3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_R = tmpVar;
   // tilt lowshelf l1
   tmpVar = m_ls1_b0 * sample_L;
@@ -226,17 +212,10 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_ls1_b2 * m_ls1_StateVar_L2;
   tmpVar += m_ls1_a1 * m_ls1_StateVar_L3;
   tmpVar += m_ls1_a2 * m_ls1_StateVar_L4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ls1_StateVar_L2 = m_ls1_stateVar_L1;
   m_ls1_stateVar_L1 = sample_L;
   m_ls1_StateVar_L4 = m_ls1_StateVar_L3;
   m_ls1_StateVar_L3 = tmpVar;
-#else
-  m_ls1_StateVar_L2 = m_ls1_stateVar_L1 + NlToolbox::Constants::DNC_const;
-  m_ls1_stateVar_L1 = sample_L + NlToolbox::Constants::DNC_const;
-  m_ls1_StateVar_L4 = m_ls1_StateVar_L3 + NlToolbox::Constants::DNC_const;
-  m_ls1_StateVar_L3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_L = tmpVar;
   // tilt lowshelf r1
   tmpVar = m_ls1_b0 * sample_R;
@@ -244,17 +223,10 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_ls1_b2 * m_ls1_stateVar_R2;
   tmpVar += m_ls1_a1 * m_ls1_stateVar_R3;
   tmpVar += m_ls1_a2 * m_ls1_stateVar_R4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ls1_stateVar_R2 = m_ls1_stateVar_R1;
   m_ls1_stateVar_R1 = sample_R;
   m_ls1_stateVar_R4 = m_ls1_stateVar_R3;
   m_ls1_stateVar_R3 = tmpVar;
-#else
-  m_ls1_stateVar_R2 = m_ls1_stateVar_R1 + NlToolbox::Constants::DNC_const;
-  m_ls1_stateVar_R1 = sample_R + NlToolbox::Constants::DNC_const;
-  m_ls1_stateVar_R4 = m_ls1_stateVar_R3 + NlToolbox::Constants::DNC_const;
-  m_ls1_stateVar_R3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_R = tmpVar;
   // shaper l
   sample_L *= _signals.get(C15::Signals::Mono_Signals::Cabinet_Pre_Sat);
@@ -262,11 +234,7 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   sample_L = NlToolbox::Math::sinP3_wrap(sample_L);
   sample_L = NlToolbox::Others::threeRanges(sample_L, tmpVar, _signals.get(C15::Signals::Mono_Signals::Cabinet_Fold));
   tmpVar = sample_L * sample_L - m_hp30_stateVar_L;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_hp30_stateVar_L = tmpVar * m_hp30_b0 + m_hp30_stateVar_L;
-#else
-  m_hp30_stateVar_L = tmpVar * m_hp30_b0 + m_hp30_stateVar_L + NlToolbox::Constants::DNC_const;
-#endif
   sample_L = NlToolbox::Others::parAsym(sample_L, tmpVar, _signals.get(C15::Signals::Mono_Signals::Cabinet_Asym));
   sample_L *= _signals.get(C15::Signals::Mono_Signals::Cabinet_Sat);
   // shaper r
@@ -275,11 +243,7 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   sample_R = NlToolbox::Math::sinP3_wrap(sample_R);
   sample_R = NlToolbox::Others::threeRanges(sample_R, tmpVar, _signals.get(C15::Signals::Mono_Signals::Cabinet_Fold));
   tmpVar = sample_R * sample_R - m_hp30_stateVar_R;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_hp30_stateVar_R = tmpVar * m_hp30_b0 + m_hp30_stateVar_R;
-#else
-  m_hp30_stateVar_R = tmpVar * m_hp30_b0 + m_hp30_stateVar_R + NlToolbox::Constants::DNC_const;
-#endif
   sample_R = NlToolbox::Others::parAsym(sample_R, tmpVar, _signals.get(C15::Signals::Mono_Signals::Cabinet_Asym));
   sample_R *= _signals.get(C15::Signals::Mono_Signals::Cabinet_Sat);
   // tilt lowshelf l2
@@ -288,17 +252,10 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_ls2_b2 * m_ls2_StateVar_L2;
   tmpVar += m_ls2_a1 * m_ls2_StateVar_L3;
   tmpVar += m_ls2_a2 * m_ls2_StateVar_L4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ls2_StateVar_L2 = m_ls2_stateVar_L1;
   m_ls2_stateVar_L1 = sample_L;
   m_ls2_StateVar_L4 = m_ls2_StateVar_L3;
   m_ls2_StateVar_L3 = tmpVar;
-#else
-  m_ls2_StateVar_L2 = m_ls2_stateVar_L1 + NlToolbox::Constants::DNC_const;
-  m_ls2_stateVar_L1 = sample_L + NlToolbox::Constants::DNC_const;
-  m_ls2_StateVar_L4 = m_ls2_StateVar_L3 + NlToolbox::Constants::DNC_const;
-  m_ls2_StateVar_L3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_L = tmpVar;
   // tilt lowshelf r2
   tmpVar = m_ls2_b0 * sample_R;
@@ -306,17 +263,10 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_ls2_b2 * m_ls2_stateVar_R2;
   tmpVar += m_ls2_a1 * m_ls2_stateVar_R3;
   tmpVar += m_ls2_a2 * m_ls2_stateVar_R4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ls2_stateVar_R2 = m_ls2_stateVar_R1;
   m_ls2_stateVar_R1 = sample_R;
   m_ls2_stateVar_R4 = m_ls2_stateVar_R3;
   m_ls2_stateVar_R3 = tmpVar;
-#else
-  m_ls2_stateVar_R2 = m_ls2_stateVar_R1 + NlToolbox::Constants::DNC_const;
-  m_ls2_stateVar_R1 = sample_R + NlToolbox::Constants::DNC_const;
-  m_ls2_stateVar_R4 = m_ls2_stateVar_R3 + NlToolbox::Constants::DNC_const;
-  m_ls2_stateVar_R3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_R = tmpVar;
   // 2x biquad lp l
   tmpVar = m_lp1_b0 * sample_L;
@@ -324,34 +274,20 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_lp1_b0 * m_lp1_stateVar_L2;
   tmpVar += m_lp1_a1 * m_lp1_stateVar_L3;
   tmpVar += m_lp1_a2 * m_lp1_stateVar_L4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp1_stateVar_L2 = m_lp1_stateVar_L1;
   m_lp1_stateVar_L1 = sample_L;
   m_lp1_stateVar_L4 = m_lp1_stateVar_L3;
   m_lp1_stateVar_L3 = tmpVar;
-#else
-  m_lp1_stateVar_L2 = m_lp1_stateVar_L1 + NlToolbox::Constants::DNC_const;
-  m_lp1_stateVar_L1 = sample_L + NlToolbox::Constants::DNC_const;
-  m_lp1_stateVar_L4 = m_lp1_stateVar_L3 + NlToolbox::Constants::DNC_const;
-  m_lp1_stateVar_L3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_L = tmpVar;
   tmpVar = m_lp2_b0 * sample_L;
   tmpVar += m_lp2_b1 * m_lp2_stateVar_L1;
   tmpVar += m_lp2_b0 * m_lp2_stateVar_L2;
   tmpVar += m_lp2_a1 * m_lp2_stateVar_L3;
   tmpVar += m_lp2_a2 * m_lp2_stateVar_L4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp2_stateVar_L2 = m_lp2_stateVar_L1;
   m_lp2_stateVar_L1 = sample_L;
   m_lp2_stateVar_L4 = m_lp2_stateVar_L3;
   m_lp2_stateVar_L3 = tmpVar;
-#else
-  m_lp2_stateVar_L2 = m_lp2_stateVar_L1 + NlToolbox::Constants::DNC_const;
-  m_lp2_stateVar_L1 = sample_L + NlToolbox::Constants::DNC_const;
-  m_lp2_stateVar_L4 = m_lp2_stateVar_L3 + NlToolbox::Constants::DNC_const;
-  m_lp2_stateVar_L3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_L = tmpVar;
   // 2x biquad lp r
   tmpVar = m_lp1_b0 * sample_R;
@@ -359,34 +295,20 @@ void Engine::MonoCabinet::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar += m_lp1_b0 * m_lp1_stateVar_R2;
   tmpVar += m_lp1_a1 * m_lp1_stateVar_R3;
   tmpVar += m_lp1_a2 * m_lp1_stateVar_R4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp1_stateVar_R2 = m_lp1_stateVar_R1;
   m_lp1_stateVar_R1 = sample_R;
   m_lp1_stateVar_R4 = m_lp1_stateVar_R3;
   m_lp1_stateVar_R3 = tmpVar;
-#else
-  m_lp1_stateVar_R2 = m_lp1_stateVar_R1 + NlToolbox::Constants::DNC_const;
-  m_lp1_stateVar_R1 = sample_R + NlToolbox::Constants::DNC_const;
-  m_lp1_stateVar_R4 = m_lp1_stateVar_R3 + NlToolbox::Constants::DNC_const;
-  m_lp1_stateVar_R3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_R = tmpVar;
   tmpVar = m_lp2_b0 * sample_R;
   tmpVar += m_lp2_b1 * m_lp2_stateVar_R1;
   tmpVar += m_lp2_b0 * m_lp2_stateVar_R2;
   tmpVar += m_lp2_a1 * m_lp2_stateVar_R3;
   tmpVar += m_lp2_a2 * m_lp2_stateVar_R4;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp2_stateVar_R2 = m_lp2_stateVar_R1;
   m_lp2_stateVar_R1 = sample_R;
   m_lp2_stateVar_R4 = m_lp2_stateVar_R3;
   m_lp2_stateVar_R3 = tmpVar;
-#else
-  m_lp2_stateVar_R2 = m_lp2_stateVar_R1 + NlToolbox::Constants::DNC_const;
-  m_lp2_stateVar_R1 = sample_R + NlToolbox::Constants::DNC_const;
-  m_lp2_stateVar_R4 = m_lp2_stateVar_R3 + NlToolbox::Constants::DNC_const;
-  m_lp2_stateVar_R3 = tmpVar + NlToolbox::Constants::DNC_const;
-#endif
   sample_R = tmpVar;
   // crossfades
   m_out_L

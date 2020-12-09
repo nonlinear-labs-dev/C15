@@ -28,7 +28,7 @@ class EditSmoothingTime : public Setting
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
  private:
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
   QuantizedValue m_time;
 };

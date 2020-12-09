@@ -22,16 +22,12 @@ template <size_t Size> class ProtoSmoother
 {
  public:
   // smoothed value
-#if POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_MINMAX_FLOAT
   static constexpr size_t ParallelData_Padding(const size_t& _size)
   {
     return _size % 4 > 0 ? _size + 4 - (_size % 4) : _size;
     // - pad arbitrary ParallelData sizes (they have to equal multiples of four)
   }
   ParallelData<float, ParallelData_Padding(Size)> m_value{ 0.0f };
-#else
-  ParallelData<float, Size> m_value{ 0.0f };
-#endif
 
   // starting a segment (_dx: converted time, _dest: destination)
   inline void start(int idx, const float _dx, const float _dest)
@@ -64,19 +60,11 @@ template <size_t Size> class ProtoSmoother
   }
 
  private:
-#if POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_MINMAX_FLOAT
   // segment-specific private variables
   ParallelData<float, ParallelData_Padding(Size)> m_start{ 0.0f };
   ParallelData<float, ParallelData_Padding(Size)> m_diff{ 0.0f };
   ParallelData<float, ParallelData_Padding(Size)> m_x{ 0.0f };
   ParallelData<float, ParallelData_Padding(Size)> m_dx{ 0.0f };
-#else
-  // segment-specific private variables
-  ParallelData<float, Size> m_start{ 0.0f };
-  ParallelData<float, Size> m_diff{ 0.0f };
-  ParallelData<float, Size> m_x{ 0.0f };
-  ParallelData<float, Size> m_dx{ 0.0f };
-#endif
 };
 
 // smoother copy handle (for parameter smoothers that directly translate to signals)

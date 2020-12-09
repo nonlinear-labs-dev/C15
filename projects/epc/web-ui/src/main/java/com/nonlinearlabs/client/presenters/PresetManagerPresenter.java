@@ -43,6 +43,8 @@ public class PresetManagerPresenter {
 
 		if (EditBufferModel.get().loadedPreset.getValue().equals("Init")) {
 			ret = "Init";
+		} else if(EditBufferModel.get().loadedPreset.getValue().equals("Converted")) {
+			ret = "Converted";
 		} else if (bank == null && preset == null) {
 			ret = "";
 		} else if (bank != null && preset != null) {

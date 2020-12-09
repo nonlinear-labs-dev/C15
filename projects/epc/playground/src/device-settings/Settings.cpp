@@ -47,6 +47,7 @@
 #include "UsedRAM.h"
 #include "SyncVoiceGroupsAcrossUIS.h"
 #include "SplitPointSyncParameters.h"
+#include "ExternalMidiEnabledSetting.h"
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameter_declarations.h>
@@ -98,6 +99,7 @@ Settings::Settings(UpdateDocumentMaster *master)
   addSetting("SyncVoiceGroups", new SyncVoiceGroupsAcrossUIS(*this));
   addSetting("ScreenSaverTimeout", new ScreenSaverTimeoutSetting(*this));
   addSetting("SyncSplit", new SplitPointSyncParameters(*this));
+  addSetting("ExternalMidi", new ExternalMidiEnabledSetting(*this));
 }
 
 Settings::~Settings()
@@ -237,24 +239,24 @@ void Settings::sendSettingsToPlaycontroller(SendReason reason)
 
 void Settings::sendGlobalPlaycontrollerInitSettings()
 {
-  getSetting<BaseUnitUIMode>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<RibbonRelativeFactor>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<ParameterEditModeRibbonBehaviour>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<VelocityCurve>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<AftertouchCurve>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<BenderCurve>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting("Pedal1Type")->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting("Pedal2Type")->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting("Pedal3Type")->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting("Pedal4Type")->sendToPlaycontroller(SendReason::HeartBeatDropped);
+  getSetting<BaseUnitUIMode>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<RibbonRelativeFactor>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<ParameterEditModeRibbonBehaviour>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<VelocityCurve>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<AftertouchCurve>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<BenderCurve>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting("Pedal1Type")->syncExternals(SendReason::HeartBeatDropped);
+  getSetting("Pedal2Type")->syncExternals(SendReason::HeartBeatDropped);
+  getSetting("Pedal3Type")->syncExternals(SendReason::HeartBeatDropped);
+  getSetting("Pedal4Type")->syncExternals(SendReason::HeartBeatDropped);
 }
 
 void Settings::sendGlobalAESettings()
 {
-  getSetting<PresetGlitchSuppression>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<TransitionTime>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<NoteShift>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
-  getSetting<TuneReference>()->sendToPlaycontroller(SendReason::HeartBeatDropped);
+  getSetting<PresetGlitchSuppression>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<TransitionTime>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<NoteShift>()->syncExternals(SendReason::HeartBeatDropped);
+  getSetting<TuneReference>()->syncExternals(SendReason::HeartBeatDropped);
 }
 
 void Settings::sendPresetSettingsToPlaycontroller()

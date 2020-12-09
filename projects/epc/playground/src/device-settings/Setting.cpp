@@ -30,9 +30,9 @@ void Setting::notify()
   super::onChange();
 
   if(static_cast<Settings *>(getParent())->isLoading())
-    sendToPlaycontroller(SendReason::SettingsLoaded);
+    syncExternals(SendReason::SettingsLoaded);
   else
-    sendToPlaycontroller(SendReason::SettingChanged);
+    syncExternals(SendReason::SettingChanged);
 }
 
 void Setting::writeDocument(Writer &writer, tUpdateID knownRevision) const
@@ -41,11 +41,11 @@ void Setting::writeDocument(Writer &writer, tUpdateID knownRevision) const
   writer.writeTextElement("value", save(), Attribute("changed", changed));
 }
 
-void Setting::sendToPlaycontroller(SendReason reason) const
+void Setting::syncExternals(SendReason reason) const
 {
 }
 
 void Setting::setSetting(Initiator initiator, const Glib::ustring &text)
 {
-    load(text, initiator);
+  load(text, initiator);
 }

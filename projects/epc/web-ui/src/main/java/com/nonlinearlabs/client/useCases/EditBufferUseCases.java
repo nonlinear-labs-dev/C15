@@ -537,6 +537,11 @@ public class EditBufferUseCases {
 		}
 	}
 
+	public void setExternalMidiSetting(boolean b) {
+		SetupModel.get().systemSettings.externalMidi.setValue(b);
+		NonMaps.theMaps.getServerProxy().setSetting("ExternalMidi", b ? "on" : "off");
+	}
+
 	public void loadPreset(String uuid) {
 		NonMaps.theMaps.getServerProxy().loadPreset(uuid);
 	}

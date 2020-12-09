@@ -106,4 +106,6 @@ public class FadeEditorPresenter {
             return splitPointTextII;
         }
     }
+
+    public VoiceGroup lastSelectedPart = VoiceGroup.I;
 }

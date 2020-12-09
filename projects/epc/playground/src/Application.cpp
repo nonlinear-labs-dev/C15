@@ -30,10 +30,14 @@ Application *Application::theApp = nullptr;
 
 void setupMessaging(const Options *options)
 {
+  if(Options::s_acceptanceTests)
+    return;
+
   using namespace nltools::msg;
 
   const auto &bbbb = options->getBBBB();
   const auto &ae = options->getAudioEngineHost();
+  const auto &midi = options->getMidiBridge();
 
   Configuration conf;
 #ifdef _DEVELOPMENT_PC
@@ -41,12 +45,14 @@ void setupMessaging(const Options *options)
 #else
   conf.offerEndpoints = { EndPoint::Playground };
 #endif
-  conf.useEndpoints = { { EndPoint::Playcontroller, bbbb }, { EndPoint::Oled, bbbb },
+  conf.useEndpoints = {
+    { EndPoint::Playcontroller, bbbb }, { EndPoint::Oled, bbbb },      { EndPoint::ExternalMidiOverIPBridge, midi },
 #ifdef _DEVELOPMENT_PC
-                        { EndPoint::TestEndPoint },
+    { EndPoint::TestEndPoint },
 #endif
-                        { EndPoint::PanelLed, bbbb },       { EndPoint::RibbonLed, bbbb },
-                        { EndPoint::AudioEngine, ae },      { EndPoint::BeagleBone, bbbb } };
+    { EndPoint::PanelLed, bbbb },       { EndPoint::RibbonLed, bbbb }, { EndPoint::AudioEngine, ae },
+    { EndPoint::BeagleBone, bbbb }
+  };
   nltools::msg::init(conf);
 }
 
@@ -65,7 +71,7 @@ void quitApp(int sig)
 
 Application::Application(int numArgs, char **argv)
     : m_options(initStatic(this, std::make_unique<Options>(numArgs, argv)))
-    , m_theMainLoop(Glib::MainLoop::create())
+    , m_theMainLoop(Glib::MainLoop::create(Glib::MainContext::get_default()))
     , m_http(new HTTPServer())
     , m_settings(new Settings(m_http->getUpdateDocumentMaster()))
     , m_undoScope(new UndoScope(m_http->getUpdateDocumentMaster()))
@@ -81,6 +87,7 @@ Application::Application(int numArgs, char **argv)
     , m_isQuit(false)
     , m_usbChangeListener(std::make_unique<USBChangeListener>())
     , m_webUISupport(std::make_unique<WebUISupport>(m_http->getUpdateDocumentMaster()))
+    , m_presetUseCases { std::make_unique<PresetManagerUseCases>(m_presetManager.get()) }
 {
 #ifdef _PROFILING
   Profiler::get().enable(true);
@@ -261,6 +268,11 @@ const HWUI *Application::getHWUI() const
 UndoScope *Application::getUndoScope()
 {
   return m_undoScope.get();
+}
+
+PresetManagerUseCases *Application::getPresetManagerUseCases()
+{
+  return m_presetUseCases.get();
 }
 
 DeviceInformation *Application::getDeviceInformation()

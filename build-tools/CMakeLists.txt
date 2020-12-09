@@ -1,5 +1,6 @@
 add_subdirectory(bbb)
 add_subdirectory(epc)
+add_subdirectory(epc2)
 add_subdirectory(playcontroller)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*)
@@ -9,6 +10,8 @@ add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-c15-update.tar
     DEPENDS epc-create-update
     DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
+    DEPENDS epc2-create-update
+    DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc2/create-update/update.tar
     DEPENDS bbb-rootfs
     DEPENDS ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
     DEPENDS playcontroller-blobs
@@ -16,6 +19,7 @@ add_custom_command(
     DEPENDS ${SOURCE_FILES}
     COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
         ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
+        ${CMAKE_BINARY_DIR}/build-tools/epc2/create-update/update.tar
         ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
         ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin
         ${CMAKE_BINARY_DIR}

@@ -25,11 +25,10 @@ bool ParameterEditModeRibbonBehaviour::set(ParameterEditModeRibbonBehaviours m)
 
 void ParameterEditModeRibbonBehaviour::sendRelatedSettingToPlaycontroller() const
 {
-  Application::get().getSettings()->getSetting<RibbonRelativeFactor>()->sendToPlaycontroller(
-      SendReason::SettingChanged);
+  Application::get().getSettings()->getSetting<RibbonRelativeFactor>()->syncExternals(SendReason::SettingChanged);
 }
 
-void ParameterEditModeRibbonBehaviour::sendToPlaycontroller(SendReason reason) const
+void ParameterEditModeRibbonBehaviour::syncExternals(SendReason reason) const
 {
   auto v = static_cast<uint16_t>(get());
   Application::get().getPlaycontrollerProxy()->sendSetting(PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR, v);

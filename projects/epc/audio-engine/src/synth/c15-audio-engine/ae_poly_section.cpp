@@ -10,6 +10,7 @@
 *******************************************************************************/
 
 #include <cmath>
+#include <nltools/logging/Log.h>
 
 PolySection::PolySection()
 {
@@ -148,12 +149,7 @@ void PolySection::render_audio(const float _mute)
   m_z_self->m_comb = m_combfilter.m_out;
   m_z_self->m_svf = m_svfilter.m_out;
   // eval sends
-#if POTENTIAL_IMPROVEMENT_PART_MUTE_ONLY_ON_PART_VOL == __POTENTIAL_IMPROVEMENT_DISABLED__
-  const float send_self = 1.0f - m_smoothers.get(C15::Smoothers::Poly_Fast::Out_Mix_To_FX),
-              send_other = (1.0f - send_self) * m_smoothers.get(C15::Smoothers::Poly_Fast::Voice_Grp_Mute);
-#elif POTENTIAL_IMPROVEMENT_PART_MUTE_ONLY_ON_PART_VOL == __POTENTIAL_IMPROVEMENT_ENABLED__
   const float send_other = m_smoothers.get(C15::Smoothers::Poly_Fast::Out_Mix_To_FX), send_self = 1.0f - send_other;
-#endif
   m_send_self_l = m_outputmixer.m_out_l * send_self;
   m_send_self_r = m_outputmixer.m_out_r * send_self;
   m_send_other_l = m_outputmixer.m_out_l * send_other;
@@ -215,7 +211,6 @@ bool PolySection::keyDown(PolyKeyEvent* _event)
       = (m_key_active == 0),
       rstA = _event->m_trigger_env && static_cast<bool>(m_signals.get(C15::Signals::Quasipoly_Signals::Osc_A_Reset)),
       rstB = _event->m_trigger_env && static_cast<bool>(m_signals.get(C15::Signals::Quasipoly_Signals::Osc_B_Reset));
-  m_shift[_event->m_voiceId] = m_note_shift;
   m_unison_index[_event->m_voiceId] = _event->m_unisonIndex;
   m_last_key_tune[_event->m_voiceId] = m_base_pitch[_event->m_voiceId];
   m_key_tune[_event->m_voiceId] = _event->m_tune;
@@ -226,6 +221,7 @@ bool PolySection::keyDown(PolyKeyEvent* _event)
     {
       m_mono_glide.sync(0, 0.0f);
       m_mono_glide.start(0, m_time->eval_ms(3, m_smoothers.get(C15::Smoothers::Poly_Slow::Mono_Grp_Glide)), 1.0f);
+      m_mono_glide.render();
     }
     else
     {
@@ -249,12 +245,17 @@ bool PolySection::keyDown(PolyKeyEvent* _event)
     m_voice_level[_event->m_voiceId] = m_key_levels[_event->m_position];
     m_gain_curve_index[_event->m_voiceId] = 0;
 #endif
-    m_combfilter.setDelaySmoother(_event->m_voiceId);
     startEnvelopes(_event->m_voiceId, m_note_pitch[_event->m_voiceId], _event->m_velocity);
   }
   // process signals after starting envelopes
   postProcess_poly_key(_event->m_voiceId);
   setSlowFilterCoefs(_event->m_voiceId);
+  // set comb delay smoother after pitch processing (unfortunately separate if statement)
+  // is this legato-dependant?
+  if(_event->m_trigger_env)
+  {
+    m_combfilter.setDelaySmoother(_event->m_voiceId);
+  }
   m_key_active++;
   return retrigger_mono;
 }
@@ -330,7 +331,7 @@ void PolySection::evalVoiceFade(const float _from, const float _range)
   // phase 1: 100%
   for(int32_t i = start; i != fadeStart; i += m_fadeIncrement)
   {
-    if((i < 0) || (i >= C15::Config::key_count))
+    if((i < 0) || (i >= C15::Config::virtual_key_count))
       break;  // safety mechanism
 
     m_key_levels[i] = 1.0f;
@@ -339,7 +340,7 @@ void PolySection::evalVoiceFade(const float _from, const float _range)
   // phase 2: fade out
   for(int32_t i = fadeStart; i != fadeEnd; i += m_fadeIncrement)
   {
-    if((i < 0) || (i >= C15::Config::key_count))
+    if((i < 0) || (i >= C15::Config::virtual_key_count))
       break;  // safety mechanism
 
     fade -= slope;
@@ -367,11 +368,12 @@ void PolySection::evalVoiceFade(const float _from, const float _range)
   // phase 3: 0%
   for(int32_t i = fadeEnd; i != m_fadeEnd + m_fadeIncrement; i += m_fadeIncrement)
   {
-    if((i < 0) || (i >= C15::Config::key_count))
+    if((i < 0) || (i >= C15::Config::virtual_key_count))
       break;  // safety mechanism
 
     m_key_levels[i] = 0.0f;
   }
+  //  testVoiceFadeTable();
 }
 
 void PolySection::evalVoiceFadeInterpolated(const float _from, const float _range)
@@ -397,7 +399,7 @@ void PolySection::evalVoiceFadeInterpolated(const float _from, const float _rang
   // phase 1: 100%
   for(int32_t i = start; i != fadeStart; i += m_fadeIncrement)
   {
-    if((i < 0) || (i >= C15::Config::key_count))
+    if((i < 0) || (i >= C15::Config::virtual_key_count))
       break;  // safety mechanism
 
     m_key_levels[i] = 1.0f;
@@ -406,7 +408,7 @@ void PolySection::evalVoiceFadeInterpolated(const float _from, const float _rang
   // phase 2: fade out
   for(int32_t i = fadeStart; i != fadeEnd; i += m_fadeIncrement)
   {
-    if((i < 0) || (i >= C15::Config::key_count))
+    if((i < 0) || (i >= C15::Config::virtual_key_count))
       break;  // safety mechanism
 
     fade[0] -= slope[0];
@@ -439,16 +441,17 @@ void PolySection::evalVoiceFadeInterpolated(const float _from, const float _rang
   // phase 3: 0%
   for(int32_t i = fadeEnd; i != m_fadeEnd + m_fadeIncrement; i += m_fadeIncrement)
   {
-    if((i < 0) || (i >= C15::Config::key_count))
+    if((i < 0) || (i >= C15::Config::virtual_key_count))
       break;  // safety mechanism
 
     m_key_levels[i] = 0.0f;
   }
+  //  testVoiceFadeTable();
 }
 
 void PolySection::resetVoiceFade()
 {
-  for(uint32_t i = 0; i < C15::Config::key_count; i++)
+  for(uint32_t i = 0; i < C15::Config::virtual_key_count; i++)
   {
     m_key_levels[i] = 1.0f;
   }
@@ -1077,7 +1080,7 @@ void PolySection::updateNotePitch(const uint32_t _voiceId)
       + (m_smoothers.get(C15::Smoothers::Poly_Slow::Unison_Detune)
          * m_spread.m_detune[m_uVoice][m_unison_index[_voiceId]])
       + m_smoothers.get(C15::Smoothers::Poly_Slow::Voice_Grp_Tune)
-      + m_globalsignals->get(C15::Signals::Global_Signals::Master_Tune) + m_shift[_voiceId];
+      + m_globalsignals->get(C15::Signals::Global_Signals::Master_Tune);
 }
 
 void PolySection::setSlowFilterCoefs(const uint32_t _voiceId)
@@ -1085,4 +1088,14 @@ void PolySection::setSlowFilterCoefs(const uint32_t _voiceId)
   m_soundgenerator.set(m_signals, _voiceId);
   m_combfilter.set(m_signals, m_samplerate, _voiceId);
   m_feedbackmixer.set(m_signals, _voiceId);
+}
+
+void PolySection::testVoiceFadeTable()
+{
+  nltools::Log::info("VoiceFadeTable:");
+  for(int32_t i = 0; i < C15::Config::virtual_key_count; i += 16)
+  {
+    nltools::Log::info("[", i, "..", i + 15, "]:", m_key_levels[i], "..", m_key_levels[i + 7], "..",
+                       m_key_levels[i + 15]);
+  }
 }

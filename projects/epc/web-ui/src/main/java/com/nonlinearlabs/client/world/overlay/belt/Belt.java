@@ -139,6 +139,10 @@ public class Belt extends OverlayLayout {
 		return soundLayout.getOpacity() != 0.0 && !isHidden();
 	}
 
+	public boolean isFadeView() {
+		return fadeLayout.getOpacity() != 0.0 && !isHidden();
+	}
+
 	void setPresetView(boolean toggleIfHidden) {
 		if (toggleIfHidden && isHidden())
 			toggle();

@@ -112,7 +112,7 @@ TEST_CASE("Single Preset Message")
   SECTION("Single Message not duplicate IDs")
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableLoad(scope->getTransaction(), presets.getSinglePreset());
+    editBuffer->undoableLoad(scope->getTransaction(), presets.getSinglePreset(), true);
     auto message = AudioEngineProxy::createSingleEditBufferMessage(*editBuffer);
     assertNoIDTwice(message);
   }
@@ -120,7 +120,7 @@ TEST_CASE("Single Preset Message")
   SECTION("Split Message no duplicate IDs")
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableLoad(scope->getTransaction(), presets.getSplitPreset());
+    editBuffer->undoableLoad(scope->getTransaction(), presets.getSplitPreset(), true);
     auto message = AudioEngineProxy::createSplitEditBufferMessage(*editBuffer);
     assertNoIDTwice(message);
   }
@@ -128,7 +128,7 @@ TEST_CASE("Single Preset Message")
   SECTION("Layer Message no duplicate IDs")
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableLoad(scope->getTransaction(), presets.getLayerPreset());
+    editBuffer->undoableLoad(scope->getTransaction(), presets.getLayerPreset(), true);
     auto message = AudioEngineProxy::createLayerEditBufferMessage(*editBuffer);
     assertNoIDTwice(message);
   }

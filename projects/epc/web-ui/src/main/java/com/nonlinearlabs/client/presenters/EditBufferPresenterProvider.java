@@ -172,12 +172,14 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
         if (model.soundType.getValue() == SoundType.Split) {
             BasicParameterModel sI = model.getParameter(new ParameterId(356, VoiceGroup.I));
             BasicParameterModel sII = model.getParameter(new ParameterId(356, VoiceGroup.II));
-            boolean splitOverlap = sI.value.value.getValue() >= sII.value.value.getValue();
-
-            if (presenter.splitOverlap != splitOverlap) {
-                presenter.splitOverlap = splitOverlap;
-                notifyChanges();
-            }
+            
+            Double dI = sI.value.value.getValue() * 100;
+            Double dII = sII.value.value.getValue() * 100;
+            double iI = dI.intValue();
+            double iII = dII.intValue();
+            boolean splitOverlap = iI >= iII;
+            presenter.splitOverlap = splitOverlap;
+            notifyChanges();
         } else if (presenter.splitOverlap != false) {
             presenter.splitOverlap = false;
             notifyChanges();
@@ -247,7 +249,13 @@ public class EditBufferPresenterProvider extends Notifier<EditBufferPresenter> {
         boolean fxSrc = cpNotZero(354, vg);
         boolean fx = fxMix && fxSrc;
 
-        return oscFB || comb || svf || fx;
+        boolean pfbl = cpNotZero(299, vg);
+        boolean shaperFB = cpNotZero(68, vg) || cpNotZero(98, vg);
+        boolean oscPM = cpGreaterThanZero(78, vg) || cpGreaterThanZero(108, vg);
+
+        boolean other = pfbl && (shaperFB || oscPM);
+
+        return (oscFB || comb || svf || fx) && other;
     }
 
     private boolean isCrossFX(VoiceGroup vg) {

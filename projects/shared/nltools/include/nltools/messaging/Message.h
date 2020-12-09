@@ -18,18 +18,27 @@ namespace nltools
           return MessageType::MidiSimpleMessage;
         }
 
-        uint64_t id = 0;
-        uint8_t rawBytes[3];
-      };
-
-      struct MessageAcknowledge
-      {
-        constexpr static MessageType getType()
+        SimpleMessage()
         {
-          return MessageType::MidiAck;
         }
 
-        uint64_t id = 0;
+        SimpleMessage(uint8_t status, uint8_t data)
+        {
+          rawBytes[0] = status;
+          rawBytes[1] = data;
+          numBytesUsed = 2;
+        }
+
+        SimpleMessage(uint8_t status, uint8_t data1, uint8_t data2)
+        {
+          rawBytes[0] = status;
+          rawBytes[1] = data1;
+          rawBytes[2] = data2;
+          numBytesUsed = 3;
+        }
+
+        std::array<uint8_t, 3> rawBytes;
+        uint8_t numBytesUsed = 0;
       };
 
       struct ProgramChangeMessage
@@ -190,6 +199,16 @@ namespace nltools
         }
 
         double m_tuneReference;
+      };
+
+      struct MidiBridgeSettings
+      {
+        constexpr static MessageType getType()
+        {
+          return MessageType::MidiBridgeSettings;
+        }
+
+        bool enable = false;
       };
 
       struct TransitionTimeMessage
@@ -556,6 +575,11 @@ namespace nltools
       return ret;
     }
 
+    inline bool operator!=(const SinglePresetMessage& lhs, const SinglePresetMessage& rhs)
+    {
+      return !(lhs == rhs);
+    }
+
     struct SplitPresetMessage
     {
       constexpr static MessageType getType()
@@ -597,6 +621,11 @@ namespace nltools
       return ret;
     }
 
+    inline bool operator!=(const SplitPresetMessage& lhs, const SplitPresetMessage& rhs)
+    {
+      return !(lhs == rhs);
+    }
+
     struct LayerPresetMessage
     {
       constexpr static MessageType getType()
@@ -634,6 +663,11 @@ namespace nltools
       ret &= lhs.macros == rhs.macros;
       ret &= lhs.macrotimes == rhs.macrotimes;
       return ret;
+    }
+
+    inline bool operator!=(const LayerPresetMessage& lhs, const LayerPresetMessage& rhs)
+    {
+      return !(lhs == rhs);
     }
   }
 }

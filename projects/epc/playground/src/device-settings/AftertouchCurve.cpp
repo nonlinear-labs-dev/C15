@@ -13,7 +13,7 @@ AftertouchCurve::~AftertouchCurve()
 {
 }
 
-void AftertouchCurve::sendToPlaycontroller(SendReason reason) const
+void AftertouchCurve::syncExternals(SendReason reason) const
 {
   Application::get().getPlaycontrollerProxy()->sendSetting(AFTERTOUCH_CURVE, (uint16_t)(get()));
 }

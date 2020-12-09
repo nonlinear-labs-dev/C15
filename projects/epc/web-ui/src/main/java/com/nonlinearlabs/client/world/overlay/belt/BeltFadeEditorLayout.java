@@ -18,6 +18,7 @@ import com.nonlinearlabs.client.world.overlay.belt.Belt.BeltTab;
 import com.nonlinearlabs.client.world.overlay.belt.fadeeditor.KeyBed;
 import com.nonlinearlabs.client.presenters.FadeEditorPresenter;
 import com.nonlinearlabs.client.presenters.FadeEditorPresenterProvider;
+import com.nonlinearlabs.client.world.overlay.belt.parameters.SyncParameterButton;
 import com.nonlinearlabs.client.world.overlay.belt.sound.ValueEdit;
 
 public class BeltFadeEditorLayout extends OverlayLayout {
@@ -124,6 +125,7 @@ public class BeltFadeEditorLayout extends OverlayLayout {
     private KeyBed keys;
     private OctaveLabel[] octaveLabels = new OctaveLabel[6];
     private PartFadeToggle toggle;
+    private SyncParameterButton button;
 
     private OverlayControl leftControls = null;
     private OverlayControl rightControls = null;
@@ -142,6 +144,7 @@ public class BeltFadeEditorLayout extends OverlayLayout {
 
         keys = addChild(new KeyBed(this));
         toggle = addChild(new PartFadeToggle(this));
+        button = addChild(new SyncParameterButton(this));
 
         for (int i = 0; i < 6; i++) {
             octaveLabels[i] = addChild(new OctaveLabel(this, i));
@@ -154,13 +157,15 @@ public class BeltFadeEditorLayout extends OverlayLayout {
     }
 
     private void installType(SoundType type) {
-
+        
         if (leftControls != null || rightControls != null) {
             removeChild(leftControls);
             removeChild(rightControls);
             leftControls = null;
             rightControls = null;
         }
+
+        button.setVisible(type == SoundType.Split);
 
         if (type == SoundType.Split) {
             leftControls = addChild(new SplitPartIndicators(this, VoiceGroup.I));
@@ -170,7 +175,7 @@ public class BeltFadeEditorLayout extends OverlayLayout {
             rightControls = addChild(new LayerPartIndicators(this, VoiceGroup.II));
         } else if (type == SoundType.Single) {
             Overlay o = NonMaps.get().getNonLinearWorld().getViewport().getOverlay();
-            if (o != null) {
+            if (o != null && o.getBelt().isFadeView()) {
                 o.getBelt().openTab(BeltTab.Sound);
             }
         }
@@ -196,18 +201,19 @@ public class BeltFadeEditorLayout extends OverlayLayout {
                     keys.getPictureHeight() * 1.6, 50, 40);
         }
 
-        double pw = toggle.getPictureWidth();
-        double ph = toggle.getPictureHeight();
+        double toggleW = toggle.getPictureWidth();
+        double toggleH = toggle.getPictureHeight();
 
-        toggle.doLayout(7 * partWidth - pw / 2 + pw * 1.5, h / 2 - ph / 2, pw, ph);
+        button.doLayout(7 * partWidth - toggleW / 2, h / 2 - toggleH / 2, toggleW, toggleH);
+        toggle.doLayout(7 * partWidth - toggleW / 2 + toggleW * 1.5, h / 2 - toggleH / 2, toggleW, toggleH);
 
-        double valueWidth = partWidth / 2;
+        double valueWidth = partWidth * 0.75;
 
         if (leftControls != null)
-            leftControls.doLayout(keys.getRelativePosition().getLeft() - valueWidth * 1.5, baseLine, valueWidth, h);
+            leftControls.doLayout(keys.getRelativePosition().getLeft() - valueWidth * 1.25, baseLine, valueWidth, h);
 
         if (rightControls != null)
-            rightControls.doLayout(keys.getRelativePosition().getRight() + valueWidth * 0.5, baseLine, valueWidth, h);
+            rightControls.doLayout(keys.getRelativePosition().getRight() + valueWidth * 0.25, baseLine, valueWidth, h);
     }
 
     // Handle overlapping Handles inside KeyBed

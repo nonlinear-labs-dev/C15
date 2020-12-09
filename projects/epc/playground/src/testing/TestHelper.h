@@ -111,6 +111,11 @@ namespace TestHelper
 
     CHECK(test());
   }
+
+  inline void doMainLoopIteration()
+  {
+    g_main_context_iteration(nullptr, TRUE);
+  }
 }
 
 inline std::pair<double, double> getNextStepValuesFromValue(Parameter* p, double v)

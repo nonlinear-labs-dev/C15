@@ -1,7 +1,8 @@
 package com.nonlinearlabs.client.world.overlay.belt.fadeeditor;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.core.client.GWT;
+import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
@@ -80,14 +81,15 @@ public class KeyBed extends SVGImage {
         return (key * keyW) + (key * keyPadding) + keyW + keyPadding;
     }
 
-    private void drawHandle(Context2d ctx, boolean focus, Rect r, RGB stroke) {
-        r.drawRoundedRect(ctx, Rect.ROUNDING_ALL, 2, 1, stroke, RGB.black());
+    private boolean mouseIsDown = false;
 
-        if (focus) {
-            r.getReducedBy(-4).drawRoundedRect(ctx, Rect.ROUNDING_ALL, 1, 1, null, RGB.black());
-            r.getReducedBy(-6).drawRoundedRect(ctx, Rect.ROUNDING_ALL, 3, 3, null, stroke);
-            r.getReducedBy(-7).drawRoundedRect(ctx, Rect.ROUNDING_ALL, 3, 1, null, RGB.black());
-        }
+    private void drawHandle(Context2d ctx, boolean focus, Rect r, RGB stroke) {
+        RGB color = stroke;
+
+        if(mouseIsDown && focus)
+            color = stroke.brighter(20);
+
+        r.drawRoundedRect(ctx, Rect.ROUNDING_ALL, 2, 1, color, RGB.black());
     }
 
     private void drawSplitHandle(Context2d ctx, VoiceGroup vg) {
@@ -117,8 +119,12 @@ public class KeyBed extends SVGImage {
         ctx.stroke();
     }
 
+    private VoiceGroup selectedVoiceGroup() {
+        return presenter.lastSelectedPart;
+    }
+
     public void drawSplit(Context2d ctx) {
-        VoiceGroup vg = EditBufferModel.get().voiceGroup.getValue();
+        VoiceGroup vg = selectedVoiceGroup();
 
         if (vg == VoiceGroup.I) {
             drawSplitPart(ctx, VoiceGroup.II);
@@ -218,7 +224,7 @@ public class KeyBed extends SVGImage {
     }
 
     public void drawLayer(Context2d ctx) {
-        if (EditBufferModel.get().voiceGroup.getValue() == VoiceGroup.I) {
+        if (selectedVoiceGroup() == VoiceGroup.I) {
             drawLayerPart(ctx, VoiceGroup.II);
             drawLayerPart(ctx, VoiceGroup.I);
             drawFadeHandle(ctx, new VoiceGroup[] { VoiceGroup.II, VoiceGroup.I });
@@ -234,22 +240,7 @@ public class KeyBed extends SVGImage {
         return super.drag(pos, dragProxy);
     }
 
-    private boolean isSelectedHandleOfVoiceGroup(VoiceGroup vg, SelectedHandle handle) {
-        if (vg == VoiceGroup.I) {
-            return handle == SelectedHandle.FadePointI || handle == SelectedHandle.FadeRangeI
-                    || handle == SelectedHandle.SplitPointI;
-        } else {
-            return handle == SelectedHandle.FadePointII || handle == SelectedHandle.FadeRangeII
-                    || handle == SelectedHandle.SplitPointII;
-        }
-    }
-
     void selectControl(SelectedHandle handle) {
-        if (isSelectedHandleOfVoiceGroup(VoiceGroup.I, handle)) {
-            EditBufferUseCases.get().selectVoiceGroup(VoiceGroup.I);
-        } else if (isSelectedHandleOfVoiceGroup(VoiceGroup.II, handle)) {
-            EditBufferUseCases.get().selectVoiceGroup(VoiceGroup.II);
-        }
         selection = handle;
         invalidate(INVALIDATION_FLAG_UI_CHANGED);
     }
@@ -281,7 +272,6 @@ public class KeyBed extends SVGImage {
         }
 
         selectControl(SelectedHandle.None);
-
         return null;
     }
 
@@ -295,7 +285,7 @@ public class KeyBed extends SVGImage {
     }
 
     @Override
-    public Control click(Position pos) {
+    public Control click(Position pos) {        
         Control c = handleMouseDownDragStart(pos);
         if (c == null) {
             return super.click(pos);
@@ -310,8 +300,13 @@ public class KeyBed extends SVGImage {
         double fadeI = EditBufferModel.get().getParameter(new ParameterId(396, VoiceGroup.I)).value.value.getValue();
         double fadeII = EditBufferModel.get().getParameter(new ParameterId(396, VoiceGroup.II)).value.value.getValue();
 
+        BasicParameterModel fadeRangeI = EditBufferModel.get().getParameter(new ParameterId(397, VoiceGroup.I));
+        BasicParameterModel fadeRangeII = EditBufferModel.get().getParameter(new ParameterId(397, VoiceGroup.II));
+
         boolean fadeIMin = fadeI <= 0;
         boolean fadeIIMax = fadeII >= 1;
+
+        boolean fine = NonMaps.get().getNonLinearWorld().isShiftDown();
 
         switch (selection) {
             case FadePointI:
@@ -324,9 +319,14 @@ public class KeyBed extends SVGImage {
                     double useableRange = Math.max(0,
                             Math.min(pix.getWidth() - (pix.getWidth() * fadeI), pix.getWidth()));
                     double usableRangePercent = useableRange / pix.getWidth();
-                    return Math.max(0,
+                    double newCp = Math.max(0,
                             Math.min((p.getX() - (pix.getLeft() + (pix.getWidth() * fadeI))) / pix.getWidth(),
                                     usableRangePercent));
+                    if(fine) {
+                        return newCp;
+                    } else {
+                        return fadeRangeI.value.getQuantizedAndClipped(newCp, false);
+                    }        
                 } else {
                     return xPercent;
                 }
@@ -335,9 +335,14 @@ public class KeyBed extends SVGImage {
                 if (!fadeIIMax) {
                     double useableRange = Math.max(0, Math.min((pix.getWidth() * fadeII), pix.getWidth()));
                     double usableRangePercent = useableRange / pix.getWidth();
-                    return Math.max(0,
+                    double newCp = Math.max(0,
                             Math.min(((pix.getLeft() + (pix.getWidth() * fadeII)) - p.getX()) / pix.getWidth(),
                                     usableRangePercent));
+                    if(fine) {
+                        return newCp;
+                    } else {
+                        return fadeRangeII.value.getQuantizedAndClipped(newCp, false);
+                    }        
                 } else {
                     return 1.0 - xPercent;
                 }
@@ -355,7 +360,6 @@ public class KeyBed extends SVGImage {
     public void updateCP(Position p) {
         try {
             double cp = getCPForPosition(p);
-
             switch (selection) {
                 case FadePointI:
                     EditBufferUseCases.get().setParameterValue(new ParameterId(396, VoiceGroup.I), cp, true);
@@ -391,5 +395,24 @@ public class KeyBed extends SVGImage {
             return this;
         }
         return super.mouseDrag(oldPoint, newPoint, fine);
+    }
+
+    @Override
+    public Control mouseDown(Position p) {
+        mouseIsDown = true;
+        invalidate(INVALIDATION_FLAG_UI_CHANGED);
+        return this;
+    }
+
+	@Override
+	public Control mouseUp(Position eventPoint) {
+        mouseIsDown = false;
+        invalidate(INVALIDATION_FLAG_UI_CHANGED);
+        return this;
+    }
+   
+    @Override
+    public void onMouseLost() {
+        mouseIsDown = false;
     }
 }

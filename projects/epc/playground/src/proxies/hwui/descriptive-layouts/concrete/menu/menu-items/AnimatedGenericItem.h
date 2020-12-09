@@ -44,5 +44,4 @@ class AnimatedGenericItem : public GenericItem
  private:
   std::unique_ptr<Animator> m_animator;
   std::function<void(void)> m_animationFinishedCB;
-  bool drawEnterIndication(FrameBuffer& buffer);
 };

@@ -32,7 +32,7 @@ class TransitionTime : public Setting
     return "Transition Time";
   }
 
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
  private:
   QuantizedValue m_time;

@@ -212,7 +212,7 @@ bool ParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modi
         {
           if(SwitchVoiceGroupButton::allowToggling(getCurrentParameter(),
                                                    Application::get().getPresetManager()->getEditBuffer()))
-            Application::get().getHWUI()->toggleCurrentVoiceGroup();
+            Application::get().getHWUI()->toggleCurrentVoiceGroupAndUpdateParameterSelection();
           return true;
         }
         break;

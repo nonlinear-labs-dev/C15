@@ -162,7 +162,7 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
       auto loadscope = presetManager.getUndoScope().startTransaction("Load Compare Buffer");
       auto loadtransaction = loadscope->getTransaction();
 
-      SendEditBufferScopeGuard scopeGuard(loadtransaction);
+      SendEditBufferScopeGuard scopeGuard(loadtransaction, true);
 
       auto autoLoadSetting = Application::get().getSettings()->getSetting<DirectLoadSetting>();
       auto scopedLock = autoLoadSetting->scopedOverlay(BooleanSettings::BOOLEAN_SETTING_FALSE);

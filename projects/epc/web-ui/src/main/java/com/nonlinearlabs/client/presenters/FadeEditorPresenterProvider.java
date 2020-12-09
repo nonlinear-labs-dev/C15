@@ -21,17 +21,21 @@ public class FadeEditorPresenterProvider extends Notifier<FadeEditorPresenter> {
     
     public FadeEditorPresenterProvider() {
         for(VoiceGroup vg: new VoiceGroup[]{VoiceGroup.I, VoiceGroup.II}) {
+            
             EditBufferModel.get().getParameter(new ParameterId(396, vg)).onChange(p -> {
+                presenter.lastSelectedPart = vg;
                 update();
                 return true;
             });
 
             EditBufferModel.get().getParameter(new ParameterId(397, vg)).onChange(p -> {
+                presenter.lastSelectedPart = vg;
                 update();
                 return true;
             });
 
             EditBufferModel.get().getParameter(new ParameterId(356, vg)).onChange(p -> {
+                presenter.lastSelectedPart = vg;
                 update();
                 return true;
             });
@@ -67,8 +71,8 @@ public class FadeEditorPresenterProvider extends Notifier<FadeEditorPresenter> {
         BasicParameterModel rangeI = model.getParameter(new ParameterId(397, VoiceGroup.I));
         BasicParameterModel rangeII = model.getParameter(new ParameterId(397, VoiceGroup.II));
 
-        double rI = Math.max(Math.min(presenter.fadePointI.to + (rangeI.value.value.getValue() * 61), 61), 0);
-        double rII = Math.min(Math.max(presenter.fadePointII.from - (rangeII.value.value.getValue() * 61), 0), 61);
+        double rI = Math.max(Math.min(presenter.fadePointI.to + (rangeI.value.value.getValue() * 61), 61), presenter.fadePointI.to);
+        double rII = Math.min(Math.max(presenter.fadePointII.from - (rangeII.value.value.getValue() * 61), 0), presenter.fadePointII.from);
 
         presenter.fadeRangeI = rI;
         presenter.fadeRangeII = rII;

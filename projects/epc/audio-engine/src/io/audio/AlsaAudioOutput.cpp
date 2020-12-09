@@ -96,6 +96,7 @@ void AlsaAudioOutput::stop()
 
 void AlsaAudioOutput::doBackgroundWork()
 {
+  pthread_setname_np(pthread_self(), "AudioOut");
   const auto framesPerCallback = m_numFramesPerPeriod;
 
   snd_pcm_prepare(m_handle);

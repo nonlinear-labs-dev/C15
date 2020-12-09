@@ -8,9 +8,10 @@ namespace UNDO
 class SendEditBufferScopeGuard
 {
  public:
-  SendEditBufferScopeGuard(UNDO::Transaction* transaction);
+  SendEditBufferScopeGuard(UNDO::Transaction* transaction, bool sendToAE);
   ~SendEditBufferScopeGuard();
 
  private:
+  const bool sendToAudioEngine;
   UNDO::Transaction* m_transaction;
 };

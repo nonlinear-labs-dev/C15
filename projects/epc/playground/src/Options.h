@@ -5,6 +5,8 @@
 class Options
 {
  public:
+  static bool s_acceptanceTests;
+
   Options(int &argc, char **&argv);
 
   const Glib::ustring &getPresetManagerPath() const;
@@ -14,6 +16,7 @@ class Options
   const Glib::ustring &getBBBB() const;
   const Glib::ustring &getLayoutFolder() const;
   const Glib::ustring &getAudioEngineHost() const;
+  const Glib::ustring &getMidiBridge() const;
   bool sendBBBBTurnaroundTimestamps() const;
 
  private:
@@ -29,5 +32,6 @@ class Options
   Glib::ustring m_layoutFolder;
   Glib::ustring m_bbbb = "localhost";
   Glib::ustring m_audioEngineHost = "localhost";
+  Glib::ustring m_midiBridge = "localhost";
   bool m_sendBBBTurnaroundTimes = false;
 };

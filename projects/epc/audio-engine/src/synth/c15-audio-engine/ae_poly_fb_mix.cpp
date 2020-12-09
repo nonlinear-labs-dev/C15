@@ -65,24 +65,15 @@ void Engine::PolyFeedbackMixer::apply(PolySignals &_signals, const LayerSignalCo
   m_out = m_hp_b0 * tmpVar;  // HP
   m_out += m_hp_b1 * m_hp_stateVar_1;
   m_out += m_hp_a1 * m_hp_stateVar_2;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
   m_hp_stateVar_1 = tmpVar;
   m_hp_stateVar_2 = m_out;
-#else
-  m_hp_stateVar_1 = tmpVar + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_2 = m_out + NlToolbox::Constants::DNC_const;
-#endif
   m_out *= _signals.get(C15::Signals::Quasipoly_Signals::FB_Mix_Drive);
   tmpVar = m_out;
   m_out = sinP3_wrap(m_out);
   m_out = threeRanges(m_out, tmpVar, _signals.get(C15::Signals::Quasipoly_Signals::FB_Mix_Fold));
   tmpVar = m_out * m_out;
   tmpVar -= m_hp30hz_stateVar;  // HP 30Hz
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
   m_hp30hz_stateVar = tmpVar * m_hp30hz_b0 + m_hp30hz_stateVar;
-#else
-  m_hp30hz_stateVar = tmpVar * m_hp30hz_b0 + m_hp30hz_stateVar + NlToolbox::Constants::DNC_const;
-#endif
   m_out = parAsym(m_out, tmpVar, _signals.get(C15::Signals::Quasipoly_Signals::FB_Mix_Asym));
   m_out = m_out * _signals.get(C15::Signals::Truepoly_Signals::FB_Mix_Lvl);
 }

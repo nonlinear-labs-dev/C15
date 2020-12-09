@@ -4,6 +4,8 @@
 #include <memory>
 #include <glibmm/refptr.h>
 #include <proxies/usb/USBChangeListener.h>
+#include <nltools/messaging/Messaging.h>
+#include <presets/PresetManagerUseCases.h>
 
 class DeviceInformation;
 class WatchDog;
@@ -49,6 +51,7 @@ class Application
   DeviceInformation *getDeviceInformation();
   Clipboard *getClipboard();
   WebUISupport *getWebUISupport();
+  PresetManagerUseCases *getPresetManagerUseCases();
 
   void quit();
   bool isQuit() const;
@@ -71,6 +74,7 @@ class Application
   std::unique_ptr<PlaycontrollerProxy> m_playcontrollerProxy;
   std::unique_ptr<AudioEngineProxy> m_audioEngineProxy;
   std::unique_ptr<HWUI> m_hwui;
+  std::unique_ptr<PresetManagerUseCases> m_presetUseCases;
 
   std::unique_ptr<WatchDog> m_watchDog;
   std::unique_ptr<WatchDog> m_aggroWatchDog;

@@ -33,7 +33,10 @@ List of current Error Messages
 - 83 :: "E83: Can't logon to ePC OS ..."
 - 84 :: "E84: Upgrade OS first!"
 - 85 :: "E85: OS too old for update!"
-- 86 :: "E81: BBB IP usage wrong ..."
+- 86 :: "E86: BBB IP usage wrong ..."
+- 86 :: "E87: ePC update missing" "Please retry download!"
+- 87 :: "E88: BBB update missing" "Please retry download!"
+- 88 :: "E89: playcontroller update missing" "Please retry download!"
 
 ------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------

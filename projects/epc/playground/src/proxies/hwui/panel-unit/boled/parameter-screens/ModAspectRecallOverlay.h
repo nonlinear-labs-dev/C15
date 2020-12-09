@@ -5,6 +5,8 @@
 #include <proxies/hwui/panel-unit/boled/parameter-screens/controls/MacroControl.h>
 #include <variant>
 
+class Button;
+
 class ModAspectRecallOverlay : public Overlay, public ButtonReceiver
 {
  public:
@@ -53,8 +55,8 @@ class ModAspectRecallOverlay : public Overlay, public ButtonReceiver
   {
     bool anyRecallHappened = false;
     bool likeInPreset = false;
-    std::variant<float, MacroControls> leftRecallValue;
-    std::variant<float, MacroControls> rightRecallValue;
+    std::variant<double, MacroControls> leftRecallValue;
+    std::variant<double, MacroControls> rightRecallValue;
   };
 
   std::unordered_map<Mode, RecallPair> m_oldRecallValues;

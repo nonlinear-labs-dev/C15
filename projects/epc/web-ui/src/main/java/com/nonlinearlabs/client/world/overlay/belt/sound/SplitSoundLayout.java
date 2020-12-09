@@ -75,10 +75,8 @@ public class SplitSoundLayout extends SoundLayout {
 				SplitPoint splits = (SplitPoint) getChildren().get(2);
 				Rect left = splits.getRectOfVG(VoiceGroup.I);
 				Rect right = splits.getRectOfVG(VoiceGroup.II);
-
 				Rect startLeft = getChildren().get(1).getPixRect();
 				Rect endRight = getChildren().get(3).getPixRect();
-
 				RGB bgI = EditBufferPresenterProvider.getPresenter().voiceGroupI_BackgroundColor;
 				RGB bgII = EditBufferPresenterProvider.getPresenter().voiceGroupII_BackgroundColor;
 
@@ -90,7 +88,16 @@ public class SplitSoundLayout extends SoundLayout {
 				ctx.fillRect(right.getRight(), right.getCenterPoint().getY() - 2, endRight.getLeft() - right.getRight(),
 						4);
 
+				if(!EditBufferPresenterProvider.getPresenter().splitOverlap) {
+					RGB color = EditBufferModel.get().voiceGroup.getValue() == VoiceGroup.I ? bgI : bgII;
+					ctx.setFillStyle(color.toString());
+					double startY = left.getCenterPoint().getY();
+					double endY = right.getCenterPoint().getY();
+					ctx.fillRect(left.getCenterPoint().getX() - 2, startY, 4, endY - startY);
+				}
 			}
+
+
 			super.draw(ctx, flags);
 		}
 	}
@@ -144,12 +151,12 @@ public class SplitSoundLayout extends SoundLayout {
 			double quarterHeight = h / 4;
 
 			if (syncEnabled) {
-				getChildren().get(0).doLayout(0, 0, w, quarterHeight * 1);
+				getChildren().get(0).doLayout(0, 0, w, quarterHeight * 0.75);
 				getChildren().get(1).doLayout(0, quarterHeight * 1.5, w, quarterHeight);
 			} else {
-				getChildren().get(0).doLayout(0, 0, w, quarterHeight * 1);
-				getChildren().get(1).doLayout(0, quarterHeight * 1, w, quarterHeight);
-				getChildren().get(2).doLayout(0, quarterHeight * 3, w, quarterHeight);
+				getChildren().get(0).doLayout(0, 0, w, quarterHeight * 0.75);
+				getChildren().get(1).doLayout(0, quarterHeight, w, quarterHeight);
+				getChildren().get(2).doLayout(0, quarterHeight * 2.4, w, quarterHeight);
 			}
 		}
 

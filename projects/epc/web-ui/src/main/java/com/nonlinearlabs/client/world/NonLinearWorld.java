@@ -81,6 +81,11 @@ public class NonLinearWorld extends MapsLayout {
 		viewport.setScreenDimension(100, 100);
 
 		layoutRequested = false;
+
+		SetupModel.get().systemSettings.forceHighlightChangedParameters.onChange(t -> {
+			invalidate(Control.INVALIDATION_FLAG_UI_CHANGED);
+			return true;
+		});
 	}
 
 	public void init() {

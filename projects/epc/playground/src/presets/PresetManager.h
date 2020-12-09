@@ -77,6 +77,7 @@ class PresetManager : public ContentSection
   void selectPreviousBank();
   void selectNextBank();
   void onPresetSelectionChanged();
+  void onPresetStored();
 
   std::shared_ptr<ScopedGuard::Lock> lockLoading();
 
@@ -114,6 +115,7 @@ class PresetManager : public ContentSection
   sigc::connection onBankSelection(sigc::slot<void, Uuid> cb);
   sigc::connection onNumBanksChanged(sigc::slot<void, size_t> cb);
   sigc::connection onRestoreHappened(sigc::slot<void> cb);
+  sigc::connection onPresetStoreHappened(sigc::slot<void> cb);
 
   const Preset *getSelectedPreset() const;
   Preset *getSelectedPreset();
@@ -123,8 +125,9 @@ class PresetManager : public ContentSection
   void scheduleLoadToPart(const Preset *preset, VoiceGroup loadFrom, VoiceGroup loadTo);
 
  private:
-  void loadMetadataAndSendEditBufferToPlaycontroller(UNDO::Transaction *transaction, const Glib::RefPtr<Gio::File>& pmFolder);
-  void loadInitSound(UNDO::Transaction *transaction, const Glib::RefPtr<Gio::File>& pmFolder);
+  void loadMetadataAndSendEditBufferToPlaycontroller(UNDO::Transaction *transaction,
+                                                     const Glib::RefPtr<Gio::File> &pmFolder);
+  void loadInitSound(UNDO::Transaction *transaction, const Glib::RefPtr<Gio::File> &pmFolder);
   void loadBanks(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder);
   void fixMissingPresetSelections(UNDO::Transaction *transaction);
   Glib::ustring getBaseName(const Glib::ustring &basedOn) const;
@@ -157,6 +160,7 @@ class PresetManager : public ContentSection
   SignalWithCache<void, Uuid> m_sigBankSelection;
   SignalWithCache<void, size_t> m_sigNumBanksChanged;
   Signal<void> m_sigRestoreHappened;
+  Signal<void> m_presetStoreHappened;
 
   std::atomic_bool m_autoLoadScheduled { false };
 

@@ -9,6 +9,7 @@
 
 #include <Application.h>
 #include <proxies/hwui/descriptive-layouts/concrete/sound/menus/items/RandomizeItem.h>
+#include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/SplitSyncItem.h>
 
 DualSoundEditMenu::DualSoundEditMenu(const Rect &r)
     : ScrollMenu(r)
@@ -42,6 +43,7 @@ void DualSoundEditMenu::initSplit()
   addItem<PartLabelItem>(fullWidth);
   addItem<ConvertToSoundTypeItem>(fullWidth, SoundType::Single);
   addItem<ConvertToSoundTypeItem>(fullWidth, SoundType::Layer);
+  addItem<SplitSyncItem>(fullWidth);
   addItem<InitPart>(fullWidth);
   addItem<InitSound>(fullWidth);
   addItem<RandomizePart>(fullWidth);

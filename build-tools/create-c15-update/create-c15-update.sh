@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-# Author:       Anton Schmied
 # Date:         12.02.2020
 # vom Cmake übergebene Pfade zu den .tarS
 
 EPC_UPDATE=$1
-BBB_UPDATE=$2
-PLAYCONTROLLER_UPDATE=$3
-BINARY_DIR=$4
-SOURCE_DIR=$5/build-tools/create-c15-update
-OUTNAME=$6
-ASPECTS=$7
+EPC_2_UPDATE=$2
+BBB_UPDATE=$3
+PLAYCONTROLLER_UPDATE=$4
+BINARY_DIR=$5
+SOURCE_DIR=$6/build-tools/create-c15-update
+OUTNAME=$7
+ASPECTS=$8
 OUT_DIRECTORY=$BINARY_DIR/$OUTNAME
 OUT_TAR=$BINARY_DIR/$OUTNAME.tar
 
@@ -61,14 +61,18 @@ deploy_updates() {
     echo "Deploying updates..."
 
     if [ $UPDATE_BBB == 1 ]; then
+        echo "Will deploy BBB update."
         cp $BBB_UPDATE $OUT_DIRECTORY/BBB/ && chmod 666 $OUT_DIRECTORY/BBB/rootfs.tar.gz || fail_and_exit;
     fi
 
     if [ $UPDATE_EPC == 1 ]; then
-        cp $EPC_UPDATE $OUT_DIRECTORY/EPC/update.tar && chmod 666 $OUT_DIRECTORY/EPC/update.tar || fail_and_exit;
+        echo "Will deploy ePC updates."
+        cp $EPC_UPDATE $OUT_DIRECTORY/EPC/update_5-7i3.tar && chmod 666 $OUT_DIRECTORY/EPC/update_5-7i3.tar || fail_and_exit;
+        cp $EPC_2_UPDATE $OUT_DIRECTORY/EPC/update_10i3.tar && chmod 666 $OUT_DIRECTORY/EPC/update_10i3.tar || fail_and_exit;
     fi
 
     if [ $UPDATE_PLAYCONTROLLER == 1 ]; then
+        echo "Will deploy playcontroller update."
         cp $PLAYCONTROLLER_UPDATE $OUT_DIRECTORY/playcontroller/main.bin && chmod 666 $OUT_DIRECTORY/playcontroller/main.bin || fail_and_exit;
     fi
 

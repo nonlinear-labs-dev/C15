@@ -24,7 +24,7 @@ class NoteShift : public Setting
   void decOctave();
 
   Glib::ustring getDisplayString() const override;
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
  private:
   NoteShift(const NoteShift& other) = delete;

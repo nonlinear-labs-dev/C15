@@ -46,7 +46,7 @@ void NoteShift::set(int shift)
   }
 }
 
-void NoteShift::sendToPlaycontroller(SendReason reason) const
+void NoteShift::syncExternals(SendReason reason) const
 {
   nltools::msg::Setting::NoteShiftMessage msg { m_shift };
   Application::get().getAudioEngineProxy()->sendSettingMessage<nltools::msg::Setting::NoteShiftMessage>(msg);

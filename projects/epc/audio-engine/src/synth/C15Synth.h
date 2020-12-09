@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Synth.h"
+#include "c15-audio-engine/dsp_host_dual.h"
 #include <nltools/messaging/Message.h>
 #include <sigc++/sigc++.h>
 #include <thread>
 #include <condition_variable>
 #include <mutex>
+#include <future>
 #include <nltools/threading/BackgroundThreadWaiter.h>
 
 namespace nltools
@@ -23,7 +25,7 @@ class AudioEngineOptions;
 class C15Synth : public Synth, public sigc::trackable
 {
  public:
-  C15Synth(const AudioEngineOptions* options);
+  explicit C15Synth(AudioEngineOptions* options);
   ~C15Synth() override;
 
   void doMidi(const MidiEvent& event) override;
@@ -62,15 +64,20 @@ class C15Synth : public Synth, public sigc::trackable
   dsp_host_dual* getDsp();
 
  private:
-  bool doIdle();
-  void sendExternalMidiOut();
+  void queueExternalMidiOut(const dsp_host_dual::SimpleRawMidiMessage& m);
+
+  void syncExternals();
+  void syncExternalMidiBridge();
+  void syncPlayground();
 
   std::unique_ptr<dsp_host_dual> m_dsp;
   std::array<float, 8> m_hwSourceValues;
-  const AudioEngineOptions* m_options;
+  AudioEngineOptions* m_options;
 
   RingBuffer<nltools::msg::Midi::SimpleMessage, 2048> m_externalMidiOutBuffer;
-  std::thread m_externalMidiOutThread;
-  nltools::BackgroundThreadWaiter m_externalMidiOutThreadWaiter;
+
+  std::mutex m_syncExternalsMutex;
+  std::condition_variable m_syncExternalsWaiter;
   std::atomic<bool> m_quit { false };
+  std::future<void> m_syncExternalsTask;
 };

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+run_hook() {
+   fsck_root() {
+      echo "fsck_root disabled"
+      echo &>/dev/null
+   }
+
+   poll_device /dev/sda2 20
+   mkdir -p /lroot
+   "$mount_handler" /lroot
+
+   mkdir -p /nloverlay
+   mount /dev/sda3 /nloverlay
+   mkdir -p /nloverlay/os-overlay
+   mkdir -p /nloverlay/runtime-overlay
+   mkdir -p /nloverlay/work
+
+   oroot_mount() {
+      echo "Entering custom mount handler oroot_mount"
+      mkdir -p /nloverlay
+      mount /dev/sda3 /nloverlay
+      
+      mount -t overlay -o lowerdir=/nloverlay/os-overlay:/lroot,upperdir=/nloverlay/runtime-overlay,workdir=/nloverlay/work overlay "$1"
+      mv /overlay_flush /new_root/usr/bin/
+   }
+
+   mount_handler=oroot_mount
+}

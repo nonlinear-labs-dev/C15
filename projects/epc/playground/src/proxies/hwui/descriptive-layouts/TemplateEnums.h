@@ -38,8 +38,8 @@ namespace DescriptiveLayouts
        VGIMasterVolumeText, VGIIMasterVolumeText, SplitPointValue, MonoEnabledText, MonoPrioText, MonoLegatoText,
        MonoGlideText, UnisonVoicesText, UnisonDetuneText, UnisonPhaseText, UnisonPanText, MonoEnabled, UnisonEnabled,
        CurrentVoiceGroupLabel, SoundParamsButtonText, SoundVoicesButtonText, SoundMasterButtonText, MonoButtonText,
-       UnisonButtonText, VGIMuted, VGIIMuted, IsSingleSound, IsLayerSound, IsSplitSound, SplitPointIValue,
-       SplitPointIIValue,
+       UnisonButtonText, VGIMuted, VGIIMuted, VGIIsMuted, VGIIIsMuted, IsSingleSound, IsLayerSound, IsSplitSound,
+       SplitPointIValue, SplitPointIIValue,
 
        // try to use more generic names, the specific meaning is implemented in the EventProvider
        Edit, Fine, Locked, Position, NumItems,
@@ -51,10 +51,10 @@ namespace DescriptiveLayouts
        CurrentNumber, CurrentName, CurrentSelected, CurrentLoaded,
 
        NextNumber, NextName, NextSelected, NextLoaded, PreviousType, NextType, CurrentType, CurrentVoiceGroupText,
-       EditBufferNameWithSuffix, SyncSplitEnabled, SyncSplitDisabled,
+       EditBufferNameWithSuffix, SyncSplitEnabled, SyncSplitDisabled, SplitPointDefaultBehaviourWithoutSync,
 
        AnyLayerCrossFB, AnyLayerCrossFBToI, AnyLayerCrossFBToII, ToFXIIUnder100, ToFXIUnder100, ToFXIIOver0, ToFXIOver0,
-       LayerFBState, LayerFBOffset, LayerFXState, LayerFXOffset);
+       LayerFBState, LayerFXState, LayerFXOffset);
 
   ENUM(EventSinks, uint8_t, Swallow, SwitchToInitDetail, SwitchToEditMode, SwitchToSelectMode, SwitchToSetupFocus,
        SwitchToParameterFocus, SwitchToBankFocus, SwitchToPresetFocus, SwitchToSoundFocus, SwitchToMCSelectDetail,
@@ -70,7 +70,7 @@ namespace DescriptiveLayouts
        Left, Right, Up, Down, IncParam, DecParam, Commit);
 
   ENUM(EventProviders, uint8_t, None, Global, IndependentPresetSelectionEvents, PresetManagerEvents);
-  ENUM(PrimitiveClasses, uint8_t, Any, Bar, Border, Text, Circle, Image);
+  ENUM(PrimitiveClasses, uint8_t, Any, Bar, Border, Text, Circle, Image, Concrete);
 
   template <typename Derived> class StringId : public std::string
   {

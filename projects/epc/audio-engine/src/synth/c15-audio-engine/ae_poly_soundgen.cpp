@@ -51,11 +51,7 @@ void Engine::PolySoundGenerator::generate(PolySignals &_signals, const PolyValue
   oscSampleA *= m_chiA_a0;
   auto tmpVarA = oscSampleA;
   oscSampleA = (oscSampleA + m_chiA_stateVar) * m_chiA_omega;  // chirp FIR
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
   m_chiA_stateVar = tmpVarA;
-#else
-  m_chiA_stateVar = tmpVarA + NlToolbox::Constants::DNC_const;
-#endif
   oscSampleA += m_oscA_phase;
   oscSampleA += _signals.get(C15::Signals::Quasipoly_Signals::Osc_A_Phase)
       + _signals.get(C15::Signals::Truepoly_Signals::Unison_PolyPhase);
@@ -82,11 +78,7 @@ void Engine::PolySoundGenerator::generate(PolySignals &_signals, const PolyValue
   oscSampleB *= m_chiB_a0;
   auto tmpVarB = oscSampleB;
   oscSampleB = (oscSampleB + m_chiB_stateVar) * m_chiB_omega;  // chirp FIR
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
   m_chiB_stateVar = tmpVarB;
-#else
-  m_chiB_stateVar = tmpVarB + NlToolbox::Constants::DNC_const;
-#endif
   oscSampleB += m_oscB_phase;
   oscSampleB += _signals.get(C15::Signals::Quasipoly_Signals::Osc_B_Phase)
       + _signals.get(C15::Signals::Truepoly_Signals::Unison_PolyPhase);

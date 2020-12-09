@@ -22,6 +22,8 @@
 #include "ae_mono_section.h"
 #include "ae_poly_section.h"
 
+#include "midi_handle.h"
+
 #include <array>
 
 // developer switches
@@ -57,37 +59,6 @@ inline constexpr uint32_t LOG_PARAMS_LENGTH = 3;
 // use tcd ids here (currently: Split Point, Unison Detune)
 static const uint32_t LOG_PARAMS[LOG_PARAMS_LENGTH] = { 356, 250, 367 };
 
-namespace MSB
-{
-  // encode HW source number and MSB CC
-  enum HWSourceMidiCC
-  {
-    Ped1 = 0 << 8 | 20,
-    Ped2 = 1 << 8 | 21,
-    Ped3 = 2 << 8 | 22,
-    Ped4 = 3 << 8 | 23,
-    Bender = 4 << 8 | 0,
-    Aftertouch = 5 << 8 | 0,
-    Rib1 = 6 << 8 | 24,
-    Rib2 = 7 << 8 | 25
-  };
-}
-
-namespace LSB
-{
-  // encode HW source number and LSB CC
-  enum HWSourceMidiCC
-  {
-    Ped1 = 0 << 8 | 52,
-    Ped2 = 1 << 8 | 53,
-    Ped3 = 2 << 8 | 54,
-    Ped4 = 3 << 8 | 55,
-    Rib1 = 6 << 8 | 56,
-    Rib2 = 7 << 8 | 57,
-    Vel = 0xFF << 8 | 88
-  };
-}
-
 class dsp_host_dual
 {
  public:
@@ -104,7 +75,8 @@ class dsp_host_dual
   void logStatus();
   // event bindings: Playcontroller or MIDI Device (in Dev_PC mode)
 
-  using SimpleRawMidiMessage = std::array<uint8_t, 3>;
+  using SimpleRawMidiMessage = nltools::msg::Midi::SimpleMessage;
+
   using MidiOut = std::function<void(const SimpleRawMidiMessage&)>;
 
   void onTcdMessage(const uint32_t _status, const uint32_t _data0, const uint32_t _data1,
@@ -131,7 +103,7 @@ class dsp_host_dual
   // evend bindings: Settings
   void onSettingEditTime(const float _position);
   void onSettingTransitionTime(const float _position);
-  void onSettingNoteShift(const float _shift);
+  void onSettingNoteShift(const int& _shift);
   void onSettingGlitchSuppr(const bool _enabled);
   void onSettingTuneReference(const float _position);
   void onSettingInitialSinglePreset();
@@ -142,8 +114,15 @@ class dsp_host_dual
 
   using HWSourceValues = std::array<float, static_cast<size_t>(C15::Parameters::Hardware_Sources::_LENGTH_)>;
   HWSourceValues getHWSourceValues() const;
+  void hwSourceToMidi(const uint32_t id, const float controlPosition, const MidiOut& out);
+
+  using CC_Range_7_Bit = Midi::FullCCRange<Midi::Formats::_7_Bits_>;
+  using CC_Range_14_Bit = Midi::clipped14BitCCRange;
+  using CC_Range_Bender = Midi::FullCCRange<Midi::Formats::_14_Bits_>;
+  using CC_Range_Vel = Midi::clipped14BitVelRange;
 
  private:
+  using LayerMode = C15::Properties::LayerMode;
   // parameters
   Engine::Param_Handle m_params;
   Time_Param m_edit_time, m_transition_time;
@@ -154,10 +133,13 @@ class dsp_host_dual
   Engine::Handle::Clock_Handle m_clock;
   Engine::Handle::Time_Handle m_time;
   // layer handling
-  C15::Properties::LayerMode m_layer_mode;
+  LayerMode m_layer_mode;
   // global dsp components
   GlobalSection m_global;
-  VoiceAllocation<C15::Config::total_polyphony, C15::Config::local_polyphony, C15::Config::key_count> m_alloc;
+  VoiceAllocation<C15::Config::total_polyphony, C15::Config::local_polyphony, C15::Config::virtual_key_count,
+                  C15::Config::generic_key_pivot, LayerMode>
+      m_alloc;
+  ShifteableKeys<C15::Config::physical_key_from, C15::Config::physical_key_to> m_shifteable_keys;
   // dsp components
   atomic_fade_table m_fade;
   PolySection m_poly[2];
@@ -166,8 +148,9 @@ class dsp_host_dual
   // helper values
   const float m_format_vel = 16383.0f / 127.0f, m_format_hw = 16000.0f / 127.0f, m_format_pb = 16000.0f / 16383.0f,
               m_norm_vel = 1.0f / 16383.0f, m_norm_hw = 1.0f / 16000.0f;
-  uint32_t m_key_pos = 0, m_tone_state = 0;
-  bool m_key_valid = false, m_glitch_suppression = false;
+  int32_t m_key_pos = 0;
+  uint32_t m_tone_state = 0;
+  bool m_glitch_suppression = false;
 
   std::array<uint8_t, 8> m_hwSourcesMidiLSB;
   uint8_t m_velocityLSB = 0;
@@ -216,12 +199,16 @@ class dsp_host_dual
                     const nltools::msg::ParameterGroups::UnisonGroup& _unison,
                     const nltools::msg::ParameterGroups::MonoGroup& _mono);
   void debugLevels();
-#if __POTENTIAL_IMPROVEMENT_NUMERIC_TESTS__
-  void PotentialImprovements_RunNumericTests();
-#endif
 
   static inline MidiOut getNullMidiOut()
   {
     return [](const SimpleRawMidiMessage&) {};
   }
+
+  template <typename Range> void processBipolarMidiController(const uint32_t dataByte, int id);
+  template <typename Range> void processUnipolarMidiController(const uint32_t dataByte, int id);
+  void processNormalizedMidiController(const uint32_t _id, const float _controlPosition);
+  template <Midi::MSB::HWSourceMidiCC msb, Midi::LSB::HWSourceMidiCC lsb>
+  void sendCCOut(int id, float controlPosition, const MidiOut& out);
+  void processMidiForHWSource(int id, uint32_t _data);
 };

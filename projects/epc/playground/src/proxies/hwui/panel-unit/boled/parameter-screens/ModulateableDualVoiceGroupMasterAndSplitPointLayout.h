@@ -26,11 +26,16 @@ class UnmodulateableDualVoiceGroupMasterAndSplitPointLayout : public Unmodulatea
 
 class SplitPointParameterLayout : public ModulateableDualVoiceGroupMasterAndSplitPointLayout
 {
- protected:
-  Control* createParameterValueControl() override;
-
  public:
   SplitPointParameterLayout();
+  ~SplitPointParameterLayout() override;
+
+ protected:
+  Control* createParameterValueControl() override;
+  void fixValueControl();
+  void setMode(Mode desiredMode) override;
+
+  sigc::connection m_connection;
 };
 
 class SplitPointParameterEditLayout : public ModulateableParameterEditLayout2
@@ -39,11 +44,13 @@ class SplitPointParameterEditLayout : public ModulateableParameterEditLayout2
  public:
   SplitPointParameterEditLayout();
   ~SplitPointParameterEditLayout() override;
+
   ButtonMenu* createMenu(const Rect& rect) override;
 
  protected:
+  sigc::connection m_connection;
+
   Control* createParameterValueControl() override;
   ModuleCaption* createModuleCaption() const override;
   void fixValueControl();
-  sigc::connection m_settingConnection;
 };

@@ -1,6 +1,8 @@
 package com.nonlinearlabs.client.world.overlay.belt.parameters;
 
+import com.gargoylesoftware.htmlunit.svg.SvgImage;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.nonlinearlabs.client.Millimeter;
@@ -104,39 +106,6 @@ public class BeltParameterLayout extends OverlayLayout {
 
 	}
 
-	private final class SyncParameterButton extends SVGImage {
-		public SyncParameterButton(OverlayLayout parent) {
-			super(parent, "Morph_Tab_Disabled.svg", "Morph_Tab_Enabled.svg");
-		}
-
-		@Override
-		public int getSelectedPhase() {
-			return SetupModel.get().systemSettings.syncSplit.getBool() ? 1 : 0;
-		}
-
-		@Override
-		public Control click(Position eventPoint) {
-			EditBufferUseCases.get().toggleSyncSplit();
-			return this;
-		}
-	}
-
-	private final class SplitPointOverlapIndicator extends Label {
-		public SplitPointOverlapIndicator(OverlayLayout parent) {
-			super(parent);
-
-			EditBufferPresenterProvider.get().onChange(presenter -> {
-				setVisible(presenter.splitOverlap && presenter.selectedParameter.id.getNumber() == 356);
-				return true;
-			});
-		}
-
-		@Override
-		public String getDrawText(Context2d ctx) {
-			return "!";
-		}
-	}
-
 	private Mode mode = Mode.modulateableParameter;
 	private IncrementalChanger currentIncrementalChanger;
 
@@ -146,7 +115,7 @@ public class BeltParameterLayout extends OverlayLayout {
 	private OverlayControl mcSourceDisplay;
 	private OverlayControl editorMode;
 	private OverlayControl valueDisplay;
-	private OverlayControl splitValueDisplay;
+	private SplitValueDisplay splitValueDisplay;
 	private OverlayControl parameterName;
 	private OverlayControl dottedLine;
 	private OverlayControl infoButton;
@@ -161,7 +130,6 @@ public class BeltParameterLayout extends OverlayLayout {
 
 	private RecallArea currentRecall;
 	private SyncParameterButton syncSplitParameter;
-	private SplitPointOverlapIndicator splitOverlap;
 
 	public BeltParameterLayout(final Belt parent) {
 		super(parent);
@@ -189,7 +157,6 @@ public class BeltParameterLayout extends OverlayLayout {
 		addChild(mcLowerClip = new ParameterClippingLabel(this, Mode.mcLower));
 		addChild(currentRecall = new ParameterRecallArea(this));
 		addChild(syncSplitParameter = new SyncParameterButton(this));
-		addChild(splitOverlap = new SplitPointOverlapIndicator(this));
 
 		EditBufferPresenterProvider.get().onChange(p -> {
 			if (p.selectedParameter.id.getNumber() != lastSelectedParameterNumber) {
@@ -279,10 +246,12 @@ public class BeltParameterLayout extends OverlayLayout {
 
 		mcSourceDisplay.doLayout(undoRedoMargin + undoWidth * 0.75 - modSrcDim / 2, (h - modSrcDim) / 2, modSrcDim,
 				modSrcDim);
-		editorMode.doLayout(w - editorModeLeft, (h - buttonDim) / 2, buttonDim, buttonDim);
 
-		splitOverlap.doLayout(w - editorModeLeft - buttonDim * 2, (h - buttonDim) / 2, buttonDim, buttonDim);
-		syncSplitParameter.doLayout(w - editorModeLeft + buttonDim, (h - buttonDim) / 2, buttonDim, buttonDim);
+		if (isParameterSplitPoint()) {
+			editorMode.doLayout(w - editorModeLeft - (buttonDim * 0.5), (h - buttonDim) / 2, buttonDim, buttonDim);
+		} else {
+			editorMode.doLayout(w - editorModeLeft, (h - buttonDim) / 2, buttonDim, buttonDim);
+		}
 
 		final double clipW = 20;
 		mcLowerClip.doLayout(sliderLeft - clipW, third, clipW, third);
@@ -323,6 +292,7 @@ public class BeltParameterLayout extends OverlayLayout {
 				c.doLayout(walkerX, 0, r.width, modAndParamValueYValue);
 				if (c == valueDisplay) {
 					splitValueDisplay.doLayout(walkerX, 0, r.width, modAndParamValueYValue);
+					syncSplitParameter.doLayout(walkerX + r.width, splitValueDisplay.getRelativePosition().getCenterPoint().getY() - (buttonDim / 1.8), buttonDim, buttonDim);
 				}
 			}
 			walkerX += r.width;

@@ -41,7 +41,7 @@ namespace nltools
 
          NotifyHardwareSourceChanged,
 
-         MidiSimpleMessage, MidiAck, MidiProgramChange,
+         MidiSimpleMessage, MidiAck, MidiProgramChange, MidiBridgeSettings,
 
          SyncFS);
 
@@ -105,6 +105,7 @@ namespace nltools
 
     void init(const Configuration &conf);
     void deInit();
+    const Configuration &getConfig();
 
     // wait at most timeOut for the sigc::connection to be established
     // return true if there is a sigc::connection to receiver

@@ -98,7 +98,7 @@ public class SoundSettingsButton extends SVGImage {
 
 				if (currentSetting == SoundType.Split) {
 					boolean syncEnabled = SetupModel.get().systemSettings.syncSplit.isTrue();
-					addChild(new ContextMenuItem(this, syncEnabled ? "Disable Sync" : "Enable Sync") {
+					addChild(new ContextMenuItem(this, syncEnabled ? "Unlink Splitpoints" : "Link Splitpoints") {
 						@Override
 						public Control click(Position eventPoint) {
 							EditBufferUseCases.get().toggleSyncSplit();

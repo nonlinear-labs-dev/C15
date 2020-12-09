@@ -54,7 +54,8 @@ class ModulateableParameterSelectLayout2 : public ParameterSelectLayout2, public
     Recall
   };
 
-  void setMode(Mode desiredMode);
+  virtual void setMode(Mode desiredMode);
+  Mode getMode() const;
   void toggleMode(Mode desiredMode);
   bool isModeOf(std::vector<Mode> modes) const;
 

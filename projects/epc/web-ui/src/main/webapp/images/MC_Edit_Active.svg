@@ -1,41 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
   <defs>
     <style>
       .a {
         fill: #76839c;
       }
 
-      .b {
-        fill: #1a1a1a;
-      }
-
-      .c, .d {
+      .b, .c {
         fill: none;
         stroke-miterlimit: 10;
       }
 
-      .c {
+      .b {
         stroke: #e6e6e6;
         stroke-width: 11px;
       }
 
-      .d {
+      .c {
         stroke: #000;
         stroke-width: 5px;
       }
 
-      .e {
+      .d {
         fill: #e6e6e6;
       }
     </style>
   </defs>
   <title>MC_Edit_Active</title>
   <g>
-    <rect class="a" x="1.5" y="1.5" width="41" height="41" rx="3.5" ry="3.5"/>
-    <path class="b" d="M39,2a3.00339,3.00339,0,0,1,3,3V39a3.00339,3.00339,0,0,1-3,3H5a3.00339,3.00339,0,0,1-3-3V5A3.00339,3.00339,0,0,1,5,2H39m0-1H5A4.01176,4.01176,0,0,0,1,5V39a4.01176,4.01176,0,0,0,4,4H39a4.01176,4.01176,0,0,0,4-4V5a4.01176,4.01176,0,0,0-4-4Z"/>
+    <rect class="a" x="0.5" y="0.5" width="37" height="37" rx="3.5" ry="3.5"/>
+    <path d="M34,1a3.00339,3.00339,0,0,1,3,3V34a3.00339,3.00339,0,0,1-3,3H4a3.00339,3.00339,0,0,1-3-3V4A3.00339,3.00339,0,0,1,4,1H34m0-1H4A4,4,0,0,0,0,4V34a4,4,0,0,0,4,4H34a4,4,0,0,0,4-4V4a4,4,0,0,0-4-4Z"/>
   </g>
-  <path class="c" d="M13.59975,15.43729a11.98326,11.98326,0,0,1,16.8005,0"/>
-  <circle class="d" cx="22" cy="24.00004" r="12"/>
-  <polygon class="a" points="22 26 10.34 41 33.66 41 22 26"/>
-  <circle class="e" cx="22" cy="24.00004" r="2.5"/>
+  <path class="b" d="M11.39978,13.06228a10.842,10.842,0,0,1,15.20044,0"/>
+  <circle class="c" cx="19" cy="20.80952" r="10.85714"/>
+  <polygon class="a" points="19 23.619 8.45 36.19 29.55 36.19 19 23.619"/>
+  <circle class="d" cx="18.69268" cy="21.34706" r="2.2619"/>
 </svg>

@@ -40,7 +40,7 @@ class EditBuffer : public ParameterGroupSet
   void undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p);
   void undoableSelectParameter(UNDO::Transaction *transaction, const ParameterId &id);
 
-  void undoableLoad(UNDO::Transaction *transaction, Preset *preset);
+  void undoableLoad(UNDO::Transaction *transaction, Preset *preset, bool sendToAudioEngine);
   void undoableLoad(Preset *preset);
   void undoableLoadToPart(const Preset *preset, VoiceGroup from, VoiceGroup to);
   void undoableLoadToPart(UNDO::Transaction *trans, const Preset *p, VoiceGroup from, VoiceGroup to);
@@ -231,4 +231,6 @@ class EditBuffer : public ParameterGroupSet
 
   mutable Preset *m_originCache { nullptr };
   bool isPartLabelChanged(VoiceGroup group) const;
+  void cleanupSplitPointIfOldPreset(UNDO::Transaction *transaction, const Preset* p);
+  void setSyncSplitSettingAccordingToLoadedPreset(UNDO::Transaction *transaction);
 };

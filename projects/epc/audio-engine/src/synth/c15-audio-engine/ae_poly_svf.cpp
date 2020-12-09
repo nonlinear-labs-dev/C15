@@ -45,11 +45,7 @@ void Engine::PolyStateVariableFilter::apply(PolySignals &_signals, const PolyVal
   auto bandpassOutput = (highpassOutput * omega) + m_first_int1_stateVar;
   auto lowpassOutput = (bandpassOutput * omega) + m_first_int2_stateVar;
   m_first_int1_stateVar = bandpassOutput;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
   m_first_int2_stateVar = lowpassOutput;
-#else
-  m_first_int2_stateVar = lowpassOutput + NlToolbox::Constants::DNC_const;
-#endif
   tmpVar = _signals.get(C15::Signals::Quasipoly_Signals::SV_Flt_LBH_1);
   auto outputSample_1 = lowpassOutput * std::max(-tmpVar, 0.0f);
   outputSample_1 += bandpassOutput * (1.0f - std::abs(tmpVar));
@@ -68,11 +64,7 @@ void Engine::PolyStateVariableFilter::apply(PolySignals &_signals, const PolyVal
   bandpassOutput = (highpassOutput * omega) + m_second_int1_stateVar;
   lowpassOutput = (bandpassOutput * omega) + m_second_int2_stateVar;
   m_second_int1_stateVar = bandpassOutput;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC
   m_second_int2_stateVar = lowpassOutput;
-#else
-  m_second_int2_stateVar = lowpassOutput + NlToolbox::Constants::DNC_const;
-#endif
   tmpVar = _signals.get(C15::Signals::Quasipoly_Signals::SV_Flt_LBH_2);
   auto outputSample_2 = lowpassOutput * std::max(-tmpVar, 0.0f);
   outputSample_2 += bandpassOutput * (1.0f - std::abs(tmpVar));

@@ -27,8 +27,7 @@ class PolySection
  public:
   PolySignals m_signals;
   float *m_reference;
-  float m_send_self_l = 0.0f, m_send_self_r = 0.0f, m_send_other_l = 0.0f, m_send_other_r = 0.0f, m_note_shift = 0.0f,
-        m_millisecond = 0.0f;
+  float m_send_self_l = 0.0f, m_send_self_r = 0.0f, m_send_other_l = 0.0f, m_send_other_r = 0.0f, m_millisecond = 0.0f;
   uint32_t m_uVoice = 0, m_key_active = 0;
   int32_t m_fadeStart = 0, m_fadeEnd = 0, m_fadeIncrement = 0;
   PolySection();
@@ -58,7 +57,7 @@ class PolySection
   void resetVoiceFade();
 
  private:
-  float m_key_levels[C15::Config::key_count] = {};
+  float m_key_levels[C15::Config::virtual_key_count] = {};
   SmootherHandle<C15::Smoothers::Poly_Sync, C15::Smoothers::Poly_Audio, C15::Smoothers::Poly_Fast,
                  C15::Smoothers::Poly_Slow>
       m_smoothers;
@@ -87,8 +86,8 @@ class PolySection
 #endif
   const float m_svf_resFactor = 1.0f / 60.0f;
   float m_note_pitch[C15::Config::local_polyphony] = {}, m_base_pitch[C15::Config::local_polyphony] = {},
-        m_shift[C15::Config::local_polyphony] = {}, m_key_tune[C15::Config::local_polyphony] = {},
-        m_last_key_tune[C15::Config::local_polyphony] = {}, m_samplerate = 0.0f, m_nyquist = 0.0f;
+        m_key_tune[C15::Config::local_polyphony] = {}, m_last_key_tune[C15::Config::local_polyphony] = {},
+        m_samplerate = 0.0f, m_nyquist = 0.0f;
   uint32_t m_key_position[C15::Config::local_polyphony] = {}, m_unison_index[C15::Config::local_polyphony] = {};
   const uint32_t m_voices = C15::Config::local_polyphony;
   float evalNyquist(const float _value);
@@ -106,4 +105,5 @@ class PolySection
   void updateEnvTimes(const uint32_t _voiceId);
   void updateNotePitch(const uint32_t _voiceId);
   void setSlowFilterCoefs(const uint32_t _voiceId);
+  void testVoiceFadeTable();
 };

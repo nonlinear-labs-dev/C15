@@ -50,7 +50,7 @@ void EditSmoothingTime::setDefault()
   set(m_time.getDefaultValue());
 }
 
-void EditSmoothingTime::sendToPlaycontroller(SendReason reason) const
+void EditSmoothingTime::syncExternals(SendReason reason) const
 {
   nltools::msg::Setting::EditSmoothingTimeMessage msg { static_cast<float>(m_time.getRawValue()) };
   Application::get().getAudioEngineProxy()->sendSettingMessage<nltools::msg::Setting::EditSmoothingTimeMessage>(msg);
@@ -75,7 +75,7 @@ void EditSmoothingTime::incDec(int incs, ButtonModifiers modifiers)
     incs++;
   }
 
-  sendToPlaycontroller(SendReason::SettingChanged);
+  syncExternals(SendReason::SettingChanged);
   notify();
 }
 

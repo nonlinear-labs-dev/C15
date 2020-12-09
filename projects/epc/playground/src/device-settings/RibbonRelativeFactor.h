@@ -22,7 +22,7 @@ class RibbonRelativeFactor : public Setting
   Glib::ustring getDisplayString() const;
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
-  void sendToPlaycontroller(SendReason reason) const override;
+  void syncExternals(SendReason reason) const override;
 
  private:
   QuantizedValue m_factor;

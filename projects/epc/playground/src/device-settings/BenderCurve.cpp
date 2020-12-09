@@ -13,7 +13,7 @@ BenderCurve::~BenderCurve()
 {
 }
 
-void BenderCurve::sendToPlaycontroller(SendReason reason) const
+void BenderCurve::syncExternals(SendReason reason) const
 {
   Application::get().getPlaycontrollerProxy()->sendSetting(BENDER_CURVE, (uint16_t)(get()));
 }

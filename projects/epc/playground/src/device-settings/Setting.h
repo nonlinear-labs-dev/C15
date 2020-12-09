@@ -24,7 +24,7 @@ class Setting : public UpdateDocumentContributor
   sigc::connection onChange(sigc::slot<void, const Setting *> slot);
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
-  virtual void sendToPlaycontroller(SendReason reason = SendReason::SettingChanged) const;
+  virtual void syncExternals(SendReason reason = SendReason::SettingChanged) const;
   virtual bool persistent() const;
 
   virtual Glib::ustring getDisplayString() const = 0;

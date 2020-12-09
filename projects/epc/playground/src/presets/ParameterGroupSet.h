@@ -28,6 +28,12 @@ class ParameterGroupSet : public AttributesOwner
   virtual const IntrusiveList<tParameterGroupPtr> &getParameterGroups(VoiceGroup vg) const;
 
   virtual std::map<int, Parameter *> getParametersSortedByNumber(VoiceGroup vg) const;
+
+  template <typename tP> tP *findAndCastParameterByID(const ParameterId &id) const
+  {
+    return dynamic_cast<tP *>(findParameterByID(id));
+  }
+
   virtual Parameter *findParameterByID(const ParameterId &id) const;
 
   template <VoiceGroup VG> void forEachParameter(const std::function<void(Parameter *)> &cb)

@@ -28,7 +28,7 @@ TEST_CASE("Store and Load Preset yields same editbuffer")
 
       WHEN("Loaded")
       {
-        eb->undoableLoad(transaction, layerPreset);
+        eb->undoableLoad(transaction, layerPreset, true);
 
         THEN("Unison Voices are 12")
         {

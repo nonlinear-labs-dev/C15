@@ -114,35 +114,33 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-IF(BUILD_BBB) # we need the BBB utilities
-    add_custom_command(
-        COMMENT "Build ePC update"
-        OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
-        DEPENDS .filesystem-created
-        DEPENDS epc-create-update
-        DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
-        DEPENDS bbb-rootfs
-        DEPENDS bbb-rootfs
-        DEPENDS ${ALL_FILES_IN_PROJECT}
-        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
-            ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
-            ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
-            "unused-playcontroller"
-            ${CMAKE_BINARY_DIR}
-            ${CMAKE_SOURCE_DIR}
-            nonlinear-epc-update
-            epc
-    )
+add_custom_command(
+    COMMENT "Build ePC update"
+    OUTPUT ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+    DEPENDS .filesystem-created
+    DEPENDS epc-create-update
+    DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
+    DEPENDS bbb-rootfs
+    DEPENDS bbb-rootfs
+    DEPENDS ${ALL_FILES_IN_PROJECT}
+    COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
+        ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
+        ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
+        "unused-playcontroller"
+        ${CMAKE_BINARY_DIR}
+        ${CMAKE_SOURCE_DIR}
+        nonlinear-epc-update
+        epc
+)
 
-    add_custom_target(epc-ota-update
-        DEPENDS ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
-        DEPENDS .filesystem-created
-        COMMAND ${CMAKE_SOURCE_DIR}/build-tools/c15-ota-update.sh
-            ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
-            \${UNIT_NAME}
-            \${UNIT_PASSWORD}
-        )
-ENDIF()
+add_custom_target(epc-ota-update
+    DEPENDS ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+    DEPENDS .filesystem-created
+    COMMAND ${CMAKE_SOURCE_DIR}/build-tools/c15-ota-update.sh
+        ${CMAKE_BINARY_DIR}/nonlinear-epc-update.tar
+        \${UNIT_NAME}
+        \${UNIT_PASSWORD}
+    )
 
 add_custom_target(epc-install-medium DEPENDS .nonlinux-install-medium)
 add_custom_target(epc-create-update DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/update.tar)

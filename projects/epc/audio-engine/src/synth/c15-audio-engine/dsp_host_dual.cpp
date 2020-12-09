@@ -1,5 +1,6 @@
 #include "dsp_host_dual.h"
 #include <nltools/messaging/Messaging.h>
+#include <assert.h>
 
 using namespace std::chrono_literals;
 
@@ -12,21 +13,68 @@ using namespace std::chrono_literals;
     @todo
 *******************************************************************************/
 
-template <int EnumValue> inline constexpr uint32_t getHWSourceId()
-{
-  return EnumValue >> 8;
-}
-
-template <int EnumValue> inline constexpr uint32_t getMidiCC()
-{
-  return EnumValue & 0xFF;
-}
-
 dsp_host_dual::dsp_host_dual()
 {
   m_hwSourcesMidiLSB.fill(0);
   m_mainOut_L = m_mainOut_R = 0.0f;
   m_layer_mode = C15::Properties::LayerMode::Single;
+
+  // pitch bend
+  assert(CC_Range_Bender::encodeBipolarMidiValue(-1.5f) == 0x0000);
+  assert(CC_Range_Bender::encodeBipolarMidiValue(-1.0f) == 0x0000);
+  assert(CC_Range_Bender::encodeBipolarMidiValue(0.0f) == 0x2000);
+  assert(CC_Range_Bender::encodeBipolarMidiValue(1.0f) == 0x3FFF);
+  assert(CC_Range_Bender::encodeBipolarMidiValue(1.5f) == 0x3FFF);
+
+  assert(CC_Range_Bender::decodeBipolarMidiValue(0x0000) == -1.0f);
+  assert(CC_Range_Bender::decodeBipolarMidiValue(0x2000) == 0.0f);
+  assert(CC_Range_Bender::decodeBipolarMidiValue(0x3FFF) == 1.0f);
+
+  // 14 bit bipolar controllers
+  assert(CC_Range_14_Bit::encodeBipolarMidiValue(-1.5f) == 0x0000);
+  assert(CC_Range_14_Bit::encodeBipolarMidiValue(-1.0f) == 0x0000);
+  assert(CC_Range_14_Bit::encodeBipolarMidiValue(0.0f) == 0x2000);
+  assert(CC_Range_14_Bit::encodeBipolarMidiValue(1.0f) == 0x3F80);
+  assert(CC_Range_14_Bit::encodeBipolarMidiValue(1.5f) == 0x3F80);
+
+  assert(CC_Range_14_Bit::decodeBipolarMidiValue(0x0000) == -1.0f);
+  assert(CC_Range_14_Bit::decodeBipolarMidiValue(0x2000) == 0.0f);
+  assert(CC_Range_14_Bit::decodeBipolarMidiValue(0x3F80) == 1.0f);
+
+  // 14 bit unipolar controllers
+  assert(CC_Range_14_Bit::encodeUnipolarMidiValue(-0.5f) == 0x0000);
+  assert(CC_Range_14_Bit::encodeUnipolarMidiValue(0.0f) == 0x0000);
+  assert(CC_Range_14_Bit::encodeUnipolarMidiValue(0.5f) == 0x2000);
+  assert(CC_Range_14_Bit::encodeUnipolarMidiValue(1.0f) == 0x3F80);
+  assert(CC_Range_14_Bit::encodeUnipolarMidiValue(1.5f) == 0x3F80);
+
+  assert(CC_Range_14_Bit::decodeUnipolarMidiValue(0x0000) == 0.0f);
+  assert(CC_Range_14_Bit::decodeUnipolarMidiValue(0x2000) == 0.5f);
+  assert(CC_Range_14_Bit::decodeUnipolarMidiValue(0x3F80) == 1.0f);
+
+  // 7 bit unipolar controllers
+  assert(CC_Range_7_Bit::encodeUnipolarMidiValue(-0.5f) == 0x00);
+  assert(CC_Range_7_Bit::encodeUnipolarMidiValue(0.0f) == 0x00);
+  assert(CC_Range_7_Bit::encodeUnipolarMidiValue(0.5f) == 0x40);
+  assert(CC_Range_7_Bit::encodeUnipolarMidiValue(1.0f) == 0x7F);
+  assert(CC_Range_7_Bit::encodeUnipolarMidiValue(1.5f) == 0x7F);
+
+  assert(CC_Range_7_Bit::decodeUnipolarMidiValue(0x00) == 0.0f);
+  assert(CC_Range_7_Bit::decodeUnipolarMidiValue(0x40) == 0.5f);
+  assert(CC_Range_7_Bit::decodeUnipolarMidiValue(0x7F) == 1.0f);
+
+  // velocity control
+  assert(CC_Range_Vel::encodeUnipolarMidiValue(-0.5f) == 0x0000);
+  assert(CC_Range_Vel::encodeUnipolarMidiValue(0.0f) == 0x0080);
+  assert(CC_Range_Vel::encodeUnipolarMidiValue(0.5f) == 0x2000);
+  assert(CC_Range_Vel::encodeUnipolarMidiValue(1.0f) == 0x3F80);
+  assert(CC_Range_Vel::encodeUnipolarMidiValue(1.5f) == 0x3F80);
+
+  assert(CC_Range_Vel::decodeUnipolarMidiValue(0x0000) == 0.0f);
+  assert(CC_Range_Vel::decodeUnipolarMidiValue(0x0080) == 0.0f);
+  assert(CC_Range_Vel::decodeUnipolarMidiValue(0x2000) == 0.5f);
+  assert(CC_Range_Vel::decodeUnipolarMidiValue(0x3F80) == 1.0f);
+  assert(CC_Range_Vel::decodeUnipolarMidiValue(0x3FFF) == 1.0f);
 }
 
 void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
@@ -42,8 +90,8 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
   const float samplerate = static_cast<float>(C15::Config::clock_rates[upsampleIndex][0]);
   // init of crucial components: voiceAlloc, conversion, clock, time, fadepoint
   m_alloc.init();
-  m_alloc.setSplitPoint(30, 0);  // temporary..?
-  m_alloc.setSplitPoint(31, 1);  // temporary..?
+  m_alloc.setSplitPoint(30 + C15::Config::physical_key_from, 0);  // temporary..?
+  m_alloc.setSplitPoint(31 + C15::Config::physical_key_from, 1);  // temporary..?
   m_convert.init();
   m_clock.init(upsampleIndex);
   m_time.init(upsampleIndex);
@@ -65,15 +113,15 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
   m_global.update_tone_mode(0);
 
   // voice fade stuff I (currently explicit)
-  m_poly[0].m_fadeStart = 0;
-  m_poly[0].m_fadeEnd = C15::Config::key_count - 1;
+  m_poly[0].m_fadeStart = C15::Config::virtual_key_from;
+  m_poly[0].m_fadeEnd = C15::Config::virtual_key_to;
   m_poly[0].m_fadeIncrement = 1;
   // init poly dsp: exponentiator, feedback pointers
   m_poly[0].init(&m_global.m_signals, &m_convert, &m_time, &m_z_layers[0], &m_reference.m_scaled, m_time.m_millisecond,
                  env_init_gateRelease, samplerate, upsampleFactor);
   // voice fade stuff II (currently explicit)
-  m_poly[1].m_fadeStart = C15::Config::key_count - 1;
-  m_poly[1].m_fadeEnd = 0;
+  m_poly[1].m_fadeStart = C15::Config::virtual_key_to;
+  m_poly[1].m_fadeEnd = C15::Config::virtual_key_from;
   m_poly[1].m_fadeIncrement = -1;
   // init poly dsp: exponentiator, feedback pointers
   m_poly[1].init(&m_global.m_signals, &m_convert, &m_time, &m_z_layers[1], &m_reference.m_scaled, m_time.m_millisecond,
@@ -247,10 +295,6 @@ void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
   }
   // temporary: load initials in order to have valid osc reset params
   //onSettingInitialSinglePreset();
-
-#if __POTENTIAL_IMPROVEMENT_NUMERIC_TESTS__
-  PotentialImprovements_RunNumericTests();
-#endif
 
   if(LOG_INIT)
   {
@@ -468,31 +512,29 @@ void dsp_host_dual::onTcdMessage(const uint32_t _status, const uint32_t _data0, 
         break;
       case 13:
         // Key Pos (down or up)
-        arg = _data1;
-        m_key_pos = arg - C15::Config::key_from;
-        // key position is only valid within range [36 ... 96]
-        m_key_valid = (arg >= C15::Config::key_from) && (arg <= C15::Config::key_to);
+        m_key_pos = _data1;
         if(LOG_MIDI_DETAIL)
         {
-          nltools::Log::info("midiMsg(source:KeyPos, raw:", arg, ", valid:", m_key_valid, ")");
+          nltools::Log::info("midiMsg(source:KeyPos, raw:", arg, ")");
         }
         break;
       case 14:
-        // Key Down
+        // Key Down (with Note Shift)
         arg = _data1 + (_data0 << 7);
-        if(m_key_valid)
+        m_key_pos = m_shifteable_keys.keyDown(m_key_pos);
+        if((m_key_pos >= C15::Config::virtual_key_from) && (m_key_pos <= C15::Config::virtual_key_to))
         {
           auto vel = static_cast<float>(arg) * m_norm_vel;
           keyDown(vel);
 
           uint8_t highResolutionVelocityStatusByte = static_cast<uint8_t>(0xB0);
-          uint16_t fullResolutionValue = vel * (1 << 13);
-          uint8_t lsbValByte = static_cast<uint8_t>(fullResolutionValue & 0x7F);
-          out({ highResolutionVelocityStatusByte, 88, lsbValByte });
+          uint16_t fullResolutionValue = CC_Range_Vel::encodeUnipolarMidiValue(vel);
+          uint8_t lsbVelByte = static_cast<uint8_t>(fullResolutionValue & 0x7F);
+          out({ highResolutionVelocityStatusByte, 88, lsbVelByte });
 
           uint8_t statusByte = static_cast<uint8_t>(0x90);
-          uint8_t keyByte = static_cast<uint8_t>(m_key_pos + C15::Config::key_from) & 0x7F;
-          uint8_t msbVelByte = static_cast<uint8_t>(vel * 127);
+          uint8_t keyByte = static_cast<uint8_t>(m_key_pos) & 0x7F;
+          uint8_t msbVelByte = static_cast<uint8_t>(fullResolutionValue >> 7);
           out({ statusByte, keyByte, msbVelByte });
         }
         else if(LOG_FAIL)
@@ -502,21 +544,22 @@ void dsp_host_dual::onTcdMessage(const uint32_t _status, const uint32_t _data0, 
         // ...
         break;
       case 15:
-        // Key Up
+        // Key Up (with Note Shift)
         arg = _data1 + (_data0 << 7);
-        if(m_key_valid)
+        m_key_pos = m_shifteable_keys.keyUp(m_key_pos);
+        if((m_key_pos >= C15::Config::virtual_key_from) && (m_key_pos <= C15::Config::virtual_key_to))
         {
           auto vel = static_cast<float>(arg) * m_norm_vel;
           keyUp(vel);
 
           uint8_t highResolutionVelocityStatusByte = static_cast<uint8_t>(0xB0);
-          uint16_t fullResolutionValue = vel * (1 << 13);
-          uint8_t lsbValByte = static_cast<uint8_t>(fullResolutionValue & 0x7F);
-          out({ highResolutionVelocityStatusByte, 88, lsbValByte });
+          uint16_t fullResolutionValue = CC_Range_Vel::encodeUnipolarMidiValue(vel);
+          uint8_t lsbVelByte = static_cast<uint8_t>(fullResolutionValue & 0x7F);
+          out({ highResolutionVelocityStatusByte, 88, lsbVelByte });
 
           uint8_t statusByte = static_cast<uint8_t>(0x80);
-          uint8_t keyByte = static_cast<uint8_t>(m_key_pos + C15::Config::key_from) & 0x7F;
-          uint8_t msbVelByte = static_cast<uint8_t>(vel * 127);
+          uint8_t keyByte = static_cast<uint8_t>(m_key_pos) & 0x7F;
+          uint8_t msbVelByte = static_cast<uint8_t>(fullResolutionValue >> 7);
           out({ statusByte, keyByte, msbVelByte });
         }
         else if(LOG_FAIL)
@@ -530,6 +573,36 @@ void dsp_host_dual::onTcdMessage(const uint32_t _status, const uint32_t _data0, 
   }
 }
 
+template <typename Range> void dsp_host_dual::processBipolarMidiController(const uint32_t dataByte, int id)
+{
+  auto midiVal = (dataByte << 7) + std::exchange(m_hwSourcesMidiLSB[id], 0);
+  auto value = Range::decodeBipolarMidiValue(midiVal);
+  processNormalizedMidiController(id, value);
+}
+
+template <typename Range> void dsp_host_dual::processUnipolarMidiController(const uint32_t dataByte, int id)
+{
+  auto midiVal = (dataByte << 7) + std::exchange(m_hwSourcesMidiLSB[id], 0);
+  auto value = Range::decodeUnipolarMidiValue(midiVal);
+  processNormalizedMidiController(id, value);
+}
+
+void dsp_host_dual::processNormalizedMidiController(const uint32_t _id, const float _controlPosition)
+{
+  auto source = m_params.get_hw_src(_id);
+  const float inc = _controlPosition - source->m_position;
+  source->m_position = _controlPosition;
+  hwModChain(source, _id, inc);
+}
+
+void dsp_host_dual::processMidiForHWSource(int id, uint32_t _data)
+{
+  if(m_params.get_hw_src(id)->m_behavior == C15::Properties::HW_Return_Behavior::Center)
+    processBipolarMidiController<CC_Range_14_Bit>(_data, id);
+  else
+    processUnipolarMidiController<CC_Range_14_Bit>(_data, id);
+}
+
 void dsp_host_dual::onMidiMessage(const uint32_t _status, const uint32_t _data0, const uint32_t _data1)
 {
   const uint32_t type = (_status & 127) >> 4;
@@ -537,82 +610,86 @@ void dsp_host_dual::onMidiMessage(const uint32_t _status, const uint32_t _data0,
   {
     nltools::Log::info("rawMidi(chan:", _status & 15, ", type:", type, ", data0:", _data0, ", data1:", _data1, ")");
   }
-  uint32_t arg = 0;
   switch(type)
   {
     case 0:
-      // note off
-      arg = static_cast<uint32_t>(static_cast<float>(_data1) * m_format_vel);
-      onTcdMessage(0xED, 0, _data0);                                  // keyPos
-      onTcdMessage(0xEF, arg >> 7, std::exchange(m_velocityLSB, 0));  // keyUp
+      // note off (without note shift)
+      {
+        const uint16_t fullResVel = (_data1 << 7) + std::exchange(m_velocityLSB, 0);
+        const float vel = CC_Range_Vel::decodeUnipolarMidiValue(fullResVel);
+        m_key_pos = _data0;
+        keyUp(vel);
+      }
       break;
     case 1:
-      // note on
-      arg = static_cast<uint32_t>(static_cast<float>(_data1) * m_format_vel);
-      onTcdMessage(0xED, 0, _data0);  // keyPos
-      if(arg != 0)
+      // note on (without note shift)
       {
-        onTcdMessage(0xEE, arg >> 7, std::exchange(m_velocityLSB, 0));  // keyDown
-      }
-      else
-      {
-        onTcdMessage(0xEF, 0, 0);  // keyUp
+        const uint16_t fullResVel = (_data1 << 7) + std::exchange(m_velocityLSB, 0);
+        const float vel = CC_Range_Vel::decodeUnipolarMidiValue(fullResVel);
+        m_key_pos = _data0;
+        if(CC_Range_Vel::isValidNoteOnVelocity(fullResVel))
+        {
+          keyDown(vel);
+        }
+        else
+        {
+          keyUp(0.0f);
+        }
       }
       break;
     case 3:
-      arg = static_cast<uint32_t>(static_cast<float>(_data1) * m_format_hw);
       switch(_data0)
       {
-        case getMidiCC<MSB::Ped1>():
-          onTcdMessage(0xE0, arg >> 7, std::exchange(m_hwSourcesMidiLSB[0], 0));
+        case Midi::getMSB::getCC<Midi::MSB::Ped1>():
+          processMidiForHWSource(0, _data1);
           break;
 
-        case getMidiCC<MSB::Ped2>():
-          onTcdMessage(0xE1, arg >> 7, std::exchange(m_hwSourcesMidiLSB[1], 0));
+        case Midi::getMSB::getCC<Midi::MSB::Ped2>():
+          processMidiForHWSource(1, _data1);
           break;
 
-        case getMidiCC<MSB::Ped3>():
-          onTcdMessage(0xE2, arg >> 7, std::exchange(m_hwSourcesMidiLSB[2], 0));
+        case Midi::getMSB::getCC<Midi::MSB::Ped3>():
+          processMidiForHWSource(2, _data1);
           break;
 
-        case getMidiCC<MSB::Ped4>():
-          onTcdMessage(0xE3, arg >> 7, std::exchange(m_hwSourcesMidiLSB[3], 0));
+        case Midi::getMSB::getCC<Midi::MSB::Ped4>():
+          processMidiForHWSource(3, _data1);
           break;
 
-        case getMidiCC<MSB::Rib1>():
-          onTcdMessage(0xE6, arg >> 7, std::exchange(m_hwSourcesMidiLSB[6], 0));
+        case Midi::getMSB::getCC<Midi::MSB::Rib1>():
+          processMidiForHWSource(6, _data1);
           break;
 
-        case getMidiCC<MSB::Rib2>():
-          onTcdMessage(0xE7, arg >> 7, std::exchange(m_hwSourcesMidiLSB[7], 0));
+        case Midi::getMSB::getCC<Midi::MSB::Rib2>():
+          processMidiForHWSource(7, _data1);
           break;
 
-        case getMidiCC<LSB::Ped1>():
-          m_hwSourcesMidiLSB[0] = arg & 0x7F;
+        case Midi::getLSB::getCC<Midi::LSB::Ped1>():
+          m_hwSourcesMidiLSB[0] = _data1 & 0x7F;
           break;
 
-        case getMidiCC<LSB::Ped2>():
-          m_hwSourcesMidiLSB[1] = arg & 0x7F;
+        case Midi::getLSB::getCC<Midi::LSB::Ped2>():
+          m_hwSourcesMidiLSB[1] = _data1 & 0x7F;
           break;
 
-        case getMidiCC<LSB::Ped3>():
-          m_hwSourcesMidiLSB[2] = arg & 0x7F;
+        case Midi::getLSB::getCC<Midi::LSB::Ped3>():
+          m_hwSourcesMidiLSB[2] = _data1 & 0x7F;
           break;
 
-        case getMidiCC<LSB::Ped4>():
-          m_hwSourcesMidiLSB[3] = arg & 0x7F;
+        case Midi::getLSB::getCC<Midi::LSB::Ped4>():
+          m_hwSourcesMidiLSB[3] = _data1 & 0x7F;
           break;
 
-        case getMidiCC<LSB::Rib1>():
-          m_hwSourcesMidiLSB[6] = arg & 0x7F;
+        case Midi::getLSB::getCC<Midi::LSB::Rib1>():
+          m_hwSourcesMidiLSB[6] = _data1 & 0x7F;
           break;
 
-        case getMidiCC<LSB::Rib2>():
-          m_hwSourcesMidiLSB[7] = arg & 0x7F;
+        case Midi::getLSB::getCC<Midi::LSB::Rib2>():
+          m_hwSourcesMidiLSB[7] = _data1 & 0x7F;
           break;
 
-        case getMidiCC<LSB::Vel>():
-          m_velocityLSB = arg & 0x7F;
+        case Midi::getLSB::getCC<Midi::LSB::Vel>():
+          m_velocityLSB = _data1 & 0x7F;
           break;
 
         default:
@@ -621,14 +698,18 @@ void dsp_host_dual::onMidiMessage(const uint32_t _status, const uint32_t _data0,
       break;
     case 5:
       // mono aftertouch (hw source)
-      arg = static_cast<uint32_t>(static_cast<float>(_data0) * m_format_hw);
-      onTcdMessage(0xE5, arg >> 7, arg & 127);  // hw_at
+      m_hwSourcesMidiLSB[5] = 0;
+      processNormalizedMidiController(5, CC_Range_7_Bit::decodeUnipolarMidiValue(_data0));
       break;
+
     case 6:
-      // bend (hw source)
-      arg = static_cast<uint32_t>(static_cast<float>(_data0 + (_data1 << 7)) * m_format_pb);
-      onTcdMessage(0xE4, arg >> 7, arg & 127);  // hw_bend
+      // bender
+      // pitch bend messages are: STATUS LSB MSB
+      m_hwSourcesMidiLSB[4] = _data0 & 0x7F;
+      processNormalizedMidiController(
+          4, CC_Range_Bender::decodeBipolarMidiValue((_data1 << 7) + std::exchange(m_hwSourcesMidiLSB[4], 0)));
       break;
+
     default:
       break;
   }
@@ -895,7 +976,7 @@ void dsp_host_dual::localParChg(const uint32_t _id, const nltools::msg::Modulate
       case C15::Parameters::Local_Modulateables::Split_Split_Point:
         if(m_layer_mode == LayerMode::Split)
         {
-          m_alloc.setSplitPoint(static_cast<uint32_t>(param->m_scaled), layerId);
+          m_alloc.setSplitPoint(static_cast<uint32_t>(param->m_scaled) + C15::Config::physical_key_from, layerId);
         }
         break;
       default:
@@ -1091,9 +1172,9 @@ void dsp_host_dual::onSettingTransitionTime(const float _position)
   }
 }
 
-void dsp_host_dual::onSettingNoteShift(const float _shift)
+void dsp_host_dual::onSettingNoteShift(const int& _shift)
 {
-  m_poly[0].m_note_shift = m_poly[1].m_note_shift = _shift;
+  m_shifteable_keys.setNoteShift(_shift);
   if(LOG_SETTINGS)
   {
     nltools::Log::info("note_shift:", _shift);
@@ -1499,16 +1580,76 @@ float dsp_host_dual::scale(const Scale_Aspect _scl, float _value)
   return result;
 }
 
-template <MSB::HWSourceMidiCC msb, LSB::HWSourceMidiCC lsb, typename Out> void sendCCOut(const Out& out, float value)
+template <Midi::MSB::HWSourceMidiCC msb, Midi::LSB::HWSourceMidiCC lsb, typename Out>
+void doSendCCOut(const Out& out, uint16_t value)
 {
   uint8_t statusByte = static_cast<uint8_t>(0xB0);
-  uint16_t fullResolutionValue = value * (1 << 13);
+  uint8_t lsbValByte = static_cast<uint8_t>(value & 0x7F);
+  out({ statusByte, Midi::getLSB::getCC<lsb>(), lsbValByte });
 
-  uint8_t lsbValByte = static_cast<uint8_t>(fullResolutionValue & 0x7F);
-  out({ statusByte, getMidiCC<lsb>(), lsbValByte });
+  uint8_t msbValByte = static_cast<uint8_t>(value >> 7 & 0x7F);
+  out({ statusByte, Midi::getMSB::getCC<msb>(), msbValByte });
+}
 
-  uint8_t msbValByte = static_cast<uint8_t>(fullResolutionValue >> 7 & 0x7F);
-  out({ statusByte, getMidiCC<msb>(), msbValByte });
+template <Midi::MSB::HWSourceMidiCC msb, Midi::LSB::HWSourceMidiCC lsb>
+void dsp_host_dual::sendCCOut(int id, float controlPosition, const MidiOut& out)
+{
+  if(m_params.get_hw_src(id)->m_behavior == C15::Properties::HW_Return_Behavior::Center)
+    doSendCCOut<msb, lsb>(out, CC_Range_14_Bit::encodeBipolarMidiValue(controlPosition));
+  else
+    doSendCCOut<msb, lsb>(out, CC_Range_14_Bit::encodeUnipolarMidiValue(controlPosition));
+}
+
+void dsp_host_dual::hwSourceToMidi(const uint32_t id, const float controlPosition, const MidiOut& out)
+{
+  switch(static_cast<C15::Parameters::Hardware_Sources>(id))
+  {
+    case C15::Parameters::Hardware_Sources::Pedal_1:
+      sendCCOut<Midi::MSB::Ped1, Midi::LSB::Ped1>(0, controlPosition, out);
+      break;
+
+    case C15::Parameters::Hardware_Sources::Pedal_2:
+      sendCCOut<Midi::MSB::Ped2, Midi::LSB::Ped2>(1, controlPosition, out);
+      break;
+
+    case C15::Parameters::Hardware_Sources::Pedal_3:
+      sendCCOut<Midi::MSB::Ped3, Midi::LSB::Ped3>(2, controlPosition, out);
+      break;
+
+    case C15::Parameters::Hardware_Sources::Pedal_4:
+      sendCCOut<Midi::MSB::Ped4, Midi::LSB::Ped4>(3, controlPosition, out);
+      break;
+
+    case C15::Parameters::Hardware_Sources::Ribbon_1:
+      sendCCOut<Midi::MSB::Rib1, Midi::LSB::Rib1>(6, controlPosition, out);
+      break;
+
+    case C15::Parameters::Hardware_Sources::Ribbon_2:
+      sendCCOut<Midi::MSB::Rib2, Midi::LSB::Rib2>(7, controlPosition, out);
+      break;
+
+    case C15::Parameters::Hardware_Sources::Bender:
+    {
+      auto value = CC_Range_Bender::encodeBipolarMidiValue(controlPosition);
+      uint8_t statusByte = static_cast<uint8_t>(0xE0);
+      uint8_t valByte1 = static_cast<uint8_t>(value & 0x7F);
+      uint8_t valByte2 = static_cast<uint8_t>((value >> 7) & 0x7F);
+      // Pitch Bend Messages are: Status LSB MSB
+      out({ statusByte, valByte1, valByte2 });
+      break;
+    }
+
+    case C15::Parameters::Hardware_Sources::Aftertouch:
+    {
+      uint8_t statusByte = static_cast<uint8_t>(0xD0);
+      uint8_t valByte = CC_Range_7_Bit::encodeUnipolarMidiValue(controlPosition);
+      out({ statusByte, valByte });
+      break;
+    }
+
+    default:
+      break;
+  }
 }
 
 void dsp_host_dual::updateHW(const uint32_t _id, const float _raw, const MidiOut& out)
@@ -1516,59 +1657,12 @@ void dsp_host_dual::updateHW(const uint32_t _id, const float _raw, const MidiOut
   auto source = m_params.get_hw_src(_id);
   float value = _raw * m_norm_hw;
 
-  switch(_id)
-  {
-    case getHWSourceId<MSB::Ped1>():
-      sendCCOut<MSB::Ped1, LSB::Ped1>(out, value);
-      break;
-
-    case getHWSourceId<MSB::Ped2>():
-      sendCCOut<MSB::Ped2, LSB::Ped2>(out, value);
-      break;
-
-    case getHWSourceId<MSB::Ped3>():
-      sendCCOut<MSB::Ped3, LSB::Ped3>(out, value);
-      break;
-
-    case getHWSourceId<MSB::Ped4>():
-      sendCCOut<MSB::Ped4, LSB::Ped4>(out, value);
-      break;
-
-    case getHWSourceId<MSB::Rib1>():
-      sendCCOut<MSB::Rib1, LSB::Rib1>(out, value);
-      break;
-
-    case getHWSourceId<MSB::Rib2>():
-      sendCCOut<MSB::Rib2, LSB::Rib2>(out, value);
-      break;
-
-    case getHWSourceId<MSB::Bender>():
-    {
-      uint8_t statusByte = static_cast<uint8_t>(0xE0);
-      uint16_t v = static_cast<uint16_t>(value * (1 << 13));
-      uint8_t valByte1 = static_cast<uint8_t>(v & 0x7F);
-      uint8_t valByte2 = static_cast<uint8_t>((v >> 7) & 0x7F);
-      out({ statusByte, valByte1, valByte2 });
-      break;
-    }
-
-    case getHWSourceId<MSB::Aftertouch>():
-    {
-      uint8_t statusByte = static_cast<uint8_t>(0xD0);
-      uint8_t v = static_cast<uint8_t>(value * 127);
-      uint8_t valByte = static_cast<uint8_t>(0x7F & v);
-      out({ statusByte, valByte, 0 });
-      break;
-    }
-
-    default:
-      break;
-  }
-
   if(source->m_behavior == C15::Properties::HW_Return_Behavior::Center)
   {
     value = (2.0f * value) - 1.0f;  // make return_to_center sources bipolar
   }
+
+  hwSourceToMidi(_id, value, out);
 
   const float inc = value - source->m_position;
   source->m_position = value;
@@ -1734,7 +1828,7 @@ void dsp_host_dual::localModChain(const uint32_t _layer, Macro_Param* _mc)
       }
       if(param->m_splitpoint)
       {
-        m_alloc.setSplitPoint(static_cast<uint32_t>(param->m_scaled), _layer);
+        m_alloc.setSplitPoint(static_cast<uint32_t>(param->m_scaled) + C15::Config::physical_key_from, _layer);
       }
     }
   }
@@ -1983,29 +2077,52 @@ bool dsp_host_dual::evalPolyChg(const C15::Properties::LayerId _layerId,
 
 void dsp_host_dual::evalVoiceFadeChg(const uint32_t _layer)
 {
-  if(VOICE_FADE_INTERPOLATION)
+
+  /// final version (when fade from range fits 128 keys):
+  //  const float from =
+  //      m_params
+  //          .get_local_direct(_layer, static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_From))
+  //          ->m_scaled
+  //      + static_cast<float>(C15::Config::physical_key_from);
+  //  const float range
+  //      = m_params
+  //            .get_local_direct(_layer,
+  //                              static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_Range))
+  //            ->m_scaled;
+
+  /// temporary version (for 61 key fade from range)
+  // this little hack will treat edge fade from cases (Part I: C1, Part II: C6) as virtual edge cases (keys 0, 127),
+  // ensuring that keys out of the 61 key range can be heard (instead of being faded out)
+  const uint32_t edgeCaseHackKey[2] = { C15::Config::physical_key_to, C15::Config::physical_key_from },
+                 edgeCaseHackRemap[2] = { C15::Config::virtual_key_to, C15::Config::virtual_key_from };
+
+  uint32_t from
+      = static_cast<uint32_t>(
+            m_params
+                .get_local_direct(_layer,
+                                  static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_From))
+                ->m_scaled)
+      + C15::Config::physical_key_from;
+
+  if(from == edgeCaseHackKey[_layer])
   {
-    m_poly[_layer].evalVoiceFadeInterpolated(
-        m_params
-            .get_local_direct(_layer,
-                              static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_From))
-            ->m_scaled,
-        m_params
+    from = edgeCaseHackRemap[_layer];
+  }
+  const float range
+      = m_params
             .get_local_direct(_layer,
                               static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_Range))
-            ->m_scaled);
+            ->m_scaled;
+  ///
+  if(VOICE_FADE_INTERPOLATION)
+  {
+    //      m_poly[_layer].evalVoiceFadeInterpolated(from, range);
+    m_poly[_layer].evalVoiceFadeInterpolated(static_cast<float>(from), range);
   }
   else
   {
-    m_poly[_layer].evalVoiceFade(
-        m_params
-            .get_local_direct(_layer,
-                              static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_From))
-            ->m_scaled,
-        m_params
-            .get_local_direct(_layer,
-                              static_cast<uint32_t>(C15::Parameters::Local_Unmodulateables::Voice_Grp_Fade_Range))
-            ->m_scaled);
+    //      m_poly[_layer].evalVoiceFade(from, range);
+    m_poly[_layer].evalVoiceFade(static_cast<float>(from), range);
   }
 }
 
@@ -2639,7 +2756,7 @@ void dsp_host_dual::localParRcl(const uint32_t _layerId, const nltools::msg::Par
     const uint32_t macroId = getMacroId(_param.mc);
     m_params.m_layer[_layerId].m_assignment.reassign(element.m_param.m_index, macroId);
     param->update_modulation_aspects(m_params.get_macro(macroId)->m_position);
-    m_alloc.setSplitPoint(static_cast<uint32_t>(param->m_scaled), _layerId);
+    m_alloc.setSplitPoint(static_cast<uint32_t>(param->m_scaled) + C15::Config::physical_key_from, _layerId);
   }
   else if(LOG_FAIL)
   {
@@ -2703,279 +2820,3 @@ void dsp_host_dual::debugLevels()
       m_params.get_local_target(0, static_cast<uint32_t>(C15::Parameters::Local_Modulateables::Voice_Grp_Volume))
           ->m_scaled);
 }
-
-#if __POTENTIAL_IMPROVEMENT_NUMERIC_TESTS__
-void dsp_host_dual::PotentialImprovements_RunNumericTests()
-{
-  // startup: provide test data
-  nltools::Log::info(__PRETTY_FUNCTION__, "starting tests (proposal_enabled:", __POTENTIAL_IMPROVEMENT_PROPOSAL__, ")");
-  const float TestGroup_Pattern_data[12]
-      = { -1.0f, -0.99f, -0.75f, -0.5f, -0.3f, -0.0f, 0.0f, 0.3f, 0.5f, 0.75f, 0.99f, 1.0f };
-  const PolyValue TestGroup_Pattern{ TestGroup_Pattern_data };
-  const size_t TestGroups = 4;
-  const char* RunInfo[TestGroups] = { "big", "unclamped", "clamped", "small" };
-  const PolyValue TestGroup[TestGroups]
-      = { 500.5f * TestGroup_Pattern, 2.25f * TestGroup_Pattern, 1.0f * TestGroup_Pattern, 0.001f * TestGroup_Pattern };
-  const float Threshold = 1.e-18f;
-
-  // consider enabled implementations individually
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    auto tmp1 = TestGroup[i];
-    // potential improvement - parallel implementation
-    auto tmp2 = std::abs(tmp1);
-    const PolyInt tmp2_sign_condition((tmp1 > 0.0f)),  // contains -1 (true) or 0 (false)
-        tmp2_sat_condition((tmp2 > 0.501187f));        // contains -1 (true) or 0 (false)
-    tmp2 -= 0.501187f;
-    auto tmp3 = tmp2 * 0.2512f;
-    tmp2 = std::min(tmp2, 2.98815f);
-    tmp2 *= 0.7488f * (1.0f - (tmp2 * 0.167328f));
-    tmp2 += tmp3 + 0.501187f;
-    tmp2 *= static_cast<PolyValue>((-2 * tmp2_sign_condition) - 1);  // restore sign
-    tmp3 = tmp2 - tmp1;                                              // detect difference to unsaturated signal
-    tmp1 -= static_cast<PolyValue>(tmp2_sat_condition) * tmp3;       // restore signal
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    auto tmp4 = TestGroup[i];
-    for(size_t v = 0; v < 12; v++)
-    {
-      // current implementation
-      if(std::abs(tmp4[v]) > 0.501187f)
-      {
-        if(tmp4[v] > 0.f)
-        {
-          tmp4[v] -= 0.501187f;
-          auto tmp5 = tmp4[v];
-          tmp4[v] = std::min(tmp4[v], 2.98815f);
-          tmp4[v] *= (1.0f - tmp4[v] * 0.167328f);
-          tmp4[v] *= 0.7488f;
-          tmp5 *= 0.2512f;
-          tmp4[v] += (tmp5 + 0.501187f);
-        }
-        else
-        {
-          tmp4[v] += 0.501187f;
-          auto tmp5 = tmp4[v];
-          tmp4[v] = std::max(tmp4[v], -2.98815f);
-          tmp4[v] *= (1.0f - std::abs(tmp4[v]) * 0.167328f);
-          tmp4[v] *= 0.7488f;
-          tmp5 *= 0.2512f;
-          tmp4[v] += (tmp5 - 0.501187f);
-        }
-      }
-      // value comparison
-      const auto tmpAbs = std::abs(tmp1[v] - tmp4[v]);
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp4[v], ",", tmpAbs, "]");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_ABS:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    // potential improvement - parallel implementation
-    auto tmp1 = std::abs(TestGroup[i]);
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    auto tmp2 = TestGroup[i];
-    for(size_t v = 0; v < 12; v++)
-    {
-      // scalar implementation
-      auto tmp3 = abs(tmp2[v]);
-      // value comparison
-      const auto tmpAbs = std::abs(tmp1[v] - tmp3);
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp3, ",", tmpAbs, "]");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_MINMAX_FLOAT:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    const float tmpMin = -1.0f, tmpMax = 1.0f;
-    // potential improvement - parallel implementation:
-    // - min(parallel,scalar), max(parallel,scalar), clamp(parallel,scalar,scalar), clamp(parallel,scalar,parallel)
-    auto tmp1 = std::min(TestGroup[i], tmpMin), tmp2 = std::max(TestGroup[i], tmpMax),
-         tmp3 = std::clamp(TestGroup[i], tmpMin, tmpMax), tmp4 = std::clamp(TestGroup[i], tmpMin, TestGroup[2]);
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    for(size_t v = 0; v < 12; v++)
-    {
-      // scalar implementation
-      auto tmp5 = std::min(TestGroup[i][v], tmpMin), tmp6 = std::max(TestGroup[i][v], tmpMax),
-           tmp7 = std::clamp(TestGroup[i][v], tmpMin, tmpMax),
-           tmp8 = std::clamp(TestGroup[i][v], tmpMin, TestGroup[2][v]);
-      // value comparison
-      const auto tmpAbs1 = std::abs(tmp1[v] - tmp5), tmpAbs2 = std::abs(tmp2[v] - tmp6),
-                 tmpAbs3 = std::abs(tmp3[v] - tmp7), tmpAbs4 = std::abs(tmp4[v] - tmp8),
-                 tmpAbs = tmpAbs1 + tmpAbs2 + tmpAbs3 + tmpAbs4;
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp5, ",", tmpAbs1, "] ( std::min(parallel, scalar) )");
-        nltools::Log::info("      [", v, ":", tmp2[v], ",", tmp6, ",", tmpAbs2, "] ( std::max(parallel, scalar) )");
-        nltools::Log::info("      [", v, ":", tmp3[v], ",", tmp7, ",", tmpAbs3,
-                           "] ( std::clamp(parallel, scalar, scalar) )");
-        nltools::Log::info("      [", v, ":", tmp4[v], ",", tmp8, ",", tmpAbs4,
-                           "] ( std::clamp(parallel, scalar, parallel) )");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_ROUND:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    // potential improvement - parallel implementation
-    auto tmp1 = static_cast<PolyValue>(std::round<int32_t>(TestGroup[i]));
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    for(size_t v = 0; v < 12; v++)
-    {
-      // scalar implementation
-      auto tmp2 = std::round(TestGroup[i][v]);
-      // value comparison
-      const auto tmpAbs = std::abs(tmp1[v] - tmp2);
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp2, ",", tmpAbs, "]");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_PARALLEL_DATA_KEEP_FRACTIONAL:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    // potential improvement - parallel implementation
-    auto tmp1 = keepFractional(TestGroup[i]);
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    for(size_t v = 0; v < 12; v++)
-    {
-      // scalar implementation
-      auto tmp2 = TestGroup[i][v] - NlToolbox::Conversion::float2int(TestGroup[i][v]);
-      // value comparison
-      const auto tmpAbs = std::abs(tmp1[v] - tmp2);
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp2, ",", tmpAbs, "]");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_PARALLEL_DATA_SINP3_WRAP:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    // potential improvement - parallel implementation
-    auto tmp1 = sinP3_wrap(TestGroup[i]);
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    for(size_t v = 0; v < 12; v++)
-    {
-      // scalar implementation
-      auto tmp2 = NlToolbox::Math::sinP3_wrap(TestGroup[i][v]);
-      // value comparison
-      const auto tmpAbs = std::abs(tmp1[v] - tmp2);
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp2, ",", tmpAbs, "]");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_PARALLEL_DATA_SINP3_NOWRAP:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    // potential improvement - parallel implementation
-    auto tmp1 = sinP3_noWrap(TestGroup[i]);
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    for(size_t v = 0; v < 12; v++)
-    {
-      // scalar implementation
-      auto tmp2 = NlToolbox::Math::sinP3_noWrap(TestGroup[i][v]);
-      // value comparison
-      const auto tmpAbs = std::abs(tmp1[v] - tmp2);
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp2, ",", tmpAbs, "]");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info("  POTENTIAL_IMPROVEMENT_PARALLEL_DATA_THREE_RANGES:");
-  for(int i = 0; i < TestGroups; i++)
-  {
-    uint16_t Profile = 0;
-    // potential improvement - parallel implementation
-    const float fold = 0.5f;
-    auto tmp1 = threeRanges(TestGroup[i], TestGroup[2], fold);
-    nltools::Log::info("    [ voiceId : improved, current, difference = abs(parallel - scalar) ] - run", i + 1, "of",
-                       TestGroups, "(", RunInfo[i], "numbers )");
-    // scalar implementation within voice loop
-    for(size_t v = 0; v < 12; v++)
-    {
-      auto tmp2 = TestGroup[i][v];
-      // scalar implementation
-      if(TestGroup[2][v] < -0.25f)
-      {
-        tmp2 = (tmp2 + 1.f) * fold - 1.f;
-      }
-      else if(TestGroup[2][v] > -0.25f)
-      {
-        tmp2 = (tmp2 - 1.f) * fold + 1.f;
-      }
-      // value comparison
-      const auto tmpAbs = std::abs(tmp1[v] - tmp2);
-      if(tmpAbs > Threshold)
-      {
-        nltools::Log::info("      [", v, ":", tmp1[v], ",", tmp2, ",", tmpAbs, "]");
-        Profile |= 1;
-      }
-      Profile <<= 1;
-    }
-    nltools::Log::info("    Profile:", Profile);
-  }
-
-  nltools::Log::info(__PRETTY_FUNCTION__, "finished tests");
-}
-#endif

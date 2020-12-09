@@ -127,5 +127,5 @@ install(FILES ${PROJECT_BINARY_DIR}/systemd/${BINARY_NAME}.service DESTINATION $
 install(FILES ${PROJECT_SOURCE_DIR}/systemd/persistent.mount DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
 
 install(DIRECTORY DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants)
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${SYSTEMD_SERVICES_INSTALL_DIR}/${BINARY_NAME}.service ${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/${BINARY_NAME}.service)")
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${SYSTEMD_SERVICES_INSTALL_DIR}/persistent.mount ${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/persistent.mount)")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../${BINARY_NAME}.service $ENV{DESTDIR}/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/${BINARY_NAME}.service)")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../persistent.mount $ENV{DESTDIR}/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/persistent.mount)")

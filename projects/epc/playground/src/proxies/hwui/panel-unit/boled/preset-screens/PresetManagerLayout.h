@@ -63,4 +63,5 @@ class PresetManagerLayout : public Layout
   sigc::connection m_dlSettingConnection;
 
   void setStoreModeData(std::unique_ptr<StoreModeData> ptr);
+  void onPresetStoreHappened();
 };

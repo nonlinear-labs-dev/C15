@@ -105,11 +105,6 @@ public class DeviceSettingsProvider {
 			return true;
 		});
 
-		SetupModel.get().systemSettings.forceHighlightChangedParameters.onChange(t -> {
-			NonMaps.get().getNonLinearWorld().invalidate(Control.INVALIDATION_FLAG_UI_CHANGED);
-			return true;
-		});
-
 		connectToPedal(254, settings.pedal1);
 		connectToPedal(259, settings.pedal2);
 		connectToPedal(264, settings.pedal3);
@@ -132,6 +127,18 @@ public class DeviceSettingsProvider {
 		SetupModel.get().systemSettings.tuneReference.onChange(t -> {
 			settings.tuneReferenceValue = t.value.getValue();
 			settings.tuneReferenceDisplayString = t.getDecoratedValue(true, true);
+			notifyClients();
+			return true;
+		});
+
+		SetupModel.get().systemSettings.syncSplit.onChange(t -> {
+			settings.syncSplitsEnabled = t.equals(BooleanValues.on);
+			notifyClients();
+			return true;
+		});
+
+		SetupModel.get().systemSettings.externalMidi.onChange(t -> {
+			settings.externalMidiEnabled = t.equals(BooleanValues.on);
 			notifyClients();
 			return true;
 		});

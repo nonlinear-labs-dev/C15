@@ -48,7 +48,7 @@
         },
         "Left": {
           "Class": "SplitVoiceGroupI",
-          "Position": "42, 17",
+          "Position": "43, 17",
           "Init": {
             "VoiceGroupIdentifier[Text]": "I",
             "UpperText[Text]": "+12.00 st",
@@ -59,7 +59,7 @@
         },
         "Right": {
           "Class": "SplitVoiceGroupII",
-          "Position": "142, 17",
+          "Position": "143, 17",
           "Init": {
             "VoiceGroupIdentifier[Text]": "II",
             "UpperText[Text]": "+12.00 st",
@@ -68,24 +68,29 @@
           },
           "Events": "isCurrentVGII => ANY[Highlight], VGIIMasterTuneText => LowerText[Text], VGIIMasterVolumeText => UpperText[Text]"
         },
+        "SplitSyncedLine": {
+          "Class": "SplitPointLine",
+          "Position": "128, 29",
+          "Events": "SplitPointDefaultBehaviourWithoutSync => ANY[Visibility]"
+        },
         "SplitI": {
           "Class": "SplitPointI",
-          "Position": "112, 20",
+          "Position": "113, 20",
           "Events": "SplitPointIValue => Text[Text], SyncSplitDisabled => ANY[Visibility], isCurrentVGI => ANY[Highlight]"
         },
         "SplitII": {
           "Class": "SplitPointII",
-          "Position": "118, 33",
+          "Position": "119, 34",
           "Events": "SplitPointIIValue => Text[Text], SyncSplitDisabled => ANY[Visibility], isCurrentVGII => ANY[Highlight]"
         },
         "SplitSynced": {
           "Class": "SplitPoint",
-          "Position": "113, 17",
+          "Position": "114, 17",
           "Events": "SplitPointValue => Text[Text], SyncSplitEnabled => ANY[Visibility]"
         },
         "I_TO_II": {
           "Class": "SplitFBImage",
-          "Position": "10, 23",
+          "Position": "11, 23",
           "Init": {
             "Image[ImagePath]": "Split_FX_B.png",
             "Image[Visibility]": "false"
@@ -94,7 +99,7 @@
         },
         "II_TO_I": {
           "Class": "SplitFBImage",
-          "Position": "212, 21",
+          "Position": "213, 21",
           "Init": {
             "Image[ImagePath]": "Split_FX_A.png",
             "Image[Visibility]": "false"

@@ -2,8 +2,8 @@
 
 /******************************************************************************/
 /** @file       ae_potential_improvements.h
-    @date       2020-04-22
-    @version    1.7B-4
+    @date       2020-11-13
+    @version    1.7B-7
     @author     M. Seeber
 
     @brief      contains define flags enabling potential dsp improvements
@@ -13,7 +13,6 @@
 
                 (this file is intended to only be temporary and should be deleted after everything is implemented, tested, decided and cleaned up)
 
-    @todo
 *******************************************************************************/
 
 // two basic states (disabled, enabled) are provided (disabled refers to the current implementation)
@@ -21,50 +20,33 @@
 #define __POTENTIAL_IMPROVEMENT_DISABLED__ 0
 #define __POTENTIAL_IMPROVEMENT_ENABLED__ 1
 
-// proposal declaration
-
-#define __POTENTIAL_IMPROVEMENT_PROPOSAL__ __POTENTIAL_IMPROVEMENT_ENABLED__
-#define __POTENTIAL_IMPROVEMENT_NUMERIC_TESTS__ __POTENTIAL_IMPROVEMENT_DISABLED__
-// - enable or disable:
-//   1) implementations of potential improvements
-//   2) numeric tests of chosen implementations
-
-// individual improvements
-
-// COMB IMPROVEMENTS
-
-#define POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_1 __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_2 __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_COMB_REDUCE_VOICE_LOOP_3 __POTENTIAL_IMPROVEMENT_PROPOSAL__
-// - three options, potentially reducing voice loops within the Comb Filter to zero
-
-// DNC IMPROVEMENTS
-
-#define POTENTIAL_IMPROVEMENT_DNC_CONST_OF_ZERO __POTENTIAL_IMPROVEMENT_DISABLED__
-// - first option just as a proof of concept
-#define POTENTIAL_IMPROVEMENT_DNC_OMIT_POLYPHONIC __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC __POTENTIAL_IMPROVEMENT_PROPOSAL__
-// - two further options potentially saving many additions
-
-// PARALLEL DATA SPECIFIC IMPROVEMENTS
-
-#define POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_ABS __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_MINMAX_FLOAT __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_PARALLEL_DATA_STD_ROUND __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_PARALLEL_DATA_KEEP_FRACTIONAL __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_PARALLEL_DATA_SINP3_WRAP __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_PARALLEL_DATA_SINP3_NOWRAP __POTENTIAL_IMPROVEMENT_PROPOSAL__
-#define POTENTIAL_IMPROVEMENT_PARALLEL_DATA_THREE_RANGES __POTENTIAL_IMPROVEMENT_PROPOSAL__
-// - at least in theory, all provided methods of ParallelData.h should perform SIMD compliant
+/******************************************************************************/
+/** @details
+ *
+ * - permanent improvements (April 2020)
+ *   - comb improvements: reduced voice loops by using paralleldata
+ *   - dnc improvements: got rid of denormal floats, avoiding lots of additions (Nltoolbox::Contants::DNC_const)
+ *   - paralleldata improvements (made the following SIMD-compliant):
+ *     - std::abs, std::min, std::max, std::clamp, std::round
+ *     - keepFractional, sinP3_wrap, sinP3_nowrap, threeRanges
+ *
+ * - permanent improvements (October/November 2020)
+ *   - output mixer: filter simplification of static mono HP
+ *   - part muting: reduced to only affect final part volume (cross feedback and fx send not affected anymore)
+ *
+*******************************************************************************/
 
 /******************************************************************************/
-/** @date       2020-10-18
-    @version    1.7B-7
-    @author     M. Seeber
-
-    @brief      further dsp-related improvements
-
-    @todo
+/** @todo
+ *
+ * - remaining potential improvements (November 2020 - still in development)
+ *   - fast pitch processing: process pitches faster (resolving env c and glide effects by fast(er) clock)
+ *     --> new 2.4 kHz clock and parameter-db update required
+ *   - gain curve smoothing: use a pre-calculated fade out/in buffer to
+ *     - avoid sudden "gain"-related signal changes (producing audible clicks - part: voicelevel (fade from/range), mixers: poly keypan, keytrk)
+ *     - avoid sudden "phase"-related signal changes (comb filter delay buffer)
+ *     --> poly "steal" detection (env-signals), poly fade mechanism and delayed keydown application required
+ *
 *******************************************************************************/
 
 // PROCESSING IMPROVEMENTS
@@ -72,17 +54,7 @@
 #define POTENTIAL_IMPROVEMENT_FAST_PITCH_PROCESSING __POTENTIAL_IMPROVEMENT_DISABLED__
 // - disabled: slow clock / enabled: fast clock for pitches
 
-// FILTER SIMPLIFICATION
-
-#define POTENTIAL_IMPROVEMENT_OUTMIX_SIMPLE_HP __POTENTIAL_IMPROVEMENT_ENABLED__
-// - replaces final static mono hp filter in output mix by simpler variation
-
 // GAIN-RELATED SMOOTHING (avoiding clicks)
 #define POTENTIAL_IMPROVEMENT_GAIN_CURVE __POTENTIAL_IMPROVEMENT_DISABLED__
 constexpr float POTENTIAL_SETTING_GAIN_CURVE_TIME_MS = 1.0f;  // later: migrate to parameter-db
 // - introduces a lookup-based s-curve smoothing of gain-related signals (currently at 1ms, smoothing only voice_level for now)
-
-// PART-MUTING ON OUT MIX "TO FX"?
-#define POTENTIAL_IMPROVEMENT_PART_MUTE_ONLY_ON_PART_VOL __POTENTIAL_IMPROVEMENT_ENABLED__
-// - disabled: output mixer "to fx" still is affected by part muting
-// - enabled: reduce Part Muting fully to only affect final Part Volume

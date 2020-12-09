@@ -6,6 +6,8 @@
 #include <parameters/SplitPointParameter.h>
 #include <presets/EditBuffer.h>
 #include <parameter_declarations.h>
+#include <device-settings/Settings.h>
+#include <device-settings/SplitPointSyncParameters.h>
 
 void DescriptiveLayouts::EditBufferTypeStringEvent::onChange(const EditBuffer *eb)
 {
@@ -171,13 +173,13 @@ void DescriptiveLayouts::CurrentVoiceGroupText::onChange(VoiceGroup newSelection
 
 void DescriptiveLayouts::VGIMuted::onChange(const EditBuffer *eb)
 {
-  auto muteI = eb->findParameterByID({ 395, VoiceGroup::I })->getControlPositionValue() != 0;
+  auto muteI = eb->findParameterByID({ C15::PID::Voice_Grp_Mute, VoiceGroup::I })->getControlPositionValue() != 0;
   setValue({ muteI ? "\uE0BA" : "", 0 });
 }
 
 void DescriptiveLayouts::VGIIMuted::onChange(const EditBuffer *eb)
 {
-  auto muteII = eb->findParameterByID({ 395, VoiceGroup::II })->getControlPositionValue() != 0;
+  auto muteII = eb->findParameterByID({ C15::PID::Voice_Grp_Mute, VoiceGroup::II })->getControlPositionValue() != 0;
   setValue({ muteII ? "\uE0BA" : "", 0 });
 }
 
@@ -199,6 +201,11 @@ void DescriptiveLayouts::IsSplitSound::onChange(const EditBuffer *eb)
 template <typename... Args> bool anyControlPositionNotZero(const EditBuffer *eb, Args... args)
 {
   return ((eb->findParameterByID(args)->getControlPositionValue() != 0) || ...);
+}
+
+template <typename... Args> bool anyControlPositionGreaterThanZero(const EditBuffer *eb, Args... args)
+{
+  return ((eb->findParameterByID(args)->getControlPositionValue() > 0) || ...);
 }
 
 void DescriptiveLayouts::AnyLayerCrossFB::onChange(const EditBuffer *eb)
@@ -269,9 +276,15 @@ bool DescriptiveLayouts::LayerIIFBFromI::check(const EditBuffer *eb)
   auto fxSrc = anyControlPositionNotZero(eb, ParameterId { C15::PID::FB_Mix_FX_Src, VoiceGroup::II });
   auto fx = fxMix && fxSrc;
 
-  auto state = comb || svf || fx;
+  auto pfbl = anyControlPositionNotZero(eb, ParameterId { C15::PID::FB_Mix_Lvl, VoiceGroup::II });
+  auto oscPM = anyControlPositionNotZero(eb, ParameterId { C15::PID::Osc_A_PM_FB, VoiceGroup::II },
+                                         ParameterId { C15::PID::Osc_B_PM_FB, VoiceGroup::II });
+  auto shaperFB = anyControlPositionGreaterThanZero(eb, ParameterId(C15::PID::Shp_A_FB_Mix, VoiceGroup::II),
+                                                    ParameterId(C15::PID::Shp_B_FB_Mix, VoiceGroup::II));
 
-  return oscFB || state;
+  auto other = pfbl && (shaperFB || oscPM);
+  auto state = comb || svf || fx;
+  return (oscFB || state) && other;
 }
 
 bool DescriptiveLayouts::LayerIFBFromII::check(const EditBuffer *eb)
@@ -290,9 +303,15 @@ bool DescriptiveLayouts::LayerIFBFromII::check(const EditBuffer *eb)
   auto fxSrc = anyControlPositionNotZero(eb, ParameterId { C15::PID::FB_Mix_FX_Src, VoiceGroup::I });
   auto fx = fxMix && fxSrc;
 
-  auto state = comb || svf || fx;
+  auto pfbl = anyControlPositionNotZero(eb, ParameterId { C15::PID::FB_Mix_Lvl, VoiceGroup::I });
+  auto oscPM = anyControlPositionNotZero(eb, ParameterId { C15::PID::Osc_A_PM_FB, VoiceGroup::I },
+                                         ParameterId { C15::PID::Osc_B_PM_FB, VoiceGroup::I });
+  auto shaperFB = anyControlPositionGreaterThanZero(eb, ParameterId(C15::PID::Shp_A_FB_Mix, VoiceGroup::I),
+                                                    ParameterId(C15::PID::Shp_B_FB_Mix, VoiceGroup::I));
 
-  return oscFB || state;
+  auto other = pfbl && (shaperFB || oscPM);
+  auto state = comb || svf || fx;
+  return (oscFB || state) && other;
 }
 
 void DescriptiveLayouts::LayerFBState::onChange(const EditBuffer *eb)
@@ -312,18 +331,6 @@ void DescriptiveLayouts::LayerFBState::onChange(const EditBuffer *eb)
   else
   {
     setValue("");
-  }
-}
-
-void DescriptiveLayouts::LayerFBOffset::onChange(const EditBuffer *eb)
-{
-  if(LayerIFBFromII::check(eb) && LayerIIFBFromI::check(eb))
-  {
-    setValue({ 0, 0 });
-  }
-  else
-  {
-    setValue({ 5, 5 });
   }
 }
 
@@ -363,4 +370,21 @@ void DescriptiveLayouts::LayerFXOffset::onChange(const EditBuffer *eb)
   {
     setValue({ 0, 0 });
   }
+}
+
+void DescriptiveLayouts::SplitPointBehaviourIsDefaultWithoutSync::onChange(const EditBuffer *eb)
+{
+  auto sI = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::I });
+  auto sync = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
+  setValue((!sync->get()) && sI->inDefaultSplitBehaviour());
+}
+
+void DescriptiveLayouts::VGIIsMuted::onChange(const EditBuffer *eb)
+{
+  setValue(eb->findParameterByID({ C15::PID::Voice_Grp_Mute, VoiceGroup::I })->isValueDifferentFrom(0));
+}
+
+void DescriptiveLayouts::VGIIIsMuted::onChange(const EditBuffer *eb)
+{
+  setValue(eb->findParameterByID({ C15::PID::Voice_Grp_Mute, VoiceGroup::II })->isValueDifferentFrom(0));
 }

@@ -13,7 +13,7 @@ VelocityCurve::~VelocityCurve()
 {
 }
 
-void VelocityCurve::sendToPlaycontroller(SendReason reason) const
+void VelocityCurve::syncExternals(SendReason reason) const
 {
   Application::get().getPlaycontrollerProxy()->sendSetting(VELOCITY_CURVE, static_cast<uint16_t>(get()));
 }

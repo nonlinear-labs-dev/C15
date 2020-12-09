@@ -118,11 +118,7 @@ void Engine::MonoFlanger::apply(MonoSignals &_signals, const float _rawSample_L,
   // 2 Hz lp tmod
   float tmod = _signals.get(C15::Signals::Mono_Signals::Flanger_Time_Mod) - m_lp2hz_stateVar_D;
   tmod = tmod * m_lp2hz_b0 + m_lp2hz_stateVar_D;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp2hz_stateVar_D = tmod;
-#else
-  m_lp2hz_stateVar_D = tmod + NlToolbox::Constants::DNC_const;
-#endif
   // left channel
   tmpVar_1 = _rawSample_L + (m_stateVar_L * _signals.get(C15::Signals::Mono_Signals::Flanger_FB_Local))
       + (m_stateVar_R * _signals.get(C15::Signals::Mono_Signals::Flanger_FB_Cross));
@@ -130,22 +126,13 @@ void Engine::MonoFlanger::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar_2 = m_lp_b0 * tmpVar_1;
   tmpVar_2 += m_lp_b1 * m_lp_stateVar_L1;
   tmpVar_2 += m_lp_a1 * m_lp_stateVar_L2;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp_stateVar_L1 = tmpVar_1;
   m_lp_stateVar_L2 = tmpVar_2;
-#else
-  m_lp_stateVar_L1 = tmpVar_1 + NlToolbox::Constants::DNC_const;
-  m_lp_stateVar_L2 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-#endif
   m_buffer_L[m_buffer_indx] = tmpVar_2;
   // 2 Hz lp tl
   tmpVar_1 = _signals.get(C15::Signals::Mono_Signals::Flanger_Time_L) - m_lp2hz_stateVar_TL;
   tmpVar_1 = tmpVar_1 * m_lp2hz_b0 + m_lp2hz_stateVar_TL;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp2hz_stateVar_TL = tmpVar_1;
-#else
-  m_lp2hz_stateVar_TL = tmpVar_1 + NlToolbox::Constants::DNC_const;
-#endif
   tmpVar_1 = tmpVar_1 + tmpVar_1 * tmod * _signals.get(C15::Signals::Mono_Signals::Flanger_LFO_L);
   int32_t ind_t0 = static_cast<int32_t>(std::round(tmpVar_1 - 0.5f));
   tmpVar_1 = tmpVar_1 - static_cast<float>(ind_t0);
@@ -172,11 +159,7 @@ void Engine::MonoFlanger::apply(MonoSignals &_signals, const float _rawSample_L,
   m_ap_StateVar_L1 = tmpVar_1;
   tmpVar_1 = tmpVar_2;
   m_ap_StateVar_L4 = m_ap_StateVar_L3;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ap_StateVar_L3 = tmpVar_2;
-#else
-  m_ap_StateVar_L3 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-#endif
   tmpVar_2 = tmpVar_2 * m_ap_b0_L;
   tmpVar_2 = tmpVar_2 + m_ap_StateVar_L5 * m_ap_b1_L;
   tmpVar_2 = tmpVar_2 + m_ap_StateVar_L6;
@@ -185,23 +168,13 @@ void Engine::MonoFlanger::apply(MonoSignals &_signals, const float _rawSample_L,
   m_ap_StateVar_L6 = m_ap_StateVar_L5;
   m_ap_StateVar_L5 = tmpVar_1;
   m_ap_StateVar_L8 = m_ap_StateVar_L7;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ap_StateVar_L7 = tmpVar_2;
-#else
-  m_ap_StateVar_L7 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-#endif
   // hp l
   m_stateVar_L = m_hp_b0 * tmpVar_2;
   m_stateVar_L += m_hp_b1 * m_hp_stateVar_L1;
   m_stateVar_L += m_hp_a1 * m_hp_stateVar_L2;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_hp_stateVar_L1 = tmpVar_2;
   m_hp_stateVar_L2 = m_stateVar_L;
-#else
-  m_hp_stateVar_L1 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_L2 = m_stateVar_L + NlToolbox::Constants::DNC_const;
-  m_stateVar_L += NlToolbox::Constants::DNC_const;
-#endif
   // out & tremolo l
   m_out_L
       = NlToolbox::Crossfades::crossFade(_rawSample_L, tmpVar_2, _signals.get(C15::Signals::Mono_Signals::Flanger_DRY),
@@ -216,22 +189,13 @@ void Engine::MonoFlanger::apply(MonoSignals &_signals, const float _rawSample_L,
   tmpVar_2 = m_lp_b0 * tmpVar_1;
   tmpVar_2 += m_lp_b1 * m_lp_stateVar_R1;
   tmpVar_2 += m_lp_a1 * m_lp_stateVar_R2;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp_stateVar_R1 = tmpVar_1;
   m_lp_stateVar_R2 = tmpVar_2;
-#else
-  m_lp_stateVar_R1 = tmpVar_1 + NlToolbox::Constants::DNC_const;
-  m_lp_stateVar_R2 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-#endif
   m_buffer_R[m_buffer_indx] = tmpVar_2;
   // 2 Hz lp tr
   tmpVar_1 = _signals.get(C15::Signals::Mono_Signals::Flanger_Time_R) - m_lp2hz_stateVar_TR;
   tmpVar_1 = tmpVar_1 * m_lp2hz_b0 + m_lp2hz_stateVar_TR;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_lp2hz_stateVar_TR = tmpVar_1;
-#else
-  m_lp2hz_stateVar_TR = tmpVar_1 + NlToolbox::Constants::DNC_const;
-#endif
   tmpVar_1 = tmpVar_1 + tmpVar_1 * tmod * _signals.get(C15::Signals::Mono_Signals::Flanger_LFO_R);
   ind_t0 = static_cast<int32_t>(std::round(tmpVar_1 - 0.5f));
   tmpVar_1 = tmpVar_1 - static_cast<float>(ind_t0);
@@ -258,11 +222,7 @@ void Engine::MonoFlanger::apply(MonoSignals &_signals, const float _rawSample_L,
   m_ap_StateVar_R1 = tmpVar_1;
   tmpVar_1 = tmpVar_2;
   m_ap_StateVar_R4 = m_ap_StateVar_R3;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ap_StateVar_R3 = tmpVar_2;
-#else
-  m_ap_StateVar_R3 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-#endif
   tmpVar_2 = tmpVar_2 * m_ap_b0_R;
   tmpVar_2 = tmpVar_2 + m_ap_StateVar_R5 * m_ap_b1_R;
   tmpVar_2 = tmpVar_2 + m_ap_StateVar_R6;
@@ -271,23 +231,13 @@ void Engine::MonoFlanger::apply(MonoSignals &_signals, const float _rawSample_L,
   m_ap_StateVar_R6 = m_ap_StateVar_R5;
   m_ap_StateVar_R5 = tmpVar_1;
   m_ap_StateVar_R8 = m_ap_StateVar_R7;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_ap_StateVar_R7 = tmpVar_2;
-#else
-  m_ap_StateVar_R7 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-#endif
   // hp r
   m_stateVar_R = m_hp_b0 * tmpVar_2;
   m_stateVar_R += m_hp_b1 * m_hp_stateVar_R1;
   m_stateVar_R += m_hp_a1 * m_hp_stateVar_R2;
-#if POTENTIAL_IMPROVEMENT_DNC_OMIT_MONOPHONIC
   m_hp_stateVar_R1 = tmpVar_2;
   m_hp_stateVar_R2 = m_stateVar_R;
-#else
-  m_hp_stateVar_R1 = tmpVar_2 + NlToolbox::Constants::DNC_const;
-  m_hp_stateVar_R2 = m_stateVar_R + NlToolbox::Constants::DNC_const;
-  m_stateVar_R += NlToolbox::Constants::DNC_const;
-#endif
   // out & tremolo r
   m_out_R
       = NlToolbox::Crossfades::crossFade(_rawSample_R, tmpVar_2, _signals.get(C15::Signals::Mono_Signals::Flanger_DRY),
