@@ -16,10 +16,10 @@ public class StoreModeButton extends SVGImage {
 
 	@Override
 	public int getSelectedPhase() {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		if (!pm.hasPresets) {
 			return drawStates.disabled.ordinal();
-		} else if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode) {
+		} else if (PresetManagerPresenterProvider.get().getValue().inStoreSelectMode) {
 			return drawStates.active.ordinal();
 		} else {
 			return drawStates.normal.ordinal();

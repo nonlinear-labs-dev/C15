@@ -3,11 +3,12 @@ package com.nonlinearlabs.client.useCases;
 import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank;
 import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
 import com.nonlinearlabs.client.dataModel.presetManager.Presets;
 import com.nonlinearlabs.client.world.maps.NonPosition;
 
@@ -30,7 +31,7 @@ public class BankUseCases {
     }
 
     public void dropBelow(String presetUUID, DropEffect effect) {
-        var dnd = PresetManagerModel.get().dnd.getValue();
+        var dnd = ClipboardModel.get().dnd.getValue();
         if (dnd == null)
             return;
 
@@ -47,7 +48,7 @@ public class BankUseCases {
     }
 
     public void dropOn(String presetUUID, DropEffect effect) {
-        var dnd = PresetManagerModel.get().dnd.getValue();
+        var dnd = ClipboardModel.get().dnd.getValue();
         if (dnd == null)
             return;
 
@@ -64,7 +65,7 @@ public class BankUseCases {
     }
 
     public void dropAbove(String presetUUID, DropEffect effect) {
-        var dnd = PresetManagerModel.get().dnd.getValue();
+        var dnd = ClipboardModel.get().dnd.getValue();
         if (dnd == null)
             return;
 
@@ -81,7 +82,7 @@ public class BankUseCases {
     }
 
     public void dropOnBank(String bankUuid) {
-        var dnd = PresetManagerModel.get().dnd.getValue();
+        var dnd = ClipboardModel.get().dnd.getValue();
         if (dnd == null)
             return;
 
@@ -113,7 +114,7 @@ public class BankUseCases {
     }
 
     public void dropDock(String master, TapePosition tapePosition, NonPosition pos) {
-        var dnd = PresetManagerModel.get().dnd.getValue();
+        var dnd = ClipboardModel.get().dnd.getValue();
         if (dnd != null && dnd.type == DragDataType.Bank)
             dock(dnd.data, master, tapePosition, pos);
     }

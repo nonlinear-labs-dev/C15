@@ -70,9 +70,9 @@ public class BankInfoDialog extends GWTDialog {
 	}
 
 	private void initialSetup() {
-		PresetManagerPresenterProvider.get().register(v -> {
+		PresetManagerPresenterProvider.get().onChange(v -> {
 			BankPresenterProviders.get().register(v.selectedBank, p -> {
-				if (PresetManagerPresenterProvider.get().getPresenter().selectedBank != p.uuid)
+				if (PresetManagerPresenterProvider.get().getValue().selectedBank != p.uuid)
 					return false;
 
 				updateInfo(p);
@@ -263,7 +263,7 @@ public class BankInfoDialog extends GWTDialog {
 		if (theDialog != null) {
 			theDialog.commit();
 		} else {
-			var presenter = PresetManagerPresenterProvider.get().getPresenter();
+			var presenter = PresetManagerPresenterProvider.get().getValue();
 			if (!presenter.selectedBank.isEmpty())
 				theDialog = new BankInfoDialog();
 		}
@@ -369,13 +369,13 @@ public class BankInfoDialog extends GWTDialog {
 
 	private void setFocus(Widget w) {
 		haveFocus = w;
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		bankPresenter = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 	}
 
 	public static void update() {
 
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var bankPresenter = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 		update(bankPresenter);
 	}

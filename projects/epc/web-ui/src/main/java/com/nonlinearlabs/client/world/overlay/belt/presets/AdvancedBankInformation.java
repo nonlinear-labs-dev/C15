@@ -18,7 +18,7 @@ public class AdvancedBankInformation extends Label {
 
 	@Override
 	public String getDrawText(Context2d ctx) {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var bankPresenter = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 		if (bankPresenter != null) {
 			return "[" + bankPresenter.presets.size() + "]";

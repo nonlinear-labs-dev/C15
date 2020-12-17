@@ -105,12 +105,12 @@ class MenuArea extends OverlayLayout {
 	}
 
 	boolean hasBank() {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		return !pm.banks.isEmpty();
 	}
 
 	boolean hasPreset() {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		return pm.hasPresets;
 	}
 

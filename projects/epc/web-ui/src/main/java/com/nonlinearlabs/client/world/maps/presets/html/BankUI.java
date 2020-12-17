@@ -10,7 +10,7 @@ import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
 import com.nonlinearlabs.client.useCases.BankUseCases.TapePosition;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.PointerEvent;
@@ -145,8 +145,8 @@ class BankUI extends HTMLPanel {
                     maxY = Math.max(maxY, bottom);
                 }
 
-                dragProxyContainer.getStyle().setWidth((maxX - minX) + 5, Unit.PX);
-                dragProxyContainer.getStyle().setHeight((maxY - minY) + 5, Unit.PX);
+                dragProxyContainer.getStyle().setWidth((maxX - minX), Unit.PX);
+                dragProxyContainer.getStyle().setHeight((maxY - minY), Unit.PX);
 
                 Document.get().getBody().appendChild(dragProxyContainer);
 

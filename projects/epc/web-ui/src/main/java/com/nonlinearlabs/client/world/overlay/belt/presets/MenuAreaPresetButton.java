@@ -45,7 +45,7 @@ public class MenuAreaPresetButton extends SVGImage {
 	}
 
 	String getPreset() {
-		return PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+		return PresetManagerPresenterProvider.get().getValue().selectedPreset;
 	}
 
 	private PresetManager getPresetManager() {
@@ -53,7 +53,7 @@ public class MenuAreaPresetButton extends SVGImage {
 	}
 
 	boolean hasPreset() {
-		var bankUuid = PresetManagerPresenterProvider.get().getPresenter().selectedBank;
+		var bankUuid = PresetManagerPresenterProvider.get().getValue().selectedBank;
 		var bank = BankPresenterProviders.get().getPresenter(bankUuid);
 		return !bank.presets.isEmpty();
 	}

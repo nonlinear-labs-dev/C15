@@ -61,7 +61,7 @@ class BankHeaderUI extends DropZone {
             e.stopPropagation();
             e.preventDefault();
 
-            if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode)
+            if (PresetManagerPresenterProvider.get().getValue().inStoreSelectMode)
                 return;
 
             boolean showContextMenus = SetupModel.get().localSettings.contextMenus.getValue() == BooleanValues.on;

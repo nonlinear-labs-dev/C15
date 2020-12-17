@@ -50,7 +50,7 @@ class PreviousPreset extends SVGImage {
 
 	@Override
 	public int getSelectedPhase() {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var b = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 
 		if (!b.canSelectPrevPreset)

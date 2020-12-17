@@ -50,7 +50,7 @@ class NextPreset extends SVGImage {
 
 	@Override
 	public int getSelectedPhase() {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var bank = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 
 		if (bank.presets.isEmpty())

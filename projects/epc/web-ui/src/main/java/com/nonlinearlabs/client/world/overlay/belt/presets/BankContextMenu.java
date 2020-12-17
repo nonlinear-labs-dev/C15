@@ -37,7 +37,7 @@ public abstract class BankContextMenu extends ContextMenu {
 		this.uuid = uuid;
 
 		var bankPresenter = BankPresenterProviders.get().getPresenter(uuid);
-		var pmPresenter = PresetManagerPresenterProvider.get().getPresenter();
+		var pmPresenter = PresetManagerPresenterProvider.get().getValue();
 
 		if (hasBankCreationRights()) {
 			addChild(new ContextMenuItem(this, "Create New Bank") {

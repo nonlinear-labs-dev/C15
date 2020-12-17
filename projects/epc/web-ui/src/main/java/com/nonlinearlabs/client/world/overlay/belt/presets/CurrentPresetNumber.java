@@ -18,7 +18,7 @@ public class CurrentPresetNumber extends Label {
 
 	@Override
 	public String getDrawText(Context2d ctx) {
-		return PresetManagerPresenterProvider.get().getPresenter().loadedPresetNumber;
+		return PresetManagerPresenterProvider.get().getValue().loadedPresetNumber;
 	}
 
 	public double getDesiredWidth() {

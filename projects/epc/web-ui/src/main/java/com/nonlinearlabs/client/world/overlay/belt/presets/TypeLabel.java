@@ -187,7 +187,7 @@ public class TypeLabel extends OverlayLayout {
 	public TypeLabel(BeltPreset parent) {
 		super(parent);
 
-		PresetManagerPresenterProvider.get().register(p -> {
+		PresetManagerPresenterProvider.get().onChange(p -> {
 			presenter = p;
 			bruteForce();
 			return true;

@@ -1,40 +1,32 @@
 package com.nonlinearlabs.client.presenters;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.function.Function;
 
 import com.google.gwt.i18n.client.NumberFormat;
+import com.nonlinearlabs.client.dataModel.Notifier;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.dataModel.presetManager.LoadToPartMode;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
 import com.nonlinearlabs.client.dataModel.presetManager.Presets;
 import com.nonlinearlabs.client.dataModel.presetManager.StoreSelectMode;
 
-public class PresetManagerPresenterProvider {
+public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresenter> {
 	public static PresetManagerPresenterProvider theInstance = new PresetManagerPresenterProvider();
 
 	public static PresetManagerPresenterProvider get() {
 		return theInstance;
 	}
 
-	private LinkedList<Function<PresetManagerPresenter, Boolean>> clients;
-	private PresetManagerPresenter pm = null;
+	private PresetManagerPresenter pm = new PresetManagerPresenter();
+	private PresetManagerModel model = PresetManagerModel.get();
 
 	public PresetManagerPresenterProvider() {
-		var model = PresetManagerModel.get();
-
-		pm = new PresetManagerPresenter();
-
-		clients = new LinkedList<Function<PresetManagerPresenter, Boolean>>();
-
 		Presets.get().onChange(v -> {
 			var hasPresets = !v.isEmpty();
 			if (hasPresets != pm.hasPresets) {
 				pm.hasPresets = hasPresets;
-				notifyClients();
+				notifyChanges();
 			}
 			return true;
 		});
@@ -42,16 +34,7 @@ public class PresetManagerPresenterProvider {
 		model.banks.onChange(b -> onBanksChanged(b));
 		model.positions.onChange(p -> {
 			pm.bankPositions = p;
-			notifyClients();
-			return true;
-		});
-
-		model.dnd.onChange(p -> {
-			if (p != null)
-				pm.dndType = p.type;
-			else
-				pm.dndType = DragDataType.None;
-			notifyClients();
+			notifyChanges();
 			return true;
 		});
 
@@ -64,11 +47,11 @@ public class PresetManagerPresenterProvider {
 
 				pm.selectedPreset = selPreset;
 				updateSelectionOpportunities();
-				notifyClients();
+				notifyChanges();
 				return true;
 			});
 
-			notifyClients();
+			notifyChanges();
 			return true;
 		});
 
@@ -77,14 +60,14 @@ public class PresetManagerPresenterProvider {
 			if (pm.inLoadToPartMode != loadToPart) {
 				pm.inLoadToPartMode = loadToPart;
 				updateSelectionOpportunities();
-				notifyClients();
+				notifyChanges();
 			}
 
 			var storeSelect = v instanceof StoreSelectMode;
 			if (pm.inStoreSelectMode != storeSelect) {
 				pm.inStoreSelectMode = storeSelect;
 				updateSelectionOpportunities();
-				notifyClients();
+				notifyChanges();
 			}
 
 			return true;
@@ -100,7 +83,7 @@ public class PresetManagerPresenterProvider {
 				pm.numSelectedPresetsInMultiSelection = numSelectedPresets;
 				pm.currentMultiSelection = v;
 				updateSelectionOpportunities();
-				notifyClients();
+				notifyChanges();
 			}
 
 			return true;
@@ -108,7 +91,7 @@ public class PresetManagerPresenterProvider {
 
 		model.fileVersion.onChange(v -> {
 			pm.fileVersion = v;
-			notifyClients();
+			notifyChanges();
 			return true;
 		});
 
@@ -153,12 +136,12 @@ public class PresetManagerPresenterProvider {
 
 		if (pm.canSelectNextBank != canNextBank) {
 			pm.canSelectNextBank = canNextBank;
-			notifyClients();
+			notifyChanges();
 		}
 
 		if (pm.canSelectPrevBank != canPrevBank) {
 			pm.canSelectPrevBank = canPrevBank;
-			notifyClients();
+			notifyChanges();
 		}
 
 	}
@@ -166,20 +149,12 @@ public class PresetManagerPresenterProvider {
 	private Boolean onBanksChanged(ArrayList<String> dmBanks) {
 		pm.banks = dmBanks;
 		updateSelectionOpportunities();
-		notifyClients();
+		notifyChanges();
 		return true;
 	}
 
-	protected void notifyClients() {
-		clients.removeIf(listener -> !listener.apply(pm));
-	}
-
-	public void register(Function<PresetManagerPresenter, Boolean> cb) {
-		clients.add(cb);
-		cb.apply(pm);
-	}
-
-	public PresetManagerPresenter getPresenter() {
+	@Override
+	public PresetManagerPresenter getValue() {
 		return pm;
 	}
 }

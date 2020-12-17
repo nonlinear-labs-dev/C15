@@ -2,8 +2,8 @@ package com.nonlinearlabs.client.world.maps.presets.html;
 
 import com.google.gwt.event.dom.client.DropEvent;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
+import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.maps.NonPosition;
 import com.nonlinearlabs.client.world.maps.NonRect;
@@ -24,7 +24,7 @@ class Tape extends DropZone {
         addDomHandler(e -> {
             getElement().removeClassName("drop-target");
 
-            var dndType = PresetManagerPresenterProvider.get().getPresenter().dndType;
+            var dndType = ClipboardPresenterProvider.get().getValue().dndType;
 
             if (dndType == DragDataType.Bank) {
                 e.preventDefault();

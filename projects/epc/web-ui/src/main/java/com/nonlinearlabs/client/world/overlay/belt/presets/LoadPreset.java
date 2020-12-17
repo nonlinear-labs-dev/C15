@@ -18,7 +18,7 @@ class LoadPreset extends SVGImage {
 	}
 
 	public boolean isSelectedBankEmpty() {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var bank = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 		return bank.presets.isEmpty();
 	}
@@ -29,7 +29,7 @@ class LoadPreset extends SVGImage {
 			return drawStates.disabled.ordinal();
 		} else if (!isEnabled()) {
 			return drawStates.disabled.ordinal();
-		} else if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode) {
+		} else if (PresetManagerPresenterProvider.get().getValue().inStoreSelectMode) {
 			return drawStates.disabled.ordinal();
 		} else if (isCaptureControl()) {
 			return drawStates.active.ordinal();
@@ -42,7 +42,7 @@ class LoadPreset extends SVGImage {
 
 	@Override
 	public Control click(Position eventPoint) {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		if (pm.inStoreSelectMode)
 			return this;
 
@@ -74,7 +74,7 @@ class LoadPreset extends SVGImage {
 			return false;
 		}
 
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var eb = EditBufferPresenterProvider.getPresenter();
 		return pm.selectedPreset == eb.loadedPresetUUID;
 	}

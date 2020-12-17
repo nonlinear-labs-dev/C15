@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy.BankAndPosition;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
-import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
+import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 
 public class PresetManagerUI extends DropZone {
@@ -68,7 +68,7 @@ public class PresetManagerUI extends DropZone {
 
         }, DropEvent.getType());
 
-        PresetManagerPresenterProvider.get().register(presenter -> {
+        ClipboardPresenterProvider.get().onChange(presenter -> {
             if (presenter.dndType == DragDataType.None)
                 getElement().removeClassName("maybe-drop-target");
             else

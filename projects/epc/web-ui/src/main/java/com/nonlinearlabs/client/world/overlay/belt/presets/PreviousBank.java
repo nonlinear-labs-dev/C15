@@ -19,7 +19,7 @@ class PreviousBank extends PrevNextBank {
 
 	@Override
 	public int getSelectedPhase() {
-		if (!PresetManagerPresenterProvider.get().getPresenter().canSelectPrevBank)
+		if (!PresetManagerPresenterProvider.get().getValue().canSelectPrevBank)
 			return drawStates.disabled.ordinal();
 
 		return super.getSelectedPhase();

@@ -55,7 +55,7 @@ public class LoadModeMenu extends OverlayLayout {
             if (!isDualEditBuffer()) {
                 return 0;
             } else {
-                var pm = PresetManagerPresenterProvider.get().getPresenter();
+                var pm = PresetManagerPresenterProvider.get().getValue();
                 if (PresetManagerUseCases.get().isInLoadToPartMode()) {
                     return 2;
                 } else if (pm.banks.isEmpty()) {

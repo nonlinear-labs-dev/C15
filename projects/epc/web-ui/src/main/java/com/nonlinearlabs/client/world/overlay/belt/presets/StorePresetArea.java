@@ -54,7 +54,7 @@ public class StorePresetArea extends OverlayLayout {
 	}
 
 	public Control handleEnterKey() {
-		if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode) {
+		if (PresetManagerPresenterProvider.get().getValue().inStoreSelectMode) {
 			return m_commitButton.handleEnterKey();
 		}
 		return null;

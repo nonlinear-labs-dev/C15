@@ -1,15 +1,21 @@
 package com.nonlinearlabs.client.world.overlay.belt.presets;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
-import com.nonlinearlabs.client.dataModel.presetManager.Preset;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
+import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetPresenter;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
+import com.nonlinearlabs.client.useCases.BankUseCases;
+import com.nonlinearlabs.client.useCases.EditBufferUseCases;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
+import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
@@ -30,7 +36,7 @@ public class BeltPreset extends OverlayLayout {
 	private PresetPresenter presenter = new PresetPresenter();
 
 	protected BeltPreset(PresetList parent) {
-		super(parent);
+		super(parent, true, true);
 
 		color = addChild(new PresetColorTag(this));
 		number = addChild(new PresetNumber(this));
@@ -95,7 +101,7 @@ public class BeltPreset extends OverlayLayout {
 			}
 		}
 
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		boolean loaded = isLoaded() && !pm.inStoreSelectMode && !pm.inLoadToPartMode;
 		boolean selected = isSelected() || contextMenuOnPreset;
 		boolean isOriginalPreset = false;
@@ -125,19 +131,22 @@ public class BeltPreset extends OverlayLayout {
 
 	@Override
 	public Control mouseUp(Position eventPoint) {
-		// TODO
-		/*
-		 * if (hasCustomPresetSelection()) { if
-		 * (getCustomPresetSelection().getSelectedPreset() == mapsPreset.getUUID()) {
-		 * mapsPreset.load(); } else {
-		 * getCustomPresetSelection().setSelectedPreset(mapsPreset.getUUID()); } return
-		 * this; }
-		 * 
-		 * if (mapsPreset.isSelected()) mapsPreset.load(); else
-		 * mapsPreset.selectPreset();
-		 * 
-		 * getParent().scheduleAutoScroll(PresetList.ScrollRequest.Smooth);
-		 */
+		var pm = PresetManagerPresenterProvider.get().getValue();
+
+		if (pm.inLoadToPartMode || pm.inStoreSelectMode) {
+			if (presenter.selected)
+				EditBufferUseCases.get().loadPreset(presenter.uuid);
+			else
+				PresetManagerUseCases.get().toggleMultipleSelection(presenter.uuid);
+			return this;
+		}
+
+		if (presenter.selected)
+			EditBufferUseCases.get().loadPreset(presenter.uuid);
+		else
+			BankUseCases.get().selectPreset(presenter.uuid);
+
+		getParent().scheduleAutoScroll(PresetList.ScrollRequest.Smooth);
 		return this;
 	}
 
@@ -155,20 +164,19 @@ public class BeltPreset extends OverlayLayout {
 		if (!getPixRect().contains(pos))
 			return null;
 
-		// TODO
-		// if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin()
-		// instanceof EditBufferDraggingButton
-		// || dragProxy.getOrigin() instanceof IBank) {
-		// Rect r = getPixRect();
-		// if (pos.getY() < r.getTop() + r.getHeight() * 0.25)
-		// setDropPosition(DropPosition.TOP);
-		// else if (pos.getY() < r.getTop() + r.getHeight() * 0.75)
-		// setDropPosition(DropPosition.MIDDLE);
-		// else
-		// setDropPosition(DropPosition.BOTTOM);
+		var cp = ClipboardPresenterProvider.get().getValue();
 
-		// return this;
-		// }
+		if (cp.dndType.any(DragDataType.Preset, DragDataType.Bank)) {
+			Rect r = getPixRect();
+			if (pos.getY() < r.getTop() + r.getHeight() * 0.25)
+				setDropPosition(DropPosition.TOP);
+			else if (pos.getY() < r.getTop() + r.getHeight() * 0.75)
+				setDropPosition(DropPosition.MIDDLE);
+			else
+				setDropPosition(DropPosition.BOTTOM);
+
+			return this;
+		}
 		return super.drag(pos, dragProxy);
 	}
 
@@ -187,109 +195,31 @@ public class BeltPreset extends OverlayLayout {
 
 	@Override
 	public Control drop(Position pos, DragProxy dragProxy) {
+		DropEffect effect = DropEffect.MOVE;
+		switch (dropPosition) {
+			case TOP:
+				BankUseCases.get().dropAbove(presenter.uuid, effect);
+				break;
 
-		// TODO
-		// if (dragProxy.getOrigin() instanceof IPreset)
-		// insertPreset(dragProxy);
-		// else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
-		// insertEditBuffer();
-		// else if (dragProxy.getOrigin() instanceof IBank)
-		// insertBank((IBank) dragProxy.getOrigin());
+			case MIDDLE:
+				BankUseCases.get().dropOn(presenter.uuid, effect);
+				break;
+
+			case BOTTOM:
+				BankUseCases.get().dropBelow(presenter.uuid, effect);
+				break;
+
+			case NONE:
+				break;
+		}
 
 		setDropPosition(DropPosition.NONE);
 		return this;
 	}
 
-	protected void insertPreset(DragProxy dragProxy) {
-		// TODO
-		/*
-		 * Preset p = mapsPreset; IPreset newPreset = (IPreset) dragProxy.getOrigin();
-		 * 
-		 * boolean isMove =
-		 * p.getParent().getPresetList().findPreset(newPreset.getUUID()) != null;
-		 * 
-		 * if (isMove) movePreset(p, newPreset); else copyPreset(p, newPreset);
-		 */
-	}
-
-	protected void insertBank(String bank) {
-		// TODO
-		/*
-		 * Preset p = mapsPreset;
-		 * 
-		 * switch (dropPosition) { case TOP:
-		 * getNonMaps().getServerProxy().insertBankAbove(bank.getUUID(), p.getUUID());
-		 * break;
-		 * 
-		 * case MIDDLE:
-		 * getNonMaps().getServerProxy().overwritePresetWithBank(bank.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * case BOTTOM: getNonMaps().getServerProxy().insertBankBelow(bank.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * default: break; }
-		 */
-	}
-
-	protected void insertEditBuffer() {
-		// TODO
-		/*
-		 * Preset p = mapsPreset;
-		 * 
-		 * switch (dropPosition) { case TOP:
-		 * getNonMaps().getServerProxy().insertEditBufferAbove(p); break;
-		 * 
-		 * case MIDDLE:
-		 * getNonMaps().getServerProxy().overwritePresetWithEditBuffer(p.getUUID());
-		 * break;
-		 * 
-		 * case BOTTOM: getNonMaps().getServerProxy().insertEditBufferBelow(p); break;
-		 * 
-		 * default: break; }
-		 */
-	}
-
-	protected void copyPreset(Preset p, String newPreset) {
-		// TODO
-		/*
-		 * switch (dropPosition) { case TOP:
-		 * getNonMaps().getServerProxy().insertPresetCopyAbove(newPreset.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * case MIDDLE:
-		 * getNonMaps().getServerProxy().overwritePresetWith(newPreset.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * case BOTTOM:
-		 * getNonMaps().getServerProxy().insertPresetCopyBelow(newPreset.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * default: break; }
-		 */
-	}
-
-	protected void movePreset(Preset p, String newPreset) {
-		// TODO
-		/*
-		 * switch (dropPosition) { case TOP:
-		 * getNonMaps().getServerProxy().movePresetAbove(newPreset.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * case MIDDLE: getNonMaps().getServerProxy().movePresetTo(newPreset.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * case BOTTOM:
-		 * getNonMaps().getServerProxy().movePresetBelow(newPreset.getUUID(),
-		 * p.getUUID()); break;
-		 * 
-		 * default: break; }
-		 */
-	}
-
 	@Override
 	public Control onContextMenu(Position pos) {
-		if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode)
+		if (PresetManagerPresenterProvider.get().getValue().inStoreSelectMode)
 			return null;
 
 		Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();

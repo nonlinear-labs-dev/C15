@@ -46,14 +46,14 @@ public abstract class OverlayLayout extends OverlayControl implements ILayout<Ov
 					e.preventDefault();
 					e.stopPropagation();
 					GWT.log("drop on overlay");
-					drop(getPixRect().getCenterPoint(), null);
+					drop(new Position(e.getNativeEvent()), null);
 					dragLeave();
 				}, DropEvent.getType());
 
 				htmlProxy.addDomHandler(e -> {
 					e.preventDefault();
 					e.stopPropagation();
-					drag(getPixRect().getCenterPoint(), null);
+					drag(new Position(e.getNativeEvent()), null);
 					GWT.log("drag over on overlay");
 				}, DragOverEvent.getType());
 			}
@@ -62,7 +62,7 @@ public abstract class OverlayLayout extends OverlayControl implements ILayout<Ov
 				htmlProxy.addDomHandler(e -> {
 					e.preventDefault();
 					e.stopPropagation();
-					drag(getPixRect().getCenterPoint(), null);
+					drag(new Position(e.getNativeEvent()), null);
 					GWT.log("drag on overlay");
 				}, DragEvent.getType());
 

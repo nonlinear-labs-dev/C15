@@ -5,10 +5,12 @@ import com.nonlinearlabs.client.Animator;
 import com.nonlinearlabs.client.Animator.DoubleClientData.Client;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.contextStates.ClipContext;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.presenters.BankPresenter;
-import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
@@ -25,12 +27,12 @@ public class PresetList extends OverlayLayout {
 	}
 
 	private boolean isDropTarget = false;
+
 	private double scrollPosition = 0;
+	private double scrollTarget = 0;
+
 	private Animator animation;
 	private ScrollRequest scrollRequest = ScrollRequest.None;
-
-	private String selectedBank = "";
-	private String selectedPreset = "";
 	private VoiceGroup selectedPart = VoiceGroup.Global;
 
 	private BankPresenter bankPresenter = new BankPresenter();
@@ -38,55 +40,9 @@ public class PresetList extends OverlayLayout {
 	protected PresetList(BankControl parent) {
 		super(parent);
 
-		PresetManagerPresenterProvider.get().register(p -> {
-			select(p.selectedBank, p.selectedPreset, p.selectedPart);
+		PresetManagerPresenterProvider.get().onChange(p -> {
 			return true;
 		});
-	}
-
-	private void select(String selectedBank, String selectedPreset, VoiceGroup selectedPart) {
-		if (selectedBank != this.selectedBank) {
-			this.selectedBank = selectedBank;
-
-			BankPresenterProviders.get().register(this.selectedBank, b -> {
-				if (b.uuid != this.selectedBank)
-					return false;
-
-				bankPresenter = b;
-				select(selectedPreset, selectedPart);
-				scheduleAutoScroll(ScrollRequest.Jump);
-				return true;
-			});
-		}
-
-		syncPresets();
-		select(selectedPreset, selectedPart);
-	}
-
-	private void syncPresets() {
-		var numDesiredPresets = bankPresenter.presets.size();
-		var numExistingPresets = getChildren().size();
-
-		while (numDesiredPresets > numExistingPresets) {
-			addChild(new BeltPreset(this));
-			numExistingPresets++;
-		}
-
-		while (numDesiredPresets < numExistingPresets) {
-			removeChild(getChildren().get(0));
-			numExistingPresets--;
-		}
-
-		for (int i = 0; i < numDesiredPresets; i++)
-			((BeltPreset) getChildren().get(i)).setOrigin(bankPresenter.presets.get(i));
-	}
-
-	private void select(String selectedPreset, VoiceGroup selectedPart) {
-		if (this.selectedPreset != selectedPreset || this.selectedPart != selectedPart) {
-			this.selectedPreset = selectedPreset;
-			this.selectedPart = selectedPart;
-			scheduleAutoScroll(ScrollRequest.Smooth);
-		}
 	}
 
 	@Override
@@ -171,13 +127,8 @@ public class PresetList extends OverlayLayout {
 		if (!getPixRect().contains(pos))
 			return null;
 
-		// TODO
-		// if (dragProxy.getOrigin() instanceof IPreset || dragProxy.getOrigin()
-		// instanceof EditBufferDraggingButton
-		// || dragProxy.getOrigin() instanceof IBank) {
-		// setIsDropTarget(true);
-		// return this;
-		// }
+		var t = ClipboardPresenterProvider.get().getValue().dndType;
+		setIsDropTarget(t.any(DragDataType.Bank, DragDataType.Preset, DragDataType.Presets));
 		return super.drag(pos, dragProxy);
 	}
 
@@ -196,20 +147,7 @@ public class PresetList extends OverlayLayout {
 
 	@Override
 	public Control drop(Position pos, DragProxy dragProxy) {
-		// TODO
-
-		// if (dragProxy.getOrigin() instanceof IPreset) {
-		// } else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
-		// getNonMaps().getServerProxy().dropEditBufferOnBank(bank);
-		// else if (dragProxy.getOrigin() instanceof IBank) {
-		// Bank draggedBank = (Bank) dragProxy.getOrigin();
-		// if (!draggedBank.hasSlaves()) {
-		// var bank = (IBank) dragProxy.getOrigin();
-		// getNonMaps().getServerProxy().dropBankOnBank(bank.getUUID(), bank);
-		// }
-		// }
-
-		// setIsDropTarget(false);
+		BankUseCases.get().dropOnBank(bankPresenter.uuid);
 		return this;
 	}
 
@@ -239,8 +177,7 @@ public class PresetList extends OverlayLayout {
 	private BeltPreset findSelectedPreset() {
 		for (var a : getChildren()) {
 			BeltPreset p = (BeltPreset) a;
-			if (p.getUuid() == selectedPreset)
-				return p;
+
 		}
 		return null;
 	}
@@ -322,5 +259,8 @@ public class PresetList extends OverlayLayout {
 
 	public double getHorizontalCenterLinePosition() {
 		return getRelativePosition().getCenterPoint().getY();
+	}
+
+	public void setBank(BankPresenter bank) {
 	}
 }

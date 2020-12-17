@@ -40,7 +40,7 @@ public class PresetContextMenu extends ContextMenu {
 		this.uuid = uuid;
 
 		presetPresenter = PresetPresenterProviders.get().getPresenter(uuid);
-		presetManagerPresenter = PresetManagerPresenterProvider.get().getPresenter();
+		presetManagerPresenter = PresetManagerPresenterProvider.get().getValue();
 
 		final boolean multipleSelectionAllowed = SetupModel.get().localSettings.presetDragDrop
 				.getValue() == BooleanValues.on;
@@ -186,7 +186,7 @@ public class PresetContextMenu extends ContextMenu {
 	}
 
 	public static void deletePresetWithBankModal(String uuid) {
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var uc = PresetManagerUseCases.get();
 		if (uc.hasMultipleSelection()) {
 			String csv = uc.getSelectedPresetsCSV();

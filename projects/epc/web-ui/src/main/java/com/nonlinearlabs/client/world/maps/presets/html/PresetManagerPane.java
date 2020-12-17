@@ -25,7 +25,7 @@ class PresetManagerPane extends HTMLPanel {
     public PresetManagerPane() {
         super("");
 
-        PresetManagerPresenterProvider.get().register(p -> {
+        PresetManagerPresenterProvider.get().onChange(p -> {
             sync(p.banks);
             setPositions(p.bankPositions, p.selectedBank);
 

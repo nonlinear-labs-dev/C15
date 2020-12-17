@@ -58,7 +58,7 @@ public class BankControl extends OverlayLayout {
 		addChild(presets = new PresetList(this));
 		addChild(selRectangle = new PresetSelectionRectangle(this));
 
-		PresetManagerPresenterProvider.get().register(p -> {
+		PresetManagerPresenterProvider.get().onChange(p -> {
 			int s = ++bankSubscription;
 
 			BankPresenterProviders.get().register(p.selectedBank, b -> {
@@ -66,6 +66,7 @@ public class BankControl extends OverlayLayout {
 					return false;
 
 				bank = b;
+				presets.setBank(bank);
 				invalidate(INVALIDATION_FLAG_UI_CHANGED);
 				return true;
 			});

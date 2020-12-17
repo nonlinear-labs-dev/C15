@@ -35,7 +35,7 @@ class LayerDisplay extends OverlayLayout {
     }
 
     public boolean isLoadIntoPartEnabled() {
-        return PresetManagerPresenterProvider.get().getPresenter().inLoadToPartMode;
+        return PresetManagerPresenterProvider.get().getValue().inLoadToPartMode;
     }
 
     @Override

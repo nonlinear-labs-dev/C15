@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank.Position;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
 
 public class PresetManagerPresenter {
 
@@ -12,7 +11,7 @@ public class PresetManagerPresenter {
 	public ArrayList<String> banks = new ArrayList<String>();
 
 	public boolean loadModeButtonState = false;
-	public PresetManagerModel.DragDataType dndType = PresetManagerModel.DragDataType.None;
+
 	public ArrayList<Position> bankPositions = new ArrayList<Position>();
 
 	// TODO: check that selected preset is bound to load to part and other selection

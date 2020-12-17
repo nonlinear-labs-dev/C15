@@ -3,7 +3,8 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.contextStates.ClipContext;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
+import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.world.Control;
@@ -109,7 +110,7 @@ class BankHeader extends OverlayLayout {
 		if (!getPixRect().contains(pos))
 			return null;
 
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = ClipboardPresenterProvider.get().getValue();
 		setIsDropTarget(pm.dndType != DragDataType.None);
 		return this;
 	}
@@ -135,7 +136,7 @@ class BankHeader extends OverlayLayout {
 
 	@Override
 	public Control onContextMenu(Position pos) {
-		if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode)
+		if (PresetManagerPresenterProvider.get().getValue().inStoreSelectMode)
 			return null;
 
 		Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();

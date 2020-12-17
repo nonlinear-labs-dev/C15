@@ -704,7 +704,7 @@ public class ServerProxy {
 		} else {
 
 			try {
-				var pmPresenter = PresetManagerPresenterProvider.get().getPresenter();
+				var pmPresenter = PresetManagerPresenterProvider.get().getValue();
 				String versionString = attributes.getNamedItem("version").getNodeValue();
 				int fileVersion = Integer.parseInt(versionString);
 				if (fileVersion > pmPresenter.fileVersion) {

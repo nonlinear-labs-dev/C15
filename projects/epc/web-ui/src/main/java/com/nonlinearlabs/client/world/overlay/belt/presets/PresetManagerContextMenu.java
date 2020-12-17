@@ -62,7 +62,7 @@ public class PresetManagerContextMenu extends ContextMenu {
 			}
 		});
 
-		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		var pm = PresetManagerPresenterProvider.get().getValue();
 		var selectedBank = pm.selectedBank;
 		var bank = BankPresenterProviders.get().getPresenter(selectedBank);
 

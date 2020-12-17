@@ -19,7 +19,7 @@ public class MenuAreaBankButton extends SVGImage {
 	public Control mouseDown(Position pos) {
 		Overlay o = getOverlay();
 
-		var selectedBank = PresetManagerPresenterProvider.get().getPresenter().selectedBank;
+		var selectedBank = PresetManagerPresenterProvider.get().getValue().selectedBank;
 
 		if (o.getContextMenu() instanceof CombinedBankContextMenu) {
 			o.removeExistingContextMenus();
@@ -49,7 +49,7 @@ public class MenuAreaBankButton extends SVGImage {
 	}
 
 	boolean hasBank() {
-		return !PresetManagerPresenterProvider.get().getPresenter().banks.isEmpty();
+		return !PresetManagerPresenterProvider.get().getValue().banks.isEmpty();
 	}
 
 	@Override

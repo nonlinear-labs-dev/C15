@@ -28,7 +28,7 @@ public class PresetInfoDialog extends GWTDialog {
 	}
 
 	public PresetPresenter getCurrentPreset() {
-		var uuid = PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+		var uuid = PresetManagerPresenterProvider.get().getValue().selectedPreset;
 		return PresetPresenterProviders.get().getPresenter(uuid);
 	}
 
@@ -65,7 +65,7 @@ public class PresetInfoDialog extends GWTDialog {
 		if (theDialog != null) {
 			theDialog.commit();
 		} else {
-			if (PresetManagerPresenterProvider.get().getPresenter().hasPresets)
+			if (PresetManagerPresenterProvider.get().getValue().hasPresets)
 				theDialog = new PresetInfoDialog();
 		}
 	}
@@ -105,6 +105,6 @@ public class PresetInfoDialog extends GWTDialog {
 	}
 
 	public static void update() {
-		update(PresetManagerPresenterProvider.get().getPresenter().selectedPreset);
+		update(PresetManagerPresenterProvider.get().getValue().selectedPreset);
 	}
 }

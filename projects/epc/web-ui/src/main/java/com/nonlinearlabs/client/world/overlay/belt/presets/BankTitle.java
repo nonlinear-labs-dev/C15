@@ -20,7 +20,6 @@ class BankTitle extends Label {
 
 	@Override
 	public String getDrawText(Context2d ctx) {
-	// TODO: add midi flag
 		return getParent().getParent().getBankPresenter().name;
 	}
 

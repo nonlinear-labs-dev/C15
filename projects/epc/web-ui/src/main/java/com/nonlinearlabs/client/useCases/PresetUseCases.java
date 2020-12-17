@@ -2,9 +2,9 @@ package com.nonlinearlabs.client.useCases;
 
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDropData;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDropData;
 
 public class PresetUseCases {
     private static PresetUseCases theInstance = new PresetUseCases();
@@ -22,7 +22,7 @@ public class PresetUseCases {
         } else {
             PresetManagerUseCases.get().setDragDropData(DragDataType.Preset, presetUuid);
         }
-        return PresetManagerModel.get().dnd.getValue();
+        return ClipboardModel.get().dnd.getValue();
 
     }
 

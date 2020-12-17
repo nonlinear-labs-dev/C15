@@ -180,7 +180,7 @@ public class PresetInfoWidget {
 		});
 		this.panel = panel;
 
-		var uuid = PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+		var uuid = PresetManagerPresenterProvider.get().getValue().selectedPreset;
 		var presenter = PresetPresenterProviders.get().getPresenter(uuid);
 		updateInfo(presenter, false);
 	}

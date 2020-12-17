@@ -142,7 +142,7 @@ class PresetUI extends HTMLPanel {
             e.stopPropagation();
             e.preventDefault();
 
-            var pm = PresetManagerPresenterProvider.get().getPresenter();
+            var pm = PresetManagerPresenterProvider.get().getValue();
 
             if (pm.inStoreSelectMode)
                 return;

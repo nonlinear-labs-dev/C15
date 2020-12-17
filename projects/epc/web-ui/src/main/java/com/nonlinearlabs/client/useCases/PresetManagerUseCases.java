@@ -6,6 +6,9 @@ import java.util.function.Function;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.ServerProxy;
 import com.nonlinearlabs.client.ServerProxy.BankAndPosition;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
+import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDropData;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.presetManager.Bank;
@@ -13,8 +16,6 @@ import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.dataModel.presetManager.LoadToPartMode;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDataType;
-import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel.DragDropData;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerUpdater;
 import com.nonlinearlabs.client.dataModel.presetManager.Presets;
 import com.nonlinearlabs.client.dataModel.presetManager.StoreSelectMode;
@@ -26,6 +27,7 @@ public class PresetManagerUseCases {
     private static PresetManagerUseCases theInstance = new PresetManagerUseCases();
     private static ServerProxy server = NonMaps.get().getServerProxy();
     private static PresetManagerModel model = PresetManagerModel.get();
+    private static ClipboardModel clipboardModel = ClipboardModel.get();
 
     public static PresetManagerUseCases get() {
         return theInstance;
@@ -74,16 +76,16 @@ public class PresetManagerUseCases {
     }
 
     public void resetDragDropData() {
-        model.dnd.setValue(null);
+        clipboardModel.dnd.setValue(null);
     }
 
     public DragDropData setDragDropData(DragDataType type, String data) {
-        model.dnd.setValue(new DragDropData(type, data));
-        return model.dnd.getValue();
+        clipboardModel.dnd.setValue(new DragDropData(type, data));
+        return clipboardModel.dnd.getValue();
     }
 
     public void drop(double x, double y, Function<String, ArrayList<BankAndPosition>> getBankPositionsOfCluster) {
-        var dnd = model.dnd.getValue();
+        var dnd = clipboardModel.dnd.getValue();
         if (dnd != null) {
             if (dnd.type == DragDataType.Bank)
                 moveBank(dnd.data, x, y, getBankPositionsOfCluster);
@@ -106,13 +108,13 @@ public class PresetManagerUseCases {
         PresetManagerUpdater u = new PresetManagerUpdater(null, model);
         u.updateBankPositions();
 
-        server.setBankPositions(getBankPositionsOfCluster.apply(uuid));
+        if (getBankPositionsOfCluster != null)
+            server.setBankPositions(getBankPositionsOfCluster.apply(uuid));
     }
 
     public void selectBank(String uuid) {
-        if (hasMultipleSelection()) {
+        if (hasMultipleSelection())
             return;
-        }
 
         model.selectedBank.setValue(uuid);
         server.selectBank(uuid);
@@ -304,13 +306,13 @@ public class PresetManagerUseCases {
                     var ssm = (StoreSelectMode) model.customPresetSelection.getValue();
                     server.insertPreset(ssm.getSelectedPreset());
                 } else {
-                    var p = PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+                    var p = PresetManagerPresenterProvider.get().getValue().selectedPreset;
                     server.insertPreset(p);
                 }
                 break;
 
             case overwrite:
-                var selectedPreset = PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+                var selectedPreset = PresetManagerPresenterProvider.get().getValue().selectedPreset;
                 if (isInStoreSelectMode()
                         && !((StoreSelectMode) model.customPresetSelection.getValue()).getSelectedPreset().isEmpty()) {
                     server.overwritePresetWithEditBuffer(

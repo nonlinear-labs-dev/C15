@@ -131,7 +131,7 @@ public class PresetManager extends MapsLayout {
 				PresetInfoDialog.toggle();
 			}
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_DELETE) {
-			var preset = PresetManagerPresenterProvider.get().getPresenter().selectedPreset;
+			var preset = PresetManagerPresenterProvider.get().getValue().selectedPreset;
 			PresetContextMenu.deletePresetWithBankModal(preset);
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_Z
 				&& NonMaps.get().getNonLinearWorld().isCtrlDown()) {

@@ -24,7 +24,7 @@ public class MenuAreaSearchButton extends SVGImage {
 
 	@Override
 	public int getSelectedPhase() {
-		if (PresetManagerPresenterProvider.get().getPresenter().hasPresets)
+		if (PresetManagerPresenterProvider.get().getValue().hasPresets)
 			return drawStates.disabled.ordinal();
 
 		return PresetSearchDialog.isShown() ? drawStates.active.ordinal() : drawStates.normal.ordinal();
