@@ -55,9 +55,9 @@ class KeyBedEditor extends OverlayLayout {
         }
 
         @Override
-        public void draw(Context2d ctx, int flags) {
+        public void draw(Context2d ctx, Context2d overlayCtx, int flags) {
             getPixRect().drawValueEditSliderBackgound(ctx, false, getColorFont());
-            super.draw(ctx, flags);
+            super.draw(ctx, overlayCtx, flags);
         }
     }
 
@@ -88,10 +88,10 @@ class KeyBedEditor extends OverlayLayout {
         }
 
         @Override
-        public void draw(Context2d ctx, int invalidationMask) {
+        public void draw(Context2d ctx, Context2d overlayCtx, int invalidationMask) {
             try (ClipContext c = new ClipContext(ctx, this)) {
                 ctx.translate(scrolling, 0);
-                super.draw(ctx, invalidationMask);
+                super.draw(ctx, overlayCtx, invalidationMask);
             }
         }
 

@@ -1,9 +1,7 @@
 package com.nonlinearlabs.client.world.overlay.belt.parameters;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
-import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.ParameterPresenter;
@@ -25,7 +23,7 @@ public class SplitValueDisplay extends Label {
         final ParameterPresenter sII = ParameterPresenterProviders.get().getParameterPresenter(VoiceGroup.II, 356);
         char delim = hasOverlap() ? '-' : '|';
 
-        if(getLargerPart() == VoiceGroup.I) {
+        if (getLargerPart() == VoiceGroup.I) {
             return sII.displayValues[0] + "\t " + delim + " \t" + sI.displayValues[0];
         } else {
             return sI.displayValues[0] + "\t " + delim + " \t" + sII.displayValues[0];

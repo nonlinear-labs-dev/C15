@@ -94,8 +94,7 @@ class Bank : public AttributesOwner
   Preset *insertAndLoadPreset(UNDO::Transaction *transaction, size_t pos, std::unique_ptr<Preset> preset);
 
   void movePreset(UNDO::Transaction *transaction, const Preset *toMove, const Preset *before);
-  void movePresetBetweenBanks(UNDO::Transaction *transaction, Preset *presetToMove, Bank *tgtBank,
-                              const Preset *presetAnchor);
+  static void movePresetBetweenBanks(UNDO::Transaction *transaction, Preset *presetToMove, const Preset *presetAnchor);
 
   void deletePreset(UNDO::Transaction *transaction, const Uuid &uuid);
   void resolveCyclicAttachments(UNDO::Transaction *transaction);

@@ -22,7 +22,7 @@ public class Presets extends DataModelEntity<HashMap<String, Preset>> {
     public Preset put(String uuid) {
         var v = getValue();
         v.put(uuid, new Preset());
-        setValue(v);
+        notifyChanges(false);
         return find(uuid);
     }
 
@@ -34,15 +34,15 @@ public class Presets extends DataModelEntity<HashMap<String, Preset>> {
     }
 
     public void postUpdate() {
-        var old = getValue();
-        old.values().removeIf(v -> v.isDoomed());
-        setValue(old);
+        var v = getValue();
+        v.values().removeIf(a -> a.isDoomed());
+        notifyChanges(false);
     }
 
     public void onBankRemoved(String bankUuid) {
-        var old = getValue();
-        old.values().removeIf(v -> v.bankUuid.getValue() == bankUuid);
-        setValue(old);
+        var v = getValue();
+        v.values().removeIf(a -> a.bankUuid.getValue() == bankUuid);
+        notifyChanges(false);
     }
 
     public boolean isEmpty() {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.function.Function;
 
+import com.google.gwt.i18n.client.NumberFormat;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.presetManager.Banks;
 import com.nonlinearlabs.client.dataModel.presetManager.LoadToPartMode;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
@@ -31,7 +33,7 @@ public class PresetManagerPresenterProvider {
 		Presets.get().onChange(v -> {
 			var hasPresets = !v.isEmpty();
 			if (hasPresets != pm.hasPresets) {
-				pm.hasPresets = pm.hasPresets;
+				pm.hasPresets = hasPresets;
 				notifyClients();
 			}
 			return true;
@@ -109,6 +111,38 @@ public class PresetManagerPresenterProvider {
 			notifyClients();
 			return true;
 		});
+
+		EditBufferPresenterProvider.get().onChange(p -> updateLoadedPresetNumber());
+	}
+
+	public boolean updateLoadedPresetNumber() {
+		String loadedPresetUUID = EditBufferModel.get().loadedPreset.getValue();
+		var preset = Presets.get().find(loadedPresetUUID);
+		var bank = Banks.get().find(preset != null ? preset.bankUuid.getValue() : "");
+		var modFlag = EditBufferPresenterProvider.getPresenter().isAnyParameterChanged ? " *" : "";
+
+		if (EditBufferModel.get().loadedPreset.getValue().equals("Init")) {
+			pm.loadedPresetNumber = "Init" + modFlag;
+		} else if (EditBufferModel.get().loadedPreset.getValue().equals("Converted")) {
+			pm.loadedPresetNumber = "Converted" + modFlag;
+		} else if (bank == null && preset == null) {
+			pm.loadedPresetNumber = "";
+		} else if (bank != null && preset != null) {
+			pm.loadedPresetNumber = bank.orderNumber.getValue() + "-"
+					+ NumberFormat.getFormat("000").format(preset.number.getValue()) + modFlag;
+		} else {
+			var loadedPresetUuid = EditBufferModel.get().loadedPreset.getValue();
+			var loadedPreset = Presets.get().find(loadedPresetUuid);
+			var bankUuid = loadedPreset != null ? loadedPreset.bankUuid.getValue() : "";
+
+			if (bank != null && loadedPreset != null) {
+				var bankOrderNumber = BankPresenterProviders.get().getPresenter(bankUuid).orderNumber;
+				var presetOrderNumber = PresetPresenterProviders.get().getPresenter(loadedPresetUuid).paddedNumber;
+				pm.loadedPresetNumber = bankOrderNumber + "-" + presetOrderNumber + modFlag;
+			}
+		}
+
+		return true;
 	}
 
 	private void updateSelectionOpportunities() {

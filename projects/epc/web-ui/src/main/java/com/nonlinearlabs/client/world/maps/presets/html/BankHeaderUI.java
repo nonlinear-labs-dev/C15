@@ -8,6 +8,7 @@ import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Position;
@@ -60,18 +61,13 @@ class BankHeaderUI extends DropZone {
             e.stopPropagation();
             e.preventDefault();
 
-            // TODO!
-            // if (isInStoreSelectMode())
-            // return null;
+            if (PresetManagerPresenterProvider.get().getPresenter().inStoreSelectMode)
+                return;
 
             boolean showContextMenus = SetupModel.get().localSettings.contextMenus.getValue() == BooleanValues.on;
 
             if (showContextMenus) {
                 Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
-
-                // boolean isInMultiSel = isSelectedInMultiplePresetSelectionMode();
-
-                // if (isInMultiSel || (!isInMultiSel && !isInMultiplePresetSelectionMode()))
                 o.setContextMenu(new Position(e.getNativeEvent()), new MapsBankContextMenu(o, uuid));
             }
 

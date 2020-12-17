@@ -82,7 +82,7 @@
 
           <devmodeArgs>
             <arg>-style</arg>
-            <arg>DETAILED</arg>
+            <arg>PRETTY</arg>
             <arg>-bindAddress</arg>
             <arg>0.0.0.0</arg>
             <arg>-war</arg>

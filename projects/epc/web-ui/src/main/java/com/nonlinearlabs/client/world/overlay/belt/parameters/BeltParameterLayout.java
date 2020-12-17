@@ -1,14 +1,11 @@
 package com.nonlinearlabs.client.world.overlay.belt.parameters;
 
-import com.gargoylesoftware.htmlunit.svg.SvgImage;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
-import com.nonlinearlabs.client.presenters.FadeEditorPresenterProvider;
 import com.nonlinearlabs.client.presenters.ParameterPresenter;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.useCases.IncrementalChanger;
@@ -25,7 +22,6 @@ import com.nonlinearlabs.client.world.overlay.belt.parameters.recall.ParameterRe
 import com.nonlinearlabs.client.world.overlay.belt.parameters.recall.RecallArea;
 import com.nonlinearlabs.client.world.overlay.layouter.HarmonicLayouter;
 import com.nonlinearlabs.client.world.pointer.TouchPinch;
-import com.nonlinearlabs.client.world.overlay.SVGImage;
 
 public class BeltParameterLayout extends OverlayLayout {
 

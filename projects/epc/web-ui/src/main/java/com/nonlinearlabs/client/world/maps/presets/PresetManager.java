@@ -5,7 +5,9 @@ import com.google.gwt.user.client.Window;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.NonLinearWorld;
@@ -17,10 +19,8 @@ import com.nonlinearlabs.client.world.overlay.ParameterInfoDialog;
 import com.nonlinearlabs.client.world.overlay.PresetInfoDialog;
 import com.nonlinearlabs.client.world.overlay.belt.presets.PresetContextMenu;
 import com.nonlinearlabs.client.world.overlay.html.presetSearch.PresetSearchDialog;
-import com.nonlinearlabs.client.world.pointer.PointerState;
 
 public class PresetManager extends MapsLayout {
-
 
 	private PresetManagerUI theHtmlUI = new PresetManagerUI();
 
@@ -76,8 +76,6 @@ public class PresetManager extends MapsLayout {
 		theHtmlUI.syncPosition();
 	}
 
-
-
 	public void toggleHiddenBanks() {
 		setVisible(!isIntendedVisible());
 	}
@@ -88,7 +86,6 @@ public class PresetManager extends MapsLayout {
 
 	@Override
 	public void doSecondLayoutPass(double parentsWidthFromFirstPass, double parentsHeightFromFirstPass) {
-
 
 	}
 

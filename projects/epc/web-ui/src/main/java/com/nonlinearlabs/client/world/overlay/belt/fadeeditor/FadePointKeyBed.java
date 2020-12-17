@@ -29,9 +29,9 @@ public class FadePointKeyBed extends KeyBed {
     }
 
     @Override
-    public void draw(Context2d ctx, int invalidationMask) {
+    public void draw(Context2d ctx, Context2d overlayCtx, int invalidationMask) {
         try (ClipContext c = new ClipContext(ctx, this)) {
-            super.draw(ctx, invalidationMask);
+            super.draw(ctx, overlayCtx, invalidationMask);
 
             if (EditBufferModel.get().voiceGroup.getValue() == VoiceGroup.I) {
                 drawLayerPart(ctx, VoiceGroup.II);

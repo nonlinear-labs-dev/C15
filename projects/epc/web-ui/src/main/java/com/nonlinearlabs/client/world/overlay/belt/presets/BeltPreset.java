@@ -5,8 +5,11 @@ import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.presetManager.Preset;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
+import com.nonlinearlabs.client.presenters.PresetPresenter;
+import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
+import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.overlay.DragProxy;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.OverlayControl;
@@ -18,12 +21,13 @@ public class BeltPreset extends OverlayLayout {
 		NONE, TOP, MIDDLE, BOTTOM
 	}
 
-	private String uuid;
 	private OverlayControl color;
 	private PresetNumber number;
 	private PresetName name;
 	private TypeLabel type;
 	private DropPosition dropPosition = DropPosition.NONE;
+
+	private PresetPresenter presenter = new PresetPresenter();
 
 	protected BeltPreset(PresetList parent) {
 		super(parent);
@@ -42,29 +46,15 @@ public class BeltPreset extends OverlayLayout {
 	}
 
 	public String getUuid() {
-		return uuid;
+		return presenter.uuid;
 	}
 
 	public void setOrigin(String uuid) {
-		if (this.uuid != uuid) {
-			this.uuid = uuid;
+		PresetPresenterProviders.get().register(uuid, v -> {
+			presenter = v;
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);
-			if (type != null)
-				type.bruteForce();
-
-			requestLayout();
-		}
-		// TODO
-		// if (hasCustomPresetSelection())
-		{
-
-			invalidate(INVALIDATION_FLAG_UI_CHANGED);
-
-			if (type != null) {
-				type.bruteForce();
-				type.invalidate(INVALIDATION_FLAG_UI_CHANGED);
-			}
-		}
+			return true;
+		});
 	}
 
 	@Override
@@ -84,34 +74,47 @@ public class BeltPreset extends OverlayLayout {
 	}
 
 	private boolean isSelected() {
-		// TODO
-		return false;
+		return presenter.selected;
 	}
 
 	private boolean isLoaded() {
-		// TODO
-		return false;
+		return presenter.loaded;
 	}
 
 	@Override
 	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		var contextMenuOnPreset = false;
+
+		Overlay o = NonMaps.get().getNonLinearWorld().getViewport().getOverlay();
+		for (var cm : o.getContextMenus()) {
+			if (cm instanceof PresetContextMenu) {
+				var pcm = (PresetContextMenu) cm;
+				contextMenuOnPreset = pcm.getPreset() == presenter.uuid;
+				if (contextMenuOnPreset)
+					break;
+			}
+		}
+
+		var pm = PresetManagerPresenterProvider.get().getPresenter();
+		boolean loaded = isLoaded() && !pm.inStoreSelectMode && !pm.inLoadToPartMode;
+		boolean selected = isSelected() || contextMenuOnPreset;
+		boolean isOriginalPreset = false;
+
 		// TODO
-		/*
-		 * boolean loaded = isLoaded() && !mapsPreset.isInStoreSelectMode(); boolean
-		 * selected = isSelected() || mapsPreset.isContextMenuActiveOnMe(); boolean
-		 * isOriginalPreset = false;
-		 * 
-		 * if (hasCustomPresetSelection()) isOriginalPreset =
-		 * getCustomPresetSelection().isOriginalPreset(mapsPreset.getUUID());
-		 * 
-		 * RGB colorFill = new RGB(25, 25, 25);
-		 * 
-		 * if (selected && !isOriginalPreset) colorFill = new RGB(77, 77, 77);
-		 * 
-		 * if (loaded || isOriginalPreset) colorFill = RGB.blue();
-		 * 
-		 * getPixRect().fill(ctx, colorFill);
-		 */
+		// if (pm.inLoadToPartMode || pm.inStoreSelectMode)
+		// isOriginalPreset =
+		// pm.getCustomPresetSelection().isOriginalPreset(mapsPreset.getUUID());
+
+		RGB colorFill = new RGB(25, 25, 25);
+
+		if (selected && !isOriginalPreset)
+			colorFill = new RGB(77, 77, 77);
+
+		if (loaded || isOriginalPreset)
+			colorFill = RGB.blue();
+
+		getPixRect().fill(ctx, colorFill);
+
 		super.draw(ctx, overlay, invalidationMask);
 	}
 
@@ -290,7 +293,7 @@ public class BeltPreset extends OverlayLayout {
 			return null;
 
 		Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
-		return o.setContextMenu(pos, new PresetContextMenu(o, uuid));
+		return o.setContextMenu(pos, new PresetContextMenu(o, presenter.uuid));
 
 	}
 }

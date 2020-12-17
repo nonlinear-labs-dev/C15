@@ -7,9 +7,13 @@ import com.google.gwt.event.dom.client.DragEndEvent;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.presetManager.Preset.Color;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
+import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetPresenterProviders;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
@@ -65,6 +69,22 @@ class PresetUI extends HTMLPanel {
         }
     }
 
+    class ColorTagUI extends Label {
+
+        public void setColor(Color color) {
+            getElement().setClassName("color-tag");
+            getElement().addClassName(color.name());
+        }
+    }
+
+    class SoundTypeUI extends Label {
+
+        public void setType(SoundType type) {
+            getElement().setClassName("sound-type");
+            getElement().addClassName(type.name());
+        }
+    }
+
     PresetUI(String uuid) {
         super("");
 
@@ -72,11 +92,15 @@ class PresetUI extends HTMLPanel {
         getElement().setAttribute("draggable", "true");
         getElement().setId(uuid);
 
-        NumberUI number = new NumberUI();
-        NameUI name = new NameUI();
+        var color = new ColorTagUI();
+        var number = new NumberUI();
+        var name = new NameUI();
+        var soundType = new SoundTypeUI();
 
+        add(color);
         add(number);
         add(name);
+        add(soundType);
 
         add(new Above(uuid));
         add(new Middle(uuid));
@@ -88,7 +112,8 @@ class PresetUI extends HTMLPanel {
 
             switchClassName("selected", presenter.selected);
             switchClassName("loaded", presenter.loaded);
-
+            color.setColor(presenter.color);
+            soundType.setType(presenter.type);
             return isAttached();
         });
 
@@ -117,19 +142,21 @@ class PresetUI extends HTMLPanel {
             e.stopPropagation();
             e.preventDefault();
 
-            // TODO!
-            // if (isInStoreSelectMode())
-            // return null;
+            var pm = PresetManagerPresenterProvider.get().getPresenter();
+
+            if (pm.inStoreSelectMode)
+                return;
 
             boolean showContextMenus = SetupModel.get().localSettings.contextMenus.getValue() == BooleanValues.on;
 
             if (showContextMenus) {
                 Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
 
-                // boolean isInMultiSel = isSelectedInMultiplePresetSelectionMode();
+                var isInMultiSel = pm.multiSelection;
+                var presetIsInMultiSel = pm.currentMultiSelection.contains(uuid);
 
-                // if (isInMultiSel || (!isInMultiSel && !isInMultiplePresetSelectionMode()))
-                o.setContextMenu(new Position(e.getNativeEvent()), new PresetContextMenu(o, uuid));
+                if (presetIsInMultiSel || !isInMultiSel)
+                    o.setContextMenu(new Position(e.getNativeEvent()), new PresetContextMenu(o, uuid));
             }
 
         }, ContextMenuEvent.getType());

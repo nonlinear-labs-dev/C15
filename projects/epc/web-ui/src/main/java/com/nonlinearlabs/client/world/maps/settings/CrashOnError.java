@@ -34,6 +34,7 @@ public class CrashOnError extends Setting {
 			@Override
 			public void setValue(Items item) {
 				SystemSettings.get().setCrashOnError(item == Items.ON ? BooleanValues.on : BooleanValues.off);
+				EditBufferUseCases.get().setEnableUSBCommunication(item == Items.ON);
 			}
 		}, world), pos);
 	}

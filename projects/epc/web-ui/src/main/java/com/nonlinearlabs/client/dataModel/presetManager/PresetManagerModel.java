@@ -29,6 +29,7 @@ public class PresetManagerModel {
 	public BanksDataModelEntity banks = new BanksDataModelEntity();
 	public BankPositionsDataModelEntity positions = new BankPositionsDataModelEntity();
 	public StringDataModelEntity selectedBank = new StringDataModelEntity();
+	public StringDataModelEntity midiBank = new StringDataModelEntity();
 	public SelectedPresets selectedPresets = new SelectedPresets();
 	public DataModelEntity<DragDropData> dnd = new DataModelEntity<DragDropData>(null);
 

@@ -450,22 +450,16 @@ void Bank::movePreset(UNDO::Transaction *transaction, const Preset *toMove, cons
   m_presets.move(transaction, toMove, before);
 }
 
-void Bank::movePresetBetweenBanks(UNDO::Transaction *transaction, Preset *presetToMove, Bank *tgtBank,
-                                  const Preset *presetAnchor)
+void Bank::movePresetBetweenBanks(UNDO::Transaction *transaction, Preset *presetToMove, const Preset *presetAnchor)
 {
-  if(tgtBank == this)
-  {
-    movePreset(transaction, presetToMove, presetAnchor);
-  }
-  else
-  {
-    auto p = m_presets.release(transaction, presetToMove);
-    nltools_assertAlways(p == presetToMove);
-    auto pos = presetAnchor ? tgtBank->getPresetPosition(presetAnchor) : tgtBank->getNumPresets();
-    tgtBank->m_presets.adopt(transaction, pos, p);
-    tgtBank->updateLastModifiedTimestamp(transaction);
-    updateLastModifiedTimestamp(transaction);
-  }
+  auto srcBank = static_cast<Bank *>(presetToMove->getParent());
+  auto tgtBank = static_cast<Bank *>(presetAnchor->getParent());
+  auto p = srcBank->m_presets.release(transaction, presetToMove);
+  nltools_assertAlways(p == presetToMove);
+  auto pos = presetAnchor ? tgtBank->getPresetPosition(presetAnchor) : tgtBank->getNumPresets();
+  tgtBank->m_presets.adopt(transaction, pos, p);
+  tgtBank->updateLastModifiedTimestamp(transaction);
+  srcBank->updateLastModifiedTimestamp(transaction);
 }
 
 void Bank::deletePreset(UNDO::Transaction *transaction, const Uuid &uuid)

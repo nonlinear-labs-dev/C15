@@ -3,14 +3,14 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.nonlinearlabs.client.ClipboardManager.ClipboardContent;
-import com.nonlinearlabs.client.presenters.DeviceSettingsProvider;
-import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Renameable;
 import com.nonlinearlabs.client.presenters.BankPresenterProviders;
+import com.nonlinearlabs.client.presenters.DeviceSettingsProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.useCases.ClipboardUseCases;
+import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
@@ -81,11 +81,11 @@ public abstract class BankContextMenu extends ContextMenu {
 
 		if (!uuid.isEmpty()) {
 			if (DeviceSettingsProvider.get().getPresenter().externalMidiEnabled) {
-				if (!bank.isMidiBank()) {
+				if (!bankPresenter.isMidiBank) {
 					addChild(new ContextMenuItem(this, "Select Bank as Midi PC Receiver") {
 						@Override
 						public Control click(Position eventPoint) {
-							EditBufferUseCases.get().selectMidiBank(bank);
+							EditBufferUseCases.get().selectMidiBank(uuid);
 							return super.click(eventPoint);
 						}
 					});

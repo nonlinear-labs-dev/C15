@@ -20,4 +20,6 @@ public class BankPresenter {
     public boolean canSelectNextPreset = false;
     public boolean canSelectPrevPreset = false;
 
+    public boolean isMidiBank = false;
+
 }

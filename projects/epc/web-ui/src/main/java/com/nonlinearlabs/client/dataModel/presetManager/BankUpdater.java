@@ -8,12 +8,10 @@ import com.nonlinearlabs.client.dataModel.Updater;
 public class BankUpdater extends Updater {
 
 	private Bank bank;
-	private String selectedMidiUuid;
 
-	public BankUpdater(Node c, Bank target, String midiUuid) {
+	public BankUpdater(Node c, Bank target) {
 		super(c);
 		bank = target;
-		selectedMidiUuid = midiUuid;
 	}
 
 	@Override
@@ -26,7 +24,6 @@ public class BankUpdater extends Updater {
 		if (bank.isMidiBank.isTrue()) {
 			bank.name.setValue(bank.name.getValue() + " ^");
 		}
-
 		bank.selectedPreset.setValue(getAttributeValue(root, "selected-preset"));
 		bank.orderNumber.setValue(Integer.parseInt(getAttributeValue(root, "order-number")));
 

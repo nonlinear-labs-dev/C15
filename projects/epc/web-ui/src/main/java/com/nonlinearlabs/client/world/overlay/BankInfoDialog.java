@@ -70,9 +70,16 @@ public class BankInfoDialog extends GWTDialog {
 	}
 
 	private void initialSetup() {
-		var pmPresenter = PresetManagerPresenterProvider.get().getPresenter();
-		var bankPresenter = BankPresenterProviders.get().getPresenter(pmPresenter.selectedBank);
-		updateInfo(bankPresenter);
+		PresetManagerPresenterProvider.get().register(v -> {
+			BankPresenterProviders.get().register(v.selectedBank, p -> {
+				if (PresetManagerPresenterProvider.get().getPresenter().selectedBank != p.uuid)
+					return false;
+
+				updateInfo(p);
+				return true;
+			});
+			return true;
+		});
 	}
 
 	private void addRow(FlexTable panel, String name, Widget content) {
@@ -367,6 +374,7 @@ public class BankInfoDialog extends GWTDialog {
 	}
 
 	public static void update() {
+
 		var pm = PresetManagerPresenterProvider.get().getPresenter();
 		var bankPresenter = BankPresenterProviders.get().getPresenter(pm.selectedBank);
 		update(bankPresenter);

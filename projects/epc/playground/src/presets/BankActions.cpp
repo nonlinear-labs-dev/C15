@@ -69,7 +69,10 @@ BankActions::BankActions(PresetManager &presetManager)
     auto presetToMoveUuid = request->get("presetToMove");
     auto presetAnchorUuid = request->get("anchor");
 
+
     PresetManagerUseCases useCase(&m_presetManager);
+	// move into method
+Bank::movePresetBetweenBanks(transaction, toMove, anchor);
     useCase.movePresetAbove(presetToMoveUuid, presetAnchorUuid);
   });
 
@@ -78,12 +81,15 @@ BankActions::BankActions(PresetManager &presetManager)
     auto presetAnchorUuid = request->get("anchor");
 
     PresetManagerUseCases useCases(&m_presetManager);
+        Bank::movePresetBetweenBanks(transaction, toMove, anchor);
     useCases.movePresetBelow(presetToMoveUuid, presetAnchorUuid);
   });
 
   addAction("move-preset-to", [&](std::shared_ptr<NetworkRequest> request) {
     auto presetToOverwrite = request->get("presetToOverwrite");
     auto overwriteWith = request->get("overwriteWith");
+
+        Bank::movePresetBetweenBanks(transaction, srcPreset, anchor);
     PresetManagerUseCases useCases(&m_presetManager);
     useCases.movePresetTo(overwriteWith, presetToOverwrite);
   });

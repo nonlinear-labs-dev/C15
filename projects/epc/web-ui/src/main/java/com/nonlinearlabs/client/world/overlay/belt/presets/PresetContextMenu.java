@@ -196,7 +196,7 @@ public class PresetContextMenu extends ContextMenu {
 				uc.deletePresets(csv, false);
 			}
 
-			pm.closeMultiSelection();
+			uc.finishMultipleSelection();
 		} else {
 			var presetPresenter = PresetPresenterProviders.get().getPresenter(uuid);
 			if (presetPresenter.isLastPresetInBank)

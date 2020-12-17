@@ -68,10 +68,24 @@ public class BankPresenterProvider extends Notifier<BankPresenter> {
 
             return true;
         });
+
+        PresetManagerModel.get().midiBank.onChange(p -> {
+            var isMidiBank = p == uuid;
+            if (thePresenter.isMidiBank != isMidiBank) {
+                thePresenter.isMidiBank = isMidiBank;
+                updateName(model);
+            }
+            return true;
+        });
+
     }
 
     private boolean updateName(Bank b) {
         thePresenter.name = b.orderNumber.getValue() + " - " + b.name.getValue();
+
+        if (PresetManagerModel.get().midiBank.getValue() == model.uuid.getValue())
+            thePresenter.name += " ^";
+
         notifyChanges();
         return true;
     }

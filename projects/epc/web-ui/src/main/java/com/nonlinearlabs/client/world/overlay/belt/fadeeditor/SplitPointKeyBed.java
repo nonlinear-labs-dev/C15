@@ -23,9 +23,9 @@ public class SplitPointKeyBed extends KeyBed {
     }
 
     @Override
-    public void draw(Context2d ctx, int invalidationMask) {
+    public void draw(Context2d ctx, Context2d overlayCtx, int invalidationMask) {
         try (ClipContext c = new ClipContext(ctx, this)) {
-            super.draw(ctx, invalidationMask);
+            super.draw(ctx, overlayCtx, invalidationMask);
 
             VoiceGroup vg = lastTouchedVoiceGroup;
             VoiceGroup other = (vg == VoiceGroup.I) ? VoiceGroup.II : VoiceGroup.I;

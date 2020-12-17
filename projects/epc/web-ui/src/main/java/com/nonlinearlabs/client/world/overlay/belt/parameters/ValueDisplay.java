@@ -6,7 +6,6 @@ import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.overlay.Label;
-import com.nonlinearlabs.client.world.overlay.OverlayControl;
 
 public class ValueDisplay extends Label {
 

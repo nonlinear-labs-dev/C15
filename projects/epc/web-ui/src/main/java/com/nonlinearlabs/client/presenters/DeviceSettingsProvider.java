@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
@@ -13,7 +12,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.PedalParameterModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.presenters.DeviceSettings.Pedal;
-import com.nonlinearlabs.client.world.Control;
 
 public class DeviceSettingsProvider {
 	public static DeviceSettingsProvider theInstance = new DeviceSettingsProvider();
