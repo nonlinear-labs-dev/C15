@@ -14,6 +14,7 @@ class SyncSplitSettingUseCases
   void enableSyncSetting(UNDO::Transaction*);
   void disableSyncSetting(UNDO::Transaction*);
 
+  void toggleSyncSetting();
  private:
   void undoableSetSetting(UNDO::Transaction* transaction, bool state);
   static SplitPointSyncParameters* getSyncSetting();

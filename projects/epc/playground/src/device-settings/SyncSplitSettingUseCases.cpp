@@ -73,3 +73,15 @@ void SyncSplitSettingUseCases::updateFromWebUI(const Glib::ustring& value)
     disableSyncSetting();
   }
 }
+
+void SyncSplitSettingUseCases::toggleSyncSetting()
+{
+  if(getSyncSetting()->get())
+  {
+    disableSyncSetting();
+  }
+  else
+  {
+    enableSyncSetting();
+  }
+}

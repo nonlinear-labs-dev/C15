@@ -4,11 +4,12 @@
 #include "SplitSyncItem.h"
 #include "LeftAligned9pxCaptionLabel.h"
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/controls/CaptionLabel.h>
+#include <device-settings/SyncSplitSettingUseCases.h>
 
 void SplitSyncItem::doAction()
 {
-  auto setting = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
-  setting->setState(!setting->get());
+  auto useCases = SyncSplitSettingUseCases::get();
+  useCases.toggleSyncSetting();
 }
 
 SplitSyncItem::SplitSyncItem(const Rect& r)
