@@ -1,5 +1,7 @@
 #include "EditBufferEvents.h"
 #include <Application.h>
+#include <presets/PresetManager.h>
+#include <presets/EditBuffer.h>
 #include <proxies/hwui/HWUI.h>
 #include <groups/ParameterGroup.h>
 #include <sigc++/sigc++.h>
@@ -372,11 +374,23 @@ void DescriptiveLayouts::LayerFXOffset::onChange(const EditBuffer *eb)
   }
 }
 
+DescriptiveLayouts::SplitPointBehaviourIsDefaultWithoutSync::SplitPointBehaviourIsDefaultWithoutSync()
+    : EditBufferEvent()
+{
+  auto sync = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
+  sync->onChange(sigc::mem_fun(this, &SplitPointBehaviourIsDefaultWithoutSync::onSettingChanged));
+}
+
 void DescriptiveLayouts::SplitPointBehaviourIsDefaultWithoutSync::onChange(const EditBuffer *eb)
 {
   auto sI = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::I });
   auto sync = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
   setValue((!sync->get()) && sI->inDefaultSplitBehaviour());
+}
+
+void DescriptiveLayouts::SplitPointBehaviourIsDefaultWithoutSync::onSettingChanged(const Setting *s)
+{
+  onChange(Application::get().getPresetManager()->getEditBuffer());
 }
 
 void DescriptiveLayouts::VGIIsMuted::onChange(const EditBuffer *eb)

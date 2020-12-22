@@ -1,6 +1,7 @@
 #pragma once
 #include <presets/EditBuffer.h>
 #include <parameter_declarations.h>
+#include <device-settings/Setting.h>
 #include "EditBufferEvent.h"
 
 namespace DescriptiveLayouts
@@ -211,6 +212,10 @@ namespace DescriptiveLayouts
   class SplitPointBehaviourIsDefaultWithoutSync : public EditBufferEvent<bool>
   {
    public:
+    SplitPointBehaviourIsDefaultWithoutSync();
     void onChange(const EditBuffer *eb) override;
+
+   private:
+    void onSettingChanged(const Setting *s);
   };
 }
