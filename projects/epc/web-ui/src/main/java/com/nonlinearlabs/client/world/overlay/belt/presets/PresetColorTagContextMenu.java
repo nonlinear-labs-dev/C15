@@ -36,8 +36,8 @@ public class PresetColorTagContextMenu extends ContextMenu {
 				}
 
 				@Override
-				public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-					super.draw(ctx, overlay, invalidationMask);
+				public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+					super.draw(ctx, overlay, menus, invalidationMask);
 					Rect r = this.getPixRect().copy();
 					r.setWidth(getColorTagWidth());
 					r.reduceHeightBy(r.getHeight() / 1.9);

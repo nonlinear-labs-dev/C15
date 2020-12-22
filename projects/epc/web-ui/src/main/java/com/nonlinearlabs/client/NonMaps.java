@@ -32,9 +32,11 @@ public class NonMaps extends Mouseing implements EntryPoint {
 
 	private Canvas worldCanvas;
 	private Canvas overlayCanvas;
+	private Canvas menusCanvas;
 
 	public Context2d world;
 	public Context2d overlay;
+	public Context2d menus;
 
 	private NonLinearWorld nonlinearWorld;
 	private final ServerProxy server = new ServerProxy(this);
@@ -185,6 +187,10 @@ public class NonMaps extends Mouseing implements EntryPoint {
 		overlayCanvas = Canvas.createIfSupported();
 		RootPanel.get("overlay").add(overlayCanvas);
 		overlay = overlayCanvas.getContext2d();
+
+		menusCanvas = Canvas.createIfSupported();
+		RootPanel.get("menus").add(menusCanvas);
+		menus = menusCanvas.getContext2d();
 	}
 
 	private void createWorld() {
@@ -225,6 +231,9 @@ public class NonMaps extends Mouseing implements EntryPoint {
 			overlayCanvas.setCoordinateSpaceWidth(width);
 			overlayCanvas.setCoordinateSpaceHeight(height);
 
+			menusCanvas.setCoordinateSpaceWidth(width);
+			menusCanvas.setCoordinateSpaceHeight(height);
+
 			nonlinearWorld.setScreenSize(width, height);
 
 			if (!initial) {
@@ -254,7 +263,7 @@ public class NonMaps extends Mouseing implements EntryPoint {
 		int invalidationMask = nonlinearWorld.getAndResetInvalid();
 
 		if (invalidationMask != 0) {
-			nonlinearWorld.draw(world, overlay, invalidationMask);
+			nonlinearWorld.draw(world, overlay, menus, invalidationMask);
 
 			if (refreshBitmapCaches == null) {
 				refreshBitmapCaches = new ScheduledCommand() {

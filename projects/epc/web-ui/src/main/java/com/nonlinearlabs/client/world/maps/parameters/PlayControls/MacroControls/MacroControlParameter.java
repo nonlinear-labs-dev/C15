@@ -59,8 +59,8 @@ public abstract class MacroControlParameter extends Parameter implements Renamea
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-		super.draw(ctx, overlay, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+		super.draw(ctx, overlay, menus, invalidationMask);
 
 		if (isSelected())
 			getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), toXPixels(1), null,

@@ -16,7 +16,7 @@ abstract class ModulateableValueControl extends ValueControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		drawCenterIndicator(ctx);
 		drawBackgroundAndOutline(ctx);
 

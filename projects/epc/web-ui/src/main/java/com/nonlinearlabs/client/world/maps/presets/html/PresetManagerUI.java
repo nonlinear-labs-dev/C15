@@ -11,12 +11,13 @@ import com.nonlinearlabs.client.ServerProxy.BankAndPosition;
 import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
 import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
+import com.nonlinearlabs.client.world.html.DropZone;
 
 public class PresetManagerUI extends DropZone {
     static private PresetManagerUI thePresetManagerUI;
 
     private PresetManagerPane thePane;
-
+ 
     public PresetManagerUI() {
         super();
 

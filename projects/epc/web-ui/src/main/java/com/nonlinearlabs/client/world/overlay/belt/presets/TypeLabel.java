@@ -70,7 +70,7 @@ public class TypeLabel extends OverlayLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 			if (presenter.inLoadToPartMode) {
 				EditBufferModel ebm = EditBufferModel.get();
 				VoiceGroup currentVG = ebm.voiceGroup.getValue();
@@ -195,12 +195,12 @@ public class TypeLabel extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		if (dualControl != null)
-			dualControl.draw(ctx, overlay, invalidationMask);
+			dualControl.draw(ctx, overlay, menus, invalidationMask);
 
 		if (singleControl != null)
-			singleControl.draw(ctx, overlay, invalidationMask);
+			singleControl.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	public void bruteForce() {

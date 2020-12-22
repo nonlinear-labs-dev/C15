@@ -109,7 +109,7 @@ public class ValueEdit extends OverlayLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 			return;
 		}
 	}
@@ -179,7 +179,7 @@ public class ValueEdit extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		boolean withArrows = getPixRect().getWidth() >= Millimeter.toPixels(35);
 		getPixRect().drawValueEditSliderBackgound(ctx, false, getColorFont());
 
@@ -188,8 +188,8 @@ public class ValueEdit extends OverlayLayout {
 			right.getPixRect().drawValueEditSliderArrow(ctx, false, getColorFont());
 		}
 
-		super.draw(ctx, overlay, invalidationMask);
-		value.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
+		value.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	@Override

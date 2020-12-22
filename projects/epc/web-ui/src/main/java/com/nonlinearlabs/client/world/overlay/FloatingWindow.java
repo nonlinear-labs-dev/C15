@@ -45,12 +45,12 @@ public abstract class FloatingWindow extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(1), Millimeter.toPixels(1.5), null, RGB.black());
 
 		getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(1), Millimeter.toPixels(0.25),
 				RGB.floatingWindowHeaderBackground(), Gray.floatingWindowHeaderBorder());
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	public abstract void doLayout(double x, double y);

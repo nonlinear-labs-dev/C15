@@ -14,8 +14,8 @@ public class TwoPartContextMenuItem extends PresetContextMenuItem {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-		super.draw(ctx, overlay, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+		super.draw(ctx, overlay, menus, invalidationMask);
 		ctx.fillText(endString, getPixRect().getRight() - ctx.measureText(endString).getWidth(),
 				getPixRect().getTop() + getPixRect().getHeight() / 2);
 	}

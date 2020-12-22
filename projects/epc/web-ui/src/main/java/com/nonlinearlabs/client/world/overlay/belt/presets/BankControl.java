@@ -34,7 +34,7 @@ public class BankControl extends OverlayLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 			Rect presetPixrect = getPresetList().getPixRect().copy();
 			Rect r = getRelativePosition().copy();
 			r.setTop(presetPixrect.getTop() + presetPixrect.getHeight() / 3);
@@ -76,13 +76,13 @@ public class BankControl extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		Rect r = getPixRect();
 		RGB black = new Gray(0);
 		r.drawRoundedArea(ctx, 0, 1, new Gray(102), black);
 		r = r.getReducedBy(2 * inset);
 		r.drawRoundedArea(ctx, 0, 0, black, black);
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	void showEmptyLabel(boolean bankEmpty) {

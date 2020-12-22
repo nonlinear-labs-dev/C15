@@ -92,8 +92,7 @@ public class LayerSoundLayout extends SoundLayout {
 			getChildren().get(0).doLayout(margin * 1.5, margin * 1.2, voiceGroupWidth, h - 2 * margin);
 			getChildren().get(1).doLayout(margin + 1.5 * unit + margin, margin, 7.5 * unit - 2 * margin,
 					h - 2 * margin);
-			getChildren().get(2).doLayout(margin + 9 * unit + margin, margin, 4.25 * unit - 2 * margin,
-					h - 2 * margin);
+			getChildren().get(2).doLayout(margin + 9 * unit + margin, margin, 4.25 * unit - 2 * margin, h - 2 * margin);
 			getChildren().get(3).doLayout(margin + 13 * unit + margin, margin, unit, h - 2 * margin);
 			getChildren().get(4).doLayout(margin + 14.25 * unit + margin, margin, 4.25 * unit - 2 * margin,
 					h - 2 * margin);
@@ -102,7 +101,7 @@ public class LayerSoundLayout extends SoundLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 			double margin = Millimeter.toPixels(1);
 
 			EditBufferPresenter presenter = EditBufferPresenterProvider.getPresenter();
@@ -116,7 +115,7 @@ public class LayerSoundLayout extends SoundLayout {
 			Rect contentRect = new Rect(contentLeft - 2 * margin, getPixRect().getTop() + 1 * margin,
 					contentRight - contentLeft + 1 * margin, getPixRect().getHeight() - 2 * margin);
 			contentRect.drawRoundedArea(ctx, margin, 1, new Gray(30), new Gray(30));
-			super.draw(ctx, overlay, invalidationMask);
+			super.draw(ctx, overlay, menus, invalidationMask);
 
 			if (isDropTarget) {
 				getPixRect().getReducedBy(1).drawRoundedArea(ctx, margin, 1, RGBA.transparent(), RGB.red());
@@ -248,9 +247,9 @@ public class LayerSoundLayout extends SoundLayout {
 			}
 
 			@Override
-			public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+			public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 				getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(0.5), 1, new Gray(68), new Gray(86));
-				super.draw(ctx, overlay, invalidationMask);
+				super.draw(ctx, overlay, menus, invalidationMask);
 			}
 
 			@Override

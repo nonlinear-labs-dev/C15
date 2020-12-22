@@ -69,12 +69,12 @@ public abstract class Parameter extends LayoutResizingVertical {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 
 		getPixRect().drawRoundedRect(ctx, getBackgroundRoundings(), toXPixels(4), 0, getParameterBackgroundColor(),
 				null);
 
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 
 		RGB c = getRoundingColor();
 		if (c != null) {

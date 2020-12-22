@@ -186,9 +186,9 @@ public class BeltParameterLayout extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(final Context2d ctx, Context2d overlay, final int invalidationMask) {
+	public void draw(final Context2d ctx, Context2d overlay, Context2d menus, final int invalidationMask) {
 		fixMode();
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	private void fixMode() {
@@ -288,7 +288,9 @@ public class BeltParameterLayout extends OverlayLayout {
 				c.doLayout(walkerX, 0, r.width, modAndParamValueYValue);
 				if (c == valueDisplay) {
 					splitValueDisplay.doLayout(walkerX, 0, r.width, modAndParamValueYValue);
-					syncSplitParameter.doLayout(walkerX + r.width, splitValueDisplay.getRelativePosition().getCenterPoint().getY() - (buttonDim / 1.8), buttonDim, buttonDim);
+					syncSplitParameter.doLayout(walkerX + r.width,
+							splitValueDisplay.getRelativePosition().getCenterPoint().getY() - (buttonDim / 1.8),
+							buttonDim, buttonDim);
 				}
 			}
 			walkerX += r.width;

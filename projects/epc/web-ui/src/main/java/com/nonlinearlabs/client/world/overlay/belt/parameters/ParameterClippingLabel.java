@@ -29,10 +29,10 @@ public class ParameterClippingLabel extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		if (isClipping()) {
 			getPixRect().fill(ctx, new RGB(51, 51, 51));
-			super.draw(ctx, overlay, invalidationMask);
+			super.draw(ctx, overlay, menus, invalidationMask);
 		}
 	}
 

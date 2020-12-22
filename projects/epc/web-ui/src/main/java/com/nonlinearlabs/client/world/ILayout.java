@@ -14,7 +14,7 @@ public interface ILayout<TChild extends Control> {
 
 	public <T extends TChild> T prependChild(T child);
 
-	public void drawChildren(Context2d ctx, Context2d overlay, int invalidationMask);
+	public void drawChildren(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask);
 
 	public void calcPixRect(Position parentsReference, double currentZoom);
 

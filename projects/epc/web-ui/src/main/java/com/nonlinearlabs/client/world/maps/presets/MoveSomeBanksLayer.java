@@ -20,8 +20,8 @@ public class MoveSomeBanksLayer extends MapsControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-		super.draw(ctx, overlay, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+		super.draw(ctx, overlay, menus, invalidationMask);
 		selectionRect.fillAndStroke(ctx, new RGBA(255, 255, 255, 0.25), Millimeter.toPixels(0.1),
 				new RGB(255, 255, 255));
 	}

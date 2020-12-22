@@ -54,8 +54,8 @@ public class SliderHorizontalWithHandle extends SliderHorizontal {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-		super.draw(ctx, overlay, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+		super.draw(ctx, overlay, menus, invalidationMask);
 
 		ParameterPresenter p = getParentParameterLayout().presenter;
 

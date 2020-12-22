@@ -38,9 +38,9 @@ public class ValueDisplay extends Label {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		if (getPixRect().getWidth() >= Millimeter.toPixels(20))
-			super.draw(ctx, overlay, invalidationMask);
+			super.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	@Override

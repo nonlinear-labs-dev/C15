@@ -88,7 +88,7 @@ public class BeltPreset extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		var contextMenuOnPreset = false;
 
 		Overlay o = NonMaps.get().getNonLinearWorld().getViewport().getOverlay();
@@ -121,7 +121,7 @@ public class BeltPreset extends OverlayLayout {
 
 		getPixRect().fill(ctx, colorFill);
 
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	@Override

@@ -67,7 +67,7 @@ public class SplitSoundLayout extends SoundLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, Context2d overlayCtx, int flags) {
+		public void draw(Context2d ctx, Context2d overlayCtx, Context2d menus, int flags) {
 			if (SetupModel.get().systemSettings.syncSplit.isFalse()) {
 				SplitPoint splits = (SplitPoint) getChildren().get(2);
 				Rect left = splits.getRectOfVG(VoiceGroup.I);
@@ -93,7 +93,7 @@ public class SplitSoundLayout extends SoundLayout {
 					ctx.fillRect(left.getCenterPoint().getX() - 2, startY, 4, endY - startY);
 				}
 			}
-			super.draw(ctx, overlayCtx, flags);
+			super.draw(ctx, overlayCtx, menus, flags);
 		}
 	}
 
@@ -245,7 +245,7 @@ public class SplitSoundLayout extends SoundLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 			double margin = Millimeter.toPixels(1);
 			EditBufferPresenter presenter = EditBufferPresenterProvider.getPresenter();
 			RGB bgColor = (group == VoiceGroup.I) ? presenter.voiceGroupI_BackgroundColor
@@ -273,7 +273,7 @@ public class SplitSoundLayout extends SoundLayout {
 				getPixRect().getReducedBy(1).drawRoundedArea(ctx, margin, 1, RGBA.transparent(), RGB.red());
 			}
 
-			super.draw(ctx, overlay, invalidationMask);
+			super.draw(ctx, overlay, menus, invalidationMask);
 		}
 
 		@Override
@@ -377,9 +377,9 @@ public class SplitSoundLayout extends SoundLayout {
 			}
 
 			@Override
-			public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+			public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 				getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(0.5), 1, new Gray(68), new Gray(86));
-				super.draw(ctx, overlay, invalidationMask);
+				super.draw(ctx, overlay, menus, invalidationMask);
 			}
 		}
 

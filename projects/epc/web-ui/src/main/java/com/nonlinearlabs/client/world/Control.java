@@ -45,7 +45,7 @@ public abstract class Control {
 		this.parent = parent;
 	}
 
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 	}
 
 	public void drawPost(Context2d ctx, int invalidationMask) {

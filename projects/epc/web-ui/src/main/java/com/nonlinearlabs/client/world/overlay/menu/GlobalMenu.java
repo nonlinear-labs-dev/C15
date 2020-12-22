@@ -268,7 +268,7 @@ public class GlobalMenu extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		double lineWidth = Millimeter.toPixels(1.1);
 
 		createBackgroundAreaPath(ctx);
@@ -284,15 +284,15 @@ public class GlobalMenu extends OverlayLayout {
 		ctx.setLineWidth(lineWidth / 4);
 		ctx.stroke();
 
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 
 		createHeaderAreaPath(ctx);
 		ctx.setFillStyle(RGB.black().toString());
 		ctx.setLineWidth(0);
 		ctx.fill();
 
-		headerText.draw(ctx, overlay, invalidationMask);
-		header.draw(ctx, overlay, invalidationMask);
+		headerText.draw(ctx, overlay, menus, invalidationMask);
+		header.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	private void createHeaderAreaPath(Context2d ctx) {

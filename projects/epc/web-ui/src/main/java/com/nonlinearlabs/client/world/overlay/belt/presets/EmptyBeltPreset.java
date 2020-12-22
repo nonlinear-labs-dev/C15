@@ -21,10 +21,10 @@ public class EmptyBeltPreset extends OverlayLayout {
 		}
 
 		@Override
-		public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+		public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 			Rect rect = getPixRect();
 			rect.fill(ctx, new Gray(25));
-			super.draw(ctx, overlay, invalidationMask);
+			super.draw(ctx, overlay, menus, invalidationMask);
 		}
 
 		@Override

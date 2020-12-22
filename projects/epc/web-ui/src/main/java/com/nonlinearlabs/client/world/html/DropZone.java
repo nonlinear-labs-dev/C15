@@ -1,4 +1,4 @@
-package com.nonlinearlabs.client.world.maps.presets.html;
+package com.nonlinearlabs.client.world.html;
 
 import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.google.gwt.event.dom.client.DragEndEvent;
@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
 import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 
-class DropZone extends HTMLPanel {
-    DropZone() {
+public class DropZone extends HTMLPanel {
+    public DropZone() {
         super("");
         getElement().addClassName("drop-zone");
 

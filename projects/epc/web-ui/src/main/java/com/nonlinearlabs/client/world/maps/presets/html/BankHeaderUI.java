@@ -12,11 +12,12 @@ import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Position;
+import com.nonlinearlabs.client.world.html.DropZone;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.belt.presets.BankContextMenu;
 
-class BankHeaderUI extends DropZone {
+class BankHeaderUI extends DropZone { 
 
     private class MapsBankContextMenu extends BankContextMenu {
         private MapsBankContextMenu(OverlayLayout parent, String bank) {

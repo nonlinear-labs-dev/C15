@@ -126,7 +126,7 @@ public class Overlay extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		if (layoutRequested) {
 			layoutRequested = false;
 			doLayout(0, 0, getRelativePosition().getWidth(), getRelativePosition().getHeight());
@@ -134,14 +134,14 @@ public class Overlay extends OverlayLayout {
 
 		ctx.clearRect(0, 0, getPixRect().getWidth(), getPixRect().getHeight());
 
-		buttons.drawInactiveButton(ctx, overlay, invalidationMask);
+		buttons.drawInactiveButton(ctx, overlay, menus, invalidationMask);
 		drawBackground(ctx);
-		buttons.drawActiveButton(ctx, overlay, invalidationMask);
+		buttons.drawActiveButton(ctx, overlay, menus, invalidationMask);
 
 		if (EditBufferModel.get().soundType.getValue() != SoundType.Single)
 			drawDualSoundIndication(ctx);
 
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	private void drawDualSoundIndication(Context2d ctx) {
@@ -197,7 +197,6 @@ public class Overlay extends OverlayLayout {
 
 	private void drawBackground(Context2d ctx) {
 
-
 		Rect r = belt.getPixRect();
 
 		double corner = Millimeter.toPixels(1);
@@ -205,7 +204,7 @@ public class Overlay extends OverlayLayout {
 		double activeButtonRight = buttons.getRightOfActiveButton();
 		double activeButtonTop = buttons.getPixRect().getTop();
 
-		if(!buttons.isAnyActive()) {
+		if (!buttons.isAnyActive()) {
 			activeButtonTop = buttons.getPixRect().getBottom();
 		}
 

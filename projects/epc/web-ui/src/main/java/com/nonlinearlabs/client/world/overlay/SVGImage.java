@@ -61,7 +61,7 @@ public abstract class SVGImage extends OverlayControl {
 	public double getPictureWidth() {
 		return getPhase(getSelectedPhase()).getImgWidth();
 	}
-	
+
 	public double getPictureHeight() {
 		return getPhase(getSelectedPhase()).getImgHeight();
 	}
@@ -109,11 +109,11 @@ public abstract class SVGImage extends OverlayControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		SVGImagePhase phase = getSelectedImage();
 
 		if (phase != null) {
-			phase.draw(ctx, overlay, invalidationMask);
+			phase.draw(ctx, overlay, menus, invalidationMask);
 		}
 	}
 

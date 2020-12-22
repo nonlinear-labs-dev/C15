@@ -31,7 +31,7 @@ class Line extends ZoomReactingControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		Rect pixRect = getPixRect();
 
 		ctx.setFillStyle(getColorObjectContour().toString());
@@ -39,6 +39,6 @@ class Line extends ZoomReactingControl {
 		double insetY = 0;
 		ctx.fillRect(pixRect.getLeft() + insetX, pixRect.getTop() + insetY, pixRect.getWidth() - 2 * insetX,
 				pixRect.getHeight() - 2 * insetY);
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 }

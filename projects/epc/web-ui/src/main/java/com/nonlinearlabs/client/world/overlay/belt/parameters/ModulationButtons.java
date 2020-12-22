@@ -22,8 +22,8 @@ public class ModulationButtons extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-		super.draw(ctx, overlay, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+		super.draw(ctx, overlay, menus, invalidationMask);
 		boolean changedIndicationEnabled = SetupModel.get().systemSettings.highlightChangedParameters.getBool();
 		if (isChanged() && changedIndicationEnabled) {
 			getPixRect().drawRoundedRect(ctx, Rect.ROUNDING_ALL, 5, 1.5, null, RGB.changedBeltBorder());

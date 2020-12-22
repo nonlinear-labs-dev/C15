@@ -19,6 +19,7 @@ import com.nonlinearlabs.client.useCases.BankUseCases;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.useCases.PresetUseCases;
 import com.nonlinearlabs.client.world.Position;
+import com.nonlinearlabs.client.world.html.DropZone;
 import com.nonlinearlabs.client.world.overlay.Overlay;
 import com.nonlinearlabs.client.world.overlay.belt.presets.PresetContextMenu;
 
@@ -37,7 +38,7 @@ class PresetUI extends HTMLPanel {
                 BankUseCases.get().dropAbove(uuid, effect);
             }, DropEvent.getType());
         }
-    }
+    } 
 
     class Middle extends DropZone {
         public Middle(String uuid) {
@@ -153,7 +154,7 @@ class PresetUI extends HTMLPanel {
                 Overlay o = NonMaps.theMaps.getNonLinearWorld().getViewport().getOverlay();
 
                 var isInMultiSel = pm.multiSelection;
-                var presetIsInMultiSel = pm.currentMultiSelection.contains(uuid);
+                var presetIsInMultiSel = pm.currentMultiSelection != null && pm.currentMultiSelection.contains(uuid);
 
                 if (presetIsInMultiSel || !isInMultiSel)
                     o.setContextMenu(new Position(e.getNativeEvent()), new PresetContextMenu(o, uuid));

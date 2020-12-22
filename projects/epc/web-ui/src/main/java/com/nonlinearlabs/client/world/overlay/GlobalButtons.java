@@ -1,7 +1,6 @@
 package com.nonlinearlabs.client.world.overlay;
 
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.core.client.GWT;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
@@ -45,7 +44,7 @@ class GlobalButtons extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 	}
 
 	@Override
@@ -82,20 +81,20 @@ class GlobalButtons extends OverlayLayout {
 		return getPixRect().getRight();
 	}
 
-	public void drawInactiveButton(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void drawInactiveButton(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		for (OverlayControl c : getChildren()) {
 			IActivatable b = (IActivatable) c;
 			if (!b.isActive() || belt.isHidden())
-				c.draw(ctx, overlay, invalidationMask);
+				c.draw(ctx, overlay, menus, invalidationMask);
 		}
 	}
 
-	public void drawActiveButton(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void drawActiveButton(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		if (!belt.isHidden()) {
 			for (OverlayControl c : getChildren()) {
 				IActivatable b = (IActivatable) c;
 				if (b.isActive())
-					c.draw(ctx, overlay, invalidationMask);
+					c.draw(ctx, overlay, menus, invalidationMask);
 			}
 		}
 	}

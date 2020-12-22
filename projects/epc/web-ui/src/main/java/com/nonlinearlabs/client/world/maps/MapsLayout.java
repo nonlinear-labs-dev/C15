@@ -73,8 +73,8 @@ public abstract class MapsLayout extends MapsControl implements ILayout<MapsCont
 	}
 
 	@Override
-	public void drawChildren(Context2d ctx, Context2d overlay, int invalidationMask) {
-		children.draw(ctx, overlay, invalidationMask);
+	public void drawChildren(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+		children.draw(ctx, overlay, menus, invalidationMask);
 
 		if (debugRects) {
 			for (MapsControl c : getChildren()) {
@@ -140,8 +140,8 @@ public abstract class MapsLayout extends MapsControl implements ILayout<MapsCont
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
-		drawChildren(ctx, overlay, invalidationMask);
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
+		drawChildren(ctx, overlay, menus, invalidationMask);
 
 		if (debugRects)
 			getPixRect().stroke(ctx, 1, new RGB(255, 0, 0));

@@ -186,8 +186,8 @@ class MenuArea extends OverlayLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		getPixRect().drawRoundedArea(ctx, Millimeter.toPixels(1), Millimeter.toPixels(1), new Gray(16), null);
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 }

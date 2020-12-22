@@ -102,11 +102,11 @@ class StorePreset extends SVGImage {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		if (isDraggingControl() && !isVisibilityForced()) {
 			drawDetachedState(ctx);
 		} else {
-			super.draw(ctx, overlay, invalidationMask);
+			super.draw(ctx, overlay, menus, invalidationMask);
 		}
 	}
 

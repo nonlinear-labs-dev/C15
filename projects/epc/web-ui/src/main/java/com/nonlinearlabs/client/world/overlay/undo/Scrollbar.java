@@ -17,7 +17,7 @@ public class Scrollbar extends OverlayControl {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		getPixRect().fill(ctx, new Gray(20));
 	}
 

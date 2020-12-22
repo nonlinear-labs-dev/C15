@@ -11,7 +11,7 @@ public class NumericalControlLarge extends ValueDisplayLarge {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		Rect pixRect = getPixRect();
 
 		ctx.setFillStyle(getColorSliderBackground().toString());
@@ -28,7 +28,7 @@ public class NumericalControlLarge extends ValueDisplayLarge {
 		ctx.fillRect(x, y, pixRect.getWidth() - 2 * insetX, pixRect.getHeight() - 2 * insetY);
 		ctx.strokeRect(x, y, pixRect.getWidth() - 2 * insetX, pixRect.getHeight() - 2 * insetY);
 
-		super.draw(ctx, overlay, invalidationMask);
+		super.draw(ctx, overlay, menus, invalidationMask);
 	}
 
 	@Override

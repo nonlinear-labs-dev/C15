@@ -1,5 +1,7 @@
 package com.nonlinearlabs.client.world;
 
+import java.util.Arrays;
+
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.Composite;
 import com.google.gwt.canvas.dom.client.Context2d.LineCap;
@@ -227,18 +229,25 @@ public class NonLinearWorld extends MapsLayout {
 	}
 
 	@Override
-	public void draw(Context2d ctx, Context2d overlay, int invalidationMask) {
+	public void draw(Context2d ctx, Context2d overlay, Context2d menus, int invalidationMask) {
 		try (ContextState state = new ContextState(ctx)) {
 			try (StopWatchState s = new StopWatchState("NonlinearWorld::draw")) {
-				ctx.save();
-				ctx.setGlobalCompositeOperation(Composite.SOURCE_OVER);
-				ctx.setLineCap(LineCap.BUTT);
-				ctx.translate(-0.5, -0.5);
-				viewport.drawBackground(ctx);
-				drawChildren(ctx, overlay, invalidationMask);
-				viewport.draw(ctx, overlay, invalidationMask);
+				for (var c : Arrays.asList(ctx, overlay, menus)) {
+					c.save();
+					c.setGlobalCompositeOperation(Composite.SOURCE_OVER);
+					c.setLineCap(LineCap.BUTT);
+					c.translate(-0.5, -0.5);
+				}
 
-				ctx.restore();
+				viewport.drawBackground(ctx);
+				overlay.clearRect(0, 0, getPixRect().getWidth(), getPixRect().getHeight());
+				menus.clearRect(0, 0, getPixRect().getWidth(), getPixRect().getHeight());
+				drawChildren(ctx, overlay, menus, invalidationMask);
+				viewport.draw(ctx, overlay, menus, invalidationMask);
+
+				for (var c : Arrays.asList(ctx, overlay, menus)) {
+					c.restore();
+				}
 			}
 		}
 	}

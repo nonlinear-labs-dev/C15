@@ -5,12 +5,13 @@ import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.clipboard.ClipboardModel.DragDataType;
 import com.nonlinearlabs.client.presenters.ClipboardPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
+import com.nonlinearlabs.client.world.html.DropZone;
 import com.nonlinearlabs.client.world.maps.NonPosition;
 import com.nonlinearlabs.client.world.maps.NonRect;
 
 class Tape extends DropZone {
 
-    private String uuid;
+    private String uuid; 
     private BankUseCases.TapePosition position;
 
     public Tape(String uuid, BankUseCases.TapePosition position) {
