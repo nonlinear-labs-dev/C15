@@ -73,7 +73,7 @@ class PresetManagerUseCases
   void deletePresets(const std::vector<std::string>& uuids, bool deleteBanks);
 
   void selectMidiBank(Bank* b);
-  void moveBankCluster(std::vector<std::string> uuids);
+  void moveBankCluster(std::vector<std::string> uuids_x_y);
 
   void moveLeft(Bank* bank);
   void moveRight(Bank* bank);

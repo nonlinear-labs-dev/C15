@@ -2,7 +2,6 @@ package com.nonlinearlabs.client.world.overlay.belt;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.Animator;
 import com.nonlinearlabs.client.Animator.DoubleClientData.Client;
 import com.nonlinearlabs.client.NonMaps;
@@ -106,7 +105,8 @@ public class Belt extends OverlayLayout {
 			desiredHeight = 2;
 		} else {
 			desiredHeight = 1;
-			presetLayout.storeSelectOff();
+			// todo
+			// presetLayout.storeSelectOff();
 		}
 
 		if (animator != null)
@@ -130,10 +130,6 @@ public class Belt extends OverlayLayout {
 	// height: 1 = hidden, 2 = expanded
 	private double currentHeight = 2;
 	private double desiredHeight = 2;
-
-	public void update(Node settingsNode, Node editBufferNode, Node presetManagerNode) {
-		presetLayout.update(settingsNode, editBufferNode, presetManagerNode);
-	}
 
 	public boolean isPresetView() {
 		return presetLayout.getOpacity() != 0.0 && !isHidden();
@@ -217,10 +213,12 @@ public class Belt extends OverlayLayout {
 			if (!isPresetView())
 				setPresetView(true);
 
-			getPresetLayout().toggleStoreSelect();
+			// todo
+			// getPresetLayout().toggleStoreSelect();
 			return this;
 		} else if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-			return getPresetLayout().handleEnterKey();
+			// todo
+			// return getPresetLayout().handleEnterKey();
 		}
 
 		return null;

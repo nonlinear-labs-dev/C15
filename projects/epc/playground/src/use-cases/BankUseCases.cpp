@@ -131,7 +131,7 @@ void BankUseCases::dropBankOnPreset(const Bank* sourceBank, const Uuid& presetAn
   }
 }
 
-void BankUseCases::moveBank(const std::string& x, const std::string& y)
+void BankUseCases::moveBank(const std::string& x, const std::string& y, bool undock)
 {
   if(m_bank->getX() != x || m_bank->getY() != y)
   {
@@ -139,6 +139,9 @@ void BankUseCases::moveBank(const std::string& x, const std::string& y)
     auto transaction = scope->getTransaction();
     m_bank->setX(transaction, x);
     m_bank->setY(transaction, y);
+
+    if(undock)
+      m_bank->attachBank(transaction, Uuid::none(), Bank::AttachmentDirection::none);
   }
 }
 

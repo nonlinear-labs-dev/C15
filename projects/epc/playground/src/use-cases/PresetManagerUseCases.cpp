@@ -257,14 +257,16 @@ void PresetManagerUseCases::deleteBank(const Uuid& uuid)
   }
 }
 
-void PresetManagerUseCases::moveBankCluster(std::vector<std::string> uuids)
+void PresetManagerUseCases::moveBankCluster(std::vector<std::string> uuids_x_y)
 {
   auto scope = m_presetManager->getUndoScope().startTransaction("Moved Banks");
   auto transaction = scope->getTransaction();
 
-  nltools_assertAlways(uuids.size() % 3 == 0);
+  nltools_assertAlways(uuids_x_y.size() % 3 == 0);
 
-  for(auto i = uuids.begin(); i != uuids.end();)
+  bool firstBank = true;
+
+  for(auto i = uuids_x_y.begin(); i != uuids_x_y.end();)
   {
     if(auto selBank = m_presetManager->findBank(*(i++)))
     {
@@ -272,11 +274,16 @@ void PresetManagerUseCases::moveBankCluster(std::vector<std::string> uuids)
       auto y = *(i++);
       selBank->setX(transaction, x);
       selBank->setY(transaction, y);
+
+      if(firstBank)
+        selBank->attachBank(transaction, Uuid::none(), Bank::AttachmentDirection::none);
     }
     else
     {
       std::advance(i, 2);
     }
+
+    firstBank = false;
   }
 }
 
@@ -420,7 +427,7 @@ void PresetManagerUseCases::movePresetAbove(const Uuid& presetToMoveUuid, const 
       auto scope = m_presetManager->getUndoScope().startTransaction("Move preset");
       auto transaction = scope->getTransaction();
       auto anchor = tgtBank->findPresetNear(presetAnchorUuid, 0);
-      srcBank->movePresetBetweenBanks(transaction, toMove, tgtBank, anchor);
+      Bank::movePresetBetweenBanks(transaction, toMove, anchor);
       tgtBank->selectPreset(transaction, presetToMoveUuid);
       m_presetManager->selectBank(transaction, tgtBank->getUuid());
     }
@@ -439,7 +446,7 @@ void PresetManagerUseCases::movePresetBelow(const Uuid& presetToMoveUuid, const 
       auto scope = m_presetManager->getUndoScope().startTransaction("Move preset");
       auto transaction = scope->getTransaction();
       auto anchor = tgtBank->findPresetNear(presetAnchorUuid, 1);
-      srcBank->movePresetBetweenBanks(transaction, toMove, tgtBank, anchor);
+      Bank::movePresetBetweenBanks(transaction, toMove, anchor);
       tgtBank->selectPreset(transaction, presetToMoveUuid);
       m_presetManager->selectBank(transaction, tgtBank->getUuid());
     }
@@ -460,9 +467,8 @@ void PresetManagerUseCases::movePresetTo(const Uuid& overwriteWith, const Uuid& 
     {
       auto scope = m_presetManager->getUndoScope().startTransaction("Overwrite preset");
       auto transaction = scope->getTransaction();
-
       auto anchor = tgtBank->findPresetNear(presetToOverwrite, 0);
-      tgtBank->movePresetBetweenBanks(transaction, srcPreset, tgtBank, anchor);
+      Bank::movePresetBetweenBanks(transaction, srcPreset, anchor);
       srcBank->deletePreset(transaction, presetToOverwrite);
       tgtBank->selectPreset(transaction, srcPreset->getUuid());
       m_presetManager->selectBank(transaction, tgtBank->getUuid());

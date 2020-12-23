@@ -16,7 +16,7 @@ class BankUseCases
   void renameBank(const Glib::ustring& name);
   void setBankComment(const Glib::ustring& comment);
 
-  void moveBank(const std::string& x, const std::string& y);
+  void moveBank(const std::string& x, const std::string& y, bool undock);
 
   void dropPresets(const std::string& csv);
   void dropBank(const Bank* b);

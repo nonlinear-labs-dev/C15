@@ -39,9 +39,6 @@ PresetManager::PresetManager(UpdateDocumentContributor *parent, bool readOnly)
     , m_saveJob(std::bind(&PresetManager::doSaveTask, this))
     , m_readOnly(readOnly)
 {
-  m_actionManagers.emplace_back(new PresetManagerActions(*this));
-  m_actionManagers.emplace_back(new BankActions(*this));
-  m_actionManagers.emplace_back(new EditBufferActions(m_editBuffer.get()));
   onRestoreHappened([&]() { invalidate(); });
 }
 
@@ -85,6 +82,10 @@ void PresetManager::init()
   hwui->getBaseUnit().getPlayPanel().getSOLED().resetSplash();
   m_sigLoadHappened.send();
   onChange();
+
+  m_actionManagers.emplace_back(new PresetManagerActions(*this));
+  m_actionManagers.emplace_back(new BankActions(*this));
+  m_actionManagers.emplace_back(new EditBufferActions(m_editBuffer.get()));
 }
 
 void PresetManager::invalidate()

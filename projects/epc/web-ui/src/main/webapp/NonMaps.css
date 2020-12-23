@@ -1353,12 +1353,15 @@ input[type="radio"]+label {
   top: 0%;
   margin: 0px;
   padding: 0px;
-  z-index: 3;
   pointer-events: none;
 }
 
+#overlay {
+  z-index: 3;
+}
+
 #menus {
-  z-index: 4;
+  z-index: 6;
 }
 
 #overlay > canvas, #menus > canvas {
@@ -2093,7 +2096,7 @@ button {
   display: block;
   position: absolute;
   pointer-events: all;
-  z-index: 100;
+  z-index: 4;
 }
 
 .header .gwt-Label {
@@ -2152,5 +2155,64 @@ button {
 
 .belt-preset-ui {
   position: absolute;
-  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content:center;
+  z-index: 5;
+  overflow: hidden;
 }
+
+.belt-preset-ui .bank {
+  justify-self: center;
+  align-self: center;
+  overflow: hidden;
+}
+
+.belt-preset-ui .bank .presets {
+  overflow-y: scroll;
+  height: 27mm;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.belt-preset-ui .bank .presets::-webkit-scrollbar {
+  display: none;
+}
+
+.belt-preset-ui .bank .header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.belt-preset-ui .bank .header .prev-bank {
+  width: 8mm;
+}
+
+.belt-preset-ui .bank .header .prev-bank:enabled {
+  background-image: url(images/Bank_Left_Enabled.svg)
+}
+
+.belt-preset-ui .bank .header .prev-bank:disabled {
+  background-image: url(images/Bank_Left_Disabled.svg)
+}
+
+.belt-preset-ui .bank .header .prev-bank:active {
+  background-image: url(images/Bank_Left_Active.svg)
+}
+
+.belt-preset-ui .bank .header .next-bank {
+  width: 8mm;
+}
+
+.belt-preset-ui .bank .header .next-bank:enabled {
+  background-image: url(images/Bank_Right_Enabled.svg)
+}
+
+.belt-preset-ui .bank .header .next-bank:disabled {
+  background-image: url(images/Bank_Right_Disabled.svg)
+}
+
+.belt-preset-ui .bank .header .next-bank:active {
+  background-image: url(images/Bank_Right_Active.svg)
+}
+

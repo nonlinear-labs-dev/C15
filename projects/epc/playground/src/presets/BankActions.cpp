@@ -69,10 +69,7 @@ BankActions::BankActions(PresetManager &presetManager)
     auto presetToMoveUuid = request->get("presetToMove");
     auto presetAnchorUuid = request->get("anchor");
 
-
     PresetManagerUseCases useCase(&m_presetManager);
-	// move into method
-Bank::movePresetBetweenBanks(transaction, toMove, anchor);
     useCase.movePresetAbove(presetToMoveUuid, presetAnchorUuid);
   });
 
@@ -81,7 +78,6 @@ Bank::movePresetBetweenBanks(transaction, toMove, anchor);
     auto presetAnchorUuid = request->get("anchor");
 
     PresetManagerUseCases useCases(&m_presetManager);
-        Bank::movePresetBetweenBanks(transaction, toMove, anchor);
     useCases.movePresetBelow(presetToMoveUuid, presetAnchorUuid);
   });
 
@@ -89,7 +85,6 @@ Bank::movePresetBetweenBanks(transaction, toMove, anchor);
     auto presetToOverwrite = request->get("presetToOverwrite");
     auto overwriteWith = request->get("overwriteWith");
 
-        Bank::movePresetBetweenBanks(transaction, srcPreset, anchor);
     PresetManagerUseCases useCases(&m_presetManager);
     useCases.movePresetTo(overwriteWith, presetToOverwrite);
   });
@@ -325,13 +320,18 @@ Bank::movePresetBetweenBanks(transaction, toMove, anchor);
 
   addAction("set-preset-attribute", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto csv = request->get("csv");
+    auto key = request->get("key");
     auto value = request->get("value");
 
     std::vector<std::string> strs;
     boost::split(strs, csv, boost::is_any_of(","));
 
-    PresetUseCases useCase(preset);
-    useCase.setAttribute(strs, value);
+    std::vector<Preset *> presets;
+    std::transform(strs.begin(), strs.end(), std::back_inserter(presets),
+                   [&](auto uuid) { return m_presetManager.findPreset(uuid); });
+
+    PresetUseCases useCase(presets);
+    useCase.setAttribute(key, value);
   });
 
   addAction("set-bank-attribute", [&](std::shared_ptr<NetworkRequest> request) mutable {

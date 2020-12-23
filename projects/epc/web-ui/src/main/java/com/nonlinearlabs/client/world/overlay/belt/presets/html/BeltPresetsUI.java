@@ -10,6 +10,7 @@ public class BeltPresetsUI extends DropZone {
     public BeltPresetsUI() {
         RootPanel.get().add(this);
         getElement().addClassName("belt-preset-ui");
+        add(new BankUI());
     }
 
     public void syncPosition(Rect r) {
