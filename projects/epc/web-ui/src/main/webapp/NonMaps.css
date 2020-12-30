@@ -2154,18 +2154,12 @@ button {
 }
 
 .belt-preset-ui {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content:center;
   z-index: 5;
   overflow: hidden;
-}
-
-.belt-preset-ui .bank {
-  justify-self: center;
-  align-self: center;
-  overflow: hidden;
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .belt-preset-ui .bank .presets {
@@ -2177,15 +2171,6 @@ button {
 
 .belt-preset-ui .bank .presets::-webkit-scrollbar {
   display: none;
-}
-
-.belt-preset-ui .bank .header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.belt-preset-ui .bank .header .prev-bank {
-  width: 8mm;
 }
 
 .belt-preset-ui .bank .header .prev-bank:enabled {
@@ -2200,10 +2185,6 @@ button {
   background-image: url(images/Bank_Left_Active.svg)
 }
 
-.belt-preset-ui .bank .header .next-bank {
-  width: 8mm;
-}
-
 .belt-preset-ui .bank .header .next-bank:enabled {
   background-image: url(images/Bank_Right_Enabled.svg)
 }
@@ -2216,3 +2197,144 @@ button {
   background-image: url(images/Bank_Right_Active.svg)
 }
 
+.belt-preset-ui .bank .header .next-bank:active {
+  background-image: url(images/Bank_Right_Active.svg)
+}
+
+.belt-preset-ui .presetmanager-area {
+  display: table;
+}
+
+.belt-preset-ui .presetmanager-area .preset-area {
+  display: table-row;
+}
+
+.belt-preset-ui .presetmanager-area .bank-area {
+  display: table-row;
+}
+
+.belt-preset-ui .presetmanager-area div > * {
+  display: table-cell;
+  vertical-align: middle;
+  background-color:transparent;
+  padding: 2mm;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.belt-preset-ui button {
+  display: table-cell;
+  vertical-align: middle;
+  background-color:transparent;
+  padding: 3px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.belt-preset-ui button img {
+  visibility: hidden;
+}
+
+.belt-preset-ui .presetmanager-area .preset-area .show-menu {
+  background-image: url(images/Menu_Preset_Enabled_S.svg)
+}
+
+.belt-preset-ui .presetmanager-area .preset-area .show-menu:disabled {
+  background-image: url(images/Menu_Preset_Disabled_S.svg)
+}
+
+.belt-preset-ui .presetmanager-area .preset-area .show-info {
+  background-image: url(images/Menu_Info_Enabled_S.svg)
+}
+
+.belt-preset-ui .presetmanager-area .preset-area .show-search {
+  background-image: url(images/Menu_Search_Enabled_S.svg)
+}
+
+.belt-preset-ui .presetmanager-area .bank-area .show-menu {
+  background-image: url(images/Menu_Bank_Enabled_S.svg)
+}
+
+.belt-preset-ui .presetmanager-area .bank-area .show-info {
+  background-image: url(images/Menu_Info_Enabled_S.svg)
+}
+
+.belt-preset-ui .bank-area {
+  display: flex;
+  align-items: center;
+  flex-grow: 2;
+}
+
+.belt-preset-ui .bank-area > * {
+  padding-left: 3mm;
+  padding-right: 3mm;
+}
+
+.belt-preset-ui .bank-area .load-and-select-buttons {
+  display: flex;
+}
+
+.belt-preset-ui .bank-area .load-and-select-buttons .select-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.belt-preset-ui .bank-area .load-and-select-buttons .select-buttons .number-of-presets {
+  padding-bottom: 15px;
+}
+
+.belt-preset-ui .bank-area .load-and-select-buttons .load-preset {
+  margin-top: 35px;
+}
+
+
+.belt-preset-ui .bank-area .store-area .show-menu {
+  background-image: url(images/Append_Enabled.svg)
+}
+
+.belt-preset-ui .bank-area .store-area .store-select-mode {
+  background-image: url(images/Select_Enabled.svg)
+}
+
+.belt-preset-ui .bank-area .store-area .store {
+  background-image: url(images/Store_Enabled.svg)
+}
+
+.belt-preset-ui .bank-area .bank {
+  position: initial;
+  flex-grow: 2;
+}
+
+.belt-preset-ui .bank-area .bank .header {
+  display: flex;
+}
+
+
+.belt-preset-ui .load-area {
+  
+}
+
+.belt-preset-ui .load-area .number-of-presets {
+
+}
+
+.belt-preset-ui .load-area .previous-preset {
+  background-image: url(images/Preset_Up_Enabled.svg)
+}
+
+.belt-preset-ui .load-area .next-preset {
+  background-image: url(images/Preset_Down_Enabled.svg)
+}
+
+.belt-preset-ui .load-area .load-preset {
+  background-image: url(images/Load_Enabled.svg)
+}
+
+.belt-preset-ui .loaded-preset-number {
+
+}
+
+.belt-preset-ui .direct-load {
+  background-image: url(images/Dir-Load_Enabled.svg)
+}

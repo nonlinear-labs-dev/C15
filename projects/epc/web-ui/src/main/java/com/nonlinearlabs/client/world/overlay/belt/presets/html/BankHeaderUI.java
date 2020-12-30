@@ -3,6 +3,7 @@ package com.nonlinearlabs.client.world.overlay.belt.presets.html;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
@@ -11,6 +12,7 @@ import com.nonlinearlabs.client.presenters.BankPresenterProviders;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.BankUseCases;
+import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.html.DropZone;
 import com.nonlinearlabs.client.world.overlay.Overlay;
@@ -55,6 +57,13 @@ class BankHeaderUI extends DropZone {
 
         prevButton.getElement().addClassName("prev-bank");
         nextButton.getElement().addClassName("next-bank");
+        text.getElement().addClassName("bank-name");
+
+        var leftImg = new Image("images/Bank_Left_Active.svg");
+        prevButton.getElement().appendChild(leftImg.getElement());
+
+        var rightImg = new Image("images/Bank_Right_Active.svg");
+        nextButton.getElement().appendChild(rightImg.getElement());
 
         PresetManagerPresenterProvider.get().onChange(p -> {
             pmPresenter = p;
@@ -72,6 +81,9 @@ class BankHeaderUI extends DropZone {
 
             return true;
         });
+
+        prevButton.addClickHandler(v -> PresetManagerUseCases.get().selectPreviousBank());
+        nextButton.addClickHandler(v -> PresetManagerUseCases.get().selectNextBank());
 
         addDomHandler(e -> {
             getElement().removeClassName("drop-target");

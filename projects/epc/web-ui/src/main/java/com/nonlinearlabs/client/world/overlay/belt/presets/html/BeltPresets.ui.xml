@@ -1,0 +1,74 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:nl='urn:import:com.nonlinearlabs.client.world.overlay.belt.presets.html'>
+	<g:HTMLPanel styleName="belt-preset-ui">
+		<div class="presetmanager-area">
+			<div class="preset-area">
+				<g:Label styleName="title">Preset</g:Label>
+				<g:Button styleName="show-menu">
+					<img src="images/Menu_Preset_Enabled_S.svg"></img>
+				</g:Button>
+
+				<g:Button styleName="show-info">
+					<img src="images/Menu_Info_Enabled_S.svg"></img>
+				</g:Button>
+
+				<g:Button styleName="show-search">
+					<img src="images/Menu_Search_Enabled_S.svg"></img>
+				</g:Button>
+			</div>
+			<div class="bank-area">
+				<g:Label styleName="title">Bank</g:Label>
+				<g:Button styleName="show-menu">
+					<img src="images/Menu_Bank_Enabled_S.svg"></img>
+				</g:Button>
+				<g:Button styleName="show-info">
+					<img src="images/Menu_Info_Enabled_S.svg"></img>
+				</g:Button>
+			</div>
+		</div>
+
+		<div class="bank-area">
+			<div class="store-area">
+				<div class="upper">
+					<g:Button styleName="show-menu">
+						<img src="images/Append_Enabled.svg"></img>
+					</g:Button>
+				</div>
+				<div class="lower">
+					<g:Button styleName="store-select-mode">
+						<img src="images/Select_Enabled.svg"></img>
+					</g:Button>
+					<g:Button styleName="store">
+						<img src="images/Store_Enabled.svg"></img>
+					</g:Button>
+				</div>
+			</div>
+
+			<nl:BankUI></nl:BankUI>
+
+			<div class="load-area">
+				<div class="load-and-select-buttons">
+					<div class="select-buttons">
+						<g:Label styleName="number-of-presets">[64]</g:Label>
+						<g:Button styleName="previous-preset">
+							<img src="images/Preset_Up_Enabled.svg"></img>
+						</g:Button>
+						<g:Button styleName="next-preset">
+							<img src="images/Preset_Down_Enabled.svg"></img>
+						</g:Button>
+					</div>
+					<g:Button styleName="load-preset">
+						<img src="images/Load_Enabled.svg"></img>
+					</g:Button>
+				</div>
+			</div>
+		</div>
+
+		<g:Label styleName="loaded-preset-number">12-123</g:Label>
+		<g:Button styleName="direct-load">
+			<img src="images/Dir-Load_Enabled.svg"></img>
+		</g:Button>
+
+	</g:HTMLPanel>
+</ui:UiBinder>

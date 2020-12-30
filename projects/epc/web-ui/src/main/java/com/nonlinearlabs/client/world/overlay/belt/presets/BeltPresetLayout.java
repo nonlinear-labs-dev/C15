@@ -4,14 +4,13 @@ import com.google.gwt.dom.client.Style.Display;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.belt.Belt;
-import com.nonlinearlabs.client.world.overlay.belt.presets.html.BeltPresetsUI;
+import com.nonlinearlabs.client.world.overlay.belt.presets.html.BeltPresets;
 
 public class BeltPresetLayout extends OverlayLayout {
-	private BeltPresetsUI theHtmlUI = new BeltPresetsUI();
+	private BeltPresets theHtmlUI = new BeltPresets();
 
 	public BeltPresetLayout(Belt parent) {
 		super(parent);
-
 	}
 
 	@Override
