@@ -1921,6 +1921,7 @@ button {
 .bank {
   position: absolute;
   width: fit-content;
+  flex-grow: 2;
 }
 
 .bank .content {
@@ -1928,7 +1929,6 @@ button {
 	position: relative;
 	font-size: 4mm;
 	line-height: 8mm;
-	width: calc(60mm + 2px);
 	border: 2px solid #999;
 	box-sizing: content-box;
 	background-color: #9cf;
@@ -1941,7 +1941,6 @@ button {
   display: block;
 	border-top-right-radius: 0mm;
 	border-top-left-radius: 0mm;
-	width: calc(60mm + 2px);
 	color: black;
 	text-align: center;
 	overflow: hidden;
@@ -1954,7 +1953,6 @@ button {
   display: block;
   border-top-right-radius: 2mm;
   border-top-left-radius: 2mm;
-  width: calc(60mm + 2px);
   color: black;
   text-align: center;
   overflow: hidden;
@@ -2229,6 +2227,7 @@ button {
   padding: 3px;
   background-position: center;
   background-repeat: no-repeat;
+  min-width: 1cm;
 }
 
 .belt-preset-ui button img {
@@ -2263,6 +2262,8 @@ button {
   display: flex;
   align-items: center;
   flex-grow: 2;
+  max-width: 200mm;
+  min-width: 60mm;
 }
 
 .belt-preset-ui .bank-area > * {
@@ -2288,6 +2289,9 @@ button {
   margin-top: 35px;
 }
 
+.belt-preset-ui .bank-area .store-area  {
+  flex-shrink: 0;
+}
 
 .belt-preset-ui .bank-area .store-area .show-menu {
   background-image: url(images/Append_Enabled.svg)
@@ -2310,9 +2314,13 @@ button {
   display: flex;
 }
 
+.belt-preset-ui .bank-area .bank .header .bank-name {
+  flex-shrink: 2;
+  flex-grow: 2;
+}
 
 .belt-preset-ui .load-area {
-  
+  flex-shrink: 0;
 }
 
 .belt-preset-ui .load-area .number-of-presets {
