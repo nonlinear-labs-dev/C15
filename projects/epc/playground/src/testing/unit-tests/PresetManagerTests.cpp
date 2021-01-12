@@ -54,7 +54,7 @@ namespace EditBufferHelper
     auto scope = TestHelper::createTestScope();
     auto eb = TestHelper::getEditBuffer();
 
-    eb->undoableConvertToDual(scope->getTransaction(), tSoundType);
+    eb->undoableConvertToDual(scope->getTransaction(), tSoundType, VoiceGroup::II);
     REQUIRE(eb->getType() == tSoundType);
   }
 

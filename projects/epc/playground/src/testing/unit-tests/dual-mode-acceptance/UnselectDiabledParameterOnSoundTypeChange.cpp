@@ -34,7 +34,7 @@ TEST_CASE("FROM Layer")
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
@@ -65,7 +65,7 @@ TEST_CASE("FROM Layer")
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
@@ -96,7 +96,7 @@ TEST_CASE("FROM Layer")
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 156, VoiceGroup::II });
     }
 
@@ -127,7 +127,7 @@ TEST_CASE("FROM Layer")
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 158, VoiceGroup::II });
     }
 
@@ -158,7 +158,7 @@ TEST_CASE("FROM Layer")
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 160, VoiceGroup::II });
     }
 
@@ -243,7 +243,7 @@ TEST_CASE("FROM Layer")
     THEN("Split converted")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
@@ -274,7 +274,7 @@ TEST_CASE("FROM Layer")
     THEN("Split Convert")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
@@ -372,7 +372,7 @@ TEST_CASE("Split Loaded")
     THEN("Layer Convert")
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 358, VoiceGroup::II });
     }
 

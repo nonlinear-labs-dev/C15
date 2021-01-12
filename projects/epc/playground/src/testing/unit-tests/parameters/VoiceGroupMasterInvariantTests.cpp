@@ -14,7 +14,7 @@ TEST_CASE("Fade From gets properly initialized on convert to Layer")
   TestHelper::initSingleEditBuffer(scope->getTransaction());
 
   auto eb = TestHelper::getEditBuffer();
-  eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+  eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
 
   CHECK(eb->findParameterByID({ 396, VoiceGroup::I })->getDisplayString() == "C6");
   CHECK(eb->findParameterByID({ 396, VoiceGroup::II })->getDisplayString() == "C1");

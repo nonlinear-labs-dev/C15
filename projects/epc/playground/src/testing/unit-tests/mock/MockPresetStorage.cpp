@@ -58,7 +58,7 @@ Preset *MockPresetStorage::createSplitPreset(UNDO::Transaction *transaction)
 {
   auto editBuffer = getEditBuffer();
   editBuffer->undoableConvertToSingle(transaction, VoiceGroup::I);
-  editBuffer->undoableConvertToDual(transaction, SoundType::Split);
+  editBuffer->undoableConvertToDual(transaction, SoundType::Split, VoiceGroup::II);
   auto preset = m_bank->appendPreset(transaction, std::make_unique<Preset>(m_bank, *editBuffer));
   preset->setName(transaction, "Split Preset");
   return preset;
@@ -67,7 +67,7 @@ Preset *MockPresetStorage::createSplitPreset(UNDO::Transaction *transaction)
 Preset *MockPresetStorage::createLayerPreset(UNDO::Transaction *transaction)
 {
   auto editBuffer = getEditBuffer();
-  editBuffer->undoableConvertToDual(transaction, SoundType::Layer);
+  editBuffer->undoableConvertToDual(transaction, SoundType::Layer, VoiceGroup::II);
   auto preset = m_bank->appendPreset(transaction, std::make_unique<Preset>(m_bank, *editBuffer));
   preset->setName(transaction, "Layer Preset");
   return preset;
@@ -92,7 +92,7 @@ DualPresetBank::DualPresetBank()
   m_bank = pm->addBank(scope->getTransaction());
 
   auto editBuffer = getEditBuffer();
-  editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+  editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
   for(int i = 0; i < 5; i++)
   {
     auto preset = m_bank->appendPreset(scope->getTransaction(), std::make_unique<Preset>(m_bank, *editBuffer));

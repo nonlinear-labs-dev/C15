@@ -17,14 +17,14 @@ class SoundUseCases
   void initPart(VoiceGroup part);
   void initSound();
 
-  void randomizeSound();
-  void randomizePart(VoiceGroup part);
+  void randomizeSound(double amount);
+  void randomizePart(VoiceGroup part, double randomizeAmount);
 
   void renamePart(VoiceGroup part, const Glib::ustring& name);
 
   void convertToSingle(VoiceGroup partToUse);
-  void convertToLayer();
-  void convertToSplit();
+  void convertToLayer(VoiceGroup currentPart);
+  void convertToSplit(VoiceGroup currentPart);
 
  private:
   EditBuffer* m_editBuffer;

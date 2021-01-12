@@ -48,8 +48,9 @@ class EditBuffer : public ParameterGroupSet
   void fakeParameterSelectionSignal(VoiceGroup oldGroup, VoiceGroup group);
   void undoableSetLoadedPresetInfo(UNDO::Transaction *transaction, const Preset *preset);
   void undoableUpdateLoadedPresetInfo(UNDO::Transaction *transaction);
-  void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator);
-  void undoableRandomizePart(UNDO::Transaction *transaction, VoiceGroup currentVoiceGroup, Initiator initiator);
+  void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double randomizationAmount);
+  void undoableRandomizePart(UNDO::Transaction *transaction, VoiceGroup vg, Initiator initiator,
+                             double randomizeAmount);
   void undoableInitSound(UNDO::Transaction *transaction, Defaults mode);
   void undoableSetDefaultValues(UNDO::Transaction *transaction, Preset *values);
   void undoableLockAllGroups(UNDO::Transaction *transaction);
@@ -96,7 +97,7 @@ class EditBuffer : public ParameterGroupSet
 
   SoundType getType() const;
 
-  void undoableConvertToDual(UNDO::Transaction *transaction, SoundType type);
+  void undoableConvertToDual(UNDO::Transaction *transaction, SoundType type, VoiceGroup currentPart);
   void undoableConvertToSingle(UNDO::Transaction *transaction, VoiceGroup copyFrom);
 
   void undoableLoadPresetIntoDualSound(const Preset *preset, VoiceGroup vg);
@@ -176,7 +177,7 @@ class EditBuffer : public ParameterGroupSet
   void undoableConvertSingleToLayer(UNDO::Transaction *transaction);
   void undoableConvertSingleToSplit(UNDO::Transaction *transaction);
   void undoableConvertLayerToSplit(UNDO::Transaction *transaction);
-  void undoableConvertSplitToLayer(UNDO::Transaction *transaction);
+  void undoableConvertSplitToLayer(UNDO::Transaction *transaction, VoiceGroup currentPart);
   void calculateSplitPointFromFadeParams(UNDO::Transaction *transaction);
   void copySinglePresetMasterToPartMaster(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup targetGroup);
   std::vector<Parameter *> getCrossFBParameters(const VoiceGroup &to) const;

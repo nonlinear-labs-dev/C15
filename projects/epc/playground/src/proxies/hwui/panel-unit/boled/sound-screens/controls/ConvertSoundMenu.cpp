@@ -17,17 +17,18 @@ void ConvertSoundMenu::convertSoundTo(SoundType newType)
 {
   auto pm = Application::get().getPresetManager();
   SoundUseCases useCases(pm->getEditBuffer(), pm);
-  
+  auto selectedVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+
   switch(newType)
   {
     case SoundType::Single:
-      useCases.convertToSingle(Application::get().getHWUI()->getCurrentVoiceGroup());
+      useCases.convertToSingle(selectedVG);
       break;
     case SoundType::Layer:
-      useCases.convertToLayer();
+      useCases.convertToLayer(selectedVG);
       break;
     case SoundType::Split:
-      useCases.convertToSplit();
+      useCases.convertToSplit(selectedVG);
       break;
   }
   Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });

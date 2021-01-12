@@ -21,16 +21,16 @@ void SoundUseCases::resetInitSound()
   m_presetManager->resetInitSound(scope->getTransaction());
 }
 
-void SoundUseCases::randomizeSound()
+void SoundUseCases::randomizeSound(double amount)
 {
   auto scope = m_presetManager->getUndoScope().startTransaction("Randomize Sound");
-  m_presetManager->getEditBuffer()->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_HWUI);
+  m_presetManager->getEditBuffer()->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_HWUI, amount);
 }
 
-void SoundUseCases::randomizePart(VoiceGroup part)
+void SoundUseCases::randomizePart(VoiceGroup part, double randomizeAmount)
 {
   auto scope = m_presetManager->getUndoScope().startTransaction("Randomize Part");
-  m_editBuffer->undoableRandomizePart(scope->getTransaction(), part, Initiator::EXPLICIT_WEBUI);
+  m_editBuffer->undoableRandomizePart(scope->getTransaction(), part, Initiator::EXPLICIT_WEBUI, randomizeAmount);
 }
 
 void SoundUseCases::initSound()
@@ -51,11 +51,11 @@ void SoundUseCases::renamePart(VoiceGroup part, const Glib::ustring& name)
   m_editBuffer->setVoiceGroupName(scope->getTransaction(), name, part);
 }
 
-void SoundUseCases::convertToLayer()
+void SoundUseCases::convertToLayer(VoiceGroup currentPart)
 {
   auto scope = m_editBuffer->getUndoScope().startTransaction("Convert Sound to Layer");
   auto transaction = scope->getTransaction();
-  m_editBuffer->undoableConvertToDual(transaction, SoundType::Layer);
+  m_editBuffer->undoableConvertToDual(transaction, SoundType::Layer, currentPart);
 }
 
 void SoundUseCases::convertToSingle(VoiceGroup partToUse)
@@ -65,9 +65,9 @@ void SoundUseCases::convertToSingle(VoiceGroup partToUse)
   m_editBuffer->undoableConvertToSingle(transaction, partToUse);
 }
 
-void SoundUseCases::convertToSplit()
+void SoundUseCases::convertToSplit(VoiceGroup currentPart)
 {
   auto scope = m_editBuffer->getUndoScope().startTransaction("Convert Sound to Split");
   auto transaction = scope->getTransaction();
-  m_editBuffer->undoableConvertToDual(transaction, SoundType::Split);
+  m_editBuffer->undoableConvertToDual(transaction, SoundType::Split, currentPart);
 }

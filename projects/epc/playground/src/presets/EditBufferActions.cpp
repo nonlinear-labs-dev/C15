@@ -23,6 +23,7 @@
 #include <use-cases/ModParameterUseCases.h>
 #include <use-cases/RibbonParameterUseCases.h>
 #include <use-cases/PedalParameterUseCases.h>
+#include <device-settings/RandomizeAmount.h>
 
 //NonMember helperFunctions pre:
 IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer);
@@ -143,7 +144,8 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("randomize-sound", [=](std::shared_ptr<NetworkRequest>) mutable {
     SoundUseCases useCase(editBuffer, editBuffer->getParent());
-    useCase.randomizeSound();
+    auto amount = Application::get().getSettings()->getSetting<RandomizeAmount>()->get();
+    useCase.randomizeSound(amount);
   });
 
   addAction("init-sound", [=](std::shared_ptr<NetworkRequest>) mutable {
@@ -165,7 +167,8 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("randomize-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
     SoundUseCases useCase(editBuffer, editBuffer->getParent());
-    useCase.randomizePart(to<VoiceGroup>(request->get("part")));
+    auto amount = Application::get().getSettings()->getSetting<RandomizeAmount>()->get();
+    useCase.randomizePart(to<VoiceGroup>(request->get("part")), amount);
   });
 
   addAction("mute", [=](std::shared_ptr<NetworkRequest> request) mutable {
@@ -251,13 +254,15 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
   });
 
   addAction("convert-to-split", [=](auto request) {
+    auto currentPart = Application::get().getHWUI()->getCurrentVoiceGroup();
     SoundUseCases useCase(editBuffer, editBuffer->getParent());
-    useCase.convertToSplit();
+    useCase.convertToSplit(currentPart);
   });
 
   addAction("convert-to-layer", [=](auto request) {
+    auto currentPart = Application::get().getHWUI()->getCurrentVoiceGroup();
     SoundUseCases useCase(editBuffer, editBuffer->getParent());
-    useCase.convertToLayer();
+    useCase.convertToLayer(currentPart);
   });
 
   addAction("load-selected-preset-part-into-editbuffer-part", [=](auto request) {

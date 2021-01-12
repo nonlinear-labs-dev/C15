@@ -20,7 +20,7 @@ TEST_CASE("Convert Split to Layer With Part Names")
       setVGName(trans, VoiceGroup::I, "I");
       setVGName(trans, VoiceGroup::II, "II");
 
-      eb->undoableConvertToDual(trans, SoundType::Layer);
+      eb->undoableConvertToDual(trans, SoundType::Layer, VoiceGroup::II);
 
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
@@ -33,7 +33,7 @@ TEST_CASE("Convert Split to Layer With Part Names")
       setVGName(trans, VoiceGroup::I, "I");
       setVGName(trans, VoiceGroup::II, "II");
 
-      eb->undoableConvertToDual(trans, SoundType::Split);
+      eb->undoableConvertToDual(trans, SoundType::Split, VoiceGroup::II);
 
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");

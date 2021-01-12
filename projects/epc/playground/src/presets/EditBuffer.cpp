@@ -543,25 +543,20 @@ void EditBuffer::undoableUpdateLoadedPresetInfo(UNDO::Transaction *transaction)
   undoableSetLoadedPresetInfo(transaction, pm->findPreset(getUUIDOfLastLoadedPreset()));
 }
 
-void EditBuffer::undoableRandomize(UNDO::Transaction *transaction, Initiator initiator)
+void EditBuffer::undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double randomizationAmount)
 {
   SendEditBufferScopeGuard scopeGuard(transaction, true);
-
-  auto amount = Application::get().getSettings()->getSetting<RandomizeAmount>()->get();
-
   for(auto vg : { VoiceGroup::I, VoiceGroup::II, VoiceGroup::Global })
     for(auto &group : getParameterGroups(vg))
-      group->undoableRandomize(transaction, initiator, amount);
+      group->undoableRandomize(transaction, initiator, randomizationAmount);
 }
 
-void EditBuffer::undoableRandomizePart(UNDO::Transaction *transaction, VoiceGroup vg, Initiator initiator)
+void EditBuffer::undoableRandomizePart(UNDO::Transaction *transaction, VoiceGroup vg, Initiator initiator,
+                                       double randomizeAmount)
 {
   SendEditBufferScopeGuard scopeGuard(transaction, true);
-
-  auto amount = Application::get().getSettings()->getSetting<RandomizeAmount>()->get();
-
   for(auto &g : getParameterGroups(vg))
-    g->undoableRandomize(transaction, initiator, amount);
+    g->undoableRandomize(transaction, initiator, randomizeAmount);
 }
 
 void EditBuffer::undoableInitSound(UNDO::Transaction *transaction, Defaults mode)
@@ -792,7 +787,7 @@ void EditBuffer::undoableConvertSplitToSingle(UNDO::Transaction *transaction, Vo
   }
 }
 
-void EditBuffer::undoableConvertToDual(UNDO::Transaction *transaction, SoundType type)
+void EditBuffer::undoableConvertToDual(UNDO::Transaction *transaction, SoundType type, VoiceGroup currentPart)
 {
   const auto oldType = m_type;
 
@@ -810,7 +805,7 @@ void EditBuffer::undoableConvertToDual(UNDO::Transaction *transaction, SoundType
   else if(oldType == SoundType::Layer && type == SoundType::Split)
     undoableConvertLayerToSplit(transaction);
   else if(oldType == SoundType::Split && type == SoundType::Layer)
-    undoableConvertSplitToLayer(transaction);
+    undoableConvertSplitToLayer(transaction, currentPart);
 
   initCrossFB(transaction);
   undoableUnmuteLayers(transaction);
@@ -1285,10 +1280,9 @@ void EditBuffer::undoableConvertLayerToSplit(UNDO::Transaction *transaction)
   initFadeFrom(transaction, VoiceGroup::II);
 }
 
-void EditBuffer::undoableConvertSplitToLayer(UNDO::Transaction *transaction)
+void EditBuffer::undoableConvertSplitToLayer(UNDO::Transaction *transaction, VoiceGroup currentPart)
 {
-  auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
-  copyVoicesGroups(transaction, currentVG, invert(currentVG));
+  copyVoicesGroups(transaction, currentPart, invert(currentPart));
   defaultFadeParameters(transaction);
   undoableUnisonMonoLoadDefaults(transaction, VoiceGroup::II);
   initSplitPoint(transaction);

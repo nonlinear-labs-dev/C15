@@ -28,7 +28,8 @@ MenuOverlay* RandomizeItem::createOverlay()
     auto pm = Application::get().getPresetManager();
     auto eb = pm->getEditBuffer();
     SoundUseCases useCases(eb, pm);
-    useCases.randomizeSound();
+    auto amount = Application::get().getSettings()->getSetting<RandomizeAmount>()->get();
+    useCases.randomizeSound(amount);
   });
 }
 
@@ -51,6 +52,7 @@ MenuOverlay* RandomizePart::createOverlay()
     auto pm = Application::get().getPresetManager();
     auto eb = pm->getEditBuffer();
     SoundUseCases useCases(eb, pm);
-    useCases.randomizePart(vg);
+    auto amount = Application::get().getSettings()->getSetting<RandomizeAmount>()->get();
+    useCases.randomizePart(vg, amount);
   });
 }

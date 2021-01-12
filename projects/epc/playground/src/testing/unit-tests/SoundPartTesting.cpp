@@ -39,7 +39,7 @@ SCENARIO("Single sound with modulation aspects on mod-param")
     {
       {
         auto scope = TestHelper::createTestScope();
-        eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+        eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
       }
 
       REQUIRE(eb->getType() == SoundType::Layer);
@@ -57,7 +57,7 @@ SCENARIO("Single sound with modulation aspects on mod-param")
     {
       {
         auto scope = TestHelper::createTestScope();
-        eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+        eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       }
 
       REQUIRE(eb->getType() == SoundType::Split);

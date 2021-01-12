@@ -20,7 +20,7 @@ TEST_CASE("Convert Single to Dual Sound Changes Unison Accordingly", "[Unison][P
 
     WHEN("Converted to Dual")
     {
-      eb->undoableConvertToDual(transaction, SoundType::Layer);
+      eb->undoableConvertToDual(transaction, SoundType::Layer, VoiceGroup::II);
       REQUIRE(unisonVoices->getDisplayString() == "1 voice (off)");
     }
   }
@@ -35,7 +35,7 @@ TEST_CASE("Convert Single to Dual Sound Changes Unison Accordingly", "[Unison][P
       unisonVoices->stepCPFromHwui(transaction, steps, {});
       REQUIRE(unisonVoices->getDisplayString() == std::to_string(voices) + " voices");
 
-      eb->undoableConvertToDual(transaction, SoundType::Layer);
+      eb->undoableConvertToDual(transaction, SoundType::Layer, VoiceGroup::II);
 
       if(voices >= 12)
       {
@@ -55,7 +55,7 @@ TEST_CASE("Convert Dual to Single Sound", "[Unison][Parameter]")
   auto scope = TestHelper::createTestScope();
   auto transaction = scope->getTransaction();
 
-  eb->undoableConvertToDual(transaction, SoundType::Layer);
+  eb->undoableConvertToDual(transaction, SoundType::Layer, VoiceGroup::II);
   eb->undoableInitSound(transaction, Defaults::FactoryDefault);
 
   auto unisonVoices = eb->findParameterByID({ 249, VoiceGroup::I });
@@ -113,7 +113,7 @@ TEST_CASE("Undo Convert Sound resets Scaling", "[Unison][Parameter]")
     //convert to dual
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
 
       REQUIRE(eb->getType() == SoundType::Layer);
       REQUIRE(unisonVoicesI->getValue().getCoarseDenominator() == 11);
@@ -159,7 +159,7 @@ TEST_CASE("Undo Convert Sound resets Scaling", "[Unison][Parameter]")
     //Init dual
     {
       auto scope = TestHelper::createTestScope();
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
 
       REQUIRE(eb->getType() == SoundType::Layer);
       REQUIRE(unisonVoicesI->getValue().getCoarseDenominator() == 11);

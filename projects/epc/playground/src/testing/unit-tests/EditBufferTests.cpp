@@ -44,13 +44,13 @@ TEST_CASE("Simple EditBuffer Conversion")
 {
   auto editBuffer = getEditBuffer();
   MockPresetStorage presets;
+  SoundUseCases useCase(editBuffer, editBuffer->getParent());
 
   loadPreset<SoundType::Single>(presets.getSinglePreset());
 
   SECTION("Convert Single to Layer Sound")
   {
-    auto scope = TestHelper::createTestScope();
-    editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+    useCase.convertToLayer(VoiceGroup::I);
     editBuffer->TEST_doDeferredJobs();
 
     REQUIRE(editBuffer->getType() == SoundType::Layer);
@@ -60,8 +60,7 @@ TEST_CASE("Simple EditBuffer Conversion")
 
   SECTION("Convert Single to Split Sound")
   {
-    auto scope = TestHelper::createTestScope();
-    editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+    useCase.convertToSplit(VoiceGroup::I);
     editBuffer->TEST_doDeferredJobs();
 
     REQUIRE(editBuffer->getType() == SoundType::Split);
@@ -74,11 +73,8 @@ TEST_CASE("Simple EditBuffer Conversion")
 
   SECTION("Undo Convert Single to Split")
   {
-    {
-      auto scope = TestHelper::createTestScope();
-      editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
-      editBuffer->TEST_doDeferredJobs();
-    }
+    useCase.convertToSplit(VoiceGroup::I);
+    editBuffer->TEST_doDeferredJobs();
 
     REQUIRE(editBuffer->isModified());
     REQUIRE_FALSE(editBuffer->findAnyParameterChanged());
@@ -98,11 +94,8 @@ TEST_CASE("Simple EditBuffer Conversion")
 
   SECTION("Undo Convert Single to Layer")
   {
-    {
-      auto scope = TestHelper::createTestScope();
-      editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
-      editBuffer->TEST_doDeferredJobs();
-    }
+    useCase.convertToLayer(VoiceGroup::I);
+    editBuffer->TEST_doDeferredJobs();
 
     REQUIRE(editBuffer->isModified());
     REQUIRE_FALSE(editBuffer->findAnyParameterChanged());
@@ -291,7 +284,7 @@ TEST_CASE("Editbuffer Contents loaded")
   auto editBuffer = getEditBuffer();
   {
     auto scope = TestHelper::createTestScope();
-    editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+    editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
 
     REQUIRE(editBuffer->getType() == SoundType::Layer);
     REQUIRE_FALSE(editBuffer->isModified());
@@ -519,7 +512,7 @@ TEST_CASE("Part Label")
     auto scope = TestHelper::createTestScope();
     eb->undoableLoad(scope->getTransaction(), presets.getSinglePreset(), true);
     auto ebName = eb->getName();
-    eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+    eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
     REQUIRE(eb->getVoiceGroupName(VoiceGroup::I) == ebName);
     REQUIRE(eb->getVoiceGroupName(VoiceGroup::II) == ebName);
     REQUIRE_FALSE(eb->isModified());
@@ -533,9 +526,12 @@ void randomizeRequireChangedAndInitSoundTest(const Preset *preset)
   {
     auto scope = TestHelper::createTestScope();
 
-    //setup randomize amount
-    Application::get().getSettings()->getSetting<RandomizeAmount>()->set(0.5);
-    eb->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_OTHER);
+    {
+      Application::get().getSettings()->getSetting<RandomizeAmount>()->set(0.5);
+      auto amount = Application::get().getSettings()->getSetting<RandomizeAmount>()->get();
+      eb->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_OTHER, amount);
+    }
+
     eb->TEST_doDeferredJobs();
     REQUIRE(eb->isModified());
     REQUIRE(eb->findAnyParameterChanged());
@@ -610,14 +606,14 @@ TEST_CASE("Convert Sound Leads to Converted UUID")
   SECTION("Convert from Single to Layer")
   {
     auto scope = TestHelper::createTestScope();
-    eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+    eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
     REQUIRE(eb->getUUIDOfLastLoadedPreset() == Uuid::converted());
   }
 
   SECTION("Convert from Single to Split")
   {
     auto scope = TestHelper::createTestScope();
-    eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+    eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
     REQUIRE(eb->getUUIDOfLastLoadedPreset() == Uuid::converted());
   }
 }
@@ -697,7 +693,7 @@ TEST_CASE("Convert Dual To Single Label Naming")
       auto scope = TestHelper::createTestScope();
       eb->undoableLoad(scope->getTransaction(), singlePreset, true);
 
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Layer, VoiceGroup::II);
       REQUIRE(eb->getVoiceGroupName(VoiceGroup::I) == "foo");
       REQUIRE(eb->getVoiceGroupName(VoiceGroup::II) == "foo");
     }
@@ -712,7 +708,7 @@ TEST_CASE("Convert Dual To Single Label Naming")
       auto scope = TestHelper::createTestScope();
       eb->undoableLoad(scope->getTransaction(), singlePreset, true);
 
-      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
+      eb->undoableConvertToDual(scope->getTransaction(), SoundType::Split, VoiceGroup::II);
       REQUIRE(eb->getVoiceGroupName(VoiceGroup::I) == "foo");
       REQUIRE(eb->getVoiceGroupName(VoiceGroup::II) == "foo");
     }

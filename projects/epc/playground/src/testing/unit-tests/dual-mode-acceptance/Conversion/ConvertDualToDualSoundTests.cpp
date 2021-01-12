@@ -76,7 +76,7 @@ TEST_CASE("Convert Split (II) to Layer")
     auto scope = TestHelper::createTestScope();
     auto transaction = scope->getTransaction();
     auto eb = TestHelper::getEditBuffer();
-    eb->undoableConvertToDual(transaction, SoundType::Layer);
+    eb->undoableConvertToDual(transaction, SoundType::Layer, VoiceGroup::II);
 
     THEN("Unison Voices Correct")
     {
@@ -232,7 +232,7 @@ TEST_CASE("Convert Layer I to Split")
     auto scope = TestHelper::createTestScope();
     auto transaction = scope->getTransaction();
     auto eb = TestHelper::getEditBuffer();
-    eb->undoableConvertToDual(transaction, SoundType::Split);
+    eb->undoableConvertToDual(transaction, SoundType::Split, VoiceGroup::II);
 
     THEN("Unison Voices Correct")
     {

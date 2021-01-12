@@ -44,7 +44,7 @@ namespace TestHelper
   {
     auto eb = getEditBuffer();
     eb->undoableUnlockAllGroups(transaction);
-    eb->undoableConvertToDual(transaction, tType);
+    eb->undoableConvertToDual(transaction, tType, VoiceGroup::I);
     eb->undoableInitSound(transaction, Defaults::FactoryDefault);
   }
 
