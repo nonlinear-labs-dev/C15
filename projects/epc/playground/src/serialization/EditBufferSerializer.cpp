@@ -68,7 +68,7 @@ void EditBufferSerializer::readTagContent(Reader &reader) const
   SplashLayout::addStatus("Reading Edit Buffer");
 
   reader.onTextElement("editbuffer-type", [&](auto text, auto) mutable {
-    m_editBuffer->undoableSetType(reader.getTransaction(), to<SoundType>(text));
+    m_editBuffer->undoableSetType(reader.getTransaction(), to<SoundType>(text), VoiceGroup::I);
   });
 
   reader.onTag(ParameterGroupSerializer::getTagName(), [&](auto attr) -> ParameterGroupSerializer * {

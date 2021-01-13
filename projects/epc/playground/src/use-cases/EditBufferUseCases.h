@@ -7,6 +7,7 @@
 #include <memory>
 #include <playground.h>
 #include <tools/Uuid.h>
+#include <presets/PresetPartSelection.h>
 
 class EditBuffer;
 class Preset;
@@ -33,11 +34,11 @@ class EditBufferUseCases
   void unmuteBothPartsWithTransactionNameForPart(VoiceGroup part);
   void mutePartUnmuteOtherPart(VoiceGroup part);
 
-  void undoableLoad(const Uuid& uuid);
-  void undoableLoad(const Preset* preset);
+  void undoableLoad(const Uuid& uuid, VoiceGroup currentPart);
+  void undoableLoad(const Preset* preset, VoiceGroup currentPart);
   void undoableLoadToPart(const Preset* preset, VoiceGroup from, VoiceGroup to);
   void loadSelectedPresetPartIntoPart(VoiceGroup from, VoiceGroup to);
-  void loadSelectedPresetAccordingToLoadType();
+  void loadSelectedPresetAccordingToLoadType(VoiceGroup currentPart, PresetPartSelection* loadToPartData);
 
   void resetScaleGroup();
   void resetCustomScale();
@@ -60,7 +61,7 @@ class EditBufferUseCases
  void scheduleUndoableLoadToPart(const Preset* preset, VoiceGroup from, VoiceGroup to);
  void undoableLoadAccordingToType(Preset* pPreset, VoiceGroup group, SoundType type, bool isLoadToPartActive);
 
- void autoLoadSelectedPreset();
+ void autoLoadSelectedPreset(VoiceGroup currentPart, PresetPartSelection* loadToPartData);
 
 private:
   VoiceGroup invert(VoiceGroup vg);

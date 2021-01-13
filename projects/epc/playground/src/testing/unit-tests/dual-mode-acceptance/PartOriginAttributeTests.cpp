@@ -36,7 +36,7 @@ TEST_CASE("Part Origin Attribute")
 
   SECTION("Load Single Full")
   {
-    ebUseCases.undoableLoad(presets.getSinglePreset());
+    ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
 
     auto originI = eb->getPartOrigin(VoiceGroup::I);
     auto originII = eb->getPartOrigin(VoiceGroup::II);
@@ -50,7 +50,7 @@ TEST_CASE("Part Origin Attribute")
   SECTION("Init Sound Resets")
   {
     auto scope = TestHelper::createTestScope();
-    eb->undoableLoad(scope->getTransaction(), presets.getSinglePreset(), true);
+    eb->undoableLoad(scope->getTransaction(), presets.getSinglePreset(), true, VoiceGroup::II);
 
     eb->undoableInitSound(scope->getTransaction(), Defaults::FactoryDefault);
     auto originI = eb->getPartOrigin(VoiceGroup::I);
@@ -65,7 +65,7 @@ TEST_CASE("Part Origin Attribute")
   SECTION("Init Part Resets")
   {
     auto scope = TestHelper::createTestScope();
-    eb->undoableLoad(scope->getTransaction(), presets.getSinglePreset(), true);
+    eb->undoableLoad(scope->getTransaction(), presets.getSinglePreset(), true, VoiceGroup::II);
 
     eb->undoableInitPart(scope->getTransaction(), VoiceGroup::I, Defaults::FactoryDefault);
     auto originI = eb->getPartOrigin(VoiceGroup::I);
@@ -80,7 +80,7 @@ TEST_CASE("Part Origin Attribute")
 
   SECTION("Load Dual Full")
   {
-    ebUseCases.undoableLoad(presets.getLayerPreset());
+    ebUseCases.undoableLoad(presets.getLayerPreset(), VoiceGroup::II);
     auto originI = eb->getPartOrigin(VoiceGroup::I);
     auto originII = eb->getPartOrigin(VoiceGroup::II);
 

@@ -38,10 +38,11 @@ class EditBuffer : public ParameterGroupSet
   void undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p);
   void undoableSelectParameter(UNDO::Transaction *transaction, const ParameterId &id);
 
-  void undoableLoad(UNDO::Transaction *transaction, const Preset *preset, bool sendToAudioEngine);
+  void undoableLoad(UNDO::Transaction *transaction, const Preset *preset, bool sendToAudioEngine,
+                    VoiceGroup currentPart);
   void undoableLoadToPart(UNDO::Transaction *trans, const Preset *p, VoiceGroup from, VoiceGroup to);
 
-  void undoableLoadSelectedPreset(VoiceGroup loadInto);
+  void undoableLoadSelectedPreset(VoiceGroup loadInto, VoiceGroup currentPart);
   void undoableLoadSelectedPreset(UNDO::Transaction *transaction, VoiceGroup loadInto);
   void undoableLoadSelectedToPart(VoiceGroup from, VoiceGroup to);
 
@@ -143,7 +144,7 @@ class EditBuffer : public ParameterGroupSet
   Parameter *searchForAnyParameterWithLock(VoiceGroup vg) const;
   UNDO::Scope &getUndoScope() override;
 
-  void undoableSetType(UNDO::Transaction *transaction, SoundType type);
+  void undoableSetType(UNDO::Transaction *transaction, SoundType type, VoiceGroup currentPart);
   void undoableConvertDualToSingle(UNDO::Transaction *transaction, VoiceGroup copyFrom);
   void undoableConvertLayerToSingle(UNDO::Transaction *transaction, VoiceGroup copyFrom);
   void undoableConvertSplitToSingle(UNDO::Transaction *transaction, VoiceGroup copyFrom);
@@ -189,7 +190,8 @@ class EditBuffer : public ParameterGroupSet
                                             VoiceGroup copyTo);
   void undoableLoadPresetPartIntoSingleSound(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup copyFrom,
                                              VoiceGroup copyTo);
-  void cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType);
+  void cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType,
+                                 VoiceGroup currentPart);
   bool isMonoEnabled(const VoiceGroup &vg) const;
   bool hasMoreThanOneUnisonVoice(const VoiceGroup &vg) const;
 

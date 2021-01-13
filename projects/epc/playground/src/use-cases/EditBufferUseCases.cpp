@@ -46,23 +46,23 @@ void EditBufferUseCases::undoableLoadToPart(const Preset* preset, VoiceGroup fro
   m_editBuffer->undoableLoadToPart(scope->getTransaction(), preset, from, to);
 }
 
-void EditBufferUseCases::undoableLoad(const Uuid& uuid)
+void EditBufferUseCases::undoableLoad(const Uuid& uuid, VoiceGroup currentPart)
 {
   if(auto pm = m_editBuffer->getParent())
   {
     if(auto preset = pm->findPreset(uuid))
     {
-      undoableLoad(preset);
+      undoableLoad(preset, currentPart);
     }
   }
 }
 
-void EditBufferUseCases::undoableLoad(const Preset* preset)
+void EditBufferUseCases::undoableLoad(const Preset* preset, VoiceGroup currentPart)
 {
   auto& undoScope = m_editBuffer->getUndoScope();
   auto name = preset->buildUndoTransactionTitle("Load");
   auto scope = undoScope.startContinuousTransaction(preset->getParent(), std::chrono::seconds(5), name);
-  m_editBuffer->undoableLoad(scope->getTransaction(), preset, true);
+  m_editBuffer->undoableLoad(scope->getTransaction(), preset, true, currentPart);
 }
 
 std::unique_ptr<ParameterUseCases> EditBufferUseCases::getUseCase(ParameterId id)
@@ -338,19 +338,20 @@ void EditBufferUseCases::undoableLoadAccordingToType(Preset* pPreset, VoiceGroup
   }
   else
   {
-    undoableLoad(pPreset);
+    undoableLoad(pPreset, VoiceGroup::II);
   }
 }
 
-void EditBufferUseCases::loadSelectedPresetAccordingToLoadType()
+void EditBufferUseCases::loadSelectedPresetAccordingToLoadType(VoiceGroup currentPart,
+                                                               PresetPartSelection* loadToPartData)
 {
   auto name = "Load Preset";
   auto scope = m_editBuffer->getUndoScope().startContinuousTransaction(m_editBuffer->getParent()->getSelectedBank(),
                                                                        std::chrono::seconds(5), name);
-  m_editBuffer->getParent()->autoLoadPresetAccordingToLoadType(scope->getTransaction());
+  m_editBuffer->getParent()->autoLoadPresetAccordingToLoadType(scope->getTransaction(), currentPart, loadToPartData);
 }
 
-void EditBufferUseCases::autoLoadSelectedPreset()
+void EditBufferUseCases::autoLoadSelectedPreset(VoiceGroup currentPart, PresetPartSelection* loadToPartData)
 {
   auto pm = m_editBuffer->getParent();
   if(auto selectedBank = pm->getSelectedBank())
@@ -360,7 +361,7 @@ void EditBufferUseCases::autoLoadSelectedPreset()
       auto name = selectedPreset->buildUndoTransactionTitle("Load");
       auto scope
           = m_editBuffer->getUndoScope().startContinuousTransaction(selectedBank, std::chrono::seconds { 5 }, name);
-      pm->doAutoLoadSelectedPreset(scope->getTransaction());
+      pm->doAutoLoadSelectedPreset(scope->getTransaction(), currentPart, loadToPartData);
     }
   }
 }

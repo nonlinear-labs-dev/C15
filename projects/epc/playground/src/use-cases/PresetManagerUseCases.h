@@ -5,6 +5,7 @@
 #include <use-cases/BankUseCases.h>
 #include <libsoup/soup-message-body.h>
 #include <xml/FileInStream.h>
+#include <nltools/Types.h>
 
 class PresetManager;
 class Preset;
@@ -32,14 +33,14 @@ class PresetManagerUseCases
 
   //Preset
   //Store Actions
-  void overwritePreset(const Uuid& uuid);
-  void overwritePreset(Preset* preset);
+  void overwritePreset(const Uuid& uuid, VoiceGroup currentPart);
+  void overwritePreset(Preset* preset, VoiceGroup currentPart);
   void overwritePresetWithPreset(Preset* target, Preset* source);
-  void insertPresetWithUUID(Bank* bank, size_t pos, const std::string& uuid);
+  void insertPresetWithUUID(Bank* bank, size_t pos, const std::string& uuid, VoiceGroup currentPart);
   void insertPreset(Bank* bank, size_t pos);
-  void appendPreset(Bank* bank);
-  void appendPresetWithUUID(Bank* bank, const std::string& uuid);
-  void createBankAndStoreEditBuffer();
+  void appendPreset(Bank* bank, VoiceGroup currentPart);
+  void appendPresetWithUUID(Bank* bank, const std::string& uuid, VoiceGroup currentPart);
+  void createBankAndStoreEditBuffer(VoiceGroup currentPart);
   void createBankFromPreset(const Uuid& uuid, const std::string& x, const std::string& y);
   void createBankFromPresets(const std::string& csv, const std::string& x, const std::string& y);
 
@@ -64,8 +65,8 @@ class PresetManagerUseCases
   void copyPresetAbove(const Uuid& presetToCopy, const Uuid& presetAnchorUuid);
   void copyPresetBelow(const Uuid& presetToCopy, const Uuid& presetAnchorUuid);
 
-  void insertEditBufferAbove(const Uuid& anchor, const Uuid& ebUuid);
-  void insertEditBufferBelow(const Uuid& anchor, const Uuid& ebUuid);
+  void insertEditBufferAbove(const Uuid& anchor, const Uuid& ebUuid, VoiceGroup currentPart);
+  void insertEditBufferBelow(const Uuid& anchor, const Uuid& ebUuid, VoiceGroup currentPart);
 
   void deleteBank(const Uuid& uuid);
   void deleteBank(Bank* b);

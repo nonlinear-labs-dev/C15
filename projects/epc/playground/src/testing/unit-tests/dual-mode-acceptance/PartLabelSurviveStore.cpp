@@ -34,19 +34,19 @@ TEST_CASE("Store Presets With Part Names", "[Preset][Store]")
       CHECK(singlePreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(singlePreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, singlePreset, true);
+      eb->undoableLoad(trans, singlePreset, true, VoiceGroup::II);
 
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      auto storedPreset = bank->insertAndLoadPreset(scope->getTransaction(), 0, std::make_unique<Preset>(bank, *eb));
+      auto storedPreset = bank->insertAndLoadPreset(scope->getTransaction(), 0, std::make_unique<Preset>(bank, *eb), VoiceGroup::II);
 
       CHECK(storedPreset->getUuid() != singlePreset->getUuid());
 
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, storedPreset, true);
+      eb->undoableLoad(trans, storedPreset, true, VoiceGroup::II);
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
     }
@@ -57,19 +57,19 @@ TEST_CASE("Store Presets With Part Names", "[Preset][Store]")
       CHECK(layerPreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(layerPreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, layerPreset, true);
+      eb->undoableLoad(trans, layerPreset, true, VoiceGroup::II);
 
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      auto storedPreset = bank->insertAndLoadPreset(scope->getTransaction(), 0, std::make_unique<Preset>(bank, *eb));
+      auto storedPreset = bank->insertAndLoadPreset(scope->getTransaction(), 0, std::make_unique<Preset>(bank, *eb), VoiceGroup::II);
 
       CHECK(storedPreset->getUuid() != layerPreset->getUuid());
 
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(storedPreset->getVoiceGroupName(VoiceGroup::II) == "II");
 
-      eb->undoableLoad(trans, storedPreset, true);
+      eb->undoableLoad(trans, storedPreset, true, VoiceGroup::II);
       CHECK(eb->getVoiceGroupName(VoiceGroup::I) == "I");
       CHECK(eb->getVoiceGroupName(VoiceGroup::II) == "II");
     }

@@ -50,6 +50,6 @@ void BaseUnitPresetsMode::onFuncButtonDown()
 {
   auto &app = Application::get();
   auto eb = app.getPresetManager()->getEditBuffer();
-  auto currentVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
-  eb->undoableLoadSelectedPreset(currentVoiceGroup);
+  EditBufferUseCases useCase(eb);
+  useCase.autoLoadSelectedPreset(VoiceGroup::II, nullptr);
 }

@@ -344,7 +344,9 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
           auto pm = Application::get().getPresetManager();
           EditBufferUseCases useCases(pm->getEditBuffer());
           auto oldPreset = pm->getEditBuffer()->getUUIDOfLastLoadedPreset();
-          useCases.loadSelectedPresetAccordingToLoadType();
+          auto currentPart = getHWUI()->getCurrentVoiceGroup();
+          auto loadToPartData = getHWUI()->getPresetPartSelection(currentPart);
+          useCases.loadSelectedPresetAccordingToLoadType(currentPart, loadToPartData);
           if(pm->getSelectedPreset()->getUuid() == oldPreset)
           {
             animateSelectedPreset([] {});

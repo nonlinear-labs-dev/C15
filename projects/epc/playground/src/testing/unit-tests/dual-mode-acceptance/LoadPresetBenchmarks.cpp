@@ -71,18 +71,18 @@ TEST_CASE("Load Presets", "[Benchmark]")
   {
 
     avgSingle.put(measure([&]() {
-      ebUseCases.undoableLoad(presets1.getSinglePreset());
-      ebUseCases.undoableLoad(presets2.getSinglePreset());
+      ebUseCases.undoableLoad(presets1.getSinglePreset(), VoiceGroup::II);
+      ebUseCases.undoableLoad(presets2.getSinglePreset(), VoiceGroup::II);
     }));
 
     avgLayer.put(measure([&]() {
-      ebUseCases.undoableLoad(presets1.getLayerPreset());
-      ebUseCases.undoableLoad(presets2.getLayerPreset());
+      ebUseCases.undoableLoad(presets1.getLayerPreset(), VoiceGroup::II);
+      ebUseCases.undoableLoad(presets2.getLayerPreset(), VoiceGroup::II);
     }));
 
     avgSplit.put(measure([&] {
-      ebUseCases.undoableLoad(presets1.getSplitPreset());
-      ebUseCases.undoableLoad(presets2.getSplitPreset());
+      ebUseCases.undoableLoad(presets1.getSplitPreset(), VoiceGroup::II);
+      ebUseCases.undoableLoad(presets2.getSplitPreset(), VoiceGroup::II);
     }));
   }
 }

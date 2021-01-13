@@ -10,6 +10,7 @@
 
 #include <serialization/PresetBankSerializer.h>
 #include <tools/Uuid.h>
+#include <nltools/Types.h>
 
 class Preset;
 class PresetManager;
@@ -94,9 +95,10 @@ class Bank : public AttributesOwner
   Preset *prependPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset);
   Preset *insertPreset(UNDO::Transaction *transaction, size_t pos, std::unique_ptr<Preset> preset);
 
-  Preset *appendAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset);
-  Preset *prependAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset);
-  Preset *insertAndLoadPreset(UNDO::Transaction *transaction, size_t pos, std::unique_ptr<Preset> preset);
+  Preset *appendAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset, VoiceGroup currentPart);
+  Preset *prependAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset, VoiceGroup currentPart);
+  Preset *insertAndLoadPreset(UNDO::Transaction *transaction, size_t pos, std::unique_ptr<Preset> preset,
+                              VoiceGroup currentPart);
 
   void movePreset(UNDO::Transaction *transaction, const Preset *toMove, const Preset *before);
   void movePresetBetweenBanks(UNDO::Transaction *transaction, Preset *presetToMove, Bank *tgtBank,
@@ -118,7 +120,9 @@ class Bank : public AttributesOwner
 
   PresetManager *getPresetManager() const;
 
- Glib::ustring getComment();private:
+  Glib::ustring getComment();
+
+ private:
   using Attributes = std::map<std::string, std::string>;
 
   uint64_t loadMetadata(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> bankFolder);

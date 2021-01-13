@@ -429,10 +429,11 @@ Preset *Bank::appendPreset(UNDO::Transaction *transaction, std::unique_ptr<Prese
   return newPreset;
 }
 
-Preset *Bank::appendAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset)
+Preset *Bank::appendAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset,
+                                  VoiceGroup currentPart)
 {
   auto newPreset = appendPreset(transaction, std::move(preset));
-  getEditBuffer()->undoableLoad(transaction, newPreset, false);
+  getEditBuffer()->undoableLoad(transaction, newPreset, false, currentPart);
   getPresetManager()->onPresetStored();
   return newPreset;
 }
@@ -445,10 +446,11 @@ Preset *Bank::prependPreset(UNDO::Transaction *transaction, std::unique_ptr<Pres
   return newPreset;
 }
 
-Preset *Bank::prependAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset)
+Preset *Bank::prependAndLoadPreset(UNDO::Transaction *transaction, std::unique_ptr<Preset> preset,
+                                   VoiceGroup currentPart)
 {
   auto newPreset = prependPreset(transaction, std::move(preset));
-  getEditBuffer()->undoableLoad(transaction, newPreset, false);
+  getEditBuffer()->undoableLoad(transaction, newPreset, false, currentPart);
   getPresetManager()->onPresetStored();
   return newPreset;
 }
@@ -459,10 +461,11 @@ Preset *Bank::insertPreset(UNDO::Transaction *transaction, size_t pos, std::uniq
   return m_presets.insert(transaction, pos, std::move(preset));
 }
 
-Preset *Bank::insertAndLoadPreset(UNDO::Transaction *transaction, size_t pos, std::unique_ptr<Preset> preset)
+Preset *Bank::insertAndLoadPreset(UNDO::Transaction *transaction, size_t pos, std::unique_ptr<Preset> preset,
+                                  VoiceGroup currentPart)
 {
   auto newPreset = insertPreset(transaction, pos, std::move(preset));
-  getEditBuffer()->undoableLoad(transaction, newPreset, false);
+  getEditBuffer()->undoableLoad(transaction, newPreset, false, currentPart);
   getPresetManager()->onPresetStored();
   return newPreset;
 }

@@ -94,6 +94,7 @@ BankActions::BankActions(PresetManager &presetManager)
 
     auto sourcePreset = m_presetManager.findPreset(overwriteWith);
     auto targetPreset = m_presetManager.findPreset(presetToOverwrite);
+    auto currentPart = Application::get().getHWUI()->getCurrentVoiceGroup();
 
     PresetManagerUseCases useCases(&m_presetManager);
 
@@ -105,12 +106,12 @@ BankActions::BankActions(PresetManager &presetManager)
       }
       else
       {
-        useCases.overwritePreset(targetPreset);
+        useCases.overwritePreset(targetPreset, currentPart);
       }
     }
     else
     {
-      useCases.createBankAndStoreEditBuffer();
+      useCases.createBankAndStoreEditBuffer(currentPart);
     }
   });
 
@@ -131,21 +132,24 @@ BankActions::BankActions(PresetManager &presetManager)
   addAction("insert-editbuffer-above", [&](std::shared_ptr<NetworkRequest> request) {
     auto presetAnchor = request->get("anchor");
     auto uuid = request->get("uuid");
+    auto selectedPart = to<VoiceGroup>(request->get("part"));
     PresetManagerUseCases useCases(&m_presetManager);
-    useCases.insertEditBufferAbove(presetAnchor, uuid);
+    useCases.insertEditBufferAbove(presetAnchor, uuid, selectedPart);
   });
 
   addAction("insert-editbuffer-below", [&](std::shared_ptr<NetworkRequest> request) {
     auto presetAnchor = request->get("anchor");
     auto uuid = request->get("uuid");
+    auto selectedPart = to<VoiceGroup>(request->get("part"));
     PresetManagerUseCases useCases(&m_presetManager);
-    useCases.insertEditBufferBelow(presetAnchor, uuid);
+    useCases.insertEditBufferBelow(presetAnchor, uuid, selectedPart);
   });
 
   addAction("overwrite-preset-with-editbuffer", [&](std::shared_ptr<NetworkRequest> request) {
     auto presetToOverwrite = request->get("presetToOverwrite");
+    auto part = to<VoiceGroup>(request->get("part"));
     PresetManagerUseCases useCase(&m_presetManager);
-    useCase.overwritePreset(Uuid { presetToOverwrite });
+    useCase.overwritePreset(Uuid { presetToOverwrite }, part);
   });
 
   addAction("append-preset", [&](std::shared_ptr<NetworkRequest> request) mutable {
@@ -153,22 +157,23 @@ BankActions::BankActions(PresetManager &presetManager)
     std::string fallBack = b ? b->getUuid().raw() : "";
     auto bankToAppendTo = request->get("bank-uuid", fallBack);
     auto uuid = request->get("uuid");
+    auto currentPart = to<VoiceGroup>(request->get("part"));
 
     if(auto bank = m_presetManager.findBank(bankToAppendTo))
     {
       PresetManagerUseCases useCase(&m_presetManager);
-      useCase.appendPresetWithUUID(bank, uuid);
+      useCase.appendPresetWithUUID(bank, uuid, currentPart);
     }
   });
 
   addAction("append-preset-to-bank", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto bankUuid = request->get("bank-uuid");
     auto presetUuid = request->get("preset-uuid");
-
+    auto currentPart = to<VoiceGroup>(request->get("part"));
     if(auto bank = m_presetManager.findBank(bankUuid))
     {
       PresetManagerUseCases useCases(&m_presetManager);
-      useCases.appendPreset(bank);
+      useCases.appendPreset(bank, currentPart);
     }
   });
 
@@ -231,8 +236,9 @@ BankActions::BankActions(PresetManager &presetManager)
 
   addAction("load-preset", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto uuid = request->get("uuid");
+    auto selectedPart = to<VoiceGroup>(request->get("part"));
     EditBufferUseCases useCase(m_presetManager.getEditBuffer());
-    useCase.undoableLoad(uuid);
+    useCase.undoableLoad(uuid, selectedPart);
   });
 
   addAction("set-position", [&](std::shared_ptr<NetworkRequest> request) mutable {

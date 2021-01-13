@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UndoableVector.h"
+#include "PresetPartSelection.h"
 
 #include <memory>
 #include <vector>
@@ -57,7 +58,8 @@ class PresetManager : public ContentSection
     throw std::runtime_error("ActionManager does not exist in object");
   }
 
-  void doAutoLoadSelectedPreset(UNDO::Transaction *currentTransactionPtr);
+  void doAutoLoadSelectedPreset(UNDO::Transaction *currentTransactionPtr, VoiceGroup currentPart,
+                                PresetPartSelection *loadToPartData);
   bool isLoading() const;
   std::shared_ptr<ScopedGuard::Lock> getLoadingLock();
 
@@ -108,7 +110,8 @@ class PresetManager : public ContentSection
   void resolveCyclicAttachments(UNDO::Transaction *transaction);
   void ensureBankSelection(UNDO::Transaction *transaction);
 
-  void autoLoadPresetAccordingToLoadType(UNDO::Transaction *transaction) const;
+  void autoLoadPresetAccordingToLoadType(UNDO::Transaction *transaction, VoiceGroup currentPart,
+                                         PresetPartSelection *loadToPartData) const;
 
   // algorithms
   Glib::ustring createPresetNameBasedOn(const Glib::ustring &basedOn) const;

@@ -29,15 +29,15 @@ PresetManagerUseCases::PresetManagerUseCases(PresetManager* pm)
 {
 }
 
-void PresetManagerUseCases::overwritePreset(const Uuid& uuid)
+void PresetManagerUseCases::overwritePreset(const Uuid& uuid, VoiceGroup currentPart)
 {
   if(auto preset = m_presetManager->findPreset(uuid))
   {
-    overwritePreset(preset);
+    overwritePreset(preset, currentPart);
   }
 }
 
-void PresetManagerUseCases::overwritePreset(Preset* preset)
+void PresetManagerUseCases::overwritePreset(Preset* preset, VoiceGroup currentPart)
 {
   auto scope = Application::get().getUndoScope()->startTransaction("Overwrite preset '%0'", preset->getName());
   auto transaction = scope->getTransaction();
@@ -45,7 +45,7 @@ void PresetManagerUseCases::overwritePreset(Preset* preset)
   if(auto bank = dynamic_cast<Bank*>(preset->getParent()))
   {
     preset->copyFrom(transaction, m_presetManager->getEditBuffer());
-    m_presetManager->getEditBuffer()->undoableLoad(transaction, preset, false);
+    m_presetManager->getEditBuffer()->undoableLoad(transaction, preset, false, currentPart);
     bank->selectPreset(transaction, preset->getUuid());
     m_presetManager->selectBank(transaction, bank->getUuid());
 
@@ -75,7 +75,8 @@ void PresetManagerUseCases::overwritePresetWithPreset(Preset* target, Preset* so
   }
 }
 
-void PresetManagerUseCases::insertPresetWithUUID(Bank* bank, size_t pos, const std::string& uuid)
+void PresetManagerUseCases::insertPresetWithUUID(Bank* bank, size_t pos, const std::string& uuid,
+                                                 VoiceGroup currentPart)
 {
   Uuid id;
 
@@ -93,7 +94,8 @@ void PresetManagerUseCases::insertPresetWithUUID(Bank* bank, size_t pos, const s
   auto transaction = scope->getTransaction();
   auto ebIsModified = m_presetManager->getEditBuffer()->isModified();
 
-  auto preset = bank->insertAndLoadPreset(transaction, pos, std::make_unique<Preset>(bank, *pm->getEditBuffer(), id));
+  auto preset = bank->insertAndLoadPreset(transaction, pos, std::make_unique<Preset>(bank, *pm->getEditBuffer(), id),
+                                          currentPart);
 
   m_presetManager->selectBank(transaction, bank->getUuid());
   bank->selectPreset(transaction, preset->getUuid());
@@ -110,27 +112,27 @@ void PresetManagerUseCases::insertPresetWithUUID(Bank* bank, size_t pos, const s
 
 void PresetManagerUseCases::insertPreset(Bank* bank, size_t pos)
 {
-  insertPresetWithUUID(bank, pos, "");
+  insertPresetWithUUID(bank, pos, "", VoiceGroup::II);
 }
 
-void PresetManagerUseCases::appendPreset(Bank* bank)
+void PresetManagerUseCases::appendPreset(Bank* bank, VoiceGroup currentPart)
 {
-  insertPresetWithUUID(bank, bank->getNumPresets(), "");
+  insertPresetWithUUID(bank, bank->getNumPresets(), "", currentPart);
 }
 
-void PresetManagerUseCases::appendPresetWithUUID(Bank* bank, const std::string& uuid)
+void PresetManagerUseCases::appendPresetWithUUID(Bank* bank, const std::string& uuid, VoiceGroup currentPart)
 {
-  insertPresetWithUUID(bank, bank->getNumPresets(), uuid);
+  insertPresetWithUUID(bank, bank->getNumPresets(), uuid, currentPart);
 }
 
-void PresetManagerUseCases::createBankAndStoreEditBuffer()
+void PresetManagerUseCases::createBankAndStoreEditBuffer(VoiceGroup currentPart)
 {
   auto& scope = m_presetManager->getUndoScope();
   auto transactionScope = scope.startTransaction("Create Bank and Store Preset");
   auto transaction = transactionScope->getTransaction();
   auto bank = m_presetManager->addBank(transaction);
-  auto preset
-      = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *m_presetManager->getEditBuffer()));
+  auto preset = bank->appendAndLoadPreset(
+      transaction, std::make_unique<Preset>(bank, *m_presetManager->getEditBuffer()), currentPart);
   bank->selectPreset(transaction, preset->getUuid());
   m_presetManager->selectBank(transaction, bank->getUuid());
 
@@ -181,8 +183,8 @@ void PresetManagerUseCases::newBank(const Glib::ustring& x, const Glib::ustring&
   auto bank = m_presetManager->addBank(transaction);
   bank->setX(transaction, x);
   bank->setY(transaction, y);
-  auto preset
-      = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, m_presetManager->getEditBuffer(), false));
+  auto preset = bank->appendAndLoadPreset(
+      transaction, std::make_unique<Preset>(bank, m_presetManager->getEditBuffer(), false), VoiceGroup::II);
   bank->selectPreset(transaction, preset->getUuid());
   m_presetManager->selectBank(transaction, bank->getUuid());
 }
@@ -579,7 +581,7 @@ void PresetManagerUseCases::copyPresetBelow(const Uuid& presetToCopy, const Uuid
 
 std::string guessNameBasedOnEditBuffer(EditBuffer*);
 
-void PresetManagerUseCases::insertEditBufferAbove(const Uuid& anchor, const Uuid& ebUuid)
+void PresetManagerUseCases::insertEditBufferAbove(const Uuid& anchor, const Uuid& ebUuid, VoiceGroup currentPart)
 {
 
   if(auto tgtBank = m_presetManager->findBankWithPreset(anchor))
@@ -590,7 +592,7 @@ void PresetManagerUseCases::insertEditBufferAbove(const Uuid& anchor, const Uuid
     auto transactionScope = undoScope.startTransaction("Save new Preset in Bank '%0'", tgtBank->getName(true));
     auto transaction = transactionScope->getTransaction();
     auto newPreset = std::make_unique<Preset>(tgtBank, *m_presetManager->getEditBuffer());
-    auto tgtPreset = tgtBank->insertAndLoadPreset(transaction, anchorPos, std::move(newPreset));
+    auto tgtPreset = tgtBank->insertAndLoadPreset(transaction, anchorPos, std::move(newPreset), currentPart);
     tgtPreset->setName(transaction, name);
 
     if(!ebUuid.empty())
@@ -601,7 +603,7 @@ void PresetManagerUseCases::insertEditBufferAbove(const Uuid& anchor, const Uuid
   }
 }
 
-void PresetManagerUseCases::insertEditBufferBelow(const Uuid& anchor, const Uuid& ebUuid)
+void PresetManagerUseCases::insertEditBufferBelow(const Uuid& anchor, const Uuid& ebUuid, VoiceGroup currentPart)
 {
   if(auto tgtBank = m_presetManager->findBankWithPreset(anchor))
   {
@@ -611,7 +613,7 @@ void PresetManagerUseCases::insertEditBufferBelow(const Uuid& anchor, const Uuid
     auto transactionScope = undoScope.startTransaction("Save new Preset in Bank '%0'", tgtBank->getName(true));
     auto transaction = transactionScope->getTransaction();
     auto newPreset = std::make_unique<Preset>(tgtBank, *m_presetManager->getEditBuffer());
-    auto tgtPreset = tgtBank->insertAndLoadPreset(transaction, anchorPos, std::move(newPreset));
+    auto tgtPreset = tgtBank->insertAndLoadPreset(transaction, anchorPos, std::move(newPreset), currentPart);
     tgtPreset->setName(transaction, name);
 
     if(!ebUuid.empty())

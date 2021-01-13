@@ -443,13 +443,13 @@ void EditBuffer::undoableLoadSelectedPreset(UNDO::Transaction *transaction, Voic
       }
       else
       {
-        undoableLoad(transaction, preset, true);
+        undoableLoad(transaction, preset, true, loadInto);
       }
     }
   }
 }
 
-void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto)
+void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto, VoiceGroup currentPart)
 {
   if(auto bank = getParent()->getSelectedBank())
   {
@@ -463,13 +463,14 @@ void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto)
       else
       {
         EditBufferUseCases ebUseCases(this);
-        ebUseCases.undoableLoad(preset);
+        ebUseCases.undoableLoad(preset, currentPart);
       }
     }
   }
 }
 
-void EditBuffer::undoableLoad(UNDO::Transaction *transaction, const Preset *preset, bool sendToAudioEngine)
+void EditBuffer::undoableLoad(UNDO::Transaction *transaction, const Preset *preset, bool sendToAudioEngine,
+                              VoiceGroup currentPart)
 {
   PerformanceTimer timer(__PRETTY_FUNCTION__);
 
@@ -498,7 +499,7 @@ void EditBuffer::undoableLoad(UNDO::Transaction *transaction, const Preset *pres
   }
 
   setSyncSplitSettingAccordingToLoadedPreset(transaction);
-  cleanupParameterSelection(transaction, oldType, preset->getType());
+  cleanupParameterSelection(transaction, oldType, preset->getType(), currentPart);
   resetModifiedIndicator(transaction, getHash());
 }
 
@@ -510,7 +511,7 @@ void EditBuffer::undoableLoadToPart(UNDO::Transaction *trans, const Preset *p, V
 void EditBuffer::copyFrom(UNDO::Transaction *transaction, const Preset *preset)
 {
   EditBufferSnapshotMaker::get().addSnapshotIfRequired(transaction, this);
-  undoableSetType(transaction, preset->getType());
+  undoableSetType(transaction, preset->getType(), VoiceGroup::II);
   super::copyFrom(transaction, preset);
   resetModifiedIndicator(transaction, getHash());
 }
@@ -733,7 +734,7 @@ void EditBuffer::undoableConvertDualToSingle(UNDO::Transaction *transaction, Voi
   SendEditBufferScopeGuard scopeGuard(transaction, true);
 
   setName(transaction, getVoiceGroupName(copyFrom));
-  undoableSetType(transaction, SoundType::Single);
+  undoableSetType(transaction, SoundType::Single, VoiceGroup::II);
 
   if(oldType == SoundType::Split)
     undoableConvertSplitToSingle(transaction, copyFrom);
@@ -796,7 +797,7 @@ void EditBuffer::undoableConvertToDual(UNDO::Transaction *transaction, SoundType
 
   SendEditBufferScopeGuard scopeGuard(transaction, true);
 
-  undoableSetType(transaction, type);
+  undoableSetType(transaction, type, VoiceGroup::II);
 
   if(oldType == SoundType::Single && type == SoundType::Layer)
     undoableConvertSingleToLayer(transaction);
@@ -854,13 +855,13 @@ void EditBuffer::copyAndInitGlobalMasterGroupToPartMasterGroups(UNDO::Transactio
   }
 }
 
-void EditBuffer::undoableSetType(UNDO::Transaction *transaction, SoundType type)
+void EditBuffer::undoableSetType(UNDO::Transaction *transaction, SoundType type, VoiceGroup currentPart)
 {
   if(m_type != type)
   {
     auto swap = UNDO::createSwapData(type);
 
-    cleanupParameterSelection(transaction, m_type, type);
+    cleanupParameterSelection(transaction, m_type, type, currentPart);
 
     transaction->addSimpleCommand([=](auto state) {
       swap->swapWith(m_type);
@@ -1481,7 +1482,8 @@ void EditBuffer::undoableLoadSelectedToPart(VoiceGroup from, VoiceGroup to)
   }
 }
 
-void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType)
+void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType,
+                                           VoiceGroup currentPart)
 {
   auto scope = std::make_unique<GenericScopeGuard>([&] { lockParameterFocusChanges(); },
                                                    [&] { unlockParameterFocusChanges(); });
@@ -1519,9 +1521,6 @@ void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, Sound
                                          { C15::PID::Voice_Grp_Volume, C15::PID::Master_Volume },
                                          { C15::PID::Out_Mix_To_FX, C15::PID::Out_Mix_Lvl } } } };
 
-  auto hwui = Application::get().getHWUI();
-  auto currentVg = hwui->getCurrentVoiceGroup();
-
   auto itMap = conversions.find({ oldType, newType });
   if(itMap != conversions.end())
   {
@@ -1530,23 +1529,23 @@ void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, Sound
     auto itConv = conv.find(id);
     if(itConv != conv.end())
     {
-      auto vg = ParameterId::isGlobal(itConv->second) ? VoiceGroup::Global : currentVg;
+      auto vg = ParameterId::isGlobal(itConv->second) ? VoiceGroup::Global : currentPart;
 
       if(newType == SoundType::Single && vg == VoiceGroup::II)
         vg = VoiceGroup::I;
 
       undoableSelectParameter(transaction, { itConv->second, vg });
-      hwui->setCurrentVoiceGroup(vg);
+      //hwui->setCurrentVoiceGroup(vg);
     }
   }
 
-  if(newType == SoundType::Single && currentVg == VoiceGroup::II)
+  if(newType == SoundType::Single && currentPart == VoiceGroup::II)
   {
     auto selNum = getSelectedParameterNumber();
     if(!ParameterId::isGlobal(selNum))
       undoableSelectParameter(transaction, { selNum, VoiceGroup::I });
 
-    hwui->setCurrentVoiceGroup(VoiceGroup::I);
+    //hwui->setCurrentVoiceGroup(VoiceGroup::I);
   }
 }
 

@@ -234,10 +234,12 @@ SaveResult PresetManager::saveBanks(Glib::RefPtr<Gio::File> pmFolder)
   return SaveResult::Nothing;
 }
 
-void PresetManager::doAutoLoadSelectedPreset(UNDO::Transaction *currentTransactionPtr)
+void PresetManager::doAutoLoadSelectedPreset(UNDO::Transaction *currentTransactionPtr, VoiceGroup currentPart,
+                                             PresetPartSelection *loadToPartData)
 {
   if(auto lock = m_isLoading.lock())
   {
+    //TODO remove this whole HWUI foo?
     auto hwui = Application::get().getHWUI();
     FocusAndMode focusAndMode = hwui->getFocusAndMode();
 
@@ -247,7 +249,7 @@ void PresetManager::doAutoLoadSelectedPreset(UNDO::Transaction *currentTransacti
 
     if(!isStoringPreset)
     {
-      autoLoadPresetAccordingToLoadType(currentTransactionPtr);
+      autoLoadPresetAccordingToLoadType(currentTransactionPtr, currentPart, loadToPartData);
     }
   }
 }
@@ -506,7 +508,7 @@ void PresetManager::selectBank(UNDO::Transaction *transaction, const Uuid &uuid)
 void PresetManager::onPresetSelectionChanged(UNDO::Transaction *currentTransactionPtr)
 {
   if(Application::get().getSettings()->getSetting<DirectLoadSetting>()->get())
-    doAutoLoadSelectedPreset(currentTransactionPtr);
+    doAutoLoadSelectedPreset(currentTransactionPtr, VoiceGroup::II, nullptr);
 }
 
 void PresetManager::sortBanks(UNDO::Transaction *transaction, const std::vector<Bank *> &banks)
@@ -880,7 +882,7 @@ void PresetManager::stressLoad(int numTransactions)
         {
           forEachBank([&](auto b) {
             b->forEachPreset([&](auto p) {
-              m_editBuffer->undoableLoad(transaction, p, true);
+              m_editBuffer->undoableLoad(transaction, p, true, VoiceGroup::I);
               numSteps--;
             });
           });
@@ -970,39 +972,27 @@ void PresetManager::doLoadToPart(const Preset *preset, VoiceGroup loadFrom, Voic
   }
 }
 
-void PresetManager::autoLoadPresetAccordingToLoadType(UNDO::Transaction *transaction) const
+void PresetManager::autoLoadPresetAccordingToLoadType(UNDO::Transaction *transaction, VoiceGroup currentPart,
+                                                      PresetPartSelection *loadToPartData) const
 {
   nltools_assertAlways(transaction != nullptr);
-
-  auto ebUseCases = EditBufferUseCases(getEditBuffer());
   auto eb = getEditBuffer();
-  auto hwui = Application::get().getHWUI();
-  auto currentVoiceGroup = hwui->getCurrentVoiceGroup();
 
   if(auto bank = getSelectedBank())
   {
     if(auto selPreset = bank->getSelectedPreset())
     {
-      auto directLoadSetting = Application::get().getSettings()->getSetting<DirectLoadSetting>();
-      auto loadToPartActive = Application::get().getHWUI()->isInLoadToPart();
-
       switch(selPreset->getType())
       {
         case SoundType::Single:
-          eb->undoableLoadSelectedPreset(transaction, currentVoiceGroup);
-
+          eb->undoableLoadSelectedPreset(transaction, currentPart);
           break;
         case SoundType::Layer:
         case SoundType::Split:
-          if(loadToPartActive)
-          {
-            auto load = hwui->getPresetPartSelection(currentVoiceGroup);
-            eb->undoableLoadToPart(transaction, load->m_preset, load->m_voiceGroup, currentVoiceGroup);
-          }
+          if(loadToPartData != nullptr)
+            eb->undoableLoadToPart(transaction, loadToPartData->m_preset, loadToPartData->m_voiceGroup, currentPart);
           else
-          {
-            eb->undoableLoadSelectedPreset(transaction, currentVoiceGroup);
-          }
+            eb->undoableLoadSelectedPreset(transaction, currentPart);
           break;
         default:
           break;

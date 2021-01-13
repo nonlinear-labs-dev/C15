@@ -287,9 +287,11 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void loadPreset(String presetuuid) {
+	public void loadPreset(String presetuuid, VoiceGroup part) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "load-preset");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", presetuuid));
+		StaticURI uri = new StaticURI(path, 
+								new StaticURI.KeyValue("uuid", presetuuid),
+								new StaticURI.KeyValue("part", part.toString()));
 		queueJob(uri, false);
 	}
 
@@ -406,27 +408,32 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void insertEditBufferAbove(IPreset actionAnchor) {
+	public void insertEditBufferAbove(IPreset actionAnchor, VoiceGroup part) {
 		String uuid = Uuid.random();
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "insert-editbuffer-above");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("anchor", actionAnchor.getUUID()),
-				new StaticURI.KeyValue("uuid", uuid));
+				new StaticURI.KeyValue("uuid", uuid),
+				new StaticURI.KeyValue("part", part.toString()));
 		queueJob(uri, false);
 		RenameDialog.awaitNewPreset(uuid);
 	}
 
-	public void insertEditBufferBelow(IPreset actionAnchor) {
+	public void insertEditBufferBelow(IPreset actionAnchor, VoiceGroup part) {
 		String uuid = Uuid.random();
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "insert-editbuffer-below");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("anchor", actionAnchor.getUUID()),
-				new StaticURI.KeyValue("uuid", uuid));
+				new StaticURI.KeyValue("uuid", uuid),
+				new StaticURI.KeyValue("part", part.toString()));
 		queueJob(uri, false);
 		RenameDialog.awaitNewPreset(uuid);
 	}
 
-	public void overwritePresetWithEditBuffer(IPreset actionAnchor) {
+	public void overwritePresetWithEditBuffer(IPreset actionAnchor, VoiceGroup part) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "overwrite-preset-with-editbuffer");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("presetToOverwrite", actionAnchor.getUUID()));
+		StaticURI uri = new StaticURI(path, 
+							new StaticURI.KeyValue("presetToOverwrite", actionAnchor.getUUID()), 
+							new StaticURI.KeyValue("part", part.toString())
+						);
 		queueJob(uri, false);
 
 		if (actionAnchor.getUUID() != nonMaps.getNonLinearWorld().getParameterEditor().getLoadedPresetUUID())
@@ -453,18 +460,20 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void appendPreset(IPreset srcPreset, Bank targetBank) {
+	public void appendPreset(IPreset srcPreset, Bank targetBank, VoiceGroup part) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "append-preset-to-bank");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank-uuid", targetBank.getUUID()),
-				new StaticURI.KeyValue("preset-uuid", srcPreset.getUUID()));
+				new StaticURI.KeyValue("preset-uuid", srcPreset.getUUID()),
+				new StaticURI.KeyValue("part", part.toString()));
 		queueJob(uri, false);
 	}
 
-	public void appendEditBuffer(IBank bank) {
+	public void appendEditBuffer(IBank bank, VoiceGroup part) {
 		String uuid = Uuid.random();
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "append-preset");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank-uuid", bank.getUUID()),
-				new StaticURI.KeyValue("uuid", uuid));
+				new StaticURI.KeyValue("uuid", uuid),
+				new StaticURI.KeyValue("part", part.toString()));
 		queueJob(uri, false);
 		RenameDialog.awaitNewPreset(uuid);
 	}
@@ -642,17 +651,17 @@ public class ServerProxy {
 				+ "&vg1=" + vgOfPreset1 + "&vg2=" + vgOfPreset2, handler);
 	}
 
-	public void dropPresetOnBank(IPreset p, Bank b) {
+	public void dropPresetOnBank(IPreset p, Bank b, VoiceGroup part) {
 		boolean foundInBank = b.getPresetList().findPreset(p.getUUID()) != null;
 		if (foundInBank)
 			movePresetBelow(p, b.getLast());
 		else
-			appendPreset(p, b);
+			appendPreset(p, b, part);
 	}
 
-	public void dropPresetOnBankIfNotInBank(IPreset p, Bank b) {
+	public void dropPresetOnBankIfNotInBank(IPreset p, Bank b, VoiceGroup part) {
 		if (b.getPresetList().findPreset(p.getUUID()) == null)
-			appendPreset(p, b);
+			appendPreset(p, b, part);
 	}
 
 	public void dropPresetsOnBank(String csv, Bank targetBank) {
@@ -662,8 +671,8 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
-	public void dropEditBufferOnBank(IBank b) {
-		appendEditBuffer(b);
+	public void dropEditBufferOnBank(IBank b, VoiceGroup part) {
+		appendEditBuffer(b, part);
 	}
 
 	public void dropBankOnBank(IBank dragged, IBank b) {

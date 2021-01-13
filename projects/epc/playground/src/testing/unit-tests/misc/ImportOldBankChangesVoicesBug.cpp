@@ -38,7 +38,7 @@ TEST_CASE("Import Bank Fresh Results in Correct Voices", "[Unison]")
     {
       auto scope = TestHelper::createTestScope();
       auto transaction = scope->getTransaction();
-      eb->undoableLoad(transaction, preset, true);
+      eb->undoableLoad(transaction, preset, true, VoiceGroup::II);
 
       CHECK(eb->getType() == SoundType::Single);
       CHECK(voicesI->getDisplayString() == "8 voices");

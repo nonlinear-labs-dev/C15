@@ -2,6 +2,7 @@
 #include <device-settings/Settings.h>
 #include <Application.h>
 #include <presets/PresetManager.h>
+#include <proxies/hwui/HWUI.h>
 
 DirectLoadSetting::DirectLoadSetting(Settings &settings)
     : BooleanSetting(settings, false)
@@ -30,8 +31,11 @@ bool DirectLoadSetting::set(BooleanSettings m)
     if(auto pm = Application::get().getPresetManager())
       if(m == BooleanSettings::BOOLEAN_SETTING_TRUE)
       {
+        auto hwui = Application::get().getHWUI();
+        auto currentPart = hwui->getCurrentVoiceGroup();
+        auto loadToPartData = hwui->getPresetPartSelection(currentPart);
         EditBufferUseCases useCase(pm->getEditBuffer());
-        useCase.autoLoadSelectedPreset();
+        useCase.autoLoadSelectedPreset(currentPart, loadToPartData);
       }
 
   return ret;

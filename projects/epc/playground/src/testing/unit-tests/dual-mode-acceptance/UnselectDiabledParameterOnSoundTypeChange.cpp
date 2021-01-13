@@ -9,7 +9,7 @@ TEST_CASE("FROM Layer")
 
   auto eb = TestHelper::getEditBuffer();
   EditBufferUseCases ebUseCases(eb);
-  ebUseCases.undoableLoad(presets.getLayerPreset());
+  ebUseCases.undoableLoad(presets.getLayerPreset(), VoiceGroup::II);
 
   Application::get().getHWUI()->setCurrentVoiceGroup(VoiceGroup::II);
 
@@ -21,13 +21,13 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 346, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
@@ -52,13 +52,13 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 346, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
@@ -83,13 +83,13 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 156, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 156, VoiceGroup::II });
     }
 
@@ -114,13 +114,13 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 158, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 158, VoiceGroup::II });
     }
 
@@ -145,13 +145,13 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 160, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 160, VoiceGroup::II });
     }
 
@@ -176,7 +176,7 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
 
@@ -194,7 +194,7 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
@@ -212,7 +212,7 @@ TEST_CASE("FROM Layer")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
 
@@ -230,13 +230,13 @@ TEST_CASE("FROM Layer")
 
     THEN("Split Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
 
@@ -261,13 +261,13 @@ TEST_CASE("FROM Layer")
 
     THEN("Split Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
 
@@ -294,7 +294,7 @@ TEST_CASE("Split Loaded")
   auto eb = TestHelper::getEditBuffer();
   EditBufferUseCases ebUseCases(eb);
 
-  ebUseCases.undoableLoad(presets.getSplitPreset());
+  ebUseCases.undoableLoad(presets.getSplitPreset(), VoiceGroup::II);
 
   Application::get().getHWUI()->setCurrentVoiceGroup(VoiceGroup::II);
   CHECK(eb->getType() == SoundType::Split);
@@ -305,7 +305,7 @@ TEST_CASE("Split Loaded")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
 
@@ -323,7 +323,7 @@ TEST_CASE("Split Loaded")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
@@ -341,7 +341,7 @@ TEST_CASE("Split Loaded")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
 
@@ -359,13 +359,13 @@ TEST_CASE("Split Loaded")
 
     THEN("Single Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
     THEN("Layer Preset Loaded")
     {
-      ebUseCases.undoableLoad(presets.getLayerPreset());
+      ebUseCases.undoableLoad(presets.getLayerPreset(), VoiceGroup::II);
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 358, VoiceGroup::II });
     }
 

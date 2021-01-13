@@ -45,7 +45,7 @@ TEST_CASE("Preset Load sends EditBuffer")
   EditBufferUseCases ebUseCases(eb);
 
   MockPresetStorage presets;
-  ebUseCases.undoableLoad(presets.getSinglePreset());
+  ebUseCases.undoableLoad(presets.getSinglePreset(), VoiceGroup::II);
 
   TestHelper::doMainLoop(1s, 1s, [&] { return singleMessageRecieved; });
   c.disconnect();
@@ -80,7 +80,7 @@ TEST_CASE("Store Action do not send EditBuffer")
 
   //Store EditBuffer as new Bank
   auto oldNumBanks = pm->getNumBanks();
-  useCases.createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer(VoiceGroup::II);
   auto newNumBanks = pm->getNumBanks();
   TestHelper::doMainLoopIteration();
   CHECK(newNumBanks > oldNumBanks);
@@ -89,7 +89,7 @@ TEST_CASE("Store Action do not send EditBuffer")
 
   //Append preset into bank
   auto oldNumPresets = bank->getNumPresets();
-  useCases.appendPreset(bank);
+  useCases.appendPreset(bank, VoiceGroup::II);
   auto newNumPresets = bank->getNumPresets();
   CHECK(newNumPresets > oldNumPresets);
 

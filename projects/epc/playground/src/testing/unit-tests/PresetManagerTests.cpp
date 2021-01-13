@@ -190,7 +190,7 @@ TEST_CASE("Delete Current Midi Bank resets attribute")
       BooleanSettings::BOOLEAN_SETTING_TRUE);
 
   //Create bank to use
-  useCases.createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer(VoiceGroup::II);
   auto b = pm->getSelectedBank();
   CHECK(pm->getNumBanks() == 1);
   CHECK(b != nullptr);
@@ -213,10 +213,10 @@ TEST_CASE("When Midi Bank is Selected new and old midi selection banks get notif
   auto pm = TestHelper::getPresetManager();
   PresetManagerUseCases useCases(pm);
 
-  useCases.createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer(VoiceGroup::II);
   auto b1 = pm->getSelectedBank();
 
-  useCases.createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer(VoiceGroup::II);
   auto b2 = pm->getSelectedBank();
 
   int changesB1 = 0;

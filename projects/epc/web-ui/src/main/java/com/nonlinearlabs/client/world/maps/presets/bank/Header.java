@@ -24,6 +24,7 @@ import com.nonlinearlabs.client.world.overlay.OverlayLayout;
 import com.nonlinearlabs.client.world.overlay.belt.EditBufferDraggingButton;
 import com.nonlinearlabs.client.world.overlay.belt.presets.BankContextMenu;
 import com.nonlinearlabs.client.world.pointer.DoubleClickWaiter;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 
 public class Header extends Label {
 
@@ -104,6 +105,7 @@ public class Header extends Label {
 	public Control drop(Position pos, DragProxy dragProxy) {
 		Bank b = getParent();
 		PresetManager pm = b.getParent();
+		VoiceGroup currentPart = EditBufferModel.get().voiceGroup.getValue();
 
 		if (b == dragProxy.getOrigin())
 			return null;
@@ -115,10 +117,10 @@ public class Header extends Label {
 					getNonMaps().getServerProxy().dropPresetsOnBank(pm.getMultiSelection().getCSV(), b);
 					pm.getMultiSelection().clear();
 				} else {
-					getNonMaps().getServerProxy().dropPresetOnBank((IPreset) dragProxy.getOrigin(), b);
+					getNonMaps().getServerProxy().dropPresetOnBank((IPreset) dragProxy.getOrigin(), b, currentPart);
 				}
 			} else if (dragProxy.getOrigin() instanceof EditBufferDraggingButton)
-				getNonMaps().getServerProxy().dropEditBufferOnBank(b);
+				getNonMaps().getServerProxy().dropEditBufferOnBank(b, currentPart);
 			else if (dragProxy.getOrigin() instanceof IBank) {
 				Bank draggedBank = (Bank) dragProxy.getOrigin();
 				if (!draggedBank.hasSlaves()) {

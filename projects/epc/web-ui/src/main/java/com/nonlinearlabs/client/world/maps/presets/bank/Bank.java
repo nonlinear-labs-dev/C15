@@ -10,6 +10,7 @@ import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Renameable;
 import com.nonlinearlabs.client.ServerProxy;
 import com.nonlinearlabs.client.Tracer;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.world.Control;
@@ -318,17 +319,18 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	}
 
 	private void doInsertEditbuffer(DropPosition pos, IPreset preset, DragProxy dragProxy) {
+		VoiceGroup currentPart = EditBufferModel.get().voiceGroup.getValue();
 		switch (pos) {
 			case ABOVE:
-				getNonMaps().getServerProxy().insertEditBufferAbove(preset);
+				getNonMaps().getServerProxy().insertEditBufferAbove(preset, currentPart);
 				break;
 
 			case BELOW:
-				getNonMaps().getServerProxy().insertEditBufferBelow(preset);
+				getNonMaps().getServerProxy().insertEditBufferBelow(preset, currentPart);
 				break;
 
 			case COVERING:
-				getNonMaps().getServerProxy().overwritePresetWithEditBuffer(preset);
+				getNonMaps().getServerProxy().overwritePresetWithEditBuffer(preset, currentPart);
 				break;
 		}
 	}

@@ -88,7 +88,7 @@ void AppendOverwriteInsertButtonMenu::executeAction()
       switch(setting)
       {
         case PresetStoreModeSettings::PRESET_STORE_MODE_APPEND:
-          useCases.appendPreset(selectedBank);
+          useCases.appendPreset(selectedBank, VoiceGroup::II);
           if(modified)
           {
             pushRenameScreen();
@@ -100,7 +100,7 @@ void AppendOverwriteInsertButtonMenu::executeAction()
           break;
 
         case PresetStoreModeSettings::PRESET_STORE_MODE_OVERWRITE:
-          useCases.overwritePreset(selectedPreset);
+          useCases.overwritePreset(selectedPreset, VoiceGroup::II);
           animate();
           break;
       }
@@ -113,7 +113,7 @@ void AppendOverwriteInsertButtonMenu::executeAction()
   }
   else
   {
-    useCases.createBankAndStoreEditBuffer();
+    useCases.createBankAndStoreEditBuffer(VoiceGroup::II);
   }
 }
 

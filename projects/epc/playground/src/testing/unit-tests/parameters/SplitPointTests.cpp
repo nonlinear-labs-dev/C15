@@ -105,16 +105,16 @@ TEST_CASE("Sync Setting gets updated on store and load")
     CHECK(sI->hasOverlap());
   };
 
-  pmUseCases.createBankAndStoreEditBuffer();
+  pmUseCases.createBankAndStoreEditBuffer(VoiceGroup::II);
   b = pm->getSelectedBank();
   TestHelper::initDualEditBuffer<SoundType::Split>();
 
   CHECK_FALSE(sI->hasOverlap());
-  pmUseCases.appendPreset(b);
+  pmUseCases.appendPreset(b, VoiceGroup::II);
   presetWithoutOverlap = pm->getSelectedPreset();
 
   createEBWithOverlap();
-  pmUseCases.appendPreset(b);
+  pmUseCases.appendPreset(b, VoiceGroup::II);
   presetWithOverlap = pm->getSelectedPreset();
 
   auto syncSetting = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
@@ -126,7 +126,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("Preset With Overlap Loaded")
     {
-      ebUseCases.undoableLoad(presetWithOverlap);
+      ebUseCases.undoableLoad(presetWithOverlap, VoiceGroup::II);
       THEN("Sync Setting Disabled")
       {
         CHECK(!syncSetting->get());
@@ -135,7 +135,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("Preset Without Overlap Loaded")
     {
-      ebUseCases.undoableLoad(presetWithoutOverlap);
+      ebUseCases.undoableLoad(presetWithoutOverlap, VoiceGroup::II);
       THEN("Sync Setting Enabled")
       {
         CHECK(syncSetting->get());
@@ -144,7 +144,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("gets Stored")
     {
-      pmUseCases.appendPreset(b);
+      pmUseCases.appendPreset(b, VoiceGroup::II);
       THEN("Sync Setting stays Enabled")
       {
         CHECK(syncSetting->get());
@@ -159,7 +159,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("Preset With Overlap Loaded")
     {
-      ebUseCases.undoableLoad(presetWithOverlap);
+      ebUseCases.undoableLoad(presetWithOverlap, VoiceGroup::II);
       THEN("Sync Setting Disabled")
       {
         CHECK(!syncSetting->get());
@@ -168,7 +168,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("Preset Without Overlap Loaded")
     {
-      ebUseCases.undoableLoad(presetWithoutOverlap);
+      ebUseCases.undoableLoad(presetWithoutOverlap, VoiceGroup::II);
       THEN("Sync Setting Enabled")
       {
         CHECK(syncSetting->get());
@@ -177,7 +177,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("gets Stored")
     {
-      pmUseCases.appendPreset(b);
+      pmUseCases.appendPreset(b, VoiceGroup::II);
       THEN("Sync Setting stays Disabled")
       {
         CHECK(!syncSetting->get());
