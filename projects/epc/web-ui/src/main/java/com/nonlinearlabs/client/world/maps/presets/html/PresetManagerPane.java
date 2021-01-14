@@ -35,7 +35,7 @@ class PresetManagerPane extends HTMLPanel {
                 if (PresetInfoDialog.isShown())
                     PresetInfoDialog.update(selectedPreset);
 
-                if (LocalSettingsProvider.get().getSettings().selectionAutoScroll.isOneOf(
+                if (LocalSettingsProvider.get().getValue().selectionAutoScroll.isOneOf(
                         SetupModel.SelectionAutoScroll.parameter_and_preset, SetupModel.SelectionAutoScroll.preset))
                     scrollToSelectedPreset();
             }

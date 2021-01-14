@@ -60,7 +60,8 @@ public class Setup extends Composite {
 
 	@UiField
 	Label pedal1DisplayString, pedal2DisplayString, pedal3DisplayString, pedal4DisplayString,
-			editSmoothingTimeDisplayString, freeMemory, uiVersion, dateTime, uiHead, uiBranch, uiCommits, uiCommitDate, uiUsedRam, uiTotalRam;
+			editSmoothingTimeDisplayString, freeMemory, uiVersion, dateTime, uiHead, uiBranch, uiCommits, uiCommitDate,
+			uiUsedRam, uiTotalRam;
 
 	@UiField
 	InputElement pedal1Slider, pedal2Slider, pedal3Slider, pedal4Slider;
@@ -261,17 +262,17 @@ public class Setup extends Composite {
 	}
 
 	public void connectUpdate() {
-		DeviceSettingsProvider.get().register(t -> {
+		DeviceSettingsProvider.get().onChange(t -> {
 			applyPresenter(t);
 			return true;
 		});
 
-		LocalSettingsProvider.get().register(t -> {
+		LocalSettingsProvider.get().onChange(t -> {
 			applyPresenter(t);
 			return true;
 		});
 
-		DeviceInformationProvider.get().register(t -> {
+		DeviceInformationProvider.get().onChange(t -> {
 			applyPresenter(t);
 			return true;
 		});

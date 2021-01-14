@@ -2097,6 +2097,10 @@ button {
   z-index: 4;
 }
 
+.overlay-proxy.context-menu {
+  z-index: 7;
+}
+
 .header .gwt-Label {
 	padding: 0.7mm;
 	font-weight: 600;
@@ -2169,6 +2173,10 @@ button {
 
 .belt-preset-ui .bank .presets::-webkit-scrollbar {
   display: none;
+}
+
+.belt-preset-ui .bank .header > * {
+  float: left;
 }
 
 .belt-preset-ui .bank .header .prev-bank:enabled {
@@ -2263,7 +2271,7 @@ button {
   align-items: center;
   flex-grow: 2;
   max-width: 200mm;
-  min-width: 60mm;
+  min-width: 30mm;
 }
 
 .belt-preset-ui .bank-area > * {
@@ -2293,16 +2301,46 @@ button {
   flex-shrink: 0;
 }
 
-.belt-preset-ui .bank-area .store-area .show-menu {
+.belt-preset-ui .bank-area .store-area .show-menu.append {
   background-image: url(images/Append_Enabled.svg)
+}
+
+.belt-preset-ui .bank-area .store-area .show-menu.insert {
+  background-image: url(images/Insert_Enabled.svg)
+}
+
+.belt-preset-ui .bank-area .store-area .show-menu.overwrite {
+  background-image: url(images/Overwrite_Enabled.svg)
+}
+
+.belt-preset-ui .bank-area .store-area .store-select-mode.active {
+  background-image: url(images/Select_Active.svg)
 }
 
 .belt-preset-ui .bank-area .store-area .store-select-mode {
   background-image: url(images/Select_Enabled.svg)
 }
 
+.belt-preset-ui .bank-area .store-area .store-select-mode:disabled {  
+  background-image: url(images/Select_Disabled.svg)
+}
+
 .belt-preset-ui .bank-area .store-area .store {
   background-image: url(images/Store_Enabled.svg)
+}
+
+.belt-preset-ui .bank-area .store-area .store:active {
+  background-image: url(images/Store_Active.svg)
+}
+
+.belt-preset-ui > * {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.belt-preset-ui .bank-area {
+  flex-shrink: 1;
+  flex-grow: 1;
 }
 
 .belt-preset-ui .bank-area .bank {
@@ -2311,38 +2349,125 @@ button {
 }
 
 .belt-preset-ui .bank-area .bank .header {
-  display: flex;
+  display: block;
+}
+
+.belt-preset-ui .bank-area .bank .header .next-bank {
+  float: right;
 }
 
 .belt-preset-ui .bank-area .bank .header .bank-name {
-  flex-shrink: 2;
-  flex-grow: 2;
+  flex-shrink: 1;
+  flex-grow: 1;
+  overflow: hidden;
+  width: calc(100% - 2cm - 12px);
 }
 
 .belt-preset-ui .load-area {
   flex-shrink: 0;
 }
 
-.belt-preset-ui .load-area .number-of-presets {
+.belt-preset-ui .load-area .number-of-presets::before {
+  content: '[';
+}
 
+.belt-preset-ui .load-area .number-of-presets::after {
+  content: ']';
 }
 
 .belt-preset-ui .load-area .previous-preset {
   background-image: url(images/Preset_Up_Enabled.svg)
 }
 
+.belt-preset-ui .load-area .previous-preset:disabled {
+  background-image: url(images/Preset_Up_Disabled.svg)
+}
+
 .belt-preset-ui .load-area .next-preset {
   background-image: url(images/Preset_Down_Enabled.svg)
+}
+
+.belt-preset-ui .load-area .next-preset:disabled {
+  background-image: url(images/Preset_Down_Disabled.svg)
 }
 
 .belt-preset-ui .load-area .load-preset {
   background-image: url(images/Load_Enabled.svg)
 }
 
-.belt-preset-ui .loaded-preset-number {
-
+.belt-preset-ui .load-area .load-preset:disabled {
+  background-image: url(images/Load_Disabled.svg)
 }
+
+.belt-preset-ui .loaded-preset-number {
+  flex-shrink: 2;
+}
+
 
 .belt-preset-ui .direct-load {
   background-image: url(images/Dir-Load_Enabled.svg)
+}
+
+.belt-preset-ui .direct-load .small {
+  display:none;
+}
+
+.belt-preset-ui .direct-load .large {
+  display:block;
+}
+
+@media only screen and (max-width: 960px) {
+  .belt-preset-ui .direct-load {
+    background-image: url(images/Link_Active.svg  )
+  }
+
+  .belt-preset-ui .direct-load .small {
+    display:block;
+  }
+  
+  .belt-preset-ui .direct-load .large {
+    display:none;
+  }
+
+  .belt-preset-ui .presetmanager-area div div.title {
+    display:none;
+  }
+}
+
+@media only screen and (max-width: 760px) {
+  .belt-preset-ui .presetmanager-area {
+    display:none;
+  }
+
+  .belt-preset-ui .loaded-preset-number {
+    display:none;
+  }
+}
+
+@media only screen and (max-width: 560px) {
+  .belt-preset-ui .presetmanager-area {
+    display:none;
+  }
+
+  .belt-preset-ui .direct-load {
+    display:none;
+  }
+
+  .belt-preset-ui .number-of-presets {
+    display: none;
+  }
+
+  .belt-preset-ui .bank-area .load-and-select-buttons .load-preset {
+    margin-top: 0;
+  }
+
+  .belt-preset-ui .load-and-select-buttons {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 460px) {
+  .belt-preset-ui .bank {
+    display:none;
+  }
 }

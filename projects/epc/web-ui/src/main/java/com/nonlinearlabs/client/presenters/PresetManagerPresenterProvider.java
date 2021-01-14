@@ -10,6 +10,7 @@ import com.nonlinearlabs.client.dataModel.presetManager.LoadToPartMode;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
 import com.nonlinearlabs.client.dataModel.presetManager.Presets;
 import com.nonlinearlabs.client.dataModel.presetManager.StoreSelectMode;
+import com.nonlinearlabs.client.tools.Pair;
 
 public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresenter> {
 	public static PresetManagerPresenterProvider theInstance = new PresetManagerPresenterProvider();
@@ -45,12 +46,26 @@ public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresen
 				if (v != model.selectedBank.getValue())
 					return false;
 
-				pm.selectedPreset = selPreset;
+				if (pm.selectedPreset != selPreset) {
+					pm.selectedPreset = selPreset;
+					notifyChanges();
+				}
+
 				updateSelectionOpportunities();
-				notifyChanges();
+				updateNumPresets();
 				return true;
 			});
 
+			Banks.get().findOrPut(v).presets.onChange(selPreset -> {
+				if (v != model.selectedBank.getValue())
+					return false;
+
+				updateSelectionOpportunities();
+				updateNumPresets();
+				return true;
+			});
+
+			updateNumPresets();
 			notifyChanges();
 			return true;
 		});
@@ -98,6 +113,20 @@ public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresen
 		EditBufferPresenterProvider.get().onChange(p -> updateLoadedPresetNumber());
 	}
 
+	private void updateNumPresets() {
+		var model = PresetManagerModel.get();
+		var bank = Banks.get().find(model.selectedBank.getValue());
+		var s = "";
+
+		if (bank != null)
+			s = Integer.toString(bank.presets.getValue().size());
+
+		if (s != pm.numPresetsInCurrentBank) {
+			pm.numPresetsInCurrentBank = s;
+			notifyChanges();
+		}
+	}
+
 	public boolean updateLoadedPresetNumber() {
 		String loadedPresetUUID = EditBufferModel.get().loadedPreset.getValue();
 		var preset = Presets.get().find(loadedPresetUUID);
@@ -129,21 +158,54 @@ public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresen
 	}
 
 	private void updateSelectionOpportunities() {
+		var banks = canSelectPrevNextBank();
+		var presets = canSelectPrevNextPreset();
+		var notify = false;
+
+		if (pm.canSelectPrevBank != banks.first) {
+			pm.canSelectPrevBank = banks.first;
+			notify = true;
+		}
+
+		if (pm.canSelectNextBank != banks.second) {
+			pm.canSelectNextBank = banks.second;
+			notify = true;
+		}
+
+		if (pm.canSelectPrevPreset != presets.first) {
+			pm.canSelectPrevPreset = presets.first;
+			notify = true;
+		}
+
+		if (pm.canSelectNextPreset != presets.second) {
+			pm.canSelectNextPreset = presets.second;
+			notify = true;
+		}
+
+		if (notify)
+			notifyChanges();
+	}
+
+	private Pair<Boolean, Boolean> canSelectPrevNextPreset() {
+		var model = PresetManagerModel.get();
+		var bank = Banks.get().find(model.selectedBank.getValue());
+
+		if (bank != null) {
+			var preset = Presets.get().find(bank.selectedPreset.getValue());
+
+			if (preset != null) {
+				var isFirst = preset.number.getValue() == 1;
+				var isLast = preset.number.getValue() == bank.presets.getValue().size();
+				return new Pair<Boolean, Boolean>(!isFirst, !isLast);
+			}
+		}
+		return new Pair<Boolean, Boolean>(false, false);
+	}
+
+	private Pair<Boolean, Boolean> canSelectPrevNextBank() {
 		var model = PresetManagerModel.get();
 		var idx = model.banks.getValue().indexOf(model.selectedBank.getValue());
-		var canPrevBank = idx > 0;
-		var canNextBank = idx < model.banks.getValue().size() - 1;
-
-		if (pm.canSelectNextBank != canNextBank) {
-			pm.canSelectNextBank = canNextBank;
-			notifyChanges();
-		}
-
-		if (pm.canSelectPrevBank != canPrevBank) {
-			pm.canSelectPrevBank = canPrevBank;
-			notifyChanges();
-		}
-
+		return new Pair<Boolean, Boolean>(idx > 0, idx < model.banks.getValue().size() - 1);
 	}
 
 	private Boolean onBanksChanged(ArrayList<String> dmBanks) {

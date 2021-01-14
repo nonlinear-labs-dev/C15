@@ -37,9 +37,9 @@ public class SetupUpdater extends Updater {
 		m.put("Pedal4Type", SetupModel.get().systemSettings.pedal4Type);
 		m.put("PresetDragDropEnabled", SetupModel.get().systemSettings.presetDragEnabled);
 		m.put("PresetGlitchSuppression", SetupModel.get().systemSettings.presetGlitchSuppression);
-		m.put("PresetStoreModeSetting", SetupModel.get().systemSettings.presetStoreModeSetting);
+		m.put("PresetStoreModeSetting", SetupModel.get().systemSettings.presetStoreMode);
 		m.put("RibbonRelFactor", SetupModel.get().systemSettings.ribbonRelativeFactor);
-        m.put("SendPresetAsLPCWriteFallback", SetupModel.get().systemSettings.sendPresetAsPlaycontrollerFallback);
+		m.put("SendPresetAsLPCWriteFallback", SetupModel.get().systemSettings.sendPresetAsPlaycontrollerFallback);
 		m.put("SignalFlowIndication", SetupModel.get().systemSettings.signalFlowIndication);
 		m.put("SSID", SetupModel.get().systemSettings.ssid);
 		m.put("TransitionTime", SetupModel.get().systemSettings.transitionTime);

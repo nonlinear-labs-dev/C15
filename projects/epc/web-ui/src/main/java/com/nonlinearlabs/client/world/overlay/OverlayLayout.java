@@ -25,7 +25,7 @@ import com.nonlinearlabs.client.world.pointer.Gesture;
 
 public abstract class OverlayLayout extends OverlayControl implements ILayout<OverlayControl> {
 
-	FocusWidget htmlProxy;
+	protected FocusWidget htmlProxy;
 
 	protected OverlayLayout(Control parent) {
 		this(parent, false, false);

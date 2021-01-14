@@ -254,12 +254,12 @@ public class SetupModel {
 		public BooleanDataModelEntity presetDragEnabled = new BooleanDataModelEntity();
 		public BooleanDataModelEntity presetGlitchSuppression = new BooleanDataModelEntity();
 		public BooleanDataModelEntity syncVoiceGroups = new BooleanDataModelEntity();
-		public EnumDataModelEntity<PresetStoreMode> presetStoreModeSetting = createEnumDataModelEntity(
-				PresetStoreMode.class, PresetStoreMode.append);
+		public EnumDataModelEntity<PresetStoreMode> presetStoreMode = createEnumDataModelEntity(PresetStoreMode.class,
+				PresetStoreMode.append);
 		public ValueDataModelEntity randomizeAmount = new ValueDataModelEntity();
 		public ValueDataModelEntity tuneReference = new ValueDataModelEntity();
 		public ValueDataModelEntity ribbonRelativeFactor = new ValueDataModelEntity();
-        public BooleanDataModelEntity sendPresetAsPlaycontrollerFallback = new BooleanDataModelEntity();
+		public BooleanDataModelEntity sendPresetAsPlaycontrollerFallback = new BooleanDataModelEntity();
 		public BooleanDataModelEntity signalFlowIndication = new BooleanDataModelEntity();
 		public StringDataModelEntity ssid = new StringDataModelEntity();
 		public ValueDataModelEntity transitionTime = new ValueDataModelEntity();

@@ -38,6 +38,7 @@ public class PresetManagerPresenter {
 	public boolean canSelectPrevPreset = false;
 
 	public String loadedPresetNumber = "";
+	public String numPresetsInCurrentBank = "";
 
 	public PresetManagerPresenter() {
 	}

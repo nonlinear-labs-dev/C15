@@ -46,7 +46,7 @@ public class SoundSettings extends Composite {
 	}
 
 	public void connectUpdate() {
-		DeviceSettingsProvider.get().register(s -> {
+		DeviceSettingsProvider.get().onChange(s -> {
 			randomValueDisplayString.setText(s.randomizeAmountDisplayString);
 			randomValueSliderRange.setValue(s.randomizeAmountValue);
 			return true;

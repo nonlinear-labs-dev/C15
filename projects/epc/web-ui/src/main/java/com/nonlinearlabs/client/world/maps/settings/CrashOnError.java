@@ -23,6 +23,10 @@ public class CrashOnError extends Setting {
 				setCurrentValue(t == SetupModel.BooleanValues.on);
 				return true;
 			}
+
+		DeviceSettingsProvider.get().onChange(t -> {
+			setCurrentValue(t.externalMidiEnabled);
+			return true;
 		});
 	}
 

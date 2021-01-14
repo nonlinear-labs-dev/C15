@@ -219,7 +219,7 @@ public class ParameterEditor extends LayoutResizingVertical {
 		addChild(new SynthParameters(this));
 
 		EditBufferModel.get().selectedParameter.onChange(i -> {
-			boolean autoScroll = LocalSettingsProvider.get().getSettings().selectionAutoScroll
+			boolean autoScroll = LocalSettingsProvider.get().getValue().selectionAutoScroll
 					.isOneOf(SelectionAutoScroll.parameter, SelectionAutoScroll.parameter_and_preset);
 
 			BasicParameterModel param = EditBufferModel.get().getAnyParameter(i);

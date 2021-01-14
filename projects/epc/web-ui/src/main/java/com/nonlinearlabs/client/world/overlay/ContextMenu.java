@@ -19,6 +19,10 @@ public class ContextMenu extends OverlayLayout {
 
 	public ContextMenu(OverlayLayout parent) {
 		super(parent);
+
+		if (htmlProxy != null) {
+			htmlProxy.getElement().addClassName("context-menu");
+		}
 	}
 
 	@Override

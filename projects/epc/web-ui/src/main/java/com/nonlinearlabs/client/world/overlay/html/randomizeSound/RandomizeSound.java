@@ -48,7 +48,7 @@ public class RandomizeSound extends Composite {
 	}
 
 	public void connectUpdate() {
-		DeviceSettingsProvider.get().register(t -> {
+		DeviceSettingsProvider.get().onChange(t -> {
 			randomizeAmountDisplayString.setText(t.randomizeAmountDisplayString);
 			randomizeAmountRange.setValue(t.randomizeAmountValue);
 			return true;

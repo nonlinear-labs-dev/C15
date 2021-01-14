@@ -1,5 +1,7 @@
 package com.nonlinearlabs.client.presenters;
 
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.PresetStoreMode;
+
 public class DeviceSettings {
 	static public class VelocityCurve {
 		static public String[] options = { "Very Soft", "Soft", "Normal", "Hard", "Very Hard" };
@@ -38,7 +40,7 @@ public class DeviceSettings {
 	}
 
 	static public class SyncPartsAcrossUI {
-		static public String[] options = {"On", "Off"};
+		static public String[] options = { "On", "Off" };
 		public boolean value = false;
 	}
 
@@ -66,4 +68,6 @@ public class DeviceSettings {
 
 	public boolean syncSplitsEnabled = false;
 	public boolean externalMidiEnabled = false;
+
+	public PresetStoreMode presetStoreMode = PresetStoreMode.append;
 }

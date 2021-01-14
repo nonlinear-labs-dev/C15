@@ -5,24 +5,24 @@
 		<div class="presetmanager-area">
 			<div class="preset-area">
 				<g:Label styleName="title">Preset</g:Label>
-				<g:Button styleName="show-menu">
+				<g:Button styleName="show-menu" ui:field="showPresetMenu">
 					<img src="images/Menu_Preset_Enabled_S.svg"></img>
 				</g:Button>
 
-				<g:Button styleName="show-info">
+				<g:Button styleName="show-info" ui:field="showPresetInfo">
 					<img src="images/Menu_Info_Enabled_S.svg"></img>
 				</g:Button>
 
-				<g:Button styleName="show-search">
+				<g:Button styleName="show-search" ui:field="showPresetSearch">
 					<img src="images/Menu_Search_Enabled_S.svg"></img>
 				</g:Button>
 			</div>
 			<div class="bank-area">
 				<g:Label styleName="title">Bank</g:Label>
-				<g:Button styleName="show-menu">
+				<g:Button styleName="show-menu" ui:field="showBankMenu">
 					<img src="images/Menu_Bank_Enabled_S.svg"></img>
 				</g:Button>
-				<g:Button styleName="show-info">
+				<g:Button styleName="show-info" ui:field="showBankInfo">
 					<img src="images/Menu_Info_Enabled_S.svg"></img>
 				</g:Button>
 			</div>
@@ -31,15 +31,15 @@
 		<div class="bank-area">
 			<div class="store-area">
 				<div class="upper">
-					<g:Button styleName="show-menu">
+					<g:Button styleName="show-menu" ui:field="showStoreMenu">
 						<img src="images/Append_Enabled.svg"></img>
 					</g:Button>
 				</div>
 				<div class="lower">
-					<g:Button styleName="store-select-mode">
+					<g:Button styleName="store-select-mode" ui:field="storeSelectMode">
 						<img src="images/Select_Enabled.svg"></img>
 					</g:Button>
-					<g:Button styleName="store">
+					<g:Button styleName="store" ui:field="store">
 						<img src="images/Store_Enabled.svg"></img>
 					</g:Button>
 				</div>
@@ -50,15 +50,15 @@
 			<div class="load-area">
 				<div class="load-and-select-buttons">
 					<div class="select-buttons">
-						<g:Label styleName="number-of-presets">[64]</g:Label>
-						<g:Button styleName="previous-preset">
+						<g:Label styleName="number-of-presets" ui:field="numPresets">[64]</g:Label>
+						<g:Button styleName="previous-preset" ui:field="previousPreset">
 							<img src="images/Preset_Up_Enabled.svg"></img>
 						</g:Button>
-						<g:Button styleName="next-preset">
+						<g:Button styleName="next-preset" ui:field="nextPreset">
 							<img src="images/Preset_Down_Enabled.svg"></img>
 						</g:Button>
 					</div>
-					<g:Button styleName="load-preset">
+					<g:Button styleName="load-preset" ui:field="loadPreset">
 						<img src="images/Load_Enabled.svg"></img>
 					</g:Button>
 				</div>
@@ -67,7 +67,8 @@
 
 		<g:Label styleName="loaded-preset-number">12-123</g:Label>
 		<g:Button styleName="direct-load">
-			<img src="images/Dir-Load_Enabled.svg"></img>
+			<img src="images/Dir-Load_Enabled.svg" class="large"></img>
+			<img src="images/Link_Active.svg" class="small"></img>
 		</g:Button>
 
 	</g:HTMLPanel>

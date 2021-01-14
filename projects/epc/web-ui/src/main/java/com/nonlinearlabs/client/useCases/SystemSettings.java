@@ -11,6 +11,7 @@ import com.nonlinearlabs.client.dataModel.setup.SetupModel.MidiReceiveChannelSpl
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.MidiSendChannel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.MidiSendChannelSplit;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.PedalType;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.PresetStoreMode;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.VelocityCurve;
 
 public class SystemSettings {
@@ -206,5 +207,10 @@ public class SystemSettings {
 	public void setLocalProgramChanges(BooleanValues enabled) {
 		SetupModel.get().systemSettings.localProgramChanges.setValue(enabled);
 		NonMaps.theMaps.getServerProxy().setSetting("LocalProgramChanges", netify(enabled.name()));	
+	}
+
+	public void setPresetStoreMode(PresetStoreMode mode) {
+		SetupModel.get().systemSettings.presetStoreMode.setValue(mode);
+		NonMaps.get().getServerProxy().setSetting("PresetStoreModeSetting", mode.toString());
 	}
 }

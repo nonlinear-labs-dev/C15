@@ -291,7 +291,7 @@ public class PresetManagerUseCases {
     }
 
     public void storeToBank() {
-        switch (SetupModel.get().systemSettings.presetStoreModeSetting.getValue()) {
+        switch (SetupModel.get().systemSettings.presetStoreMode.getValue()) {
             case append:
                 if (isInStoreSelectMode()) {
                     var ssm = (StoreSelectMode) model.customPresetSelection.getValue();
