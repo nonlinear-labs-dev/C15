@@ -65,8 +65,8 @@
 			</div>
 		</div>
 
-		<g:Label styleName="loaded-preset-number">12-123</g:Label>
-		<g:Button styleName="direct-load">
+		<g:Label styleName="loaded-preset-number" ui:field="loadedPresetNumber"></g:Label>
+		<g:Button styleName="direct-load" ui:field="directLoad">
 			<img src="images/Dir-Load_Enabled.svg" class="large"></img>
 			<img src="images/Link_Active.svg" class="small"></img>
 		</g:Button>

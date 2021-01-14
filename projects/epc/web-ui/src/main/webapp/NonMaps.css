@@ -2379,12 +2379,20 @@ button {
   background-image: url(images/Preset_Up_Enabled.svg)
 }
 
+.belt-preset-ui .load-area .previous-preset:active {
+  background-image: url(images/Preset_Up_Active.svg)
+}
+
 .belt-preset-ui .load-area .previous-preset:disabled {
   background-image: url(images/Preset_Up_Disabled.svg)
 }
 
 .belt-preset-ui .load-area .next-preset {
   background-image: url(images/Preset_Down_Enabled.svg)
+}
+
+.belt-preset-ui .load-area .next-preset:active {
+  background-image: url(images/Preset_Down_Active.svg)
 }
 
 .belt-preset-ui .load-area .next-preset:disabled {
@@ -2403,9 +2411,13 @@ button {
   flex-shrink: 2;
 }
 
-
 .belt-preset-ui .direct-load {
-  background-image: url(images/Dir-Load_Enabled.svg)
+  background-image: url(images/Dir-Load_Enabled.svg);
+  padding-right: 5mm;
+}
+
+.belt-preset-ui .direct-load.active {
+  background-image: url(images/Dir-Load_Active.svg);
 }
 
 .belt-preset-ui .direct-load .small {
@@ -2417,7 +2429,12 @@ button {
 }
 
 @media only screen and (max-width: 960px) {
+  
   .belt-preset-ui .direct-load {
+    background-image: url(images/Link_Enabled.svg  )
+  }
+
+  .belt-preset-ui .direct-load.active {
     background-image: url(images/Link_Active.svg  )
   }
 

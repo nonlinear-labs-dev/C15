@@ -10,6 +10,8 @@ import com.nonlinearlabs.client.dataModel.presetManager.LoadToPartMode;
 import com.nonlinearlabs.client.dataModel.presetManager.PresetManagerModel;
 import com.nonlinearlabs.client.dataModel.presetManager.Presets;
 import com.nonlinearlabs.client.dataModel.presetManager.StoreSelectMode;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.tools.Pair;
 
 public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresenter> {
@@ -110,6 +112,17 @@ public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresen
 			return true;
 		});
 
+		SetupModel.get().systemSettings.directLoad.onChange(v -> {
+			var a = v == BooleanValues.on;
+
+			if (pm.directLoad != a) {
+				pm.directLoad = a;
+				notifyChanges();
+			}
+
+			return true;
+		});
+
 		EditBufferPresenterProvider.get().onChange(p -> updateLoadedPresetNumber());
 	}
 
@@ -132,16 +145,17 @@ public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresen
 		var preset = Presets.get().find(loadedPresetUUID);
 		var bank = Banks.get().find(preset != null ? preset.bankUuid.getValue() : "");
 		var modFlag = EditBufferPresenterProvider.getPresenter().isAnyParameterChanged ? " *" : "";
+		var res = "";
 
 		if (EditBufferModel.get().loadedPreset.getValue().equals("Init")) {
-			pm.loadedPresetNumber = "Init" + modFlag;
+			res = "Init" + modFlag;
 		} else if (EditBufferModel.get().loadedPreset.getValue().equals("Converted")) {
-			pm.loadedPresetNumber = "Converted" + modFlag;
+			res = "Converted" + modFlag;
 		} else if (bank == null && preset == null) {
-			pm.loadedPresetNumber = "";
+			res = "";
 		} else if (bank != null && preset != null) {
-			pm.loadedPresetNumber = bank.orderNumber.getValue() + "-"
-					+ NumberFormat.getFormat("000").format(preset.number.getValue()) + modFlag;
+			res = bank.orderNumber.getValue() + "-" + NumberFormat.getFormat("000").format(preset.number.getValue())
+					+ modFlag;
 		} else {
 			var loadedPresetUuid = EditBufferModel.get().loadedPreset.getValue();
 			var loadedPreset = Presets.get().find(loadedPresetUuid);
@@ -150,8 +164,13 @@ public class PresetManagerPresenterProvider extends Notifier<PresetManagerPresen
 			if (bank != null && loadedPreset != null) {
 				var bankOrderNumber = BankPresenterProviders.get().getPresenter(bankUuid).orderNumber;
 				var presetOrderNumber = PresetPresenterProviders.get().getPresenter(loadedPresetUuid).paddedNumber;
-				pm.loadedPresetNumber = bankOrderNumber + "-" + presetOrderNumber + modFlag;
+				res = bankOrderNumber + "-" + presetOrderNumber + modFlag;
 			}
+		}
+
+		if (pm.loadedPresetNumber != res) {
+			pm.loadedPresetNumber = res;
+			notifyChanges();
 		}
 
 		return true;

@@ -11,7 +11,7 @@ import com.nonlinearlabs.client.world.Gray;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.RGB;
 import com.nonlinearlabs.client.world.Rect;
-
+ 
 public class ContextMenu extends OverlayLayout {
 
 	private double opacity = 1.0;

@@ -213,4 +213,10 @@ public class SystemSettings {
 		SetupModel.get().systemSettings.presetStoreMode.setValue(mode);
 		NonMaps.get().getServerProxy().setSetting("PresetStoreModeSetting", mode.toString());
 	}
+
+	public void toggleDirectLoad() {
+		var dl = SetupModel.get().systemSettings.directLoad;
+		dl.setValue(!dl.getBool());
+		NonMaps.get().getServerProxy().setSetting("DirectLoad", dl.getValue().toString());
+	}
 }

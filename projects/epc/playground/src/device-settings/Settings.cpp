@@ -71,42 +71,45 @@ Settings::Settings(UpdateDocumentMaster *master)
     , m_actions(std::make_unique<SettingsActions>(*this))
     , m_saveJob(5000, std::bind(&Settings::save, this))
 {
-  addSetting("DirectLoad", new DirectLoadSetting(*this));
-  addSetting("SendPresetAsLPCWriteFallback", new SendPresetAsPlaycontrollerWriteFallback(*this));
-  addSetting("PresetStoreModeSetting", new PresetStoreModeSetting(*this));
+  addSetting("AftertouchCurve", new AftertouchCurve(*this));
   addSetting("BaseUnitUIMode", new BaseUnitUIMode(*this));
+  addSetting("BenderCurve", new BenderCurve(*this));
+  addSetting("CrashOnError", new CrashOnError(*this));
+  addSetting("DateTimeAdjustment", new DateTimeAdjustment(*this));
+  addSetting("DebugLevel", new DebugLevel(*this));
+  addSetting("DeviceName", new DeviceName(*this));
+  addSetting("DirectLoad", new DirectLoadSetting(*this));
+  addSetting("EditSmoothingTime", new EditSmoothingTime(*this));
+  addSetting("EncoderAcceleration", new EncoderAcceleration(*this));
+  addSetting("ExternalMidi", new ExternalMidiEnabledSetting(*this));
+  addSetting("ForceHighlightChangedParameters", new ForceHighlightChangedParametersSetting(*this));
+  addSetting("HighlightChangedParameters", new HighlightChangedParametersSetting(*this));
+  addSetting("IndicateBlockedUI", new BlockingMainThreadIndication(*this, false));
+  addSetting("KioskMode", new KioskModeSetting(*this));
+  addSetting("LayoutVersionMode", new LayoutMode(this));
   addSetting("NoteShift", new NoteShift(*this));
   addSetting("ParameterEditModeRibbonBehaviour", new ParameterEditModeRibbonBehaviour(*this));
-  addSetting("DebugLevel", new DebugLevel(*this));
-  addSetting("VelocityCurve", new VelocityCurve(*this));
-  addSetting("DeviceName", new DeviceName(*this));
-  addSetting("PresetDragDropEnabled", new PresetDragDropEnabled(*this));
-  addSetting("TransitionTime", new TransitionTime(*this));
-  addSetting("RandomizeAmount", new RandomizeAmount(*this));
-  addSetting("RibbonRelFactor", new RibbonRelativeFactor(*this));
+  addSetting("Passphrase", new Passphrase(*this));
   addSetting("Pedal1Type", new PedalType(*this, 1));
   addSetting("Pedal2Type", new PedalType(*this, 2));
   addSetting("Pedal3Type", new PedalType(*this, 3));
   addSetting("Pedal4Type", new PedalType(*this, 4));
-  addSetting("EncoderAcceleration", new EncoderAcceleration(*this));
-  addSetting("LayoutVersionMode", new LayoutMode(this));
-  addSetting("AftertouchCurve", new AftertouchCurve(*this));
-  addSetting("BenderCurve", new BenderCurve(*this));
-  addSetting("EditSmoothingTime", new EditSmoothingTime(*this));
-  addSetting("SSID", new SSID(*this));
-  addSetting("Passphrase", new Passphrase(*this));
+  addSetting("PresetDragDropEnabled", new PresetDragDropEnabled(*this));
   addSetting("PresetGlitchSuppression", new PresetGlitchSuppression(*this));
-  addSetting("DateTimeAdjustment", new DateTimeAdjustment(*this));
+  addSetting("PresetStoreModeSetting", new PresetStoreModeSetting(*this));
+  addSetting("RandomizeAmount", new RandomizeAmount(*this));
+  addSetting("RibbonRelFactor", new RibbonRelativeFactor(*this));
+  addSetting("SSID", new SSID(*this));
+  addSetting("ScreenSaverTimeout", new ScreenSaverTimeoutSetting(*this));
+  addSetting("SendPresetAsLPCWriteFallback", new SendPresetAsPlaycontrollerWriteFallback(*this));
   addSetting("SignalFlowIndication", new SignalFlowIndicationSetting(*this));
-  addSetting("KioskMode", new KioskModeSetting(*this));
-  addSetting("IndicateBlockedUI", new BlockingMainThreadIndication(*this, false));
-  addSetting("WifiSetting", new WifiSetting(*this));
-  addSetting("HighlightChangedParameters", new HighlightChangedParametersSetting(*this));
-  addSetting("ForceHighlightChangedParameters", new ForceHighlightChangedParametersSetting(*this));
-  addSetting("CrashOnError", new CrashOnError(*this));
-  addSetting("TuneReference", new TuneReference(*this));
+  addSetting("SyncSplit", new SplitPointSyncParameters(*this));
+  addSetting("SyncVoiceGroups", new SyncVoiceGroupsAcrossUIS(*this));
   addSetting("TotalRAM", new TotalRAM(*this));
+  addSetting("TransitionTime", new TransitionTime(*this));
+  addSetting("TuneReference", new TuneReference(*this));
   addSetting("UsedRAM", new UsedRAM(*this));
+
   addSetting("SyncVoiceGroups", new SyncVoiceGroupsAcrossUIS(*this));
   addSetting("ScreenSaverTimeout", new ScreenSaverTimeoutSetting(*this));
   addSetting("SyncSplit", new SplitPointSyncParameters(*this));
@@ -128,6 +131,9 @@ Settings::Settings(UpdateDocumentMaster *master)
   addSetting("SendProgramChanges", new MidiSendProgramChangesSetting(*this));
   addSetting("SendNotes", new MidiSendNotesSetting(*this));
   addSetting("SendControllers", new MidiSendControllersSetting(*this));
+
+  addSetting("VelocityCurve", new VelocityCurve(*this));
+  addSetting("WifiSetting", new WifiSetting(*this));
 }
 
 Settings::~Settings()

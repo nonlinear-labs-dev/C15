@@ -18,6 +18,7 @@ import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenter;
 import com.nonlinearlabs.client.presenters.PresetManagerPresenterProvider;
 import com.nonlinearlabs.client.useCases.PresetManagerUseCases;
+import com.nonlinearlabs.client.useCases.SystemSettings;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.Rect;
 import com.nonlinearlabs.client.world.overlay.BankInfoDialog;
@@ -48,10 +49,13 @@ public class BeltPresets extends Composite {
     Button previousPreset, nextPreset, loadPreset;
 
     @UiField
-    Label numPresets;
+    Label numPresets, loadedPresetNumber;
+
+    @UiField
+    Button directLoad;
 
     private PresetManagerPresenter presetManager;
-    DeviceSettings deviceSettings;
+    public DeviceSettings deviceSettings;
 
     public BeltPresets() {
         initWidget(ourUiBinder.createAndBindUi(this));
@@ -69,6 +73,7 @@ public class BeltPresets extends Composite {
         previousPreset.addClickHandler(v -> PresetManagerUseCases.get().selectPreviousPreset());
         nextPreset.addClickHandler(v -> PresetManagerUseCases.get().selectNextPreset());
         loadPreset.addClickHandler(v -> PresetManagerUseCases.get().loadSelectedPreset());
+        directLoad.addClickHandler(v -> SystemSettings.get().toggleDirectLoad());
 
         PresetManagerPresenterProvider.get().onChange(p -> {
             presetManager = p;
@@ -82,10 +87,16 @@ public class BeltPresets extends Composite {
             else
                 storeSelectMode.removeStyleName("active");
 
+            if (presetManager.directLoad)
+                directLoad.addStyleName("active");
+            else
+                directLoad.removeStyleName("active");
+
             previousPreset.setEnabled(presetManager.canSelectPrevPreset);
             nextPreset.setEnabled(presetManager.canSelectNextPreset);
 
             numPresets.setText(presetManager.numPresetsInCurrentBank);
+            loadedPresetNumber.setText(presetManager.loadedPresetNumber);
             return true;
         });
 

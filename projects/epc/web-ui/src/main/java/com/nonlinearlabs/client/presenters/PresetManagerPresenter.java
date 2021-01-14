@@ -39,6 +39,7 @@ public class PresetManagerPresenter {
 
 	public String loadedPresetNumber = "";
 	public String numPresetsInCurrentBank = "";
+	public boolean directLoad  = false;
 
 	public PresetManagerPresenter() {
 	}
