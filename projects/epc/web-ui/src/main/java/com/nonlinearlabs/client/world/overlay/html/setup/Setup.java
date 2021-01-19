@@ -31,6 +31,8 @@ import com.nonlinearlabs.client.presenters.DeviceSettings;
 import com.nonlinearlabs.client.presenters.DeviceSettingsProvider;
 import com.nonlinearlabs.client.presenters.LocalSettings;
 import com.nonlinearlabs.client.presenters.LocalSettingsProvider;
+import com.nonlinearlabs.client.presenters.MidiSettings;
+import com.nonlinearlabs.client.presenters.MidiSettingsProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.useCases.SystemSettings;
 import com.nonlinearlabs.client.world.overlay.html.Range;
@@ -42,7 +44,7 @@ public class Setup extends Composite {
 	private static SetupUiBinder ourUiBinder = GWT.create(SetupUiBinder.class);
 
 	@UiField
-	Button deviceSettingsButton, uiSettingsButton, systemInfoButton, aboutButton;
+	Button deviceSettingsButton, uiSettingsButton, uiMidiButton, systemInfoButton, aboutButton;
 
 	@UiField
 	DivElement deviceSettings, uiSettings, systemInfo, about;
@@ -220,6 +222,11 @@ public class Setup extends Composite {
 			applyPresenter(t);
 			return true;
 		});
+
+		MidiSettingsProvider.get().register(t -> {
+			applyPresenter(t);
+			return true;
+		});
 	}
 
 	private void fillListboxWithOptions(ListBox box, String[] options) {
@@ -293,6 +300,10 @@ public class Setup extends Composite {
 		uiCommitDate.setText(t.commitDate);
 		uiUsedRam.setText(t.usedRam);
 		uiTotalRam.setText(t.totalRam);
+	}
+
+	private void applyPresenter(MidiSettings t) {
+		//TODO implement
 	}
 
 	public void switchPage(Button btn, DivElement page) {

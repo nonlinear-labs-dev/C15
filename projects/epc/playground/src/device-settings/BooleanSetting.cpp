@@ -30,3 +30,16 @@ const std::vector<Glib::ustring> &BooleanSetting::enumToDisplayString() const
   static std::vector<Glib::ustring> s_modeNames = { "On", "Off" };
   return s_modeNames;
 }
+
+void BooleanSetting::incDec(int inc, bool wrap)
+{
+  if(wrap)
+  {
+    for(auto i = 0; i < inc; i++)
+      toggle();
+  }
+  else if(inc % 2 == 1)
+  {
+    toggle();
+  }
+}

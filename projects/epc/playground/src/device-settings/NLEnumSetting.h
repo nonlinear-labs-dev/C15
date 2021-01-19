@@ -4,6 +4,7 @@
 #include <nltools/enums/EnumTools.h>
 #include "xml/Writer.h"
 #include "xml/Attribute.h"
+#include <nltools/Types.h>
 
 template <typename TEnum> class NLEnumSetting : public Setting
 {
@@ -16,6 +17,16 @@ template <typename TEnum> class NLEnumSetting : public Setting
   NLEnumSetting(UpdateDocumentContributor &settings, tEnum def)
       : super(settings)
       , m_mode(def)
+      , m_displayStrings { [] {
+        auto in = getAllStrings<tEnum>();
+        std::vector<Glib::ustring> ret {};
+        ret.reserve(in.size());
+        for(auto &i : in)
+        {
+          ret.emplace_back(i);
+        }
+        return ret;
+      }() }
   {
   }
 
@@ -47,7 +58,7 @@ template <typename TEnum> class NLEnumSetting : public Setting
     set(to<TEnum>(text));
   }
 
-  void inc(int dir, bool wrap)
+  void incDec(int dir, bool wrap)
   {
     auto v = getAllValues<tEnum>();
     auto it = std::find(v.begin(), v.end(), get());
@@ -88,7 +99,13 @@ template <typename TEnum> class NLEnumSetting : public Setting
     return "";
   }
 
+  const std::vector<Glib::ustring> &getDisplayStrings() const
+  {
+    return m_displayStrings;
+  }
+
  private:
+  std::vector<Glib::ustring> m_displayStrings;
   NLEnumSetting(const NLEnumSetting &other);
   NLEnumSetting &operator=(const NLEnumSetting &);
 

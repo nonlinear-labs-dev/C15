@@ -69,6 +69,23 @@ public class SetupModel {
 		off, percent_10, percent_25, percent_50
 	}
 
+	public enum MidiReceiveChannel { 
+		None, Omni, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16 
+	}
+
+	public enum MidiReceiveChannelSplit { 
+		None, Omni, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16, Follow_I 
+	}
+
+	public enum MidiSendChannel {
+		None, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16 
+	}
+
+	public enum MidiSendChannelSplit { 
+		None, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16, Follow_I
+	}
+
+
 	private <T extends Enum<T>> EnumDataModelEntity<T> createEnumDataModelEntity(Class<T> c, T def) {
 		return new EnumDataModelEntity<T>(c, def);
 	}
@@ -156,6 +173,25 @@ public class SetupModel {
 		public BooleanDataModelEntity crashOnError = new BooleanDataModelEntity();
 		public BooleanDataModelEntity syncSplit = new BooleanDataModelEntity();
 		public BooleanDataModelEntity externalMidi = new BooleanDataModelEntity();
+
+		//Midi below
+		public BooleanDataModelEntity localControllers = new BooleanDataModelEntity();
+		public BooleanDataModelEntity localNotes = new BooleanDataModelEntity();
+		public BooleanDataModelEntity localProgramChanges = new BooleanDataModelEntity();
+	
+		public BooleanDataModelEntity sendControllers = new BooleanDataModelEntity();
+		public BooleanDataModelEntity sendNotes = new BooleanDataModelEntity();
+		public BooleanDataModelEntity sendProgramChanges = new BooleanDataModelEntity();
+		public EnumDataModelEntity<MidiSendChannel> sendChannel = createEnumDataModelEntity(MidiSendChannel.class, MidiSendChannel.None);
+		public EnumDataModelEntity<MidiSendChannelSplit> sendChannelSplit = createEnumDataModelEntity(MidiSendChannelSplit.class, MidiSendChannelSplit.None);
+
+		public BooleanDataModelEntity receiveControllers = new BooleanDataModelEntity();
+		public BooleanDataModelEntity receiveNotes = new BooleanDataModelEntity();
+		public BooleanDataModelEntity receiveProgramChanges = new BooleanDataModelEntity();
+		public EnumDataModelEntity<MidiReceiveChannel> receiveChannel = createEnumDataModelEntity(MidiReceiveChannel.class, MidiReceiveChannel.None);
+		public EnumDataModelEntity<MidiReceiveChannelSplit> receiveChannelSplit = createEnumDataModelEntity(MidiReceiveChannelSplit.class, MidiReceiveChannelSplit.None);
+		public EnumDataModelEntity<VelocityCurve> receiveVelocityCurve = createEnumDataModelEntity(VelocityCurve.class, VelocityCurve.normal);
+		public EnumDataModelEntity<AftertouchCurve> receiveAftertouchCurve = createEnumDataModelEntity(AftertouchCurve.class, AftertouchCurve.normal);
 	};
 
 	public class LocalSettings {

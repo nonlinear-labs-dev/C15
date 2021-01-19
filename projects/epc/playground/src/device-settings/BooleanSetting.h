@@ -19,6 +19,8 @@ class BooleanSetting : public EnumSetting<BooleanSettings>
 
   void toggle();
 
+  void incDec(int inc, bool wrap);
+
   bool get() const;
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
 

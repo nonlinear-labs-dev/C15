@@ -14,7 +14,7 @@ PedalEditor::~PedalEditor() = default;
 
 void PedalEditor::incSetting(int inc)
 {
-  m_mode->inc(inc, false);
+  m_mode->incDec(inc, false);
 }
 
 const std::vector<Glib::ustring>& PedalEditor::getDisplayStrings() const

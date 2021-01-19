@@ -54,6 +54,21 @@ public class SetupUpdater extends Updater {
 		m.put("UsedRAM", DeviceInformation.get().usedRam);
 		m.put("SyncSplit", SetupModel.get().systemSettings.syncSplit);
 		m.put("ExternalMidi", SetupModel.get().systemSettings.externalMidi);
+		m.put("LocalControllers", SetupModel.get().systemSettings.localControllers);
+		m.put("LocalNotes", SetupModel.get().systemSettings.localNotes);
+		m.put("LocalProgramChanges", SetupModel.get().systemSettings.localProgramChanges);
+		m.put("ReceiveChannel", SetupModel.get().systemSettings.receiveChannel);
+		m.put("ReceiveChannelSplit", SetupModel.get().systemSettings.receiveChannelSplit);
+		m.put("ReceiveControllers", SetupModel.get().systemSettings.receiveControllers);
+		m.put("ReceiveNotes", SetupModel.get().systemSettings.receiveNotes);
+		m.put("ReceiveProgramChanges", SetupModel.get().systemSettings.receiveProgramChanges);
+		m.put("ReceiveAftertouchCurve", SetupModel.get().systemSettings.receiveAftertouchCurve);
+		m.put("ReceiveVelocityCurve", SetupModel.get().systemSettings.receiveVelocityCurve);
+		m.put("SendChannel", SetupModel.get().systemSettings.sendChannel);
+		m.put("SendChannelSplit", SetupModel.get().systemSettings.sendChannelSplit);
+		m.put("SendProgramChanges", SetupModel.get().systemSettings.sendProgramChanges);
+		m.put("SendNotes", SetupModel.get().systemSettings.sendNotes);
+		m.put("SendControllers", SetupModel.get().systemSettings.sendControllers);
 		return m;
 	}
 

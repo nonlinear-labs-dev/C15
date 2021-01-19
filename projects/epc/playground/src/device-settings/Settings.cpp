@@ -54,6 +54,18 @@
 #include <parameters/RibbonParameter.h>
 #include <device-settings/ScreenSaverTimeoutSetting.h>
 #include <iostream>
+#include <device-settings/midi/MidiChannelSettings.h>
+#include <device-settings/midi/local/LocalControllersSetting.h>
+#include <device-settings/midi/local/LocalNotesSetting.h>
+#include <device-settings/midi/local/LocalProgramChangesSetting.h>
+#include <device-settings/midi/send/MidiSendControllersSetting.h>
+#include <device-settings/midi/send/MidiSendNotesSetting.h>
+#include <device-settings/midi/send/MidiSendProgramChangesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveAftertouchCurveSetting.h>
+#include <device-settings/midi/receive/MidiReceiveVelocityCurveSetting.h>
+#include <device-settings/midi/receive/MidiReceiveControllersSetting.h>
+#include <device-settings/midi/receive/MidiReceiveNotesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveProgramChangesSetting.h>
 
 Settings::Settings(UpdateDocumentMaster *master)
     : super(master)
@@ -100,6 +112,24 @@ Settings::Settings(UpdateDocumentMaster *master)
   addSetting("ScreenSaverTimeout", new ScreenSaverTimeoutSetting(*this));
   addSetting("SyncSplit", new SplitPointSyncParameters(*this));
   addSetting("ExternalMidi", new ExternalMidiEnabledSetting(*this));
+
+  addSetting("LocalControllers", new LocalControllersSetting(*this));
+  addSetting("LocalNotes", new LocalNotesSetting(*this));
+  addSetting("LocalProgramChanges", new LocalProgramChangesSetting(*this));
+
+  addSetting("ReceiveChannel", new MidiReceiveChannelSetting(*this));
+  addSetting("ReceiveChannelSplit", new MidiReceiveChannelSplitSetting(*this));
+  addSetting("ReceiveProgramChanges", new MidiReceiveProgramChangesSetting(*this));
+  addSetting("ReceiveNotes", new MidiReceiveNotesSetting(*this));
+  addSetting("ReceiveControllers", new MidiReceiveControllersSetting(*this));
+  addSetting("ReceiveAftertouchCurve", new MidiReceiveAftertouchCurveSetting(*this));
+  addSetting("ReceiveVelocityCurve", new MidiReceiveVelocityCurveSetting(*this));
+
+  addSetting("SendChannel", new MidiSendChannelSetting(*this));
+  addSetting("SendChannelSplit", new MidiSendChannelSplitSetting(*this));
+  addSetting("SendProgramChanges", new MidiSendProgramChangesSetting(*this));
+  addSetting("SendNotes", new MidiSendNotesSetting(*this));
+  addSetting("SendControllers", new MidiSendControllersSetting(*this));
 }
 
 Settings::~Settings()

@@ -51,7 +51,7 @@
 #include <proxies/hwui/panel-unit/boled/setup/SignalFlowIndicatorEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/WiFiSettingEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/SettingView.h>
-#include <proxies/hwui/panel-unit/boled/setup/EnumSettingEditor.h>
+#include <proxies/hwui/panel-unit/boled/setup/SettingEditors.h>
 #include <proxies/hwui/panel-unit/boled/setup/NumericSettingEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/WiFiSettingView.h>
 #include <proxies/hwui/panel-unit/EditPanel.h>
@@ -72,6 +72,18 @@
 #include "ScreenSaverTimeControls.h"
 
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/AnimatedGenericItem.h>
+#include <device-settings/midi/MidiChannelSettings.h>
+#include <device-settings/midi/receive/MidiReceiveProgramChangesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveNotesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveControllersSetting.h>
+#include <device-settings/midi/send/MidiSendControllersSetting.h>
+#include <device-settings/midi/send/MidiSendProgramChangesSetting.h>
+#include <device-settings/midi/send/MidiSendNotesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveVelocityCurveSetting.h>
+#include <device-settings/midi/receive/MidiReceiveAftertouchCurveSetting.h>
+#include <device-settings/midi/local/LocalProgramChangesSetting.h>
+#include <device-settings/midi/local/LocalNotesSetting.h>
+#include <device-settings/midi/local/LocalControllersSetting.h>
 
 namespace NavTree
 {
@@ -731,6 +743,27 @@ namespace NavTree
     }
   };
 
+  template <typename tSetting> struct EnumSettingItem : EditableLeaf
+  {
+    EnumSettingItem(InnerNode *parent, const std::string &text)
+        : EditableLeaf(parent, text)
+    {
+    }
+
+    Control *createView() override
+    {
+      return new SettingView<tSetting>();
+    }
+
+    Control *createEditor() override
+    {
+      if constexpr(std::is_base_of_v<BooleanSetting, tSetting>)
+        return new BooleanSettingsEditor2<tSetting>();
+      else
+        return new EnumSettingEditor<tSetting>();
+    }
+  };
+
   struct Backup : InnerNode
   {
     Backup(InnerNode *parent)
@@ -742,6 +775,65 @@ namespace NavTree
     }
   };
 
+  struct SettingView : SetupLabel
+  {
+    SettingView()
+        : SetupLabel("...", Rect(0, 0, 0, 0))
+    {
+      setText("...");
+    }
+  };
+
+  struct MidiReceiveSettings : InnerNode
+  {
+    MidiReceiveSettings(InnerNode *parent)
+        : InnerNode(parent, "Receive")
+    {
+      children.emplace_back(new EnumSettingItem<MidiReceiveChannelSetting>(this, "Rec. Channel"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveChannelSplitSetting>(this, "Rec. Split Channel"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveProgramChangesSetting>(this, "Rec. PC"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveNotesSetting>(this, "Rec. Notes"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveControllersSetting>(this, "Rec. Controllers"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveVelocityCurveSetting>(this, "Rec. Vel. Curve"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveAftertouchCurveSetting>(this, "Rec. AT Curve"));
+    }
+  };
+
+  struct MidiSendSettings : InnerNode
+  {
+    MidiSendSettings(InnerNode *parent)
+        : InnerNode(parent, "Send")
+    {
+      children.emplace_back(new EnumSettingItem<MidiSendChannelSetting>(this, "Send Channel"));
+      children.emplace_back(new EnumSettingItem<MidiSendChannelSplitSetting>(this, "Send Split Channel"));
+      children.emplace_back(new EnumSettingItem<MidiSendProgramChangesSetting>(this, "Send PC"));
+      children.emplace_back(new EnumSettingItem<MidiSendNotesSetting>(this, "Send Notes"));
+      children.emplace_back(new EnumSettingItem<MidiSendControllersSetting>(this, "Send Controllers"));
+    }
+  };
+
+  struct MidiLocalSettings : InnerNode
+  {
+    MidiLocalSettings(InnerNode *parent)
+        : InnerNode(parent, "Local")
+    {
+      children.emplace_back(new EnumSettingItem<LocalProgramChangesSetting>(this, "enable PC"));
+      children.emplace_back(new EnumSettingItem<LocalNotesSetting>(this, "enable Notes"));
+      children.emplace_back(new EnumSettingItem<LocalControllersSetting>(this, "enable Controllers"));
+    }
+  };
+
+  struct MidiSettings : InnerNode
+  {
+    MidiSettings(InnerNode *parent)
+        : InnerNode(parent, "Midi")
+    {
+      children.emplace_back(new MidiReceiveSettings(this));
+      children.emplace_back(new MidiSendSettings(this));
+      children.emplace_back(new MidiLocalSettings(this));
+    }
+  };
+
   struct Setup : InnerNode
   {
     Setup()
@@ -750,6 +842,7 @@ namespace NavTree
       children.emplace_back(new DeviceSettings(this));
       children.emplace_back(new HardwareUI(this));
       children.emplace_back(new SystemInfo(this));
+      children.emplace_back(new MidiSettings(this));
       children.emplace_back(new About(this));
       children.emplace_back(new Backup(this));
       focus = children.begin();

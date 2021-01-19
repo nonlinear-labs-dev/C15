@@ -9,6 +9,9 @@
 				</g:Button>
 				<g:Button styleName="tabheader" ui:field="uiSettingsButton">GUI Settings
 				</g:Button>
+				<g:Button styleName="tabheader" ui:field="uiMidiButton">Midi Settings
+				</g:Button>
+				
 				<g:Button styleName="tabheader" ui:field="systemInfoButton">System Info
 				</g:Button>
 				<g:Button styleName="tabheader" ui:field="aboutButton">About</g:Button>
