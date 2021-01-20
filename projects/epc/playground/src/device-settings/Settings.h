@@ -7,6 +7,7 @@
 #include <utility>
 #include <map>
 #include "SendReason.h"
+#include <nltools/Types.h>
 
 class Application;
 class Setting;
@@ -67,4 +68,11 @@ class Settings : public ContentSection
   ScopedGuard m_isLoading;
   void sendGlobalAESettings();
   sigc::connection m_aeSettingsConnection;
+  void connectMidiSettingsToAudioEngineMessage();
+  void sendMidiSettingsMessage();
+
+  int channelToMessageInt(MidiSendChannel channel);
+  int channelToMessageInt(MidiSendChannelSplit channel);
+  int channelToMessageInt(MidiReceiveChannel channel);
+  int channelToMessageInt(MidiReceiveChannelSplit channel);
 };

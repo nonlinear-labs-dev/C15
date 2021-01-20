@@ -5,6 +5,7 @@
 #include "device-settings/Setting.h"
 #include <Application.h>
 
+//Weg damit wenn es keinen Grund gibt
 template <typename tSetting> class BooleanSettingsEditor2 : public MenuEditor
 {
  public:

@@ -9,6 +9,7 @@
 #include <mutex>
 #include <future>
 #include <nltools/threading/BackgroundThreadWaiter.h>
+#include <MidiRuntimeOptions.h>
 
 namespace nltools
 {
@@ -57,6 +58,8 @@ class C15Synth : public Synth, public sigc::trackable
   void onEditSmoothingTimeMessage(const nltools::msg::Setting::EditSmoothingTimeMessage& msg);
   void onTuneReferenceMessage(const nltools::msg::Setting::TuneReference& msg);
 
+  void onMidiSettingsMessage(const nltools::msg::Setting::MidiSettingsMessage& msg);
+
   void simulateKeyDown(int key);
   void simulateKeyUp(int key);
   unsigned int getRenderedSamples();
@@ -64,6 +67,9 @@ class C15Synth : public Synth, public sigc::trackable
   dsp_host_dual* getDsp();
 
  private:
+  bool filterMidiInEvent(const MidiEvent& event) const;
+  bool filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event) const;
+
   void queueExternalMidiOut(const dsp_host_dual::SimpleRawMidiMessage& m);
 
   void syncExternals();
@@ -73,6 +79,7 @@ class C15Synth : public Synth, public sigc::trackable
   std::unique_ptr<dsp_host_dual> m_dsp;
   std::array<float, 8> m_hwSourceValues;
   AudioEngineOptions* m_options;
+  MidiRuntimeOptions m_midiOptions;
 
   RingBuffer<nltools::msg::Midi::SimpleMessage, 2048> m_externalMidiOutBuffer;
 

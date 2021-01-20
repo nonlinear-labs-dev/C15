@@ -156,6 +156,8 @@ void Settings::init()
   {
     s.second->init();
   }
+
+  connectMidiSettingsToAudioEngineMessage();
 }
 
 void Settings::reload()
@@ -296,4 +298,102 @@ void Settings::sendPresetSettingsToPlaycontroller()
   auto r2 = dynamic_cast<RibbonParameter *>(eb->findParameterByID({ C15::PID::Ribbon_2, VoiceGroup::Global }));
   r1->sendModeToPlaycontroller();
   r2->sendModeToPlaycontroller();
+}
+
+void Settings::connectMidiSettingsToAudioEngineMessage()
+{
+  for(auto &settingName :
+      { "LocalControllers", "LocalNotes", "LocalProgramChanges", "ReceiveChannel", "ReceiveChannelSplit",
+        "ReceiveProgramChanges", "ReceiveNotes", "ReceiveControllers", "ReceiveAftertouchCurve", "ReceiveVelocityCurve",
+        "SendChannel", "SendChannelSplit", "SendProgramChanges", "SendNotes", "SendControllers" })
+  {
+    if(auto setting = getSetting(settingName))
+    {
+      setting->onChange(sigc::hide(sigc::mem_fun(this, &Settings::sendMidiSettingsMessage)));
+    }
+    else
+    {
+      nltools_assertNotReached();
+    }
+  }
+
+  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::AudioEngine,
+                                        sigc::mem_fun(this, &Settings::sendMidiSettingsMessage));
+}
+
+int Settings::channelToMessageInt(MidiSendChannel channel)
+{
+  switch(channel)
+  {
+    case MidiSendChannel::None:
+      return -1;
+    default:
+      return static_cast<int>(channel) - 1;
+  }
+
+  nltools_assertNotReached();
+}
+
+int Settings::channelToMessageInt(MidiSendChannelSplit channel)
+{
+  switch(channel)
+  {
+    case MidiSendChannelSplit::None:
+      return -1;
+    case MidiSendChannelSplit::Follow_I:
+      return channelToMessageInt(getSetting<MidiSendChannelSetting>()->get());
+    default:
+      return static_cast<int>(channel) - 2;
+  }
+  nltools_assertNotReached();
+}
+
+int Settings::channelToMessageInt(MidiReceiveChannel channel)
+{
+  switch(channel)
+  {
+    case MidiReceiveChannel::None:
+      return -1;
+    case MidiReceiveChannel::Omni:
+      return 16;
+    default:
+      return static_cast<int>(channel)
+          - 2;  // - 2 because none is before Channel_1 and channels are 1 index towards the human and 0 indexed in midi
+  }
+}
+
+int Settings::channelToMessageInt(MidiReceiveChannelSplit channel)
+{
+  switch(channel)
+  {
+    case MidiReceiveChannelSplit::None:
+      return -1;
+    case MidiReceiveChannelSplit::Omni:
+      return 16;
+    case MidiReceiveChannelSplit::Follow_I:
+      return channelToMessageInt(getSetting<MidiReceiveChannelSetting>()->get());
+    default:
+      return static_cast<int>(channel) - 1;
+  }
+}
+
+void Settings::sendMidiSettingsMessage()
+{
+  nltools::msg::Setting::MidiSettingsMessage msg;
+  msg.sendChannel = channelToMessageInt(getSetting<MidiSendChannelSetting>()->get());
+  msg.sendSplitChannel = channelToMessageInt(getSetting<MidiSendChannelSplitSetting>()->get());
+  msg.receiveChannel = channelToMessageInt(getSetting<MidiReceiveChannelSetting>()->get());
+  msg.receiveSplitChannel = channelToMessageInt(getSetting<MidiReceiveChannelSplitSetting>()->get());
+
+  msg.sendNotes = getSetting<MidiSendNotesSetting>()->get();
+  msg.sendProgramChange = getSetting<MidiSendProgramChangesSetting>()->get();
+  msg.sendControllers = getSetting<MidiSendControllersSetting>()->get();
+
+  msg.receiveNotes = getSetting<MidiReceiveNotesSetting>()->get();
+  msg.receiveProgramChange = getSetting<MidiReceiveProgramChangesSetting>()->get();
+  msg.receiveControllers = getSetting<MidiReceiveControllersSetting>()->get();
+
+  //TODO add Local
+
+  nltools::msg::send(nltools::msg::EndPoint::AudioEngine, msg);
 }

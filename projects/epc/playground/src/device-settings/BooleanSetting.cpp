@@ -33,6 +33,7 @@ const std::vector<Glib::ustring> &BooleanSetting::enumToDisplayString() const
 
 void BooleanSetting::incDec(int inc, bool wrap)
 {
+  //TODO schauen wies sich verhaelt
   if(wrap)
   {
     for(auto i = 0; i < inc; i++)
