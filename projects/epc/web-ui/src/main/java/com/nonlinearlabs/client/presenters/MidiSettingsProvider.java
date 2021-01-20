@@ -22,94 +22,139 @@ public class MidiSettingsProvider {
 
         //Local
         s.localControllers.onChange(t -> {
-            settings.localControllers.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(newValue != settings.localControllers.value != newValue) {
+                settings.localControllers.value = newValue;
+                notifyClients();
+            } 
             return true;
         });
 
         s.localNotes.onChange(t -> {
-            settings.localNotes.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.localNotes.value != newValue) {
+                settings.localNotes.value = newValue;   
+                notifyClients();
+            }
             return true;
         });
 
         s.localProgramChanges.onChange(t -> {
-            settings.localProgramChanges.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.localProgramChanges.value != newValue) {
+                settings.localProgramChanges.value = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         //Send
         s.sendChannel.onChange(t -> {
-            settings.sendChannel.selected = t.ordinal();
-            notifyClients();
+            int newValue = t.ordinal();
+            if(settings.sendChannel.selected != newValue) {
+                settings.sendChannel.selected = t.ordinal();
+                notifyClients();
+            }
             return true;
         });
 
         s.sendChannelSplit.onChange(t -> {
-            settings.sendChannelSplit.selected = t.ordinal();
-            notifyClients();
+            int newValue = t.ordinal();
+            if(settings.sendChannelSplit.selected != newValue) {
+                settings.sendChannelSplit.selected = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.sendControllers.onChange(t -> {
-            settings.sendControllers.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.sendControllers.value != newValue) {
+                settings.sendControllers.value = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.sendProgramChanges.onChange(t -> {
-            settings.sendProgramChanges.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.sendProgramChanges.value != newValue) {
+                settings.sendProgramChanges.value = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.sendNotes.onChange(t -> {
-            settings.sendNotes.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.sendNotes.value != newValue) {
+                settings.sendNotes.value = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         //Receive
         s.receiveChannel.onChange(t -> {
-            settings.receiveChannel.selected = t.ordinal();
-            notifyClients();
+            int newValue = t.ordinal();
+            if(settings.receiveChannel.selected != newValue) {
+                settings.receiveChannel.selected = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.receiveChannelSplit.onChange(t -> {
-            settings.receiveChannelSplit.selected = t.ordinal();
-            notifyClients();
+            int newValue = t.ordinal();
+            if(settings.receiveChannelSplit.selected != newValue) {
+                settings.receiveChannelSplit.selected = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.receiveProgramChanges.onChange(t -> {
-            settings.receiveProgramChanges.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.receiveProgramChanges.value != newValue) {
+                settings.receiveProgramChanges.value = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.receiveNotes.onChange(t -> {
-            settings.receiveNotes.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.receiveNotes.value != newValue) {
+                settings.receiveNotes.value = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.receiveControllers.onChange(t -> {
-            settings.receiveControllers.value = t == BooleanValues.on;
-            notifyClients();
+            boolean newValue = t == BooleanValues.on;
+            if(settings.receiveControllers.value != newValue) {
+                settings.receiveControllers.value = newValue;
+                notifyClients();
+            }
             return true;
         });
 
         s.receiveAftertouchCurve.onChange(t -> {
-            settings.receiveAftertouchCurve.selected = t.ordinal();
-            notifyClients();
+            int newValue = t.ordinal();
+            if(settings.receiveAftertouchCurve.selected != newValue) {
+                settings.receiveAftertouchCurve.selected = newValue;   
+                notifyClients();
+            }
             return true;
         });
 
         s.receiveVelocityCurve.onChange(t -> {
-            settings.receiveVelocityCurve.selected = t.ordinal();
-            notifyClients();
+            int newValue = t.ordinal();
+            if(settings.receiveVelocityCurve.selected != newValue) {
+                settings.receiveVelocityCurve.selected = newValue;
+                notifyClients();
+            }
             return true;
         });
 	}
