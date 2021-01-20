@@ -2,7 +2,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
 	<g:HTMLPanel>
-		<div class="tabcontainer w33 html-dialog">
+		<div class="tabcontainer w36 html-dialog">
 
 			<div class="tab">
 				<g:Button styleName="tabheader" ui:field="deviceSettingsButton">Device Settings
@@ -11,7 +11,6 @@
 				</g:Button>
 				<g:Button styleName="tabheader" ui:field="uiMidiButton">Midi Settings
 				</g:Button>
-				
 				<g:Button styleName="tabheader" ui:field="systemInfoButton">System Info
 				</g:Button>
 				<g:Button styleName="tabheader" ui:field="aboutButton">About</g:Button>
@@ -318,6 +317,157 @@
 						</div>
 					</div>
 
+				</div>
+			</div>
+
+			<div ui:field="midiSettings" class="tabcontent">
+				<div class="forms-container">
+					<div class="eins-he fl-j-center">
+						<h3 class="uneditable">Midi Receive</h3>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Midi Channel</p>
+						</div>
+						<div class="w40p">
+							<g:ListBox ui:field="midiReceiveChannel">
+							</g:ListBox>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Midi Split Channel</p>
+						</div>
+						<div class="w40p">
+							<g:ListBox ui:field="midiReceiveChannelSplit">
+							</g:ListBox>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Programm Changes</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="receivePCOn" name="rad_recPC" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="receivePCOff" name="rad_recPC" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Notes</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="receiveNotesOn" name="rad_recNotes" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="receiveNotesOff" name="rad_recNotes" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Controllers</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="receiveControllersOn" name="rad_recControllers" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="receiveControllersOff" name="rad_recControllers" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Velocity Curve</p>
+						</div>
+						<div class="w40p">
+							<g:ListBox ui:field="midiReceiveVelocityCurve">
+							</g:ListBox>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Aftertouch Curve</p>
+						</div>
+						<div class="w40p">
+							<g:ListBox ui:field="midiReceiveAftertouchCurve">
+							</g:ListBox>
+						</div>
+					</div>
+					<div class="linie"></div>
+					<div class="eins-he fl-j-center">
+						<h3 class="uneditable">Midi Send</h3>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Midi Channel</p>
+						</div>
+						<div class="w40p">
+							<g:ListBox ui:field="midiSendChannel">
+							</g:ListBox>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Midi Split Channel</p>
+						</div>
+						<div class="w40p">
+							<g:ListBox ui:field="midiSendChannelSplit">
+							</g:ListBox>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Programm Changes</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="sendPCOn" name="rad_sendPC" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="sendPCOff" name="rad_sendPC" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Notes</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="sendNotesOn" name="rad_sendNotes" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="sendNotesOff" name="rad_sendNotes" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Controllers</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="sendControllersOn" name="rad_sendControllers" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="sendControllersOff" name="rad_sendControllers" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="linie"></div>
+					<div class="eins-he fl-j-center">
+						<h3 class="uneditable">Local</h3>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Programm Changes</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="localPCOn" name="rad_localPC" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="localPCOff" name="rad_localPC" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Notes</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="localNotesOn" name="rad_localNotes" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="localNotesOff" name="rad_localNotes" value="false"></g:RadioButton>
+						</div>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Controllers</p>
+						</div>
+						<div class="w40p mw-fit-content">
+							<g:RadioButton ui:field="localControllersOn" name="rad_localControllers" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="localControllersOff" name="rad_localControllers" value="false"></g:RadioButton>
+						</div>
+					</div>
 				</div>
 			</div>
 

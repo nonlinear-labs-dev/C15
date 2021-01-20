@@ -1,7 +1,5 @@
 package com.nonlinearlabs.client.presenters;
 
-import com.nonlinearlabs.client.dataModel.setup.SetupModel;
-
 public class MidiSettings {
 
 	static public class VelocityCurve {

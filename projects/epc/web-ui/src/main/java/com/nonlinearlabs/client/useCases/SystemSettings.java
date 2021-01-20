@@ -6,6 +6,10 @@ import com.nonlinearlabs.client.dataModel.setup.SetupModel.AftertouchCurve;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BenderCurve;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.DebugLevel;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.MidiReceiveChannel;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.MidiReceiveChannelSplit;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.MidiSendChannel;
+import com.nonlinearlabs.client.dataModel.setup.SetupModel.MidiSendChannelSplit;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.PedalType;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.VelocityCurve;
 
@@ -16,8 +20,8 @@ public class SystemSettings {
 		return theInstance;
 	}
 
-    public void setSendPresetAsPlaycontrollerWriteFallback(BooleanValues v) {
-        SetupModel.get().systemSettings.sendPresetAsPlaycontrollerFallback.setValue(v);
+	public void setSendPresetAsPlaycontrollerWriteFallback(BooleanValues v) {
+		SetupModel.get().systemSettings.sendPresetAsPlaycontrollerFallback.setValue(v);
 		NonMaps.get().getServerProxy().setSetting("SendPresetAsLPCWriteFallback", netify(v.name()));
 	}
 
@@ -132,5 +136,80 @@ public class SystemSettings {
 	public void setExternalMidi(boolean midiEnable) {
 		SetupModel.get().systemSettings.externalMidi.setValue(midiEnable);
 		NonMaps.theMaps.getServerProxy().setSetting("ExternalMidi", Boolean.toString(midiEnable));
+	}
+
+	public void setReceiveMidiChannel(MidiReceiveChannel midiReceiveChannel) {
+		SetupModel.get().systemSettings.receiveChannel.setValue(midiReceiveChannel);
+		NonMaps.theMaps.getServerProxy().setSetting("ReceiveChannel", midiReceiveChannel.name());
+	}
+
+	public void setReceiveMidiChannelSplit(MidiReceiveChannelSplit midiReceiveChannelSplit) {
+		SetupModel.get().systemSettings.receiveChannelSplit.setValue(midiReceiveChannelSplit);
+		NonMaps.theMaps.getServerProxy().setSetting("ReceiveChannelSplit", midiReceiveChannelSplit.name());
+	}
+
+	public void setReceiveNotes(BooleanValues enabled) {
+		SetupModel.get().systemSettings.receiveNotes.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("ReceiveNotes", netify(enabled.name()));
+	}
+
+	public void setReceiveProgramChanges(BooleanValues enabled) {
+		SetupModel.get().systemSettings.receiveProgramChanges.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("ReceiveProgramChanges", netify(enabled.name()));
+	}
+
+	public void setReceiveControllers(BooleanValues enabled) {
+		SetupModel.get().systemSettings.receiveControllers.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("ReceiveControllers", netify(enabled.name()));
+	}
+
+	public void setReceiveAftertouchCurve(AftertouchCurve value) {
+		SetupModel.get().systemSettings.receiveAftertouchCurve.setValue(value);
+		NonMaps.theMaps.getServerProxy().setSetting("ReceiveAftertouchCurve", value.name());
+	}
+
+	public void setReceiveVelocityCurve(VelocityCurve value) {
+		SetupModel.get().systemSettings.receiveVelocityCurve.setValue(value);
+		NonMaps.theMaps.getServerProxy().setSetting("ReceiveVelocityCurve", value.name());
+	}
+
+	public void setSendChannel(MidiSendChannel channel) {
+		SetupModel.get().systemSettings.sendChannel.setValue(channel);
+		NonMaps.theMaps.getServerProxy().setSetting("SendChannel", channel.name());
+	}
+
+	public void setSendChannelSplit(MidiSendChannelSplit channel) {
+		SetupModel.get().systemSettings.sendChannelSplit.setValue(channel);
+		NonMaps.theMaps.getServerProxy().setSetting("SendChannelSplit", channel.name());
+	}
+
+	public void setSendProgramChanges(BooleanValues enabled) {
+		SetupModel.get().systemSettings.sendProgramChanges.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("SendProgramChanges", netify(enabled.name()));
+	}
+
+	public void setSendNotes(BooleanValues enabled) {
+		SetupModel.get().systemSettings.sendNotes.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("SendNotes", netify(enabled.name()));
+	}
+
+	public void setSendControllers(BooleanValues enabled) {
+		SetupModel.get().systemSettings.sendControllers.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("SendControllers", netify(enabled.name()));
+	}
+
+	public void setLocalControllers(BooleanValues enabled) {
+		SetupModel.get().systemSettings.localControllers.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("LocalControllers", netify(enabled.name()));
+	}
+
+	public void setLocalNotes(BooleanValues enabled) {
+		SetupModel.get().systemSettings.localNotes.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("LocalNotes", netify(enabled.name()));
+	}
+
+	public void setLocalProgramChanges(BooleanValues enabled) {
+		SetupModel.get().systemSettings.localProgramChanges.setValue(enabled);
+		NonMaps.theMaps.getServerProxy().setSetting("LocalProgramChanges", netify(enabled.name()));	
 	}
 }
