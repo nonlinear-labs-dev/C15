@@ -289,6 +289,7 @@ void Settings::sendGlobalAESettings()
   getSetting<TransitionTime>()->syncExternals(SendReason::HeartBeatDropped);
   getSetting<NoteShift>()->syncExternals(SendReason::HeartBeatDropped);
   getSetting<TuneReference>()->syncExternals(SendReason::HeartBeatDropped);
+  sendMidiSettingsMessage();
 }
 
 void Settings::sendPresetSettingsToPlaycontroller()
@@ -316,9 +317,6 @@ void Settings::connectMidiSettingsToAudioEngineMessage()
       nltools_assertNotReached();
     }
   }
-
-  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::AudioEngine,
-                                        sigc::mem_fun(this, &Settings::sendMidiSettingsMessage));
 }
 
 int Settings::channelToMessageInt(MidiSendChannel channel)
