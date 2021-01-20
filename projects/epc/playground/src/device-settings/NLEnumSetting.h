@@ -99,7 +99,7 @@ template <typename TEnum> class NLEnumSetting : public Setting
     return "";
   }
 
-  const std::vector<Glib::ustring> &getDisplayStrings() const
+  virtual const std::vector<Glib::ustring> &getDisplayStrings() const
   {
     return m_displayStrings;
   }

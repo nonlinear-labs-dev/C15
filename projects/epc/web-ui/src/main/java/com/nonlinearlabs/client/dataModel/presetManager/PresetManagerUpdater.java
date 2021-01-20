@@ -3,7 +3,6 @@ package com.nonlinearlabs.client.dataModel.presetManager;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.dataModel.Updater;
 
@@ -23,9 +22,6 @@ public class PresetManagerUpdater extends Updater {
 
 	private void updateBanks(PresetManagerModel pm, Node banks) {
 		String midiSelectedBank = banks.getAttributes().getNamedItem("selected-midi-bank").getNodeValue();
-
-		GWT.log("updating Banks with midi uuid: " + midiSelectedBank);
-
 		BankMapDataModelEntity existingBanksEntity = pm.getBanks();
 		Map<String, Bank> existingBanks = new HashMap<String, Bank>(existingBanksEntity.getValue());
 		existingBanks.forEach((uuid, bank) -> bank.setDoomed());

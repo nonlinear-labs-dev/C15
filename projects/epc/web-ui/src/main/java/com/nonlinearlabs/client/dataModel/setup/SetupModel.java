@@ -113,6 +113,103 @@ public class SetupModel {
 		}
 	}
 
+	public class MidiReceiveChannelSetting extends EnumDataModelEntity<MidiReceiveChannel> {
+		public MidiReceiveChannelSetting() {
+			super(MidiReceiveChannel.class, MidiReceiveChannel.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiReceiveChannel c = MidiReceiveChannel.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Receive Channel value of " + str);				
+			}
+		}
+	}
+
+	public class MidiReceiveChannelSplitSetting extends EnumDataModelEntity<MidiReceiveChannelSplit> {
+		public MidiReceiveChannelSplitSetting() {
+			super(MidiReceiveChannelSplit.class, MidiReceiveChannelSplit.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiReceiveChannelSplit c = MidiReceiveChannelSplit.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Receive Channel Split value of " + str);				
+			}
+		}
+	}
+
+	public class MidiSendChannelSetting extends EnumDataModelEntity<MidiSendChannel> {
+		public MidiSendChannelSetting() {
+			super(MidiSendChannel.class, MidiSendChannel.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiSendChannel c = MidiSendChannel.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Send Channel value of " + str);				
+			}
+		}
+	}
+
+	public class MidiSendChannelSplitSetting extends EnumDataModelEntity<MidiSendChannelSplit> {
+		public MidiSendChannelSplitSetting() {
+			super(MidiSendChannelSplit.class, MidiSendChannelSplit.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiSendChannelSplit c = MidiSendChannelSplit.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Send Channel Split value of " + str);				
+			}
+		}
+	}
+
+
+	public class MidiReceiveVelocityCurveSetting extends EnumDataModelEntity<VelocityCurve> {
+		public MidiReceiveVelocityCurveSetting() {
+			super(VelocityCurve.class, VelocityCurve.normal);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				VelocityCurve c = VelocityCurve.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi receive VelocityCurve value of " + str);				
+			}
+		}
+	}
+
+	public class MidiReceiveAftertouchCurve extends EnumDataModelEntity<AftertouchCurve> {
+		public MidiReceiveAftertouchCurve() {
+			super(AftertouchCurve.class, AftertouchCurve.normal);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				AftertouchCurve c = AftertouchCurve.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Receive AftertouchCurve value of: " + str);
+			}
+		}
+	}
+
 	class PedalTypeSetting extends EnumDataModelEntity<PedalType> {
 		public PedalTypeSetting() {
 			super(PedalType.class, PedalType.PotTipActive);
@@ -182,16 +279,16 @@ public class SetupModel {
 		public BooleanDataModelEntity sendControllers = new BooleanDataModelEntity();
 		public BooleanDataModelEntity sendNotes = new BooleanDataModelEntity();
 		public BooleanDataModelEntity sendProgramChanges = new BooleanDataModelEntity();
-		public EnumDataModelEntity<MidiSendChannel> sendChannel = createEnumDataModelEntity(MidiSendChannel.class, MidiSendChannel.None);
-		public EnumDataModelEntity<MidiSendChannelSplit> sendChannelSplit = createEnumDataModelEntity(MidiSendChannelSplit.class, MidiSendChannelSplit.None);
+		public MidiSendChannelSetting sendChannel = new MidiSendChannelSetting();
+		public MidiSendChannelSplitSetting sendChannelSplit = new MidiSendChannelSplitSetting();
 
 		public BooleanDataModelEntity receiveControllers = new BooleanDataModelEntity();
 		public BooleanDataModelEntity receiveNotes = new BooleanDataModelEntity();
 		public BooleanDataModelEntity receiveProgramChanges = new BooleanDataModelEntity();
-		public EnumDataModelEntity<MidiReceiveChannel> receiveChannel = createEnumDataModelEntity(MidiReceiveChannel.class, MidiReceiveChannel.None);
-		public EnumDataModelEntity<MidiReceiveChannelSplit> receiveChannelSplit = createEnumDataModelEntity(MidiReceiveChannelSplit.class, MidiReceiveChannelSplit.None);
-		public EnumDataModelEntity<VelocityCurve> receiveVelocityCurve = createEnumDataModelEntity(VelocityCurve.class, VelocityCurve.normal);
-		public EnumDataModelEntity<AftertouchCurve> receiveAftertouchCurve = createEnumDataModelEntity(AftertouchCurve.class, AftertouchCurve.normal);
+		public MidiReceiveChannelSetting receiveChannel = new MidiReceiveChannelSetting();
+		public MidiReceiveChannelSplitSetting receiveChannelSplit = new MidiReceiveChannelSplitSetting();
+		public MidiReceiveVelocityCurveSetting receiveVelocityCurve = new MidiReceiveVelocityCurveSetting();
+		public MidiReceiveAftertouchCurve receiveAftertouchCurve = new MidiReceiveAftertouchCurve();
 	};
 
 	public class LocalSettings {

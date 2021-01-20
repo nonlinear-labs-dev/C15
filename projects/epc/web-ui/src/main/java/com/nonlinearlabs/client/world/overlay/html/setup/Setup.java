@@ -243,8 +243,8 @@ public class Setup extends Composite {
 		receiveNotesOn.addValueChangeHandler(e -> settings.setReceiveNotes(BooleanValues.on));
 		receiveNotesOff.addValueChangeHandler(e -> settings.setReceiveNotes(BooleanValues.off));
 
-		midiSendChannel.addAttachHandler(e -> settings.setSendChannel(MidiSendChannel.values()[midiSendChannel.getSelectedIndex()]));
-		midiSendChannelSplit.addAttachHandler(e -> settings.setSendChannelSplit(MidiSendChannelSplit.values()[midiSendChannelSplit.getSelectedIndex()]));
+		midiSendChannel.addChangeHandler(e -> settings.setSendChannel(MidiSendChannel.values()[midiSendChannel.getSelectedIndex()]));
+		midiSendChannelSplit.addChangeHandler(e -> settings.setSendChannelSplit(MidiSendChannelSplit.values()[midiSendChannelSplit.getSelectedIndex()]));
 		sendPCOn.addValueChangeHandler(e -> settings.setSendProgramChanges(BooleanValues.on));
 		sendPCOff.addValueChangeHandler(e -> settings.setSendProgramChanges(BooleanValues.off));
 		sendNotesOn.addValueChangeHandler(e -> settings.setSendNotes(BooleanValues.on));
@@ -356,7 +356,6 @@ public class Setup extends Composite {
 	}
 
 	private void applyPresenter(MidiSettings t) {
-		GWT.log("Applying MidiSettings Presenter!");
 		midiReceiveChannel.setSelectedIndex(t.receiveChannel.selected);
 		midiReceiveChannelSplit.setSelectedIndex(t.receiveChannelSplit.selected);
 		midiReceiveAftertouchCurve.setSelectedIndex(t.receiveAftertouchCurve.selected);
@@ -379,10 +378,10 @@ public class Setup extends Composite {
 		
 		localControllersOn.setValue(t.localControllers.value);
 		localControllersOff.setValue(!t.localControllers.value);
-		localPCOn.setValue(t.localControllers.value);
-		localPCOff.setValue(!t.localControllers.value);
-		localNotesOn.setValue(t.localControllers.value);
-		localNotesOff.setValue(!t.localControllers.value);
+		localPCOn.setValue(t.localProgramChanges.value);
+		localPCOff.setValue(!t.localProgramChanges.value);
+		localNotesOn.setValue(t.localNotes.value);
+		localNotesOff.setValue(!t.localNotes.value);
 	}
 
 	public void switchPage(Button btn, DivElement page) {

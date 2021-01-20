@@ -50,6 +50,11 @@ template <typename TEnum> class EnumSetting : public Setting
     }
   }
 
+  void incDec(int i, bool wrap)
+  {
+    inc(i, wrap);
+  }
+
   void inc(int dir, bool wrap)
   {
     int numEntries = enumToString().size();
@@ -93,6 +98,11 @@ template <typename TEnum> class EnumSetting : public Setting
   {
     int idx = static_cast<int>(get());
     return enumToString()[idx];
+  }
+
+  const std::vector<Glib::ustring> &getDisplayStrings() const
+  {
+    return enumToDisplayString();
   }
 
   Glib::ustring getDisplayString() const
