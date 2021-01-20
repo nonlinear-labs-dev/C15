@@ -16,7 +16,7 @@ add_nltools(${AE_LIB_NAME})
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${AE_LIB_NAME})
 
-set(LIBS alsa)
+set(LIBS alsa flac)
 
 find_package(OpenMP)
 
