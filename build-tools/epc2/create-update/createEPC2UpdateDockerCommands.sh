@@ -51,7 +51,8 @@ install_packages() {
         for subpackage in $(pacman -Sp $package); do
             pacstrap -c -U /overlay-fs $(basename ${subpackage})
         done
-    done
+        pacman --noconfirm -S $UPDATE_PACKAGES
+    done    
 }
 
 build_binaries() {

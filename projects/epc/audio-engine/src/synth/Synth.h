@@ -15,6 +15,8 @@ class AudioEngineOptions;
 class Synth
 {
  public:
+  using AudioRing = RingBuffer<SampleFrame, 1 << 15>;
+
   Synth(const AudioEngineOptions *options);
   virtual ~Synth();
 
@@ -30,6 +32,7 @@ class Synth
 
   void checkFiniteness(SampleFrame *target, size_t numFrames);
   const AudioEngineOptions *getOptions() const;
+  const AudioRing &getAudioRing() const;
 
  protected:
   virtual void doMidi(const MidiEvent &event) = 0;
@@ -56,5 +59,6 @@ class Synth
   std::unique_ptr<AudioOutput> m_out;
   RingBuffer<MidiEvent, 2048> m_midiRingBuffer;
   RingBuffer<MidiEvent, 2048> m_tcdRingBuffer;
+  AudioRing m_audioRingBuffer;
   const AudioEngineOptions *m_options;
 };

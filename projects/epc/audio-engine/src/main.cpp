@@ -2,11 +2,12 @@
 #include "synth/C15Synth.h"
 #include "synth/CPUBurningSynth.h"
 #include "ui/CommandlinePerformanceWatch.h"
+#include "io/MidiHeartBeat.h"
+#include "io/flac/StreamServer.h"
 
 #include <nltools/logging/Log.h>
 #include <nltools/StringTools.h>
 #include <nltools/messaging/Messaging.h>
-#include "io/MidiHeartBeat.h"
 
 #include <glibmm.h>
 #include <iostream>
@@ -93,6 +94,8 @@ int main(int args, char *argv[])
   auto cli = createCLI(synth.get());
 
   CommandlinePerformanceWatch watch(synth->getAudioOut());
+  StreamServer flacStreamServer(synth.get());
+
   synth->start();
   MidiHeartBeat heartbeat(theOptions->getHeartBeatDeviceName());
   runMainLoop();

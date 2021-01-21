@@ -98,6 +98,7 @@ void Synth::process(SampleFrame *target, size_t numFrames)
     processAudioWithTimestampedMidi(target, numFrames);
 
   checkFiniteness(target, numFrames);
+  m_audioRingBuffer.push(target, numFrames);
 }
 
 void Synth::checkFiniteness(SampleFrame *target, size_t numFrames)
@@ -115,6 +116,11 @@ void Synth::checkFiniteness(SampleFrame *target, size_t numFrames)
 const AudioEngineOptions *Synth::getOptions() const
 {
   return m_options;
+}
+
+const Synth::AudioRing &Synth::getAudioRing() const
+{
+  return m_audioRingBuffer;
 }
 
 void Synth::processAudioWithoutTimestampedMidi(SampleFrame *target, size_t numFrames)
