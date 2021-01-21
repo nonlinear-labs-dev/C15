@@ -121,7 +121,7 @@ const AudioEngineOptions *Synth::getOptions() const
   return m_options;
 }
 
-const Synth::AudioRing &Synth::getAudioRing() const
+const EncodedStream::AudioRing &Synth::getAudioRing() const
 {
   return m_audioRingBuffer;
 }

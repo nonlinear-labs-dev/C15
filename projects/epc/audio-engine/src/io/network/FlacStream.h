@@ -1,19 +1,19 @@
 #pragma once
 
 #include <Types.h>
-#include <libsoup/soup-message.h>
+#include "EncodedStream.h"
 #include <FLAC/stream_encoder.h>
-#include <functional>
 #include <sigc++/connection.h>
+#include <functional>
 
-class Synth;
-
-class FlacStream
+class FlacStream : public EncodedStream
 {
  public:
   using CB = std::function<void(const uint8_t *data, size_t numBytes)>;
-  FlacStream(const Synth *synth, CB cb);
-  ~FlacStream();
+  FlacStream(const EncodedStream::AudioRing &ring, uint32_t sampleRate, CB cb);
+  ~FlacStream() override;
+
+  std::string getContentType() const override;
 
  private:
   bool writeToFlac();
@@ -22,12 +22,8 @@ class FlacStream
                                                    size_t bytes, uint32_t samples, uint32_t current_frame,
                                                    void *client_data);
 
-  const Synth *m_synth;
   CB m_cb;
-  std::function<void()> m_unPause;
   FLAC__StreamEncoder *m_encoder = nullptr;
   uint64_t m_readHead = 0;
   sigc::connection m_connection;
-  std::vector<SampleFrame> m_scratch;
-  std::vector<FLAC__int32> m_scratchFlac;
 };

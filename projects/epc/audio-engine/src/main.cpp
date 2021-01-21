@@ -3,7 +3,7 @@
 #include "synth/CPUBurningSynth.h"
 #include "ui/CommandlinePerformanceWatch.h"
 #include "io/MidiHeartBeat.h"
-#include "io/flac/StreamServer.h"
+#include "io/network/StreamServer.h"
 
 #include <nltools/logging/Log.h>
 #include <nltools/StringTools.h>
@@ -94,7 +94,7 @@ int main(int args, char *argv[])
   auto cli = createCLI(synth.get());
 
   CommandlinePerformanceWatch watch(synth->getAudioOut());
-  StreamServer flacStreamServer(synth.get());
+  StreamServer flacStreamServer(synth->getAudioRing(), theOptions->getSampleRate());
 
   synth->start();
   MidiHeartBeat heartbeat(theOptions->getHeartBeatDeviceName());

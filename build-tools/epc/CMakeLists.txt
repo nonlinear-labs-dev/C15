@@ -120,12 +120,14 @@ add_custom_command(
     DEPENDS .filesystem-created
     DEPENDS epc-create-update
     DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
+    DEPENDS epc2-create-update
+    DEPENDS ${CMAKE_BINARY_DIR}/build-tools/epc2/create-update/update.tar
     DEPENDS bbb-rootfs
     DEPENDS bbb-rootfs
     DEPENDS ${ALL_FILES_IN_PROJECT}
     COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
         ${CMAKE_BINARY_DIR}/build-tools/epc/update.tar
-        "unused-epc2"
+        ${CMAKE_BINARY_DIR}/build-tools/epc2/create-update/update.tar
         ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
         "unused-playcontroller"
         ${CMAKE_BINARY_DIR}
