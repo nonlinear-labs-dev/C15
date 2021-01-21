@@ -39,7 +39,7 @@ void BooleanSetting::incDec(int inc, bool wrap)
     for(auto i = 0; i < inc; i++)
       toggle();
   }
-  else if(inc % 2 == 1)
+  else if((inc < 0 && get()) || (inc > 0 && !get()))
   {
     toggle();
   }

@@ -757,10 +757,7 @@ namespace NavTree
 
     Control *createEditor() override
     {
-      if constexpr(std::is_base_of_v<BooleanSetting, tSetting>)
-        return new BooleanSettingsEditor2<tSetting>();
-      else
-        return new EnumSettingEditor<tSetting>();
+      return new EnumSettingEditor<tSetting>();
     }
   };
 

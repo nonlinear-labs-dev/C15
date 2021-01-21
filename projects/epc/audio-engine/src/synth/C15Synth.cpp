@@ -136,7 +136,7 @@ constexpr static u_int8_t MIDI_NOTE_ON_PATTERN = 0b10010000;
 constexpr static u_int8_t MIDI_CHANNEL_PATTERN = 0b00001111;
 constexpr static u_int8_t MIDI_POLY_AFTERTOUCH_PATTERN = 0b10100000;
 constexpr static u_int8_t MIDI_CONTROLCHANGE_PATTERN = 0b10110000;
-constexpr static u_int8_t MIDI_PROGRAM_CHANGE_PATTERN = 0b11000000;
+constexpr static u_int8_t MIDI_PITCHBEND_PATTERN = 0b11100000;
 
 constexpr static u_int8_t MIDI_CHANNEL_OMNI = 16;
 
@@ -161,14 +161,9 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
         = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN) || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN);
     const auto isPolyAftertouchEvent = matchPattern(statusByte, MIDI_POLY_AFTERTOUCH_PATTERN);
     const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN);
-    const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAM_CHANGE_PATTERN);
 
-    nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
-    nltools::Log::error("isNoteEvent:", isNoteEvent, "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent,
-                        "isPCEvent", isProgramChangeEvent);
-
-    if(isProgramChangeEvent)
-      return m_midiOptions.shouldSendProgramChanges();
+    //    nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
+    //    nltools::Log::error("isNoteEvent:", isNoteEvent, "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent);
 
     if(isNoteEvent)
       return m_midiOptions.shouldSendNotes();
@@ -189,24 +184,20 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
   const auto channel = (statusByte & MIDI_CHANNEL_PATTERN);
   const auto allowedChannel = m_midiOptions.getReceiveChannel();
 
+  //  nltools::Log::error("Raw Midi Event:", (int)statusByte, (int)event.raw[1], (int)event.raw[2]);
+
   if(channel == allowedChannel)
   {
     const auto isNoteEvent
         = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN) || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN);
     const auto isPolyAftertouchEvent = matchPattern(statusByte, MIDI_POLY_AFTERTOUCH_PATTERN);
     const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN);
-    const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAM_CHANGE_PATTERN);
+    const auto isPitchBendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN);
 
-    nltools::Log::error("filterMidiInEvent channel:", channel, "allowedChannel:", allowedChannel);
-    nltools::Log::error("isNoteEvent:", isNoteEvent, "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent,
-                        "isPCEvent", isProgramChangeEvent);
+    //    nltools::Log::error("filterMidiInEvent channel:", channel, "allowedChannel:", allowedChannel);
+    //    nltools::Log::error("isNoteEvent:", isNoteEvent, "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent || isPitchBendEvent);
 
-    if(isProgramChangeEvent)
-    {
-      return m_midiOptions.shouldReceiveProgramChanges();
-    }
-
-    if(isPolyAftertouchEvent || isControlChangeEvent)
+    if(isPolyAftertouchEvent || isControlChangeEvent || isPitchBendEvent)
     {
       return m_midiOptions.shouldReceiveControllers();
     }
