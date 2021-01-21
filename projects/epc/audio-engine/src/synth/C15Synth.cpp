@@ -130,30 +130,80 @@ void C15Synth::syncPlayground()
   }
 }
 
-constexpr static int MIDI_CHANNEL_PATTERN = 0b00001111;
-constexpr static int MIDI_CHANNEL_OMNI = 16;
+constexpr static u_int8_t MIDI_SYSEX_PATTERN = 0b11110000;
+constexpr static u_int8_t MIDI_NOTE_OFF_PATTERN = 0b10000000;
+constexpr static u_int8_t MIDI_NOTE_ON_PATTERN = 0b10010000;
+constexpr static u_int8_t MIDI_CHANNEL_PATTERN = 0b00001111;
+constexpr static u_int8_t MIDI_POLY_AFTERTOUCH_PATTERN = 0b10100000;
+constexpr static u_int8_t MIDI_CONTROLCHANGE_PATTERN = 0b10110000;
+constexpr static u_int8_t MIDI_PROGRAM_CHANGE_PATTERN = 0b11000000;
+
+constexpr static u_int8_t MIDI_CHANNEL_OMNI = 16;
 
 bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event) const
 {
   auto statusByte = event.rawBytes[0];
+  const auto isSysexEvent = statusByte & MIDI_SYSEX_PATTERN;
+
+  if(isSysexEvent)
+    return false;
+
   const auto channel = (statusByte & MIDI_CHANNEL_PATTERN);
   const auto allowedChannel = m_midiOptions.getSendChannel();
-  nltools::Log::error("filterMidiOutEvent Channel:", channel, "Byte1", (int) event.rawBytes[0], ",",
-                      (int) event.rawBytes[1], ",", (int) event.rawBytes[2]);
-  return channel == allowedChannel;
+
+  if(channel == allowedChannel)
+  {
+    const auto isNoteEvent = statusByte & MIDI_NOTE_ON_PATTERN || statusByte & MIDI_NOTE_OFF_PATTERN;
+    const auto isPolyAftertouchEvent = statusByte & MIDI_POLY_AFTERTOUCH_PATTERN;
+    const auto isControlChangeEvent = statusByte & MIDI_CONTROLCHANGE_PATTERN;
+    const auto isProgramChangeEvent = statusByte & MIDI_PROGRAM_CHANGE_PATTERN;
+
+    if(isProgramChangeEvent)
+      return m_midiOptions.shouldSendProgramChanges();
+
+    if(isNoteEvent)
+      return m_midiOptions.shouldSendNotes();
+
+    if(isControlChangeEvent || isPolyAftertouchEvent)
+      return m_midiOptions.shouldSendControllers();
+  }
+  return false;
 }
 
 bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
 {
   auto statusByte = event.raw[0];
 
-  //TODO check for SYSEX
-  //if(statusByte & 0b11110000)
-  //  return false;
+  const auto isSysexEvent = statusByte & MIDI_SYSEX_PATTERN;
+  if(isSysexEvent)
+    return false;
 
   const auto channel = (statusByte & MIDI_CHANNEL_PATTERN);
   const auto allowedChannel = m_midiOptions.getReceiveChannel();
-  return channel == allowedChannel || allowedChannel == MIDI_CHANNEL_OMNI;
+
+  if(channel == allowedChannel)
+  {
+    const auto isNoteEvent = statusByte & MIDI_NOTE_ON_PATTERN || statusByte & MIDI_NOTE_OFF_PATTERN;
+    const auto isPolyAftertouchEvent = statusByte & MIDI_POLY_AFTERTOUCH_PATTERN;
+    const auto isControlChangeEvent = statusByte & MIDI_CONTROLCHANGE_PATTERN;
+    const auto isProgramChangeEvent = statusByte & MIDI_PROGRAM_CHANGE_PATTERN;
+
+    if(isProgramChangeEvent)
+    {
+      return m_midiOptions.shouldReceiveProgramChanges();
+    }
+
+    if(isPolyAftertouchEvent || isControlChangeEvent)
+    {
+      return m_midiOptions.shouldReceiveControllers();
+    }
+
+    if(isNoteEvent)
+    {
+      return (channel == allowedChannel || allowedChannel == MIDI_CHANNEL_OMNI) && m_midiOptions.shouldReceiveNotes();
+    }
+  }
+  return false;
 }
 
 void C15Synth::doMidi(const MidiEvent& event)
@@ -167,21 +217,10 @@ void C15Synth::doMidi(const MidiEvent& event)
 
 void C15Synth::doTcd(const MidiEvent& event)
 {
+  //TODO respect local m_midiOptions here?!
   m_dsp->onTcdMessage(event.raw[0], event.raw[1], event.raw[2],
                       [=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage); });
   m_syncExternalsWaiter.notify_all();
-}
-
-void C15Synth::simulateKeyDown(int key)
-{
-  m_dsp->onTcdMessage(0xED, 0, static_cast<uint32_t>(key));  // playcontroller keyPos
-  m_dsp->onTcdMessage(0xEE, 127, 127);                       // playcontroller keyDown (vel: 100%)
-}
-
-void C15Synth::simulateKeyUp(int key)
-{
-  m_dsp->onTcdMessage(0xED, 0, static_cast<uint32_t>(key));  // playcontroller keyPos
-  m_dsp->onTcdMessage(0xEF, 127, 127);                       // playcontroller keyUp (vel: 100%)
 }
 
 unsigned int C15Synth::getRenderedSamples()

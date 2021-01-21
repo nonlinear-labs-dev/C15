@@ -60,8 +60,6 @@ class C15Synth : public Synth, public sigc::trackable
 
   void onMidiSettingsMessage(const nltools::msg::Setting::MidiSettingsMessage& msg);
 
-  void simulateKeyDown(int key);
-  void simulateKeyUp(int key);
   unsigned int getRenderedSamples();
 
   dsp_host_dual* getDsp();
