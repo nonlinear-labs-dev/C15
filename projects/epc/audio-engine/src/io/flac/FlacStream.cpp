@@ -13,10 +13,10 @@ FlacStream::FlacStream(const Synth *synth, CB cb)
     : m_synth(synth)
     , m_cb(cb)
     , m_encoder(FLAC__stream_encoder_new())
-    , m_readHead(m_synth->getAudioRing().getWriteHead())
 {
   auto sr = static_cast<uint32_t>(m_synth->getOptions()->getSampleRate());
-  auto delay = 125ms;
+
+  m_readHead = m_synth->getAudioRing().getWriteHead() - sr / 4;
 
   FLAC__stream_encoder_set_channels(m_encoder, 2);
   FLAC__stream_encoder_set_sample_rate(m_encoder, sr);
@@ -25,8 +25,7 @@ FlacStream::FlacStream(const Synth *synth, CB cb)
   FLAC__stream_encoder_init_stream(m_encoder, &writeToOut, nullptr, nullptr, nullptr, this);
 
   auto ctx = Glib::MainContext::get_default();
-  m_connection = ctx->signal_timeout().connect(sigc::mem_fun(this, &FlacStream::writeToFlac),
-                                               static_cast<unsigned int>(delay.count()));
+  m_connection = ctx->signal_timeout().connect(sigc::mem_fun(this, &FlacStream::writeToFlac), 100);
 }
 
 FlacStream::~FlacStream()
@@ -39,7 +38,6 @@ FLAC__StreamEncoderWriteStatus FlacStream::writeToOut(const FLAC__StreamEncoder 
                                                       size_t bytes, uint32_t, uint32_t, void *client_data)
 {
   static_cast<FlacStream *>(client_data)->m_cb(buffer, bytes);
-  nltools::Log::warning("Wrote to soup:", bytes);
   return FLAC__STREAM_ENCODER_WRITE_STATUS_OK;
 }
 
@@ -51,9 +49,6 @@ bool FlacStream::writeToFlac()
 
   auto &ring = m_synth->getAudioRing();
   m_scratch.resize(numFrames);
-
-  nltools::Log::warning("readHead:", m_readHead);
-  nltools::Log::warning("writeHead:", ring.getWriteHead());
 
   auto numFramesRead = ring.pop(m_scratch.data(), numFrames, m_readHead);
   m_readHead += numFramesRead;

@@ -15,7 +15,7 @@ class AudioEngineOptions;
 class Synth
 {
  public:
-  using AudioRing = RingBuffer<SampleFrame, 1 << 15>;
+  using AudioRing = RingBuffer<SampleFrame, 1 << 16>;
 
   Synth(const AudioEngineOptions *options);
   virtual ~Synth();

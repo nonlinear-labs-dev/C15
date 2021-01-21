@@ -92,10 +92,13 @@ void Synth::pushTcdEvent(const MidiEvent &event)
 
 void Synth::process(SampleFrame *target, size_t numFrames)
 {
-  if(getOptions()->getAdditionalMidiDelay() == std::chrono::nanoseconds::zero())
-    processAudioWithoutTimestampedMidi(target, numFrames);
-  else
-    processAudioWithTimestampedMidi(target, numFrames);
+  if(true)
+  {
+    if(getOptions()->getAdditionalMidiDelay() == std::chrono::nanoseconds::zero())
+      processAudioWithoutTimestampedMidi(target, numFrames);
+    else
+      processAudioWithTimestampedMidi(target, numFrames);
+  }
 
   checkFiniteness(target, numFrames);
   m_audioRingBuffer.push(target, numFrames);
