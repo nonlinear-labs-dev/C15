@@ -140,12 +140,16 @@ constexpr static u_int8_t MIDI_PROGRAM_CHANGE_PATTERN = 0b11000000;
 
 constexpr static u_int8_t MIDI_CHANNEL_OMNI = 16;
 
+bool matchPattern(unsigned char data, uint8_t PATTERN)
+{
+  return (data & PATTERN) == PATTERN;
+}
+
 bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event) const
 {
   auto statusByte = event.rawBytes[0];
-  const auto isSysexEvent = statusByte & MIDI_SYSEX_PATTERN;
 
-  if(isSysexEvent)
+  if(matchPattern(statusByte, MIDI_SYSEX_PATTERN))
     return false;
 
   const auto channel = (statusByte & MIDI_CHANNEL_PATTERN);
@@ -153,10 +157,15 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
 
   if(channel == allowedChannel)
   {
-    const auto isNoteEvent = statusByte & MIDI_NOTE_ON_PATTERN || statusByte & MIDI_NOTE_OFF_PATTERN;
-    const auto isPolyAftertouchEvent = statusByte & MIDI_POLY_AFTERTOUCH_PATTERN;
-    const auto isControlChangeEvent = statusByte & MIDI_CONTROLCHANGE_PATTERN;
-    const auto isProgramChangeEvent = statusByte & MIDI_PROGRAM_CHANGE_PATTERN;
+    const auto isNoteEvent
+        = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN) || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN);
+    const auto isPolyAftertouchEvent = matchPattern(statusByte, MIDI_POLY_AFTERTOUCH_PATTERN);
+    const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN);
+    const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAM_CHANGE_PATTERN);
+
+    nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
+    nltools::Log::error("isNoteEvent:", isNoteEvent, "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent,
+                        "isPCEvent", isProgramChangeEvent);
 
     if(isProgramChangeEvent)
       return m_midiOptions.shouldSendProgramChanges();
@@ -174,8 +183,7 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
 {
   auto statusByte = event.raw[0];
 
-  const auto isSysexEvent = statusByte & MIDI_SYSEX_PATTERN;
-  if(isSysexEvent)
+  if(matchPattern(statusByte, MIDI_SYSEX_PATTERN))
     return false;
 
   const auto channel = (statusByte & MIDI_CHANNEL_PATTERN);
@@ -183,10 +191,15 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
 
   if(channel == allowedChannel)
   {
-    const auto isNoteEvent = statusByte & MIDI_NOTE_ON_PATTERN || statusByte & MIDI_NOTE_OFF_PATTERN;
-    const auto isPolyAftertouchEvent = statusByte & MIDI_POLY_AFTERTOUCH_PATTERN;
-    const auto isControlChangeEvent = statusByte & MIDI_CONTROLCHANGE_PATTERN;
-    const auto isProgramChangeEvent = statusByte & MIDI_PROGRAM_CHANGE_PATTERN;
+    const auto isNoteEvent
+        = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN) || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN);
+    const auto isPolyAftertouchEvent = matchPattern(statusByte, MIDI_POLY_AFTERTOUCH_PATTERN);
+    const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN);
+    const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAM_CHANGE_PATTERN);
+
+    nltools::Log::error("filterMidiInEvent channel:", channel, "allowedChannel:", allowedChannel);
+    nltools::Log::error("isNoteEvent:", isNoteEvent, "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent,
+                        "isPCEvent", isProgramChangeEvent);
 
     if(isProgramChangeEvent)
     {
