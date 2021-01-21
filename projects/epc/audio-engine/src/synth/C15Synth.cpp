@@ -60,7 +60,7 @@ C15Synth::C15Synth(AudioEngineOptions* options)
     MidiEvent e;
     std::copy(msg.rawBytes.data(), msg.rawBytes.data() + msg.numBytesUsed, e.raw);
 
-    if((e.raw[0] & 0xF0) == 0xC0)
+    if((e.raw[0] & 0xF0) == 0xC0 && m_midiOptions.shouldReceiveProgramChanges())
     {
       // receive program changes midi-over-ip and dispatch it to playground
       send(nltools::msg::EndPoint::Playground, nltools::msg::Midi::ProgramChangeMessage { e.raw[1] });
