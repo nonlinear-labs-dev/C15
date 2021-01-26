@@ -27,7 +27,7 @@ public class SplitPointKeyBed extends KeyBed {
         try (ClipContext c = new ClipContext(ctx, this)) {
             super.draw(ctx, invalidationMask);
 
-            VoiceGroup vg = lastTouchedVoiceGroup;
+            VoiceGroup vg = EditBufferModel.get().voiceGroup.getValue();
             VoiceGroup other = (vg == VoiceGroup.I) ? VoiceGroup.II : VoiceGroup.I;
 
             drawSplitPart(ctx, other);
