@@ -128,10 +128,9 @@ void BankEditButtonMenu::newBank()
   newBank->setX(transaction, to_string(pos.first));
   newBank->setY(transaction, to_string(pos.second));
   pm->selectBank(transaction, newBank->getUuid());
-
-  Application::get().getHWUI()->undoableSetFocusAndMode(transaction, FocusAndMode(UIFocus::Presets, UIMode::Select));
-
-  auto layout = new RenameBankLayout(transaction);
+  auto layout = new RenameBankLayout(transaction, [](auto transaction) {
+    Application::get().getHWUI()->undoableSetFocusAndMode(transaction, FocusAndMode(UIFocus::Presets, UIMode::Select));
+  });
   Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
 }
 

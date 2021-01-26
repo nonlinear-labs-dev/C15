@@ -22,7 +22,7 @@ inline EditBuffer *getEditBuffer()
 Bank::Bank(UpdateDocumentContributor *parent)
     : super(parent)
     , m_attachedToBankWithUuid(Uuid::none())
-    , m_name("<Untitled Bank>")
+    , m_name("New Bank")
     , m_presets(*this, std::bind(&Bank::clonePreset, this, std::placeholders::_1))
 {
 }
@@ -164,7 +164,7 @@ const Uuid &Bank::getUuid() const
 std::string Bank::getName(bool withFallback) const
 {
   if(m_name.empty() && withFallback)
-    return "<Untitled Bank>";
+    return "New Bank";
 
   return m_name;
 }

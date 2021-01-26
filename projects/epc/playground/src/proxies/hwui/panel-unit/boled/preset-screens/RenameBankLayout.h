@@ -16,6 +16,7 @@ class RenameBankLayout : public RenameLayout
 
  public:
   RenameBankLayout(UNDO::Transaction* transaction = nullptr);
+  RenameBankLayout(UNDO::Transaction* transaction, std::function<void(UNDO::Transaction*)> onCommit);
 
  private:
   virtual void commit(const Glib::ustring& newName) override;
@@ -23,4 +24,5 @@ class RenameBankLayout : public RenameLayout
 
   Bank* m_currentBank = nullptr;
   UNDO::Transaction* m_transaction;
+  std::function<void(UNDO::Transaction*)> m_onCommitCallback { nullptr };
 };
