@@ -153,6 +153,8 @@ public class Overlay extends OverlayLayout {
 		Rect ldr = layerDisplay.getPixRect().copy();
 		ldr.setTop(ldr.getTop() + 1);
 		r.setTop(ldr.getTop() + 1);
+		r.setLeft(r.getLeft() + 1);
+		r.setWidth(r.getWidth() - 1);
 
 		double w = 2;
 		double corner = Millimeter.toPixels(1);
