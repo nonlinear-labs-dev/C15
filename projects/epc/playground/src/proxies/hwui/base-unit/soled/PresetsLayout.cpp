@@ -39,7 +39,8 @@ PresetsLayout::PresetsLayout()
 
   addControl(new SoledHeader("Preset", Rect(0, 0, 31, headlineHeight + 1)));
   m_number = addControl(new LabelRegular8("", Rect(32, 1, 64, headlineHeight - 1)));
-  m_name = addControl(new ShortenLabel("", Rect(0, headlineHeight + 2, 128, 32 - headlineHeight - 2)));
+  m_name = addControl(new ShortenLabel("", Rect(0, headlineHeight + 2, 120, 32 - headlineHeight - 2)));
+  m_type = addControl(new ShortenLabel("", Rect(120, headlineHeight, 8, 32 - headlineHeight - 2)));
   m_directLoad = addControl(new DirectLoadIndicator(Rect(96, 0, 32, headlineHeight)));
   addControl(new DottedLine(Rect(31, headlineHeight, 96, 1)));
 
@@ -115,6 +116,7 @@ bool PresetsLayout::updateNameAndNumber()
       auto presetNumberString = formatBankAndPresetNumber(bankNumber, presetPosition, modified);
       m_number->setText(presetNumberString);
       m_name->setText(preset->getDisplayNameWithSuffixes(false));
+      m_type->setText(Preset::getTypeUnicode(preset));
       return true;
     }
   }

@@ -32,5 +32,6 @@ class PresetsLayout : public Layout
   sigc::connection m_connection;
   Label *m_number;
   Label *m_name;
+  Label *m_type;
   DirectLoadIndicator *m_directLoad;
 };

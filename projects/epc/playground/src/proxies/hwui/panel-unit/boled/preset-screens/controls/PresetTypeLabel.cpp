@@ -120,9 +120,9 @@ std::string typeToString(const SoundType &type)
     case SoundType::Invalid:
       return "";
     case SoundType::Layer:
-      return "\uE0F3";
+      return "\uE0F5";
     case SoundType::Split:
-      return "\uE0F0";
+      return "\uE0F2";
   }
   return {};
 }
