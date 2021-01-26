@@ -4,6 +4,8 @@
 
 class Setting;
 
+
+//remove this and use enumsettingeditor
 class SignalFlowIndicatorEditor : public MenuEditor
 {
  private:

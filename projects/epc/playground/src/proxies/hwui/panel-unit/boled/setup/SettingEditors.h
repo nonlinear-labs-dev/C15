@@ -4,7 +4,9 @@
 #include "device-settings/Settings.h"
 #include "device-settings/Setting.h"
 #include <Application.h>
+#include <device-settings/BooleanSetting.h>
 
+//fix for boolean setting
 template <typename tSetting> class EnumSettingEditor : public MenuEditor
 {
  public:
@@ -25,7 +27,7 @@ template <typename tSetting> class EnumSettingEditor : public MenuEditor
 
   int getSelectedIndex() const override
   {
-    return static_cast<size_t>(getSetting()->get());
+    return static_cast<size_t>(getSetting()->getEnumIndex());
   }
 
   auto getSetting() const

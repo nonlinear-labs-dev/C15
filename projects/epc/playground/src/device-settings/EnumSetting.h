@@ -36,6 +36,11 @@ template <typename TEnum> class EnumSetting : public Setting
     return m_mode;
   }
 
+  size_t getEnumIndex() const
+  {
+    return static_cast<size_t>(EnumSetting<tEnum>::get());
+  }
+
   void load(const Glib::ustring &text, Initiator initiator) override
   {
     int i = 0;

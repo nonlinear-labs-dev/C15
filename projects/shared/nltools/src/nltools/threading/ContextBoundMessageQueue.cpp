@@ -15,7 +15,7 @@ namespace nltools
 
     void ContextBoundMessageQueue::pushMessage(tMessage &&m)
     {
-      m_jobs.remove_if([&](const auto &a) { return a.unique(); });
+      m_jobs.remove_if([&](const auto &a) { return a.unique(); }); //check if changed on staging
 
       m_pendingCalls++;
 
