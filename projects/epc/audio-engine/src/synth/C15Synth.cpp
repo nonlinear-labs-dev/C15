@@ -7,7 +7,7 @@
 
 C15Synth::C15Synth(AudioEngineOptions* options)
     : Synth(options)
-    , m_dsp(std::make_unique<dsp_host_dual>())
+    , m_dsp(std::make_unique<dsp_host_dual>(m_midiOptions))
     , m_options(options)
     , m_syncExternalsTask(std::async(std::launch::async, [this] { syncExternals(); }))
 {
@@ -220,32 +220,41 @@ void C15Synth::doMidi(const MidiEvent& event)
 {
   if(filterMidiInEvent(event))
   {
+    //[=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage);
     m_dsp->onMidiMessage(event.raw[0], event.raw[1], event.raw[2]);
     m_syncExternalsWaiter.notify_all();
   }
 }
 
+constexpr auto TCD_PATTERN = 0b11100000;
+constexpr auto TCD_KEY_POS_PATTERN = 0b11101100;
+constexpr auto TCD_KEY_DOWN_PATTERN = 0b11101101;
+constexpr auto TCD_KEY_UP_PATTERN = 0b11101110;
+constexpr auto TCD_TYPE_MASK = 0b00001111;
+
+bool isValidTCDMessage(const MidiEvent& event)
+{
+  return matchPattern(event.raw[0], TCD_PATTERN, TCD_PATTERN);
+}
+
 bool C15Synth::filterTcdIn(const MidiEvent& event) const
 {
-  nltools::Log::error("TCD In: ", (int) event.raw[0], (int) event.raw[1], (int) event.raw[2]);
-  
-  const auto statusByte = event.raw[0];
-  const auto isNoteEvent = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
-      || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK);
-  const auto isPolyAftertouchEvent = matchPattern(statusByte, MIDI_POLY_AFTERTOUCH_PATTERN, MIDI_EVENT_TYPE_MASK);
-  const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
-  const auto isPitchBendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
-
-  if(isNoteEvent)
+  if(isValidTCDMessage(event))
   {
-    return m_midiOptions.shouldReceiveLocalNotes();
-  }
+    const auto typeId = (event.raw[0] & TCD_TYPE_MASK);
+    const auto isNoteEvent = typeId >= 13 && typeId <= 15;
+    const auto isControlEvent = typeId >= 0 && typeId <= 11;
 
-  if(isPolyAftertouchEvent || isControlChangeEvent || isPitchBendEvent)
-  {
-    return m_midiOptions.shouldReceiveLocalControllers();
-  }
+    if(isNoteEvent)
+    {
+      return m_midiOptions.shouldReceiveLocalNotes();
+    }
 
+    if(isControlEvent)
+    {
+      return m_midiOptions.shouldReceiveLocalControllers();
+    }
+  }
   return false;
 }
 

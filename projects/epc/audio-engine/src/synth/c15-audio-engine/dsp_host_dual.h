@@ -59,6 +59,8 @@ inline constexpr uint32_t LOG_PARAMS_LENGTH = 3;
 // use tcd ids here (currently: Split Point, Unison Detune)
 static const uint32_t LOG_PARAMS[LOG_PARAMS_LENGTH] = { 356, 250, 367 };
 
+class MidiRuntimeOptions;
+
 class dsp_host_dual
 {
  public:
@@ -66,7 +68,7 @@ class dsp_host_dual
   float m_mainOut_R = 0.0f, m_mainOut_L = 0.0f;
   uint32_t m_sample_counter = 0;
   // constructor
-  dsp_host_dual();
+  dsp_host_dual(const MidiRuntimeOptions& midiSettings);
   // public methods
   void init(const uint32_t _samplerate, const uint32_t _polyphony);
   // handles for inconvenient stuff
@@ -211,4 +213,6 @@ class dsp_host_dual
   template <Midi::MSB::HWSourceMidiCC msb, Midi::LSB::HWSourceMidiCC lsb>
   void sendCCOut(int id, float controlPosition, const MidiOut& out);
   void processMidiForHWSource(int id, uint32_t _data);
+
+  const MidiRuntimeOptions& m_midiOptions;
 };
