@@ -1,7 +1,7 @@
 #include "OpusStream.h"
 #include <glibmm.h>
 
-OpusStream::OpusStream(const EncodedStream::AudioRing &ring, uint32_t sampleRate, CB cb)
+OpusStream::OpusStream(const RingBuffer<SampleFrame> &ring, uint32_t sampleRate, CB cb)
     : EncodedStream(ring, sampleRate)
     , m_cb(cb)
 {

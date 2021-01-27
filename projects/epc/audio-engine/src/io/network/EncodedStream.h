@@ -1,13 +1,12 @@
 #pragma once
 
 #include <io/RingBuffer.h>
+#include <string>
 
 class EncodedStream
 {
  public:
-  using AudioRing = RingBuffer<SampleFrame, 1 << 16>;
-
-  EncodedStream(const AudioRing &ring, uint32_t sampleRate)
+  EncodedStream(const RingBuffer<SampleFrame> &ring, uint32_t sampleRate)
       : m_ring(ring)
       , m_sampleRate(sampleRate)
   {
@@ -17,6 +16,6 @@ class EncodedStream
   virtual ~EncodedStream() = default;
 
  protected:
-  const AudioRing &m_ring;
+  const RingBuffer<SampleFrame> &m_ring;
   uint32_t m_sampleRate;
 };

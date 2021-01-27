@@ -1,14 +1,19 @@
 #pragma once
 
 #include "Types.h"
-#include <array>
+#include <vector>
 
-template <typename T, uint32_t numElements> class RingBuffer
+template <typename T> class RingBuffer
 {
  public:
+  RingBuffer(size_t numElements)
+      : m_buffer(numElements)
+  {
+  }
+
   T& push(const T& e)
   {
-    T& ret = m_buffer[m_writeHead & mask];
+    T& ret = m_buffer[m_writeHead % m_buffer.size()];
     ret = e;
     m_writeHead++;
     return ret;
@@ -16,7 +21,7 @@ template <typename T, uint32_t numElements> class RingBuffer
 
   void push(const T* e, size_t numFrames)
   {
-    auto idx = m_writeHead & mask;
+    auto idx = m_writeHead % m_buffer.size();
     auto cap = m_buffer.size() - idx;
     auto todoNow = std::min(cap, numFrames);
     std::copy(e, e + todoNow, m_buffer.data() + idx);
@@ -29,20 +34,20 @@ template <typename T, uint32_t numElements> class RingBuffer
   const T* peek() const
   {
     if(m_writeHead > m_readHead)
-      return &(m_buffer[m_readHead & mask]);
+      return &(m_buffer[m_readHead % m_buffer.size()]);
 
     return nullptr;
   }
 
   const T& pop()
   {
-    return m_buffer[m_readHead++ & mask];
+    return m_buffer[m_readHead++ % m_buffer.size()];
   }
 
   size_t pop(T* target, size_t targetSize, uint64_t readHead) const
   {
     auto content = m_writeHead - readHead;
-    auto idx = readHead & mask;
+    auto idx = readHead % m_buffer.size();
     auto chunkSize = m_buffer.size() - idx;
     if(auto todo = std::min(std::min<uint64_t>(chunkSize, content), targetSize))
     {
@@ -63,8 +68,7 @@ template <typename T, uint32_t numElements> class RingBuffer
   }
 
  private:
-  constexpr static uint64_t mask = (numElements - 1);
-  std::array<T, numElements> m_buffer;
+  std::vector<T> m_buffer;
   uint64_t m_readHead = 0;
   uint64_t m_writeHead = 0;
 };

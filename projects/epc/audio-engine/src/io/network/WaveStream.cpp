@@ -2,7 +2,7 @@
 #include <glibmm.h>
 #include <nltools/logging/Log.h>
 
-WaveStream::WaveStream(const EncodedStream::AudioRing &ring, uint32_t sampleRate, CB cb)
+WaveStream::WaveStream(const RingBuffer<SampleFrame> &ring, uint32_t sampleRate, CB cb)
     : EncodedStream(ring, sampleRate)
     , m_cb(cb)
 {

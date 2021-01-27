@@ -10,7 +10,7 @@ class FlacStream : public EncodedStream
 {
  public:
   using CB = std::function<void(const uint8_t *data, size_t numBytes)>;
-  FlacStream(const EncodedStream::AudioRing &ring, uint32_t sampleRate, CB cb);
+  FlacStream(const RingBuffer<SampleFrame> &ring, uint32_t sampleRate, CB cb);
   ~FlacStream() override;
 
   std::string getContentType() const override;

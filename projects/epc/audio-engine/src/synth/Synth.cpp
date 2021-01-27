@@ -11,48 +11,12 @@
 
 Synth::Synth(const AudioEngineOptions *options)
     : m_options(options)
+    , m_midiRingBuffer(2048)
+    , m_tcdRingBuffer(2048)
 {
-  auto outDeviceName = options->getAudioOutputDeviceName();
-
-  if(outDeviceName.empty())
-    m_out = std::make_unique<AudioOutputMock>();
-  else
-    m_out = std::make_unique<AlsaAudioOutput>(options, outDeviceName,
-                                              [=](auto buf, auto length) { process(buf, length); });
-
-  auto inMidiDeviceName = options->getMidiInputDeviceName();
-  if(inMidiDeviceName.empty())
-    m_midiIn = std::make_unique<MidiInputMock>([=](auto) {});
-  else
-    m_midiIn = std::make_unique<AlsaMidiInput>(inMidiDeviceName, [=](auto event) { pushMidiEvent(event); });
-
-  auto inTcdDeviceName = options->getTcdInputDeviceName();
-  if(inTcdDeviceName.empty())
-    m_tcdIn = std::make_unique<MidiInputMock>([=](auto) {});
-  else
-    m_tcdIn = std::make_unique<AlsaMidiInput>(inTcdDeviceName, [=](auto event) { pushTcdEvent(event); });
 }
 
 Synth::~Synth() = default;
-
-void Synth::start()
-{
-  m_midiIn->start();
-  m_tcdIn->start();
-  m_out->start();
-}
-
-void Synth::stop()
-{
-  m_out->stop();
-  m_tcdIn->stop();
-  m_midiIn->stop();
-}
-
-AudioOutput *Synth::getAudioOut() const
-{
-  return m_out.get();
-}
 
 std::tuple<Synth::AudioBlock, Synth::RealtimeFactor> Synth::measurePerformance(std::chrono::nanoseconds time)
 {
@@ -63,11 +27,6 @@ std::tuple<Synth::AudioBlock, Synth::RealtimeFactor> Synth::measurePerformance(s
 
   auto timeUsed = std::chrono::high_resolution_clock::now() - start;
   return { std::move(samples), 1.0 * time / timeUsed };
-}
-
-void Synth::resetPerformance()
-{
-  m_out->resetPerformance();
 }
 
 void Synth::resetDSP()
@@ -92,16 +51,12 @@ void Synth::pushTcdEvent(const MidiEvent &event)
 
 void Synth::process(SampleFrame *target, size_t numFrames)
 {
-  if(true)
-  {
-    if(getOptions()->getAdditionalMidiDelay() == std::chrono::nanoseconds::zero())
-      processAudioWithoutTimestampedMidi(target, numFrames);
-    else
-      processAudioWithTimestampedMidi(target, numFrames);
-  }
+  if(getOptions()->getAdditionalMidiDelay() == std::chrono::nanoseconds::zero())
+    processAudioWithoutTimestampedMidi(target, numFrames);
+  else
+    processAudioWithTimestampedMidi(target, numFrames);
 
   checkFiniteness(target, numFrames);
-  m_audioRingBuffer.push(target, numFrames);
 }
 
 void Synth::checkFiniteness(SampleFrame *target, size_t numFrames)
@@ -119,11 +74,6 @@ void Synth::checkFiniteness(SampleFrame *target, size_t numFrames)
 const AudioEngineOptions *Synth::getOptions() const
 {
   return m_options;
-}
-
-const EncodedStream::AudioRing &Synth::getAudioRing() const
-{
-  return m_audioRingBuffer;
 }
 
 void Synth::processAudioWithoutTimestampedMidi(SampleFrame *target, size_t numFrames)

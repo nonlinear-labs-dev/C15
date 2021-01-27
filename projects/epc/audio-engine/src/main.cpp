@@ -3,7 +3,12 @@
 #include "synth/CPUBurningSynth.h"
 #include "ui/CommandlinePerformanceWatch.h"
 #include "io/MidiHeartBeat.h"
-#include "io/network/StreamServer.h"
+#include "io/network/NetworkServer.h"
+
+#include "io/audio/AudioOutputMock.h"
+#include "io/audio/AlsaAudioOutput.h"
+#include "io/midi/MidiInputMock.h"
+#include "io/midi/AlsaMidiInput.h"
 
 #include <nltools/logging/Log.h>
 #include <nltools/StringTools.h>
@@ -17,31 +22,31 @@
 static Glib::RefPtr<Glib::MainLoop> theMainLoop;
 static std::unique_ptr<AudioEngineOptions> theOptions;
 
-void quit(int)
+static void quit(int)
 {
   if(theMainLoop)
     theMainLoop->quit();
 }
 
-void connectSignals()
+static void connectSignals()
 {
   signal(SIGINT, quit);
   signal(SIGQUIT, quit);
   signal(SIGTERM, quit);
 }
 
-const AudioEngineOptions *getOptions()
+static const AudioEngineOptions *getOptions()
 {
   return theOptions.get();
 }
 
-void runMainLoop()
+static void runMainLoop()
 {
   theMainLoop = Glib::MainLoop::create();
   theMainLoop->run();
 }
 
-void setupMessaging(const AudioEngineOptions *o)
+static void setupMessaging(const AudioEngineOptions *o)
 {
   using namespace nltools::msg;
 
@@ -55,7 +60,7 @@ void setupMessaging(const AudioEngineOptions *o)
   nltools::msg::init(conf);
 }
 
-std::unique_ptr<Synth> createSynth(AudioEngineOptions *options)
+static std::unique_ptr<Synth> createSynth(AudioEngineOptions *options)
 {
   if(options->getNumCpuBurningSines())
     return std::make_unique<CPUBurningSynth>(options);
@@ -63,12 +68,52 @@ std::unique_ptr<Synth> createSynth(AudioEngineOptions *options)
   return std::make_unique<C15Synth>(options);
 }
 
-std::unique_ptr<C15_CLI> createCLI(Synth *synth)
+static std::unique_ptr<C15_CLI> createCLI(Synth *synth, AudioOutput *audioOut)
 {
   if(auto c15 = dynamic_cast<C15Synth *>(synth))
-    return std::make_unique<C15_CLI>(c15);
+    return std::make_unique<C15_CLI>(c15, audioOut);
 
   return nullptr;
+}
+
+static int measurePerformance()
+{
+  auto synth = std::make_unique<C15Synth>(theOptions.get());
+  synth->measurePerformance(std::chrono::seconds(5));  // warm up
+  auto result = std::get<1>(synth->measurePerformance(std::chrono::seconds(5)));
+  nltools::Log::info("Audio engine performs at", result, "x realtime.");
+  return EXIT_SUCCESS;
+}
+
+template <typename Ring>
+static std::unique_ptr<AudioOutput> createAudioOut(const std::string &name, Ring &ring, Synth *synth)
+{
+  return name.empty() ? nullptr : std::make_unique<AlsaAudioOutput>(theOptions.get(), name, [&](auto buf, auto length) {
+    synth->process(buf, length);
+    ring.push(buf, length);
+  });
+}
+
+static std::unique_ptr<MidiInput> createMidiIn(const std::string &name, Synth *synth)
+{
+  return name.empty() ? nullptr
+                      : std::make_unique<AlsaMidiInput>(name, [&](auto event) { synth->pushMidiEvent(event); });
+}
+
+static std::unique_ptr<MidiInput> createTCDIn(const std::string &name, Synth *synth)
+{
+  return name.empty() ? nullptr
+                      : std::make_unique<AlsaMidiInput>(name, [&](auto event) { synth->pushMidiEvent(event); });
+}
+
+template <typename... A> static void start(A &... a)
+{
+  (a->start(), ...);
+}
+
+template <typename... A> static void stop(A &... a)
+{
+  (..., a->stop());
 }
 
 int main(int args, char *argv[])
@@ -82,24 +127,23 @@ int main(int args, char *argv[])
   setupMessaging(theOptions.get());
 
   if(theOptions->doMeasurePerformance())
-  {
-    auto synth = std::make_unique<C15Synth>(theOptions.get());
-    synth->measurePerformance(std::chrono::seconds(5));  // warm up
-    auto result = std::get<1>(synth->measurePerformance(std::chrono::seconds(5)));
-    nltools::Log::info("Audio engine performs at", result, "x realtime.");
-    return EXIT_SUCCESS;
-  }
+    return measurePerformance();
 
   auto synth = createSynth(theOptions.get());
-  auto cli = createCLI(synth.get());
 
-  CommandlinePerformanceWatch watch(synth->getAudioOut());
-  StreamServer flacStreamServer(synth->getAudioRing(), theOptions->getSampleRate());
+  RingBuffer<SampleFrame> outRing(theOptions->getSampleRate());
+  NetworkServer flacStreamServer(outRing, theOptions->getSampleRate());
+  auto audioOut = createAudioOut(theOptions->getAudioOutputDeviceName(), outRing, synth.get());
+  auto midiIn = createMidiIn(theOptions->getMidiInputDeviceName(), synth.get());
+  auto tcdIn = createTCDIn(theOptions->getTcdInputDeviceName(), synth.get());
+  auto cli = createCLI(synth.get(), audioOut.get());
 
-  synth->start();
   MidiHeartBeat heartbeat(theOptions->getHeartBeatDeviceName());
+  CommandlinePerformanceWatch watch(audioOut.get());
+
+  start(audioOut, midiIn, tcdIn);
   runMainLoop();
-  synth->stop();
+  stop(audioOut, midiIn, tcdIn);
 
   return EXIT_SUCCESS;
 }

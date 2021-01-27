@@ -23,6 +23,7 @@ C15Synth::C15Synth(AudioEngineOptions* options)
     : Synth(options)
     , m_dsp(std::make_unique<dsp_host_dual>())
     , m_options(options)
+    , m_externalMidiOutBuffer(2048)
     , m_syncExternalsTask(std::async(std::launch::async, [this] { syncExternals(); }))
 {
   m_hwSourceValues.fill(0);

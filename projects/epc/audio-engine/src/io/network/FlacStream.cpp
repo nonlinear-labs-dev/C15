@@ -1,7 +1,7 @@
 #include "FlacStream.h"
 #include <glibmm.h>
 
-FlacStream::FlacStream(const EncodedStream::AudioRing &ring, uint32_t sampleRate, CB cb)
+FlacStream::FlacStream(const RingBuffer<SampleFrame> &ring, uint32_t sampleRate, CB cb)
     : EncodedStream(ring, sampleRate)
     , m_cb(cb)
     , m_encoder(FLAC__stream_encoder_new())

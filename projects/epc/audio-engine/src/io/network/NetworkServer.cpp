@@ -1,4 +1,4 @@
-#include "StreamServer.h"
+#include "NetworkServer.h"
 #include "FlacStream.h"
 #include "OpusStream.h"
 #include "WaveStream.h"
@@ -7,25 +7,25 @@
 #include <netinet/tcp.h>
 #include <nltools/logging/Log.h>
 
-StreamServer::StreamServer(const EncodedStream::AudioRing &ring, uint32_t sampleRate)
+NetworkServer::NetworkServer(const RingBuffer<SampleFrame> &ring, uint32_t sampleRate)
     : m_ring(ring)
     , m_sampleRate(sampleRate)
     , m_server(soup_server_new(nullptr, nullptr))
 {
-  soup_server_add_handler(m_server, nullptr, &StreamServer::stream, this, nullptr);
+  soup_server_add_handler(m_server, nullptr, &NetworkServer::stream, this, nullptr);
   soup_server_listen_all(m_server, 9090, static_cast<SoupServerListenOptions>(0), nullptr);
 }
 
-StreamServer::~StreamServer()
+NetworkServer::~NetworkServer()
 {
   m_streams.clear();
   g_object_unref(m_server);
 }
 
-void StreamServer::stream(SoupServer *server, SoupMessage *msg, const char *path, GHashTable *,
-                          SoupClientContext *client, gpointer ctx)
+void NetworkServer::stream(SoupServer *server, SoupMessage *msg, const char *path, GHashTable *,
+                           SoupClientContext *client, gpointer ctx)
 {
-  auto pThis = static_cast<StreamServer *>(ctx);
+  auto pThis = static_cast<NetworkServer *>(ctx);
   auto socket = soup_client_context_get_gsocket(client);
 
   GError *error = nullptr;
@@ -61,14 +61,14 @@ void StreamServer::stream(SoupServer *server, SoupMessage *msg, const char *path
   soup_message_headers_set_encoding(msg->response_headers, SOUP_ENCODING_CHUNKED);
   soup_message_headers_set_content_type(msg->response_headers, stream->getContentType().c_str(), nullptr);
 
-  g_signal_connect(G_OBJECT(msg), "finished", G_CALLBACK(&StreamServer::onFinished), pThis);
+  g_signal_connect(G_OBJECT(msg), "finished", G_CALLBACK(&NetworkServer::onFinished), pThis);
   g_object_set_data(G_OBJECT(msg), "stream", stream.get());
 
   soup_server_pause_message(server, msg);
   pThis->m_streams.push_back(std::move(stream));
 }
 
-void StreamServer::onFinished(SoupMessage *msg, StreamServer *pThis)
+void NetworkServer::onFinished(SoupMessage *msg, NetworkServer *pThis)
 {
   auto &streams = pThis->m_streams;
   auto stream = g_object_get_data(G_OBJECT(msg), "stream");
