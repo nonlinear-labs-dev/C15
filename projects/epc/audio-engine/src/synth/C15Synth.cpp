@@ -225,11 +225,39 @@ void C15Synth::doMidi(const MidiEvent& event)
   }
 }
 
+bool C15Synth::filterTcdIn(const MidiEvent& event) const
+{
+  const auto statusByte = event.raw[0];
+  const auto isNoteEvent = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
+      || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK);
+  const auto isPolyAftertouchEvent = matchPattern(statusByte, MIDI_POLY_AFTERTOUCH_PATTERN, MIDI_EVENT_TYPE_MASK);
+  const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
+  const auto isPitchBendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
+
+  if(isNoteEvent)
+  {
+    return m_midiOptions.shouldReceiveLocalNotes();
+  }
+
+  if(isPolyAftertouchEvent || isControlChangeEvent || isPitchBendEvent)
+  {
+    return m_midiOptions.shouldReceiveLocalControllers();
+  }
+
+  return false;
+}
+
 void C15Synth::doTcd(const MidiEvent& event)
 {
-  //TODO respect local m_midiOptions here?!
-  m_dsp->onTcdMessage(event.raw[0], event.raw[1], event.raw[2],
-                      [=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage); });
+  const auto statusByte = event.raw[0];
+  if(isSysex(statusByte))
+    return;
+
+  auto isNoteMessage =
+
+      //TODO respect local m_midiOptions here?!
+      m_dsp->onTcdMessage(event.raw[0], event.raw[1], event.raw[2],
+                          [=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage); });
   m_syncExternalsWaiter.notify_all();
 }
 

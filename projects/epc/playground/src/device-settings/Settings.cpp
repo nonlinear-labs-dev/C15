@@ -391,7 +391,8 @@ void Settings::sendMidiSettingsMessage()
   msg.receiveProgramChange = getSetting<MidiReceiveProgramChangesSetting>()->get();
   msg.receiveControllers = getSetting<MidiReceiveControllersSetting>()->get();
 
-  //TODO add Local
-
+  msg.localNotes = getSetting<LocalNotesSetting>()->get();
+  msg.localControllers = getSetting<LocalControllersSetting>()->get();
+  
   nltools::msg::send(nltools::msg::EndPoint::AudioEngine, msg);
 }

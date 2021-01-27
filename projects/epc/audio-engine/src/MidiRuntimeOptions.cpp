@@ -15,6 +15,9 @@ void MidiRuntimeOptions::update(const nltools::msg::Setting::MidiSettingsMessage
   m_sendProgramChanges = msg.sendProgramChange;
   m_sendControllers = msg.sendControllers;
   m_sendNotes = msg.sendNotes;
+
+  m_localNotes = msg.localNotes;
+  m_localControllers = msg.localControllers;
 }
 
 int MidiRuntimeOptions::getReceiveChannel() const
@@ -65,4 +68,14 @@ int MidiRuntimeOptions::getReceiveSplitChannel() const
 int MidiRuntimeOptions::getSendSplitChannel() const
 {
   return m_sendSplitChannel;
+}
+
+bool MidiRuntimeOptions::shouldReceiveLocalNotes() const
+{
+  return m_localNotes;
+}
+
+bool MidiRuntimeOptions::shouldReceiveLocalControllers() const
+{
+  return m_localControllers;
 }

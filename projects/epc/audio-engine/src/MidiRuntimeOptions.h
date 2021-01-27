@@ -17,6 +17,9 @@ class MidiRuntimeOptions
   [[nodiscard]] bool shouldSendNotes() const;
   [[nodiscard]] bool shouldSendControllers() const;
 
+  [[nodiscard]] bool shouldReceiveLocalNotes() const;
+  [[nodiscard]] bool shouldReceiveLocalControllers() const;
+
   void update(const nltools::msg::Setting::MidiSettingsMessage& msg);
 
  private:
@@ -32,4 +35,7 @@ class MidiRuntimeOptions
   bool m_sendProgramChanges = false;
   bool m_sendNotes = false;
   bool m_sendControllers = false;
+
+  bool m_localNotes = false;
+  bool m_localControllers = false;
 };

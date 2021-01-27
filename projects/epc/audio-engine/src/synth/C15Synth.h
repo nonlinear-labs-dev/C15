@@ -67,6 +67,7 @@ class C15Synth : public Synth, public sigc::trackable
  private:
   bool filterMidiInEvent(const MidiEvent& event) const;
   bool filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event) const;
+  bool filterTcdIn(const MidiEvent& event) const;
 
   void queueExternalMidiOut(const dsp_host_dual::SimpleRawMidiMessage& m);
 

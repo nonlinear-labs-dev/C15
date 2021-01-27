@@ -231,6 +231,9 @@ namespace nltools
         bool sendProgramChange = false;
         bool sendNotes = false;
         bool sendControllers = false;
+
+        bool localNotes = false;
+        bool localControllers = false;
       };
 
       struct TransitionTimeMessage
