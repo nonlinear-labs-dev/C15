@@ -227,6 +227,8 @@ void C15Synth::doMidi(const MidiEvent& event)
 
 bool C15Synth::filterTcdIn(const MidiEvent& event) const
 {
+  nltools::Log::error("TCD In: ", (int) event.raw[0], (int) event.raw[1], (int) event.raw[2]);
+  
   const auto statusByte = event.raw[0];
   const auto isNoteEvent = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
       || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK);
