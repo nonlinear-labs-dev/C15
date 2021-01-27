@@ -249,16 +249,12 @@ bool C15Synth::filterTcdIn(const MidiEvent& event) const
 
 void C15Synth::doTcd(const MidiEvent& event)
 {
-  const auto statusByte = event.raw[0];
-  if(isSysex(statusByte))
-    return;
-
-  auto isNoteMessage =
-
-      //TODO respect local m_midiOptions here?!
-      m_dsp->onTcdMessage(event.raw[0], event.raw[1], event.raw[2],
-                          [=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage); });
-  m_syncExternalsWaiter.notify_all();
+  if(filterTcdIn(event))
+  {
+    m_dsp->onTcdMessage(event.raw[0], event.raw[1], event.raw[2],
+                        [=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage); });
+    m_syncExternalsWaiter.notify_all();
+  }
 }
 
 unsigned int C15Synth::getRenderedSamples()
