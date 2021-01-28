@@ -7,7 +7,7 @@
 
 C15Synth::C15Synth(AudioEngineOptions* options)
     : Synth(options)
-    , m_dsp(std::make_unique<dsp_host_dual>(m_midiOptions))
+    , m_dsp(std::make_unique<dsp_host_dual>())
     , m_options(options)
     , m_syncExternalsTask(std::async(std::launch::async, [this] { syncExternals(); }))
 {
@@ -227,9 +227,6 @@ void C15Synth::doMidi(const MidiEvent& event)
 }
 
 constexpr auto TCD_PATTERN = 0b11100000;
-constexpr auto TCD_KEY_POS_PATTERN = 0b11101100;
-constexpr auto TCD_KEY_DOWN_PATTERN = 0b11101101;
-constexpr auto TCD_KEY_UP_PATTERN = 0b11101110;
 constexpr auto TCD_TYPE_MASK = 0b00001111;
 
 bool isValidTCDMessage(const MidiEvent& event)

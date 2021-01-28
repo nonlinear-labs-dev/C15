@@ -14,8 +14,7 @@ using namespace std::chrono_literals;
     @todo
 *******************************************************************************/
 
-dsp_host_dual::dsp_host_dual(const MidiRuntimeOptions& options)
-    : m_midiOptions { options }
+dsp_host_dual::dsp_host_dual()
 {
   m_hwSourcesMidiLSB.fill(0);
   m_mainOut_L = m_mainOut_R = 0.0f;
