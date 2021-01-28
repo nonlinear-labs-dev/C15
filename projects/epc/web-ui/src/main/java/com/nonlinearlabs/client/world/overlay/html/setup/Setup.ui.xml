@@ -336,7 +336,7 @@
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Midi Split Channel</p>
+							<p>Midi Split Channel (WIP)</p>
 						</div>
 						<div class="w40p">
 							<g:ListBox ui:field="midiReceiveChannelSplit">
@@ -372,7 +372,7 @@
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Velocity Curve</p>
+							<p>Velocity Curve (WIP)</p>
 						</div>
 						<div class="w40p">
 							<g:ListBox ui:field="midiReceiveVelocityCurve">
@@ -381,7 +381,7 @@
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Aftertouch Curve</p>
+							<p>Aftertouch Curve (WIP)</p>
 						</div>
 						<div class="w40p">
 							<g:ListBox ui:field="midiReceiveAftertouchCurve">
@@ -403,7 +403,7 @@
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Midi Split Channel</p>
+							<p>Midi Split Channel (WIP)</p>
 						</div>
 						<div class="w40p">
 							<g:ListBox ui:field="midiSendChannelSplit">
@@ -443,7 +443,7 @@
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Programm Changes</p>
+							<p>Programm Changes (WIP)</p>
 						</div>
 						<div class="w40p mw-fit-content">
 							<g:RadioButton ui:field="localPCOn" name="rad_localPC" value="true"></g:RadioButton>
