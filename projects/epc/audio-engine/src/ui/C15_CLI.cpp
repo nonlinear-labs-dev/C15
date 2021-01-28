@@ -6,6 +6,8 @@
 
 C15_CLI::C15_CLI(C15Synth *synth, AudioOutput *audioOut)
 {
+  using namespace std::chrono_literals;
+
   m_commands['c'] = [=] { synth->logStatus(); };
   m_commands['e'] = [=] { synth->resetDSP(); };
   m_commands['t'] = [=] { synth->toggleTestTone(); };

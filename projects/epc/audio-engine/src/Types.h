@@ -28,3 +28,5 @@ struct __attribute__((packed)) SampleInt24
 using SampleInt16 = int16_t;
 using SampleInt32 = int32_t;
 using SampleFloat32 = float;
+
+using FrameId = uint64_t;

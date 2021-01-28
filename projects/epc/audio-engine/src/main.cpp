@@ -3,12 +3,12 @@
 #include "synth/CPUBurningSynth.h"
 #include "ui/CommandlinePerformanceWatch.h"
 #include "io/MidiHeartBeat.h"
-#include "io/network/NetworkServer.h"
-
 #include "io/audio/AudioOutputMock.h"
 #include "io/audio/AlsaAudioOutput.h"
 #include "io/midi/MidiInputMock.h"
 #include "io/midi/AlsaMidiInput.h"
+
+#include "recorder/Recorder.h"
 
 #include <nltools/logging/Log.h>
 #include <nltools/StringTools.h>
@@ -85,35 +85,49 @@ static int measurePerformance()
   return EXIT_SUCCESS;
 }
 
-template <typename Ring>
-static std::unique_ptr<AudioOutput> createAudioOut(const std::string &name, Ring &ring, Synth *synth)
+static std::unique_ptr<Recorder> createRecorder(int sampleRate)
 {
-  return name.empty() ? nullptr : std::make_unique<AlsaAudioOutput>(theOptions.get(), name, [&](auto buf, auto length) {
-    synth->process(buf, length);
-    ring.push(buf, length);
-  });
+  return std::make_unique<Recorder>(sampleRate);
+}
+
+static std::unique_ptr<AudioOutput> createAudioOut(const std::string &name, Synth *synth, Recorder *recorder)
+{
+  return name.empty()
+      ? nullptr
+      : std::make_unique<AlsaAudioOutput>(theOptions.get(), name, [synth, recorder](auto buf, auto length) {
+          synth->process(buf, length);
+          recorder->process(buf, length);
+        });
 }
 
 static std::unique_ptr<MidiInput> createMidiIn(const std::string &name, Synth *synth)
 {
   return name.empty() ? nullptr
-                      : std::make_unique<AlsaMidiInput>(name, [&](auto event) { synth->pushMidiEvent(event); });
+                      : std::make_unique<AlsaMidiInput>(name, [synth](auto event) { synth->pushMidiEvent(event); });
 }
 
 static std::unique_ptr<MidiInput> createTCDIn(const std::string &name, Synth *synth)
 {
   return name.empty() ? nullptr
-                      : std::make_unique<AlsaMidiInput>(name, [&](auto event) { synth->pushMidiEvent(event); });
+                      : std::make_unique<AlsaMidiInput>(name, [synth](auto event) { synth->pushMidiEvent(event); });
 }
 
 template <typename... A> static void start(A &... a)
 {
-  (a->start(), ...);
+  auto start = [](auto &p) {
+    if(p)
+      p->start();
+  };
+  (start(a), ...);
 }
 
 template <typename... A> static void stop(A &... a)
 {
-  (..., a->stop());
+  auto stop = [](auto &p) {
+    if(p)
+      p->stop();
+  };
+  (..., stop(a));
 }
 
 int main(int args, char *argv[])
@@ -130,10 +144,8 @@ int main(int args, char *argv[])
     return measurePerformance();
 
   auto synth = createSynth(theOptions.get());
-
-  RingBuffer<SampleFrame> outRing(theOptions->getSampleRate());
-  NetworkServer flacStreamServer(outRing, theOptions->getSampleRate());
-  auto audioOut = createAudioOut(theOptions->getAudioOutputDeviceName(), outRing, synth.get());
+  auto recorder = createRecorder(theOptions->getSampleRate());
+  auto audioOut = createAudioOut(theOptions->getAudioOutputDeviceName(), synth.get(), recorder.get());
   auto midiIn = createMidiIn(theOptions->getMidiInputDeviceName(), synth.get());
   auto tcdIn = createTCDIn(theOptions->getTcdInputDeviceName(), synth.get());
   auto cli = createCLI(synth.get(), audioOut.get());

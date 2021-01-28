@@ -45,6 +45,8 @@ ENDIF(DEV_PC)
 target_link_libraries(${AE_LIB_NAME} PUBLIC pthread)
 target_include_directories(${AE_LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/shared/parameter-db/generated)
 
+add_subdirectory(tests)
+
 install(TARGETS ${PROJECT_NAME} DESTINATION ${C15_INSTALL_PATH}/${PROJECT_NAME})
 
 configure_file(${PROJECT_SOURCE_DIR}/systemd/${PROJECT_NAME}.service.in ${PROJECT_BINARY_DIR}/systemd/${PROJECT_NAME}.service @ONLY)

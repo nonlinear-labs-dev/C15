@@ -57,9 +57,31 @@ template <typename T> class RingBuffer
     return 0;
   }
 
+  size_t pop(T* target, size_t targetSize)
+  {
+    auto r = pop(target, targetSize, m_readHead);
+    m_readHead += r;
+    return r;
+  }
+
   uint64_t getWriteHead() const
   {
     return m_writeHead;
+  }
+
+  size_t avail() const
+  {
+    return m_writeHead - m_readHead;
+  }
+
+  size_t getFreeSpace() const
+  {
+    return m_buffer.size() - avail();
+  }
+
+  void reset()
+  {
+    m_writeHead = m_readHead = 0;
   }
 
   bool empty() const
