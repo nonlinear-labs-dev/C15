@@ -155,7 +155,10 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
 {
   auto statusByte = event.rawBytes[0];
 
-  nltools::Log::error("filterMidiOutEvent: ", (int) statusByte, (int) event.rawBytes[1], (int) event.rawBytes[2]);
+  if constexpr(LOG_MIDI_DETAIL)
+  {
+    nltools::Log::error("filterMidiOutEvent: ", (int) statusByte, (int) event.rawBytes[1], (int) event.rawBytes[2]);
+  }
 
   if(isSysex(statusByte))
     return false;
@@ -171,9 +174,12 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
     const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
     const auto isPitchbendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
 
-    nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
-    nltools::Log::error("isNoteEvent:", isNoteEvent,
-                        "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent || isPitchbendEvent);
+    if constexpr(LOG_MIDI_DETAIL)
+    {
+      nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
+      nltools::Log::error("isNoteEvent:", isNoteEvent,
+                          "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent || isPitchbendEvent);
+    }
 
     if(isNoteEvent)
       return m_midiOptions.shouldSendNotes();
@@ -194,7 +200,10 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
   const auto channel = (statusByte & MIDI_CHANNEL_MASK);
   const auto allowedChannel = m_midiOptions.getReceiveChannel();
 
-  //  nltools::Log::error("Raw Midi Event:", (int)statusByte, (int)event.raw[1], (int)event.raw[2]);
+  if(LOG_MIDI_DETAIL)
+  {
+    nltools::Log::error("Raw Midi Event:", (int) statusByte, (int) event.raw[1], (int) event.raw[2]);
+  }
 
   if(channel == allowedChannel)
   {
@@ -204,8 +213,12 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
     const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
     const auto isPitchBendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
 
-    //    nltools::Log::error("filterMidiInEvent channel:", channel, "allowedChannel:", allowedChannel);
-    //    nltools::Log::error("isNoteEvent:", isNoteEvent, "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent || isPitchBendEvent);
+    if constexpr(LOG_MIDI_DETAIL)
+    {
+      nltools::Log::error("filterMidiInEvent channel:", channel, "allowedChannel:", allowedChannel);
+      nltools::Log::error("isNoteEvent:", isNoteEvent,
+                          "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent || isPitchBendEvent);
+    }
 
     if(isPolyAftertouchEvent || isControlChangeEvent || isPitchBendEvent)
     {
@@ -240,7 +253,10 @@ bool isValidTCDMessage(const MidiEvent& event)
 
 bool C15Synth::filterTcdIn(const MidiEvent& event) const
 {
-  nltools::Log::error("raw tcd in:", (int) event.raw[0], (int) event.raw[1], (int) event.raw[2]);
+  if constexpr(LOG_MIDI_DETAIL)
+  {
+    nltools::Log::error("raw tcd in:", (int) event.raw[0], (int) event.raw[1], (int) event.raw[2]);
+  }
 
   if(isValidTCDMessage(event))
   {
@@ -248,7 +264,10 @@ bool C15Synth::filterTcdIn(const MidiEvent& event) const
     const auto isNoteEvent = typeId >= 13 && typeId <= 15;
     const auto isControlEvent = typeId >= 0 && typeId <= 11;
 
-    nltools::Log::error("parsed tcd in: typeId:", typeId, "isNote:", isNoteEvent, "isController", isControlEvent);
+    if constexpr(LOG_MIDI_DETAIL)
+    {
+      nltools::Log::error("parsed tcd in: typeId:", typeId, "isNote:", isNoteEvent, "isController", isControlEvent);
+    }
 
     if(isNoteEvent)
     {
