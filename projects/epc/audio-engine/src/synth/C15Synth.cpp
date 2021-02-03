@@ -137,6 +137,7 @@ constexpr static u_int8_t MIDI_CHANNEL_MASK = 0b00001111;
 constexpr static u_int8_t MIDI_POLY_AFTERTOUCH_PATTERN = 0b10100000;
 constexpr static u_int8_t MIDI_CONTROLCHANGE_PATTERN = 0b10110000;
 constexpr static u_int8_t MIDI_PITCHBEND_PATTERN = 0b11100000;
+constexpr static u_int8_t MIDI_PROGRAMCHANGE_PATTERN = 0b11000000;
 
 constexpr static u_int8_t MIDI_EVENT_TYPE_MASK = 0b11110000;
 constexpr static u_int8_t MIDI_CHANNEL_OMNI = 16;
@@ -173,12 +174,14 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
     const auto isPolyAftertouchEvent = matchPattern(statusByte, MIDI_POLY_AFTERTOUCH_PATTERN, MIDI_EVENT_TYPE_MASK);
     const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
     const auto isPitchbendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
+    const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAMCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
 
     if constexpr(LOG_MIDI_DETAIL)
     {
       nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
       nltools::Log::error("isNoteEvent:", isNoteEvent,
-                          "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent || isPitchbendEvent);
+                          "isControlEvent:", isPolyAftertouchEvent || isControlChangeEvent || isPitchbendEvent,
+                          "isProgramChangeEvent:", isProgramChangeEvent);
     }
 
     if(isNoteEvent)
@@ -186,6 +189,9 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
 
     if(isControlChangeEvent || isPolyAftertouchEvent || isPitchbendEvent)
       return m_midiOptions.shouldSendControllers();
+
+    if(isProgramChangeEvent)
+      return m_midiOptions.shouldSendProgramChanges();
   }
   return false;
 }

@@ -96,6 +96,7 @@ class HWUI
   void onEditBufferSoundTypeChanged(SoundType type);
   void undoableUpdateParameterSelection(UNDO::Transaction *transaction);
   void onButtonMessage(const nltools::msg::ButtonChangedMessage &msg);
+  void onParameterSelectionChanged(const Parameter *newParameter, const Parameter *oldParameter);
   void onButtonPressed(Buttons buttonID, bool state);
 
   void onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res);
@@ -117,6 +118,7 @@ class HWUI
   FocusAndMode restrictFocusAndMode(FocusAndMode in) const;
   FocusAndMode removeEditOnFocusChange(FocusAndMode in) const;
 
+  sigc::connection m_editBufferParameterSelectionConnection;
   sigc::connection m_editBufferSoundTypeConnection;
   sigc::connection m_editBufferPresetLoadedConnection;
   sigc::connection m_rotaryChangedConnection;

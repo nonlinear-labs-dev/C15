@@ -27,7 +27,6 @@ namespace DescriptiveLayouts
   GlobalEventSinkBroker::GlobalEventSinkBroker()
   {
     auto eb = Application::get().getPresetManager()->getEditBuffer();
-    EditBufferUseCases ebUseCases { eb };
     auto hwui = Application::get().getHWUI();
 
     registerEvent(EventSinks::Swallow, []() { return; });
@@ -250,7 +249,8 @@ namespace DescriptiveLayouts
       }
     });
 
-    registerEvent(EventSinks::OpenMonoParameterScreen, [eb, &ebUseCases]() {
+    registerEvent(EventSinks::OpenMonoParameterScreen, [eb]() {
+      EditBufferUseCases ebUseCases { eb };
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
       if(eb->getType() == SoundType::Split)
         ebUseCases.selectParameter(ParameterId { 364, vg });
@@ -258,11 +258,13 @@ namespace DescriptiveLayouts
         ebUseCases.selectParameter(ParameterId { 364, VoiceGroup::I });
     });
 
-    registerEvent(EventSinks::OpenPartScreen, [eb, &ebUseCases]() {
+    registerEvent(EventSinks::OpenPartScreen, [eb]() {
+      EditBufferUseCases ebUseCases { eb };
       ebUseCases.selectParameter({ 358, Application::get().getHWUI()->getCurrentVoiceGroup() });
     });
 
-    registerEvent(EventSinks::OpenMasterParameter, [eb, &ebUseCases] {
+    registerEvent(EventSinks::OpenMasterParameter, [eb] {
+      EditBufferUseCases ebUseCases { eb };
       ebUseCases.selectParameter({ 247, VoiceGroup::Global });
     });
 
@@ -272,8 +274,9 @@ namespace DescriptiveLayouts
       Application::get().getHWUI()->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
     });
 
-    registerEvent(EventSinks::OpenUnisonParameter, [eb, &ebUseCases]() {
+    registerEvent(EventSinks::OpenUnisonParameter, [eb]() {
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
+      EditBufferUseCases ebUseCases { eb };
       ebUseCases.selectParameter({ 249, vg });
     });
 

@@ -78,6 +78,9 @@ void HWUI::init()
 
   auto eb = Application::get().getPresetManager()->getEditBuffer();
 
+  m_editBufferParameterSelectionConnection
+      = eb->onSelectionChanged(sigc::mem_fun(this, &HWUI::onParameterSelectionChanged), std::nullopt);
+
   m_editBufferSoundTypeConnection = eb->onSoundTypeChanged(sigc::mem_fun(this, &HWUI::onEditBufferSoundTypeChanged));
 
   m_editBufferPresetLoadedConnection = eb->onPresetLoaded(sigc::mem_fun(this, &HWUI::onPresetLoaded));
@@ -283,7 +286,7 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
         else
         {
           auto changer = p->getValue().startUserEdit(Initiator::EXPLICIT_PLAYCONTROLLER);
-          changer->changeBy(nullptr,1.0 / p->getValue().getCoarseDenominator(),false);
+          changer->changeBy(nullptr, 1.0 / p->getValue().getCoarseDenominator(), false);
         }
       }
       else if(line.find('x') == 0)
@@ -298,7 +301,7 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
         else
         {
           auto changer = p->getValue().startUserEdit(Initiator::EXPLICIT_PLAYCONTROLLER);
-          changer->changeBy(nullptr,-1.0 / p->getValue().getCoarseDenominator(),false);
+          changer->changeBy(nullptr, -1.0 / p->getValue().getCoarseDenominator(), false);
         }
       }
       else
@@ -836,4 +839,19 @@ void HWUI::exportOled(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const std:
   }
 
   boledFile.write(fileName);
+}
+
+void HWUI::onParameterSelectionChanged(const Parameter *newParameter, const Parameter *oldParameter)
+{
+  if(newParameter != oldParameter)
+  {
+    unsetFineMode();
+  }
+  else
+  {
+    if(getFocusAndMode().mode == UIMode::Info)
+      setFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Info));
+    else
+      setFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Select));
+  }
 }

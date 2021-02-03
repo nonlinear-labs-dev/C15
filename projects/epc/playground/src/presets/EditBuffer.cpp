@@ -322,29 +322,29 @@ void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, Paramet
       if(newP)
         newP->onSelected();
 
-      if(!getParent()->isLoading() && !isParameterFocusLocked())
-      {
-        if(auto hwui = Application::get().getHWUI())
-        {
-          if(hwui->getFocusAndMode().focus == UIFocus::Sound)
-          {
-            if(oldP->getID() != newP->getID())
-              hwui->setFocusAndMode(UIFocus::Parameters);
-          }
-          else
-          {
-            hwui->setFocusAndMode(UIFocus::Parameters);
-          }
-        }
-      }
+      //todo move into onParameterSelection Changed
+      //      if(!getParent()->isLoading() && !isParameterFocusLocked())
+      //      {
+      //        if(auto hwui = Application::get().getHWUI())
+      //        {
+      //          if(hwui->getFocusAndMode().focus == UIFocus::Sound)
+      //          {
+      //            if(oldP->getID() != newP->getID())
+      //              hwui->setFocusAndMode(UIFocus::Parameters);
+      //          }
+      //          else
+      //          {
+      //            hwui->setFocusAndMode(UIFocus::Parameters);
+      //          }
+      //        }
+      //      }
 
       onChange();
     });
-
-    if(auto hwui = Application::get().getHWUI())
-    {
-      hwui->unsetFineMode();
-    }
+  }
+  else
+  {
+    m_signalSelectedParameter.send(p, p);
   }
 }
 

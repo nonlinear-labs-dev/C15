@@ -30,60 +30,70 @@ IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* e
 EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     : super("/presets/param-editor/")
 {
-  auto ebUseCases = Application::get().getEditBufferUseCases();
-  auto soundUseCases = Application::get().getSoundUseCases();
-
   addAction("sync-audioengine", [=](std::shared_ptr<NetworkRequest> request) mutable {
     Application::get().getAudioEngineProxy()->sendEditBuffer();
   });
 
   addAction("select-param", [=](std::shared_ptr<NetworkRequest> request) mutable {
     Glib::ustring id = request->get("id");
-    ebUseCases->selectParameter(ParameterId(id));
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.selectParameter(ParameterId(id));
   });
 
   addAction("set-param", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto value = std::stod(request->get("value"));
-    ebUseCases->setParameter(ParameterId(id), value);
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setParameter(ParameterId(id), value);
   });
 
   addAction("set-splits", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto value = std::stod(request->get("value"));
     auto otherValue = std::stod(request->get("other-value"));
-    ebUseCases->setSplits(ParameterId(id), value, otherValue);
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setSplits(ParameterId(id), value, otherValue);
   });
 
   addAction("set-mod-amount", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto amount = std::stod(request->get("amount"));
     auto id = request->get("id");
-    ebUseCases->setModulationAmount(amount, ParameterId { id });
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setModulationAmount(amount, ParameterId { id });
   });
 
   addAction("set-mod-src", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto src = std::stoi(request->get("source"));
     auto id = request->get("id");
-    ebUseCases->setModulationSource(static_cast<MacroControls>(src), ParameterId { id });
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setModulationSource(static_cast<MacroControls>(src), ParameterId { id });
   });
 
-  addAction("reset", [=](std::shared_ptr<NetworkRequest>) mutable { soundUseCases->initSound(); });
+  addAction("reset", [=](std::shared_ptr<NetworkRequest>) mutable {
+    SoundUseCases useCase { editBuffer, editBuffer->getParent() };
+    useCase.initSound();
+  });
 
   addAction("rename-mc", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto newName = request->get("new-name");
-    if(auto mcUseCase = ebUseCases->getMCUseCase(ParameterId { id }))
+    EditBufferUseCases useCase { editBuffer };
+    if(auto mcUseCase = useCase.getMCUseCase(ParameterId { id }))
     {
       mcUseCase->setName(newName);
     }
   });
 
-  addAction("reset-scale", [=](std::shared_ptr<NetworkRequest> request) mutable { ebUseCases->resetScaleGroup(); });
+  addAction("reset-scale", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    EditBufferUseCases useCase { editBuffer };
+    useCase.resetScaleGroup();
+  });
 
   addAction("set-macrocontrol-info", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto info = request->get("info");
-    if(auto mcUseCase = ebUseCases->getMCUseCase(ParameterId { id }))
+    EditBufferUseCases useCase { editBuffer };
+    if(auto mcUseCase = useCase.getMCUseCase(ParameterId { id }))
     {
       mcUseCase->setInfo(info);
     }
@@ -124,43 +134,59 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("reset-modulation", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
-    if(auto mcUseCase = ebUseCases->getMCUseCase(ParameterId { id }))
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto mcUseCase = ebUseCases.getMCUseCase(ParameterId { id }))
     {
       mcUseCase->resetConnectionsToTargets();
     }
   });
 
-  addAction("randomize-sound", [=](std::shared_ptr<NetworkRequest>) mutable { soundUseCases->randomizeSound(); });
+  addAction("randomize-sound", [=](const std::shared_ptr<NetworkRequest>&) mutable {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.randomizeSound();
+  });
 
-  addAction("init-sound", [=](std::shared_ptr<NetworkRequest>) mutable { soundUseCases->initSound(); });
+  addAction("init-sound", [=](const std::shared_ptr<NetworkRequest>&) mutable {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.initSound();
+  });
 
-  addAction("init-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    soundUseCases->initPart(to<VoiceGroup>(request->get("part")));
+  addAction("init-part", [=](const std::shared_ptr<NetworkRequest>& request) mutable {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.initPart(to<VoiceGroup>(request->get("part")));
   });
 
   addAction("rename-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
     auto name = request->get("name");
-    soundUseCases->renamePart(vg, name);
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.renamePart(vg, name);
   });
 
   addAction("randomize-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    soundUseCases->randomizePart(to<VoiceGroup>(request->get("part")));
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.randomizePart(to<VoiceGroup>(request->get("part")));
   });
 
   addAction("mute", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-    ebUseCases->mutePart(vg);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.mutePart(vg);
   });
 
   addAction("unmute", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-    ebUseCases->unmutePart(vg);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.unmutePart(vg);
   });
 
   addAction("mute-part-unmute-other", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-    ebUseCases->mutePartUnmuteOtherPart(vg);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.mutePartUnmuteOtherPart(vg);
   });
 
   addAction("set-modamount-and-value", [=](std::shared_ptr<NetworkRequest> request) mutable {
@@ -168,29 +194,42 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto modAmount = std::stod(request->get("mod-amount"));
     auto value = std::stod(request->get("value"));
     auto paramId = ParameterId(id);
-    ebUseCases->setModAmountAndValue(paramId, modAmount, value);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setModAmountAndValue(paramId, modAmount, value);
   });
 
   addAction("set-modulation-limit", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = ParameterId { request->get("id") };
     auto newAmt = std::stod(request->get("mod-amt"));
     auto newParamVal = std::stod(request->get("param-val"));
-    ebUseCases->setModulationLimit(id, newAmt, newParamVal);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setModulationLimit(id, newAmt, newParamVal);
   });
 
-  addAction("unlock-all-groups",
-            [=](std::shared_ptr<NetworkRequest> request) mutable { ebUseCases->unlockAllGroups(); });
+  addAction("unlock-all-groups", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.unlockAllGroups();
+  });
 
-  addAction("lock-all-groups", [=](std::shared_ptr<NetworkRequest> request) mutable { ebUseCases->lockAllGroups(); });
+  addAction("lock-all-groups", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.lockAllGroups();
+  });
 
   addAction("toggle-group-lock", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto groupId = request->get("group");
-    ebUseCases->toggleLock(groupId);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.toggleLock(groupId);
   });
 
   addAction("recall-current-from-preset", [=](auto request) {
     auto id = request->get("id");
-    if(auto paramUseCase = ebUseCases->getUseCase(ParameterId { id }))
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto paramUseCase = ebUseCases.getUseCase(ParameterId { id }))
     {
       paramUseCase->recallParameterFromPreset();
     }
@@ -198,29 +237,43 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("recall-mc-for-current-mod-param", [=](auto request) {
     auto id = request->get("id");
-    if(auto modUseCase = ebUseCases->getModParamUseCase(ParameterId { id }))
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto modUseCase = ebUseCases.getModParamUseCase(ParameterId { id }))
       modUseCase->recallMCPos();
   });
 
   addAction("recall-mc-amount-for-current-mod-param", [=](auto request) {
     auto id = request->get("id");
-    if(auto modUseCase = ebUseCases->getModParamUseCase(ParameterId { id }))
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto modUseCase = ebUseCases.getModParamUseCase(ParameterId { id }))
       modUseCase->recallMCAmount();
   });
 
   addAction("convert-to-single", [=](auto request) {
     auto voiceGroup = to<VoiceGroup>(request->get("voice-group"));
-    soundUseCases->convertToSingle(voiceGroup);
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.convertToSingle(voiceGroup);
     //TODO move functionality someplace else -> hwui subscribe to eb->onConverted?
     //Application::get().getHWUI()->setCurrentVoiceGroupAndUpdateParameterSelection(transaction, VoiceGroup::I);
   });
-  addAction("convert-to-split", [=](auto request) { soundUseCases->convertToSplit(); });
-  addAction("convert-to-layer", [=](auto request) { soundUseCases->convertToLayer(); });
+
+  addAction("convert-to-split", [=](auto request) {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.convertToSplit();
+  });
+  addAction("convert-to-layer", [=](auto request) {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.convertToLayer();
+  });
 
   addAction("load-selected-preset-part-into-editbuffer-part", [=](auto request) {
     auto presetPart = to<VoiceGroup>(request->get("preset-part"));
     auto editbufferPartPart = to<VoiceGroup>(request->get("editbuffer-part"));
-    ebUseCases->loadSelectedPresetPartIntoPart(presetPart, editbufferPartPart);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.loadSelectedPresetPartIntoPart(presetPart, editbufferPartPart);
   });
 
   addAction("load-preset-part-into-editbuffer-part", [=](auto request) {
@@ -229,13 +282,14 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto presetUUID = request->get("preset-uuid");
     auto pm = Application::get().getPresetManager();
 
+    EditBufferUseCases ebUseCases(editBuffer);
     if(auto presetToLoad = pm->findPreset(presetUUID))
     {
-      ebUseCases->undoableLoadToPart(presetToLoad, presetPart, loadTo);
+      ebUseCases.undoableLoadToPart(presetToLoad, presetPart, loadTo);
     }
   });
 
-  addAction("download-soled-as-png", [=](std::shared_ptr<NetworkRequest> request) {
+  addAction("download-soled-as-png", [=](const std::shared_ptr<NetworkRequest>& request) {
     if(auto httpRequest = std::dynamic_pointer_cast<HTTPRequest>(request))
     {
       auto hwui = Application::get().getHWUI();
