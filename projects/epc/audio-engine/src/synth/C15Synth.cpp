@@ -53,8 +53,8 @@ C15Synth::C15Synth(AudioEngineOptions* options)
   // receive program changes from playground and dispatch it to midi-over-ip
   receive<nltools::msg::Midi::ProgramChangeMessage>(EndPoint::AudioEngine, [this](const auto& pc) {
     const uint8_t channel0Pattern = 0b11000000;
-    const uint8_t newStatus = channel0Pattern & m_midiOptions.getSendChannel();
-    nltools::Log::error("received ProgramChange Message at AE with preset:", pc.program,
+    const uint8_t newStatus = channel0Pattern | m_midiOptions.getSendChannel();
+    nltools::Log::error("received ProgramChange Message at AE with preset:", (int)pc.program,
                         "statusByte:", (int) newStatus);
     m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage { newStatus, pc.program });
     m_syncExternalsWaiter.notify_all();
