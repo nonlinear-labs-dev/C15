@@ -183,7 +183,9 @@ int main(int args, char *argv[])
 
   if(outputHandle)
   {
-    receive<SimpleMessage>(endPoint, [=](const auto &msg) { sendToExternalDevice(outputHandle, msg); });
+    receive<SimpleMessage>(endPoint, [=](const auto &msg) {
+      sendToExternalDevice(outputHandle, msg);
+    });
   }
 
   pipe(cancelPipe);
