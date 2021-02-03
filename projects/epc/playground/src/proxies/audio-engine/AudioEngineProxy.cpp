@@ -421,7 +421,10 @@ void AudioEngineProxy::onBankChanged()
         uint8_t pos = bank->getPresetPosition(preset);
 
         if(pos < 128)
+        {
           nltools::msg::send(nltools::msg::EndPoint::AudioEngine, nltools::msg::Midi::ProgramChangeMessage { pos });
+          nltools::Log::error("sending ProgramChangeMessage to AE with preset:", pos);
+        }
       }
     }
   }
