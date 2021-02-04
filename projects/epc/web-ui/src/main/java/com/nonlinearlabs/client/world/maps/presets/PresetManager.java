@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.xml.client.Node;
@@ -339,6 +340,7 @@ public class PresetManager extends MapsLayout {
 
 		readSelectedMidiBank(banks);
 		selectedBank = banks.getAttributes().getNamedItem("selected-bank").getNodeValue();
+		GWT.log("selected Bank:" + selectedBank);
 		NodeList bankList = banks.getChildNodes();
 
 		for (int i = 0; i < bankList.getLength(); i++) {
