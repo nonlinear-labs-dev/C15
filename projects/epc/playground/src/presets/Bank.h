@@ -113,12 +113,14 @@ class Bank : public AttributesOwner
 
   // signals
   sigc::connection onBankChanged(sigc::slot<void> cb);
+  sigc::connection onPresetSelectionChanged(sigc::slot<void, Preset *> cb);
 
   const Preset *getFirstPreset() const;
 
   PresetManager *getPresetManager() const;
 
- Glib::ustring getComment();private:
+  Glib::ustring getComment();
+ private:
   using Attributes = std::map<std::string, std::string>;
 
   uint64_t loadMetadata(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> bankFolder);
@@ -149,6 +151,7 @@ class Bank : public AttributesOwner
   tUpdateID m_presetsLastSavedForUpdateID = 0;
 
   Signal<void> m_sigBankChanged;
+  Signal<void, Preset *> m_sigPresetSelectionChanged;
 
   friend class PresetBankSerializer;
   friend class PresetBankMetadataSerializer;

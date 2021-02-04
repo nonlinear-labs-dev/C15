@@ -4,6 +4,7 @@
 #include <parameters/messaging/ParameterMessageFactory.h>
 #include <groups/MonoGroup.h>
 #include <tools/RecursionGuard.h>
+#include <presets/PresetManager.h>
 #include "playground.h"
 
 namespace UNDO
@@ -54,10 +55,15 @@ class AudioEngineProxy : public sigc::trackable
   static void fillMonoPart(nltools::msg::ParameterGroups::MonoGroup& monoGroup, ParameterGroup* const& g);
   static void fillUnisonPart(nltools::msg::ParameterGroups::UnisonGroup& unisonGroup, ParameterGroup* const& g);
 
-  void onBankSelectionChanged(const Uuid& uuid);
-  void onBankChanged();
+  void onPresetSelectionChanged(PresetManager* pm, Preset* selection);
+  void onMidiBankSelectionChanged(Uuid newMidiBankUuid);
+  void sendSelectedMidiPresetAsProgramChange();
+  void onPresetManagerLoaded();
 
+  uint8_t m_lastSendProgramNumber = std::numeric_limits<uint8_t>::max();
   uint m_suppressParamChanges = 0;
-  sigc::connection m_presetSelectionConnection;
+
+  sigc::connection m_midiBankChangedConnection;
+  sigc::connection m_midiBankConnection;
   RecursionGuard m_programChangeRecursion;
 };

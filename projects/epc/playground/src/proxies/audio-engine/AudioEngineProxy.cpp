@@ -53,7 +53,7 @@ AudioEngineProxy::AudioEngineProxy()
       }
   });
 
-  pm->onBankSelection(sigc::mem_fun(this, &AudioEngineProxy::onBankSelectionChanged));
+  pm->onLoadHappened(sigc::mem_fun(this, &AudioEngineProxy::onPresetManagerLoaded));
 }
 
 template <typename tMsg> void fillMessageWithGlobalParams(tMsg &msg, const EditBuffer &editBuffer)
@@ -396,36 +396,69 @@ void AudioEngineProxy::thawParameterMessages(bool send)
     sendEditBuffer();
 }
 
-void AudioEngineProxy::onBankSelectionChanged(const Uuid &uuid)
-{
-  const auto &pm = Application::get().getPresetManager();
-
-  m_presetSelectionConnection.disconnect();
-
-  if(auto bank = pm->getSelectedBank())
-  {
-    m_presetSelectionConnection = bank->onBankChanged(sigc::mem_fun(this, &AudioEngineProxy::onBankChanged));
-  }
-}
-
-void AudioEngineProxy::onBankChanged()
+void AudioEngineProxy::onPresetSelectionChanged(PresetManager *pm, Preset *selection)
 {
   if(auto lock = m_programChangeRecursion.lock())
   {
-    const auto &pm = Application::get().getPresetManager();
-
-    if(auto bank = pm->findMidiSelectedBank())
+    if(auto selectedBank = pm->getSelectedBank())
     {
-      if(auto preset = bank->getSelectedPreset())
+      if(auto midiBank = pm->findMidiSelectedBank())
       {
-        uint8_t pos = bank->getPresetPosition(preset);
-
-        if(pos < 128)
+        if(midiBank == selectedBank)
         {
-          nltools::msg::send(nltools::msg::EndPoint::AudioEngine, nltools::msg::Midi::ProgramChangeMessage { pos });
-          nltools::Log::error("sending ProgramChangeMessage to AE with preset:", (int)pos);
+          if(auto selectedMidiPreset = midiBank->getSelectedPreset())
+          {
+            if(selection == selectedMidiPreset)
+            {
+              uint8_t pos = midiBank->getPresetPosition(selectedMidiPreset);
+            }
+          }
         }
       }
     }
   }
+}
+void AudioEngineProxy::onMidiBankSelectionChanged(Uuid newMidiBankUUID)
+{
+  m_midiBankChangedConnection.disconnect();
+
+  auto pm = Application::get().getPresetManager();
+
+  if(auto midiBank = pm->findBank(newMidiBankUUID))
+  {
+    m_midiBankChangedConnection
+        = midiBank->onBankChanged(sigc::mem_fun(this, &AudioEngineProxy::sendSelectedMidiPresetAsProgramChange));
+  }
+}
+
+void AudioEngineProxy::sendSelectedMidiPresetAsProgramChange()
+{
+  auto pm = Application::get().getPresetManager();
+  if(auto midiBank = pm->findMidiSelectedBank())
+  {
+    if(pm->getSelectedBank() == midiBank)
+    {
+      if(auto selectedPreset = midiBank->getSelectedPreset())
+      {
+        uint8_t presetPos = midiBank->getPresetPosition(selectedPreset);
+        if(m_lastSendProgramNumber != presetPos)
+        {
+          if(presetPos < 128)
+          {
+            m_lastSendProgramNumber = presetPos;
+            nltools::msg::send(nltools::msg::EndPoint::AudioEngine,
+                               nltools::msg::Midi::ProgramChangeMessage { presetPos });
+            nltools::Log::error("sending ProgramChangeMessage to AE with preset:", (int) presetPos);
+          }
+        }
+      }
+    }
+  }
+}
+
+void AudioEngineProxy::onPresetManagerLoaded()
+{
+  auto pm = Application::get().getPresetManager();
+  m_midiBankConnection
+      = pm->onMidiBankSelectionHappened(sigc::mem_fun(this, &AudioEngineProxy::onMidiBankSelectionChanged));
 }

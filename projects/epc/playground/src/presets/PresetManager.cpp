@@ -84,6 +84,7 @@ void PresetManager::init()
   auto hwui = Application::get().getHWUI();
   hwui->getPanelUnit().getEditPanel().getBoled().setupFocusAndMode(hwui->getFocusAndMode());
   hwui->getBaseUnit().getPlayPanel().getSOLED().resetSplash();
+  m_sigLoadHappened.send();
   onChange();
 }
 
@@ -1058,10 +1059,15 @@ void PresetManager::selectMidiBank(UNDO::Transaction *trans, const Uuid &uuid)
 
 sigc::connection PresetManager::onMidiBankSelectionHappened(sigc::slot<void, Uuid> cb)
 {
-  return m_sigMidiBankSelection.connect(cb);
+  return m_sigMidiBankSelection.connectAndInit(cb, getMidiSelectedBank());
 }
 
 Bank *PresetManager::findMidiSelectedBank() const
 {
   return m_banks.find(getMidiSelectedBank());
+}
+
+sigc::connection PresetManager::onLoadHappened(sigc::slot<void> cb)
+{
+  return m_sigLoadHappened.connect(cb);
 }
