@@ -332,6 +332,7 @@ void PresetManagerUseCases::selectPreset(const Preset* preset)
     if(auto bank = m_presetManager->findBankWithPreset(presetUuid))
     {
       auto scope = Application::get().getUndoScope()->startTransaction("Select Preset");
+      m_presetManager->selectBank(scope->getTransaction(), bank->getUuid());
       bank->selectPreset(scope->getTransaction(), presetUuid);
     }
   }

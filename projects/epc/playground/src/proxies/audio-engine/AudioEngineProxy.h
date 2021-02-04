@@ -55,7 +55,6 @@ class AudioEngineProxy : public sigc::trackable
   static void fillMonoPart(nltools::msg::ParameterGroups::MonoGroup& monoGroup, ParameterGroup* const& g);
   static void fillUnisonPart(nltools::msg::ParameterGroups::UnisonGroup& unisonGroup, ParameterGroup* const& g);
 
-  void onPresetSelectionChanged(PresetManager* pm, Preset* selection);
   void onMidiBankSelectionChanged(Uuid newMidiBankUuid);
   void sendSelectedMidiPresetAsProgramChange();
   void onPresetManagerLoaded();

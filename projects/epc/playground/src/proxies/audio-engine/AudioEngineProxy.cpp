@@ -396,28 +396,6 @@ void AudioEngineProxy::thawParameterMessages(bool send)
     sendEditBuffer();
 }
 
-void AudioEngineProxy::onPresetSelectionChanged(PresetManager *pm, Preset *selection)
-{
-  if(auto lock = m_programChangeRecursion.lock())
-  {
-    if(auto selectedBank = pm->getSelectedBank())
-    {
-      if(auto midiBank = pm->findMidiSelectedBank())
-      {
-        if(midiBank == selectedBank)
-        {
-          if(auto selectedMidiPreset = midiBank->getSelectedPreset())
-          {
-            if(selection == selectedMidiPreset)
-            {
-              uint8_t pos = midiBank->getPresetPosition(selectedMidiPreset);
-            }
-          }
-        }
-      }
-    }
-  }
-}
 void AudioEngineProxy::onMidiBankSelectionChanged(Uuid newMidiBankUUID)
 {
   m_midiBankChangedConnection.disconnect();
