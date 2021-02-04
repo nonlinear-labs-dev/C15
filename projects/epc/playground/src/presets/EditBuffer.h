@@ -127,6 +127,8 @@ class EditBuffer : public ParameterGroupSet
 
   PartOrigin getPartOrigin(VoiceGroup vg) const;
 
+  bool isParameterFocusLocked() const;
+
  private:
   friend class PresetManager;
   friend class LastLoadedPresetInfoSerializer;
@@ -148,7 +150,6 @@ class EditBuffer : public ParameterGroupSet
   void doDeferedJobs();
   void checkModified();
 
-  bool isParameterFocusLocked() const;
   void lockParameterFocusChanges();
   void unlockParameterFocusChanges();
   void initUnisonVoicesScaling(SoundType newType);

@@ -846,6 +846,22 @@ void HWUI::onParameterSelectionChanged(const Parameter *newParameter, const Para
   if(newParameter != oldParameter)
   {
     unsetFineMode();
+    auto pm = Application::get().getPresetManager();
+    const auto isPresetManagerLoading = pm->isLoading();
+    const auto isParameterFocusLocked = pm->getEditBuffer()->isParameterFocusLocked();
+    
+    if(!isPresetManagerLoading && !isParameterFocusLocked)
+    {
+      if(getFocusAndMode().focus == UIFocus::Sound)
+      {
+        if(oldParameter == nullptr || newParameter == nullptr || oldParameter->getID() != newParameter->getID())
+          setFocusAndMode(UIFocus::Parameters);
+      }
+      else
+      {
+        setFocusAndMode(UIFocus::Parameters);
+      }
+    }
   }
   else
   {
