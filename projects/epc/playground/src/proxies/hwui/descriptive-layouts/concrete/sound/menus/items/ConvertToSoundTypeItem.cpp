@@ -9,23 +9,24 @@
 
 ConvertToSoundTypeItem::ConvertToSoundTypeItem(const Rect& rect, SoundType toType)
     : AnimatedGenericItem(nltools::string::concat("Convert to ", toString(toType)), rect, [=] {
-      auto useCases = Application::get().getSoundUseCases();
+      SoundUseCases useCases(Application::get().getPresetManager()->getEditBuffer(),
+                             Application::get().getPresetManager());
       switch(toType)
       {
         case SoundType::Single:
         {
           auto selectedVG = Application::get().getHWUI()->getCurrentVoiceGroup();
-          useCases->convertToSingle(selectedVG);
+          useCases.convertToSingle(selectedVG);
           break;
         }
         case SoundType::Split:
         {
-          useCases->convertToSplit();
+          useCases.convertToSplit();
           break;
         }
         case SoundType::Layer:
         {
-          useCases->convertToLayer();
+          useCases.convertToLayer();
           break;
         }
         default:

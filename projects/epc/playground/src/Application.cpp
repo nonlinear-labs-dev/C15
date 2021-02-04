@@ -87,9 +87,6 @@ Application::Application(int numArgs, char **argv)
     , m_isQuit(false)
     , m_usbChangeListener(std::make_unique<USBChangeListener>())
     , m_webUISupport(std::make_unique<WebUISupport>(m_http->getUpdateDocumentMaster()))
-    , m_presetUseCases { std::make_unique<PresetManagerUseCases>(m_presetManager.get()) }
-    , m_soundUseCases { std::make_unique<SoundUseCases>(m_presetManager->getEditBuffer(), m_presetManager.get()) }
-    , m_editBufferUseCases { std::make_unique<EditBufferUseCases>(m_presetManager->getEditBuffer()) }
 {
 #ifdef _PROFILING
   Profiler::get().enable(true);
@@ -270,21 +267,6 @@ const HWUI *Application::getHWUI() const
 UndoScope *Application::getUndoScope()
 {
   return m_undoScope.get();
-}
-
-PresetManagerUseCases *Application::getPresetManagerUseCases()
-{
-  return m_presetUseCases.get();
-}
-
-SoundUseCases *Application::getSoundUseCases()
-{
-  return m_soundUseCases.get();
-}
-
-EditBufferUseCases *Application::getEditBufferUseCases()
-{
-  return m_editBufferUseCases.get();
 }
 
 DeviceInformation *Application::getDeviceInformation()

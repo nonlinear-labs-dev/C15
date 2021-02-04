@@ -184,24 +184,24 @@ TEST_CASE("Delete Current Midi Bank resets attribute")
 {
   Helper::clearPresetManager();
   auto pm = TestHelper::getPresetManager();
-  auto useCases = Application::get().getPresetManagerUseCases();
+  PresetManagerUseCases useCases(pm);
 
   auto midiEnable = Application::get().getSettings()->getSetting<ExternalMidiEnabledSetting>()->scopedOverlay(
       BooleanSettings::BOOLEAN_SETTING_TRUE);
 
   //Create bank to use
-  useCases->createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer();
   auto b = pm->getSelectedBank();
   CHECK(pm->getNumBanks() == 1);
   CHECK(b != nullptr);
 
   //select bank as midi target
-  useCases->selectMidiBank(b);
+  useCases.selectMidiBank(b);
   CHECK(pm->getMidiSelectedBank() == b->getUuid());
 
   WHEN("Bank Deleted")
   {
-    useCases->deleteBank(b);
+    useCases.deleteBank(b);
     CHECK(pm->getNumBanks() == 0);
     CHECK(pm->getMidiSelectedBank() == Uuid::none());
   }
@@ -211,12 +211,12 @@ TEST_CASE("When Midi Bank is Selected new and old midi selection banks get notif
 {
   Helper::clearPresetManager();
   auto pm = TestHelper::getPresetManager();
-  auto useCases = Application::get().getPresetManagerUseCases();
+  PresetManagerUseCases useCases(pm);
 
-  useCases->createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer();
   auto b1 = pm->getSelectedBank();
 
-  useCases->createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer();
   auto b2 = pm->getSelectedBank();
 
   int changesB1 = 0;
@@ -227,14 +227,14 @@ TEST_CASE("When Midi Bank is Selected new and old midi selection banks get notif
   WHEN("Midi Bank 1 Selected")
   {
     const auto b1ChangesBeforeSelection = changesB1;
-    useCases->selectMidiBank(b1);
+    useCases.selectMidiBank(b1);
     CHECK(changesB1 > b1ChangesBeforeSelection);
     const auto b1ChangesAfterSelection = changesB1;
 
     THEN("Midi Bank 2 Selected")
     {
       const auto b2ChangesBeforeSelection = changesB2;
-      useCases->selectMidiBank(b2);
+      useCases.selectMidiBank(b2);
       CHECK(changesB2 > b2ChangesBeforeSelection);
       CHECK(changesB1 > b1ChangesAfterSelection);
     }

@@ -11,6 +11,8 @@
 #include <proxies/hwui/controls/Label.h>
 #include <proxies/hwui/controls/LeftAlignedLabel.h>
 #include "presets/Preset.h"
+#include <device-settings/Settings.h>
+#include <device-settings/DirectLoadSetting.h>
 
 PresetList::PresetList(const Rect& pos, bool showBankArrows)
     : super(pos, showBankArrows)
@@ -79,31 +81,22 @@ bool PresetList::onButton(Buttons i, bool down, ButtonModifiers modifiers)
   {
     auto focusAndMode = Application::get().getHWUI()->getFocusAndMode();
     auto pm = Application::get().getPresetManager();
+    PresetManagerUseCases useCase(pm);
 
     switch(i)
     {
       case Buttons::BUTTON_B:
         if(focusAndMode.focus == UIFocus::Banks)
-        {
-          if(auto bank = pm->getSelectedBank())
-            bank->selectPreviousPreset();
-        }
+          useCase.selectPreviousPreset();
         else
-        {
-          pm->selectPreviousBank();
-        }
+          useCase.selectPreviousBank();
         return true;
 
       case Buttons::BUTTON_C:
         if(focusAndMode.focus == UIFocus::Banks)
-        {
-          if(auto bank = pm->getSelectedBank())
-            bank->selectNextPreset();
-        }
+          useCase.selectNextPreset();
         else
-        {
-          pm->selectNextBank();
-        }
+          useCase.selectNextBank();
         return true;
     }
   }

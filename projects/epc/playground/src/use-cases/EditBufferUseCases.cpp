@@ -8,6 +8,7 @@
 #include <libundo/undo/Scope.h>
 #include <parameters/ModulateableParameter.h>
 #include <parameter_declarations.h>
+#include <presets/Bank.h>
 
 EditBufferUseCases::EditBufferUseCases(EditBuffer* eb)
     : m_editBuffer { eb }
@@ -58,7 +59,9 @@ void EditBufferUseCases::undoableLoad(const Uuid& uuid)
 
 void EditBufferUseCases::undoableLoad(const Preset* preset)
 {
-  auto scope = m_editBuffer->getUndoScope().startTransaction(preset->buildUndoTransactionTitle("Load"));
+  auto& undoScope = m_editBuffer->getUndoScope();
+  auto name = preset->buildUndoTransactionTitle("Load");
+  auto scope = undoScope.startContinuousTransaction(preset->getParent(), std::chrono::seconds(5), name);
   m_editBuffer->undoableLoad(scope->getTransaction(), preset, true);
 }
 
@@ -231,16 +234,6 @@ void EditBufferUseCases::toggleLock(const std::string& groupName)
   m_editBuffer->undoableToggleGroupLock(scope->getTransaction(), groupName);
 }
 
-void EditBufferUseCases::loadSelectedPresetPartIntoPart(VoiceGroup from, VoiceGroup to)
-{
-  if(auto selectedPreset = m_editBuffer->getParent()->getSelectedPreset())
-  {
-    auto name = UNDO::StringTools::buildString("Load Preset Part", toString(from), "into", toString(to));
-    auto scope = getPresetManager()->getUndoScope().startTransaction(name);
-    m_editBuffer->undoableLoadToPart(scope->getTransaction(), selectedPreset, from, to);
-  }
-}
-
 PresetManager* EditBufferUseCases::getPresetManager() const
 {
   if(auto parentPM = dynamic_cast<PresetManager*>(m_editBuffer->getParent()))
@@ -299,18 +292,4 @@ void EditBufferUseCases::renamePart(VoiceGroup part, const Glib::ustring& name)
 {
   auto scope = m_editBuffer->getParent()->getUndoScope().startTransaction("Rename Part to %s", name);
   m_editBuffer->setVoiceGroupName(scope->getTransaction(), name, part);
-}
-
-void EditBufferUseCases::loadSinglePresetIntoDualSound(const Preset* preset, VoiceGroup part)
-{
-  auto scope = m_editBuffer->getUndoScope().startTransaction("Load Preset into Part " + toString(part));
-  auto transaction = scope->getTransaction();
-  m_editBuffer->undoableLoadSinglePresetIntoDualSound(transaction, preset, part);
-}
-
-void EditBufferUseCases::scheduleUndoableLoadToPart(const Preset* preset, VoiceGroup from, VoiceGroup to)
-{
-  auto name = "Load Preset Part";
-  auto scope = m_editBuffer->getUndoScope().startContinuousTransaction(this, std::chrono::milliseconds(500), name);
-  m_editBuffer->undoableLoadPresetPartIntoPart(scope->getTransaction(), preset, from, to);
 }

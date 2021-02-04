@@ -250,12 +250,12 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::OpenMonoParameterScreen, [eb]() {
-      EditBufferUseCases ebUseCases { eb };
+      EditBufferUseCases useCase(eb);
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
       if(eb->getType() == SoundType::Split)
-        ebUseCases.selectParameter(ParameterId { 364, vg });
+        useCase.selectParameter(ParameterId { 364, vg });
       else
-        ebUseCases.selectParameter(ParameterId { 364, VoiceGroup::I });
+        useCase.selectParameter(ParameterId { 364, VoiceGroup::I });
     });
 
     registerEvent(EventSinks::OpenPartScreen, [eb]() {

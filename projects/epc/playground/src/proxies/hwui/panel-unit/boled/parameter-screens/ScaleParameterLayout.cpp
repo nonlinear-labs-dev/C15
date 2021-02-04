@@ -71,8 +71,8 @@ bool ScaleParameterSelectLayout::onButton(Buttons i, bool down, ButtonModifiers 
 
 void ScaleParameterSelectLayout::reset()
 {
-  auto ebUseCases = Application::get().getEditBufferUseCases();
-  ebUseCases->resetCustomScale();
+  EditBufferUseCases ebUseCases(Application::get().getPresetManager()->getEditBuffer());
+  ebUseCases.resetCustomScale();
 }
 
 bool ScaleParameterSelectLayout::resetEnabled() const

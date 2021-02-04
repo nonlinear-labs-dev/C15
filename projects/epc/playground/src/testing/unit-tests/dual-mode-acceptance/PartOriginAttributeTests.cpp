@@ -144,13 +144,9 @@ TEST_CASE("Step Direct Load and Load to Part Preset List", "[Preset][Loading]")
     detail::getDirectLoad()->set(BooleanSettings::BOOLEAN_SETTING_TRUE);
 
     {
-      auto scope = TestHelper::createTestScope();
-      auto transaction = scope->getTransaction();
-      pm->selectBank(transaction, bank->getUuid());
-      bank->selectPreset(transaction, 0);
-
-      Application::get().getHWUI()->undoableSetFocusAndMode(transaction,
-                                                            { UIFocus::Presets, UIMode::Select, UIDetail::Init });
+      PresetManagerUseCases useCase(pm);
+      useCase.selectPreset(bank->getPresetAt(0));
+      Application::get().getHWUI()->undoableSetFocusAndMode({ UIFocus::Presets, UIMode::Select, UIDetail::Init });
     }
 
     TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&]() {

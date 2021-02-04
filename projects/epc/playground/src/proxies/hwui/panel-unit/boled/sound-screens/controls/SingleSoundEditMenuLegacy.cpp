@@ -16,21 +16,25 @@ SingleSoundEditMenuLegacy::SingleSoundEditMenuLegacy(const Rect &rect)
 
 void SingleSoundEditMenuLegacy::init()
 {
-  auto pm = Application::get().getPresetManager();
-  auto soundUseCases = Application::get().getSoundUseCases();
 
   addButton("Store Init", [=]() {
-    soundUseCases->storeInitSound();
+    auto pm = Application::get().getPresetManager();
+    SoundUseCases soundUseCases(pm->getEditBuffer(), pm);
+    soundUseCases.storeInitSound();
     selectButton(0);
   });
 
   addButton("Reset Init", [=]() {
-    soundUseCases->resetInitSound();
+    auto pm = Application::get().getPresetManager();
+    SoundUseCases soundUseCases(pm->getEditBuffer(), pm);
+    soundUseCases.resetInitSound();
     selectButton(0);
   });
 
   addButton("Randomize", [=]() {
-    soundUseCases->randomizeSound();
+    auto pm = Application::get().getPresetManager();
+    SoundUseCases soundUseCases(pm->getEditBuffer(), pm);
+    soundUseCases.randomizeSound();
   });
 
   addButton("Mono Mode ..", [] {});

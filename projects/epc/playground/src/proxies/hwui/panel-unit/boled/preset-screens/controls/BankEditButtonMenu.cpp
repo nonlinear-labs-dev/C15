@@ -232,10 +232,10 @@ void BankEditButtonMenu::pasteBank()
 void BankEditButtonMenu::deleteBank()
 {
   auto pm = Application::get().getPresetManager();
-  auto useCases = Application::get().getPresetManagerUseCases();
+  PresetManagerUseCases useCases(pm);
   if(auto bank = pm->getSelectedBank())
   {
-    useCases->deleteBank(bank);
+    useCases.deleteBank(bank);
   }
 
   auto hwui = Application::get().getHWUI();
@@ -262,15 +262,16 @@ void BankEditButtonMenu::moveRight()
 
 void BankEditButtonMenu::selectMidi()
 {
-  auto bank = Application::get().getPresetManager()->getSelectedBank();
-  auto useCases = Application::get().getPresetManagerUseCases();
-  useCases->selectMidiBank(bank);
+  auto pm = Application::get().getPresetManager();
+  auto bank = pm->getSelectedBank();
+  PresetManagerUseCases useCases(pm);
+  useCases.selectMidiBank(bank);
 }
 
 void BankEditButtonMenu::removeMidi()
 {
-  auto useCases = Application::get().getPresetManagerUseCases();
-  useCases->selectMidiBank(nullptr);
+  PresetManagerUseCases useCases(Application::get().getPresetManager());
+  useCases.selectMidiBank(nullptr);
 }
 
 void BankEditButtonMenu::correctMenuSelection()

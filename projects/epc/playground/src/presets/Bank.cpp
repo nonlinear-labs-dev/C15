@@ -295,28 +295,6 @@ Bank *Bank::getSlaveBottom() const
   return nullptr;
 }
 
-void Bank::selectNextPreset()
-{
-  BankUseCases useCase(this);
-  useCase.selectPreset(getNextPresetPosition());
-}
-
-void Bank::selectPreviousPreset()
-{
-  BankUseCases useCase(this);
-  useCase.selectPreset(getPreviousPresetPosition());
-}
-
-void Bank::selectNextPreset(UNDO::Transaction *transaction)
-{
-  selectPreset(transaction, getNextPresetPosition());
-}
-
-void Bank::selectPreviousPreset(UNDO::Transaction *transaction)
-{
-  selectPreset(transaction, getPreviousPresetPosition());
-}
-
 void Bank::selectPreset(UNDO::Transaction *transaction, size_t pos)
 {
   if(pos < getNumPresets())
@@ -369,8 +347,7 @@ void Bank::setUuid(UNDO::Transaction *transaction, const Uuid &uuid)
 
 void Bank::selectPreset(UNDO::Transaction *transaction, const Uuid &uuid)
 {
-  if(m_presets.select(transaction, uuid))
-    static_cast<PresetManager *>(getParent())->onPresetSelectionChanged();
+  m_presets.select(transaction, uuid);
 }
 
 void Bank::ensurePresetSelection(UNDO::Transaction *transaction)

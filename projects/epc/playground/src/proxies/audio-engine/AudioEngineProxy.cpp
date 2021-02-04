@@ -24,6 +24,7 @@
 #include <parameter_declarations.h>
 #include <groups/SplitParameterGroups.h>
 #include <proxies/playcontroller/PlaycontrollerProxy.h>
+#include <device-settings/DirectLoadSetting.h>
 
 AudioEngineProxy::AudioEngineProxy()
 {

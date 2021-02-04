@@ -36,7 +36,6 @@ PresetManager::PresetManager(UpdateDocumentContributor *parent, bool readOnly)
     , m_banks(*this, nullptr)
     , m_editBuffer(std::make_unique<EditBuffer>(this))
     , m_initSound(std::make_unique<Preset>(this))
-    , m_autoLoadThrottler(std::chrono::milliseconds(200))
     , m_saveJob(std::bind(&PresetManager::doSaveTask, this))
     , m_readOnly(readOnly)
 {
@@ -236,7 +235,7 @@ SaveResult PresetManager::saveBanks(Glib::RefPtr<Gio::File> pmFolder)
   return SaveResult::Nothing;
 }
 
-void PresetManager::doAutoLoadSelectedPreset()
+void PresetManager::undoableLoadSelectedPreset(UNDO::Transaction *currentTransactionPtr)
 {
   if(auto lock = m_isLoading.lock())
   {
@@ -249,18 +248,9 @@ void PresetManager::doAutoLoadSelectedPreset()
 
     if(!isStoringPreset)
     {
-      scheduleAutoLoadPresetAccordingToLoadType();
+      undoableLoadSelectedPresetAccordingToLoadType(currentTransactionPtr);
     }
   }
-}
-
-void PresetManager::scheduleAutoLoadPresetAccordingToLoadType()
-{
-  m_autoLoadScheduled = true;
-  m_autoLoadThrottler.doTask([=]() {
-    m_autoLoadScheduled = false;
-    autoLoadPresetAccordingToLoadType();
-  });
 }
 
 bool PresetManager::isLoading() const
@@ -373,25 +363,9 @@ void PresetManager::forEachBank(std::function<void(Bank *)> cb) const
   m_banks.forEach(cb);
 }
 
-void PresetManager::selectNextBank()
-{
-  selectBank(getNextBankPosition());
-}
-
 std::shared_ptr<ScopedGuard::Lock> PresetManager::lockLoading()
 {
   return m_isLoading.lock();
-}
-
-void PresetManager::selectPreviousBank()
-{
-  selectBank(getPreviousBankPosition());
-}
-
-void PresetManager::selectBank(size_t idx)
-{
-  PresetManagerUseCases useCase(this);
-  useCase.selectBank(idx);
 }
 
 bool PresetManager::selectPreviousBank(UNDO::Transaction *transaction)
@@ -510,14 +484,7 @@ void PresetManager::handleDockingOnBankDelete(UNDO::Transaction *transaction, co
 
 void PresetManager::selectBank(UNDO::Transaction *transaction, const Uuid &uuid)
 {
-  if(m_banks.select(transaction, uuid))
-    onPresetSelectionChanged();
-}
-
-void PresetManager::onPresetSelectionChanged()
-{
-  if(Application::get().getSettings()->getSetting<DirectLoadSetting>()->get())
-    doAutoLoadSelectedPreset();
+  m_banks.select(transaction, uuid);
 }
 
 void PresetManager::sortBanks(UNDO::Transaction *transaction, const std::vector<Bank *> &banks)
@@ -933,62 +900,10 @@ Preset *PresetManager::getSelectedPreset()
   return nullptr;
 }
 
-bool PresetManager::currentLoadedPartIsBeforePresetToLoad() const
+void PresetManager::undoableLoadSelectedPresetAccordingToLoadType(UNDO::Transaction *transaction) const
 {
-  auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
-  auto og = getEditBuffer()->getPartOrigin(currentVG);
+  nltools_assertAlways(transaction != nullptr);
 
-  if(auto selectedBank = getSelectedBank())
-  {
-    if(auto selectedPreset = selectedBank->getSelectedPreset())
-    {
-      if(auto currentOGBank = findBankWithPreset(og.presetUUID))
-      {
-        if(currentOGBank == selectedBank)
-        {
-          if(auto currentOGPreset = currentOGBank->findPreset(og.presetUUID))
-          {
-            return currentOGBank->getPresetPosition(currentOGPreset) < currentOGBank->getPresetPosition(selectedPreset);
-          }
-        }
-        else
-        {
-          return getBankPosition(currentOGBank->getUuid()) < getBankPosition(selectedBank->getUuid());
-        }
-      }
-    }
-  }
-
-  return false;
-}
-
-void PresetManager::scheduleLoadToPart(const Preset *preset, VoiceGroup loadFrom, VoiceGroup loadTo)
-{
-  auto eb = getEditBuffer();
-  m_autoLoadScheduled = true;
-  m_autoLoadThrottler.doTask([=]() {
-    if(preset)
-    {
-      if(auto currentUndo = getUndoScope().getUndoTransaction())
-      {
-        if(!currentUndo->isClosed())
-        {
-          eb->undoableLoadPresetPartIntoPart(currentUndo, preset, loadFrom, loadTo);
-          m_autoLoadScheduled = false;
-          return;
-        }
-      }
-
-      EditBufferUseCases useCase(eb);
-      useCase.scheduleUndoableLoadToPart(preset, loadFrom, loadTo);
-      m_autoLoadScheduled = false;
-    }
-  });
-}
-
-void PresetManager::autoLoadPresetAccordingToLoadType()
-{
-  auto ebUseCases = Application::get().getEditBufferUseCases();
   auto eb = getEditBuffer();
   auto hwui = Application::get().getHWUI();
   auto currentVoiceGroup = hwui->getCurrentVoiceGroup();
@@ -1003,18 +918,19 @@ void PresetManager::autoLoadPresetAccordingToLoadType()
       switch(selPreset->getType())
       {
         case SoundType::Single:
-          eb->undoableLoadSelectedPreset(currentVoiceGroup);
+          eb->undoableLoadSelectedPreset(transaction, currentVoiceGroup);
+
           break;
         case SoundType::Layer:
         case SoundType::Split:
           if(loadToPartActive)
           {
             auto load = hwui->getPresetPartSelection(currentVoiceGroup);
-            ebUseCases->undoableLoadToPart(load->m_preset, load->m_voiceGroup, currentVoiceGroup);
+            eb->undoableLoadToPart(transaction, load->m_preset, load->m_voiceGroup, currentVoiceGroup);
           }
           else
           {
-            eb->undoableLoadSelectedPreset(currentVoiceGroup);
+            eb->undoableLoadSelectedPreset(transaction, currentVoiceGroup);
           }
           break;
         default:

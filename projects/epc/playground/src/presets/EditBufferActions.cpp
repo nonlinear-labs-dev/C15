@@ -170,21 +170,18 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("mute", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-
-    EditBufferUseCases ebUseCases(editBuffer);
-    ebUseCases.mutePart(vg);
+    EditBufferUseCases useCase(editBuffer);
+    useCase.mutePart(vg);
   });
 
   addAction("unmute", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-
     EditBufferUseCases ebUseCases(editBuffer);
     ebUseCases.unmutePart(vg);
   });
 
   addAction("mute-part-unmute-other", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-
     EditBufferUseCases ebUseCases(editBuffer);
     ebUseCases.mutePartUnmuteOtherPart(vg);
   });
@@ -194,16 +191,14 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto modAmount = std::stod(request->get("mod-amount"));
     auto value = std::stod(request->get("value"));
     auto paramId = ParameterId(id);
-
-    EditBufferUseCases ebUseCases(editBuffer);
-    ebUseCases.setModAmountAndValue(paramId, modAmount, value);
+    EditBufferUseCases useCase(editBuffer);
+    useCase.setModAmountAndValue(paramId, modAmount, value);
   });
 
   addAction("set-modulation-limit", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = ParameterId { request->get("id") };
     auto newAmt = std::stod(request->get("mod-amt"));
     auto newParamVal = std::stod(request->get("param-val"));
-
     EditBufferUseCases ebUseCases(editBuffer);
     ebUseCases.setModulationLimit(id, newAmt, newParamVal);
   });
@@ -227,7 +222,6 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("recall-current-from-preset", [=](auto request) {
     auto id = request->get("id");
-
     EditBufferUseCases ebUseCases(editBuffer);
     if(auto paramUseCase = ebUseCases.getUseCase(ParameterId { id }))
     {
@@ -237,7 +231,6 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("recall-mc-for-current-mod-param", [=](auto request) {
     auto id = request->get("id");
-
     EditBufferUseCases ebUseCases(editBuffer);
     if(auto modUseCase = ebUseCases.getModParamUseCase(ParameterId { id }))
       modUseCase->recallMCPos();
@@ -245,7 +238,6 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
   addAction("recall-mc-amount-for-current-mod-param", [=](auto request) {
     auto id = request->get("id");
-
     EditBufferUseCases ebUseCases(editBuffer);
     if(auto modUseCase = ebUseCases.getModParamUseCase(ParameterId { id }))
       modUseCase->recallMCAmount();
@@ -263,6 +255,7 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
     soundUseCases.convertToSplit();
   });
+
   addAction("convert-to-layer", [=](auto request) {
     SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
     soundUseCases.convertToLayer();
@@ -273,7 +266,10 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto editbufferPartPart = to<VoiceGroup>(request->get("editbuffer-part"));
 
     EditBufferUseCases ebUseCases(editBuffer);
-    ebUseCases.loadSelectedPresetPartIntoPart(presetPart, editbufferPartPart);
+    if(auto selectedPreset = editBuffer->getParent()->getSelectedPreset())
+    {
+      ebUseCases.undoableLoadToPart(selectedPreset, presetPart, editbufferPartPart);
+    }
   });
 
   addAction("load-preset-part-into-editbuffer-part", [=](auto request) {

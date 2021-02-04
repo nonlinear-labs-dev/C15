@@ -5,6 +5,7 @@ UPDATE_PACKAGE_SERVERS="https://nonlinearlabs.s3.eu-central-1.amazonaws.com http
 BUILD_SWITCHES="-DBUILD_EPC_SCRIPTS=On -DBUILD_AUDIOENGINE=On -DBUILD_PLAYGROUND=On -DBUILD_ONLINEHELP=On -DBUILD_WEBUI=On"
 
 setup_overlay() {
+    mkdir -p /run/shm
     mount -o loop /in/rootfs.ext4 /mnt
     mkdir -p /mnt/boot
     mount -o loop /in/bootfs.fat /mnt/boot/

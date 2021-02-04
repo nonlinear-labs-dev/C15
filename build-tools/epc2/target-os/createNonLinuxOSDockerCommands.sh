@@ -1,4 +1,5 @@
 set -e
+set -x
 
 pacman --noconfirm --overwrite '*' -S ${INSTALL_PACKAGES}
 yes | truncate -s 8G /out/rootfs.ext4
@@ -9,6 +10,7 @@ pacman --noconfirm -Sw ${INSTALL_PACKAGES}
 mount -o loop /out/rootfs.ext4 /mnt
 mkdir /mnt/boot
 mount -o loop /out/bootfs.fat /mnt/boot/
+mkdir -p /run/shm
 echo Server\ =\ file:///var/lib/pacman/sync > /etc/pacman.d/mirrorlist
 echo [dvzrv] >> /etc/pacman.d/mirrorlist
 echo Server\ =\ file:///var/lib/pacman/sync >> /etc/pacman.d/mirrorlist

@@ -51,8 +51,8 @@ class PresetManagerUseCases
   void selectPreset(const Preset* preset);
 
   void selectBank(const Uuid& uuid);
-  void selectBank(Bank* b);
-  void selectBank(int index);
+  void selectBank(Bank* bank);
+  void selectBank(int idx);
 
   void stepBankSelection(int inc, bool shift);
 
@@ -88,6 +88,12 @@ class PresetManagerUseCases
   bool loadPresetFromCompareXML(const Glib::ustring& xml);
 
   void moveAllBanks(float x, float y);
+  void selectPreviousBank();
+  void selectNextBank();
+
+  void selectPreviousPreset();
+  void selectNextPreset();
+
   void pastePresetOnBank(Bank* bank, const Preset* preset, Clipboard* pClipboard);
 
   void pastePresetOnPreset(Preset* target, Preset* source, Clipboard* clipboard);
@@ -98,6 +104,8 @@ class PresetManagerUseCases
   void pastePresetOnBackground(const Glib::ustring& x, const Glib::ustring& y, Preset* source, Clipboard* clipboard);
 
  private:
+  [[nodiscard]] bool isDirectLoadActive() const;
+
   PresetManager* m_presetManager;
 
   void onStore(UNDO::Transaction* transaction, Preset* preset);

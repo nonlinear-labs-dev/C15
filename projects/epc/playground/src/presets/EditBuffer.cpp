@@ -430,7 +430,7 @@ bool isLoadToPartActive()
   return hwui->isInLoadToPart();
 }
 
-void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto)
+void EditBuffer::undoableLoadSelectedPreset(UNDO::Transaction *transaction, VoiceGroup loadInto)
 {
   if(auto bank = getParent()->getSelectedBank())
   {
@@ -439,11 +439,11 @@ void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto)
       if(isLoadToPartActive() && isDual())
       {
         if(!preset->isDual())
-          undoableLoadPresetIntoDualSound(preset, loadInto);
+          undoableLoadPresetIntoDualSound(transaction, preset, loadInto);
       }
       else
       {
-        Application::get().getEditBufferUseCases()->undoableLoad(preset);
+        undoableLoad(transaction, preset, true);
       }
     }
   }
@@ -856,10 +856,9 @@ void EditBuffer::undoableSetType(UNDO::Transaction *transaction, SoundType type)
   }
 }
 
-void EditBuffer::undoableLoadPresetIntoDualSound(const Preset *preset, VoiceGroup vg)
+void EditBuffer::undoableLoadPresetIntoDualSound(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup vg)
 {
-  EditBufferUseCases useCase(this);
-  useCase.loadSinglePresetIntoDualSound(preset, vg);
+  undoableLoadSinglePresetIntoDualSound(transaction, preset, vg);
 }
 
 void EditBuffer::undoableLoadSinglePresetIntoDualSound(UNDO::Transaction *transaction, const Preset *preset,

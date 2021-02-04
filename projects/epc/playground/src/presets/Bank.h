@@ -65,9 +65,6 @@ class Bank : public AttributesOwner
   Bank *getSlaveBottom() const;
   time_t getLastChangedTimestamp() const;
 
-  // convenience
-  void selectNextPreset();
-  void selectPreviousPreset();
   void rename(const Glib::ustring &name);
   void attachBank(UNDO::Transaction *transaction, const Uuid &otherBank, AttachmentDirection dir);
   void invalidate();
@@ -80,8 +77,6 @@ class Bank : public AttributesOwner
   void setUuid(UNDO::Transaction *transaction, const Uuid &uuid);
   void selectPreset(UNDO::Transaction *transaction, const Uuid &uuid);
   void selectPreset(UNDO::Transaction *transaction, size_t pos);
-  void selectNextPreset(UNDO::Transaction *transaction);
-  void selectPreviousPreset(UNDO::Transaction *transaction);
   void ensurePresetSelection(UNDO::Transaction *transaction);
   void setAttachedToBank(UNDO::Transaction *transaction, const Uuid &uuid);
   void setAttachedDirection(UNDO::Transaction *transaction, const std::string &direction);

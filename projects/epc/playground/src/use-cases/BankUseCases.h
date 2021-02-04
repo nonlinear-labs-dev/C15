@@ -25,6 +25,9 @@ class BankUseCases
   void deletePreset(const Preset* p);
   void deletePreset(const Uuid& uuid);
 
- void setAttribute(const Glib::ustring& key, const Glib::ustring& value);private:
+  void setAttribute(const Glib::ustring& key, const Glib::ustring& value);
+
+ private:
+  bool isDirectLoadActive() const;
   Bank* m_bank;
 };
