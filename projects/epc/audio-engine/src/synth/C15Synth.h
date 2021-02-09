@@ -62,8 +62,6 @@ class C15Synth : public Synth, public sigc::trackable
 
   unsigned int getRenderedSamples();
 
-  dsp_host_dual* getDsp();
-
  private:
   bool filterMidiInEvent(const MidiEvent& event) const;
   bool filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event) const;

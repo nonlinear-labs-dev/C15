@@ -218,7 +218,7 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
     nltools::Log::error("Raw Midi Event:", (int) statusByte, (int) event.raw[1], (int) event.raw[2]);
   }
 
-  if(channel == allowedChannel)
+  if(channel == allowedChannel || allowedChannel == MIDI_CHANNEL_OMNI)
   {
     const auto isNoteEvent = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
         || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK);
@@ -240,7 +240,7 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
 
     if(isNoteEvent)
     {
-      return (channel == allowedChannel || allowedChannel == MIDI_CHANNEL_OMNI) && m_midiOptions.shouldReceiveNotes();
+      return (channel == allowedChannel) && m_midiOptions.shouldReceiveNotes();
     }
   }
   return false;
@@ -308,11 +308,6 @@ void C15Synth::doTcd(const MidiEvent& event)
 unsigned int C15Synth::getRenderedSamples()
 {
   return m_dsp->m_sample_counter;
-}
-
-dsp_host_dual* C15Synth::getDsp()
-{
-  return m_dsp.get();
 }
 
 void C15Synth::doAudio(SampleFrame* target, size_t numFrames)
