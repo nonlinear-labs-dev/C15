@@ -142,7 +142,7 @@ constexpr static u_int8_t MIDI_CHANNEL_AFTERTOUCH_PATTERN = 0b11010000;
 constexpr static u_int8_t MIDI_CONTROLCHANGE_PATTERN = 0b10110000;
 constexpr static u_int8_t MIDI_PITCHBEND_PATTERN = 0b11100000;
 constexpr static u_int8_t MIDI_PROGRAMCHANGE_PATTERN = 0b11000000;
-
+constexpr static u_int8_t MIDI_CONTROL_CHANGE_HIGH_RES_VELOCITY = 0b01011000;
 constexpr static u_int8_t MIDI_EVENT_TYPE_MASK = 0b11110000;
 constexpr static u_int8_t MIDI_CHANNEL_OMNI = 16;
 
@@ -195,7 +195,14 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
       return m_midiOptions.shouldSendNotes();
 
     if(isControlChangeEvent || isAftertouchEvent || isPitchbendEvent)
+    {
+      if(isControlChangeEvent && (int) event.rawBytes[1] == MIDI_CONTROL_CHANGE_HIGH_RES_VELOCITY)
+      {
+        return m_midiOptions.shouldSendNotes();
+      }
+
       return m_midiOptions.shouldSendControllers();
+    }
 
     if(isProgramChangeEvent)
       return m_midiOptions.shouldSendProgramChanges();
