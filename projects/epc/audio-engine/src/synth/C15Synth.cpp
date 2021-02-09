@@ -181,39 +181,37 @@ bool C15Synth::filterMidiOutEvent(nltools::msg::Midi::SimpleMessage& event) cons
     nltools::Log::error("channel: ", (int) channel, "allowed channel:", (int) allowedChannel);
   }
 
-  if(channel == allowedChannel)
+  const auto isNoteEvent = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
+      || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK);
+  const auto isAftertouchEvent = matchPattern(statusByte, MIDI_CHANNEL_AFTERTOUCH_PATTERN, MIDI_EVENT_TYPE_MASK);
+  const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
+  const auto isPitchbendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
+  const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAMCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
+
+  if constexpr(LOG_MIDI_DETAIL)
   {
-    const auto isNoteEvent = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
-        || matchPattern(statusByte, MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK);
-    const auto isAftertouchEvent = matchPattern(statusByte, MIDI_CHANNEL_AFTERTOUCH_PATTERN, MIDI_EVENT_TYPE_MASK);
-    const auto isControlChangeEvent = matchPattern(statusByte, MIDI_CONTROLCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
-    const auto isPitchbendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
-    const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAMCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
-
-    if constexpr(LOG_MIDI_DETAIL)
-    {
-      nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
-      nltools::Log::error("isNoteEvent:", isNoteEvent,
-                          "isControlEvent:", isAftertouchEvent || isControlChangeEvent || isPitchbendEvent,
-                          "isProgramChangeEvent:", isProgramChangeEvent);
-    }
-
-    if(isNoteEvent)
-      return m_midiOptions.shouldSendNotes();
-
-    if(isControlChangeEvent || isAftertouchEvent || isPitchbendEvent)
-    {
-      if(isControlChangeEvent && (int) event.rawBytes[1] == MIDI_CONTROL_CHANGE_HIGH_RES_VELOCITY)
-      {
-        return m_midiOptions.shouldSendNotes();
-      }
-
-      return m_midiOptions.shouldSendControllers();
-    }
-
-    if(isProgramChangeEvent)
-      return m_midiOptions.shouldSendProgramChanges();
+    nltools::Log::error("filterMidiOutEvent channel:", channel, "allowedChannel:", allowedChannel);
+    nltools::Log::error("isNoteEvent:", isNoteEvent,
+                        "isControlEvent:", isAftertouchEvent || isControlChangeEvent || isPitchbendEvent,
+                        "isProgramChangeEvent:", isProgramChangeEvent);
   }
+
+  if(isNoteEvent)
+    return m_midiOptions.shouldSendNotes();
+
+  if(isControlChangeEvent || isAftertouchEvent || isPitchbendEvent)
+  {
+    if(isControlChangeEvent && (int) event.rawBytes[1] == MIDI_CONTROL_CHANGE_HIGH_RES_VELOCITY)
+    {
+      return m_midiOptions.shouldSendNotes();
+    }
+
+    return m_midiOptions.shouldSendControllers();
+  }
+
+  if(isProgramChangeEvent)
+    return m_midiOptions.shouldSendProgramChanges();
+
   return false;
 }
 
