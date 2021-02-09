@@ -22,7 +22,7 @@ class SelectedMacroControlsHWSourceName : public Label
   SelectedMacroControlsHWSourceName(const SelectedMacroControlsHWSourceName& other);
   SelectedMacroControlsHWSourceName& operator=(const SelectedMacroControlsHWSourceName&);
 
-  void onParameterSelected(Parameter* newOne);
+  void onParameterSelected(Parameter* newOne, SignalOrigin signalType);
   void onMCChanged(const Parameter* param);
 
   ParameterId m_hwParamID;

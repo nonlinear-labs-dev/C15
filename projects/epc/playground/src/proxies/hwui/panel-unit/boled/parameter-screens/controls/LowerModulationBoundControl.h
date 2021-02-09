@@ -12,7 +12,7 @@ class LowerModulationBoundControl : public ModulationBoundControl
   bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  private:
-  void onSelectionChanged(Parameter *, Parameter *newParam);
+  void onSelectionChanged(Parameter *, Parameter *newParam, SignalOrigin signalType);
   void onParameterChanged(const Parameter *p);
 
   sigc::connection m_paramChanged;

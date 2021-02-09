@@ -19,6 +19,6 @@ class HeadlineLabel : public Label
   virtual int getFontHeight() const override;
 
  private:
-  void updateText(Parameter *oldParam, Parameter *newParam);
+  void updateText(Parameter *oldParam, Parameter *newParam, SignalOrigin signalType);
   void updateMc(const Parameter *param);
 };

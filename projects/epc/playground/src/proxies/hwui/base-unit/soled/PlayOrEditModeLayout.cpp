@@ -48,7 +48,7 @@ int PlayOrEditModeLayout::getBehaviourLeft() const
   return 109;
 }
 
-void PlayOrEditModeLayout::onParameterSelectionChanged(const Parameter* old, Parameter* newP)
+void PlayOrEditModeLayout::onParameterSelectionChanged(const Parameter* old, Parameter* newP, SignalOrigin signalType)
 {
   if(newP->getID().getNumber() == C15::PID::Ribbon_1)
   {

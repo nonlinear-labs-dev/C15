@@ -24,7 +24,7 @@ class ParameterNameLabel : public Label
   ParameterNameLabel(const ParameterNameLabel &other);
   ParameterNameLabel &operator=(const ParameterNameLabel &);
 
-  void onParameterSelected(Parameter *param);
+  void onParameterSelected(Parameter *param, SignalOrigin signalType);
   void onParameterChanged(const Parameter *param);
 
   virtual void setFontColor(FrameBuffer &fb) const override;

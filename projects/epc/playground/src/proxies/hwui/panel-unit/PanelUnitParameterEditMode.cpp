@@ -171,7 +171,8 @@ bool PanelUnitParameterEditMode::handleMacroControlButton(bool state, int mcPara
   return true;
 }
 
-void PanelUnitParameterEditMode::onParamSelectionChanged(Parameter *oldParam, Parameter *newParam)
+void PanelUnitParameterEditMode::onParamSelectionChanged(Parameter *oldParam, Parameter *newParam,
+                                                         SignalOrigin signalType)
 {
   if(auto mc = dynamic_cast<MacroControlParameter *>(oldParam))
   {

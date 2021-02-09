@@ -17,6 +17,6 @@ class SwitchVoiceGroupButton : public Button
  private:
   void rebuild();
 
-  void onParameterSelectionChanged(Parameter* oldSelected, Parameter* newSelection);
+  void onParameterSelectionChanged(Parameter* oldSelected, Parameter* newSelection, SignalOrigin signalType);
   void onVoiceGroupChanged(VoiceGroup newVoiceGroup);
 };

@@ -19,7 +19,7 @@ SelectedMacroControlsHWSourceName::~SelectedMacroControlsHWSourceName()
 {
 }
 
-void SelectedMacroControlsHWSourceName::onParameterSelected(Parameter *newOne)
+void SelectedMacroControlsHWSourceName::onParameterSelected(Parameter *newOne, SignalOrigin signalType)
 {
   m_mcChanged.disconnect();
   m_mcChanged = newOne->onParameterChanged(sigc::mem_fun(this, &SelectedMacroControlsHWSourceName::onMCChanged));

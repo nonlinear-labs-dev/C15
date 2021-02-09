@@ -95,7 +95,7 @@ void EditBufferUseCases::selectParameter(const ParameterId& id)
     auto& undoScope = m_editBuffer->getUndoScope();
     auto groupAndParamName = p->getGroupAndParameterName();
     auto scope = undoScope.startContinuousTransaction(&p, std::chrono::hours(1), "Select '%0'", groupAndParamName);
-    m_editBuffer->undoableSelectParameter(scope->getTransaction(), ParameterId(id));
+    m_editBuffer->undoableSelectParameter(scope->getTransaction(), ParameterId(id), SignalOrigin::EXPLICIT);
   }
 }
 

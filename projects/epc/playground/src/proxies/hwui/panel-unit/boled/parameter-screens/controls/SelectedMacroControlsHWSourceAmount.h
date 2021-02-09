@@ -21,7 +21,7 @@ class SelectedMacroControlsHWSourceAmount : public Label
   SelectedMacroControlsHWSourceAmount(const SelectedMacroControlsHWSourceAmount& other);
   SelectedMacroControlsHWSourceAmount& operator=(const SelectedMacroControlsHWSourceAmount&);
 
-  void onParameterSelected(Parameter* newOne);
+  void onParameterSelected(Parameter* newOne, SignalOrigin signalType);
   void onMCChanged(const Parameter* param);
   void updateText(const Parameter* param);
   void updateTextFromRouter(const Parameter* param);

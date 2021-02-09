@@ -22,7 +22,7 @@ class ParameterEditButtonMenu : public ButtonMenu
   void unlockAll();
   void lockAll();
 
-  void onParameterSelectionChanged(Parameter *oldParameter, Parameter *newParameter);
+  void onParameterSelectionChanged(Parameter* oldParameter, Parameter* newParameter, SignalOrigin signalType);
   void onGroupChanged();
 
   void sanitizeLastAction();

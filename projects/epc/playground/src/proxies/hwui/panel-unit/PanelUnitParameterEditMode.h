@@ -41,7 +41,7 @@ class PanelUnitParameterEditMode : public UsageMode
  private:
   typedef std::array<bool, NUM_LEDS> tLedStates;
 
-  void onParamSelectionChanged(Parameter *oldParam, Parameter *newParam);
+  void onParamSelectionChanged(Parameter *oldParam, Parameter *newParam, SignalOrigin signalType);
 
   bool tryParameterToggleOnMacroControl(std::vector<gint32> ids, Parameter *selParam);
 

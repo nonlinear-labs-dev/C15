@@ -12,7 +12,8 @@ TEST_CASE("Test Previous Boled Focus on Button")
 
   {
     auto scope = TestHelper::createTestScope();
-    TestHelper::getEditBuffer()->undoableSelectParameter(scope->getTransaction(), { 0, VoiceGroup::I });
+    TestHelper::getEditBuffer()->undoableSelectParameter(scope->getTransaction(), { 0, VoiceGroup::I },
+                                                         SignalOrigin::EXPLICIT);
   }
 
   editPanel.getBoled().bruteForce();

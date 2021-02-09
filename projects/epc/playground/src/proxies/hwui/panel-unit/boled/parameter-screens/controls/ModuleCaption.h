@@ -27,7 +27,7 @@ class ModuleCaption : public Label
   StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override;
 
  private:
-  void onParameterSelected(Parameter *newOne);
+  void onParameterSelected(Parameter *newOne, SignalOrigin signalType);
   void onSelectionChanged();
   void onSoundTypeChanged();
 };

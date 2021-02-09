@@ -17,7 +17,7 @@ class UpperRibbon : public Ribbon
   ~UpperRibbon();
 
  private:
-  void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne);
+  void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne, SignalOrigin signalType);
   void onParamValueChanged(const Parameter* param);
 
   void onSettingChanged(const Setting* setting);

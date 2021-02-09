@@ -37,7 +37,7 @@ class ModulateableParameterSelectLayout2 : public ParameterSelectLayout2, public
  private:
   void handleSelectPartButton();
   void onModfiersChanged(ButtonModifiers modifiers);
-  void onSelectedParameterChanged(Parameter *oldParam, Parameter *newParam);
+  void onSelectedParameterChanged(Parameter *, Parameter *newParam, SignalOrigin signalType);
   void onCurrentParameterChanged(const Parameter *p);
   void fixModeIfNecessary(const Parameter *p);
 

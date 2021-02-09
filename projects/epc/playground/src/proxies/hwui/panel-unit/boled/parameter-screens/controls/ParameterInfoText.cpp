@@ -17,7 +17,7 @@ ParameterInfoText::ParameterInfoText(ControlOwner *parent)
       mem_fun(this, &ParameterInfoText::onParameterSelected), getHWUI()->getCurrentVoiceGroup());
 }
 
-void ParameterInfoText::onParameterSelected(Parameter *oldParam, Parameter *newParam)
+void ParameterInfoText::onParameterSelected(Parameter *oldParam, Parameter *newParam, SignalOrigin signalType)
 {
   m_currentParameterConnection.disconnect();
 

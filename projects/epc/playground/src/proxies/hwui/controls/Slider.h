@@ -14,7 +14,7 @@ class Slider : public Control
   Slider(Parameter *param, const Rect &rect);
   Slider(const Rect &rect);
 
-  virtual void setParameter(Parameter *param);
+  virtual void setParameter(Parameter *param, SignalOrigin signalType);
   Parameter *getParameter() const;
   void setValue(tDisplayValue v, bool bipolar);
   tDisplayValue getValue() const;

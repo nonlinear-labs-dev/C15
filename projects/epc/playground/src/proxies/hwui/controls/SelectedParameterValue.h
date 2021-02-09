@@ -16,7 +16,7 @@ class SelectedParameterValue : public Label
   virtual ~SelectedParameterValue();
 
  protected:
-  virtual void onParameterSelected(Parameter *parameter);
+  virtual void onParameterSelected(Parameter *parameter, SignalOrigin signalType);
   virtual void onParamValueChanged(const Parameter *param);
 
   void setSuffixFontColor(FrameBuffer &fb) const override;

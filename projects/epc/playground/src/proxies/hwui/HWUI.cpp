@@ -581,6 +581,7 @@ void HWUI::setCurrentVoiceGroup(VoiceGroup v)
     {
       m_voiceGoupSignal.send(m_currentVoiceGroup);
       auto eb = Application::get().getPresetManager()->getEditBuffer();
+      //todo explicit or implicit?
       eb->fakeParameterSelectionSignal(oldGroup, m_currentVoiceGroup);
       eb->onChange(UpdateDocumentContributor::ChangeFlags::Generic);
     }
@@ -600,7 +601,7 @@ void HWUI::undoableUpdateParameterSelection(UNDO::Transaction *transaction)
 
   if(id.getVoiceGroup() != VoiceGroup::Global)
   {
-    eb->undoableSelectParameter(transaction, { id.getNumber(), m_currentVoiceGroup });
+    eb->undoableSelectParameter(transaction, { id.getNumber(), m_currentVoiceGroup }, SignalOrigin::EXPLICIT);
   }
 }
 
@@ -841,7 +842,8 @@ void HWUI::exportOled(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const std:
   boledFile.write(fileName);
 }
 
-void HWUI::onParameterSelectionChanged(const Parameter *newParameter, const Parameter *oldParameter)
+void HWUI::onParameterSelectionChanged(const Parameter *newParameter, const Parameter *oldParameter,
+                                       SignalOrigin signalType)
 {
   if(newParameter != oldParameter)
   {
@@ -849,7 +851,7 @@ void HWUI::onParameterSelectionChanged(const Parameter *newParameter, const Para
     auto pm = Application::get().getPresetManager();
     const auto isPresetManagerLoading = pm->isLoading();
     const auto isParameterFocusLocked = pm->getEditBuffer()->isParameterFocusLocked();
-    
+
     if(!isPresetManagerLoading && !isParameterFocusLocked)
     {
       if(getFocusAndMode().focus == UIFocus::Sound)
@@ -863,11 +865,8 @@ void HWUI::onParameterSelectionChanged(const Parameter *newParameter, const Para
       }
     }
   }
-  else
+  else if(signalType == SignalOrigin::EXPLICIT)
   {
-    if(getFocusAndMode().mode == UIMode::Info)
-      setFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Info));
-    else
-      setFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Select));
+    setFocusAndMode({ UIFocus::Parameters, UIMode::Select });
   }
 }

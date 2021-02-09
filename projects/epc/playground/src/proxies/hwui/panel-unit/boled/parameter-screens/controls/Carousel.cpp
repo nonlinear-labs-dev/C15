@@ -9,7 +9,7 @@ Carousel::Carousel(const Rect &pos)
     : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &Carousel::setup)), getHWUI()->getCurrentVoiceGroup());
+      sigc::hide<0>(sigc::hide<1>(sigc::mem_fun(this, &Carousel::setup))), getHWUI()->getCurrentVoiceGroup());
 
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
       sigc::hide(sigc::mem_fun(this, &Carousel::setupSelected)), false);

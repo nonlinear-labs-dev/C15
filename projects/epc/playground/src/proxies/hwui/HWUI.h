@@ -96,7 +96,8 @@ class HWUI
   void onEditBufferSoundTypeChanged(SoundType type);
   void undoableUpdateParameterSelection(UNDO::Transaction *transaction);
   void onButtonMessage(const nltools::msg::ButtonChangedMessage &msg);
-  void onParameterSelectionChanged(const Parameter *newParameter, const Parameter *oldParameter);
+  void onParameterSelectionChanged(const Parameter *newParameter, const Parameter *oldParameter,
+                                   SignalOrigin signalType);
   void onButtonPressed(Buttons buttonID, bool state);
 
   void onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res);

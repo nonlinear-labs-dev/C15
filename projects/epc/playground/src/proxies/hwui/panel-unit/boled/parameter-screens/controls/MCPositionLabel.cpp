@@ -22,7 +22,7 @@ MCPositionLabel::~MCPositionLabel()
 {
 }
 
-void MCPositionLabel::onParameterSelected(Parameter *newParameter)
+void MCPositionLabel::onParameterSelected(Parameter *newParameter, SignalOrigin signalType)
 {
   if(newParameter)
   {
@@ -80,7 +80,9 @@ void MCPositionLabel::setSuffixFontColor(FrameBuffer &fb) const
 
 void MCPositionLabel::onModifiersChanged()
 {
-  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
+  onParameterSelected(
+      Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()),
+      SignalOrigin::EXPLICIT);
 }
 
 void MCPositionLabel::ensureDisconnectedModulationSourceIfApplicable(const Parameter *parameter)

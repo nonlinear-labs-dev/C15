@@ -17,7 +17,7 @@ class SelectedMacroControlsHWSourceSlider : public DotSlider
   virtual void drawSliderBackground(FrameBuffer& fb) override;
 
  private:
-  void onParameterSelected(Parameter* newOne);
+  void onParameterSelected(Parameter* newOne, SignalOrigin signalType);
   void onMCChanged(const Parameter* param);
 
   sigc::connection m_mcChanged;

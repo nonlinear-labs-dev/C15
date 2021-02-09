@@ -100,12 +100,12 @@ void EditBufferSerializer::readTagContent(Reader &reader) const
     {
       auto num = std::stoi(text);
       ParameterId id { num, ParameterId::isGlobal(num) ? VoiceGroup::Global : VoiceGroup::I };
-      m_editBuffer->undoableSelectParameter(reader.getTransaction(), id);
+      m_editBuffer->undoableSelectParameter(reader.getTransaction(), id, SignalOrigin::IMPLICIT);
     }
     catch(const std::invalid_argument &err)
     {
       nltools::Log::error(err.what(), "Selecting default Parameter..");
-      m_editBuffer->undoableSelectParameter(reader.getTransaction(), { 0, VoiceGroup::I });
+      m_editBuffer->undoableSelectParameter(reader.getTransaction(), { 0, VoiceGroup::I }, SignalOrigin::IMPLICIT);
     }
   });
 

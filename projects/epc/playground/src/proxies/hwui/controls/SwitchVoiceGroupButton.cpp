@@ -39,7 +39,8 @@ void SwitchVoiceGroupButton::rebuild()
     setText({ "", 0 });
 }
 
-void SwitchVoiceGroupButton::onParameterSelectionChanged(Parameter* oldSelected, Parameter* newSelection)
+void SwitchVoiceGroupButton::onParameterSelectionChanged(Parameter* oldSelected, Parameter* newSelection,
+                                                         SignalOrigin signalType)
 {
   rebuild();
 }

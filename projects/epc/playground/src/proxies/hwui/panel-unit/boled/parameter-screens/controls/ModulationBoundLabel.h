@@ -19,7 +19,7 @@ class ModulationBoundLabel : public LabelRegular8
   ModulateableParameter *getModulatedParameter();
 
  private:
-  void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam);
+  void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam, SignalOrigin signalType);
   void onParameterChanged(const Parameter *param);
   void onMCParameterChanged(const Parameter *mcParam);
   void onButtonModifiersChanged(ButtonModifiers mod);

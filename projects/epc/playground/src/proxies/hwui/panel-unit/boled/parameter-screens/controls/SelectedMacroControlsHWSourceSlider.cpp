@@ -17,7 +17,7 @@ SelectedMacroControlsHWSourceSlider::SelectedMacroControlsHWSourceSlider(const R
       getHWUI()->getCurrentVoiceGroup());
 }
 
-void SelectedMacroControlsHWSourceSlider::onParameterSelected(Parameter *newOne)
+void SelectedMacroControlsHWSourceSlider::onParameterSelected(Parameter *newOne, SignalOrigin signalType)
 {
   m_mcChanged.disconnect();
   m_mcChanged = newOne->onParameterChanged(sigc::mem_fun(this, &SelectedMacroControlsHWSourceSlider::onMCChanged));
@@ -35,7 +35,8 @@ void SelectedMacroControlsHWSourceSlider::onMCChanged(const Parameter *param)
 
       if(hwSourceID.getNumber() > 0)
       {
-        setParameter(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(hwSourceID));
+        setParameter(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(hwSourceID),
+                     SignalOrigin::EXPLICIT);
       }
     }
   }

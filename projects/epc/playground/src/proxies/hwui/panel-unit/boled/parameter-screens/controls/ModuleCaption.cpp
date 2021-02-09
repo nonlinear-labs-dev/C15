@@ -35,7 +35,7 @@ Label::StringAndSuffix ModuleCaption::shortenStringIfNeccessary(std::shared_ptr<
   return TextCropper::shortenStringIfNeccessary(font, text.text, getWidth());
 }
 
-void ModuleCaption::onParameterSelected(Parameter *newOne)
+void ModuleCaption::onParameterSelected(Parameter *newOne, SignalOrigin signalType)
 {
   updateText(newOne);
 }

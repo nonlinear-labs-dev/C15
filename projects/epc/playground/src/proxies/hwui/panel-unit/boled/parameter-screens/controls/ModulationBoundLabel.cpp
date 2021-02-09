@@ -23,7 +23,8 @@ ModulationBoundLabel::~ModulationBoundLabel()
 {
 }
 
-void ModulationBoundLabel::onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
+void ModulationBoundLabel::onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam,
+                                                       SignalOrigin signalType)
 {
   m_paramConnection.disconnect();
 

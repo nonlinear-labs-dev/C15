@@ -25,7 +25,7 @@ class ParameterInfoText : public MultiLineLabel, public Scrollable
 
  private:
   void onParameterChanged(const Parameter *newParameter);
-  void onParameterSelected(Parameter *oldParam, Parameter *newParam);
+  void onParameterSelected(Parameter *oldParam, Parameter *newParam, SignalOrigin signalType);
   void onTextLoaded(const Glib::ustring &text);
 
   ControlOwner *m_parent;

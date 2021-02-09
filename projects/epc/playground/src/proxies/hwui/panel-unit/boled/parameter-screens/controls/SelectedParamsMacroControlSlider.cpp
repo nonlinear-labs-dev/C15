@@ -20,7 +20,7 @@ SelectedParamsMacroControlSlider::~SelectedParamsMacroControlSlider()
 {
 }
 
-void SelectedParamsMacroControlSlider::setTargetParameter(Parameter *param)
+void SelectedParamsMacroControlSlider::setTargetParameter(Parameter *param, SignalOrigin signalType)
 {
   if(m_targetParameter != param)
   {
@@ -34,7 +34,7 @@ void SelectedParamsMacroControlSlider::setTargetParameter(Parameter *param)
     }
     else
     {
-      setParameter(nullptr);
+      setParameter(nullptr, signalType);
     }
   }
 }
@@ -45,20 +45,20 @@ void SelectedParamsMacroControlSlider::onTargetParamValueChanged(const Parameter
   {
     auto src = modP->getModulationSource();
     auto srcParamID = MacroControlsGroup::modSrcToParamId(src);
-    setParameter(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(srcParamID));
+    setParameter(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(srcParamID),
+                 SignalOrigin::IMPLICIT);
   }
   else
   {
-    setParameter(nullptr);
+    setParameter(nullptr, SignalOrigin::IMPLICIT);
   }
 }
 
-void SelectedParamsMacroControlSlider::setParameter(Parameter *param)
+void SelectedParamsMacroControlSlider::setParameter(Parameter *param, SignalOrigin signalType)
 {
-  Slider::setParameter(param);
+  Slider::setParameter(param, signalType);
   if(param)
   {
-    auto eb = Application::get().getPresetManager()->getEditBuffer();
     setVisible(!param->isDisabled());
   }
 }

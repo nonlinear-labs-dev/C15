@@ -17,7 +17,7 @@ ModulationBoundSlider::~ModulationBoundSlider()
 {
 }
 
-void ModulationBoundSlider::onSelectionChanged(Parameter *, Parameter *newParam)
+void ModulationBoundSlider::onSelectionChanged(Parameter *, Parameter *newParam, SignalOrigin signalType)
 {
   m_paramChanged.disconnect();
 

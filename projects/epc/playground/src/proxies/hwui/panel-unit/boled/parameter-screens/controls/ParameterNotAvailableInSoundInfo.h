@@ -17,7 +17,7 @@ class ParameterNotAvailableInSoundInfo : public ControlWithChildren
   void setBackgroundColor(FrameBuffer& fb) const override;
 
  private:
-  void onSelectionChanged(const Parameter* old, const Parameter* newParam);
+  void onSelectionChanged(const Parameter* old, const Parameter* newParam, SignalOrigin signalType);
   void onSoundTypeChanged();
 
   Label* m_parameterNameLabel;

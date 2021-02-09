@@ -20,7 +20,7 @@ SelectedParameterModAmount::SelectedParameterModAmount(const Rect &rect)
       sigc::hide<0>(sigc::mem_fun(this, &SelectedParameterModAmount::setParameter)), getHWUI()->getCurrentVoiceGroup());
 }
 
-void SelectedParameterModAmount::setParameter(Parameter *param)
+void SelectedParameterModAmount::setParameter(Parameter *param, SignalOrigin signalType)
 {
   if(param)
   {

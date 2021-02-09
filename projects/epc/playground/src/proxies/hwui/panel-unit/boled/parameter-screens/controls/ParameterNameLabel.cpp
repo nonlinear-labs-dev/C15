@@ -28,7 +28,7 @@ ParameterNameLabel::~ParameterNameLabel()
 {
 }
 
-void ParameterNameLabel::onParameterSelected(Parameter *param)
+void ParameterNameLabel::onParameterSelected(Parameter *param, SignalOrigin signalType)
 {
   if(param)
   {

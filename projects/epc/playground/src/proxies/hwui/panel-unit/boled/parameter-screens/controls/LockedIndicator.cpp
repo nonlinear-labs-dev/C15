@@ -14,7 +14,8 @@ LockedIndicator::LockedIndicator(const Rect &pos)
     : super(pos)
 {
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      sigc::hide<0>(sigc::mem_fun(this, &LockedIndicator::onParameterSelected)), getHWUI()->getCurrentVoiceGroup());
+      sigc::hide<0>(sigc::hide<1>(sigc::mem_fun(this, &LockedIndicator::onParameterSelected))),
+      getHWUI()->getCurrentVoiceGroup());
 }
 
 LockedIndicator::~LockedIndicator()
@@ -33,7 +34,11 @@ void LockedIndicator::onParameterSelected(Parameter *newOne)
 
 void LockedIndicator::onParameterGroupChanged()
 {
-  auto group = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup();
+  auto group = Application::get()
+                   .getPresetManager()
+                   ->getEditBuffer()
+                   ->getSelected(getHWUI()->getCurrentVoiceGroup())
+                   ->getParentGroup();
   setText(group->areAllParametersLocked() ? "\uE30E" : "");
 }
 

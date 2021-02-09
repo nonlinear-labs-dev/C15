@@ -24,7 +24,7 @@ MacroControl::~MacroControl()
 {
 }
 
-void MacroControl::onSelectionChanged(Parameter *parameter)
+void MacroControl::onSelectionChanged(Parameter *parameter, SignalOrigin signalType)
 {
   m_connectionTarget.disconnect();
   m_connectionTarget = parameter->onParameterChanged(sigc::mem_fun(this, &MacroControl::onTargetChanged));
@@ -48,7 +48,7 @@ void MacroControl::onTargetChanged(const Parameter *modulatedParameter)
   {
     m_srcParam = srcParam;
 
-    m_slider->setParameter(srcParam);
+    m_slider->setParameter(srcParam, SignalOrigin::EXPLICIT);
 
     if(srcParam)
       m_name->setText(srcParam->getShortName());

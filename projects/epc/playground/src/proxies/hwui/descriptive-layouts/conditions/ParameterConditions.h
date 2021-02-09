@@ -17,7 +17,7 @@ namespace DescriptiveLayouts
       virtual ~ParameterCondition();
 
      protected:
-      void onParameterSelectionChanged(const Parameter* oldParam, Parameter* newParam);
+      void onParameterSelectionChanged(const Parameter* oldParam, Parameter* newParam, SignalOrigin signalType);
       virtual void onParameterChanged(const Parameter* param);
 
       sigc::connection m_paramChangedConnection;

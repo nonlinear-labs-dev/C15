@@ -15,7 +15,7 @@ PhysicalControlBehaviorLabel::PhysicalControlBehaviorLabel(const Rect &pos)
       getHWUI()->getCurrentVoiceGroup());
 }
 
-void PhysicalControlBehaviorLabel::setParameter(Parameter *param)
+void PhysicalControlBehaviorLabel::setParameter(Parameter *param, SignalOrigin signalType)
 {
   if(param)
   {

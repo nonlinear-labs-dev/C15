@@ -25,7 +25,7 @@ UpperRibbon::~UpperRibbon()
   m_settingChangedSignal.disconnect();
 }
 
-void UpperRibbon::onParamSelectionChanged(Parameter* oldOne, Parameter* newOne)
+void UpperRibbon::onParamSelectionChanged(Parameter* oldOne, Parameter* newOne, SignalOrigin signalType)
 {
   reconnect();
 }

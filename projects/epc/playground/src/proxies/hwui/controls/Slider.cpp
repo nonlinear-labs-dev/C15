@@ -13,7 +13,7 @@ Slider::Slider(Parameter *param, const Rect &rect)
     , m_value(0)
     , m_bipolar(false)
 {
-  setParameter(param);
+  setParameter(param, SignalOrigin::ANY);
   Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
       sigc::hide(sigc::mem_fun(this, &Slider::onSoundTypeChanged)), false);
 }
@@ -23,7 +23,7 @@ Slider::Slider(const Rect &rect)
 {
 }
 
-void Slider::setParameter(Parameter *param)
+void Slider::setParameter(Parameter *param, SignalOrigin signalType)
 {
   if(m_param != param)
   {

@@ -96,6 +96,13 @@ enum class SaveResult : uint8_t
   Finished
 };
 
+enum class SignalOrigin : uint8_t
+{
+  EXPLICIT = 0,
+  IMPLICIT = 1,
+  ANY = 2
+};
+
 std::string getStackTrace(const std::string& prefix);
 
 #ifdef _TESTS

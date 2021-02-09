@@ -21,7 +21,7 @@ class ModulationSourceLabel : public Label
   Font::Justification getJustification() const override;
 
  private:
-  void onParameterSelected(Parameter *parameter);
+  void onParameterSelected(Parameter *parameter, SignalOrigin signalType);
   void onParamValueChanged(const Parameter *param);
 
   sigc::connection m_paramValueConnection;

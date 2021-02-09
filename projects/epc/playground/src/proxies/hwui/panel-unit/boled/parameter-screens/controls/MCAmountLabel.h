@@ -19,7 +19,7 @@ class MCAmountLabel : public Label
   MCAmountLabel(const MCAmountLabel &other);
   MCAmountLabel &operator=(const MCAmountLabel &);
 
-  void onParameterSelected(Parameter *newParameter);
+  void onParameterSelected(Parameter *newParameter, SignalOrigin signalType);
   void onModifiersChanged();
   void update(const Parameter *parameter);
   virtual void setSuffixFontColor(FrameBuffer &fb) const override;

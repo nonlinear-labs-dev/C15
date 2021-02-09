@@ -455,7 +455,8 @@ void ParameterRecallLayout2::updateUI(bool paramLikeInPreset)
   }
 }
 
-void ParameterRecallLayout2::onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam)
+void ParameterRecallLayout2::onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam,
+                                                         SignalOrigin signalType)
 {
   m_paramConnection.disconnect();
 

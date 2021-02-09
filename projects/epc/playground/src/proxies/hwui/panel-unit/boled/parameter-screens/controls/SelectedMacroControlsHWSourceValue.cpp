@@ -21,7 +21,7 @@ SelectedMacroControlsHWSourceValue::SelectedMacroControlsHWSourceValue(const Rec
 
 SelectedMacroControlsHWSourceValue::~SelectedMacroControlsHWSourceValue() = default;
 
-void SelectedMacroControlsHWSourceValue::onParameterSelected(Parameter *newOne)
+void SelectedMacroControlsHWSourceValue::onParameterSelected(Parameter *newOne, SignalOrigin signalType)
 {
   m_mcChanged.disconnect();
   m_mcChanged = newOne->onParameterChanged(sigc::mem_fun(this, &SelectedMacroControlsHWSourceValue::onMCChanged));

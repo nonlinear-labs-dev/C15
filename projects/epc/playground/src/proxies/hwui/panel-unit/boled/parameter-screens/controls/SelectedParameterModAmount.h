@@ -22,7 +22,7 @@ class SelectedParameterModAmount : public Control
 
  private:
   void setRangeOrdered(float from, float to);
-  void setParameter(Parameter* param);
+  void setParameter(Parameter* param, SignalOrigin signalType);
   void onParamValueChanged(const Parameter* param);
 
   sigc::connection m_paramValueConnection;

@@ -25,7 +25,7 @@ class SelectedParamValueWithFrame : public SelectedParameterValue
   int getFontHeight() const override;
 
   void setSuffixFontColor(FrameBuffer& fb) const override;
-  void onParameterSelected(Parameter* parameter) override;
+  void onParameterSelected(Parameter* parameter, SignalOrigin signalType) override;
   void onParamValueChanged(const Parameter* param) override;
   void showName();
 

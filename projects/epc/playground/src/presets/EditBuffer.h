@@ -35,8 +35,8 @@ class EditBuffer : public ParameterGroupSet
 
   void setMacroControlValueFromMCView(ParameterId id, double value, const Glib::ustring &uuid);
 
-  void undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p);
-  void undoableSelectParameter(UNDO::Transaction *transaction, const ParameterId &id);
+  void undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p, SignalOrigin signalType);
+  void undoableSelectParameter(UNDO::Transaction *transaction, const ParameterId &id, SignalOrigin signalType);
 
   void undoableLoad(UNDO::Transaction *transaction, const Preset *preset, bool sendToAudioEngine);
   void undoableLoadToPart(UNDO::Transaction *trans, const Preset *p, VoiceGroup from, VoiceGroup to);
@@ -76,7 +76,7 @@ class EditBuffer : public ParameterGroupSet
   bool isDual() const;
 
   // CALLBACKS
-  sigc::connection onSelectionChanged(const sigc::slot<void, Parameter *, Parameter *> &s,
+  sigc::connection onSelectionChanged(const sigc::slot<void, Parameter *, Parameter *, SignalOrigin> &s,
                                       std::optional<VoiceGroup> initialVG);
   sigc::connection onModificationStateChanged(const sigc::slot<void, bool> &s);
   sigc::connection onChange(const sigc::slot<void> &s, bool init = true);
@@ -191,7 +191,7 @@ class EditBuffer : public ParameterGroupSet
   bool isMonoEnabled(const VoiceGroup &vg) const;
   bool hasMoreThanOneUnisonVoice(const VoiceGroup &vg) const;
 
-  Signal<void, Parameter *, Parameter *> m_signalSelectedParameter;
+  Signal<void, Parameter *, Parameter *, SignalOrigin> m_signalSelectedParameter;
   SignalWithCache<void, bool> m_signalModificationState;
   Signal<void> m_signalChange;
   Signal<void> m_signalPresetLoaded;

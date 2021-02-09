@@ -21,7 +21,7 @@ class SelectedMacroControlsHWSourceValue : public Label
   SelectedMacroControlsHWSourceValue &operator=(const SelectedMacroControlsHWSourceValue &);
 
   void onModifiersChanged();
-  void onParameterSelected(Parameter *newOne);
+  void onParameterSelected(Parameter *newOne, SignalOrigin signalType);
   void onMCChanged(const Parameter *param);
   void updateText(const Parameter *param);
   virtual void setSuffixFontColor(FrameBuffer &fb) const override;

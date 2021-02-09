@@ -19,7 +19,7 @@ class ModulationSourceEnabledDottedLine : public DottedLine
   ModulationSourceEnabledDottedLine(const ModulationSourceEnabledDottedLine& other);
   ModulationSourceEnabledDottedLine& operator=(const ModulationSourceEnabledDottedLine&);
 
-  void onParameterSelected(Parameter* parameter);
+  void onParameterSelected(Parameter* parameter, SignalOrigin signalType);
   void onParamValueChanged(const Parameter* param);
   bool redraw(FrameBuffer& fb);
   void setEnabled(bool e);

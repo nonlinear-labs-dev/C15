@@ -33,7 +33,7 @@ void SelectedParameterValue::onModifiersChanged(ButtonModifiers mods)
       Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }
 
-void SelectedParameterValue::onParameterSelected(Parameter *parameter)
+void SelectedParameterValue::onParameterSelected(Parameter *parameter, SignalOrigin signalType)
 {
   m_paramValueConnection.disconnect();
 

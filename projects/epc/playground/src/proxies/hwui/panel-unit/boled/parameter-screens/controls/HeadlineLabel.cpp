@@ -45,7 +45,7 @@ bool HeadlineLabel::redraw(FrameBuffer &fb)
   return true;
 }
 
-void HeadlineLabel::updateText(Parameter *oldParam, Parameter *newParam)
+void HeadlineLabel::updateText(Parameter *oldParam, Parameter *newParam, SignalOrigin signalType)
 {
   if(newParam)
     setText(newParam->getLongName());

@@ -11,7 +11,7 @@ class VoiceGroupIndicator : public Control
  private:
   void onSoundTypeChanged(SoundType type);
   void onParameterChanged(const Parameter* parameter);
-  void onParameterSelectionChanged(const Parameter* old, const Parameter* newParam);
+  void onParameterSelectionChanged(const Parameter* old, const Parameter* newParam, SignalOrigin signalType);
   void onVoiceGroupSelectionChanged(VoiceGroup vg);
   void onLoadModeChanged(bool loadModeActive);
 

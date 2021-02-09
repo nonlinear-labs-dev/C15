@@ -21,7 +21,7 @@ ModulationSourceLabel::~ModulationSourceLabel()
 {
 }
 
-void ModulationSourceLabel::onParameterSelected(Parameter *parameter)
+void ModulationSourceLabel::onParameterSelected(Parameter *parameter, SignalOrigin signalType)
 {
   if(parameter)
   {

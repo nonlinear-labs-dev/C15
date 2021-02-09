@@ -78,7 +78,7 @@ void ScreenSaverTimeoutSetting::init()
   }
 
   Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      [this](auto* n, auto* old) { endAndReschedule(); }, std::nullopt);
+      [this](Parameter* n, Parameter* old, SignalOrigin type) { endAndReschedule(); }, std::nullopt);
 
   Application::get().getPresetManager()->getEditBuffer()->onChange([this]() { endAndReschedule(); }, false);
 

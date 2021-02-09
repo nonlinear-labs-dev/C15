@@ -25,7 +25,7 @@ LowerModulationBoundControl::LowerModulationBoundControl(const Rect &r)
       mem_fun(this, &LowerModulationBoundControl::onSelectionChanged), getHWUI()->getCurrentVoiceGroup());
 }
 
-void LowerModulationBoundControl::onSelectionChanged(Parameter *, Parameter *newParam)
+void LowerModulationBoundControl::onSelectionChanged(Parameter *, Parameter *newParam, SignalOrigin signalType)
 {
   m_paramChanged.disconnect();
 

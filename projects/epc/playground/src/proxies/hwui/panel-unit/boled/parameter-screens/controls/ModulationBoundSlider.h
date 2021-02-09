@@ -23,7 +23,7 @@ class ModulationBoundSlider : public Control
   };
 
   virtual BoundPosition getBoundPosition() const = 0;
-  void onSelectionChanged(Parameter *, Parameter *newParam);
+  void onSelectionChanged(Parameter *, Parameter *newParam, SignalOrigin signalType);
   void onParameterChanged(const Parameter *);
 
   ModulateableParameter *m_param = nullptr;

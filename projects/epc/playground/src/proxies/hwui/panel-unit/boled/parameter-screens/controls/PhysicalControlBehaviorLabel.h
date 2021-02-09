@@ -18,7 +18,7 @@ class PhysicalControlBehaviorLabel : public Label
   void setBackgroundColor(FrameBuffer &fb) const override;
 
  private:
-  void setParameter(Parameter *param);
+  void setParameter(Parameter *param, SignalOrigin signalType);
   void onParamValueChanged(const Parameter *param);
 
   sigc::connection m_paramConnection;

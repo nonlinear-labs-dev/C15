@@ -14,7 +14,7 @@ namespace DescriptiveLayouts
     ~ParameterEvent();
 
     virtual void onParameterChanged(const Parameter *p);
-    virtual void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam);
+    virtual void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam, SignalOrigin signalType);
     virtual void onSelectedParameterChanged(const Parameter *p) = 0;
     virtual void onGroupSelectionChanged(const ParameterGroup *group);
 
