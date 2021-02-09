@@ -174,6 +174,11 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
   const auto channel = (statusByte & MIDI_CHANNEL_MASK);
   const auto allowedChannel = m_midiOptions.getSendChannel();
 
+  if constexpr(LOG_MIDI_DETAIL)
+  {
+    nltools::Log::error("channel: ", (int) channel, "allowed channel:", (int) allowedChannel);
+  }
+
   if(channel == allowedChannel)
   {
     const auto isNoteEvent = matchPattern(statusByte, MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
