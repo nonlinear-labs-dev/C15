@@ -252,7 +252,7 @@ bool C15Synth::filterMidiInEvent(const MidiEvent& event) const
 
     if(isNoteEvent)
     {
-      return (channel == allowedChannel) && m_midiOptions.shouldReceiveNotes();
+      return (channel == allowedChannel || allowedChannel == MIDI_CHANNEL_OMNI) && m_midiOptions.shouldReceiveNotes();
     }
   }
   return false;
