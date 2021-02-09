@@ -174,7 +174,7 @@ bool C15Synth::filterMidiOutEvent(nltools::msg::Midi::SimpleMessage& event) cons
 
   const auto allowedChannel = m_midiOptions.getSendChannel();
   const auto channel = (statusByte | (MIDI_CHANNEL_MASK & allowedChannel));
-  event.rawBytes[1] = channel;
+  event.rawBytes[0] = channel;
 
   if constexpr(LOG_MIDI_DETAIL)
   {
