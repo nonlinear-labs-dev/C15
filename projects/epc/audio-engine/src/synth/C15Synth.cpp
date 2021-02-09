@@ -109,8 +109,9 @@ void C15Synth::syncExternalMidiBridge()
   while(!m_externalMidiOutBuffer.empty())
   {
     auto msg = m_externalMidiOutBuffer.pop();
-    if(filterMidiOutEvent(msg))
-      send(nltools::msg::EndPoint::ExternalMidiOverIPBridge, msg);
+    auto copy = msg;
+    if(filterMidiOutEvent(copy))
+      send(nltools::msg::EndPoint::ExternalMidiOverIPBridge, copy);
 
     if(LOG_MIDI_OUT)
     {
@@ -156,9 +157,9 @@ bool isSysex(unsigned char data)
   return matchPattern(data, MIDI_SYSEX_PATTERN, MIDI_EVENT_TYPE_MASK);
 }
 
-bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event) const
+bool C15Synth::filterMidiOutEvent(nltools::msg::Midi::SimpleMessage& event) const
 {
-  auto statusByte = event.rawBytes[0];
+  const auto statusByte = event.rawBytes[0];
 
   if constexpr(LOG_MIDI_DETAIL)
   {
@@ -171,8 +172,9 @@ bool C15Synth::filterMidiOutEvent(const nltools::msg::Midi::SimpleMessage& event
     return false;
   }
 
-  const auto channel = (statusByte & MIDI_CHANNEL_MASK);
   const auto allowedChannel = m_midiOptions.getSendChannel();
+  const auto channel = (statusByte | (MIDI_CHANNEL_MASK & allowedChannel));
+  event.rawBytes[1] = channel;
 
   if constexpr(LOG_MIDI_DETAIL)
   {
