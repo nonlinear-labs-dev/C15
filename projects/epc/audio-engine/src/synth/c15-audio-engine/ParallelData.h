@@ -4,7 +4,13 @@
 #include <type_traits>
 #include <array>
 #include <omp.h>
+
+#ifdef __x86_64__
 #include <x86intrin.h>
+#else
+#include <immintrin.h>
+#endif  //x86_64
+
 #include <vector>
 #include <cstdint>
 
