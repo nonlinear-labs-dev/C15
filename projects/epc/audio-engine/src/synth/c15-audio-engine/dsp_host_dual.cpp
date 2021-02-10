@@ -1741,9 +1741,8 @@ void dsp_host_dual::hwModChain(HW_Src_Param* _src, const uint32_t _id, const flo
           macro->m_unclipped += (_inc * amount->m_position);  // fixing #2023:
           // only rely on unclipped (always up-to-date)
           // NOTE: hopefully, this won't introduce accumulating floating point rounding errors !!!
-          const float clipped = macro->m_unclipped < 0.0f ? 0.0f
-              : macro->m_unclipped > 1.0f                 ? 1.0f
-                                                          : macro->m_unclipped;
+          const float clipped = std::clamp(macro->m_unclipped, 0.0f, 1.0f);
+          
           if(macro->m_position != clipped)
           {
             macro->m_position = clipped;
