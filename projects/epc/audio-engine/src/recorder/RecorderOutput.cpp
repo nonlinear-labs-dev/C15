@@ -92,6 +92,8 @@ void RecorderOutput::background()
 
       if(auto l = m_decoder->popAudio(buf, todo))
         m_ring.push(buf, l);
+      else if(m_decoder->eos())
+        m_paused = true;
     }
   }
 }

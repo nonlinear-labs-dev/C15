@@ -20,11 +20,11 @@
                 <div class="left-border"></div>
                 <div class="right-border"></div>
                 <div class="buttons">
-                    <div class="toggle-playback">
-                        <image src="play.svg"></image>
+                    <div class="unselectable" id="toggle-playback" onpointerdown="startPlayback(event)">
+                        <image class="unselectable" src="play.svg"></image>
                     </div>
-                    <div class="download">
-                        <image src="download.svg"></image>
+                    <div class="unselectable" id="download" onpointerdown="download(event)">
+                        <image class="unselectable" src="download.svg"></image>
                     </div>
                 </div>
             </div>

@@ -153,8 +153,11 @@ function updateWaveformDisplay() {
     drawGrid(ctx, c.clientWidth, c.clientHeight, firstBarId - bars[0].id);
 
     var c = document.getElementById("selected-range");
-    c.style.left = (zoom * (playbackRange.begin - firstBarId)) + "px";
-    c.style.right = (zoom * (playbackRange.end - firstBarId)) + "px";
+    var left = (playbackRange.begin - firstBarId) / zoom;
+    var right = (playbackRange.end - firstBarId) / zoom;
+    var width = right - left;
+    c.style.left = left + "px";
+    c.style.width = width + "px";
 }
 
 function drawGrid(ctx, width, height, idx) {
@@ -164,35 +167,30 @@ function drawGrid(ctx, width, height, idx) {
     var pixelsPerTimeMarker = 100;
     var timeMarkersOnScreen = Math.floor(width / pixelsPerTimeMarker);
     var barsOnScreen = width * zoom;
-    var nanosPerBar = (bars[1].recordTime - bars[0].recordTime);
-    var nanosOnScreen = barsOnScreen * nanosPerBar;
-    var nanosPerTimeMarker = Math.floor(nanosOnScreen / timeMarkersOnScreen);
+    var barsPerTimeMarker = barsOnScreen / timeMarkersOnScreen;
 
     var firstBarsRecordTime = bars[idx].recordTime;
-    var lastTimeMod = firstBarsRecordTime % nanosPerTimeMarker;
 
     var fontHeight = 10;
     ctx.font = fontHeight + "px serif";
 
     for (var i = 0; i < width; i++) {
 
-        var serverTime = firstBarsRecordTime + i * nanosPerBar * zoom;
+        if (idx >= bars.length)
+            break;
 
-        if (idx < bars.length)
-            serverTime = bars[idx].recordTime;
+        serverTime = bars[idx].recordTime;
 
-        var nowTimeMod = serverTime % nanosPerTimeMarker;
-
-        if (nowTimeMod < lastTimeMod) {
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i, height - fontHeight);
-            var str = buildTime(serverTime);
-            var xOffset = ctx.measureText(str).width / 2;
-            ctx.strokeText(str, i - xOffset, height - 2);
+        for (var z = 0; z < zoom; z++) {
+            idx++;
+            if (idx % barsPerTimeMarker == 0) {
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height - fontHeight);
+                var str = buildTime(serverTime);
+                var xOffset = ctx.measureText(str).width / 2;
+                ctx.strokeText(str, i - xOffset, height - 2);
+            }
         }
-
-        lastTimeMod = nowTimeMod;
-        idx += zoom;
     }
     ctx.stroke();
 }
@@ -229,12 +227,12 @@ window.onload = function () {
 }
 
 function zoomIn() {
-    zoom--;
+    zoom /= 2;
     updateWaveformDisplay();
 }
 
 function zoomOut() {
-    zoom++;
+    zoom *= 2;
     updateWaveformDisplay();
 }
 
@@ -268,7 +266,6 @@ function drag(e) {
         if (lastBarIdToShow > lastId - 5 * zoom)
             lastBarIdToShow = -1; // auto scroll
 
-
         updateWaveformDisplay();
     }
 }
@@ -285,13 +282,28 @@ function toggleRecording() {
     fireAndForget({ "toggle-recording": {} });
 }
 
+function pixToBar(pix) {
+    var c = document.getElementById("bars");
+    var lastId = lastBarIdToShow != -1 ? lastBarIdToShow : bars[bars.length - 1].id;
+    var firstBarId = Math.max(bars[0].id, lastId - c.clientWidth * zoom);
+    return firstBarId + pix * zoom;
+}
 
+function barToPix(pix) {
+    var c = document.getElementById("bars");
+    var lastId = lastBarIdToShow != -1 ? lastBarIdToShow : bars[bars.length - 1].id;
+    var firstBarId = Math.max(bars[0].id, lastId - c.clientWidth * zoom);
+    return firstBarId + pix * zoom;
+}
 
 function startDragRange(e) {
     document.getElementById("range-selector").setPointerCapture(e.pointerId);
     scrollX = e.screenX;
     dragging = Dragging.dragRange;
+    playbackRange.begin = pixToBar(e.layerX);
+    playbackRange.end = playbackRange.begin + 1;
     e.stopPropagation();
+    updateWaveformDisplay();
 }
 
 function stopDragRange(e) {
@@ -301,9 +313,19 @@ function stopDragRange(e) {
 
 function dragRange(e) {
     if (dragging == Dragging.dragRange) {
-        var diff = e.screenX - scrollX;
-        scrollX = e.screenX;
-        playbackRange.begin += diff * zoom;
-        playbackRange.end += diff * zoom;
+        playbackRange.end = pixToBar(e.layerX);
+        e.stopPropagation();
+        updateWaveformDisplay();
     }
+}
+
+function startPlayback(e) {
+    fireAndForget({ "start-playback": { begin: playbackRange.begin, end: playbackRange.end } });
+    e.stopPropagation();
+    e.preventDefault();
+}
+
+function download(e) {
+    e.stopPropagation();
+    e.preventDefault();
 }

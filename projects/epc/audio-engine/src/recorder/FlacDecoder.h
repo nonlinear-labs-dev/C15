@@ -16,6 +16,7 @@ class FlacDecoder
 
   PositionInfo getPositionInfo() const;
   size_t popAudio(SampleFrame *target, size_t maxNumFrames);
+  bool eos() const;
 
  private:
   static FLAC__StreamDecoderReadStatus readCB(const FLAC__StreamDecoder *m_decoder, FLAC__byte buffer[], size_t *bytes,

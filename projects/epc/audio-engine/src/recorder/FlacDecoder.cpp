@@ -103,3 +103,8 @@ size_t FlacDecoder::popAudio(SampleFrame *target, size_t maxNumFrames)
 
   return done;
 }
+
+bool FlacDecoder::eos() const
+{
+  return (m_readScratch.empty() && m_streamOfFrames->eos());
+}

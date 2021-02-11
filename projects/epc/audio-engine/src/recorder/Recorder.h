@@ -7,6 +7,7 @@
 class FlacFrameStorage;
 class RecorderInput;
 class RecorderOutput;
+class NetworkServer;
 
 namespace nltools
 {
@@ -37,4 +38,5 @@ class Recorder
   std::unique_ptr<RecorderInput> m_in;
   std::unique_ptr<RecorderOutput> m_out;
   std::unique_ptr<nltools::msg::WebSocketJsonAPI> m_api;
+  std::unique_ptr<NetworkServer> m_http;
 };

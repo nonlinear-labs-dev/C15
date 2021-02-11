@@ -39,13 +39,12 @@ body {
 }
 
 #selected-range {
-    width: 5vw;
-    left: 70vw;
     top: 0;
     bottom: 0;
     position: absolute;
     background-color: white;
     opacity: 0.5;
+    pointer-events: none;
 }
 
 #range-selector {
@@ -87,3 +86,22 @@ body {
     top:0;
 }
 
+#toggle-playback {
+    pointer-events: all;
+}
+
+#download {
+    pointer-events: all;
+}
+
+.unselectable {
+    /* For Opera and <= IE9, we need to add unselectable="on" attribute onto each element */
+    /* Check this site for more details: http://help.dottoro.com/lhwdpnva.php */
+    -moz-user-select: none; /* These user-select properties are inheritable, used to prevent text selection */
+    -webkit-user-select: none;
+    -ms-user-select: none; /* From IE10 only */
+    user-select: none; /* Not valid CSS yet, as of July 2012 */
+
+    -webkit-user-drag: none; /* Prevents dragging of images/divs etc */
+    user-drag: none;
+}

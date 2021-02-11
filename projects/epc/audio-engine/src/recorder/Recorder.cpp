@@ -8,6 +8,7 @@
 #include "FlacFrameStorage.h"
 #include "RecorderInput.h"
 #include "RecorderOutput.h"
+#include "NetworkServer.h"
 
 constexpr int operator""_MB(unsigned long long const x)
 {
@@ -21,6 +22,7 @@ Recorder::Recorder(int sr)
     , m_in(std::make_unique<RecorderInput>(m_storage.get(), sr))
     , m_out(std::make_unique<RecorderOutput>(m_storage.get(), sr))
     , m_api(std::make_unique<nltools::msg::WebSocketJsonAPI>(8889, [this](const auto &msg) { return api(msg); }))
+    , m_http(std::make_unique<NetworkServer>(8890, m_storage.get()))
 {
 }
 
