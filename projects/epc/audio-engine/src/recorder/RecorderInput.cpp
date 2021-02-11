@@ -33,6 +33,12 @@ nlohmann::json RecorderInput::generateInfo()
   return { { "paused", paused } };
 }
 
+void RecorderInput::TEST_waitForSettling() const
+{
+  while(ring.avail() >= FlacEncoder::flacFrameSize)
+    std::this_thread::yield();
+}
+
 void RecorderInput::background()
 {
   std::unique_lock<std::mutex> l(mutex);

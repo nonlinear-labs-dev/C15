@@ -22,12 +22,15 @@ class Recorder
   Recorder(int sr);
   ~Recorder();
 
-  void process(SampleFrame *target, size_t numFrames);
+  void process(SampleFrame* target, size_t numFrames);
+
+  RecorderInput* getInput() const;
+  RecorderOutput* getOutput() const;
+  FlacFrameStorage* getStorage() const;
 
  private:
-  nlohmann::json api(const nlohmann::json &msg);
+  nlohmann::json api(const nlohmann::json& msg);
   nlohmann::json generateInfo() const;
-  nlohmann::json getWaveform(FrameId begin, FrameId end) const;
   nlohmann::json queryFrames(FrameId begin, FrameId end) const;
 
   std::unique_ptr<FlacFrameStorage> m_storage;

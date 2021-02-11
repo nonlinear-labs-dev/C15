@@ -21,6 +21,8 @@ class RecorderInput
 
   nlohmann::json generateInfo();
 
+  void TEST_waitForSettling() const;
+
  private:
   void background();
 

@@ -22,6 +22,8 @@ class RecorderOutput
   void start(FrameId begin, FrameId end);
   nlohmann::json generateInfo();
 
+  void TEST_waitForBuffersFilled(size_t numFramesNeeded) const;
+
  private:
   void background();
 
@@ -32,7 +34,7 @@ class RecorderOutput
   std::unique_ptr<FlacDecoder> m_decoder;
 
   std::condition_variable m_cond;
-  std::mutex m_mutex;
+  mutable std::mutex m_mutex;
   bool m_close = false;
   std::future<void> m_bgTask;
   bool m_paused = true;

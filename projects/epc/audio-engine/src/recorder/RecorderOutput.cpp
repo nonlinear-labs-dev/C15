@@ -19,13 +19,27 @@ RecorderOutput::~RecorderOutput()
 void RecorderOutput::process(SampleFrame *frames, size_t numFrames)
 {
   SampleFrame buf[numFrames];
-  auto n = m_ring.pop(buf, numFrames);
 
-  for(size_t i = 0; i < n; i++)
+  auto todo = numFrames;
+
+  while(todo)
   {
-    frames[i].left += buf[i].left;
-    frames[i].right += buf[i].right;
+    auto n = m_ring.pop(buf, todo);
+
+    if(n == 0)
+      break;
+
+    for(size_t i = 0; i < n; i++)
+    {
+      frames[i].left += buf[i].left;
+      frames[i].right += buf[i].right;
+    }
+
+    frames += n;
+    todo -= n;
   }
+
+  m_cond.notify_one();
 }
 
 void RecorderOutput::pause()
@@ -51,6 +65,14 @@ nlohmann::json RecorderOutput::generateInfo()
   return {
     { "paused", m_paused }, { "begin", std::get<0>(info) }, { "pos", std::get<1>(info) }, { "end", std::get<2>(info) }
   };
+}
+
+void RecorderOutput::TEST_waitForBuffersFilled(size_t numFramesNeeded) const
+{
+  while(m_ring.avail() < numFramesNeeded)
+  {
+    std::this_thread::yield();
+  }
 }
 
 void RecorderOutput::background()

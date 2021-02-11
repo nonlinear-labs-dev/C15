@@ -22,7 +22,7 @@ uint64_t FlacEncoder::Frame::getNextId()
 
 nlohmann::json FlacEncoder::Frame::generateInfo() const
 {
-  return { { "id", id }, { "max", max }, { "record-time", recordTime.time_since_epoch().count() } };
+  return { { "id", id }, { "max", max }, { "recordTime", recordTime.time_since_epoch().count() } };
 }
 
 FlacEncoder::FlacEncoder(int sr, std::function<void(std::unique_ptr<Frame>)> cb)

@@ -77,7 +77,7 @@ nlohmann::json FlacFrameStorage::generateInfo()
 
   nlohmann::json memUsage = { { "current", m_memUsage }, { "max", m_maxMemUsage } };
 
-  return { { "mem-usage", memUsage },
+  return { { "memUsage", memUsage },
            { "first", m_frames.front()->generateInfo() },
            { "last", m_frames.back()->generateInfo() } };
 }

@@ -32,6 +32,21 @@ void Recorder::process(SampleFrame *frames, size_t numFrames)
   m_out->process(frames, numFrames);
 }
 
+RecorderInput *Recorder::getInput() const
+{
+  return m_in.get();
+}
+
+RecorderOutput *Recorder::getOutput() const
+{
+  return m_out.get();
+}
+
+FlacFrameStorage *Recorder::getStorage() const
+{
+  return m_storage.get();
+}
+
 nlohmann::json Recorder::api(const nlohmann::json &msg)
 {
   if(msg.is_object())
@@ -49,10 +64,8 @@ nlohmann::json Recorder::api(const nlohmann::json &msg)
       m_out->pause();
     else if(name == "get-info")
       return generateInfo();
-    else if(name == "get-waveform")
-      return getWaveform(args.at("begin"), args.at("end"));
     else if(name == "query-frames")
-      return getWaveform(args.at("begin"), args.at("end"));
+      return queryFrames(args.at("begin"), args.at("end"));
   }
   return {};
 }
@@ -60,19 +73,10 @@ nlohmann::json Recorder::api(const nlohmann::json &msg)
 nlohmann::json Recorder::generateInfo() const
 {
   nlohmann::json ret;
+  ret["time"] = std::chrono::system_clock::now().time_since_epoch().count();
   ret["storage"] = m_storage->generateInfo();
   ret["recorder"] = m_in->generateInfo();
   ret["player"] = m_out->generateInfo();
-  return ret;
-}
-
-nlohmann::json Recorder::getWaveform(FrameId begin, FrameId end) const
-{
-  auto ret = nlohmann::json::array();
-  auto stream = m_storage->startStream(begin, end);
-
-  while(stream->next([&](const auto &f) { ret.push_back(f.max); }))
-    ;
   return ret;
 }
 
