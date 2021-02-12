@@ -66,6 +66,13 @@ ISP1=48
 # ISP GPIO pin for uniboards >= 7.2 (RevD)
 ISP2=51
 
+# Unfortunately the previous version of the script blocks 
+# the PC programming if GPIOs are not reseted at the end.
+export_gpio $ISP1 2> /dev/null
+export_gpio $ISP2 2> /dev/null
+unexport_gpio $ISP1 2> /dev/null
+unexport_gpio $ISP2 2> /dev/null
+
 RESET=50
 PROGMODE=115
 export_gpio $ISP1 2> /dev/null
@@ -92,9 +99,8 @@ write_to_gpio $RESET 1
 unexport_gpio $PROGMODE
 unexport_gpio $RESET
 
-#we must not unexport ISP lines in order to keep their state
-# unexport_gpio $ISP1
-# unexport_gpio $ISP2
+unexport_gpio $ISP1
+unexport_gpio $ISP2
 
 if [ $return_code -eq 0 ] ; then
 	exit 0
