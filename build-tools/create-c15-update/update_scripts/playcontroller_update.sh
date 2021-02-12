@@ -67,7 +67,7 @@ ISP1=48
 ISP2=51
 
 # Unfortunately the previous version of the script blocks 
-# the PC programming if GPIOs are not reseted at the end.
+# the PC programming if GPIOs are not unexported at the end.
 export_gpio $ISP1 2> /dev/null
 export_gpio $ISP2 2> /dev/null
 unexport_gpio $ISP1 2> /dev/null
