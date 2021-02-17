@@ -74,12 +74,12 @@ void readMidi(int cancelHandle, snd_rawmidi_t *inputHandle)
         {
           if(snd_midi_event_encode_byte(encoder, byte, &event) == 1)
           {
-            if(event.type != SND_SEQ_EVENT_NONE)
+            if(event.type < SND_SEQ_EVENT_SONGPOS)
             {
               if(enableMidi)
               {
                 Midi::SimpleMessage msg;
-                msg.numBytesUsed = snd_midi_event_decode(decoder, msg.rawBytes.data(), 3, &event);
+                msg.numBytesUsed = std::min(3l, snd_midi_event_decode(decoder, msg.rawBytes.data(), 3, &event));
                 send(EndPoint::ExternalMidiOverIPClient, msg);
               }
               break;
