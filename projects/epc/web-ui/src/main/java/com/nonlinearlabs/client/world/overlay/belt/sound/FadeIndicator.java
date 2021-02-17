@@ -1,10 +1,7 @@
 package com.nonlinearlabs.client.world.overlay.belt.sound;
 
-import com.google.gwt.core.client.GWT;
-import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.ParameterId;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
-import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.presenters.ParameterPresenterProviders;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.overlay.SVGImage;
@@ -21,7 +18,11 @@ public class FadeIndicator extends SVGImage {
         voiceGroup = vg;
 
         ParameterPresenterProviders.get().register(new ParameterId(396, vg), presenter -> {
-            active = !presenter.isDefault;
+            if(vg == VoiceGroup.I)
+                active = presenter.controlPosition != 1;
+            else if(vg == VoiceGroup.II)
+                active = presenter.controlPosition != 0;
+            
             return true;
         });
     }
