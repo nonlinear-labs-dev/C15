@@ -109,7 +109,7 @@ static std::unique_ptr<MidiInput> createMidiIn(const std::string &name, Synth *s
 static std::unique_ptr<MidiInput> createTCDIn(const std::string &name, Synth *synth)
 {
   return name.empty() ? nullptr
-                      : std::make_unique<AlsaMidiInput>(name, [synth](auto event) { synth->pushMidiEvent(event); });
+                      : std::make_unique<AlsaMidiInput>(name, [synth](auto event) { synth->pushTcdEvent(event); });
 }
 
 template <typename... A> static void start(A &... a)
