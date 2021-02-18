@@ -1,6 +1,6 @@
 const httpPort = ":8890";
 const wsPort = ":8889";
-const hostName = "192.168.8.2";
+const hostName = location.hostname.length == 0 ? "localhost" : location.hostname;
 
 class TimingInfo {
     serverTime: number = 0;
@@ -38,7 +38,6 @@ class UpdateStream {
         catch (err) {
             this.retry();
         }
-
     }
 
     private processInfo(info: any) {
@@ -155,6 +154,48 @@ function fireAndForget(msg: Object) {
     };
 }
 
+class RangeBorderHandler {
+    constructor(id: string, cb: (x: number) => void) {
+        this.callback = cb;
+        this.element = document.getElementById(id)!;
+        this.element.onpointerdown = (e) => this.startDrag(e);
+        this.element.onpointerup = (e) => this.stopDrag(e);
+        this.element.onpointermove = (e) => this.drag(e);
+    }
+
+    private startDrag(e: PointerEvent) {
+        this.element.setPointerCapture(e.pointerId);
+        this.dragging = true;
+        e.stopPropagation();
+    }
+
+    private stopDrag(e: PointerEvent) {
+        this.dragging = false;
+        this.element.releasePointerCapture(e.pointerId);
+    }
+
+    private drag(e: PointerEvent) {
+        if (this.dragging) {
+            var waveform = document.getElementById("waveform")!;
+            var walker = this.element;
+            var x = e.offsetX;
+
+            while (true) {
+                x += walker.offsetLeft;
+                walker = walker.parentElement!;
+                if (walker == waveform)
+                    break;
+            }
+
+            this.callback(x);
+            e.stopPropagation();
+        }
+    }
+
+    private element: HTMLElement;
+    private dragging = false;
+    private callback: (x: number) => void
+}
 
 class SelectedRange {
     constructor(private waveform: Waveform) {
@@ -165,6 +206,16 @@ class SelectedRange {
         rangeSelector.onpointerdown = (e) => this.startDragRange(e);
         rangeSelector.onpointerup = (e) => this.stopDragRange(e);
         rangeSelector.onpointermove = (e) => this.dragRange(e);
+
+        this.leftHandle = new RangeBorderHandler("left-handle", (x) => {
+            this.playbackRange.begin = Math.round(this.pixToBar(x));
+            this.waveform.update();
+        });
+
+        this.rightHandle = new RangeBorderHandler("right-handle", (x) => {
+            this.playbackRange.end = Math.round(this.pixToBar(x));
+            this.waveform.update();
+        });
     }
 
     public update(firstBarId: number) {
@@ -221,7 +272,6 @@ class SelectedRange {
 
     private startDragRange(e: PointerEvent) {
         document.getElementById("range-selector")!.setPointerCapture(e.pointerId);
-        scrollX = e.screenX;
         this.dragging = true;
         this.playbackRange.begin = Math.round(this.pixToBar(e.offsetX));
         this.playbackRange.end = this.playbackRange.begin + 1;
@@ -257,6 +307,8 @@ class SelectedRange {
         begin: 0, end: 0
     }
     private dragging = false;
+    private leftHandle: RangeBorderHandler;
+    private rightHandle: RangeBorderHandler;
 }
 
 
@@ -376,7 +428,7 @@ class Waveform {
 
     private startDrag(e: PointerEvent) {
         document.getElementById("waveform")!.setPointerCapture(e.pointerId);
-        scrollX = e.screenX;
+        this.scrollX = e.screenX;
         this.dragging = true;
     }
 
@@ -387,8 +439,8 @@ class Waveform {
 
     private drag(e: PointerEvent) {
         if (this.dragging) {
-            var diff = e.screenX - scrollX;
-            scrollX = e.screenX;
+            var diff = e.screenX - this.scrollX;
+            this.scrollX = e.screenX;
 
             var lastId = this.bars[this.bars.length - 1].id;
 

@@ -182,6 +182,28 @@ body {
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     flex-direction: column;
+}
+
+#left-handle {
+    position: absolute;
+    width: 1cm;
+    height: 1cm;
+    left: -0.5cm;
+    top: calc(50% - 0.5cm);
+    background-color: darkgray;
+    border: 1px solid black;
+    pointer-events: all;
+}
+
+#right-handle {
+    position: absolute;
+    width: 1cm;
+    height: 1cm;
+    right: -0.5cm;
+    top: calc(50% - 0.5cm);
+    background-color: darkgray;
+    border: 1px solid black;
+    pointer-events: all;
 }
