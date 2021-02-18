@@ -5,10 +5,7 @@ set(NONMAPS_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(OBJDIR ${CMAKE_CURRENT_BINARY_DIR}/obj)
 set(OUTFILE ${CMAKE_CURRENT_BINARY_DIR}/war/nonmaps/compilation-mappings.txt)
 
-file(GLOB_RECURSE SOURCE_FILES
-  ${NONMAPS_ROOT}/src/*.java ${NONMAPS_ROOT}/src/*.xml)
-
-file (GLOB MCSITE ${NONMAPS_ROOT}/PerformanceView/*)
+file(GLOB_RECURSE SOURCE_FILES ${NONMAPS_ROOT}/src/*.java ${NONMAPS_ROOT}/src/*.xml)
 
 add_custom_command(
   COMMENT "Download gwt"
@@ -27,7 +24,6 @@ add_custom_command(OUTPUT ${OUTFILE}
   DEPENDS ${SOURCE_FILES}
   )
 
-
 add_custom_target(NonMaps ALL SOURCES ${OUTFILE})
 
 file(WRITE ${OBJDIR}/nonmaps-version.txt ${C15_VERSION})
@@ -36,4 +32,5 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/war DESTINATION ${C15_INSTALL_PATH
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/war/nonmaps DESTINATION ${C15_INSTALL_PATH}/NonMaps/war)
 install(DIRECTORY ${NONMAPS_ROOT}/src/main/webapp/ DESTINATION ${C15_INSTALL_PATH}/NonMaps/war)
 install(DIRECTORY MCView DESTINATION ${C15_INSTALL_PATH}/NonMaps)
+install(DIRECTORY recorder DESTINATION ${C15_INSTALL_PATH}/NonMaps)
 install(FILES ${OBJDIR}/nonmaps-version.txt DESTINATION ${C15_INSTALL_PATH}/NonMaps/war)

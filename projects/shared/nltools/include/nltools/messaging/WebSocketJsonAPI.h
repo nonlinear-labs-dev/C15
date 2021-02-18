@@ -1,8 +1,8 @@
 #pragma once
 
 #include <nltools/threading/ContextBoundMessageQueue.h>
+#include <nltools/nlohmann/json.hpp>
 #include <functional>
-#include <nlohmann/json.hpp>
 #include <libsoup/soup.h>
 #include <glibmm.h>
 #include <memory>

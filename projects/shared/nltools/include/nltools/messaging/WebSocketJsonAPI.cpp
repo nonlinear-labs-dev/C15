@@ -28,7 +28,7 @@ namespace nltools
     void WebSocketJsonAPI::sendAll(const nlohmann::json &msg)
     {
       m_bgContextQueue->pushMessage(
-          [this, msg]() { m_connections.remove_if([this, msg](auto &c) { return !send(c.get(), msg); }); });
+          [this, msg]() { m_connections.remove_if([this, msg](tWebSocketPtr &c) { return !send(c.get(), msg); }); });
     }
 
     void WebSocketJsonAPI::backgroundThread()

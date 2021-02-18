@@ -3,7 +3,7 @@
 #include "StyleParser.h"
 #include "Styles.h"
 #include <tuple>
-#include <tools/json.h>
+#include <nltools/nlohmann/json.hpp>
 #include <device-settings/DebugLevel.h>
 
 using json = nlohmann::json;

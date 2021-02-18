@@ -1,0 +1,13 @@
+[Unit]
+Description=Redirect recorder http traffic to ePC
+After=syslog.target network.target
+
+[Service]
+ExecStart=/bin/socat TCP-LISTEN:8890,fork TCP:192.168.10.10:8890
+Restart=always
+RestartSec=1
+StartLimitInterval=200
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

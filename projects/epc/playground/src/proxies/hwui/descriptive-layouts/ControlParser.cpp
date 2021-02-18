@@ -6,7 +6,7 @@
 #include "ControlRegistry.h"
 #include "ControlParser.h"
 #include <tuple>
-#include <tools/json.h>
+#include <nltools/nlohmann/json.hpp>
 #include <device-settings/DebugLevel.h>
 #include <boost/algorithm/string.hpp>
 #include <tools/ExceptionTools.h>

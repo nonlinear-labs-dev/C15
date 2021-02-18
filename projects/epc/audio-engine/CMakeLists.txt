@@ -16,7 +16,7 @@ add_nltools(${AE_LIB_NAME})
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${AE_LIB_NAME})
 
-set(LIBS alsa flac opus gstreamer-1.0)
+set(LIBS alsa flac)
 
 find_package(OpenMP)
 

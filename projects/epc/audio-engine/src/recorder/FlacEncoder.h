@@ -6,7 +6,7 @@
 #include <chrono>
 #include <functional>
 #include <memory>
-#include <nlohmann/json.hpp>
+#include <nltools/nlohmann/json.hpp>
 
 class FlacEncoder
 {

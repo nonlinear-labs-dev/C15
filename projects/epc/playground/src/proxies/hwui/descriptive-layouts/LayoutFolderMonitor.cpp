@@ -14,7 +14,7 @@
 #include <nltools/system/SpawnCommandLine.h>
 #include "ConsistencyChecker.h"
 
-#include <tools/json.h>
+#include <nltools/nlohmann/json.hpp>
 #include <iostream>
 #include <giomm/file.h>
 

@@ -3,7 +3,7 @@
 #include "FlacEncoder.h"
 #include <list>
 #include <mutex>
-#include <nlohmann/json.hpp>
+#include <nltools/nlohmann/json.hpp>
 
 class FlacFrameStorage
 {

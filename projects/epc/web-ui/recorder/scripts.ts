@@ -1,6 +1,6 @@
 const httpPort = ":8890";
 const wsPort = ":8889";
-const hostName = "localhost";
+const hostName = "192.168.8.2";
 
 class TimingInfo {
     serverTime: number = 0;
@@ -210,6 +210,9 @@ class SelectedRange {
     }
 
     private pixToBar(pix: number) {
+        if (this.waveform.bars.length == 0)
+            return -1;
+
         var c = document.getElementById("bars") as HTMLDivElement;
         var lastId = this.waveform.lastBarIdToShow != -1 ? this.waveform.lastBarIdToShow : this.waveform.bars[this.waveform.bars.length - 1].id;
         var firstBarId = lastId - c.clientWidth * this.waveform.zoom;

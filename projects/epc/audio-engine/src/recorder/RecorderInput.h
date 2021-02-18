@@ -5,7 +5,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <future>
-#include <nlohmann/json.hpp>
+#include <nltools/nlohmann/json.hpp>
 
 class FlacFrameStorage;
 class FlacEncoder;
