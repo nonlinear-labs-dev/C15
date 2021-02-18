@@ -14,9 +14,14 @@ class FlacFrameStorage
   struct Stream
   {
     Stream(FlacFrameStorage *s, Frames::const_iterator begin, Frames::const_iterator end);
+
     bool eos() const;
     bool next(std::function<void(const FlacEncoder::Frame &)> cb);
 
+    bool getFirstAndLast(std::function<void(const FlacEncoder::Frame &first, const FlacEncoder::Frame &last)> cb);
+
+   private:
+    friend class FlacFrameStorage;
     FlacFrameStorage *storage;
     Frames::const_iterator it;
     Frames::const_iterator end;
@@ -28,6 +33,7 @@ class FlacFrameStorage
 
   void push(std::unique_ptr<FlacEncoder::Frame> frame);
   const std::vector<std::unique_ptr<FlacEncoder::Frame>> &getHeaders() const;
+  void reset();
 
   StreamHandle startStream(FrameId begin, FrameId end);
   nlohmann::json generateInfo();

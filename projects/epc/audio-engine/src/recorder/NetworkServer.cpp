@@ -1,6 +1,7 @@
 #include "NetworkServer.h"
 #include <libsoup/soup-message.h>
 #include <nltools/logging/Log.h>
+#include <iomanip>
 
 NetworkServer::NetworkServer(int port, FlacFrameStorage *s)
     : m_storage(s)
@@ -26,10 +27,41 @@ void NetworkServer::stream(SoupServer *server, SoupMessage *msg, const char *pat
 
   if(beginPtr && endPtr)
   {
+    auto begin = strtol(beginPtr, nullptr, 10);
+    auto end = strtol(endPtr, nullptr, 10);
+
+    if(strlen(path) <= 1)
+    {
+      auto stream = pThis->m_storage->startStream(begin, end);
+      auto redirected = stream->getFirstAndLast([&](auto &first, auto &last) {
+        auto format = "%a-%H-%M-%S";
+        std::stringstream urlBuilder;
+        urlBuilder << "/C15-Recording-";
+
+        std::time_t tt = std::chrono::system_clock::to_time_t(first.recordTime);
+        std::tm tm = *std::localtime(&tt);  //Locale time-zone, usually UTC by default.
+        urlBuilder << std::put_time(&tm, format);
+        urlBuilder << "-to-";
+
+        tt = std::chrono::system_clock::to_time_t(last.recordTime);
+        tm = *std::localtime(&tt);  //Locale time-zone, usually UTC by default.
+        urlBuilder << std::put_time(&tm, format);
+        urlBuilder << ".flac?begin=" << first.id << "&end=" << last.id;
+        auto url = urlBuilder.str();
+        soup_message_set_redirect(msg, SOUP_STATUS_MOVED_PERMANENTLY, url.c_str());
+      });
+
+      if(!redirected)
+        soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
+
+      return;
+    }
+
     soup_message_set_status(msg, SOUP_KNOWN_STATUS_CODE_OK);
     soup_message_body_set_accumulate(msg->response_body, FALSE);
     soup_message_headers_set_encoding(msg->response_headers, SOUP_ENCODING_CHUNKED);
     soup_message_headers_set_content_type(msg->response_headers, "audio/x-flac", nullptr);
+    soup_message_headers_set_content_disposition(msg->response_headers, "attachment", nullptr);
 
     g_signal_connect(G_OBJECT(msg), "finished", G_CALLBACK(&NetworkServer::onFinished), pThis);
     auto wroteChunkHandler
@@ -38,8 +70,6 @@ void NetworkServer::stream(SoupServer *server, SoupMessage *msg, const char *pat
     for(auto &h : pThis->m_storage->getHeaders())
       soup_message_body_append(msg->response_body, SOUP_MEMORY_COPY, h->buffer.data(), h->buffer.size());
 
-    auto begin = strtol(beginPtr, nullptr, 10);
-    auto end = strtol(endPtr, nullptr, 10);
     pThis->m_streams.push_back({ msg, pThis->m_storage->startStream(begin, end), wroteChunkHandler });
   }
   else

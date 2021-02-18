@@ -93,6 +93,23 @@ const std::vector<std::unique_ptr<FlacEncoder::Frame> > &FlacFrameStorage::getHe
   return m_header;
 }
 
+void FlacFrameStorage::reset()
+{
+  std::unique_lock<std::mutex> l(m_mutex);
+
+  m_streams.erase(std::remove_if(m_streams.begin(), m_streams.end(), [](auto &s) { return s.unique(); }),
+                  m_streams.end());
+
+  m_memUsage = 0;
+  m_frames.clear();
+
+  for(auto &s : m_streams)
+  {
+    s->it = m_frames.end();
+    s->end = m_frames.end();
+  }
+}
+
 FlacFrameStorage::Stream::Stream(FlacFrameStorage *s, Frames::const_iterator begin, Frames::const_iterator end)
     : storage(s)
     , it(begin)
@@ -115,4 +132,16 @@ bool FlacFrameStorage::Stream::next(std::function<void(const FlacEncoder::Frame 
 
   cb(*(it++)->get());
   return true;
+}
+
+bool FlacFrameStorage::Stream::getFirstAndLast(
+    std::function<void(const FlacEncoder::Frame &, const FlacEncoder::Frame &)> cb)
+{
+  std::unique_lock<std::mutex> l(storage->m_mutex);
+  if(it != end)
+  {
+    cb(*(it)->get(), *(std::prev(end))->get());
+    return true;
+  }
+  return false;
 }

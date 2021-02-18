@@ -11,22 +11,20 @@
 
 <body>
     <div id="pane">
-        <div id="waveform" onpointerdown="startDrag(event)" onpointerup="stopDrag(event)" onpointermove="drag(event)">
-            <canvas id="bars"></canvas>
-            <div id="range-selector" onpointerdown="startDragRange(event)" onpointerup="stopDragRange(event)"
-                onpointermove="dragRange(event)">
-            </div>
-            <div id="selected-range">
-                <div class="left-border"></div>
-                <div class="right-border"></div>
-                <div class="buttons">
-                    <div class="unselectable" id="toggle-playback" onpointerdown="startPlayback(event)">
-                        <image class="unselectable" src="play.svg"></image>
-                    </div>
-                    <div class="unselectable" id="download" onpointerdown="download(event)">
-                        <image class="unselectable" src="download.svg"></image>
-                    </div>
+        <div id="waveform">
+            <div class="clipping">
+                <canvas id="bars"></canvas>
+                <div id="range-selector">
                 </div>
+                <div id="selected-range">
+                    <div id="left-border"></div>
+                    <div id="selected-range-times">
+                        <div id="selected-range-time-from"></div>
+                        <div id="selected-range-time-to"></div>
+                    </div>
+                    <div id="right-border"></div>
+                </div>
+                <div id="play-pos"></div>
             </div>
         </div>
 
@@ -42,22 +40,18 @@
             <div id="mem-info">
                 <span id="consumed-mem"></span> of <span id="max-mem"></span>
             </div>
-            <div id="recording-state"></div>
-            <div id="playback-state"></div>
         </div>
         <div id="options">
-            <div id="toggle-recording" onclick="toggleRecording()">
-                <image src="record.svg"></image>
-            </div>
-            <div id="reset" onclick="reset()">
-                <image src="reset.svg"></image>
-            </div>
-            <div id="zoom-in" onclick="zoomIn()">
-                <image src="zoom-in.svg"></image>
-            </div>
-            <div id="zoom-out" onclick="zoomOut()">
-                <image src="zoom-out.svg"></image>
-            </div>
+            <span id="toggle-playback">⏵</span>
+            <span id="toggle-recording">⏺</span>
+            <span id="download">⏷</span>
+            <span id="reset">⮾</span>
+        </div>
+
+        <div id="zoom">
+            <span id="current-zoom"></span>
+            <span id="zoom-in">⊕</span>
+            <span id="zoom-out">⊖</span>
         </div>
     </div>
 
