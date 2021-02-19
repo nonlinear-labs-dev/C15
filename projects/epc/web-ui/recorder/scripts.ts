@@ -1,6 +1,7 @@
 const httpPort = ":8890";
 const wsPort = ":8889";
-const hostName = location.hostname.length == 0 ? "localhost" : location.hostname;
+//const hostName = location.hostname.length == 0 ? "localhost" : location.hostname;
+const hostName = "192.168.8.2";
 
 class TimingInfo {
     serverTime: number = 0;
@@ -29,7 +30,6 @@ class UpdateStream {
     }
 
     private update(): void {
-        console.log("update");
         this.messageHandler = (e) => this.processInfo(e);
 
         try {
@@ -45,6 +45,7 @@ class UpdateStream {
         this.timingInfo.localTime = Date.now() * 1000 * 1000;
 
         if (!info.storage) {
+            this.ui!.update();
             this.scheduleUpdate();
             return;
         }
@@ -69,6 +70,7 @@ class UpdateStream {
             nextId = this.bars[this.bars.length - 1].id + 1;
 
         if (info.storage.last.id - nextId < 1) {
+            this.ui!.update();
             this.scheduleUpdate();
             return;
         }
@@ -79,7 +81,6 @@ class UpdateStream {
 
     private scheduleUpdate() {
         if (this.updateTimer == -1) {
-            console.log("schedule update");
             this.updateTimer = setTimeout(() => {
                 this.updateTimer = -1;
                 this.update();
@@ -321,6 +322,14 @@ class Waveform {
         waveForm.onpointerup = (e) => this.stopDrag(e);
         waveForm.onpointermove = (e) => this.drag(e);
 
+        waveForm.ongotpointercapture = (e) => {
+            console.log("Got capture");
+        }
+
+        waveForm.onlostpointercapture = (e) => {
+            console.log("Lost capture");
+        }
+
         document.getElementById("zoom-in")!.onclick = (e) => this.zoomIn();
         document.getElementById("zoom-out")!.onclick = (e) => this.zoomOut();
     }
@@ -349,7 +358,7 @@ class Waveform {
 
         this.sanitize(c.width);
 
-        document.getElementById("current-zoom")!.textContent = this.zoom + "x";
+        document.getElementById("current-zoom")!.textContent = "1/" + this.zoom;
 
         var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars[this.bars.length - 1].id;
         var firstBarId = lastId - c.width * this.zoom;
@@ -359,10 +368,10 @@ class Waveform {
             var m = 0;
 
             for (var q = 0; q < this.zoom; q++) {
-                if (idx >= this.bars.length || idx < 0)
-                    break;
+                if (idx < this.bars.length && idx >= 0)
+                    m = Math.max(m, this.bars[idx].max);
 
-                m = Math.max(m, this.bars[idx++].max);
+                idx++;
             }
 
             var m = center * m / 256;
@@ -430,6 +439,8 @@ class Waveform {
         document.getElementById("waveform")!.setPointerCapture(e.pointerId);
         this.scrollX = e.screenX;
         this.dragging = true;
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     private stopDrag(e: PointerEvent) {
@@ -437,8 +448,11 @@ class Waveform {
         document.getElementById("waveform")!.releasePointerCapture(e.pointerId);
     }
 
-    private drag(e: PointerEvent) {
+    private drag(e: PointerEvent): boolean {
         if (this.dragging) {
+            e.preventDefault();
+            e.stopPropagation();
+
             var diff = e.screenX - this.scrollX;
             this.scrollX = e.screenX;
 
@@ -457,7 +471,9 @@ class Waveform {
                 this.lastBarIdToShow = -1; // auto scroll
 
             this.update();
+            document.getElementById("waveform")!.setPointerCapture(e.pointerId);
         }
+        return true;
     }
 
     setPlayPos(pos: number) {
@@ -479,6 +495,11 @@ class Waveform {
 
     private sanitize(width: any) {
         this.zoom = Math.max(1, this.zoom);
+
+        var c = document.getElementById("bars") as HTMLCanvasElement;
+
+        if (c.width * this.zoom > this.bars.length)
+            this.lastBarIdToShow = -1; // auto scroll
 
         if (this.lastBarIdToShow != -1) {
             var barsToShow = Math.floor(this.zoom * width);

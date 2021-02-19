@@ -19,6 +19,7 @@ body {
     background-color: black;
     text-align: center;
     user-select: none;
+    touch-action: none;
 }
 
 #bars {

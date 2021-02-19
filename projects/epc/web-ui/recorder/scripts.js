@@ -1,7 +1,8 @@
 "use strict";
 const httpPort = ":8890";
 const wsPort = ":8889";
-const hostName = location.hostname.length == 0 ? "localhost" : location.hostname;
+//const hostName = location.hostname.length == 0 ? "localhost" : location.hostname;
+const hostName = "192.168.8.2";
 class TimingInfo {
     constructor() {
         this.serverTime = 0;
@@ -37,7 +38,6 @@ class UpdateStream {
         this.socket.onmessage = (event) => this.readMessage(event.data);
     }
     update() {
-        console.log("update");
         this.messageHandler = (e) => this.processInfo(e);
         try {
             this.socket.send(JSON.stringify({ "get-info": {} }));
@@ -50,6 +50,7 @@ class UpdateStream {
         this.timingInfo.serverTime = info.time;
         this.timingInfo.localTime = Date.now() * 1000 * 1000;
         if (!info.storage) {
+            this.ui.update();
             this.scheduleUpdate();
             return;
         }
@@ -68,6 +69,7 @@ class UpdateStream {
         if (this.bars.length > 0)
             nextId = this.bars[this.bars.length - 1].id + 1;
         if (info.storage.last.id - nextId < 1) {
+            this.ui.update();
             this.scheduleUpdate();
             return;
         }
@@ -76,7 +78,6 @@ class UpdateStream {
     }
     scheduleUpdate() {
         if (this.updateTimer == -1) {
-            console.log("schedule update");
             this.updateTimer = setTimeout(() => {
                 this.updateTimer = -1;
                 this.update();
@@ -270,6 +271,12 @@ class Waveform {
         waveForm.onpointerdown = (e) => this.startDrag(e);
         waveForm.onpointerup = (e) => this.stopDrag(e);
         waveForm.onpointermove = (e) => this.drag(e);
+        waveForm.ongotpointercapture = (e) => {
+            console.log("Got capture");
+        };
+        waveForm.onlostpointercapture = (e) => {
+            console.log("Lost capture");
+        };
         document.getElementById("zoom-in").onclick = (e) => this.zoomIn();
         document.getElementById("zoom-out").onclick = (e) => this.zoomOut();
     }
@@ -290,16 +297,16 @@ class Waveform {
         if (this.bars.length == 0)
             return;
         this.sanitize(c.width);
-        document.getElementById("current-zoom").textContent = this.zoom + "x";
+        document.getElementById("current-zoom").textContent = "1/" + this.zoom;
         var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars[this.bars.length - 1].id;
         var firstBarId = lastId - c.width * this.zoom;
         var idx = firstBarId - this.bars[0].id;
         for (var i = 0; i < c.width; i++) {
             var m = 0;
             for (var q = 0; q < this.zoom; q++) {
-                if (idx >= this.bars.length || idx < 0)
-                    break;
-                m = Math.max(m, this.bars[idx++].max);
+                if (idx < this.bars.length && idx >= 0)
+                    m = Math.max(m, this.bars[idx].max);
+                idx++;
             }
             var m = center * m / 256;
             var top = center - m;
@@ -354,6 +361,8 @@ class Waveform {
         document.getElementById("waveform").setPointerCapture(e.pointerId);
         this.scrollX = e.screenX;
         this.dragging = true;
+        e.preventDefault();
+        e.stopPropagation();
     }
     stopDrag(e) {
         this.dragging = false;
@@ -361,6 +370,8 @@ class Waveform {
     }
     drag(e) {
         if (this.dragging) {
+            e.preventDefault();
+            e.stopPropagation();
             var diff = e.screenX - this.scrollX;
             this.scrollX = e.screenX;
             var lastId = this.bars[this.bars.length - 1].id;
@@ -375,7 +386,9 @@ class Waveform {
             if (this.lastBarIdToShow > lastId - 5 * this.zoom)
                 this.lastBarIdToShow = -1; // auto scroll
             this.update();
+            document.getElementById("waveform").setPointerCapture(e.pointerId);
         }
+        return true;
     }
     setPlayPos(pos) {
         if (this.playPos != pos) {
@@ -393,6 +406,9 @@ class Waveform {
     }
     sanitize(width) {
         this.zoom = Math.max(1, this.zoom);
+        var c = document.getElementById("bars");
+        if (c.width * this.zoom > this.bars.length)
+            this.lastBarIdToShow = -1; // auto scroll
         if (this.lastBarIdToShow != -1) {
             var barsToShow = Math.floor(this.zoom * width);
             this.lastBarIdToShow = Math.min(this.lastBarIdToShow, this.bars[this.bars.length - 1].id);
