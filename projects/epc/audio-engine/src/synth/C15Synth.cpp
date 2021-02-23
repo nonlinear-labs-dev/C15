@@ -175,7 +175,7 @@ bool C15Synth::filterMidiOutEvent(nltools::msg::Midi::SimpleMessage& event) cons
   const auto isPitchbendEvent = matchPattern(statusByte, MIDI_PITCHBEND_PATTERN, MIDI_EVENT_TYPE_MASK);
   const auto isProgramChangeEvent = matchPattern(statusByte, MIDI_PROGRAMCHANGE_PATTERN, MIDI_EVENT_TYPE_MASK);
   const auto sendChannelIsNone = m_midiOptions.getSendChannel() == -1;
-  
+
   if(isNoteEvent && !sendChannelIsNone)
     return m_midiOptions.shouldSendNotes();
 
@@ -230,7 +230,6 @@ void C15Synth::doMidi(const MidiEvent& event)
 {
   if(filterMidiInEvent(event))
   {
-    //[=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage);
     m_dsp->onMidiMessage(event.raw[0], event.raw[1], event.raw[2]);
     m_syncExternalsWaiter.notify_all();
   }
@@ -264,10 +263,19 @@ bool C15Synth::filterTcdIn(const MidiEvent& event) const
 
 void C15Synth::doTcd(const MidiEvent& event)
 {
+  const auto localNotesOffAndMidiEventNoteEvent = !m_midiOptions.shouldReceiveLocalNotes()
+      && (matchPattern(event.raw[0], MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
+          || matchPattern(event.raw[0], MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK));
+
   if(filterTcdIn(event))
   {
     m_dsp->onTcdMessage(event.raw[0], event.raw[1], event.raw[2],
                         [=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage); });
+    m_syncExternalsWaiter.notify_all();
+  }
+  else if(localNotesOffAndMidiEventNoteEvent)
+  {
+    queueExternalMidiOut({ event.raw[0], event.raw[1], event.raw[2] });
     m_syncExternalsWaiter.notify_all();
   }
 }
