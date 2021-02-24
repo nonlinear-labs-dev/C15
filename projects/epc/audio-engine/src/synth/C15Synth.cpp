@@ -275,8 +275,8 @@ void C15Synth::doTcd(const MidiEvent& event)
   }
   else if(localNotesOffAndMidiEventNoteEvent)
   {
-    queueExternalMidiOut({ event.raw[0], event.raw[1], event.raw[2] });
-    m_syncExternalsWaiter.notify_all();
+    //    queueExternalMidiOut({ event.raw[0], event.raw[1], event.raw[2] });
+    //    m_syncExternalsWaiter.notify_all();
   }
 }
 
