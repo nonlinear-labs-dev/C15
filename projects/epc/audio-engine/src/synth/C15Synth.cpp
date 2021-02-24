@@ -240,20 +240,30 @@ bool isValidTCDMessage(const MidiEvent& event)
   return matchPattern(event.raw[0], TCD_PATTERN, TCD_PATTERN);
 }
 
+bool isTCDNoteEvent(const MidiEvent& event)
+{
+  const auto typeId = (event.raw[0] & TCD_TYPE_MASK);
+  const auto isNoteEvent = typeId >= 13 && typeId <= 15;
+  return isNoteEvent;
+}
+
+bool isTCDControllerEvent(const MidiEvent& event)
+{
+  const auto typeId = (event.raw[0] & TCD_TYPE_MASK);
+  const auto isControlEvent = typeId >= 0 && typeId <= 11;
+  return isControlEvent;
+}
+
 bool C15Synth::filterTcdIn(const MidiEvent& event) const
 {
   if(isValidTCDMessage(event))
   {
-    const auto typeId = (event.raw[0] & TCD_TYPE_MASK);
-    const auto isNoteEvent = typeId >= 13 && typeId <= 15;
-    const auto isControlEvent = typeId >= 0 && typeId <= 11;
-
-    if(isNoteEvent)
+    if(isTCDNoteEvent(event))
     {
       return m_midiOptions.shouldReceiveLocalNotes();
     }
 
-    if(isControlEvent)
+    if(isTCDControllerEvent(event))
     {
       return m_midiOptions.shouldReceiveLocalControllers();
     }
@@ -261,22 +271,75 @@ bool C15Synth::filterTcdIn(const MidiEvent& event) const
   return false;
 }
 
+bool isTCDNoteOnEvent(const MidiEvent& msg)
+{
+  const uint32_t ch = msg.raw[0] & 15, st = (msg.raw[0] & 127) >> 4;
+  if(st == 6)
+  {
+    if(ch == 13 || ch == 14)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool isTCDNoteOffEvent(const MidiEvent& msg)
+{
+  const uint32_t ch = msg.raw[0] & 15, st = (msg.raw[0] & 127) >> 4;
+  if(st == 6)
+  {
+    if(ch == 13 || ch == 15)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+nltools::msg::Midi::SimpleMessage convertTCDToMidi(const MidiEvent& event, int outChannel)
+{
+  nltools::msg::Midi::SimpleMessage ret;
+
+  if(isTCDNoteEvent(event))
+  {
+    if(isTCDNoteOnEvent(event))
+      ret.rawBytes[0] = MIDI_NOTE_ON_PATTERN | outChannel;
+    else if(isTCDNoteOffEvent(event))
+      ret.rawBytes[0] = MIDI_NOTE_OFF_PATTERN | outChannel;
+
+    ret.rawBytes[1] = event.raw[1];
+    ret.rawBytes[2] = event.raw[2];
+  }
+  else if(isTCDControllerEvent(event))
+  {
+  }
+
+  return ret;
+}
+
 void C15Synth::doTcd(const MidiEvent& event)
 {
-  const auto localNotesOffAndMidiEventNoteEvent = !m_midiOptions.shouldReceiveLocalNotes()
-      && (matchPattern(event.raw[0], MIDI_NOTE_ON_PATTERN, MIDI_EVENT_TYPE_MASK)
-          || matchPattern(event.raw[0], MIDI_NOTE_OFF_PATTERN, MIDI_EVENT_TYPE_MASK));
-
   if(filterTcdIn(event))
   {
     m_dsp->onTcdMessage(event.raw[0], event.raw[1], event.raw[2],
                         [=](auto outgoingMidiMessage) { queueExternalMidiOut(outgoingMidiMessage); });
     m_syncExternalsWaiter.notify_all();
   }
-  else if(localNotesOffAndMidiEventNoteEvent)
+  else if(isValidTCDMessage(event))
   {
-    //    queueExternalMidiOut({ event.raw[0], event.raw[1], event.raw[2] });
-    //    m_syncExternalsWaiter.notify_all();
+    if(isTCDNoteEvent(event) && !m_midiOptions.shouldReceiveLocalNotes())
+    {
+      auto convertedTCDMessage = convertTCDToMidi(event, m_midiOptions.getSendChannel());
+      queueExternalMidiOut(convertedTCDMessage);
+      m_syncExternalsWaiter.notify_all();
+    }
+    else if(isTCDControllerEvent(event) && !m_midiOptions.shouldReceiveLocalControllers())
+    {
+      auto convertedTCDMessage = convertTCDToMidi(event, m_midiOptions.getSendChannel());
+      queueExternalMidiOut(convertedTCDMessage);
+      m_syncExternalsWaiter.notify_all();
+    }
   }
 }
 
