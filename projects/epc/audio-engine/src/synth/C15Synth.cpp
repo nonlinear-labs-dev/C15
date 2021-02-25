@@ -309,15 +309,16 @@ nltools::msg::Midi::SimpleMessage convertTCDToMidi(const MidiEvent& event, int o
   if(isTCDNoteEvent(event))
   {
     if(isTCDNoteOnEvent(event))
-      ret.rawBytes[0] = MIDI_NOTE_ON_PATTERN | outChannel;
+      ret.rawBytes[0] = MIDI_NOTE_ON_PATTERN | (uint8_t) outChannel;
     else if(isTCDNoteOffEvent(event))
-      ret.rawBytes[0] = MIDI_NOTE_OFF_PATTERN | outChannel;
+      ret.rawBytes[0] = MIDI_NOTE_OFF_PATTERN | (uint8_t) outChannel;
 
     ret.rawBytes[1] = event.raw[1];
     ret.rawBytes[2] = event.raw[2];
   }
   else if(isTCDControllerEvent(event))
   {
+    //todo convert TCD controller to midi message
   }
 
   return ret;

@@ -9,7 +9,6 @@
 #include <glibmm.h>
 
 static bool quitApp = false;
-static bool enableMidi = false;
 static Glib::RefPtr<Glib::MainLoop> loop;
 static int cancelPipe[2];
 
@@ -76,12 +75,9 @@ void readMidi(int cancelHandle, snd_rawmidi_t *inputHandle)
           {
             if(event.type < SND_SEQ_EVENT_SONGPOS)
             {
-              if(enableMidi)
-              {
-                Midi::SimpleMessage msg;
-                msg.numBytesUsed = std::min(3l, snd_midi_event_decode(decoder, msg.rawBytes.data(), 3, &event));
-                send(EndPoint::ExternalMidiOverIPClient, msg);
-              }
+              Midi::SimpleMessage msg;
+              msg.numBytesUsed = std::min(3l, snd_midi_event_decode(decoder, msg.rawBytes.data(), 3, &event));
+              send(EndPoint::ExternalMidiOverIPClient, msg);
               break;
             }
           }
@@ -115,13 +111,14 @@ void configureMessaging(const Options &options, bool hasInput, bool hasOutput)
 
 void sendToExternalDevice(snd_rawmidi_t *outputHandle, const nltools::msg::Midi::SimpleMessage &msg)
 {
-  if(!enableMidi)
-    return;
-
   if(auto res = snd_rawmidi_write(outputHandle, msg.rawBytes.data(), msg.numBytesUsed))
+  {
     if(size_t(res) != msg.numBytesUsed)
       nltools::Log::error("Could not write message into midi output device");
-
+    else
+      nltools::Log::error("Wrote", msg.numBytesUsed, "to external MIDI. Status Byte:", (int) msg.rawBytes[0]);
+  }
+  
   snd_rawmidi_drain(outputHandle);
 }
 
@@ -178,14 +175,9 @@ int main(int args, char *argv[])
 
   std::thread sender;
 
-  receive<Setting::MidiBridgeSettings>(EndPoint::ExternalMidiOverIPBridge,
-                                       [&](const Setting::MidiBridgeSettings &msg) { enableMidi = msg.enable; });
-
   if(outputHandle)
   {
-    receive<SimpleMessage>(endPoint, [=](const auto &msg) {
-      sendToExternalDevice(outputHandle, msg);
-    });
+    receive<SimpleMessage>(endPoint, [=](const auto &msg) { sendToExternalDevice(outputHandle, msg); });
   }
 
   pipe(cancelPipe);
