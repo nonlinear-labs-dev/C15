@@ -19,9 +19,9 @@ namespace Tests
     GIVEN("some notes are played without glitch suppression")
     {
       synth->getDsp()->onSettingGlitchSuppr(false);
-      synth->simulateKeyDown(50);
-      synth->simulateKeyDown(53);
-      synth->simulateKeyDown(56);
+      synth->doMidi({ 0x90, 0x50, 0x7F });
+      synth->doMidi({ 0x90, 0x53, 0x7F });
+      synth->doMidi({ 0x90, 0x56, 0x7F });
 
       synth->measurePerformance(250ms);
 
@@ -41,9 +41,9 @@ namespace Tests
     GIVEN("some notes are played with glitch suppression")
     {
       synth->getDsp()->onSettingGlitchSuppr(true);
-      synth->simulateKeyDown(50);
-      synth->simulateKeyDown(53);
-      synth->simulateKeyDown(56);
+      synth->doMidi({ 0x90, 0x50, 0x7F });
+      synth->doMidi({ 0x90, 0x53, 0x7F });
+      synth->doMidi({ 0x90, 0x56, 0x7F });
 
       synth->measurePerformance(250ms);
 

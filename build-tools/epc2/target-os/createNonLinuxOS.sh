@@ -12,5 +12,5 @@ if tty; then
     TTY_OPTION=" -ti "
 fi
 
-docker run $TTY_OPTION --privileged --env INSTALL_PACKAGES="$INSTALL_PACKAGES" -v $PACKAGES_DIR/pac-cache:/var/cache/pacman -v $PACKAGES_DIR/pac-conf:/var/lib/pacman -v $OUT_DIR:/out -v $IN_DIR:/in ${DOCKERNAME} bash -c "$SCRIPT"
+docker run $TTY_OPTION --privileged --env INSTALL_PACKAGES="$INSTALL_PACKAGES" -v $PACKAGES_DIR:/packages -v $OUT_DIR:/out -v $IN_DIR:/in ${DOCKERNAME} bash -c "$SCRIPT"
     

@@ -138,7 +138,7 @@ add_custom_command(
     DEPENDS ${SOURCE_FILES}
     COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
         "unused-epc"
-        "unused-epc"
+        "unused-epc2"
         ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
         "unused-playcontroller"
         ${CMAKE_BINARY_DIR}

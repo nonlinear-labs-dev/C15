@@ -17,12 +17,13 @@ namespace Tests
 
     GIVEN("notes are played")
     {
-      synth->simulateKeyDown(50);
+      synth->doMidi({ 0x90, 0x50, 0x7F });
+
       auto withNote = synth->measurePerformance(4s);
 
       WHEN("audio decays")
       {
-        synth->simulateKeyUp(50);
+        synth->doMidi({ 0x80, 0x50, 0x7F });
 
         THEN("CPU usage is still the same after some sec")
         {

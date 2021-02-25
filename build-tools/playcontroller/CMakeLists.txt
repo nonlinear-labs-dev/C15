@@ -39,7 +39,7 @@ add_custom_command(
     DEPENDS ${ALL_FILES_IN_PROJECT}
     COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
         "unused-epc"
-        "unused-epc"
+        "unused-epc2"
         ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
         ${CMAKE_BINARY_DIR}/build-tools/playcontroller/projects/playcontroller/firmware/src/main/main.bin
         ${CMAKE_BINARY_DIR}

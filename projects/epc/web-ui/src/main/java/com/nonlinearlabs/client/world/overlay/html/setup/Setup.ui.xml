@@ -59,7 +59,7 @@
 					</div>
 
 					<div class="eins-he">
-						<div class="w25p">
+						<div class="w20p">
 							<p>Pedal 1</p>
 						</div>
 						<div class="w15p">
@@ -69,14 +69,14 @@
 							<input type="range" ui:field="pedal1Slider" class="slider-b" min="0" max="1" step="0.001" disabled="disabled"></input>
 						</div>
 						<div class="w5p"></div>
-						<div class="w30p">
+						<div class="w35p">
 							<g:ListBox ui:field="pedal1Type">
 							</g:ListBox>
 						</div>
 					</div>
 
 					<div class="eins-he">
-						<div class="w25p">
+						<div class="w20p">
 							<p>Pedal 2</p>
 						</div>
 						<div class="w15p">
@@ -86,14 +86,14 @@
 							<input type="range" ui:field="pedal2Slider" class="slider-b" min="0" max="1" step="0.001" disabled="disabled"></input>
 						</div>
 						<div class="w5p"></div>
-						<div class="w30p">
+						<div class="w35p">
 							<g:ListBox ui:field="pedal2Type">
 							</g:ListBox>
 						</div>
 					</div>
 
 					<div class="eins-he">
-						<div class="w25p">
+						<div class="w20p">
 							<p>Pedal 3</p>
 						</div>
 						<div class="w15p">
@@ -103,14 +103,14 @@
 							<input type="range" ui:field="pedal3Slider" class="slider-b" min="0" max="1" step="0.001" disabled="disabled"></input>
 						</div>
 						<div class="w5p"></div>
-						<div class="w30p">
+						<div class="w35p">
 							<g:ListBox ui:field="pedal3Type">
 							</g:ListBox>
 						</div>
 					</div>
 
 					<div class="eins-he">
-						<div class="w25p">
+						<div class="w20p">
 							<p>Pedal 4</p>
 						</div>
 						<div class="w15p">
@@ -120,7 +120,7 @@
 							<input type="range" ui:field="pedal4Slider" class="slider-b" min="0" max="1" step="0.001" disabled="disabled"></input>
 						</div>
 						<div class="w5p"></div>
-						<div class="w30p">
+						<div class="w35p">
 							<g:ListBox ui:field="pedal4Type">
 							</g:ListBox>
 						</div>

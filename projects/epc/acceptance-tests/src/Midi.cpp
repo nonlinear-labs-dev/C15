@@ -44,10 +44,11 @@ namespace Tests
     // playground
     Options::s_acceptanceTests = true;  // do not install messaging configuration in Application constructor
     Application playgroundApp(0, nullptr);
-    playgroundApp.getPresetManagerUseCases()->createBankAndStoreEditBuffer();
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    PresetManagerUseCases uc(playgroundApp.getPresetManager());
+    uc.createBankAndStoreEditBuffer();
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
 
     // audio-engine
     auto options = createEmptyAudioEngineOptions();
@@ -114,10 +115,11 @@ namespace Tests
     // playground
     Options::s_acceptanceTests = true;  // do not install messaging configuration in Application constructor
     Application playgroundApp(0, nullptr);
-    playgroundApp.getPresetManagerUseCases()->createBankAndStoreEditBuffer();
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    PresetManagerUseCases uc(playgroundApp.getPresetManager());
+    uc.createBankAndStoreEditBuffer();
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
 
     // audio-engine
     auto options = createEmptyAudioEngineOptions();
@@ -171,10 +173,11 @@ namespace Tests
     // playground
     Options::s_acceptanceTests = true;  // do not install messaging configuration in Application constructor
     Application playgroundApp(0, nullptr);
-    playgroundApp.getPresetManagerUseCases()->createBankAndStoreEditBuffer();
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
-    playgroundApp.getPresetManagerUseCases()->appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    PresetManagerUseCases uc(playgroundApp.getPresetManager());
+    uc.createBankAndStoreEditBuffer();
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
+    uc.appendPreset(playgroundApp.getPresetManager()->getBankAt(0));
 
     // audio-engine
     auto options = createEmptyAudioEngineOptions();

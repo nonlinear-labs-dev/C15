@@ -1,0 +1,20 @@
+FROM archlinux:20200908
+ARG packages
+ARG tar
+COPY ${tar} /packages/
+RUN mkdir -p /extracted-packages
+RUN cd /extracted-packages && tar -xvzf /packages/*.tar.gz
+RUN ls -la /extracted-packages/
+RUN echo "Server=file:///extracted-packages" > /etc/pacman.d/mirrorlist
+RUN sed -i 's/\[core\]//g' /etc/pacman.conf
+RUN sed -i 's/\[extra\]//g' /etc/pacman.conf
+RUN sed -i 's/\[community\]//g' /etc/pacman.conf
+RUN echo "[nonlinux]" >> /etc/pacman.conf
+RUN echo "SigLevel = Optional TrustAll" >> /etc/pacman.conf
+RUN echo "Server=file:///extracted-packages" >> /etc/pacman.conf
+
+RUN pacman --noconfirm -Syyuu
+RUN pacman --noconfirm -Syy
+RUN pacman --noconfirm -S ${packages} arch-install-scripts dosfstools cmake make pkgconf gcc git wget unzip jdk11-openjdk fuse-overlayfs fuse3 pacman-contrib
+
+

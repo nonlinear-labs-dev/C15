@@ -29,6 +29,8 @@ class C15Synth : public Synth, public sigc::trackable
   explicit C15Synth(AudioEngineOptions* options);
   ~C15Synth() override;
 
+  dsp_host_dual* getDsp() const;
+
   void doMidi(const MidiEvent& event) override;
   void doTcd(const MidiEvent& event) override;
   void doAudio(SampleFrame* target, size_t numFrames) override;

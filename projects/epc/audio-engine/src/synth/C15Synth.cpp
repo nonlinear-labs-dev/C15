@@ -101,6 +101,11 @@ C15Synth::~C15Synth()
   m_syncExternalsTask.wait();
 }
 
+dsp_host_dual* C15Synth::getDsp() const
+{
+  return m_dsp.get();
+}
+
 void C15Synth::syncExternals()
 {
   static_assert(std::tuple_size_v<dsp_host_dual::HWSourceValues> == std::tuple_size_v<decltype(m_hwSourceValues)>,
