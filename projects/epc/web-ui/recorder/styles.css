@@ -1,3 +1,4 @@
+/* changed */
 body {
     position: absolute;
     display: flex;
@@ -9,6 +10,11 @@ body {
     height: 100%;
     padding: 0;
     margin: 0;
+    
+	font-family: 'SSP-LW00';
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
 }
 
 #pane {
@@ -28,12 +34,11 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    color: white;
 }
 
 #waveform {
     position: absolute;
-    background-color: darkgray;
+    background-color: #333;
     left: 0;
     top: 0;
     right: 0;
@@ -55,7 +60,7 @@ body {
     top: 25%;
     height: 50%;
     position: absolute;
-    background-color: lightgray;
+    background-color: #999;
     opacity: 0.5;
 }
 
@@ -71,32 +76,65 @@ body {
     justify-content: center;
 }
 
+/* changed */
 #info {
+	font-size: 110%;
+	line-height: 105%;
+	color: #ddd;	
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 10px;
+    top: 10px;
+    background: rgba(128, 128, 128, 0.5);
+	box-shadow: #222 1px 1px 3px;
+    padding: 2px 7px;
+    border: 1px solid #888;
+    border-radius: 3px;
 }
-
 
 #available-frames .first:after {
-    content: " - ";
+    content: " – ";
 }
 
+/* changed */
 #options {
-    font-size: xx-large;
+	font-size: 250%;
+	color: #ccc;
     position: absolute;
     display: flex;
-    right: 0;
+    right: 10px;
     top:0;
+	text-shadow: #000 2px 2px 5px;
 }
 
+/* new */
+#options span {
+	padding: 3px;
+}
+/* * */
+
+/* changed */
 #zoom {
-    font-size: xx-large;
+	font-size: 200%;
+	text-shadow: #000 2px 2px 5px;	
+	color: #ccc;
     position: absolute;
     display: flex;
-    right: 0;
-    bottom:10px; 
+    right: 15px;
+    bottom: 45px; 
 }
+
+/* new */
+#zoom span {
+	padding: 5px;
+}
+#zoom span:hover {
+	color: #fff;
+}
+#zoom span:active {
+	color: #888;
+}
+/* * */
+
 
 #toggle-playback.paused {
     color: white;
@@ -188,6 +226,7 @@ body {
     background-color: black;
 }
 
+/* changed */
 #one-handle, #other-handle {
     position: absolute;
     width: 1cm;
@@ -197,6 +236,7 @@ body {
     background-color: darkgray;
     border: 1px solid black;
     pointer-events: all;
+    border-radius: 5px;
 }
 
 #scrollbar {
@@ -205,8 +245,7 @@ body {
     width: 100%;
     height: 1cm;
     bottom: 0;
-    background-color: red;
-    opacity: 0.5;
+    background-color: rgba(0,0,0,.5);
 }
 
 #scrollbar-handle {
@@ -215,7 +254,10 @@ body {
     width: 30%;
     min-width: 3cm;
     height: 100%;
-    background-color: green;
+    background-color: rgba(86, 135, 210, 0.7);
+    border-radius: 3px; 
+    border: 1px solid #000;
+    box-sizing: border-box;  
 }
 
 #scrollbar-handle-left {
@@ -223,7 +265,11 @@ body {
     left: 0;
     width: 1cm;
     height: 100%;
-    background-color: pink;
+    border: 1px solid #000;
+    border-radius: 3px;
+    background: #888 center center no-repeat;
+    background-image: url(img/sb-handle-top-a.svg);
+	box-sizing: border-box;
 }
 
 #scrollbar-handle-right {
@@ -231,5 +277,10 @@ body {
     right: 0cm;
     width: 1cm;
     height: 100%;
-    background-color: pink;
+    background-color: #444;
+    border: 1px solid #000;
+    border-radius: 3px;   
+    background: #888 center center no-repeat;
+    background-image: url(img/sb-handle-top-a.svg);
+	box-sizing: border-box;
 }
