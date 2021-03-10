@@ -408,7 +408,12 @@ class Waveform extends Draggable {
     showBars(first: number, last: number) {
         var c = document.getElementById("bars") as HTMLCanvasElement;
         var numBars = last - first;
-        this.zoom = Math.max(1, numBars / c.width);
+        var newZoom = Math.max(1, numBars / c.width);
+
+        if (newZoom == this.zoom)
+            return;
+
+        this.zoom = newZoom;
         this.lastBarIdToShow = last;
         this.update();
     }
@@ -416,6 +421,10 @@ class Waveform extends Draggable {
     private wheel(e: WheelEvent) {
         var oldZoom = this.zoom;
         var newZoom = oldZoom + (e.deltaY < 0 ? 1 : -1);
+        newZoom = Math.max(newZoom, 1);
+
+        if (newZoom == oldZoom)
+            return;
 
         var c = document.getElementById("bars") as HTMLDivElement;
         var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
