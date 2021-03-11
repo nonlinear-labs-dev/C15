@@ -1,0 +1,288 @@
+html {
+	background-color: #000;	
+}
+
+body {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    
+	font-family: 'SSP-LW00';
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+}
+
+#pane {
+    position: absolute;
+    width: 80vw;
+    height: 40vw;
+    color: white;
+    background-color: black;
+    text-align: center;
+    user-select: none;
+    touch-action: none;
+}
+
+#bars {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#waveform {
+    position: absolute;
+    background-color: #3c3c3c;
+    border: 1px solid #555;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#selected-range {
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    background-color: rgba(174, 206, 255, 0.4);
+	box-shadow: #222 0px 0px 10px;
+    pointer-events: none;
+}
+
+#range-selector {
+    width: 100%;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    position: absolute;
+    background-color: #999;
+    opacity: 0.5;
+}
+
+#selected-range .buttons {
+    position: absolute;
+    left: 0;
+    right:0;
+    bottom: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#info {
+/* 	font-size: 110%; */
+	line-height: 115%;
+	color: #ddd;	
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    background: rgba(128, 128, 128, 0.5);
+	box-shadow: #222 1px 1px 5px;
+    padding: 2px 7px;
+    border-radius: 3px;
+}
+
+#available-frames .first:after {
+    content: " – ";
+}
+
+#zoom {
+	font-size: 200%;
+	color: #ddd;
+    position: absolute;
+    display: flex;
+    right: 15px;
+    bottom: 50px; 
+}
+
+#zoom span {
+	width: 37px;
+	height: 37px;
+	margin: 0px 5px;
+	padding: 3px;
+	background-color: rgba(128,128,128,0.5);
+	box-shadow: #000 1px 1px 5px;
+	line-height: 34px;
+	border-radius: 3px;
+}
+
+#zoom span:hover {
+	color: #fff;
+	background-color: rgba(200,200,200,0.8);
+}
+
+#zoom span:active {
+	color: #bbb;
+	background-color: rgba(100,100,100,0.8);
+	box-shadow: none;
+}
+
+#options {
+	font-size: 250%;
+	color: #ddd;
+    position: absolute;
+    display: flex;
+    right: 10px;
+    top: 15px;
+}
+
+#options span {
+	width: 37px;
+	height: 37px;
+	margin: 0px 5px;
+	padding: 3px;
+	background-color: rgba(128,128,128,0.5);
+	box-shadow: #000 1px 1px 5px;
+	line-height: 34px;
+	border-radius: 3px;
+}
+
+#options span:hover {
+	color: #fff;
+	background-color: rgba(200,200,200,0.8);
+}
+
+#options span:active {
+	color: #bbb;
+	background-color: rgba(100,100,100,0.8);
+	box-shadow: none;
+}
+
+#toggle-playback.paused {
+    color: white;
+}
+
+#toggle-playback.playing, #toggle-playback.playing:hover {
+    color: #3bc8ff;
+}
+
+#toggle-recording.recording, #toggle-recording.recording:hover  {
+    color: #f00;
+}
+
+.unselectable {
+    /* For Opera and <= IE9, we need to add unselectable="on" attribute onto each element */
+    /* Check this site for more details: http://help.dottoro.com/lhwdpnva.php */
+    -moz-user-select: none; /* These user-select properties are inheritable, used to prevent text selection */
+    -webkit-user-select: none;
+    -ms-user-select: none; /* From IE10 only */
+    user-select: none; /* Not valid CSS yet, as of July 2012 */
+
+    -webkit-user-drag: none; /* Prevents dragging of images/divs etc */
+    user-drag: none;
+}
+
+.clipping {
+    position: relative;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#play-pos {
+    background-color: green;
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    left: -100px;
+}
+
+#selected-range-times {
+    color: #fff;
+	text-shadow: #000 1px 1px 5px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+#one-border {
+    position: absolute;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background-color: black;
+}
+
+#other-border {
+    position: absolute;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: black;
+}
+
+#one-handle, #other-handle {
+    position: absolute;
+    width: 1cm;
+    height: 1cm;
+    left: -0.5cm;
+    top: calc(50% - 0.5cm);
+    background: #c5dcff center center no-repeat;
+    background-image: url(img/sel-handle-top.svg);    
+    border: 1px solid #435168;
+    pointer-events: all;
+    border-radius: 5px;
+    box-shadow: #29384f 0px 0px 3px;
+}
+
+#scrollbar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1cm;
+    bottom: 0;
+    background-color: rgba(0,0,0,.5);
+    border-radius: 7px;
+}
+
+#scrollbar-handle {
+    position: absolute;
+    left: 40%;
+    width: 30%;
+    min-width: 3cm;
+    height: 100%;
+    background-color: rgba(150, 150, 150, 0.7);
+    border-radius: 7px; 
+    border: 1px solid #333;
+    box-sizing: border-box; 
+    overflow: hidden; 
+}
+
+#scrollbar-handle-left {
+    position: absolute;
+    left: 0;
+    width: 1cm;
+    height: 100%;
+    background: #b3b3b3 center center no-repeat;
+    background-image: url(img/sb-handle-top.svg);
+}
+
+#scrollbar-handle-right {
+    position: absolute;
+    right: 0cm;
+    width: 1cm;
+    height: 100%;
+    background-color: #444;
+    background: #b3b3b3 center center no-repeat;
+    background-image: url(img/sb-handle-top.svg);
+}
