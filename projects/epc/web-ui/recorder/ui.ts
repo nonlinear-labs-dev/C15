@@ -315,16 +315,10 @@ class Waveform extends Draggable {
         var idx = firstBarId - this.bars.first().id;
 
         for (var i = 0; i < c.width; i++) {
-            var m = 0;
+            var m = this.bars.getMax(idx, this.zoom);
 
             var from = Math.round(idx);
             var to = Math.round(idx + this.zoom);
-
-            for (var q = from; q < to; q++) {
-                if (q < this.bars.count() && q >= 0)
-                    m = Math.max(m, this.bars.get(q).max);
-            }
-
             idx += this.zoom;
 
             var m = center * m / 256;

@@ -18,40 +18,9 @@ class MockUpdateStream {
         this.timingInfo.serverTime = this.time;
         this.timingInfo.localTime = this.time;
 
-
-        // this.addBars(10000);
-        // setInterval(() => this.addBars(10), 200);
-
-        var b1 = new Bar();
-        b1.id = 0;
-        b1.max = 0;
-        b1.recordTime = 0;
-        this.bars.add(b1);
-
-        var b2 = new Bar();
-        b2.id = 9;
-        b2.max = 0;
-        b2.recordTime = barLength * 9;
-        this.bars.add(b2);
-        assert(this.bars.count() == 10);
-
-        var b3 = new Bar();
-        b3.id = 10;
-        b3.max = 0;
-        b3.recordTime = barLength * 10;
-        this.bars.add(b3);
-        assert(this.bars.count() == 11);
-
-        var b4 = new Bar();
-        b4.id = 11;
-        b4.max = 5;
-        b4.recordTime = barLength * 11;
-        this.bars.add(b4);
-        assert(this.bars.count() == 12);
-
-        this.bars.remove();
-        assert(this.bars.count() == 11);
-        assert(this.bars.first().recordTime == barLength);
+        // this.addBars(11137500);
+        this.addBars(500);
+        setInterval(() => this.addBars(10), 200);
 
         this.ui!.updateFirstAndLastFrame(this.bars.first().recordTime, this.bars.last().recordTime);
         this.ui!.updateMemoryUsage(1234567, 500 * 1024 * 1024);
@@ -68,13 +37,13 @@ class MockUpdateStream {
                 b.max = 0;
 
             b.recordTime = this.time;
-            this.time += barLength;
+            this.time += singleBarLength;
             this.bars.add(b);
         }
         this.ui!.update();
     }
 
-    bars: Bars = new Bars();
+    bars: Bars = new Bars(singleBarLength, new Integrals(2));
     timingInfo: TimingInfo = new TimingInfo();
 
     private id = 3;
@@ -179,7 +148,7 @@ class UpdateStream {
         reader.readAsText(data);
     }
 
-    bars: Bars = new Bars();
+    bars: Bars = new Bars(singleBarLength, new Integrals(2));
     timingInfo: TimingInfo = new TimingInfo();
 
     private socket: WebSocket | null = null;
