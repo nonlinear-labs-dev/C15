@@ -22,7 +22,7 @@ class IO
   IO(IO &&i);
   ~IO();
 
-  snd_rawmidi_t *handle = nullptr;
+  snd_rawmidi_t *m_handle = nullptr;
 };
 
 class Input : public IO
@@ -32,9 +32,16 @@ class Input : public IO
   Input(const std::string &name);
   ~Input();
 
+  void fetchChunk();
+
  private:
   static snd_rawmidi_t *open(const std::string &name);
+
   void readMidi();
+  bool setupDevice(size_t bufferSize);
+  size_t fetchChunk(uint8_t *buffer, size_t length, int numPollFDs, pollfd *pollFileDescriptors);
+  void processChunk(uint8_t *buffer, size_t length, snd_midi_event_t *encoder, snd_midi_event_t *decoder);
+  size_t logReserve(snd_rawmidi_status_t *pStatus, size_t bufferSize, size_t oldReserve) const;
 
   std::future<void> m_bg;
   bool m_quit = false;

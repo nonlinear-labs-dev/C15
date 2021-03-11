@@ -92,6 +92,7 @@ namespace nltools
     template <typename... tArgs> static void throwException(const tArgs &... args)
     {
       auto str = nltools::string::concat(args...);
+      error(str);
       throw std::runtime_error(str);
     }
 
