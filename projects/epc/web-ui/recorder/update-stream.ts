@@ -18,13 +18,13 @@ class MockUpdateStream {
         this.timingInfo.serverTime = this.time;
         this.timingInfo.localTime = this.time;
 
-        // this.addBars(11137500);
-        this.addBars(500);
+        this.addBars(11137500);
+        //this.addBars(500);
         setInterval(() => this.addBars(10), 200);
 
-        this.ui!.updateFirstAndLastFrame(this.bars.first().recordTime, this.bars.last().recordTime);
+        this.ui!.updateFirstAndLastFrame(this.bars.first()!.recordTime, this.bars.last()!.recordTime);
         this.ui!.updateMemoryUsage(1234567, 500 * 1024 * 1024);
-        this.ui!.updateTransportStates(false, true, this.bars.get(this.bars.count() / 2).recordTime);
+        this.ui!.updateTransportStates(false, true, this.bars.get(this.bars.count() / 2)!.recordTime);
     }
 
     addBars(n: number) {
@@ -43,7 +43,7 @@ class MockUpdateStream {
         this.ui!.update();
     }
 
-    bars: Bars = new Bars(singleBarLength, new Integrals(2));
+    bars: Bars = new Bars(singleBarLength);
     timingInfo: TimingInfo = new TimingInfo();
 
     private id = 3;
@@ -95,7 +95,7 @@ class UpdateStream {
         var nextId = info.storage.first.id;
 
         if (this.bars.count() > 0)
-            nextId = this.bars.last().id + 1;
+            nextId = this.bars.last()!.id + 1;
 
         if (info.storage.last.id - nextId < 1) {
             this.ui!.update();
@@ -148,7 +148,7 @@ class UpdateStream {
         reader.readAsText(data);
     }
 
-    bars: Bars = new Bars(singleBarLength, new Integrals(2));
+    bars: Bars = new Bars(singleBarLength);
     timingInfo: TimingInfo = new TimingInfo();
 
     private socket: WebSocket | null = null;

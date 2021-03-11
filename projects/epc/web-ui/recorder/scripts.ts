@@ -15,7 +15,7 @@ window.onload = function () {
 }
 
 function testAddRemove() {
-    var bars = new Bars(1, null);
+    var bars = new Bars(1);
     var b1 = new Bar();
     b1.id = 0;
     b1.max = 0;
@@ -69,7 +69,7 @@ function testAddRemove() {
 }
 
 function testIntegrals() {
-    var bars = new Bars(1, new Integrals(2));
+    var bars = new Bars(1);
     bars.add({ id: 4, max: 10, recordTime: 0 });
     bars.add({ id: 5, max: 10, recordTime: 1 });
     bars.add({ id: 6, max: 10, recordTime: 2 });

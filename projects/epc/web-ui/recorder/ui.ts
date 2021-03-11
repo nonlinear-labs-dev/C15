@@ -136,10 +136,10 @@ class SelectedRange extends Draggable {
 
             if (fromIdx >= 0 && fromIdx < bars.count() && toIdx >= 0 && toIdx < bars.count()) {
                 document.getElementById("selected-range-time-from")!.textContent = buildTime(
-                    bars.get(fromIdx).recordTime, this.waveform.timingInfo);
+                    bars.get(fromIdx)!.recordTime, this.waveform.timingInfo);
 
                 document.getElementById("selected-range-time-to")!.textContent = buildTime(
-                    bars.get(toIdx).recordTime, this.waveform.timingInfo);
+                    bars.get(toIdx)!.recordTime, this.waveform.timingInfo);
             }
         }
     }
@@ -256,7 +256,9 @@ class Scrollbar extends Draggable {
         var handle = document.getElementById("scrollbar-handle")!;
         var handleWidth = 100 * width / barsToShow;
         handle.style.width = handleWidth + "%";
-        handle.style.left = (100 * firstBarId / numBars) + "%";
+        var handleWidthPX = handle.getBoundingClientRect().width;
+        var left = (width - handleWidthPX) * firstBarId / (numBars - width * this.waveform.zoom);
+        handle.style.left = left + "px";
     }
 
     startDrag(e: PointerEvent) {
@@ -312,14 +314,14 @@ class Waveform extends Draggable {
 
         var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
         var firstBarId = lastId - c.width * this.zoom;
-        var idx = firstBarId - this.bars.first().id;
+        var id = firstBarId;
 
         for (var i = 0; i < c.width; i++) {
-            var m = this.bars.getMax(idx, this.zoom);
+            var m = this.bars.getMax(id, this.zoom);
 
-            var from = Math.round(idx);
-            var to = Math.round(idx + this.zoom);
-            idx += this.zoom;
+            var from = Math.round(id);
+            var to = Math.round(id + this.zoom);
+            id += this.zoom;
 
             var m = center * m / 256;
             var top = center - m;
@@ -327,7 +329,7 @@ class Waveform extends Draggable {
             ctx.moveTo(i, top);
             ctx.lineTo(i, bottom);
 
-            if (idx >= this.bars.count())
+            if (id >= lastId)
                 break;
         }
 
@@ -369,17 +371,18 @@ class Waveform extends Draggable {
         for (var i = 0; i < width; i++) {
             var from = Math.round(idx);
             var to = Math.round(idx + this.zoom);
+
+            var isWrapInRange = (from % barsPerTimeMarker) > (to % barsPerTimeMarker);
             idx += this.zoom;
 
-            for (var z = from; z < to; z++) {
-                if (z % barsPerTimeMarker == 0 && z >= 0) {
-                    serverTime = z < this.bars.count() && z >= 0 ? this.bars.get(z).recordTime : serverTime + nsPerTimeMarker;
-                    ctx.moveTo(i, 0);
-                    ctx.lineTo(i, height - fontHeight);
-                    var str = buildTime(serverTime, this.timingInfo);
-                    var xOffset = ctx.measureText(str).width / 2;
-                    ctx.strokeText(str, i - xOffset, height - 2);
-                }
+            if (isWrapInRange) {
+                var b = this.bars.get(from) || this.bars.get(to);
+                serverTime = b ? b.recordTime : serverTime + nsPerTimeMarker;
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height - fontHeight);
+                var str = buildTime(serverTime, this.timingInfo);
+                var xOffset = ctx.measureText(str).width / 2;
+                ctx.strokeText(str, i - xOffset, height - 2);
             }
         }
         ctx.stroke();
@@ -469,10 +472,10 @@ class Waveform extends Draggable {
 
         if (this.lastBarIdToShow == -1) {
             if (amount > 0)
-                this.lastBarIdToShow = lastId - amount * this.zoom;
+                this.lastBarIdToShow = Math.round(lastId - amount * this.zoom);
         }
         else {
-            this.lastBarIdToShow = this.lastBarIdToShow - amount * this.zoom;
+            this.lastBarIdToShow = Math.round(this.lastBarIdToShow - amount * this.zoom);
         }
 
         if (this.lastBarIdToShow > lastId - 5 * this.zoom)
@@ -538,7 +541,7 @@ class Waveform extends Draggable {
             this.lastBarIdToShow = Math.min(this.lastBarIdToShow, this.bars.last().id);
 
             if (this.bars.count() > barsToShow) {
-                this.lastBarIdToShow = Math.max(this.lastBarIdToShow, this.bars.get(barsToShow).id);
+                this.lastBarIdToShow = Math.max(this.lastBarIdToShow, this.bars.get(barsToShow)!.id);
             }
         }
     }
