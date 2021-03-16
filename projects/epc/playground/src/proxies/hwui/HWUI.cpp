@@ -368,6 +368,8 @@ void HWUI::onButtonPressed(Buttons buttonID, bool state)
 
   setModifiers(buttonID, state);
 
+  nltools::Log::warning(__FILE__, __PRETTY_FUNCTION__, toString(buttonID), "pressed: ", std::to_string(state));
+  
   if(!detectAffengriff(buttonID, state))
   {
     if(!m_baseUnit.onButtonPressed(buttonID, m_modifiers, state))
