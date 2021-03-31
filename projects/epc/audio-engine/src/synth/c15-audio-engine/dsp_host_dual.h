@@ -69,6 +69,8 @@ class dsp_host_dual
   uint32_t m_sample_counter = 0;
   // constructor
   dsp_host_dual();
+  ~dsp_host_dual();
+
   // public methods
   void init(const uint32_t _samplerate, const uint32_t _polyphony);
   // handles for inconvenient stuff
@@ -218,4 +220,5 @@ class dsp_host_dual
   template <int thisCore, int otherCore> void syncCoProc();
 
   std::atomic_flag m_coProcFlags[2];
+  bool m_quit = false;
 };
