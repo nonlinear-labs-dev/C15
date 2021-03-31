@@ -25,6 +25,7 @@ C15Synth::C15Synth(AudioEngineOptions* options)
     , m_options(options)
     , m_externalMidiOutBuffer(2048)
     , m_syncExternalsTask(std::async(std::launch::async, [this] { syncExternals(); }))
+    , m_audioCoProc(1, [this] { doAudioCoProc(); })
 {
   m_hwSourceValues.fill(0);
 
@@ -293,10 +294,16 @@ void C15Synth::doAudio(SampleFrame* target, size_t numFrames)
 
   for(size_t i = 0; i < numFrames; i++)
   {
-    m_dsp->render();
+    m_dsp->render<0, 1>();
     target[i].left = m_dsp->m_mainOut_L;
     target[i].right = m_dsp->m_mainOut_R;
   }
+}
+
+void C15Synth::doAudioCoProc()
+{
+  while(!m_quit)
+    m_dsp->render<1, 0>();
 }
 
 void C15Synth::logStatus()

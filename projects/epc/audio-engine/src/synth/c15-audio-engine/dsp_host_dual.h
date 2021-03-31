@@ -111,7 +111,8 @@ class dsp_host_dual
   void onSettingInitialSinglePreset();
   uint32_t onSettingToneToggle();
   // dsp-related
-  void render();
+
+  template <int thisCore, int otherCore> void render();
   void reset();
 
   using HWSourceValues = std::array<float, static_cast<size_t>(C15::Parameters::Hardware_Sources::_LENGTH_)>;
@@ -213,4 +214,8 @@ class dsp_host_dual
   template <Midi::MSB::HWSourceMidiCC msb, Midi::LSB::HWSourceMidiCC lsb>
   void sendCCOut(int id, float controlPosition, const MidiOut& out);
   void processMidiForHWSource(int id, uint32_t _data);
+
+  template <int thisCore, int otherCore> void syncCoProc();
+
+  std::atomic_flag m_coProcFlags[2];
 };

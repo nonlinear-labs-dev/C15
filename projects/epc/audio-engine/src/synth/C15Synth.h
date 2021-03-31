@@ -9,6 +9,7 @@
 #include <mutex>
 #include <future>
 #include <nltools/threading/BackgroundThreadWaiter.h>
+#include <io/HighPriorityTask.h>
 #include <MidiRuntimeOptions.h>
 
 namespace nltools
@@ -75,6 +76,8 @@ class C15Synth : public Synth, public sigc::trackable
   void syncExternalMidiBridge();
   void syncPlayground();
 
+  void doAudioCoProc();
+
   std::unique_ptr<dsp_host_dual> m_dsp;
   std::array<float, 8> m_hwSourceValues;
   AudioEngineOptions* m_options;
@@ -86,4 +89,6 @@ class C15Synth : public Synth, public sigc::trackable
   std::condition_variable m_syncExternalsWaiter;
   std::atomic<bool> m_quit { false };
   std::future<void> m_syncExternalsTask;
+
+  HighPriorityTask m_audioCoProc;
 };

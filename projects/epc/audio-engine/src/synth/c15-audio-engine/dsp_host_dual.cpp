@@ -16,6 +16,9 @@ using namespace std::chrono_literals;
 
 dsp_host_dual::dsp_host_dual()
 {
+  m_coProcFlags[0].test_and_set();
+  m_coProcFlags[1].test_and_set();
+
   m_hwSourcesMidiLSB.fill(0);
   m_mainOut_L = m_mainOut_R = 0.0f;
   m_layer_mode = C15::Properties::LayerMode::Single;
@@ -76,6 +79,11 @@ dsp_host_dual::dsp_host_dual()
   assert(CC_Range_Vel::decodeUnipolarMidiValue(0x2000) == 0.5f);
   assert(CC_Range_Vel::decodeUnipolarMidiValue(0x3F80) == 1.0f);
   assert(CC_Range_Vel::decodeUnipolarMidiValue(0x3FFF) == 1.0f);
+}
+
+dsp_host_dual::~dsp_host_dual()
+{
+  m_quit = true;
 }
 
 void dsp_host_dual::init(const uint32_t _samplerate, const uint32_t _polyphony)
@@ -1320,45 +1328,64 @@ uint32_t dsp_host_dual::onSettingToneToggle()
   return m_tone_state;
 }
 
-void dsp_host_dual::render()
+template <int c1, int c2> void dsp_host_dual::syncCoProc()
 {
-  m_sample_counter += SAMPLE_COUNT;
-  m_fade.evalTaskStatus();
+  m_coProcFlags[c1].clear(std::memory_order_release);
+  while(!m_quit && m_coProcFlags[c2].test_and_set(std::memory_order_acquire))
+    ;
+}
 
-  if(m_fade.isMuted())
+template <int thisCore, int otherCore> void dsp_host_dual::render()
+{
+  syncCoProc<thisCore, otherCore>();
+
+  if constexpr(thisCore == 0)
   {
-    m_mainOut_L = m_mainOut_R = 0.0f;
-    m_fade.onMuteSampleRendered();
-    return;
+    m_sample_counter += SAMPLE_COUNT;
+    m_fade.evalTaskStatus();
+
+    if(m_fade.isMuted())
+    {
+      m_mainOut_L = m_mainOut_R = 0.0f;
+      m_fade.onMuteSampleRendered();
+      return;
+    }
+
+    m_clock.render();
+
+    // slow rendering
+    if(m_clock.m_slow)
+    {
+      // render components
+      m_global.render_slow();
+      m_poly[0].render_slow();
+      m_poly[1].render_slow();
+      m_mono[0].render_slow();
+      m_mono[1].render_slow();
+    }
+
+    // fast rendering
+    if(m_clock.m_fast)
+    {
+      // render components
+      m_global.render_fast();
+      m_poly[0].render_fast();
+      m_poly[1].render_fast();
+      m_mono[0].render_fast();
+      m_mono[1].render_fast();
+    }
   }
 
-  m_clock.render();
+  syncCoProc<thisCore, otherCore>();
 
-  // slow rendering
-  if(m_clock.m_slow)
-  {
-    // render components
-    m_global.render_slow();
-    m_poly[0].render_slow();
-    m_poly[1].render_slow();
-    m_mono[0].render_slow();
-    m_mono[1].render_slow();
-  }
-  // fast rendering
-  if(m_clock.m_fast)
-  {
-    // render components
-    m_global.render_fast();
-    m_poly[0].render_fast();
-    m_poly[1].render_fast();
-    m_mono[0].render_fast();
-    m_mono[1].render_fast();
-  }
   // audio rendering (always) -- temporary soundgenerator patching
   const float mute = m_fade.getValue();
   // - audio dsp poly - first stage - both layers (up to Output Mixer)
-  m_poly[0].render_audio(mute);
-  m_poly[1].render_audio(mute);
+
+  m_poly[thisCore].render_audio(mute);
+
+  syncCoProc<thisCore, otherCore>();
+
   // - audio dsp mono - each layer with separate sends - left, right)
 
   m_mono[0].render_audio(m_poly[0].m_send_self_l + m_poly[1].m_send_other_l,
@@ -1366,13 +1393,18 @@ void dsp_host_dual::render()
   m_mono[1].render_audio(m_poly[0].m_send_other_l + m_poly[1].m_send_self_l,
                          m_poly[0].m_send_other_r + m_poly[1].m_send_self_r, m_poly[1].getVoiceGroupVolume());
   // audio dsp poly - second stage - both layers (FB Mixer)
-  m_poly[0].render_feedback(m_z_layers[1]);  // pass other layer's signals as arg
-  m_poly[1].render_feedback(m_z_layers[0]);  // pass other layer's signals as arg
-  // - audio dsp global - main out: combine layers, apply test_tone and soft clip
-  m_global.render_audio(m_mono[0].m_out_l + m_mono[1].m_out_l, m_mono[0].m_out_r + m_mono[1].m_out_r);
-  // - final: main out, output mute
-  m_mainOut_L = m_global.m_out_l * mute;
-  m_mainOut_R = m_global.m_out_r * mute;
+  m_poly[thisCore].render_feedback(m_z_layers[otherCore]);  // pass other layer's signals as arg
+
+  syncCoProc<thisCore, otherCore>();
+
+  if constexpr(thisCore == 0)
+  {
+    // - audio dsp global - main out: combine layers, apply test_tone and soft clip
+    m_global.render_audio(m_mono[0].m_out_l + m_mono[1].m_out_l, m_mono[0].m_out_r + m_mono[1].m_out_r);
+    // - final: main out, output mute
+    m_mainOut_L = m_global.m_out_l * mute;
+    m_mainOut_R = m_global.m_out_r * mute;
+  }
 }
 
 void dsp_host_dual::reset()
@@ -1742,7 +1774,7 @@ void dsp_host_dual::hwModChain(HW_Src_Param* _src, const uint32_t _id, const flo
           // only rely on unclipped (always up-to-date)
           // NOTE: hopefully, this won't introduce accumulating floating point rounding errors !!!
           const float clipped = std::clamp(macro->m_unclipped, 0.0f, 1.0f);
-          
+
           if(macro->m_position != clipped)
           {
             macro->m_position = clipped;
@@ -2822,3 +2854,6 @@ void dsp_host_dual::debugLevels()
       m_params.get_local_target(0, static_cast<uint32_t>(C15::Parameters::Local_Modulateables::Voice_Grp_Volume))
           ->m_scaled);
 }
+
+template void dsp_host_dual::render<0, 1>();
+template void dsp_host_dual::render<1, 0>();
