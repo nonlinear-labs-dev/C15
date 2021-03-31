@@ -2,6 +2,8 @@
 #include <nltools/messaging/Messaging.h>
 #include <cassert>
 #include <MidiRuntimeOptions.h>
+#include <thread>
+#include <chrono>
 
 using namespace std::chrono_literals;
 
@@ -1388,10 +1390,14 @@ template <int thisCore, int otherCore> void dsp_host_dual::render()
 
   // - audio dsp mono - each layer with separate sends - left, right)
 
-  m_mono[0].render_audio(m_poly[0].m_send_self_l + m_poly[1].m_send_other_l,
-                         m_poly[0].m_send_self_r + m_poly[1].m_send_other_r, m_poly[0].getVoiceGroupVolume());
-  m_mono[1].render_audio(m_poly[0].m_send_other_l + m_poly[1].m_send_self_l,
-                         m_poly[0].m_send_other_r + m_poly[1].m_send_self_r, m_poly[1].getVoiceGroupVolume());
+  if constexpr(thisCore == 0)
+  {
+    m_mono[0].render_audio(m_poly[0].m_send_self_l + m_poly[1].m_send_other_l,
+                           m_poly[0].m_send_self_r + m_poly[1].m_send_other_r, m_poly[0].getVoiceGroupVolume());
+    m_mono[1].render_audio(m_poly[0].m_send_other_l + m_poly[1].m_send_self_l,
+                           m_poly[0].m_send_other_r + m_poly[1].m_send_self_r, m_poly[1].getVoiceGroupVolume());
+  }
+
   // audio dsp poly - second stage - both layers (FB Mixer)
   m_poly[thisCore].render_feedback(m_z_layers[otherCore]);  // pass other layer's signals as arg
 
@@ -1421,6 +1427,11 @@ void dsp_host_dual::reset()
   {
     nltools::Log::info("DSP has been reset.");
   }
+}
+
+void dsp_host_dual::stop()
+{
+  m_quit = true;
 }
 
 dsp_host_dual::HWSourceValues dsp_host_dual::getHWSourceValues() const

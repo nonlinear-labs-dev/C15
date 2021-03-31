@@ -94,6 +94,8 @@ C15Synth::C15Synth(AudioEngineOptions* options)
 
 C15Synth::~C15Synth()
 {
+  m_dsp->stop();
+
   {
     std::unique_lock<std::mutex> lock(m_syncExternalsMutex);
     m_quit = true;
@@ -302,8 +304,12 @@ void C15Synth::doAudio(SampleFrame* target, size_t numFrames)
 
 void C15Synth::doAudioCoProc()
 {
+  pthread_setname_np(pthread_self(), "audioCoProc");
+
   while(!m_quit)
+  {
     m_dsp->render<1, 0>();
+  }
 }
 
 void C15Synth::logStatus()

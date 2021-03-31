@@ -116,6 +116,7 @@ class dsp_host_dual
 
   template <int thisCore, int otherCore> void render();
   void reset();
+  void stop();
 
   using HWSourceValues = std::array<float, static_cast<size_t>(C15::Parameters::Hardware_Sources::_LENGTH_)>;
   HWSourceValues getHWSourceValues() const;
