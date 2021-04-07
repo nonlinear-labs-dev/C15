@@ -24,7 +24,8 @@ class MockUpdateStream {
 
         this.ui!.updateFirstAndLastFrame(this.bars.first()!.recordTime, this.bars.last()!.recordTime);
         this.ui!.updateMemoryUsage(1234567, 500 * 1024 * 1024);
-        this.ui!.updateTransportStates(false, true, this.bars.get(this.bars.count() / 2)!.recordTime);
+        //this.ui!.updateTransportStates(false, true, this.bars.firstId + this.bars.count() / 2);
+        this.ui!.updateTransportStates(false, true, 0);
     }
 
     addBars(n: number) {

@@ -161,36 +161,20 @@ class Waveform extends Draggable {
     }
 
     startDrag(e: PointerEvent) {
-        this.scrollX = e.screenX;
-        this.pointers.push(e);
-
-        if (this.pointers.length == 2) {
-            var xDiff = this.pointers[0].clientX - this.pointers[1].clientX;
-            this.barsPerPixelOnPinchStart = xDiff * this.zoom;
-        }
-    }
-
-    stopDrag(e: PointerEvent) {
-        for (var i = 0; i < this.pointers.length; i++) {
-            if (this.pointers[i].pointerId == e.pointerId) {
-                this.pointers.splice(i, 1);
-                break;
-            }
-        }
+        this.drag(e);
     }
 
     drag(e: PointerEvent) {
-        for (var i = 0; i < this.pointers.length; i++) {
-            if (e.pointerId == this.pointers[i].pointerId) {
-                this.pointers[i] = e;
-                break;
-            }
-        }
+        var c = document.getElementById("bars") as HTMLDivElement;
+        var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
+        var firstBarId = lastId - c.clientWidth * this.zoom;
+        var bar = firstBarId + e.offsetX * this.zoom;
+        this.playPos = bar;
+        this.update();
+    }
 
-        if (this.pointers.length == 1)
-            this.doScroll(e);
-        else if (this.pointers.length == 2)
-            this.doPinch();
+    stopDrag(e: PointerEvent) {
+        fireAndForget({ "set-playback-position": { "frameId": this.playPos } });
     }
 
     scrollBy(amount: number) {
@@ -210,35 +194,8 @@ class Waveform extends Draggable {
         this.update();
     }
 
-
-    private doScroll(e: PointerEvent) {
-        this.scrollBy(e.screenX - this.scrollX);
-        this.scrollX = Math.round(e.screenX);
-    }
-
-    private doPinch() {
-        var xDiff = this.pointers[0].clientX - this.pointers[1].clientX;
-        var X = this.pointers[0].clientX + xDiff / 2;
-
-        var oldZoom = this.zoom;
-        var newZoom = Math.max(1, this.barsPerPixelOnPinchStart / xDiff);
-
-        if (oldZoom != newZoom) {
-            var c = document.getElementById("bars") as HTMLDivElement;
-            var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
-            var firstBarId = lastId - c.clientWidth * oldZoom;
-            var wheelOnBar = firstBarId + X * oldZoom;
-            var b = wheelOnBar + newZoom * c.clientWidth - X * newZoom;
-
-            this.lastBarIdToShow = b;
-            this.zoom = newZoom;
-        }
-        this.update();
-
-    }
-
     setPlayPos(pos: number) {
-        if (this.playPos != pos) {
+        if (!this.isDragging() && this.playPos != pos) {
             this.playPos = pos;
             this.update();
         }
@@ -274,11 +231,11 @@ class Waveform extends Draggable {
 
     zoom = 1.0;
     lastBarIdToShow = -1; // -1 = autoscroll
+    selectedRange: SelectedRange;
+    playPos = -1;
+
 
     private scrollX = -1;
-    private selectedRange: SelectedRange;
-    private playPos = -1;
-
     private pointers = new Array<PointerEvent>();
     private barsPerPixelOnPinchStart = 0;
 

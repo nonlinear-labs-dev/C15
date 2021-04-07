@@ -4,7 +4,6 @@ class SelectedRange extends Draggable {
 
         this.playbackRange = new PlaybackRange(waveform);
 
-        document.getElementById("toggle-playback")!.onpointerdown = (e) => this.togglePlayback(e);
         document.getElementById("download")!.onpointerdown = (e) => this.download(e);
 
         this.oneHandle = new RangeBorderHandler("one-handle", () => { }, (x) => {
@@ -75,18 +74,6 @@ class SelectedRange extends Draggable {
         }
     }
 
-    private togglePlayback(e: Event) {
-        var pb = document.getElementById("toggle-playback")!;
-
-        if (pb.classList.contains("paused"))
-            fireAndForget({ "start-playback": { begin: this.playbackRange.min(), end: this.playbackRange.max() } });
-        else
-            fireAndForget({ "pause-playback": {} });
-
-        e.stopPropagation();
-        e.preventDefault();
-    }
-
     private download(e: Event) {
         e.stopPropagation();
         e.preventDefault();
@@ -126,7 +113,7 @@ class SelectedRange extends Draggable {
         }
     }
 
-    private playbackRange: PlaybackRange;
+    public playbackRange: PlaybackRange;
     private oneHandle: RangeBorderHandler;
     private otherHandle: RangeBorderHandler;
 }

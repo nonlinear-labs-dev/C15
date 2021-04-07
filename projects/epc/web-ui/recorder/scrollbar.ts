@@ -13,10 +13,10 @@ class ScrollbarHandle extends Draggable {
     }
 
     private x = 0;
-
 }
 
 class Scrollbar extends Draggable {
+
     private leftHandle: ScrollbarHandle;
     private rightHandle: ScrollbarHandle;
 
@@ -40,7 +40,6 @@ class Scrollbar extends Draggable {
             var w = Number.parseFloat(handle.style.width!) / 100;
             this.waveform.showBars(first + x * this.waveform.zoom / w, last);
         });
-
     }
 
     update(firstBarId: number): void {
@@ -57,6 +56,22 @@ class Scrollbar extends Draggable {
         var handleWidthPX = handle.getBoundingClientRect().width;
         var left = (width - handleWidthPX) * (firstBarId - this.waveform.bars.firstId) / (numBars - width * this.waveform.zoom);
         handle.style.left = left + "px";
+
+        var playPos = document.getElementById("scrollbar-play-position")!;
+        playPos.style.visibility = this.waveform.playPos > 0 ? "visible" : "hidden";
+        var playPosIdx = this.waveform.playPos - this.waveform.bars.firstId;
+        var playPosPercent = 100 * playPosIdx / this.waveform.bars.count();
+        playPos.style.left = playPosPercent + "%";
+
+        var selRange = document.getElementById("scrollbar-selected-range")!;
+        var rangeValid = this.waveform.selectedRange.playbackRange.min() > 0 && this.waveform.selectedRange.playbackRange.max() > 0;
+        selRange.style.visibility = rangeValid ? "visible" : "hidden";
+        var leftPosIdx = this.waveform.selectedRange.playbackRange.min() - this.waveform.bars.firstId;
+        var rightPosIdx = this.waveform.selectedRange.playbackRange.max() - this.waveform.bars.firstId;
+        var leftPosPercent = 100 * leftPosIdx / this.waveform.bars.count();
+        var rightPosPercent = 100 * rightPosIdx / this.waveform.bars.count();
+        selRange.style.left = leftPosPercent + "%";
+        selRange.style.width = (rightPosPercent - leftPosPercent) + "%";
     }
 
     startDrag(e: PointerEvent) {
@@ -71,4 +86,5 @@ class Scrollbar extends Draggable {
     }
 
     private x = 0;
+
 }

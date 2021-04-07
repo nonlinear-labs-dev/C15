@@ -19,7 +19,21 @@ class UI {
     constructor(bars: Bars, private timingInfo: TimingInfo) {
         this.waveform = new Waveform(bars, timingInfo);
         document.getElementById("toggle-recording")!.onclick = (e) => this.toggleRecording();
+        document.getElementById("toggle-playback")!.onpointerdown = (e) => this.togglePlayback(e);
         document.getElementById("reset")!.onclick = (e) => this.reset();
+        document.getElementById("waveform")!.onkeydown = (e) => this.togglePlayback(e);
+    }
+
+    private togglePlayback(e: Event) {
+        var pb = document.getElementById("toggle-playback")!;
+
+        if (pb.classList.contains("paused"))
+            fireAndForget({ "start-playback": {} });
+        else
+            fireAndForget({ "pause-playback": {} });
+
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     updateFirstAndLastFrame(firstTime: number, lastTime: number) {
@@ -35,6 +49,11 @@ class UI {
     updateTransportStates(recorderPaused: boolean, playPaused: boolean, playPos: number) {
         var rec = document.getElementById("toggle-recording")!;
         var pb = document.getElementById("toggle-playback")!;
+
+        if (this.waveform.playPos > 0)
+            pb.classList.remove("disabled");
+        else
+            pb.classList.add("disabled");
 
         this.waveform.setPlayPos(playPos);
 

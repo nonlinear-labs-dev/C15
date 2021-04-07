@@ -4,7 +4,7 @@
 
 FlacDecoder::FlacDecoder(FlacFrameStorage *s, FrameId begin, FrameId end)
     : m_storage(s)
-    , m_info { begin, begin, end }
+    , m_info { begin, 0, end }
     , m_decoder(FLAC__stream_decoder_new())
     , m_streamOfFrames(m_storage->startStream(begin, end))
 {

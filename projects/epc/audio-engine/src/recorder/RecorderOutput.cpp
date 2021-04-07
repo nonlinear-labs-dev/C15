@@ -46,16 +46,29 @@ void RecorderOutput::pause()
 {
   std::unique_lock<std::mutex> l(m_mutex);
   m_paused = true;
+
+  if(m_decoder)
+    m_requestedPlayPosition = std::get<1>(m_decoder->getPositionInfo());
+
   m_cond.notify_one();
 }
 
-void RecorderOutput::start(FrameId begin, FrameId end)
+void RecorderOutput::start()
 {
   std::unique_lock<std::mutex> l(m_mutex);
-  m_decoder = std::make_unique<FlacDecoder>(m_storage, begin, end);
+  m_decoder = std::make_unique<FlacDecoder>(m_storage, m_requestedPlayPosition, std::numeric_limits<FrameId>::max());
   m_paused = false;
   m_ring.reset();
   m_cond.notify_one();
+}
+
+void RecorderOutput::setPlayPos(FrameId id)
+{
+  std::unique_lock<std::mutex> l(m_mutex);
+  m_requestedPlayPosition = id;
+
+  if(!m_paused)
+    start();
 }
 
 nlohmann::json RecorderOutput::generateInfo()

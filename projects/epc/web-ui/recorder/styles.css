@@ -135,38 +135,26 @@ body {
 }
 /* * */
 
-
-#toggle-playback.paused {
-    color: white;
+#toggle-playback.disabled {
+    color: gray
 }
 
-#toggle-playback.paused:hover {
-    text-shadow: 0px 0px 3px white;
+#toggle-playback.playing::after {
+    content: "\E0D2";
 }
 
-#toggle-playback.playing:hover {
-    text-shadow: 0px 0px 3px red;
+#toggle-playback.paused::after {
+    content: "\E0D0";
 }
 
-#toggle-playback.playing {
-    color: red;
+#toggle-recording.recording::after {
+     content: "R";
 }
 
-#toggle-recording.paused {
-    color: white;
+#toggle-recording.paused::after {
+    content: "\E0D1";
 }
 
-#toggle-recording.recording {
-    color: red;
-}
-
-#toggle-recording.paused:hover {
-    text-shadow: 0px 0px 3px white;
-}
-
-#toggle-recording.recording:hover {
-    text-shadow: 0px 0px 3px red;
-}
 
 .unselectable {
     /* For Opera and <= IE9, we need to add unselectable="on" attribute onto each element */
@@ -191,7 +179,7 @@ body {
 
 #play-pos {
     background-color: green;
-    width: 1px;
+    width: 1mm;
     height: 100%;
     position: absolute;
     left: -100px;
@@ -276,6 +264,26 @@ body {
     height: 1cm;
     bottom: 0;
     background-color: rgba(0,0,0,.5);
+}
+
+#scrollbar-selected-range {
+    visibility: hidden;
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 0%;
+    bottom: 0%;
+    background-color: rgba(255,0,0,.5);
+}
+
+#scrollbar-play-position {
+    visibility: hidden;
+    position: absolute;
+    left: 0%;
+    width: 1mm;
+    top: 0%;
+    bottom: 0%;
+    background-color: rgba(0, 255,0,.9);
 }
 
 #scrollbar-handle {

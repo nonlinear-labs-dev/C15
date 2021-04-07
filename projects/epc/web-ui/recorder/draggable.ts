@@ -33,6 +33,10 @@ class Draggable {
         return this.element;
     }
 
+    isDragging(): boolean {
+        return this.dragging;
+    }
+
     private element: HTMLElement;
     private dragging = false;
 }
