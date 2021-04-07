@@ -18,8 +18,8 @@ class MockUpdateStream {
         this.timingInfo.serverTime = this.time;
         this.timingInfo.localTime = this.time;
 
-        this.addBars(11137500);
-        //this.addBars(500);
+        //this.addBars(11137500);
+        this.addBars(5000);
         setInterval(() => this.addBars(10), 200);
 
         this.ui!.updateFirstAndLastFrame(this.bars.first()!.recordTime, this.bars.last()!.recordTime);
