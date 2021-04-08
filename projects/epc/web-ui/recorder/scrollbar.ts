@@ -20,7 +20,7 @@ class Scrollbar extends Draggable {
     private leftHandle: ScrollbarHandle;
     private rightHandle: ScrollbarHandle;
 
-    constructor(private waveform: Waveform) {
+    constructor(private c15: C15ProxyIface, private waveform: Waveform) {
         super("scrollbar-handle");
 
         this.rightHandle = new ScrollbarHandle("scrollbar-handle-right", (x: number) => {
@@ -45,7 +45,7 @@ class Scrollbar extends Draggable {
     update(firstBarId: number): void {
         var c = document.getElementById("bars") as HTMLCanvasElement;
         var width = c.width;
-        var numBars = this.waveform.bars.count();
+        var numBars = this.c15.getBars().count();
         var barsToShow = numBars / this.waveform.zoom;
         var e = document.getElementById("scrollbar")!;
         e.style.visibility = (width > barsToShow) ? "hidden" : "visible";
@@ -54,22 +54,23 @@ class Scrollbar extends Draggable {
         var handleWidth = 100 * width / barsToShow;
         handle.style.width = handleWidth + "%";
         var handleWidthPX = handle.getBoundingClientRect().width;
-        var left = (width - handleWidthPX) * (firstBarId - this.waveform.bars.firstId) / (numBars - width * this.waveform.zoom);
+        var left = (width - handleWidthPX) * (firstBarId - this.c15.getBars().firstId) / (numBars - width * this.waveform.zoom);
         handle.style.left = left + "px";
 
         var playPos = document.getElementById("scrollbar-play-position")!;
-        playPos.style.visibility = this.waveform.playPos > 0 ? "visible" : "hidden";
-        var playPosIdx = this.waveform.playPos - this.waveform.bars.firstId;
-        var playPosPercent = 100 * playPosIdx / this.waveform.bars.count();
+        playPos.style.visibility = this.c15.getCurrentPlayPosition() > 0 ? "visible" : "hidden";
+        var playPosIdx = this.c15.getCurrentPlayPosition() - this.c15.getBars().firstId;
+        var playPosPercent = 100 * playPosIdx / this.c15.getBars().count();
         playPos.style.left = playPosPercent + "%";
+        playPos.style.visibility = (width > barsToShow) ? "hidden" : "visible";
 
         var selRange = document.getElementById("scrollbar-selected-range")!;
         var rangeValid = this.waveform.selectedRange.playbackRange.min() > 0 && this.waveform.selectedRange.playbackRange.max() > 0;
-        selRange.style.visibility = rangeValid ? "visible" : "hidden";
-        var leftPosIdx = this.waveform.selectedRange.playbackRange.min() - this.waveform.bars.firstId;
-        var rightPosIdx = this.waveform.selectedRange.playbackRange.max() - this.waveform.bars.firstId;
-        var leftPosPercent = 100 * leftPosIdx / this.waveform.bars.count();
-        var rightPosPercent = 100 * rightPosIdx / this.waveform.bars.count();
+        selRange.style.visibility = rangeValid && width <= barsToShow ? "visible" : "hidden";
+        var leftPosIdx = this.waveform.selectedRange.playbackRange.min() - this.c15.getBars().firstId;
+        var rightPosIdx = this.waveform.selectedRange.playbackRange.max() - this.c15.getBars().firstId;
+        var leftPosPercent = 100 * leftPosIdx / this.c15.getBars().count();
+        var rightPosPercent = 100 * rightPosIdx / this.c15.getBars().count();
         selRange.style.left = leftPosPercent + "%";
         selRange.style.width = (rightPosPercent - leftPosPercent) + "%";
     }

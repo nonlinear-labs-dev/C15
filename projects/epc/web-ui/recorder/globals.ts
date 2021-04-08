@@ -1,3 +1,4 @@
-var wsPort: string = "";
-var playgroundHttpPort: string = "";
-var httpPort: string = "";
+
+declare var wsPort: string;
+declare var playgroundHttpPort: string;
+declare var httpPort: string;

@@ -1,9 +1,9 @@
 
 class Waveform extends Draggable {
-    constructor(public bars: Bars, public timingInfo: TimingInfo) {
+    constructor(private c15: C15ProxyIface) {
         super("waveform");
-        this.selectedRange = new SelectedRange(this);
-        this.scrollbar = new Scrollbar(this);
+        this.selectedRange = new SelectedRange(c15, this);
+        this.scrollbar = new Scrollbar(c15, this);
 
         var waveForm = document.getElementById("waveform")!;
         waveForm.onwheel = (e) => this.wheel(e);
@@ -31,17 +31,17 @@ class Waveform extends Draggable {
         ctx.lineTo(c.clientWidth, center);
         ctx.stroke();
 
-        if (this.bars.count() == 0)
+        if (this.c15.getBars().count() == 0)
             return;
 
         this.sanitize(c.width);
 
-        var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
+        var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.c15.getBars().last().id;
         var firstBarId = lastId - c.width * this.zoom;
         var id = firstBarId;
 
         for (var i = 0; i < c.width; i++) {
-            var m = this.bars.getMax(id, this.zoom);
+            var m = this.c15.getBars().getMax(id, this.zoom);
 
             var from = Math.round(id);
             var to = Math.round(id + this.zoom);
@@ -62,17 +62,23 @@ class Waveform extends Draggable {
         this.selectedRange.update(firstBarId);
         this.scrollbar.update(firstBarId);
 
-        if (this.bars.count() > 0) {
+        if (this.c15.getBars().count() > 0) {
             var playPosIndicator = document.getElementById("play-pos") as HTMLElement;
-            var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
+            var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.c15.getBars().last().id;
             var firstBarId = lastId - c.width * this.zoom;
-            playPosIndicator.style.left = (this.playPos - firstBarId) / this.zoom + "px";
-            playPosIndicator.style.visibility = this.playPos >= 0 ? "visible" : "hidden";
+            var playPos = this.isDragging() ? this.dragPosition : this.c15.getCurrentPlayPosition();
+            playPosIndicator.style.left = (playPos - firstBarId) / this.zoom + "px";
+            playPosIndicator.style.visibility = playPos > 0 ? "visible" : "hidden";
+
+            var playPosTime = document.getElementById("play-pos-time") as HTMLElement;
+            var playBar = this.c15.getBars().get(playPos);
+            if (playBar)
+                playPosTime.innerText = this.c15.buildTime(playBar.recordTime);
         }
     }
 
     private drawGrid(ctx: CanvasRenderingContext2D, width: number, height: number, id: number) {
-        if (this.bars.count() < 2)
+        if (this.c15.getBars().count() < 2)
             return;
 
         var pixelsPerTimeMarker = 100;
@@ -90,7 +96,7 @@ class Waveform extends Draggable {
         var fontHeight = 10;
         ctx.font = fontHeight + "px serif";
 
-        var serverTime = this.bars.first().recordTime;
+        var serverTime = this.c15.getBars().first().recordTime;
 
         for (var i = 0; i < width; i++) {
             var from = Math.round(id);
@@ -102,11 +108,11 @@ class Waveform extends Draggable {
             id += this.zoom;
 
             if (isWrapInRange) {
-                var b = this.bars.get(from) || this.bars.get(to);
+                var b = this.c15.getBars().get(from) || this.c15.getBars().get(to);
                 serverTime = b ? b.recordTime : serverTime + nsPerTimeMarker;
                 ctx.moveTo(i, 0);
                 ctx.lineTo(i, height - fontHeight);
-                var str = buildTime(serverTime, this.timingInfo);
+                var str = this.c15.buildTime(serverTime);
                 var xOffset = ctx.measureText(str).width / 2;
                 ctx.strokeText(str, i - xOffset, height - 2);
             }
@@ -115,7 +121,7 @@ class Waveform extends Draggable {
     }
 
     getFirstVisibleBar(): number {
-        if (this.bars.count() == 0)
+        if (this.c15.getBars().count() == 0)
             return -1;
 
         var c = document.getElementById("bars") as HTMLCanvasElement;
@@ -123,9 +129,9 @@ class Waveform extends Draggable {
     }
 
     getLastVisibleBar(): number {
-        if (this.bars.count() == 0)
+        if (this.c15.getBars().count() == 0)
             return -1;
-        return this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
+        return this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.c15.getBars().last().id;
     }
 
     showBars(first: number, last: number) {
@@ -150,7 +156,7 @@ class Waveform extends Draggable {
             return;
 
         var c = document.getElementById("bars") as HTMLDivElement;
-        var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
+        var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.c15.getBars().last().id;
         var firstBarId = lastId - c.clientWidth * oldZoom;
         var wheelOnBar = firstBarId + e.offsetX * oldZoom;
         var b = wheelOnBar + newZoom * c.clientWidth - e.offsetX * newZoom;
@@ -166,19 +172,19 @@ class Waveform extends Draggable {
 
     drag(e: PointerEvent) {
         var c = document.getElementById("bars") as HTMLDivElement;
-        var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.bars.last().id;
+        var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.c15.getBars().last().id;
         var firstBarId = lastId - c.clientWidth * this.zoom;
         var bar = firstBarId + e.offsetX * this.zoom;
-        this.playPos = bar;
+        this.dragPosition = bar;
         this.update();
     }
 
     stopDrag(e: PointerEvent) {
-        fireAndForget({ "set-playback-position": { "frameId": this.playPos } });
+        this.c15.setPlaybackPosition(this.dragPosition);
     }
 
     scrollBy(amount: number) {
-        var lastId = this.bars.last().id;
+        var lastId = this.c15.getBars().last().id;
 
         if (this.lastBarIdToShow == -1) {
             if (amount > 0)
@@ -192,13 +198,6 @@ class Waveform extends Draggable {
             this.lastBarIdToShow = -1; // auto scroll
 
         this.update();
-    }
-
-    setPlayPos(pos: number) {
-        if (!this.isDragging() && this.playPos != pos) {
-            this.playPos = pos;
-            this.update();
-        }
     }
 
     private zoomIn() {
@@ -216,15 +215,15 @@ class Waveform extends Draggable {
 
         var c = document.getElementById("bars") as HTMLCanvasElement;
 
-        if (c.width * this.zoom > this.bars.count())
+        if (c.width * this.zoom > this.c15.getBars().count())
             this.lastBarIdToShow = -1; // auto scroll
 
         if (this.lastBarIdToShow != -1) {
             var barsToShow = Math.floor(this.zoom * width);
-            this.lastBarIdToShow = Math.min(this.lastBarIdToShow, this.bars.last().id);
+            this.lastBarIdToShow = Math.min(this.lastBarIdToShow, this.c15.getBars().last().id);
 
-            if (this.bars.count() > barsToShow) {
-                this.lastBarIdToShow = Math.max(this.lastBarIdToShow, this.bars.get(barsToShow + this.bars.firstId)!.id);
+            if (this.c15.getBars().count() > barsToShow) {
+                this.lastBarIdToShow = Math.max(this.lastBarIdToShow, this.c15.getBars().get(barsToShow + this.c15.getBars().firstId)!.id);
             }
         }
     }
@@ -232,12 +231,10 @@ class Waveform extends Draggable {
     zoom = 1.0;
     lastBarIdToShow = -1; // -1 = autoscroll
     selectedRange: SelectedRange;
-    playPos = -1;
-
 
     private scrollX = -1;
     private pointers = new Array<PointerEvent>();
     private barsPerPixelOnPinchStart = 0;
-
     private scrollbar: Scrollbar;
+    private dragPosition = 0;
 }

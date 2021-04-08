@@ -1,10 +1,8 @@
 class SelectedRange extends Draggable {
-    constructor(private waveform: Waveform) {
+    constructor(private c15: C15ProxyIface, private waveform: Waveform) {
         super("range-selector");
 
-        this.playbackRange = new PlaybackRange(waveform);
-
-        document.getElementById("download")!.onpointerdown = (e) => this.download(e);
+        this.playbackRange = new PlaybackRange(c15);
 
         this.oneHandle = new RangeBorderHandler("one-handle", () => { }, (x) => {
             this.playbackRange.one = Math.round(this.pixToBar(x));
@@ -15,35 +13,21 @@ class SelectedRange extends Draggable {
             this.playbackRange.other = Math.round(this.pixToBar(x));
             this.waveform.update();
         });
-
-        var undoOne = document.getElementById("undo-one")!;
-        var undoOther = document.getElementById("undo-other")!;
-
-        undoOne.onpointerdown = (e) => { e.stopPropagation(); };
-        undoOther.onpointerdown = (e) => { e.stopPropagation(); };
-
-        undoOne.onclick = (e) => {
-            e.preventDefault();
-            this.jumpUndo(this.playbackRange.one);
-        };
-
-        undoOther.onclick = (e) => {
-            e.preventDefault();
-            this.jumpUndo(this.playbackRange.other);
-        };
-    }
-
-    jumpUndo(barId: number) {
-        var bar = this.waveform.bars.get(barId);
-        if (bar) {
-            var r = new XMLHttpRequest();
-            var url = "http://" + hostName + playgroundHttpPort + "/undo/jump-to-timestamp?timestamp=" + bar.recordTime;
-            r.open("GET", url, true);
-            r.send();
-        }
     }
 
     update(firstBarId: number): void {
+        var range = document.getElementById("selected-range")!;
+        var download = document.getElementById("download")!;
+
+        if (this.playbackRange.empty()) {
+            range.style.visibility = "hidden";
+            download.classList.add("disabled");
+        }
+        else {
+            range.style.visibility = "visible";
+            download.classList.remove("disabled");
+        }
+
         var c = document.getElementById("selected-range") as HTMLCanvasElement;
         var left = (this.playbackRange.min() - firstBarId) / this.waveform.zoom;
         var right = (this.playbackRange.max() - firstBarId) / this.waveform.zoom;
@@ -59,34 +43,30 @@ class SelectedRange extends Draggable {
         this.oneHandle.setTime("");
         this.otherHandle.setTime("");
 
-        var bars = this.waveform.bars;
+        var bars = this.c15.getBars();
         if (bars.count() > 0) {
             var fromId = this.playbackRange.min();
             var toId = this.playbackRange.max();
-            var fromTime = buildTime(bars.get(fromId)!.recordTime, this.waveform.timingInfo);
-            document.getElementById("selected-range-time-from")!.textContent = fromTime;
+            var bar = bars.get(fromId);
+            if (bar) {
+                var fromTime = this.c15.buildTime(bar.recordTime);
+                document.getElementById("selected-range-time-from")!.textContent = fromTime;
 
-            var toTime = buildTime(bars.get(toId)!.recordTime, this.waveform.timingInfo);
-            document.getElementById("selected-range-time-to")!.textContent = toTime;
+                var toTime = this.c15.buildTime(bars.get(toId)!.recordTime);
+                document.getElementById("selected-range-time-to")!.textContent = toTime;
 
-            this.oneHandle.setTime(this.playbackRange.one < this.playbackRange.other ? fromTime : toTime);
-            this.otherHandle.setTime(this.playbackRange.one < this.playbackRange.other ? toTime : fromTime);
+                this.oneHandle.setTime(this.playbackRange.one < this.playbackRange.other ? fromTime : toTime);
+                this.otherHandle.setTime(this.playbackRange.one < this.playbackRange.other ? toTime : fromTime);
+            }
         }
     }
 
-    private download(e: Event) {
-        e.stopPropagation();
-        e.preventDefault();
-        var url = "http://" + hostName + httpPort + "/?begin=" + this.playbackRange.min() + "&end=" + this.playbackRange.max();
-        window.location.assign(url);
-    }
-
     private pixToBar(pix: number) {
-        if (this.waveform.bars.count() == 0)
+        if (this.c15.getBars().count() == 0)
             return -1;
 
         var c = document.getElementById("bars") as HTMLDivElement;
-        var lastId = this.waveform.lastBarIdToShow != -1 ? this.waveform.lastBarIdToShow : this.waveform.bars.last().id;
+        var lastId = this.waveform.lastBarIdToShow != -1 ? this.waveform.lastBarIdToShow : this.c15.getBars().last().id;
         var firstBarId = lastId - c.clientWidth * this.waveform.zoom;
         return firstBarId + pix * this.waveform.zoom;
     }
@@ -105,11 +85,11 @@ class SelectedRange extends Draggable {
     }
 
     private sanitize() {
-        if (this.waveform.bars.count() > 0) {
-            this.playbackRange.one = Math.min(this.playbackRange.one, this.waveform.bars.last().id);
-            this.playbackRange.other = Math.min(this.playbackRange.other, this.waveform.bars.last().id);
-            this.playbackRange.one = Math.max(this.playbackRange.one, this.waveform.bars.first().id);
-            this.playbackRange.other = Math.max(this.playbackRange.other, this.waveform.bars.first().id);
+        if (this.c15.getBars().count() > 0) {
+            this.playbackRange.one = Math.min(this.playbackRange.one, this.c15.getBars().last().id);
+            this.playbackRange.other = Math.min(this.playbackRange.other, this.c15.getBars().last().id);
+            this.playbackRange.one = Math.max(this.playbackRange.one, this.c15.getBars().first().id);
+            this.playbackRange.other = Math.max(this.playbackRange.other, this.c15.getBars().first().id);
         }
     }
 

@@ -155,6 +155,33 @@ body {
     content: "\E0D1";
 }
 
+#download.disabled {
+    color: gray;
+}
+
+#download::after {
+    content: "\E0D4"
+}
+
+#reset::after {
+    content: "\E0D3"
+}
+
+#zoom-in::after {
+    content: "\E0DE"
+}
+
+#zoom-out::after {
+    content: "\E0DF"
+}
+
+#undo.disabled {
+    color: gray
+}
+
+#undo::after {
+    content: "\21B6"
+}
 
 .unselectable {
     /* For Opera and <= IE9, we need to add unselectable="on" attribute onto each element */
@@ -183,6 +210,16 @@ body {
     height: 100%;
     position: absolute;
     left: -100px;
+}
+
+#play-pos-time {
+    position: absolute;
+    width: fit-content;
+    text-align: left;
+    white-space: nowrap;
+    padding: 1mm;
+    top: 18%;
+    background-color: rgba(0,0,0,0.5);
 }
 
 #selected-range-times {
@@ -219,7 +256,7 @@ body {
     width: 1cm;
     height: 1cm;
     left: -0.5cm;
-    top: calc(33% - 0.5cm);
+    top: calc(50% - 0.5cm);
     background-color: darkgray;
     border: 1px solid black;
     pointer-events: all;
@@ -231,30 +268,6 @@ body {
     color: white;
     margin: 0;
     padding: 0;
-}
-
-#undo-one, #undo-other {
-    position: absolute;
-    width: 1cm;
-    height: 1cm;
-    left: -0.5cm;
-    top: calc(66% - 0.5cm);
-    background-color: darkgray;
-    border: 1px solid black;
-    pointer-events: all;
-    border-radius: 5px;
-    font-size: 1cm;
-    line-height: 1cm;
-    text-align: center;
-    vertical-align: center;
-    color: white;
-    margin: 0;
-    padding: 0;
-    outline: none;
-}
-
-#undo-one:active, #undo-other:active {
-    transform: translate(0.2mm, 0.2mm);
 }
 
 #scrollbar {

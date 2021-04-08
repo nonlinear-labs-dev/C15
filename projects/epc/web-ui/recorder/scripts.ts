@@ -1,10 +1,9 @@
 const hostName = location.hostname.length == 0 ? "localhost" : location.hostname;
 
 window.onload = function () {
-    var mock = location.search.includes("mock-audio-data");
-    var updateStream = mock ? new MockUpdateStream() : new UpdateStream();
-    var display = new UI(updateStream.bars, updateStream.timingInfo);
-    updateStream.connect(display);
+    var c15 = C15ProxyIface.create();
+    var ui = new UI(c15);
+    c15.connect(ui);
 
     if (location.search.includes("test")) {
         testAddRemove();

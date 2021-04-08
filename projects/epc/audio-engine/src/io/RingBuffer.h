@@ -89,6 +89,11 @@ template <typename T> class RingBuffer
     return m_writeHead <= m_readHead;
   }
 
+  size_t size() const
+  {
+    return m_buffer.size();
+  }
+
  private:
   std::vector<T> m_buffer;
   uint64_t m_readHead = 0;
