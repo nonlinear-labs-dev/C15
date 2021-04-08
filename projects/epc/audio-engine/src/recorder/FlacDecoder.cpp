@@ -4,7 +4,7 @@
 
 FlacDecoder::FlacDecoder(FlacFrameStorage *s, FrameId begin, FrameId end)
     : m_storage(s)
-    , m_info { begin, begin, end }
+    , m_info { begin, 0, end }
     , m_decoder(FLAC__stream_decoder_new())
     , m_streamOfFrames(m_storage->startStream(begin, end))
 {
@@ -19,7 +19,9 @@ FlacDecoder::~FlacDecoder()
 
 FlacDecoder::PositionInfo FlacDecoder::getPositionInfo() const
 {
-  return m_info;
+  auto ret = m_info;
+  std::get<1>(ret) = m_numDecodedSamples / FlacEncoder::flacFrameSize + m_firstFrameDecoded;
+  return ret;
 }
 
 FLAC__StreamDecoderReadStatus FlacDecoder::readCB(const FLAC__StreamDecoder *decoder, FLAC__byte buffer[],
@@ -39,7 +41,9 @@ FLAC__StreamDecoderReadStatus FlacDecoder::readCB(const FLAC__StreamDecoder *dec
   {
     pThis->m_streamOfFrames->next([&](const auto &frame, auto) {
       pThis->m_readScratch.insert(pThis->m_readScratch.end(), frame.buffer.begin(), frame.buffer.end());
-      std::get<1>(pThis->m_info) = frame.id;
+
+      if(!pThis->m_firstFrameDecoded)
+        pThis->m_firstFrameDecoded = frame.id;
     });
   }
 
@@ -98,6 +102,7 @@ size_t FlacDecoder::popAudio(SampleFrame *target, size_t maxNumFrames)
       target += FlacEncoder::flacFrameSize;
       todo -= FlacEncoder::flacFrameSize;
       done += FlacEncoder::flacFrameSize;
+      m_numDecodedSamples += FlacEncoder::flacFrameSize;
     }
   }
 

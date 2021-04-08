@@ -59,9 +59,13 @@ void EditBufferUseCases::undoableLoad(const Uuid& uuid)
 
 void EditBufferUseCases::undoableLoad(const Preset* preset)
 {
+  undoableLoad(preset, preset->buildUndoTransactionTitle("Load"));
+}
+
+void EditBufferUseCases::undoableLoad(const Preset* preset, const std::string& transactionName)
+{
   auto& undoScope = m_editBuffer->getUndoScope();
-  auto name = preset->buildUndoTransactionTitle("Load");
-  auto scope = undoScope.startContinuousTransaction(preset->getParent(), std::chrono::seconds(5), name);
+  auto scope = undoScope.startContinuousTransaction(preset->getParent(), std::chrono::seconds(5), transactionName);
   m_editBuffer->undoableLoad(scope->getTransaction(), preset, true);
 }
 

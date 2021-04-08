@@ -35,6 +35,7 @@ class EditBufferUseCases
 
   void undoableLoad(const Uuid& uuid);
   void undoableLoad(const Preset* preset);
+  void undoableLoad(const Preset* preset, const std::string& transactionName);
   void undoableLoadToPart(const Preset* preset, VoiceGroup from, VoiceGroup to);
 
   void resetScaleGroup();

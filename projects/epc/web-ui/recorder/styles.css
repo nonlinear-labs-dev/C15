@@ -135,37 +135,52 @@ body {
 }
 /* * */
 
-
-#toggle-playback.paused {
-    color: white;
+#toggle-playback.disabled {
+    color: gray
 }
 
-#toggle-playback.paused:hover {
-    text-shadow: 0px 0px 3px white;
+#toggle-playback.playing::after {
+    content: "\E0D2";
 }
 
-#toggle-playback.playing:hover {
-    text-shadow: 0px 0px 3px red;
+#toggle-playback.paused::after {
+    content: "\E0D0";
 }
 
-#toggle-playback.playing {
-    color: red;
+#toggle-recording.recording::after {
+     content: "R";
 }
 
-#toggle-recording.paused {
-    color: white;
+#toggle-recording.paused::after {
+    content: "\E0D1";
 }
 
-#toggle-recording.recording {
-    color: red;
+#download.disabled {
+    color: gray;
 }
 
-#toggle-recording.paused:hover {
-    text-shadow: 0px 0px 3px white;
+#download::after {
+    content: "\E0D4"
 }
 
-#toggle-recording.recording:hover {
-    text-shadow: 0px 0px 3px red;
+#reset::after {
+    content: "\E0D3"
+}
+
+#zoom-in::after {
+    content: "\E0DE"
+}
+
+#zoom-out::after {
+    content: "\E0DF"
+}
+
+#undo.disabled {
+    color: gray
+}
+
+#undo::after {
+    content: "\21B6"
 }
 
 .unselectable {
@@ -191,10 +206,20 @@ body {
 
 #play-pos {
     background-color: green;
-    width: 1px;
+    width: 1mm;
     height: 100%;
     position: absolute;
     left: -100px;
+}
+
+#play-pos-time {
+    position: absolute;
+    width: fit-content;
+    text-align: left;
+    white-space: nowrap;
+    padding: 1mm;
+    top: 18%;
+    background-color: rgba(0,0,0,0.5);
 }
 
 #selected-range-times {
@@ -231,7 +256,7 @@ body {
     width: 1cm;
     height: 1cm;
     left: -0.5cm;
-    top: calc(33% - 0.5cm);
+    top: calc(50% - 0.5cm);
     background-color: darkgray;
     border: 1px solid black;
     pointer-events: all;
@@ -243,30 +268,6 @@ body {
     color: white;
     margin: 0;
     padding: 0;
-}
-
-#undo-one, #undo-other {
-    position: absolute;
-    width: 1cm;
-    height: 1cm;
-    left: -0.5cm;
-    top: calc(66% - 0.5cm);
-    background-color: darkgray;
-    border: 1px solid black;
-    pointer-events: all;
-    border-radius: 5px;
-    font-size: 1cm;
-    line-height: 1cm;
-    text-align: center;
-    vertical-align: center;
-    color: white;
-    margin: 0;
-    padding: 0;
-    outline: none;
-}
-
-#undo-one:active, #undo-other:active {
-    transform: translate(0.2mm, 0.2mm);
 }
 
 #scrollbar {
@@ -276,6 +277,26 @@ body {
     height: 1cm;
     bottom: 0;
     background-color: rgba(0,0,0,.5);
+}
+
+#scrollbar-selected-range {
+    visibility: hidden;
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 0%;
+    bottom: 0%;
+    background-color: rgba(255,0,0,.5);
+}
+
+#scrollbar-play-position {
+    visibility: hidden;
+    position: absolute;
+    left: 0%;
+    width: 1mm;
+    top: 0%;
+    bottom: 0%;
+    background-color: rgba(0, 255,0,.9);
 }
 
 #scrollbar-handle {

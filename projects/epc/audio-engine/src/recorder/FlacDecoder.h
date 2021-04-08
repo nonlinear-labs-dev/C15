@@ -36,4 +36,7 @@ class FlacDecoder
   int m_headerPos = 0;
   std::vector<uint8_t> m_readScratch;
   bool m_audioDecoded = false;
+
+  size_t m_numDecodedSamples = 0;
+  FrameId m_firstFrameDecoded = 0;
 };

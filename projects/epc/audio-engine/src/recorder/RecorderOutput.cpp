@@ -46,13 +46,32 @@ void RecorderOutput::pause()
 {
   std::unique_lock<std::mutex> l(m_mutex);
   m_paused = true;
+
+  if(m_decoder)
+  {
+    auto framesInRing = m_ring.size() / FlacEncoder::flacFrameSize;
+    m_requestedPlayPosition = std::get<1>(m_decoder->getPositionInfo()) - framesInRing;
+  }
+
   m_cond.notify_one();
 }
 
-void RecorderOutput::start(FrameId begin, FrameId end)
+void RecorderOutput::setPlayPos(FrameId id)
 {
   std::unique_lock<std::mutex> l(m_mutex);
-  m_decoder = std::make_unique<FlacDecoder>(m_storage, begin, end);
+  m_requestedPlayPosition = id;
+
+  if(!m_paused)
+  {
+    l.unlock();
+    start();
+  }
+}
+
+void RecorderOutput::start()
+{
+  std::unique_lock<std::mutex> l(m_mutex);
+  m_decoder = std::make_unique<FlacDecoder>(m_storage, m_requestedPlayPosition, std::numeric_limits<FrameId>::max());
   m_paused = false;
   m_ring.reset();
   m_cond.notify_one();
@@ -61,10 +80,12 @@ void RecorderOutput::start(FrameId begin, FrameId end)
 nlohmann::json RecorderOutput::generateInfo()
 {
   FlacDecoder::PositionInfo info = m_decoder ? m_decoder->getPositionInfo() : FlacDecoder::PositionInfo {};
+  auto framesInRing = m_ring.size() / FlacEncoder::flacFrameSize;
 
-  return {
-    { "paused", m_paused }, { "begin", std::get<0>(info) }, { "pos", std::get<1>(info) }, { "end", std::get<2>(info) }
-  };
+  return { { "paused", m_paused },
+           { "begin", std::get<0>(info) },
+           { "pos", m_paused ? m_requestedPlayPosition : (std::get<1>(info) - framesInRing) },
+           { "end", std::get<2>(info) } };
 }
 
 void RecorderOutput::TEST_waitForBuffersFilled(size_t numFramesNeeded) const
