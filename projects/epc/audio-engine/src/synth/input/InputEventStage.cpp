@@ -316,7 +316,8 @@ void InputEventStage::sendKeyUpAsMidi(TCDDecoder *pDecoder, const VoiceGroup &de
 
 void InputEventStage::sendHardwareChangeAsMidi(int hwID, float value)
 {
-  auto roundPedalToSwitching = [](float val) -> float {
+  auto roundPedalToSwitching = [](float val) -> float
+  {
     if(val >= 0.5f)
       return 1.0f;
     else
@@ -631,7 +632,8 @@ int InputEventStage::HWIDToParameterID(int id)
 
 void InputEventStage::onHWChanged(int hwID, float pos, DSPInterface::HWChangeSource source)
 {
-  auto sendToDSP = [&](auto source) {
+  auto sendToDSP = [&](auto source)
+  {
     switch(source)
     {
       case DSPInterface::HWChangeSource::MIDI:
@@ -695,7 +697,10 @@ void InputEventStage::onMIDIHWChanged(MIDIDecoder *decoder)
       {
         if(hwID == 4 && hwRes.cases == MIDIDecoder::MidiHWChangeSpecialCases::ChannelPitchbend)
         {
-          onHWChanged(4, decoder->getValue(), DSPInterface::HWChangeSource::MIDI);
+          if(m_options->getBenderSetting() == BenderCC::Pitchbend)
+          {
+            onHWChanged(4, decoder->getValue(), DSPInterface::HWChangeSource::MIDI);
+          }
         }
 
         if(hwID == 5)

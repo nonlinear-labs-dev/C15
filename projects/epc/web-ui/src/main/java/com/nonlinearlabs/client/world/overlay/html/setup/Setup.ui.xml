@@ -519,7 +519,7 @@
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Enable High Velocity CC (88)</p>
+							<p>Enable High-Res. Velocity (CC 88)</p>
 						</div>
 						<div class="w40p mw-fit-content">
 							<g:RadioButton ui:field="highVeloCCOn" name="rad_highVeloCC" value="true"></g:RadioButton>

@@ -386,7 +386,8 @@ AftertouchCC MidiRuntimeOptions::getAftertouchSetting() const
 
 bool MidiRuntimeOptions::isSwitchingCC(int pedalZeroIndexed)
 {
-  auto enumIsInSwitching = [](PedalCC cc) -> bool {
+  auto enumIsInSwitching = [](PedalCC cc) -> bool
+  {
     switch(cc)
     {
       case PedalCC::CC64:
@@ -447,4 +448,34 @@ int MidiRuntimeOptions::getMSBCCForHWID(int hwID)
     default:
       return -1;
   }
+}
+
+BenderCC MidiRuntimeOptions::getBenderSetting() const
+{
+  return benderCC;
+}
+
+void MidiRuntimeOptions::setPedal2(PedalCC cc)
+{
+  pedal2CC = cc;
+}
+
+void MidiRuntimeOptions::setPedal3(PedalCC cc)
+{
+  pedal3CC = cc;
+}
+
+void MidiRuntimeOptions::setPedal4(PedalCC cc)
+{
+  pedal4CC = cc;
+}
+
+void MidiRuntimeOptions::setRibbon1(RibbonCC cc)
+{
+  ribbon1CC = cc;
+}
+
+void MidiRuntimeOptions::setRibbon2(RibbonCC cc)
+{
+  ribbon2CC = cc;
 }

@@ -306,11 +306,13 @@ namespace NavTree
   struct StoreInitSound : OneShotEntry
   {
     StoreInitSound(InnerNode *p)
-        : OneShotEntry(p, "Store Init Sound", [] {
-          auto pm = Application::get().getPresetManager();
-          SoundUseCases useCases(pm->getEditBuffer(), pm);
-          useCases.storeInitSound();
-        })
+        : OneShotEntry(p, "Store Init Sound",
+                       []
+                       {
+                         auto pm = Application::get().getPresetManager();
+                         SoundUseCases useCases(pm->getEditBuffer(), pm);
+                         useCases.storeInitSound();
+                       })
     {
     }
   };
@@ -318,11 +320,13 @@ namespace NavTree
   struct ResetInitSound : OneShotEntry
   {
     ResetInitSound(InnerNode *p)
-        : OneShotEntry(p, "Reset Init Sound", [] {
-          auto pm = Application::get().getPresetManager();
-          SoundUseCases useCases(pm->getEditBuffer(), pm);
-          useCases.resetInitSound();
-        })
+        : OneShotEntry(p, "Reset Init Sound",
+                       []
+                       {
+                         auto pm = Application::get().getPresetManager();
+                         SoundUseCases useCases(pm->getEditBuffer(), pm);
+                         useCases.resetInitSound();
+                       })
     {
     }
   };
@@ -835,7 +839,7 @@ namespace NavTree
       children.emplace_back(new EnumSettingItem<RibbonCCMapping<2>>(this, "Ribbon 2"));
       children.emplace_back(new EnumSettingItem<BenderCCMapping>(this, "Bender"));
       children.emplace_back(new EnumSettingItem<AftertouchCCMapping>(this, "Aftertouch"));
-      children.emplace_back(new EnumSettingItem<EnableHighVelocityCC>(this, "High-Res Velocity (CC 88)"));
+      children.emplace_back(new EnumSettingItem<EnableHighVelocityCC>(this, "High-Res. Velocity (CC 88)"));
     }
   };
 

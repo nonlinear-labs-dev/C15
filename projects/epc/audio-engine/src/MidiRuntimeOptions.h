@@ -33,6 +33,13 @@ class MidiRuntimeOptions
   static int channelEnumToInt(MidiReceiveChannelSplit channel);
   static MidiReceiveChannelSplit normalToSplitChannel(MidiReceiveChannel ch);
 
+  //Mapping Setters
+  void setPedal1(PedalCC cc);
+  void setPedal2(PedalCC cc);
+  void setPedal3(PedalCC cc);
+  void setPedal4(PedalCC cc);
+  void setRibbon1(RibbonCC cc);
+  void setRibbon2(RibbonCC cc);
   void setBenderCC(BenderCC cc);
   void setAftertouchCC(AftertouchCC cc);
   void setSendSplitChannel(MidiSendChannelSplit c);
@@ -80,14 +87,11 @@ class MidiRuntimeOptions
   std::pair<bool, int> getBenderLSBCC();
   std::pair<bool, int> getAftertouchMSBCC();
   std::pair<bool, int> getAftertouchLSBCC();
-  AftertouchCC getAftertouchSetting() const;
-
-  void setPedal1(PedalCC cc);
+  [[nodiscard]] AftertouchCC getAftertouchSetting() const;
+  [[nodiscard]] BenderCC getBenderSetting() const;
 
   bool isSwitchingCC(int pedalZeroIndexed);
-
   bool enableHighVelCC();
-
   int getMSBCCForHWID(int hwID);
 
  private:

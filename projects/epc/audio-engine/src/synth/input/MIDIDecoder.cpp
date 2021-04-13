@@ -131,8 +131,8 @@ void MIDIDecoder::handleIncommingCC(const MidiEvent& event)
   }
 
   const auto isMSB = controlChangeID > 0 && controlChangeID < 32;
-  const auto isLSB = controlChangeID > 33 && controlChangeID < 64;
-  const auto isSwitching = controlChangeID > 65 && controlChangeID < 70;
+  const auto isLSB = controlChangeID > 32 && controlChangeID < 64;
+  const auto isSwitching = controlChangeID > 63 && controlChangeID < 70;
 
   if(isMSB || isSwitching)
   {
@@ -140,7 +140,7 @@ void MIDIDecoder::handleIncommingCC(const MidiEvent& event)
     hwResult.receivedCC = controlChangeID;
 
     if(isSwitching)
-      hwResult.undecodedValueBytes = { static_cast<uint8_t>(_data1 > 64 ? 127 : 0), 0 };
+      hwResult.undecodedValueBytes = { static_cast<uint8_t>(_data1 > 63 ? 127 : 0), 0 };
     else
       hwResult.undecodedValueBytes = { _data1, m_MidiLSB };
 
