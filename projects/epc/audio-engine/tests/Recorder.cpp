@@ -130,8 +130,8 @@ TEST_CASE("Recorder InOut")
 
   r.getInput()->togglePause();
   auto first = r.getStorage()->getFrames().front()->id;
-  auto last = r.getStorage()->getFrames().back()->id;
-  r.getOutput()->start(first, last);
+  r.getOutput()->setPlayPos(first);
+  r.getOutput()->start();
 
   REQUIRE(first == 3);
 

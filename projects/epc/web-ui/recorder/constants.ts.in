@@ -1,3 +1,4 @@
-const httpPort = ":@RECORDER_HTTPSERVER_PORT@";
-const wsPort = ":@RECORDER_WEBSOCKET_PORT@";
-const playgroundHttpPort = ":@PLAYGROUND_HTTPSERVER_PORT@";
+
+var httpPort = ":@RECORDER_HTTPSERVER_PORT@";
+var wsPort = ":@RECORDER_WEBSOCKET_PORT@";
+var playgroundHttpPort = ":@PLAYGROUND_HTTPSERVER_PORT@";

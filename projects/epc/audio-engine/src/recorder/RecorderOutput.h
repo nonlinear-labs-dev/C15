@@ -19,7 +19,8 @@ class RecorderOutput
 
   void process(SampleFrame *frames, size_t numFrames);
   void pause();
-  void start(FrameId begin, FrameId end);
+  void start();
+  void setPlayPos(FrameId id);
   nlohmann::json generateInfo();
 
   void TEST_waitForBuffersFilled(size_t numFramesNeeded) const;
@@ -38,4 +39,5 @@ class RecorderOutput
   bool m_close = false;
   std::future<void> m_bgTask;
   bool m_paused = true;
+  FrameId m_requestedPlayPosition = -1;
 };

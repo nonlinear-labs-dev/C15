@@ -61,8 +61,10 @@ nlohmann::json Recorder::api(const nlohmann::json &msg)
 
     if(name == "toggle-recording")
       m_in->togglePause();
+    else if(name == "set-playback-position")
+      m_out->setPlayPos(args.at("frameId"));
     else if(name == "start-playback")
-      m_out->start(args.at("begin"), args.at("end"));
+      m_out->start();
     else if(name == "pause-playback")
       m_out->pause();
     else if(name == "get-info")

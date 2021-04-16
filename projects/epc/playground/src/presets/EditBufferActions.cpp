@@ -23,6 +23,7 @@
 #include <use-cases/ModParameterUseCases.h>
 #include <use-cases/RibbonParameterUseCases.h>
 #include <use-cases/PedalParameterUseCases.h>
+#include <iomanip>
 
 //NonMember helperFunctions pre:
 IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer);
@@ -32,6 +33,27 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 {
   addAction("sync-audioengine", [=](std::shared_ptr<NetworkRequest> request) mutable {
     Application::get().getAudioEngineProxy()->sendEditBuffer();
+  });
+
+  addAction("restore", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    using namespace std::chrono;
+    auto time = std::stoll(request->get("timestamp"));
+    auto& scope = editBuffer->getUndoScope();
+
+    if(auto transaction = scope.findTransactionAt(system_clock::time_point(system_clock::duration(time))))
+    {
+      using std::chrono::system_clock;
+      auto currentTip = scope.getUndoTransaction();
+      scope.undoJump(UNDO::StringTools::buildString(reinterpret_cast<size_t>(transaction)));
+      auto p = std::make_unique<Preset>(editBuffer->getParent(), *editBuffer);
+      scope.undoJump(UNDO::StringTools::buildString(reinterpret_cast<size_t>(currentTip)));
+      EditBufferUseCases ebUseCases(editBuffer);
+      std::stringstream nameBuilder;
+      std::time_t tt = system_clock::to_time_t(system_clock::time_point(system_clock::duration(time)));
+      std::tm tm = *std::localtime(&tt);
+      nameBuilder << "Restore at " << std::put_time(&tm, "%H:%M:%S");
+      ebUseCases.undoableLoad(p.get(), nameBuilder.str());
+    }
   });
 
   addAction("select-param", [=](std::shared_ptr<NetworkRequest> request) mutable {
