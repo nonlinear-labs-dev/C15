@@ -3,6 +3,44 @@
 #include <nltools/logging/Log.h>
 #include <iomanip>
 
+namespace
+{
+  constexpr auto c_numChannels = 2;
+  constexpr auto c_rate = 48000;
+
+  struct WaveHeader
+  {
+    constexpr static auto bytesPerFlacFrame = FlacEncoder::flacFrameSize * c_numChannels * sizeof(float);
+    constexpr static auto maxNumFrames = std::numeric_limits<uint32_t>::max() / bytesPerFlacFrame;
+
+    WaveHeader(size_t numFlacFrames)
+    {
+      numFlacFrames = std::min(numFlacFrames, maxNumFrames);
+
+      memcpy(riff, "RIFF", 4);
+      memcpy(wave, "WAVE", 4);
+      memcpy(fmt, "fmt ", 4);
+      memcpy(data, "data", 4);
+      dataLength = numFlacFrames * bytesPerFlacFrame;
+      fileSize = dataLength + sizeof(WaveHeader) - 8;
+    }
+
+    char riff[4];
+    uint32_t fileSize;
+    char wave[4];
+    char fmt[4];
+    uint32_t fmtLength = 16;
+    uint16_t formatTag = 3;  // floats
+    uint16_t channels = c_numChannels;
+    uint32_t rate = c_rate;
+    uint32_t bytesPerSecond = c_rate * c_numChannels * sizeof(float);
+    uint16_t blockAlign = c_numChannels * sizeof(float);
+    uint16_t bitsPerSample = sizeof(float) * 8;
+    char data[4];
+    uint32_t dataLength;
+  };
+};
+
 NetworkServer::NetworkServer(int port, FlacFrameStorage *s)
     : m_storage(s)
     , m_server(soup_server_new(nullptr, nullptr))
@@ -46,7 +84,7 @@ void NetworkServer::stream(SoupServer *server, SoupMessage *msg, const char *pat
         tt = std::chrono::system_clock::to_time_t(last.recordTime);
         tm = *std::localtime(&tt);  //Locale time-zone, usually UTC by default.
         urlBuilder << std::put_time(&tm, format);
-        urlBuilder << ".flac?begin=" << first.id << "&end=" << last.id;
+        urlBuilder << ".wav?begin=" << first.id << "&end=" << last.id;
         auto url = urlBuilder.str();
         soup_message_set_redirect(msg, SOUP_STATUS_MOVED_PERMANENTLY, url.c_str());
       });
@@ -60,18 +98,18 @@ void NetworkServer::stream(SoupServer *server, SoupMessage *msg, const char *pat
     soup_message_set_status(msg, SOUP_KNOWN_STATUS_CODE_OK);
     soup_message_body_set_accumulate(msg->response_body, FALSE);
     soup_message_headers_set_encoding(msg->response_headers, SOUP_ENCODING_CHUNKED);
-    soup_message_headers_set_content_type(msg->response_headers, "audio/flac", nullptr);
+    soup_message_headers_set_content_type(msg->response_headers, "audio/x-wav", nullptr);
     soup_message_headers_set_content_disposition(msg->response_headers, "attachment", nullptr);
 
     g_signal_connect(G_OBJECT(msg), "finished", G_CALLBACK(&NetworkServer::onFinished), pThis);
     auto wroteChunkHandler
         = g_signal_connect(G_OBJECT(msg), "wrote-chunk", G_CALLBACK(&NetworkServer::onChunkWritten), pThis);
 
-    for(auto &h : pThis->m_storage->getHeaders())
-      soup_message_body_append(msg->response_body, SOUP_MEMORY_COPY, h->buffer.data(), h->buffer.size());
-
-    pThis->m_streams.push_back({ msg, pThis->m_storage->startStream(begin, end), wroteChunkHandler });
-    onChunkWritten(msg, pThis);
+    auto maxEnd = begin + WaveHeader::maxNumFrames;
+    end = std::min<size_t>(end, maxEnd);
+    WaveHeader header(end - begin);
+    soup_message_body_append(msg->response_body, SOUP_MEMORY_COPY, &header, sizeof(WaveHeader));
+    pThis->m_streams.push_back({ msg, std::make_unique<FlacDecoder>(pThis->m_storage, begin, end), wroteChunkHandler });
   }
   else
   {
@@ -92,16 +130,15 @@ void NetworkServer::onChunkWritten(SoupMessage *msg, NetworkServer *pThis)
   {
     if(a.msg == msg)
     {
-      auto append = [&](auto &h, auto) {
-        soup_message_body_append(msg->response_body, SOUP_MEMORY_COPY, h.buffer.data(), h.buffer.size());
-      };
-
-      if(!a.stream->next(append))
+      if(a.decoder->eos())
       {
         g_signal_handler_disconnect(msg, a.wroteChunkHandler);
         soup_message_body_complete(msg->response_body);
       }
 
+      SampleFrame target[FlacEncoder::flacFrameSize];
+      auto avail = a.decoder->popAudio(target, FlacEncoder::flacFrameSize);
+      soup_message_body_append(msg->response_body, SOUP_MEMORY_COPY, target, avail * sizeof(SampleFrame));
       return;
     }
   }

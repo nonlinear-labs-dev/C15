@@ -2,6 +2,7 @@
 
 #include <libsoup/soup-server.h>
 #include "FlacFrameStorage.h"
+#include "FlacDecoder.h"
 
 class NetworkServer
 {
@@ -21,7 +22,7 @@ class NetworkServer
   struct Stream
   {
     SoupMessage *msg;
-    FlacFrameStorage::StreamHandle stream;
+    std::unique_ptr<FlacDecoder> decoder;
     gulong wroteChunkHandler = 0;
   };
 
