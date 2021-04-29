@@ -43,8 +43,7 @@ class InputEventStage
 
   static constexpr uint16_t midiReceiveChannelMask(const MidiReceiveChannel& _channel);
   static constexpr uint16_t midiReceiveChannelMask(const MidiReceiveChannelSplit& _channel);
-  static int parameterIDToHWID(int id);
-  static int HWIDToParameterID(int id);
+  static std::optional<int> parameterIDToHWID(int id);
 
   //MIDI and UI out
   void convertToAndSendMIDI(TCDDecoder* pDecoder, const VoiceGroup& determinedPart);
@@ -54,8 +53,8 @@ class InputEventStage
   void doSendAftertouchOut(float value);
   void doSendBenderOut(float value);
 
-  void sendCCOut(int hwID, float value, int msbCC, int lsbCC);
-  void doSendCCOut(uint16_t value, int msbCC, int lsbCC);
+  void sendCCOut(int hwID, float value, std::optional<int> msbCC, std::optional<int> lsbCC);
+  void doSendCCOut(uint16_t value, std::optional<int> msbCC, std::optional<int> lsbCC);
 
   static constexpr uint16_t c_midiReceiveMaskTable[19] = {
     0x0000,  // None (no bit is set)

@@ -184,23 +184,23 @@ std::optional<int> MidiRuntimeOptions::decodeEnumLSB(PedalCC cc)
     case PedalCC::CC67:
     case PedalCC::CC68:
     case PedalCC::CC69:
+    case PedalCC::None:
     default:
       return std::nullopt;
   }
-  return std::nullopt;
 }
 
 std::optional<int> MidiRuntimeOptions::decodeEnumMSB(RibbonCC cc)
 {
   if(cc == RibbonCC::None)
-    return -1;
+    return std::nullopt;
   return static_cast<int>(cc);
 }
 
 std::optional<int> MidiRuntimeOptions::decodeEnumLSB(RibbonCC cc)
 {
   if(cc == RibbonCC::None)
-    return -1;
+    return std::nullopt;
   return static_cast<int>(cc) + 32;
 }
 
@@ -379,7 +379,7 @@ bool MidiRuntimeOptions::enableHighVelCC()
   return m_enableHighVelCC;
 }
 
-int MidiRuntimeOptions::getMSBCCForHWID(int hwID)
+std::optional<int> MidiRuntimeOptions::getMSBCCForHWID(int hwID)
 {
   auto bender = getBenderMSBCC();
   auto aftertouch = getAftertouchMSBCC();
@@ -403,7 +403,7 @@ int MidiRuntimeOptions::getMSBCCForHWID(int hwID)
     case 7:
       return getCCFor<Midi::MSB::Rib2>();
     default:
-      return -1;
+      return std::nullopt;
   }
 }
 

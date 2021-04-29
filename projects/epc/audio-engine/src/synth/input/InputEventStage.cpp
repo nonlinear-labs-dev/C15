@@ -364,7 +364,7 @@ void InputEventStage::sendHardwareChangeAsMidi(int hwID, float value)
   }
 }
 
-void InputEventStage::sendCCOut(int hwID, float value, int msbCC, int lsbCC)
+void InputEventStage::sendCCOut(int hwID, float value, std::optional<int> msbCC, std::optional<int> lsbCC)
 {
   using CC_Range_14_Bit = Midi::clipped14BitCCRange;
 
@@ -374,7 +374,7 @@ void InputEventStage::sendCCOut(int hwID, float value, int msbCC, int lsbCC)
     doSendCCOut(CC_Range_14_Bit::encodeUnipolarMidiValue(value), msbCC, lsbCC);
 }
 
-void InputEventStage::doSendCCOut(uint16_t value, int msbCC, int lsbCC)
+void InputEventStage::doSendCCOut(uint16_t value, std::optional<int> msbCC, std::optional<int> lsbCC)
 {
   const auto mainChannel = MidiRuntimeOptions::channelEnumToInt(m_options->getSendChannel());
   const auto secondaryChannel = m_options->channelEnumToInt(m_options->getSendSplitChannel());
@@ -390,28 +390,28 @@ void InputEventStage::doSendCCOut(uint16_t value, int msbCC, int lsbCC)
   {
     auto mainStatus = static_cast<uint8_t>(statusByte | mainC);
 
-    if(lsbCC != -1 && m_options->is14BitSupportEnabled())
+    if(lsbCC.has_value() && m_options->is14BitSupportEnabled())
     {
-      m_midiOut({ mainStatus, static_cast<uint8_t>(lsbCC), lsbValByte });
+      m_midiOut({ mainStatus, static_cast<uint8_t>(lsbCC.value()), lsbValByte });
     }
 
-    if(msbCC != -1)
+    if(msbCC.has_value())
     {
-      m_midiOut({ mainStatus, static_cast<uint8_t>(msbCC), msbValByte });
+      m_midiOut({ mainStatus, static_cast<uint8_t>(msbCC.value()), msbValByte });
     }
   }
 
   if(secondaryChannel != -1)
   {
     auto secStatus = static_cast<uint8_t>(statusByte | secC);
-    if(lsbCC != -1 && m_options->is14BitSupportEnabled())
+    if(lsbCC.has_value() && m_options->is14BitSupportEnabled())
     {
-      m_midiOut({ secStatus, static_cast<uint8_t>(lsbCC), lsbValByte });
+      m_midiOut({ secStatus, static_cast<uint8_t>(lsbCC.value()), lsbValByte });
     }
 
-    if(msbCC != -1)
+    if(msbCC.has_value())
     {
-      m_midiOut({ secStatus, static_cast<uint8_t>(msbCC), msbValByte });
+      m_midiOut({ secStatus, static_cast<uint8_t>(msbCC.value()), msbValByte });
     }
   }
 }
@@ -475,12 +475,9 @@ void InputEventStage::doSendAftertouchOut(float value)
 {
   using CC_Range_14_Bit = Midi::clipped14BitCCRange;
 
-  auto atLSB = m_options->getAftertouchLSBCC();
-  auto atMSB = m_options->getAftertouchMSBCC();
-
-  if(atLSB.has_value() && atMSB.has_value())
+  if(m_options->getAftertouchSetting() == AftertouchCC::None)
   {
-    doSendCCOut(CC_Range_14_Bit::encodeUnipolarMidiValue(value), atMSB.value(), atLSB.value());
+    return;
   }
   else if(m_options->getAftertouchSetting() == AftertouchCC::ChannelPressure)
   {
@@ -537,21 +534,26 @@ void InputEventStage::doSendAftertouchOut(float value)
       m_midiOut({ secStatus, lsb, msb });
     }
   }
+  else
+  {
+    auto atLSB = m_options->getAftertouchLSBCC();
+    auto atMSB = m_options->getAftertouchMSBCC();
+    const auto hasBothCCs = atLSB.has_value() && atMSB.has_value();
+
+    if(hasBothCCs)
+    {
+      doSendCCOut(CC_Range_14_Bit::encodeUnipolarMidiValue(value), atMSB.value(), atLSB.value());
+    }
+  }
 }
 
 void InputEventStage::doSendBenderOut(float value)
 {
-  auto benderLSB = m_options->getBenderLSBCC();
-  auto benderMSB = m_options->getBenderMSBCC();
+  const auto isMappedToNone = m_options->getBenderSetting() == BenderCC::None;
+  if(isMappedToNone)
+    return;
 
-  if(benderLSB.has_value() && benderMSB.has_value())
-  {
-    using CC_Range_14_Bit = Midi::clipped14BitCCRange;
-    auto lsbCC = benderLSB.value();
-    auto msbCC = benderMSB.value();
-    doSendCCOut(CC_Range_14_Bit::encodeBipolarMidiValue(value), msbCC, lsbCC);
-  }
-  else if(m_options->getBenderSetting() != BenderCC::None)
+  if(m_options->getBenderSetting() == BenderCC::Pitchbend)
   {
     using CC_Range_Bender = Midi::FullCCRange<Midi::Formats::_14_Bits_>;
 
@@ -579,19 +581,33 @@ void InputEventStage::doSendBenderOut(float value)
       m_midiOut({ secStatus, lsb, msb });
     }
   }
+  else
+  {
+    auto benderLSB = m_options->getBenderLSBCC();
+    auto benderMSB = m_options->getBenderMSBCC();
+    const auto hasCCs = benderLSB.has_value() && benderMSB.has_value();
+
+    if(hasCCs)
+    {
+      using CC_Range_14_Bit = Midi::clipped14BitCCRange;
+      auto lsbCC = benderLSB.value();
+      auto msbCC = benderMSB.value();
+      doSendCCOut(CC_Range_14_Bit::encodeBipolarMidiValue(value), msbCC, lsbCC);
+    }
+  }
 }
 
 void InputEventStage::onUIHWSourceMessage(const nltools::msg::HWSourceChangedMessage &message)
 {
   auto hwID = InputEventStage::parameterIDToHWID(message.parameterId);
 
-  if(hwID != -1)
+  if(hwID.has_value())
   {
-    onHWChanged(hwID, message.controlPosition, DSPInterface::HWChangeSource::UI);
+    onHWChanged(hwID.value(), message.controlPosition, DSPInterface::HWChangeSource::UI);
   }
 }
 
-int InputEventStage::parameterIDToHWID(int id)
+std::optional<int> InputEventStage::parameterIDToHWID(int id)
 {
   switch(id)
   {
@@ -612,32 +628,7 @@ int InputEventStage::parameterIDToHWID(int id)
     case C15::PID::Ribbon_2:
       return 7;
     default:
-      return -1;
-  }
-}
-
-int InputEventStage::HWIDToParameterID(int id)
-{
-  switch(id)
-  {
-    case 0:
-      return C15::PID::Pedal_1;
-    case 1:
-      return C15::PID::Pedal_2;
-    case 2:
-      return C15::PID::Pedal_3;
-    case 3:
-      return C15::PID::Pedal_4;
-    case 4:
-      return C15::PID::Bender;
-    case 5:
-      return C15::PID::Aftertouch;
-    case 6:
-      return C15::PID::Ribbon_1;
-    case 7:
-      return C15::PID::Ribbon_2;
-    default:
-      return -1;
+      return std::nullopt;
   }
 }
 
@@ -694,7 +685,7 @@ void InputEventStage::onMIDIHWChanged(MIDIDecoder *decoder)
     for(auto hwID = 0; hwID < 8; hwID++)
     {
       const auto mappedMSBCC = m_options->getMSBCCForHWID(hwID);
-      if(mappedMSBCC != -1 && mappedMSBCC == hwRes.receivedCC)
+      if(mappedMSBCC.has_value() && mappedMSBCC.value() == hwRes.receivedCC)
       {
         const auto msb = hwRes.undecodedValueBytes[0];
         const auto lsb = hwRes.undecodedValueBytes[1];

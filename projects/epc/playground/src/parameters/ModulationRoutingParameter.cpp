@@ -156,9 +156,4 @@ void ModulationRoutingParameter::sendParameterMessage() const
   {
     Application::get().getAudioEngineProxy()->createAndSendParameterMessage<ModulationRoutingParameter>(this);
   }
-  else
-  {
-    nltools::Log::error(
-        "Application::getAudioEngineProxy returned nullptr, you can safely ignore this if seen in Acceptance-Tests");
-  }
 }

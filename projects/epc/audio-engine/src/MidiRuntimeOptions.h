@@ -45,38 +45,38 @@ class MidiRuntimeOptions
   void setSplitReceiveChannel(MidiReceiveChannelSplit c);
   void set14BitSupportEnabled(bool e);
 
-  template <Midi::LSB::HWSourceMidiCC tLSB> int getCCFor()
+  template <Midi::LSB::HWSourceMidiCC tLSB> std::optional<int> getCCFor()
   {
     if constexpr(tLSB == Midi::LSB::Ped1)
-      return decodeEnumLSB(pedal1CC).value_or(-1);
+      return decodeEnumLSB(pedal1CC);
     else if constexpr(tLSB == Midi::LSB::Ped2)
-      return decodeEnumLSB(pedal2CC).value_or(-1);
+      return decodeEnumLSB(pedal2CC);
     else if constexpr(tLSB == Midi::LSB::Ped3)
-      return decodeEnumLSB(pedal3CC).value_or(-1);
+      return decodeEnumLSB(pedal3CC);
     else if constexpr(tLSB == Midi::LSB::Ped4)
-      return decodeEnumLSB(pedal4CC).value_or(-1);
+      return decodeEnumLSB(pedal4CC);
     else if constexpr(tLSB == Midi::LSB::Rib1)
-      return decodeEnumLSB(ribbon1CC).value_or(-1);
+      return decodeEnumLSB(ribbon1CC);
     else if constexpr(tLSB == Midi::LSB::Rib2)
-      return decodeEnumLSB(ribbon2CC).value_or(-1);
+      return decodeEnumLSB(ribbon2CC);
     else
       nltools_assertNotReached();
   }
 
-  template <Midi::MSB::HWSourceMidiCC tMSB> int getCCFor()
+  template <Midi::MSB::HWSourceMidiCC tMSB> std::optional<int> getCCFor()
   {
     if constexpr(tMSB == Midi::MSB::Ped1)
-      return decodeEnumMSB(pedal1CC).value_or(-1);
+      return decodeEnumMSB(pedal1CC);
     else if constexpr(tMSB == Midi::MSB::Ped2)
-      return decodeEnumMSB(pedal2CC).value_or(-1);
+      return decodeEnumMSB(pedal2CC);
     else if constexpr(tMSB == Midi::MSB::Ped3)
-      return decodeEnumMSB(pedal3CC).value_or(-1);
+      return decodeEnumMSB(pedal3CC);
     else if constexpr(tMSB == Midi::MSB::Ped4)
-      return decodeEnumMSB(pedal4CC).value_or(-1);
+      return decodeEnumMSB(pedal4CC);
     else if constexpr(tMSB == Midi::MSB::Rib1)
-      return decodeEnumMSB(ribbon1CC).value_or(-1);
+      return decodeEnumMSB(ribbon1CC);
     else if constexpr(tMSB == Midi::MSB::Rib2)
-      return decodeEnumMSB(ribbon2CC).value_or(-1);
+      return decodeEnumMSB(ribbon2CC);
     else
       nltools_assertNotReached();
   }
@@ -91,7 +91,7 @@ class MidiRuntimeOptions
   bool isSwitchingCC(int pedalZeroIndexed);
   bool enableHighVelCC();
   bool is14BitSupportEnabled() const;
-  int getMSBCCForHWID(int hwID);
+  std::optional<int> getMSBCCForHWID(int hwID);
 
  private:
   MidiReceiveChannel m_receiveChannel;
