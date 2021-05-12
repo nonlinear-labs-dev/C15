@@ -3,7 +3,6 @@
 #include <io/RingBuffer.h>
 #include <memory>
 #include <mutex>
-#include <condition_variable>
 #include <future>
 #include <nltools/nlohmann/json.hpp>
 
@@ -30,7 +29,6 @@ class RecorderInput
   FlacFrameStorage *m_storage;
   std::unique_ptr<FlacEncoder> m_encoder;
   RingBuffer<SampleFrame> m_ring;
-  std::condition_variable m_cond;
   std::mutex m_mutex;
   bool m_close = false;
   std::future<void> m_bgTask;

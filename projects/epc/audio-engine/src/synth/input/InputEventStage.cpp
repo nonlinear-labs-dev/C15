@@ -4,11 +4,9 @@
 #include "synth/c15-audio-engine/dsp_host_dual.h"
 #include "InputEventStage.h"
 
-InputEventStage::InputEventStage(DSPInterface *dspHost, MidiRuntimeOptions *options, HWChangedNotification hwChangedCB,
-                                 InputEventStage::MIDIOut outCB)
+InputEventStage::InputEventStage(DSPInterface *dspHost, MidiRuntimeOptions *options, InputEventStage::MIDIOut outCB)
     : m_dspHost { dspHost }
     , m_options { options }
-    , m_hwChangedCB(std::move(hwChangedCB))
     , m_midiOut { std::move(outCB) }
     , m_midiDecoder(dspHost, options)
     , m_tcdDecoder(dspHost, options, &m_shifteable_keys)
@@ -309,8 +307,7 @@ void InputEventStage::sendKeyUpAsMidi(TCDDecoder *pDecoder, const VoiceGroup &de
 
 void InputEventStage::sendHardwareChangeAsMidi(int hwID, float value)
 {
-  auto roundPedalToSwitching = [](float val) -> float
-  {
+  auto roundPedalToSwitching = [](float val) -> float {
     if(val >= 0.5f)
       return 1.0f;
     else
@@ -644,8 +641,7 @@ int InputEventStage::HWIDToParameterID(int id)
 void InputEventStage::onHWChanged(int hwID, float pos, DSPInterface::HWChangeSource source)
 {
 
-  auto sendToDSP = [&](auto source)
-  {
+  auto sendToDSP = [&](auto source) {
     switch(source)
     {
       case DSPInterface::HWChangeSource::MIDI:
@@ -662,7 +658,6 @@ void InputEventStage::onHWChanged(int hwID, float pos, DSPInterface::HWChangeSou
   if(sendToDSP(source))
   {
     m_dspHost->onHWChanged(hwID, pos);
-    m_hwChangedCB();
   }
 
   if(m_options->shouldSendControllers() && source != DSPInterface::HWChangeSource::MIDI)
@@ -700,7 +695,6 @@ void InputEventStage::onMIDIHWChanged(MIDIDecoder *decoder)
         const auto lsb = hwRes.undecodedValueBytes[1];
         float realVal = processMidiForHWSource(m_dspHost, hwID, msb, lsb);
         m_dspHost->onHWChanged(hwID, realVal);
-        m_hwChangedCB();
       }
       else
       {

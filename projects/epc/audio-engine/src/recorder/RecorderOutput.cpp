@@ -12,7 +12,6 @@ RecorderOutput::RecorderOutput(FlacFrameStorage *storage, int sr)
 RecorderOutput::~RecorderOutput()
 {
   m_close = true;
-  m_cond.notify_one();
   m_bgTask.wait();
 }
 
@@ -38,8 +37,6 @@ void RecorderOutput::process(SampleFrame *frames, size_t numFrames)
     frames += n;
     todo -= n;
   }
-
-  m_cond.notify_one();
 }
 
 void RecorderOutput::pause()
@@ -52,8 +49,6 @@ void RecorderOutput::pause()
     auto framesInRing = m_ring.size() / FlacEncoder::flacFrameSize;
     m_requestedPlayPosition = std::get<1>(m_decoder->getPositionInfo()) - framesInRing;
   }
-
-  m_cond.notify_one();
 }
 
 void RecorderOutput::setPlayPos(FrameId id)
@@ -78,7 +73,6 @@ void RecorderOutput::start()
   m_decoder = std::make_unique<FlacDecoder>(m_storage, m_requestedPlayPosition, std::numeric_limits<FrameId>::max());
   m_paused = false;
   m_ring.reset();
-  m_cond.notify_one();
 }
 
 nlohmann::json RecorderOutput::generateInfo()
@@ -109,7 +103,9 @@ void RecorderOutput::background()
 
   while(!m_close)
   {
-    m_cond.wait_for(l, 100ms);
+    l.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    l.lock();
 
     if(!m_close && !m_paused && m_decoder)
     {

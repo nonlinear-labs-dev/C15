@@ -8,7 +8,6 @@
 #include <memory>
 #include <thread>
 #include <atomic>
-#include <condition_variable>
 #include <libsoup/soup.h>
 
 namespace nltools

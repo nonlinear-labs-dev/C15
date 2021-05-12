@@ -10,8 +10,7 @@ TEST_CASE("Interface correct", "[MIDI]")
 {
   MockDSPHost host;
   MidiRuntimeOptions options;
-  InputEventStage eventStage(
-      &host, &options, [] {}, [](auto) {});
+  InputEventStage eventStage(&host, &options, [](auto) {});
   InputEventStageTester testObject(&eventStage);
 
   WHEN("Mappings: prim = none, sec = Common")
@@ -90,7 +89,7 @@ TEST_CASE("MIDI Channel Mapping Tests", "[MIDI]")
 {
   MockDSPHost host;
   MidiRuntimeOptions options;
-  InputEventStage eventStage { &host, &options, [] {}, [](auto) {} };
+  InputEventStage eventStage { &host, &options, [](auto) {} };
   InputEventStageTester t(&eventStage);
 
   // specific tests

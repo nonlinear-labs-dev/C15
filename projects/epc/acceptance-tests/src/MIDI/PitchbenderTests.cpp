@@ -15,8 +15,7 @@ TEST_CASE("Pitchbend Mappings", "[MIDI][TCD]")
 
   std::vector<nltools::msg::Midi::SimpleMessage> sendMidiMessages;
   MidiRuntimeOptions settings;
-  InputEventStage eventStage(
-      &host, &settings, [] {}, [&](auto msg) { sendMidiMessages.push_back(msg); });
+  InputEventStage eventStage(&host, &settings, [&](auto msg) { sendMidiMessages.push_back(msg); });
 
   //set settings to not interfere with CC01
   {

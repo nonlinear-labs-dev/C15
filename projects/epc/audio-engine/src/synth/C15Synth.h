@@ -9,6 +9,7 @@
 #include <mutex>
 #include <future>
 #include <nltools/threading/BackgroundThreadWaiter.h>
+#include <nltools/threading/Threading.h>
 #include <MidiRuntimeOptions.h>
 #include <synth/input/InputEventStage.h>
 
@@ -79,8 +80,7 @@ class C15Synth : public Synth, public sigc::trackable
 
   RingBuffer<nltools::msg::Midi::SimpleMessage> m_externalMidiOutBuffer;
 
-  std::mutex m_syncExternalsMutex;
-  std::condition_variable m_syncExternalsWaiter;
+  nltools::threading::spinning_condition_variable m_syncExternalsWaiter;
   std::atomic<bool> m_quit { false };
   std::future<void> m_syncExternalsTask;
   InputEventStage m_inputEventStage;

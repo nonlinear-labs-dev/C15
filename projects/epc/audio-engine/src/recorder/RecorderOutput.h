@@ -3,7 +3,6 @@
 #include <io/RingBuffer.h>
 #include <chrono>
 #include <memory>
-#include <condition_variable>
 #include <mutex>
 #include <future>
 #include <nltools/nlohmann/json.hpp>
@@ -34,7 +33,6 @@ class RecorderOutput
   RingBuffer<SampleFrame> m_ring;
   std::unique_ptr<FlacDecoder> m_decoder;
 
-  std::condition_variable m_cond;
   mutable std::mutex m_mutex;
   bool m_close = false;
   std::future<void> m_bgTask;

@@ -14,14 +14,12 @@ RecorderInput::RecorderInput(FlacFrameStorage *storage, int sr)
 RecorderInput::~RecorderInput()
 {
   m_close = true;
-  m_cond.notify_one();
   m_bgTask.wait();
 }
 
 void RecorderInput::process(SampleFrame *frames, size_t numFrames)
 {
   m_ring.push(frames, numFrames);
-  m_cond.notify_one();
 }
 
 void RecorderInput::togglePause()
@@ -59,7 +57,9 @@ void RecorderInput::background()
 
   while(!m_close)
   {
-    m_cond.wait(l);
+    l.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    l.lock();
 
     while(!m_close && m_ring.avail() >= FlacEncoder::flacFrameSize)
     {
