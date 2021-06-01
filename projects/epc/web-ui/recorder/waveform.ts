@@ -188,7 +188,7 @@ class Waveform extends Draggable {
         var nsPerTimeMarker = 1000 * 1000 * msPerTimeMarker;
 
         var fontHeight = 12;
-        ctx.font = fontHeight + "px serif";
+        ctx.font = fontHeight + "px SSP-LW00";
 
         var serverTime = this.c15.getBars().first().recordTime;
 

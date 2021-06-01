@@ -26,6 +26,7 @@ body {
     text-align: center;
     user-select: none;
     touch-action: none;
+    font-family: 'SSP-LW00';
 }
 
 #bars {
