@@ -27,7 +27,7 @@
 //
 //  Final Versions         "YY-WW"   YY-WW : release date (tbd).
 //  Everything else        whatever seems appropriate
-#define C15_VERSION_STRING "21-18"
+#define C15_VERSION_STRING "21-22"
 #pragma message("make sure version string '" C15_VERSION_STRING "' is up-to date when building a release or beta")
 
 // do not change these two strings:
