@@ -25,8 +25,8 @@ C15Synth::C15Synth(AudioEngineOptions* options)
     , m_options(options)
     , m_externalMidiOutBuffer(2048)
     , m_syncExternalsTask(std::async(std::launch::async, [this] { syncExternals(); }))
-    , m_inputEventStage { m_dsp.get(), &m_midiOptions, [this] { m_syncExternalsWaiter.notify_all(); },
-                          [this](auto msg) { queueExternalMidiOut(msg); } }
+    , m_inputEventStage{ m_dsp.get(), &m_midiOptions, [this] { m_syncExternalsWaiter.notify_all(); },
+                         [this](auto msg) { queueExternalMidiOut(msg); } }
 {
   m_hwSourceValues.fill(0);
 
@@ -73,7 +73,7 @@ C15Synth::C15Synth(AudioEngineOptions* options)
     if(sendChannel != -1 && m_midiOptions.shouldSendProgramChanges())
     {
       const uint8_t newStatus = MIDI_PROGRAMCHANGE_PATTERN | sendChannel;
-      m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage { newStatus, pc.program });
+      m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage{ newStatus, pc.program });
       m_syncExternalsWaiter.notify_all();
     }
 
@@ -81,7 +81,7 @@ C15Synth::C15Synth(AudioEngineOptions* options)
     if(secChannel != -1 && m_midiOptions.shouldSendProgramChanges())
     {
       const uint8_t newStatus = MIDI_PROGRAMCHANGE_PATTERN | secChannel;
-      m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage { newStatus, pc.program });
+      m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage{ newStatus, pc.program });
       m_syncExternalsWaiter.notify_all();
     }
   });
@@ -93,19 +93,17 @@ C15Synth::C15Synth(AudioEngineOptions* options)
     const auto isPC = (e.raw[0] & 0xF0) == 0xC0;
     if(isPC)
     {
+      // Program Changes should be exclusively bound to Primary channel
       const auto receivedChannel = static_cast<int>(e.raw[0]) - 192;
       const auto isOmniReceive = m_midiOptions.getReceiveChannel() == MidiReceiveChannel::Omni;
-      const auto isOmniReceiveSplit = m_midiOptions.getReceiveSplitChannel() == MidiReceiveChannelSplit::Omni;
       const auto receivedChannelMatches
           = m_midiOptions.channelEnumToInt(m_midiOptions.getReceiveChannel()) == receivedChannel;
-      const auto receivedSplitChannelMatches
-          = m_midiOptions.channelEnumToInt(m_midiOptions.getReceiveSplitChannel()) == receivedChannel;
 
-      if(isOmniReceive || receivedChannelMatches || receivedSplitChannelMatches || isOmniReceiveSplit)
+      if(isOmniReceive || receivedChannelMatches)
       {
         if(m_midiOptions.shouldReceiveProgramChanges())
         {
-          send(nltools::msg::EndPoint::Playground, nltools::msg::Midi::ProgramChangeMessage { e.raw[1] });
+          send(nltools::msg::EndPoint::Playground, nltools::msg::Midi::ProgramChangeMessage{ e.raw[1] });
         }
       }
     }
@@ -167,7 +165,7 @@ void C15Synth::syncPlayground()
     using namespace nltools::msg;
     if(std::exchange(m_hwSourceValues[i], engineHWSourceValues[i]) != engineHWSourceValues[i])
     {
-      send(EndPoint::Playground, HardwareSourceChangedNotification { i, static_cast<double>(engineHWSourceValues[i]) });
+      send(EndPoint::Playground, HardwareSourceChangedNotification{ i, static_cast<double>(engineHWSourceValues[i]) });
     }
   }
 }

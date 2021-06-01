@@ -6,15 +6,15 @@
 
 InputEventStage::InputEventStage(DSPInterface *dspHost, MidiRuntimeOptions *options, HWChangedNotification hwChangedCB,
                                  InputEventStage::MIDIOut outCB)
-    : m_dspHost { dspHost }
-    , m_options { options }
+    : m_dspHost{ dspHost }
+    , m_options{ options }
     , m_hwChangedCB(std::move(hwChangedCB))
-    , m_midiOut { std::move(outCB) }
+    , m_midiOut{ std::move(outCB) }
     , m_midiDecoder(dspHost, options)
     , m_tcdDecoder(dspHost, options, &m_shifteable_keys)
 {
   std::fill(m_latchedHWPositions.begin(), m_latchedHWPositions.end(),
-            std::array<uint16_t, 2> { std::numeric_limits<uint16_t>::max(), std::numeric_limits<uint16_t>::max() });
+            std::array<uint16_t, 2>{ std::numeric_limits<uint16_t>::max(), std::numeric_limits<uint16_t>::max() });
 }
 
 template <>
@@ -224,10 +224,9 @@ bool InputEventStage::checkMIDIKeyEventEnabled(MIDIDecoder *pDecoder)
 
 bool InputEventStage::checkMIDIHardwareChangeChannelMatches(MIDIDecoder *pDecoder)
 {
+  // Control Changes should be exclusively bound to Primary channel
   const auto channelMatches = m_options->getReceiveChannel() == MidiReceiveChannel::Omni
-      || pDecoder->getChannel() == m_options->getReceiveChannel()
-      || MidiRuntimeOptions::normalToSplitChannel(pDecoder->getChannel()) == m_options->getReceiveSplitChannel()
-      || m_options->getReceiveSplitChannel() == MidiReceiveChannelSplit::Omni;
+      || pDecoder->getChannel() == m_options->getReceiveChannel();
   return channelMatches;
 }
 
@@ -663,8 +662,7 @@ int InputEventStage::parameterIDToHWID(int id)
 void InputEventStage::onHWChanged(int hwID, float pos, DSPInterface::HWChangeSource source)
 {
 
-  auto sendToDSP = [&](auto source)
-  {
+  auto sendToDSP = [&](auto source) {
     switch(source)
     {
       case DSPInterface::HWChangeSource::MIDI:
