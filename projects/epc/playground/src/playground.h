@@ -7,6 +7,7 @@
 #include <memory>
 #include "playground-helpers.h"
 #include <glibmm/ustring.h>
+#include <vector>
 
 void printLastFunctions();
 
@@ -39,6 +40,17 @@ namespace std
   inline Glib::ustring to_string(const Glib::ustring& in)
   {
     return in;
+  }
+
+  template <typename T> inline std::ostream& operator<<(std::ostream& stream, const std::vector<T>& v)
+  {
+    int index = 0;
+    for(auto val : v)
+    {
+      auto printDelim = index++ < v.size() - 1;
+      stream << val << printDelim ? " " : "";
+    }
+    return stream;
   }
 }
 
