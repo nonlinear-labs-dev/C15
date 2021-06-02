@@ -71,7 +71,8 @@ class PlaycontrollerProxy
   std::string getPlaycontrollerSoftwareVersion() const;
   Parameter *findPhysicalControlParameterFromPlaycontrollerHWSourceID(uint16_t id) const;
   void notifyRibbonTouch(int ribbonsParameterID);
-
+  void notifyLastKey(gint16 key);
+  
   void applyParamMessageAbsolutely(PhysicalControlParameter *p, gint16 value);
 
  private:
@@ -114,5 +115,4 @@ class PlaycontrollerProxy
 
   void onHeartbeatStumbled();
   void requestPlaycontrollerSoftwareVersion();
-  void notifyLastKey(gint16 key);
 };
