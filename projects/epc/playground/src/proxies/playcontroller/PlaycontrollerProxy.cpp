@@ -398,5 +398,6 @@ std::string PlaycontrollerProxy::getPlaycontrollerSoftwareVersion() const
 
 void PlaycontrollerProxy::notifyLastKey(gint16 key)
 {
-  m_lastKeyChanged.send(key);
+  nltools::Log::warning("lastKey:", key);
+  m_lastKeyChanged.deferedSend(key);
 }

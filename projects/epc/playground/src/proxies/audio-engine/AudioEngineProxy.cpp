@@ -66,6 +66,10 @@ AudioEngineProxy::AudioEngineProxy()
           playController->notifyRibbonTouch(p->getID().getNumber());
           p->onChangeFromPlaycontroller(value);
         }
+        else if(id == HW_SOURCE_ID_LAST_KEY)
+        {
+          playController->notifyLastKey(value);
+        }
       });
 
   const auto &pm = Application::get().getPresetManager();

@@ -47,8 +47,10 @@ namespace std
     int index = 0;
     for(auto val : v)
     {
-      auto printDelim = index++ < v.size() - 1;
-      stream << val << printDelim ? " " : "";
+      stream << val;
+      if(index++ < v.size() - 1) {
+        stream << ",";
+      }
     }
     return stream;
   }
