@@ -1,3 +1,6 @@
+/// <reference path="draggable.ts"/>
+/// <reference path="selected-range.ts"/>
+/// <reference path="scrollbar.ts"/>
 
 class Waveform extends Draggable {
 
@@ -23,14 +26,14 @@ class Waveform extends Draggable {
         var zoomIn = document.getElementById("zoom-in");
         var zoomOut = document.getElementById("zoom-out");
 
-        if(this.zoom == this.minZoom) {
+        if (this.zoom == this.minZoom) {
             zoomIn!.classList.add("disabled");
         } else {
             zoomIn!.classList.remove("disabled");
         }
 
         //64 equals roughly 8H of recorded audio
-        if(this.zoom == this.maxZoom) {
+        if (this.zoom == this.maxZoom) {
             zoomOut!.classList.add("disabled");
         } else {
             zoomOut!.classList.remove("disabled");
@@ -89,15 +92,17 @@ class Waveform extends Draggable {
 
         if (this.c15.getBars().count() > 0) {
             var playPosIndicator = document.getElementById("play-pos") as HTMLElement;
+            var playPosTime = document.getElementById("play-pos-time") as HTMLElement;
+
             var lastId = this.lastBarIdToShow != -1 ? this.lastBarIdToShow : this.c15.getBars().last().id;
             var firstBarId = lastId - c.width * this.zoom;
             var playPos = this.isDragging() ? this.dragPosition : this.c15.getCurrentPlayPosition();
-            playPos = Math.min(Math.max(playPos, this.c15.getBars().first().id), lastId);
+
             playPosIndicator.style.left = (playPos - firstBarId) / this.zoom + "px";
             playPosIndicator.style.visibility = playPos > 0 ? "visible" : "hidden";
+            playPosTime.style.visibility = playPos > 0 ? "visible" : "hidden";
 
-            var playPosTime = document.getElementById("play-pos-time") as HTMLElement;
-            var playBar = this.c15.getBars().get(playPos);
+            var playBar = this.c15.getBars().get(Math.min(Math.max(playPos, this.c15.getBars().first().id), lastId));
             if (playBar)
                 playPosTime.innerText = this.c15.buildTime(playBar.recordTime);
         }
@@ -138,8 +143,8 @@ class Waveform extends Draggable {
                 if (loadEvent) {
                     var presetTop = 65;
                     var fontHeight = 15;
-                    ctx.font = fontHeight + "px serif";
-                    var text = "🖈 " + loadEvent.info;
+                    ctx.font = fontHeight + "px SSP-LW00";
+                    var text = "  " + loadEvent.info;
                     var width = ctx.measureText(text).width;
                     var margin = 3;
 
@@ -159,6 +164,11 @@ class Waveform extends Draggable {
                     ctx.fillRect(r.x, r.y, r.w, r.h);
                     ctx.fillStyle = "white";
                     ctx.fillText(text, r.x + margin, r.y + margin + fontHeight / 2);
+
+                    ctx.strokeStyle = "rgb(174, 206, 255)"
+                    ctx.moveTo(r.x, r.y);
+                    ctx.lineTo(r.x, r.y + r.h);
+                    ctx.stroke();
                 }
             }
 
@@ -188,7 +198,7 @@ class Waveform extends Draggable {
         var nsPerTimeMarker = 1000 * 1000 * msPerTimeMarker;
 
         var fontHeight = 12;
-        ctx.font = fontHeight + "px serif";
+        ctx.font = fontHeight + "px SSP-LW00";
 
         var serverTime = this.c15.getBars().first().recordTime;
 
@@ -295,11 +305,21 @@ class Waveform extends Draggable {
     }
 
     zoomIn() {
-        this.zoom /= 2;
+        var c = document.getElementById("bars") as HTMLDivElement;
+
+        if (this.lastBarIdToShow != -1)
+            this.lastBarIdToShow -= 0.25 * c.clientWidth * this.zoom;;
+
+        this.zoom *= 0.5;
         this.update();
     }
 
     zoomOut() {
+        var c = document.getElementById("bars") as HTMLDivElement;
+
+        if (this.lastBarIdToShow != -1)
+            this.lastBarIdToShow += 0.5 * c.clientWidth * this.zoom;
+
         this.zoom *= 2;
         this.update();
     }

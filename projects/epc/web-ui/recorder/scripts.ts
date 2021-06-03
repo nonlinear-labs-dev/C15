@@ -1,3 +1,5 @@
+/// <reference path="bars.ts"/>
+
 const hostName = location.hostname.length == 0 ? "localhost" : location.hostname;
 
 window.onload = function () {

@@ -34,6 +34,7 @@ body {
     top: 0;
     width: 100%;
     height: calc(100% - 1cm);
+    pointer-events: none;
 }
 
 #waveform {
@@ -108,7 +109,7 @@ body {
 	height: 37px;
 	margin: 0px 5px;
 	padding: 3px;
-	background-color: rgba(128,128,128,0.5);
+	background-color: rgb(100,100,100);
 	box-shadow: #000 1px 1px 5px;
 	line-height: 34px;
 	border-radius: 3px;
@@ -135,7 +136,7 @@ body {
     position: absolute;
     display: flex;
     right: 15px;
-    bottom: 50px; 
+    bottom: 60px; 
 }
 
 #zoom span {
@@ -143,7 +144,7 @@ body {
 	height: 37px;
 	margin: 0px 5px;
 	padding: 3px;
-	background-color: rgba(128,128,128,0.5);
+	background-color: rgb(100,100,100);
 	box-shadow: #000 1px 1px 5px;
 	line-height: 34px;
 	border-radius: 3px;
@@ -238,9 +239,10 @@ body {
 #play-pos {
     background-color: #56ff56;
     width: 0.8mm;
-    height: 100%;
     position: absolute;
     left: -100px;
+    top: 0;
+    bottom: 1cm;
 }
 
 #play-pos-time {
@@ -249,7 +251,7 @@ body {
     text-align: left;
     white-space: nowrap;
     padding: 0.7mm 1.5mm;
-    top: 16%;
+    top: calc(25% - 5mm);
     margin-left: 0.8mm;
     background-color: rgba(10, 51, 10, 0.5);
     border: 1px solid rgba(22, 132, 22, 1);
@@ -319,7 +321,7 @@ body {
     right: 0%;
     top: 0%;
     bottom: 0%;
-    background-color: #122d55;
+    background-color: rgba(174, 206, 255, 0.4);
 }
 
 #scrollbar-play-position {
@@ -369,6 +371,9 @@ body {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #not-connected-box p {
@@ -377,48 +382,49 @@ body {
 
 #not-connected-box div {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-
     border-width: 3px;
     border-style: solid;
     border-color: rgb(231, 231, 231);
     border-image: initial;
-    padding: 3px;
+    padding: 10px;
     background: white;
 }
 
 .hidden {
-    display: none;
+    visibility: hidden;
 }
 
 #prompt-wrapper {
+    position: absolute;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #prompt-box {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-
     border-width: 3px;
     border-style: solid;
     border-color: rgb(231, 231, 231);
     border-image: initial;
-    padding: 3px;
+    padding: 10px;
     background: white;
 }
 
 #prompt-options-wrapper {
     display: flex;
-    justify-content: space-evenly;
-    width: 50%;
-    margin-left: 50%;
+    justify-content: flex-end;
+}
+
+#prompt-options-wrapper > * {
+    min-width: 2cm;
+    min-height: 1cm;
+}
+
+#prompt-yes {
+    margin-right: 1cm;
 }

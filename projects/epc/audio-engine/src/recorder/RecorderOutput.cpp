@@ -88,11 +88,9 @@ nlohmann::json RecorderOutput::generateInfo()
 {
   FlacDecoder::PositionInfo info = m_decoder ? m_decoder->getPositionInfo() : FlacDecoder::PositionInfo {};
   auto framesInRing = m_ring.size() / FlacEncoder::flacFrameSize;
+  int64_t playPos = m_paused ? m_requestedPlayPosition : (std::get<1>(info) - framesInRing);
 
-  return { { "paused", m_paused },
-           { "begin", std::get<0>(info) },
-           { "pos", m_paused ? m_requestedPlayPosition : (std::get<1>(info) - framesInRing) },
-           { "end", std::get<2>(info) } };
+  return { { "paused", m_paused }, { "begin", std::get<0>(info) }, { "pos", playPos }, { "end", std::get<2>(info) } };
 }
 
 void RecorderOutput::TEST_waitForBuffersFilled(size_t numFramesNeeded) const

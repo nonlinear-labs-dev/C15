@@ -44,7 +44,7 @@ TEST_CASE("Send HW-Change only in Split Sound on Split Channel")
 
   auto sendTCDHWChange = [&]() { eventStage.onTCDMessage(fullPressureTCDEvent); };
 
-  auto doTests = [&](const std::map<SoundType, int>& expected)
+  auto doTests = [&]()
   {
     WHEN("Sound is Single")
     {
@@ -56,7 +56,7 @@ TEST_CASE("Send HW-Change only in Split Sound on Split Channel")
 
         THEN("HW Change got send on Primary Channel")
         {
-          CHECK(sendMidiMessages.size() == expected.at(SoundType::Single));
+          CHECK(sendMidiMessages.size() == 1);
         }
       }
     }
@@ -71,7 +71,7 @@ TEST_CASE("Send HW-Change only in Split Sound on Split Channel")
 
         THEN("HW Change got send on Primary Channel")
         {
-          CHECK(sendMidiMessages.size() == expected.at(SoundType::Layer));
+          CHECK(sendMidiMessages.size() == 1);
         }
       }
     }
@@ -84,32 +84,31 @@ TEST_CASE("Send HW-Change only in Split Sound on Split Channel")
       {
         sendTCDHWChange();
 
-        THEN("HW Change got send on Both Channels")
+        THEN("HW Change got send on Primary Channel")
         {
-          CHECK(sendMidiMessages.size() == expected.at(SoundType::Split));
+          CHECK(sendMidiMessages.size() == 1);
         }
       }
     }
   };
 
+  std::map<SoundType, int> expected = { { SoundType::Single, 1 }, { SoundType::Layer, 1 }, { SoundType::Split, 1 } };
+
   WHEN("Split Channel is Channel 2")
   {
-    std::map<SoundType, int> expected = {{SoundType::Single, 1}, {SoundType::Layer, 1}, {SoundType::Split, 2}};
     settings.setSendSplitChannel(MidiSendChannelSplit::CH_2);
-    doTests(expected);
+    doTests();
   }
 
   WHEN("Split Channel is NONE")
   {
-    std::map<SoundType, int> expected = {{SoundType::Single, 1}, {SoundType::Layer, 1}, {SoundType::Split, 1}};
     settings.setSendSplitChannel(MidiSendChannelSplit::None);
-    doTests(expected);
+    doTests();
   }
 
   WHEN("Split Channel is Common")
   {
-    std::map<SoundType, int> expected = {{SoundType::Single, 1}, {SoundType::Layer, 1}, {SoundType::Split, 1}};
     settings.setSendSplitChannel(MidiSendChannelSplit::Common);
-    doTests(expected);
+    doTests();
   }
 }

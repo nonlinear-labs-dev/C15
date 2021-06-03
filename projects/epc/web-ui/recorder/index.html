@@ -14,7 +14,11 @@
 </head>
 
 <body>
-    <div id="not-connected-box" class="hidden"><div><p>The connection to the Nonlinear Instrument seems to be broken :-(</p></div></div>
+    <div id="not-connected-box" class="hidden">
+        <div>
+            <p>The connection to the Nonlinear Instrument seems to be broken :-(</p>
+        </div>
+    </div>
     <div id="prompt-wrapper" class="hidden">
         <div id="prompt-box">
             <p id="prompt-text"></p>
@@ -27,9 +31,9 @@
     <div id="pane">
         <div id="waveform">
             <div class="clipping">
+                <div id="range-selector"></div>
                 <canvas id="bars"></canvas>
-                <div id="range-selector">
-                </div>
+
                 <div id="selected-range">
                     <div id="selected-range-times">
                         <div id="selected-range-time-from"></div>
@@ -70,11 +74,11 @@
             </div>
         </div>
         <div id="options">
-            <span id="undo"></span>
-            <span id="toggle-playback"></span>
-            <span id="toggle-recording"></span>
-            <span id="download"></span>
-            <span id="reset"></span>
+            <span id="undo" title="Load active preset at selected timepoint (Z)"></span>
+            <span id="toggle-playback" title="Toggle playback (Space)"></span>
+            <span id="toggle-recording" title="Toggle recording (R)"></span>
+            <span id="download" title="Download selection (S)"></span>
+            <span id="reset" title="Clear whole recording"></span>
         </div>
 
         <div id="zoom">

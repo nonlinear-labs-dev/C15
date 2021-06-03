@@ -76,14 +76,6 @@ C15Synth::C15Synth(AudioEngineOptions* options)
       m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage{ newStatus, pc.program });
       m_syncExternalsWaiter.notify_all();
     }
-
-    const int secChannel = m_midiOptions.channelEnumToInt(m_midiOptions.getSendSplitChannel());
-    if(secChannel != -1 && m_midiOptions.shouldSendProgramChanges())
-    {
-      const uint8_t newStatus = MIDI_PROGRAMCHANGE_PATTERN | secChannel;
-      m_externalMidiOutBuffer.push(nltools::msg::Midi::SimpleMessage{ newStatus, pc.program });
-      m_syncExternalsWaiter.notify_all();
-    }
   });
 
   receive<nltools::msg::Midi::SimpleMessage>(EndPoint::ExternalMidiOverIPClient, [&](const auto& msg) {

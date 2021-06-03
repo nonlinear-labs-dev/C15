@@ -1,3 +1,6 @@
+/// <reference path="c15-proxy.ts"/>
+/// <reference path="scripts.ts"/>
+
 class PresetLogEntry {
     constructor(time: number, info: string) {
         this.info = info;

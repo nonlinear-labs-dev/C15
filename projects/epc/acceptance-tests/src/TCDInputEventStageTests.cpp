@@ -263,7 +263,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
       THEN("MIDI got send")
       {
-        REQUIRE(sendMessages.size() == 4);
+        REQUIRE(sendMessages.size() == 2);
         CHECK(sendMessages[0].rawBytes[0] == 0xB0);
         CHECK(sendMessages[0].rawBytes[1] == 33);
         CHECK(sendMessages[0].rawBytes[2] == 0);
@@ -271,14 +271,6 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
         CHECK(sendMessages[1].rawBytes[0] == 0xB0);
         CHECK(sendMessages[1].rawBytes[1] == 1);
         CHECK(sendMessages[1].rawBytes[2] == 127);
-
-        CHECK(sendMessages[2].rawBytes[0] == 0xB1);
-        CHECK(sendMessages[2].rawBytes[1] == 33);
-        CHECK(sendMessages[2].rawBytes[2] == 0);
-
-        CHECK(sendMessages[3].rawBytes[0] == 0xB1);
-        CHECK(sendMessages[3].rawBytes[1] == 1);
-        CHECK(sendMessages[3].rawBytes[2] == 127);
       }
     }
 
@@ -292,15 +284,11 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
       THEN("MIDI got send")
       {
-        REQUIRE(sendMessages.size() == 2);
+        REQUIRE(sendMessages.size() == 1);
 
         CHECK(sendMessages[0].rawBytes[0] == 0xB0);
         CHECK(sendMessages[0].rawBytes[1] == 1);
         CHECK(sendMessages[0].rawBytes[2] == 127);
-
-        CHECK(sendMessages[1].rawBytes[0] == 0xB1);
-        CHECK(sendMessages[1].rawBytes[1] == 1);
-        CHECK(sendMessages[1].rawBytes[2] == 127);
       }
     }
 
@@ -313,7 +301,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
       THEN("MIDI got send")
       {
-        REQUIRE(sendMessages.size() == 4);
+        REQUIRE(sendMessages.size() == 2);
         CHECK(sendMessages[0].rawBytes[0] == 0xB0);
         CHECK(sendMessages[0].rawBytes[1] == 34);
         CHECK(sendMessages[0].rawBytes[2] == 0);
@@ -321,14 +309,6 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
         CHECK(sendMessages[1].rawBytes[0] == 0xB0);
         CHECK(sendMessages[1].rawBytes[1] == 2);
         CHECK(sendMessages[1].rawBytes[2] == 127);
-
-        CHECK(sendMessages[2].rawBytes[0] == 0xB1);
-        CHECK(sendMessages[2].rawBytes[1] == 34);
-        CHECK(sendMessages[2].rawBytes[2] == 0);
-
-        CHECK(sendMessages[3].rawBytes[0] == 0xB1);
-        CHECK(sendMessages[3].rawBytes[1] == 2);
-        CHECK(sendMessages[3].rawBytes[2] == 127);
       }
     }
   }
