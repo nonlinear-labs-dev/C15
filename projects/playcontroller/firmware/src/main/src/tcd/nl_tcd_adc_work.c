@@ -619,8 +619,9 @@ static void ProcessRibbons(void)
 
     if (ribbon[i].touch == 1)  // touch begins ?
     {
-      ribbon[i].touch = 2;  // mark "stable data" phase
-      inc             = 0;  // start increment is zero
+      ribbon[i].touch   = 2;  // mark "stable data" phase
+      inc               = 0;  // start increment is zero
+      ribbon[i].incBase = position;
     }
     else
       inc = position - ribbon[i].incBase;
@@ -637,7 +638,7 @@ static void ProcessRibbons(void)
     // play control
     if (ribbon[i].behavior & 0b10)  // relative
     {
-      ribbon[i].output += inc;  // bug atm : preset, or edit buffer, does not send the initial value of the ribbon as displayed
+      ribbon[i].output += inc;
       position = ribbon[i].output;
       if (position < 0)
         position = 0;

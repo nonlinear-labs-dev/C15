@@ -136,13 +136,14 @@ void Usage(void)
 #if LPC_KEYBED_DIAG
   puts("     key-counters : get diagnostic key error counters");
 #endif
-  puts("  set[ting] : mute-ctrl|sensors|key-logging|ae-cmd|system");
+  puts("  set[ting] : mute-ctrl|sensors|key-logging|ae-cmd|system|<raw-id>");
   puts("     mute-ctrl: disable|mute|unmute : disable mute override or set/clear muting");
   puts("     sensors: on|off                : turn raw sensor messages on/off");
   puts("     key-logging: on|off            : turn key-logging messages on/off");
   puts("     ae-cmd: tton|ttoff|def-snd     : Audio Engine Special, test-tone on/off, load default sound");
   puts("     system: reboot|hb-reset|enable-midi");
   puts("                  : System Special; reboot system, reset heartbeat counter, enable midi");
+  puts("     <raw-id> <data>                : send raw setting (values in hex)");
   puts("  key <note-nr> <time>      : send emulated key");
   puts("     <note-nr>              : MIDI key number, 60=\"C3\"");
   puts("     <time>                 : key time (~1/velocity) in us (1000...525000), negative means key release");
@@ -417,8 +418,19 @@ int main(int argc, char const *argv[])
       puts("set system : illegal parameter");
       Usage();
     }
-    puts("set: unknown parameter!");
-    Usage();
+
+    if (sscanf(argv[2], "%x", &SET_DATA[2]) != 1)
+    {
+      puts("set <raw-id> : illegal number format");
+      Usage();
+    }
+    if (sscanf(argv[3], "%x", &SET_DATA[3]) != 1)
+    {
+      puts("set <raw-id> <data> : illegal number format");
+      Usage();
+    }
+    writeData(driver, sizeof SET_DATA, &SET_DATA[0]);
+    return 0;
   }
 
   // key emulation
