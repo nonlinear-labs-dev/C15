@@ -52,7 +52,7 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, const std::shared_
 
 bool WifiSetting::set(tEnum m)
 {
-  Environment::getStackTrace(std::to_string(__LINE__));
+  Environment::getStackTrace(std::to_string(__LINE__) + " " + toString(m));
   auto ret = super::set(m);
 
   if(m == WifiSettings::Enabled)
