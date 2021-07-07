@@ -1,5 +1,6 @@
 #include "nltools/system/SpawnAsyncCommandLine.h"
 #include <algorithm>
+#include <nltools/logging/Log.h>
 
 std::list<std::unique_ptr<AsyncCommandLine>> SpawnAsyncCommandLine::m_commands;
 
@@ -21,5 +22,7 @@ size_t SpawnAsyncCommandLine::removeDone()
 {
   auto size = m_commands.size();
   m_commands.remove_if([](auto& c) { return !c->isRunning(); });
-  return size - m_commands.size();
+  auto newCount = size - m_commands.size();
+  nltools::Log::error(__PRETTY_FUNCTION__, "removed", size - newCount);
+  return newCount;
 }
