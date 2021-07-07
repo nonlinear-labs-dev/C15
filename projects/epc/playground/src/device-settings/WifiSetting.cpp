@@ -58,18 +58,9 @@ bool WifiSetting::set(tEnum m)
   else if(m == WifiSettings::Disabled)
     m_localWifi->setNewWifiState(false);
 
-  if constexpr(!isDevelopmentPC)
-  {
-    m_pollImpl->poll();
-  }
+  pollAccessPointRunning();
 
   return ret;
-}
-
-void WifiSetting::onCommandReturned(GPid, int exitStatus)
-{
-  if(exitStatus != 0)
-    pollAccessPointRunning();
 }
 
 bool WifiSetting::persistent() const
@@ -83,7 +74,7 @@ bool WifiSetting::pollAccessPointRunning()
   {
     if(m_pollImpl)
     {
-      m_pollImpl->poll();
+      return m_pollImpl->poll();
     }
   }
 
@@ -102,16 +93,20 @@ bool EPC2WiFiPollImpl::poll()
       [this](const std::string& ret)
       { m_setting->set(ret == "activated" ? WifiSettings::Enabled : WifiSettings::Disabled); },
       [](const std::string& ret) { nltools::Log::error(ret); });
+  return false;
 }
 
 bool BBBWiFiPollImpl::poll()
 {
+  m_pollConnection.disconnect();
+
   GPid pid;
   std::vector<std::string> argsBBB { "/usr/bin/ssh", "-o",        "StrictHostKeyChecking=no", "root@192.168.10.11",
                                      "systemctl",    "is-active", "accesspoint.service" };
   Glib::spawn_async("", argsBBB, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
   m_pollConnection = Glib::MainContext::get_default()->signal_child_watch().connect(
       sigc::mem_fun(this, &BBBWiFiPollImpl::onPollReturned), pid);
+  return false;
 }
 
 void BBBWiFiPollImpl::onPollReturned(GPid pid, int exitStatus)
