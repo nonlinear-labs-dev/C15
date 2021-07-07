@@ -58,6 +58,7 @@ bool WifiSetting::set(tEnum m)
   else if(m == WifiSettings::Disabled)
     m_localWifi->setNewWifiState(false);
 
+  enableDisableBBBWifi(m);
   pollAccessPointRunning();
 
   return ret;
@@ -81,6 +82,14 @@ bool WifiSetting::pollAccessPointRunning()
   return false;
 }
 
+void WifiSetting::enableDisableBBBWifi(WifiSettings m)
+{
+  auto bbbWifiEnableDisableArgs = getArgs(m);
+  SpawnAsyncCommandLine::spawn(
+      bbbWifiEnableDisableArgs, [](auto str) { nltools::Log::error(__LINE__, "succ:", str); },
+      [](auto err) { nltools::Log::error(__LINE__, "err:", err); });
+}
+
 WiFiPollImpl::WiFiPollImpl(WifiSetting* setting)
     : m_setting { setting }
 {
@@ -91,7 +100,10 @@ bool EPC2WiFiPollImpl::poll()
   SpawnAsyncCommandLine::spawn(
       { "nmcli", "-g", "GENERAL.STATE", "con", "show", "C15" },
       [this](const std::string& ret)
-      { m_setting->set(ret == "activated" ? WifiSettings::Enabled : WifiSettings::Disabled); },
+      {
+        nltools::Log::error("nmcli says:", ret);
+        m_setting->set(ret == "activated" ? WifiSettings::Enabled : WifiSettings::Disabled);
+      },
       [](const std::string& ret) { nltools::Log::error(ret); });
   return false;
 }

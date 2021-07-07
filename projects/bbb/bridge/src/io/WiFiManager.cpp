@@ -7,12 +7,14 @@ WiFiManager::WiFiManager()
 {
   nltools::msg::receive<nltools::msg::WiFi::SetWiFiSSIDMessage>(nltools::msg::EndPoint::BeagleBone,
                                                                 [this](const auto& msg) {
+                                                                  nltools::Log::error("got ssid:", msg.m_ssid.get());
                                                                   m_lastSeenSSID = msg.m_ssid.get();
                                                                   saveConfig();
                                                                 });
 
   nltools::msg::receive<nltools::msg::WiFi::SetWiFiPasswordMessage>(nltools::msg::EndPoint::BeagleBone,
                                                                     [this](const auto& msg) {
+                                                                      nltools::Log::error("got pw:", msg.m_password.get());
                                                                       m_lastSeenPassword = msg.m_password.get();
                                                                       saveConfig();
                                                                     });
