@@ -7,6 +7,32 @@ ENUM(WifiSettings, int, Disabled, Enabled, Querying)
 
 #include "NLEnumSetting.h"
 
+class WifiSetting;
+
+class WiFiPollImpl {
+ public:
+  explicit WiFiPollImpl(WifiSetting* s);
+  virtual bool poll() = 0;
+ protected:
+  WifiSetting* m_setting;
+};
+
+class EPC2WiFiPollImpl : public WiFiPollImpl {
+ public:
+  using WiFiPollImpl::WiFiPollImpl;
+  bool poll() override;
+};
+
+class BBBWiFiPollImpl : public WiFiPollImpl {
+ public:
+  using WiFiPollImpl::WiFiPollImpl;
+  bool poll() override;
+
+ private:
+  void onPollReturned(GPid pid, int result);
+  sigc::connection m_pollConnection;
+};
+
 class WifiSetting : public NLEnumSetting<WifiSettings>, public sigc::trackable
 {
  public:
@@ -24,4 +50,6 @@ class WifiSetting : public NLEnumSetting<WifiSettings>, public sigc::trackable
 
   sigc::connection m_pollConnection;
   const std::shared_ptr<EpcWifi> m_localWifi;
+
+  std::unique_ptr<WiFiPollImpl> m_pollImpl;
 };
