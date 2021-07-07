@@ -1,11 +1,9 @@
 #pragma once
-
 #include <nltools/enums/EnumTools.h>
 #include "EpcWifi.h"
+#include "NLEnumSetting.h"
 
 ENUM(WifiSettings, int, Disabled, Enabled, Querying)
-
-#include "NLEnumSetting.h"
 
 class WifiSetting;
 
@@ -43,6 +41,7 @@ class WifiSetting : public NLEnumSetting<WifiSettings>, public sigc::trackable
   bool persistent() const override;
 
  private:
+  void enableDisableBBBWifi(tEnum state);
   bool pollAccessPointRunning();
 
   sigc::connection m_pollConnection;
