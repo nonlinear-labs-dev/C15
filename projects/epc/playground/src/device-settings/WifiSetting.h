@@ -45,9 +45,6 @@ class WifiSetting : public NLEnumSetting<WifiSettings>, public sigc::trackable
  private:
   bool pollAccessPointRunning();
 
-  void onPollReturned(GPid pid, int result);
-  void onCommandReturned(GPid pid, int exitStatus);
-
   sigc::connection m_pollConnection;
   const std::shared_ptr<EpcWifi> m_localWifi;
 
