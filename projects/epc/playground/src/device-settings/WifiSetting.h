@@ -25,10 +25,6 @@ class BBBWiFiPollImpl : public WiFiPollImpl {
  public:
   using WiFiPollImpl::WiFiPollImpl;
   bool poll() override;
-
- private:
-  void onPollReturned(GPid pid, int result);
-  sigc::connection m_pollConnection;
 };
 
 class WifiSetting : public NLEnumSetting<WifiSettings>, public sigc::trackable
