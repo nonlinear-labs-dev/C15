@@ -84,10 +84,13 @@ bool WifiSetting::pollAccessPointRunning()
 
 void WifiSetting::enableDisableBBBWifi(WifiSettings m)
 {
-  auto bbbWifiEnableDisableArgs = getArgs(m);
-  SpawnAsyncCommandLine::spawn(
-      bbbWifiEnableDisableArgs, [](auto str) { nltools::Log::error(__LINE__, "succ:", str); },
-      [](auto err) { nltools::Log::error(__LINE__, "err:", err); });
+  if(m != WifiSettings::Querying)
+  {
+    auto bbbWifiEnableDisableArgs = getArgs(m);
+    SpawnAsyncCommandLine::spawn(
+        bbbWifiEnableDisableArgs, [](auto str) { nltools::Log::error(__LINE__, "succ:", str); },
+        [](auto err) { nltools::Log::error(__LINE__, "err:", err); });
+  }
 }
 
 WiFiPollImpl::WiFiPollImpl(WifiSetting* setting)
@@ -110,30 +113,20 @@ bool EPC2WiFiPollImpl::poll()
 
 bool BBBWiFiPollImpl::poll()
 {
-  m_pollConnection.disconnect();
-
-  GPid pid;
   std::vector<std::string> argsBBB { "/usr/bin/ssh", "-o",        "StrictHostKeyChecking=no", "root@192.168.10.11",
                                      "systemctl",    "is-active", "accesspoint.service" };
-  Glib::spawn_async("", argsBBB, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
-  m_pollConnection = Glib::MainContext::get_default()->signal_child_watch().connect(
-      sigc::mem_fun(this, &BBBWiFiPollImpl::onPollReturned), pid);
-  return false;
-}
+  SpawnAsyncCommandLine::spawn(
+      argsBBB,
+      [this](const std::string& ret)
+      {
+        nltools::Log::error(__LINE__, ret);
+        m_setting->set(WifiSettings::Enabled);
+      },
+      [this](const std::string& err)
+      {
+        nltools::Log::error(__LINE__, "err:", err);
+        m_setting->set(WifiSettings::Enabled);
+      });
 
-void BBBWiFiPollImpl::onPollReturned(GPid pid, int exitStatus)
-{
-  if(exitStatus == 0)
-  {
-    m_setting->set(WifiSettings::Enabled);
-  }
-  else if(exitStatus == (3 << 8))
-  {
-    m_setting->set(WifiSettings::Disabled);
-  }
-  else
-  {
-    nltools::Log::warning("Polling wifi status failed, poll again in 2 secs.");
-    Glib::MainContext::get_default()->signal_timeout().connect_seconds(sigc::mem_fun(this, &BBBWiFiPollImpl::poll), 2);
-  }
+  return false;
 }
