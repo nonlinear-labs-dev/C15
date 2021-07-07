@@ -3,6 +3,7 @@
 #include <nltools/Types.h>
 #include <nltools/logging/Log.h>
 #include <glibmm.h>
+#include <playground.h>
 
 std::vector<std::string> getArgs(WifiSettings s)
 {
@@ -16,7 +17,7 @@ std::vector<std::string> getArgs(WifiSettings s)
              "accesspoint;",
              "systemctl",
              "enable",
-             "accesspoint;"
+             "accesspoint;",
              "systemctl",
              "start",
              "accesspoint;" };
@@ -30,7 +31,7 @@ std::vector<std::string> getArgs(WifiSettings s)
              "accesspoint;",
              "systemctl",
              "disable",
-             "accesspoint;"
+             "accesspoint;",
              "systemctl",
              "mask",
              "accesspoint;" };
@@ -51,6 +52,7 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, const std::shared_
 
 bool WifiSetting::set(tEnum m)
 {
+  Environment::getStackTrace(std::to_string(__LINE__));
   auto ret = super::set(m);
 
   if(m == WifiSettings::Enabled)
