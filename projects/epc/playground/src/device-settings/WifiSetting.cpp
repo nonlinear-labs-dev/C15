@@ -40,6 +40,12 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, const std::shared_
     : super(settings, WifiSettings::Querying)
     , m_localWifi(localWifi)
 {
+  static auto isEpc2 = !strcmp(TARGET_PLATFORM, "epc2");
+  if(isEpc2)
+    m_pollImpl = std::make_unique<EPC2WiFiPollImpl>(this);
+  else
+    m_pollImpl = std::make_unique<BBBWiFiPollImpl>(this);
+
   pollAccessPointRunning();
 }
 
@@ -54,12 +60,7 @@ bool WifiSetting::set(tEnum m)
 
   if constexpr(!isDevelopmentPC)
   {
-    m_pollConnection.disconnect();
-
-    GPid commandPid {};
-    Glib::spawn_async("", getArgs(m), Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &commandPid);
-    Glib::MainContext::get_default()->signal_child_watch().connect(sigc::mem_fun(this, &WifiSetting::onCommandReturned),
-                                                                   commandPid);
+    m_pollImpl->poll();
   }
 
   return ret;
@@ -80,47 +81,52 @@ bool WifiSetting::pollAccessPointRunning()
 {
   if constexpr(!isDevelopmentPC)
   {
-    std::vector<std::string> argsBBB { "/usr/bin/ssh", "-o",        "StrictHostKeyChecking=no", "root@192.168.10.11",
-                                       "systemctl",    "is-active", "accesspoint.service" };
-    std::vector<std::string> argsEPC2 { "systemctl", "is-active", "accesspoint.service" };
-    static auto isEpc2 = !strcmp(TARGET_PLATFORM, "epc2");
-    GPid pid;
-    try
+    if(m_pollImpl)
     {
-      if(isEpc2)
-      {
-        Glib::spawn_async("", argsEPC2, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
-      }
-      else
-      {
-        Glib::spawn_async("", argsBBB, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
-      }
-      m_pollConnection = Glib::MainContext::get_default()->signal_child_watch().connect(
-          sigc::mem_fun(this, &WifiSetting::onPollReturned), pid);
-    }
-    catch(const Glib::SpawnError& e)
-    {
-      nltools::Log::error(e.what());
+      m_pollImpl->poll();
     }
   }
 
   return false;
 }
 
-void WifiSetting::onPollReturned(GPid pid, int exitStatus)
+WiFiPollImpl::WiFiPollImpl(WifiSetting* setting)
+    : m_setting { setting }
+{
+}
+
+bool EPC2WiFiPollImpl::poll()
+{
+  SpawnAsyncCommandLine::spawn(
+      { "nmcli", "-g", "GENERAL.STATE", "con", "show", "C15" },
+      [this](const std::string& ret)
+      { m_setting->set(ret == "activated" ? WifiSettings::Enabled : WifiSettings::Disabled); },
+      [](const std::string& ret) { nltools::Log::error(ret); });
+}
+
+bool BBBWiFiPollImpl::poll()
+{
+  GPid pid;
+  std::vector<std::string> argsBBB { "/usr/bin/ssh", "-o",        "StrictHostKeyChecking=no", "root@192.168.10.11",
+                                     "systemctl",    "is-active", "accesspoint.service" };
+  Glib::spawn_async("", argsBBB, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
+  m_pollConnection = Glib::MainContext::get_default()->signal_child_watch().connect(
+      sigc::mem_fun(this, &BBBWiFiPollImpl::onPollReturned), pid);
+}
+
+void BBBWiFiPollImpl::onPollReturned(GPid pid, int exitStatus)
 {
   if(exitStatus == 0)
   {
-    super::set(WifiSettings::Enabled);
+    m_setting->set(WifiSettings::Enabled);
   }
   else if(exitStatus == (3 << 8))
   {
-    super::set(WifiSettings::Disabled);
+    m_setting->set(WifiSettings::Disabled);
   }
   else
   {
     nltools::Log::warning("Polling wifi status failed, poll again in 2 secs.");
-    Glib::MainContext::get_default()->signal_timeout().connect_seconds(
-        sigc::mem_fun(this, &WifiSetting::pollAccessPointRunning), 2);
+    Glib::MainContext::get_default()->signal_timeout().connect_seconds(sigc::mem_fun(this, &BBBWiFiPollImpl::poll), 2);
   }
 }
