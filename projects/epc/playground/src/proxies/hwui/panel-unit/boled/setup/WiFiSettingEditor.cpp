@@ -16,9 +16,7 @@ void WiFiSettingEditor::incSetting(int)
   auto setting = Application::get().getSettings()->getSetting<WifiSetting>();
   auto s = setting->get();
 
-  if(s == WifiSettings::Querying)
-    setting->set(WifiSettings::Disabled);
-  else if(s == WifiSettings::Disabled)
+  if(s == WifiSettings::Disabled)
     setting->set(WifiSettings::Enabled);
   else if(s == WifiSettings::Enabled)
     setting->set(WifiSettings::Disabled);
