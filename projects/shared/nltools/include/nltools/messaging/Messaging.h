@@ -37,7 +37,7 @@ namespace nltools
 
          USBStatusMessage,
 
-         WiFiPasswordChanged, WiFiSSIDChanged, WiFiSetSSID, WiFiSetPassword,
+         WiFiPasswordChanged, WiFiSSIDChanged, WiFiSetSSID, WiFiSetPassword, WiFiEnable,
 
          NotifyHardwareSourceChanged,
 

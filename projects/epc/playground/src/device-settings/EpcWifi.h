@@ -7,6 +7,14 @@
 
 class EpcWifi
 {
+ public:
+  EpcWifi();
+  ~EpcWifi();
+
+  void setNewPassphrase(const Glib::ustring& _newPassphrase);
+  void setNewSSID(const Glib::ustring& _newSSID);
+  void setNewWifiState(bool _state);
+
  private:
   Glib::ustring m_currentPassphrase, m_newPassphrase;
   Glib::ustring m_currentSSID, m_newSSID;
@@ -25,12 +33,4 @@ class EpcWifi
 
   void updateWifiSwitch();
   void updateCredentials(bool _reload);
-
- public:
-  EpcWifi();
-  ~EpcWifi();
-
-  void setNewPassphrase(const Glib::ustring& _newPassphrase);
-  void setNewSSID(const Glib::ustring& _newSSID);
-  void setNewWifiState(bool _state);
 };

@@ -5,38 +5,7 @@
 #include <playground.h>
 #include <utility>
 #include <nltools/messaging/Messaging.h>
-
-std::vector<std::string> getArgs(WifiSettings s)
-{
-  if(s == WifiSettings::Enabled)
-    return { "/usr/bin/ssh",
-             "-o",
-             "StrictHostKeyChecking=no",
-             "root@192.168.10.11",
-             "systemctl",
-             "unmask",
-             "accesspoint;",
-             "systemctl",
-             "enable",
-             "accesspoint;",
-             "systemctl",
-             "start",
-             "accesspoint;" };
-  else
-    return { "/usr/bin/ssh",
-             "-o",
-             "StrictHostKeyChecking=no",
-             "root@192.168.10.11",
-             "systemctl",
-             "stop",
-             "accesspoint;",
-             "systemctl",
-             "disable",
-             "accesspoint;",
-             "systemctl",
-             "mask",
-             "accesspoint;" };
-};
+#include <nltools/messaging/Message.h>
 
 WifiSetting::WifiSetting(UpdateDocumentContributor& settings, std::shared_ptr<EpcWifi> localWifi)
     : super(settings, WifiSettings::Enabled)
@@ -91,13 +60,9 @@ void WifiSetting::load(const Glib::ustring& text, Initiator initiator)
 
 void WifiSetting::enableDisableBBBWifi(WifiSettings m)
 {
-  if constexpr(!isDevelopmentPC) {
-
-    auto bbbWifiEnableDisableArgs = getArgs(m);
-    SpawnAsyncCommandLine::spawn(bbbWifiEnableDisableArgs,
-      [](auto str) { nltools::Log::error(__LINE__, "success:", str); },
-      [](auto err) { nltools::Log::error(__LINE__, "error:", err); });
-  }
+    using namespace nltools::msg;
+    WiFi::EnableWiFiMessage message { m == WifiSettings::Enabled };
+    send(EndPoint::BeagleBone, message);
 }
 
 void WifiSetting::setupBBBWifiIfBBBConnectedAndSettingLoaded()

@@ -2,6 +2,7 @@
 #include <giomm.h>
 #include <thread>
 #include "WiFiManager.h"
+#include <nltools/system/SpawnAsyncCommandLine.h>
 
 WiFiManager::WiFiManager()
 {
@@ -18,11 +19,19 @@ WiFiManager::WiFiManager()
                                                                       m_lastSeenPassword = msg.m_password.get();
                                                                       saveConfig();
                                                                     });
+
+  nltools::msg::receive<nltools::msg::WiFi::EnableWiFiMessage>(nltools::msg::EndPoint::BeagleBone, [this](const auto& msg) {
+     nltools::Log::error("got enable:", msg.m_enable);
+
+     if(msg.m_enable)
+       enableAndStartAP();
+     else
+       disableAndStopAP();
+  });
 }
 
 void WiFiManager::saveConfig()
 {
-
   try
   {
     std::string line;
@@ -70,4 +79,32 @@ void WiFiManager::scheduleRestart()
   });
   thread.detach();
 #endif
+}
+
+void WiFiManager::enableAndStartAP()
+{
+  std::vector<std::string> commands = {
+             "systemctl", "unmask", "accesspoint;",
+             "systemctl", "enable", "accesspoint;",
+             "systemctl", "start", "accesspoint;" };
+
+  SpawnAsyncCommandLine::spawn(commands, [](auto ret){
+      nltools::Log::error(__LINE__, ret);
+  }, [](auto err) {
+      nltools::Log::error(__LINE__, err);
+  });
+}
+
+void WiFiManager::disableAndStopAP()
+{
+  std::vector<std::string> commands = {
+             "systemctl", "stop", "accesspoint;",
+             "systemctl", "disable", "accesspoint;",
+             "systemctl", "mask", "accesspoint;" };
+
+  SpawnAsyncCommandLine::spawn(commands, [](auto ret){
+      nltools::Log::error(__LINE__, ret);
+    }, [](auto err) {
+      nltools::Log::error(__LINE__, err);
+    });
 }
