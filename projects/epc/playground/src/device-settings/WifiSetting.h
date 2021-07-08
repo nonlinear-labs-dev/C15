@@ -13,10 +13,17 @@ class WifiSetting : public NLEnumSetting<WifiSettings>, public sigc::trackable
 
   bool set(tEnum m) override;
   bool persistent() const override;
+  void load(const Glib::ustring& text, Initiator initiator) override;
 
  private:
+  bool isLoading() const;
   void enableDisableBBBWifi(tEnum state);
 
   sigc::connection m_pollConnection;
   const std::shared_ptr<EpcWifi> m_localWifi;
+
+  bool m_isLoading = false;
+  bool m_didSettingLoad = false;
+  bool m_connectionToBBBEstablished = false;
+  void setupBBBWifiIfBBBConnectedAndSettingLoaded();
 };

@@ -4,6 +4,7 @@
 #include <nltools/logging/Log.h>
 #include <playground.h>
 #include <utility>
+#include <nltools/messaging/Messaging.h>
 
 std::vector<std::string> getArgs(WifiSettings s)
 {
@@ -41,11 +42,14 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, std::shared_ptr<Ep
     : super(settings, WifiSettings::Enabled)
     , m_localWifi(std::move(localWifi))
 {
+  nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::BeagleBone, [this](){
+     m_connectionToBBBEstablished = true;
+     setupBBBWifiIfBBBConnectedAndSettingLoaded();
+  });
 }
 
 bool WifiSetting::set(tEnum m)
 {
-  Environment::getStackTrace(std::to_string(__LINE__) + " " + toString(m));
   auto ret = super::set(m);
 
   if(m == WifiSettings::Enabled)
@@ -53,7 +57,9 @@ bool WifiSetting::set(tEnum m)
   else if(m == WifiSettings::Disabled)
     m_localWifi->setNewWifiState(false);
 
-  enableDisableBBBWifi(m);
+  if(!isLoading()) {
+    setupBBBWifiIfBBBConnectedAndSettingLoaded();
+  }
 
   return ret;
 }
@@ -61,6 +67,24 @@ bool WifiSetting::set(tEnum m)
 bool WifiSetting::persistent() const
 {
   return true;
+}
+
+bool WifiSetting::isLoading() const
+{
+  return m_isLoading;
+}
+
+void WifiSetting::load(const Glib::ustring& text, Initiator initiator)
+{
+  m_isLoading = true;
+  NLEnumSetting::load(text, initiator);
+
+  if(initiator == Initiator::EXPLICIT_LOAD) {
+    m_didSettingLoad = true;
+    setupBBBWifiIfBBBConnectedAndSettingLoaded();
+  }
+
+  m_isLoading = false;
 }
 
 void WifiSetting::enableDisableBBBWifi(WifiSettings m)
@@ -71,4 +95,10 @@ void WifiSetting::enableDisableBBBWifi(WifiSettings m)
       [](auto str) { nltools::Log::error(__LINE__, "succ:", str); },
       [](auto err) { nltools::Log::error(__LINE__, "err:", err); });
   }
+}
+
+void WifiSetting::setupBBBWifiIfBBBConnectedAndSettingLoaded()
+{
+  if(m_connectionToBBBEstablished && m_didSettingLoad)
+    enableDisableBBBWifi(get());
 }
