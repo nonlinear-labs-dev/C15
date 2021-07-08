@@ -43,6 +43,7 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, std::shared_ptr<Ep
     , m_localWifi(std::move(localWifi))
 {
   nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::BeagleBone, [this](){
+     nltools::Log::error(__LINE__, "did Load?", m_didSettingLoad);
      m_connectionToBBBEstablished = true;
      setupBBBWifiIfBBBConnectedAndSettingLoaded();
   });
@@ -50,7 +51,8 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, std::shared_ptr<Ep
 
 bool WifiSetting::set(tEnum m)
 {
-  auto ret = super::set(m);
+  Environment::getStackTrace(std::to_string(__LINE__));
+  auto didChange = super::set(m);
 
   if(m == WifiSettings::Enabled)
     m_localWifi->setNewWifiState(true);
@@ -61,7 +63,7 @@ bool WifiSetting::set(tEnum m)
     setupBBBWifiIfBBBConnectedAndSettingLoaded();
   }
 
-  return ret;
+  return didChange;
 }
 
 bool WifiSetting::persistent() const
@@ -90,15 +92,19 @@ void WifiSetting::load(const Glib::ustring& text, Initiator initiator)
 void WifiSetting::enableDisableBBBWifi(WifiSettings m)
 {
   if constexpr(!isDevelopmentPC) {
+
     auto bbbWifiEnableDisableArgs = getArgs(m);
     SpawnAsyncCommandLine::spawn(bbbWifiEnableDisableArgs,
-      [](auto str) { nltools::Log::error(__LINE__, "succ:", str); },
-      [](auto err) { nltools::Log::error(__LINE__, "err:", err); });
+      [](auto str) { nltools::Log::error(__LINE__, "success:", str); },
+      [](auto err) { nltools::Log::error(__LINE__, "error:", err); });
   }
 }
 
 void WifiSetting::setupBBBWifiIfBBBConnectedAndSettingLoaded()
 {
+  Environment::getStackTrace(std::to_string(__LINE__));
+  nltools::Log::error(__LINE__, "bbbb there:", m_connectionToBBBEstablished, "loaded", m_didSettingLoad);
+
   if(m_connectionToBBBEstablished && m_didSettingLoad)
     enableDisableBBBWifi(get());
 }
