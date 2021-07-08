@@ -5,7 +5,11 @@ EpcWifi::EpcWifi()
     , m_newEpcWifiState(false)
     , m_busy(false)
 {
-  Glib::MainContext::get_default()->signal_timeout().connect_seconds(sigc::mem_fun(this, &EpcWifi::syncCredentials), 2);
+  static auto isEpc2 = !strcmp(TARGET_PLATFORM, "epc2");
+
+  if(isEpc2) {
+    Glib::MainContext::get_default()->signal_timeout().connect_seconds(sigc::mem_fun(this, &EpcWifi::syncCredentials), 2);
+  }
 }
 
 EpcWifi::~EpcWifi() = default;
