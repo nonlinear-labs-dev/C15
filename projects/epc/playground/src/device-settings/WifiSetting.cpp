@@ -12,7 +12,6 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, std::shared_ptr<Ep
     , m_localWifi(std::move(localWifi))
 {
   nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::BeagleBone, [this](){
-     nltools::Log::error(__LINE__, "did Load?", m_didSettingLoad);
      m_connectionToBBBEstablished = true;
      setupBBBWifiIfBBBConnectedAndSettingLoaded();
   });
@@ -20,7 +19,6 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings, std::shared_ptr<Ep
 
 bool WifiSetting::set(tEnum m)
 {
-  Environment::getStackTrace(std::to_string(__LINE__));
   auto didChange = super::set(m);
 
   if(m == WifiSettings::Enabled)
@@ -67,7 +65,6 @@ void WifiSetting::enableDisableBBBWifi(WifiSettings m)
 
 void WifiSetting::setupBBBWifiIfBBBConnectedAndSettingLoaded()
 {
-  Environment::getStackTrace(std::to_string(__LINE__));
   nltools::Log::error(__LINE__, "bbbb there:", m_connectionToBBBEstablished, "loaded", m_didSettingLoad);
 
   if(m_connectionToBBBEstablished && m_didSettingLoad)
