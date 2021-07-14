@@ -21,7 +21,7 @@ WiFiManager::WiFiManager()
                                                                     });
 
   nltools::msg::receive<nltools::msg::WiFi::EnableWiFiMessage>(nltools::msg::EndPoint::BeagleBone, [this](const auto& msg) {
-     nltools::Log::error("got enable:", msg.m_enable);
+     nltools::Log::notify("got enable:", msg.m_enable);
 
      if(msg.m_enable)
        enableAndStartAP();
@@ -73,9 +73,9 @@ void WiFiManager::scheduleRestart()
   nltools::Log::info(__FILE__, __FUNCTION__, "schedule Restart!");
   auto thread = std::thread([]() {
     if(system("systemctl restart accesspoint"))
-      nltools::Log::warning("Could not restart WiFi!");
+      nltools::Log::error("Could not restart WiFi!");
     else
-      nltools::Log::info(__FILE__, __FUNCTION__, "WiFi Restarted!");
+      nltools::Log::notify(__FILE__, __FUNCTION__, "WiFi Restarted!");
   });
   thread.detach();
 #endif
@@ -86,7 +86,7 @@ void WiFiManager::enableAndStartAP()
   std::vector<std::string> commands = {"/usr/C15/scripts/enableAndStartAP.sh"};
 
   SpawnAsyncCommandLine::spawn(commands, [](auto ret){
-      nltools::Log::error(__LINE__, ret);
+      nltools::Log::notify(__LINE__, ret);
   }, [](auto err) {
       nltools::Log::error(__LINE__, err);
   });
@@ -97,7 +97,7 @@ void WiFiManager::disableAndStopAP()
   std::vector<std::string> commands = {"/usr/C15/scripts/disableAndStopAP.sh"};
 
   SpawnAsyncCommandLine::spawn(commands, [](auto ret){
-      nltools::Log::error(__LINE__, ret);
+      nltools::Log::notify(__LINE__, ret);
     }, [](auto err) {
       nltools::Log::error(__LINE__, err);
     });
