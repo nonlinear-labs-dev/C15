@@ -83,12 +83,7 @@ void WiFiManager::scheduleRestart()
 
 void WiFiManager::enableAndStartAP()
 {
-  std::vector<std::string> commands = {
-             "systemctl", "unmask", "accesspoint",
-             "&",
-             "systemctl", "enable", "accesspoint",
-             "&",
-             "systemctl", "start", "accesspoint" };
+  std::vector<std::string> commands = {"/usr/C15/scripts/enableAndStart.sh"};
 
   SpawnAsyncCommandLine::spawn(commands, [](auto ret){
       nltools::Log::error(__LINE__, ret);
@@ -99,12 +94,7 @@ void WiFiManager::enableAndStartAP()
 
 void WiFiManager::disableAndStopAP()
 {
-  std::vector<std::string> commands = {
-             "systemctl", "stop", "accesspoint",
-             "&",
-             "systemctl", "disable", "accesspoint",
-             "&",
-             "systemctl", "mask", "accesspoint" };
+  std::vector<std::string> commands = {"/usr/C15/scripts/disableAndStop.sh"};
 
   SpawnAsyncCommandLine::spawn(commands, [](auto ret){
       nltools::Log::error(__LINE__, ret);
