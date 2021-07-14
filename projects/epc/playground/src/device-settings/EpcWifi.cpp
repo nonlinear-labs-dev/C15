@@ -1,11 +1,16 @@
+#include <playground-helpers.h>
 #include "EpcWifi.h"
 
 EpcWifi::EpcWifi()
-    : m_currentEpcWifiState(false)
+    : m_currentEpcWifiState(std::nullopt)
     , m_newEpcWifiState(false)
     , m_busy(false)
 {
-  Glib::MainContext::get_default()->signal_timeout().connect_seconds(sigc::mem_fun(this, &EpcWifi::syncCredentials), 2);
+  static auto isEpc2 = !strcmp(TARGET_PLATFORM, "epc2");
+
+  if(isEpc2) {
+    Glib::MainContext::get_default()->signal_timeout().connect_seconds(sigc::mem_fun(this, &EpcWifi::syncCredentials), 2);
+  }
 }
 
 EpcWifi::~EpcWifi() = default;
@@ -43,7 +48,7 @@ void EpcWifi::updateCredentials(bool _reload)
     else if (m_currentSSID != m_newSSID){
         updateSSID();
     }
-    else if (m_currentEpcWifiState != m_newEpcWifiState ){
+    else if (!m_currentEpcWifiState.has_value() || m_currentEpcWifiState != m_newEpcWifiState ){
         updateWifiSwitch();
     }
     else if (_reload){
@@ -66,7 +71,7 @@ void EpcWifi::spawn(const std::vector<std::string>& command, std::function<void(
   if constexpr(!isDevelopmentPC)
   {
     SpawnAsyncCommandLine::spawn(command, onSuccess, [this](const std::string& e) {
-      nltools::Log::warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, e);
+      nltools::Log::error(__FILE__, __LINE__, __PRETTY_FUNCTION__, e);
       m_busy = false;
     });
   }
@@ -96,6 +101,8 @@ void EpcWifi::reloadConnection()
 
 void EpcWifi::enableConnection()
 {
+  Environment::getStackTrace(std::to_string(__LINE__));
+
   spawn({ "nmcli", "con", "up", "C15" }, [this](auto) {
     m_currentEpcWifiState = true;
     m_busy = false;
@@ -104,6 +111,8 @@ void EpcWifi::enableConnection()
 
 void EpcWifi::disableConnection()
 {
+  Environment::getStackTrace(std::to_string(__LINE__));
+
   spawn({ "nmcli", "con", "down", "C15" }, [this](auto) {
     m_currentEpcWifiState = false;
     m_busy = false;

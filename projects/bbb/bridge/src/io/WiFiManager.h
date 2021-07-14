@@ -15,5 +15,7 @@ class WiFiManager
 
   constexpr static auto c_ssidPattern = "ssid";
   constexpr static auto c_pwPattern = "wpa_passphrase";
-  static constexpr auto c_fileName = "/etc/hostapd.conf";
+  constexpr static auto c_fileName = "/etc/hostapd.conf";
+  void enableAndStartAP();
+  void disableAndStopAP();
 };

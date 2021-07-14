@@ -6,8 +6,8 @@
 class SpawnAsyncCommandLine
 {
  public:
-  static bool spawn(const std::vector<std::string>& command, std::function<void(const std::string&)> success,
-                    std::function<void(const std::string&)> error);
+  static bool spawn(const std::vector<std::string>& command, const std::function<void(const std::string&)>& success,
+                    const std::function<void(const std::string&)>& error);
 
   static size_t removeDone();
   static size_t getNumCommands();

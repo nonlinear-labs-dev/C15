@@ -179,6 +179,15 @@ namespace nltools
 
         Helper::StringWrapper<8> m_password;
       };
+
+      struct EnableWiFiMessage
+      {
+        constexpr static auto getType() {
+          return MessageType::WiFiEnable;
+        }
+
+        bool m_enable;
+      };
     }
 
     struct PanicAudioEngine
