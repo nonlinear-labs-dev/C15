@@ -5,9 +5,7 @@ BooleanSetting::BooleanSetting(UpdateDocumentContributor &settings, bool def)
 {
 }
 
-BooleanSetting::~BooleanSetting()
-{
-}
+BooleanSetting::~BooleanSetting() = default;
 
 bool BooleanSetting::get() const
 {

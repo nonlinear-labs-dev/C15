@@ -108,6 +108,8 @@ void InputEventStage::onTCDEvent()
         {
           m_dspHost->onKeyDown(decoder->getKeyOrController(), decoder->getValue(), interface);
         }
+
+        setAndScheduleKeybedNotify();
       }
       if(m_options->shouldSendNotes() && soundValid)
         convertToAndSendMIDI(decoder, determinedPart);
@@ -129,6 +131,8 @@ void InputEventStage::onTCDEvent()
         {
           m_dspHost->onKeyUp(decoder->getKeyOrController(), decoder->getValue(), interface);
         }
+
+        setAndScheduleKeybedNotify();
       }
       if(m_options->shouldSendNotes() && soundValid)
         convertToAndSendMIDI(decoder, determinedPart);
@@ -177,6 +181,8 @@ void InputEventStage::onMIDIEvent()
             auto determinedPart = calculateSplitPartForKeyUp(inputSource, decoder->getKeyOrControl());
             m_dspHost->onKeyUpSplit(decoder->getKeyOrControl(), decoder->getValue(), determinedPart, inputSource);
           }
+
+          setAndScheduleKeybedNotify();
         }
         else if(soundValid && !receivedOnSecondary)
         {
@@ -184,6 +190,8 @@ void InputEventStage::onMIDIEvent()
             m_dspHost->onKeyUp(decoder->getKeyOrControl(), decoder->getValue(), inputSource);
           else if(decoder->getEventType() == DecoderEventType::KeyDown)
             m_dspHost->onKeyDown(decoder->getKeyOrControl(), decoder->getValue(), inputSource);
+
+          setAndScheduleKeybedNotify();
         }
       }
       break;
@@ -899,6 +907,17 @@ constexpr uint16_t InputEventStage::midiReceiveChannelMask(const MidiReceiveChan
 constexpr uint16_t InputEventStage::midiReceiveChannelMask(const MidiReceiveChannelSplit &_channel)
 {
   return c_midiReceiveMaskTable[static_cast<uint8_t>(_channel)];
+}
+
+bool InputEventStage::getAndResetKeyBedStatus()
+{
+  return std::exchange(m_notifyKeyBedActionStatus, false);
+}
+
+void InputEventStage::setAndScheduleKeybedNotify()
+{
+  m_notifyKeyBedActionStatus = true;
+  m_hwChangedCB();
 }
 
 bool InputEventStage::isSplitDSP() const

@@ -77,6 +77,13 @@ namespace nltools
 
         int m_keyPos;
       };
+
+      struct ActionHappened {
+        constexpr static MessageType getType()
+        {
+          return MessageType::NoteAction;
+        }
+      };
     }
 
     namespace USB

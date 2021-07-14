@@ -33,7 +33,7 @@ namespace nltools
 
          NoteShiftSetting, PresetGlitchSetting, TransitionTimeSetting, EditSmoothingTimeSetting, TuneReference,
 
-         NoteDown, NoteUp,
+         NoteDown, NoteUp, NoteAction,
 
          USBStatusMessage,
 

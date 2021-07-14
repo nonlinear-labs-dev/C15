@@ -40,7 +40,11 @@ class InputEventStage
 
   static int parameterIDToHWID(int id);
 
+  bool getAndResetKeyBedStatus();
+
  private:
+  void setAndScheduleKeybedNotify();
+
   using CC_Range_Vel = Midi::clipped14BitVelRange;
   using CC_Range_7_Bit = Midi::FullCCRange<Midi::Formats::_7_Bits_>;
 
@@ -103,6 +107,7 @@ class InputEventStage
   MIDIOut m_midiOut;
   KeyShift m_shifteable_keys;
   std::array<std::array<uint16_t, 2>, 8> m_latchedHWPositions;
+  bool m_notifyKeyBedActionStatus = false;
 
   enum class LatchMode
   {

@@ -9,6 +9,7 @@
 #include <proxies/hwui/panel-unit/boled/BOLEDScreenSaver.h>
 #include "ScreenSaverTimeoutSetting.h"
 #include <device-settings/Settings.h>
+#include <nltools/messaging/Message.h>
 
 static constexpr auto c_disabled = std::chrono::minutes::zero();
 static constexpr std::array<int, 6> s_logTimeOuts = { 0, 1, 5, 20, 60, 180 };
@@ -75,6 +76,8 @@ void ScreenSaverTimeoutSetting::init()
   app.getSettings()->onSettingsChanged(reschedule);
   app.getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstalled(
       sigc::mem_fun(this, &ScreenSaverTimeoutSetting::onLayoutInstalled));
+
+  nltools::msg::receive<nltools::msg::Keyboard::ActionHappened>(nltools::msg::EndPoint::Playground, sigc::mem_fun(this, &ScreenSaverTimeoutSetting::onKeyBedMessageReceived));
 }
 
 void ScreenSaverTimeoutSetting::sendState(bool state)
@@ -117,4 +120,9 @@ void ScreenSaverTimeoutSetting::incDec(int inc, ButtonModifiers m)
 const std::vector<Glib::ustring>& ScreenSaverTimeoutSetting::getDisplayStrings() const
 {
   return s_displayStrings;
+}
+
+void ScreenSaverTimeoutSetting::onKeyBedMessageReceived(const nltools::msg::Keyboard::ActionHappened& m)
+{
+  endAndReschedule();
 }

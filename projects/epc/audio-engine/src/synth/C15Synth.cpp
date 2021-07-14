@@ -161,10 +161,16 @@ void C15Synth::syncExternalMidiBridge()
 
 void C15Synth::syncPlayground()
 {
+  using namespace nltools::msg;
+
+  if(m_inputEventStage.getAndResetKeyBedStatus())
+  {
+    send(EndPoint::Playground, Keyboard::ActionHappened {});
+  }
+
   auto engineHWSourceValues = m_dsp->getHWSourceValues();
   for(size_t i = 0; i < std::tuple_size_v<dsp_host_dual::HWSourceValues>; i++)
   {
-    using namespace nltools::msg;
     if(std::exchange(m_playgroundHwSourceKnownValues[i], engineHWSourceValues[i]) != engineHWSourceValues[i])
     {
       send(EndPoint::Playground, HardwareSourceChangedNotification { i, static_cast<double>(engineHWSourceValues[i]) });
