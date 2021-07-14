@@ -92,8 +92,6 @@ Application::Application(int numArgs, char **argv)
   Profiler::get().enable(true);
 #endif
 
-  nltools::Log::warning("OS:", TARGET_PLATFORM);
-
   m_settings->init();
   m_hwui->init();
   m_http->init();
