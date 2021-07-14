@@ -548,163 +548,243 @@
 						<table class="midi-table">
 							<thead>
 							<tr>
-								<th>Channel</th>
-								<th colspan="2">Primary</th>
-								<th colspan="2">Split</th>
-								<th>Local</th>
+								<th class="no-table-border"></th>
+								<th colspan="2">Primary Channel</th>
+								<th colspan="2">Split Channel</th>
+								<th class="no-table-border"></th>
 							</tr>
 							</thead>
 							<tbody>
 							<tr>
-								<th>Direction</th>
+								<th class="no-table-border"></th>
 								<th>Send</th>
 								<th>Receive</th>
 								<th>Send</th>
 								<th>Receive</th>
-								<th>Both</th>
+								<th>Local</th>
 							</tr>
 							<tr>
 								<td>Pedal1</td>
 								<td>
-									<g:CheckBox ui:field="pson0" name="ps0" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson0" name="ps0" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron0" name="pr0" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron0" name="pr0" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson0" name="ss0" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson0" name="ss0" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron0" name="sr0" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron0" name="sr0" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon0" name="l0" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon0" name="l0" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Pedal2</td>
 								<td>
-									<g:CheckBox ui:field="pson1" name="ps1" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson1" name="ps1" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron1" name="pr1" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron1" name="pr1" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson1" name="ss1" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson1" name="ss1" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron1" name="sr1" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron1" name="sr1" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon1" name="l1" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon1" name="l1" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Pedal3</td>
 								<td>
-									<g:CheckBox ui:field="pson2" name="ps2" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson2" name="ps2" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron2" name="pr2" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron2" name="pr2" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson2" name="ss2" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson2" name="ss2" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron2" name="sr2" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron2" name="sr2" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon2" name="l2" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon2" name="l2" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Pedal4</td>
 								<td>
-									<g:CheckBox ui:field="pson3" name="ps3" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson3" name="ps3" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron3" name="pr3" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron3" name="pr3" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson3" name="ss3" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson3" name="ss3" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron3" name="sr3" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron3" name="sr3" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon3" name="l3" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon3" name="l3" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Bender</td>
 								<td>
-									<g:CheckBox ui:field="pson4" name="ps4" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson4" name="ps4" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron4" name="pr4" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron4" name="pr4" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson4" name="ss4" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson4" name="ss4" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron4" name="sr4" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron4" name="sr4" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon4" name="l4" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon4" name="l4" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Aftertouch</td>
 								<td>
-									<g:CheckBox ui:field="pson5" name="ps5" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson5" name="ps5" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron5" name="pr5" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron5" name="pr5" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson5" name="ss5" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson5" name="ss5" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron5" name="sr5" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron5" name="sr5" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon5" name="l5" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon5" name="l5" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Ribbon1</td>
 								<td>
-									<g:CheckBox ui:field="pson6" name="ps6" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson6" name="ps6" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron6" name="pr6" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron6" name="pr6" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson6" name="ss6" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson6" name="ss6" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron6" name="sr6" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron6" name="sr6" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon6" name="l6" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon6" name="l6" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Ribbon2</td>
 								<td>
-									<g:CheckBox ui:field="pson7" name="ps7" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pson7" name="ps7" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="pron7" name="pr7" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="pron7" name="pr7" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sson7" name="ss7" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sson7" name="ss7" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="sron7" name="sr7" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="sron7" name="sr7" value="true"></g:CheckBox>
+									</div>
 								</td>
 								<td>
-									<g:CheckBox ui:field="lon7" name="l7" value="true"></g:CheckBox>
+									<div>
+										<g:CheckBox ui:field="lon7" name="l7" value="true"></g:CheckBox>
+									</div>
 								</td>
 							</tr>
 							</tbody>
