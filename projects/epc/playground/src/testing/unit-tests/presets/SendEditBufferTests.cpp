@@ -89,13 +89,13 @@ TEST_CASE("Store Action do not send EditBuffer")
 
   //Append preset into bank
   auto oldNumPresets = bank->getNumPresets();
-  useCases.appendPreset(bank);
+  useCases.appendEditBufferToBank(bank);
   auto newNumPresets = bank->getNumPresets();
   CHECK(newNumPresets > oldNumPresets);
 
   //Insert preset into bank at pos 0
   oldNumPresets = bank->getNumPresets();
-  useCases.insertPreset(bank, 0);
+  useCases.insertEditBufferAsPresetAtPosition(bank, 0);
   newNumPresets = bank->getNumPresets();
   CHECK(newNumPresets > oldNumPresets);
 

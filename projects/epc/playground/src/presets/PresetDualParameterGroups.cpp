@@ -11,6 +11,7 @@ PresetDualParameterGroups::PresetDualParameterGroups(UpdateDocumentContributor *
     : AttributesOwner(parent)
 {
   m_type = SoundType::Single;
+  initEmpty();
 }
 
 PresetDualParameterGroups::PresetDualParameterGroups(UpdateDocumentContributor *parent, const Preset &other)
@@ -40,6 +41,25 @@ void PresetDualParameterGroups::writeDocument(Writer &writer, tUpdateID knownRev
   AttributesOwner::writeDocument(writer, knownRevision);
 }
 
+void PresetDualParameterGroups::copyFrom(UNDO::Transaction *transaction, const AttributesOwner *other)
+{
+  AttributesOwner::copyFrom(transaction, other);
+
+  if(auto preset = dynamic_cast<const PresetDualParameterGroups *>(other))
+  {
+    for(auto &vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
+    {
+      auto index = static_cast<size_t>(vg);
+      for(auto &group : preset->m_parameterGroups[index])
+      {
+        auto groupId = group.first;
+        auto &myGroup = m_parameterGroups[index][groupId];
+        myGroup->copyFrom(transaction, group.second.get());
+      }
+    }
+  }
+}
+
 void PresetDualParameterGroups::init(const Preset *preset)
 {
   m_type = preset->getType();
@@ -47,6 +67,15 @@ void PresetDualParameterGroups::init(const Preset *preset)
   for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
     for(auto &group : preset->m_parameterGroups[static_cast<size_t>(vg)])
       m_parameterGroups[static_cast<size_t>(vg)][group.first] = std::make_unique<PresetParameterGroup>(*group.second);
+}
+
+void PresetDualParameterGroups::initEmpty()
+{
+  static ParameterGroupSet sDataScheme(nullptr);
+
+  for(auto vg : { VoiceGroup::Global, VoiceGroup::I, VoiceGroup::II })
+    for(auto &group: sDataScheme.getParameterGroups(vg))
+      m_parameterGroups[static_cast<size_t>(vg)][group->getID()] = std::make_unique<PresetParameterGroup>(*group);
 }
 
 PresetDualParameterGroups::GroupsMap &PresetDualParameterGroups::getGroups(VoiceGroup vg)

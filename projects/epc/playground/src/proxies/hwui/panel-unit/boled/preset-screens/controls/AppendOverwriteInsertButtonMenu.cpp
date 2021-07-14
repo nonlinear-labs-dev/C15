@@ -88,7 +88,7 @@ void AppendOverwriteInsertButtonMenu::executeAction()
       switch(setting)
       {
         case PresetStoreModeSettings::PRESET_STORE_MODE_APPEND:
-          useCases.appendPreset(selectedBank);
+          useCases.appendEditBufferToBank(selectedBank);
           if(modified)
           {
             pushRenameScreen();
@@ -96,7 +96,8 @@ void AppendOverwriteInsertButtonMenu::executeAction()
           break;
 
         case PresetStoreModeSettings::PRESET_STORE_MODE_INSERT:
-          useCases.insertPreset(selectedBank, selectedBank->getPresetPosition(selectedPreset->getUuid()) + 1);
+          useCases.insertEditBufferAsPresetAtPosition(selectedBank,
+                                                      selectedBank->getPresetPosition(selectedPreset->getUuid()) + 1);
           if(modified)
             pushRenameScreen();
           else
@@ -104,14 +105,14 @@ void AppendOverwriteInsertButtonMenu::executeAction()
           break;
 
         case PresetStoreModeSettings::PRESET_STORE_MODE_OVERWRITE:
-          useCases.overwritePreset(selectedPreset);
+          useCases.overwritePresetWithEditBuffer(selectedPreset);
           animate();
           break;
       }
     }
     else
     {
-      useCases.insertPreset(selectedBank, 0);
+      useCases.insertEditBufferAsPresetAtPosition(selectedBank, 0);
       pushRenameScreen();
     }
   }

@@ -107,7 +107,7 @@ BankActions::BankActions(PresetManager &presetManager)
       }
       else
       {
-        useCases.overwritePreset(targetPreset);
+        useCases.overwritePresetWithEditBuffer(targetPreset);
       }
     }
     else
@@ -147,19 +147,19 @@ BankActions::BankActions(PresetManager &presetManager)
   addAction("overwrite-preset-with-editbuffer", [&](std::shared_ptr<NetworkRequest> request) {
     auto presetToOverwrite = request->get("presetToOverwrite");
     PresetManagerUseCases useCase(&m_presetManager);
-    useCase.overwritePreset(Uuid { presetToOverwrite });
+    useCase.overwritePresetWithEditBuffer(Uuid { presetToOverwrite });
   });
 
   addAction("append-preset", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto b = m_presetManager.getSelectedBank();
-    std::string fallBack = b ? b->getUuid().raw() : "";
+    auto fallBack = b ? b->getUuid().raw() : "";
     auto bankToAppendTo = request->get("bank-uuid", fallBack);
     auto uuid = request->get("uuid");
 
     if(auto bank = m_presetManager.findBank(Uuid { bankToAppendTo }))
     {
       PresetManagerUseCases useCase(&m_presetManager);
-      useCase.appendPresetWithUUID(bank, uuid);
+      useCase.appendEditBufferAsPresetWithUUID(bank, uuid);
     }
   });
 
@@ -169,8 +169,11 @@ BankActions::BankActions(PresetManager &presetManager)
 
     if(auto bank = m_presetManager.findBank(Uuid { bankUuid }))
     {
-      PresetManagerUseCases useCases(&m_presetManager);
-      useCases.appendPreset(bank);
+      if(auto srcPreset = m_presetManager.findPreset(Uuid { presetUuid }))
+      {
+        PresetManagerUseCases useCases(&m_presetManager);
+        useCases.appendPreset(bank, srcPreset);
+      }
     }
   });
 
@@ -192,7 +195,7 @@ BankActions::BankActions(PresetManager &presetManager)
     if(auto bank = m_presetManager.findBankWithPreset(Uuid { selUuid }))
     {
       auto desiredPresetPos = bank->getPresetPosition(Uuid { selUuid }) + 1;
-      useCases.insertPreset(bank, desiredPresetPos);
+      useCases.insertEditBufferAsPresetAtPosition(bank, desiredPresetPos);
     }
   });
 

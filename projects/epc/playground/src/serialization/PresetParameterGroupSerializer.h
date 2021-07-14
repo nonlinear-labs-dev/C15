@@ -13,7 +13,7 @@ class PresetParameterGroupSerializer : public Serializer
 
   static Glib::ustring getTagName();
 
- private:
+ protected:
   void writeTagContent(Writer &writer) const override;
   void readTagContent(Reader &reader) const override;
 

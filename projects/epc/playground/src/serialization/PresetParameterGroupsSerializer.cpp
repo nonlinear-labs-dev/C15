@@ -1,5 +1,7 @@
 #include "PresetParameterGroupsSerializer.h"
 #include "PresetParameterGroupSerializer.h"
+#include "SplitGroupsFromOldGlobalGroupSerializer.h"
+#include "PresetSplitGroupsFromOldGlobalGroupSerializer.h"
 #include <presets/Preset.h>
 #include <presets/PresetParameterGroup.h>
 
@@ -28,8 +30,13 @@ void PresetParameterGroupsSerializer::writeTagContent(Writer& writer) const
 
 void PresetParameterGroupsSerializer::readTagContent(Reader& reader) const
 {
-  reader.onTag(PresetParameterGroupSerializer::getTagName(), [&](const Attributes& attr) mutable {
+  reader.onTag(PresetParameterGroupSerializer::getTagName(), [&](const Attributes& attr) mutable -> PresetParameterGroupSerializer* {
     auto groupID = GroupId(attr.get("id"));
-    return new PresetParameterGroupSerializer(m_preset->findOrCreateParameterGroup(groupID), m_preset->getType());
+
+    if(groupID.getName() == "Split" && groupID.getVoiceGroup() == VoiceGroup::Global) {
+      return new PresetSplitGroupsFromOldGlobalGroupSerializer(m_preset);
+    } else {
+      return new PresetParameterGroupSerializer(m_preset->findOrCreateParameterGroup(groupID), m_preset->getType());
+    }
   });
 }

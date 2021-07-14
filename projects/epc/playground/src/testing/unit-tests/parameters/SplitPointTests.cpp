@@ -110,11 +110,11 @@ TEST_CASE("Sync Setting gets updated on store and load")
   TestHelper::initDualEditBuffer<SoundType::Split>();
 
   CHECK_FALSE(sI->hasOverlap());
-  pmUseCases.appendPreset(b);
+  pmUseCases.appendEditBufferToBank(b);
   presetWithoutOverlap = pm->getSelectedPreset();
 
   createEBWithOverlap();
-  pmUseCases.appendPreset(b);
+  pmUseCases.appendEditBufferToBank(b);
   presetWithOverlap = pm->getSelectedPreset();
 
   auto syncSetting = Application::get().getSettings()->getSetting<SplitPointSyncParameters>();
@@ -144,7 +144,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("gets Stored")
     {
-      pmUseCases.appendPreset(b);
+      pmUseCases.appendEditBufferToBank(b);
       THEN("Sync Setting stays Enabled")
       {
         CHECK(syncSetting->get());
@@ -177,7 +177,7 @@ TEST_CASE("Sync Setting gets updated on store and load")
 
     WHEN("gets Stored")
     {
-      pmUseCases.appendPreset(b);
+      pmUseCases.appendEditBufferToBank(b);
       THEN("Sync Setting stays Disabled")
       {
         CHECK(!syncSetting->get());
