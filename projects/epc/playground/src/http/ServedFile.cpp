@@ -22,7 +22,7 @@ void ServedFile::startServing()
     filePath = m_request->getPath();
   else
     filePath = getFilePathFromMessagePath();
-  
+
   Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(filePath);
 
   if(file->query_exists())

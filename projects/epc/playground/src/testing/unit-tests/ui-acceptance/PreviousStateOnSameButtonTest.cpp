@@ -12,7 +12,7 @@ TEST_CASE("Test Previous Boled Focus on Button")
 
   {
     auto scope = TestHelper::createTestScope();
-    TestHelper::getEditBuffer()->undoableSelectParameter(scope->getTransaction(), { 0, VoiceGroup::I });
+    TestHelper::getEditBuffer()->undoableSelectParameter(scope->getTransaction(), { 0, VoiceGroup::I }, false);
   }
 
   editPanel.getBoled().bruteForce();
@@ -30,8 +30,8 @@ TEST_CASE("Test Previous Boled Focus on Button")
 
   auto getFocusAndMode = [&hwui] { return hwui->getFocusAndMode(); };
 
-  const auto min = std::chrono::milliseconds(200);
-  const auto max = std::chrono::milliseconds(1000);
+  const auto min = std::chrono::milliseconds(20);
+  const auto max = std::chrono::milliseconds(500);
 
   TestHelper::doMainLoop(min, max, [&] { return isParameterLayout(getLayout()); });
 

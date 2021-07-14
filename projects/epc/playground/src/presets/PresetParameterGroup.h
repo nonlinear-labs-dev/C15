@@ -18,13 +18,13 @@ using ParameterPtr = std::unique_ptr<PresetParameter>;
 class PresetParameterGroup
 {
  public:
-  PresetParameterGroup(VoiceGroup vg);
-  PresetParameterGroup(const ::ParameterGroup &other);
+  explicit PresetParameterGroup(VoiceGroup vg);
+  explicit PresetParameterGroup(const ::ParameterGroup &other);
   PresetParameterGroup(const PresetParameterGroup &other);
   ~PresetParameterGroup();
 
   // accessors
-  PresetParameter *findParameterByID(ParameterId id) const;
+  [[nodiscard]] PresetParameter *findParameterByID(ParameterId id) const;
 
   void writeDocument(Writer &writer) const;
 
@@ -33,12 +33,12 @@ class PresetParameterGroup
   void copyFrom(UNDO::Transaction *transaction, const ::ParameterGroup *other);
   void assignVoiceGroup(UNDO::Transaction *transaction, VoiceGroup vg);
 
-  const std::map<ParameterId, ParameterPtr> &getParameters() const
+  [[nodiscard]] const std::map<ParameterId, ParameterPtr> &getParameters() const
   {
     return m_parameters;
   }
 
-  VoiceGroup getVoiceGroup() const;
+  [[nodiscard]] VoiceGroup getVoiceGroup() const;
 
   // algorithm
   void writeDiff(Writer &writer, const GroupId &groupId, const PresetParameterGroup *other) const;

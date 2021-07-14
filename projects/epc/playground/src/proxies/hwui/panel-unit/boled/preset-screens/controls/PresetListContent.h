@@ -14,8 +14,8 @@ class PresetListContent : public ControlWithChildren
   typedef ControlWithChildren super;
 
  public:
-  PresetListContent(const Rect &pos);
-  virtual ~PresetListContent();
+  explicit PresetListContent(const Rect &pos);
+  ~PresetListContent() override;
 
   void setup(Bank *bank, size_t focussedPresetPos);
   bool animateSelectedPreset(std::function<void()> cb);
@@ -24,7 +24,6 @@ class PresetListContent : public ControlWithChildren
   bool isTransparent() const override;
 
  private:
-  void onEditBufferChanged();
   Preset *getPresetAtPosition(Bank *bank, int pos) const;
 
   PresetListEntry *m_firstPreset = nullptr;

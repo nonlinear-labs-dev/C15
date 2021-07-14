@@ -30,32 +30,23 @@ public class SplitPointsKeyBedEditor extends KeyBedEditor {
     public void doLayout(double x, double y, double w, double h) {
         super.doLayout(x, y, w, h);
 
-        int parts = 8;
-        double partWidth = w / parts;
-
-        // button and close button have to be in sync with buttons in SoundLayout
         double settingsWidth = closeButton.getPictureWidth();
         double settingsHeight = closeButton.getPictureHeight();
         double xMargin = settingsWidth * 0.5;
-        button.doLayout(7 * partWidth - settingsWidth / 2, h / 2 - settingsHeight / 2, settingsWidth, settingsHeight);
-        closeButton.doLayout(button.getRelativePosition().getRight() + xMargin, h / 2 - settingsHeight / 2,
-                settingsWidth, settingsHeight);
 
-        // right control aligns itself to the buttons
+        int parts = 8;
+        double partWidth = w / parts;
+        double keysWidth = Math.min(keys.getPictureWidth(), partWidth * 5);
+        keysPane.doLayout(x + (w / 2) - (keysWidth / 2), y, keysWidth, h);
+
         double valueWidth = Math.max(partWidth * 0.75, Millimeter.toPixels(10));
-        rightControls.doLayout(button.getRelativePosition().getLeft() - valueWidth - xMargin, h / 2 - h / 8, valueWidth,
-                h / 4);
+        leftControls.doLayout(keysPane.getRelativePosition().getLeft() - valueWidth - xMargin, h / 2 - settingsHeight / 2, valueWidth, settingsHeight);        
+        rightControls.doLayout(keysPane.getRelativePosition().getRight() + xMargin, h / 2 - settingsHeight / 2, valueWidth, settingsHeight);
 
-        // left button should be same distance to border as right button
-        leftControls.doLayout(w - rightControls.getRelativePosition().getRight(), h / 2 - h / 8, valueWidth, h / 4);
+        double closeXAvaliableSpace = w - rightControls.getRelativePosition().getRight();
+        double closeX = rightControls.getRelativePosition().getRight() + (closeXAvaliableSpace / 2);
 
-        // the rest is for the keys
-        double keysLeft = leftControls.getRelativePosition().getRight() + xMargin;
-        double keysRight = rightControls.getRelativePosition().getLeft() - xMargin;
-        double keysWidth = Math.max(keysRight - keysLeft, 0);
-        double keysWidthClamped = Math.min(keys.getPictureWidth(), keysWidth);
-        keysLeft += (keysWidth - keysWidthClamped) / 2;
-
-        keysPane.doLayout(keysLeft, 0, keysWidthClamped, h);
+        closeButton.doLayout(closeX - settingsWidth * 0.5, (h / 2) - settingsHeight * 1.25, settingsWidth, settingsHeight);
+        button.doLayout(closeX - settingsWidth * 0.5, (h / 2 ) + (settingsHeight / 4), settingsWidth, settingsHeight);
     }
 }

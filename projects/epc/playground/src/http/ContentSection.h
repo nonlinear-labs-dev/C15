@@ -10,14 +10,14 @@ class NetworkRequest;
 class ContentSection : public UpdateDocumentContributor
 {
  public:
-  ContentSection(UpdateDocumentContributor *parent);
-  virtual ~ContentSection();
+  explicit ContentSection(UpdateDocumentContributor *parent);
+  ~ContentSection() override;
 
   /*! return the prefix for routing requests to this section */
-  virtual Glib::ustring getPrefix() const = 0;
+  [[nodiscard]] virtual Glib::ustring getPrefix() const = 0;
 
   /*! write the xml to the message */
   virtual void handleHTTPRequest(std::shared_ptr<NetworkRequest> request, const Glib::ustring &path);
 
-  bool contains(const Glib::ustring &path) const;
+  [[nodiscard]] bool contains(const Glib::ustring &path) const;
 };

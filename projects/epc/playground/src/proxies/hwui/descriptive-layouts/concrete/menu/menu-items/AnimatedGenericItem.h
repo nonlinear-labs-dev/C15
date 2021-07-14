@@ -12,7 +12,7 @@ class Animator
 
   Animator(std::chrono::milliseconds length, ProgressCB pcb, FinishedCB fcb);
   virtual ~Animator();
-  float getAnimationPosition() const;
+  [[nodiscard]] float getAnimationPosition() const;
 
  private:
   bool doAnimation();

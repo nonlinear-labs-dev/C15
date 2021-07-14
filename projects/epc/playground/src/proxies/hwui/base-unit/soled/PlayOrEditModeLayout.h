@@ -13,7 +13,7 @@ class PlayOrEditModeLayout : public Layout
 
  public:
   PlayOrEditModeLayout();
-  virtual ~PlayOrEditModeLayout();
+  ~PlayOrEditModeLayout() override;
 
  protected:
   int getBehaviourLeft() const;

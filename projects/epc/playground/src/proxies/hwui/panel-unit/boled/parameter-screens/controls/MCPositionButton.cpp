@@ -14,12 +14,12 @@ void MCPositionButton::update(const Parameter *parameter)
   if(const auto *p = dynamic_cast<const ModulateableParameter *>(parameter))
   {
     if(p->getModulationSource() == MacroControls::NONE)
-      setText("");
+      setText(StringAndSuffix { "" });
     else
-      setText({ std::string("MC Pos") + (p->isMacroControlAssignedAndChanged() ? "*" : "") });
+      setText(StringAndSuffix { std::string("MC Pos") + (p->isMacroControlAssignedAndChanged() ? "*" : "") });
   }
   else
   {
-    setText("");
+    setText(StringAndSuffix::empty());
   }
 }

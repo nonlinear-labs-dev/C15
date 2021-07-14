@@ -10,10 +10,10 @@ class AboutLayout : public Layout
 
  public:
   AboutLayout();
-  virtual ~AboutLayout();
+  ~AboutLayout() override;
 
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
  private:
   ScrollArea *m_scrollArea = nullptr;

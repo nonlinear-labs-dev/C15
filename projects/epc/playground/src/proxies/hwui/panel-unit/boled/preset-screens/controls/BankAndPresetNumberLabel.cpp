@@ -50,6 +50,10 @@ bool BankAndPresetNumberLabel::redraw(FrameBuffer &fb)
   {
     text = "Init";
   }
+  else if(uuid == Uuid::restored())
+  {
+    text = "Restored";
+  }
   else
   {
     text = "";

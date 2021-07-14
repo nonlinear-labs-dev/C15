@@ -9,19 +9,17 @@ class ClippedValue : public RawValue
 
  public:
   ClippedValue(const ScaleConverter* scale, tValueType def);
-  virtual ~ClippedValue();
+  ~ClippedValue() override;
 
-  tValueType getClippedValue() const;
-  tValueType getClippedValue(tValueType t) const;
-  tValueType clip(tValueType v) const;
-  tValueType getUpperBorder() const;
-  tValueType getLowerBorder() const;
+  [[nodiscard]] tValueType getClippedValue() const;
+  [[nodiscard]] tValueType getClippedValue(tValueType t) const;
+  [[nodiscard]] tValueType clip(tValueType v) const;
+  [[nodiscard]] tValueType getUpperBorder() const;
+  [[nodiscard]] tValueType getLowerBorder() const;
+  ClippedValue(const ClippedValue& other) = delete;
+  ClippedValue& operator=(const ClippedValue&) = delete;
 
  protected:
   void onRawValueChanged(Initiator initiator, tValueType oldRawValue, tValueType newRawValue) override;
   virtual void onClippedValueChanged(Initiator initiator, tValueType oldClippedValue, tValueType newClippedValue) = 0;
-
- private:
-  ClippedValue(const ClippedValue& other) = delete;
-  ClippedValue& operator=(const ClippedValue&) = delete;
 };

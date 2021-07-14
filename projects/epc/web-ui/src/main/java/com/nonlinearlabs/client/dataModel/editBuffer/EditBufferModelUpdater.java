@@ -1,5 +1,6 @@
 package com.nonlinearlabs.client.dataModel.editBuffer;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.dataModel.Updater;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
@@ -19,6 +20,7 @@ public class EditBufferModelUpdater extends Updater {
 			ParameterId selParam = new ParameterId(selParamStr);
 			EditBufferModel.get().selectedParameter.setValue(selParam.getNumber());
 			String loadedPreset = getAttributeValue(root, "loaded-preset");
+			GWT.log("Loaded Preset:" + loadedPreset);
 			EditBufferModel.get().loadedPreset.setValue(loadedPreset);
 			String loadedPresetName = getAttributeValue(root, "loaded-presets-name");
 			EditBufferModel.get().loadedPresetName.setValue(loadedPresetName);

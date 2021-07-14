@@ -11,6 +11,7 @@
 #include <presets/Preset.h>
 #include <presets/EditBuffer.h>
 #include <http/UndoScope.h>
+#include <use-cases/PresetUseCases.h>
 
 AppendOverwriteInsertButtonMenu::AppendOverwriteInsertButtonMenu(PresetManagerLayout& parent, const Rect& rect)
     : super(rect)
@@ -71,8 +72,8 @@ bool AppendOverwriteInsertButtonMenu::animate()
 
 void AppendOverwriteInsertButtonMenu::executeAction()
 {
-  auto useCases = Application::get().getPresetManagerUseCases();
   auto pm = Application::get().getPresetManager();
+  PresetManagerUseCases useCases(pm);
   auto actionPosition = m_parent.getSelectedPosition();
 
   if(auto selectedBank = pm->getBankAt(actionPosition.first))
@@ -87,7 +88,7 @@ void AppendOverwriteInsertButtonMenu::executeAction()
       switch(setting)
       {
         case PresetStoreModeSettings::PRESET_STORE_MODE_APPEND:
-          useCases->appendPreset(selectedBank);
+          useCases.appendPreset(selectedBank);
           if(modified)
           {
             pushRenameScreen();
@@ -95,7 +96,7 @@ void AppendOverwriteInsertButtonMenu::executeAction()
           break;
 
         case PresetStoreModeSettings::PRESET_STORE_MODE_INSERT:
-          useCases->insertPreset(selectedBank, selectedBank->getPresetPosition(selectedPreset->getUuid()) + 1);
+          useCases.insertPreset(selectedBank, selectedBank->getPresetPosition(selectedPreset->getUuid()) + 1);
           if(modified)
             pushRenameScreen();
           else
@@ -103,20 +104,20 @@ void AppendOverwriteInsertButtonMenu::executeAction()
           break;
 
         case PresetStoreModeSettings::PRESET_STORE_MODE_OVERWRITE:
-          useCases->overwritePreset(selectedPreset);
+          useCases.overwritePreset(selectedPreset);
           animate();
           break;
       }
     }
     else
     {
-      useCases->insertPreset(selectedBank, 0);
+      useCases.insertPreset(selectedBank, 0);
       pushRenameScreen();
     }
   }
   else
   {
-    useCases->createBankAndStoreEditBuffer();
+    useCases.createBankAndStoreEditBuffer();
   }
 }
 
@@ -128,11 +129,8 @@ void AppendOverwriteInsertButtonMenu::pushRenameScreen()
         {
           if(auto preset = bank->getSelectedPreset())
           {
-            if(preset->getName() != newName)
-            {
-              auto scope = Application::get().getUndoScope()->startTransaction("Rename preset");
-              preset->setName(scope->getTransaction(), newName);
-            }
+            PresetUseCases useCases(preset);
+            useCases.rename(newName);
           }
         }
         animate();

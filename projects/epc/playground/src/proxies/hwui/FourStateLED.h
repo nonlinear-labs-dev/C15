@@ -18,7 +18,7 @@ class FourStateLED : public LED
   };
 
   void setState(State state);
-  State getState() const;
+  [[nodiscard]] State getState() const;
   void syncHWUI();
 
  private:

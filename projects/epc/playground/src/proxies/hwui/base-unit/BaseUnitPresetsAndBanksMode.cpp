@@ -9,11 +9,16 @@
 #include <proxies/hwui/base-unit/BaseUnitPresetsAndBanksMode.h>
 #include <proxies/hwui/buttons.h>
 #include <proxies/hwui/HWUIEnums.h>
+#include <use-cases/DirectLoadUseCases.h>
 
 BaseUnitPresetsAndBanksMode::BaseUnitPresetsAndBanksMode()
     : m_modeButtonHandler(std::bind(&BaseUnitPresetsAndBanksMode::modeButtonShortPress, this),
                           std::bind(&BaseUnitPresetsAndBanksMode::modeButtonLongPress, this))
-    , m_funcButtonHandler([] {}, [] { Application::get().getSettings()->getSetting<DirectLoadSetting>()->toggle(); })
+    , m_funcButtonHandler([] {}, [] {
+                            auto setting = Application::get().getSettings()->getSetting<DirectLoadSetting>().get();
+                            DirectLoadUseCases useCase(setting);
+                            useCase.toggleDirectLoadFromBaseUnit();
+                          })
 {
 }
 

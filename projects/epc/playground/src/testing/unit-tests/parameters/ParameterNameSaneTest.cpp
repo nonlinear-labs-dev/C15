@@ -9,7 +9,7 @@ TEST_CASE("No Parameter Name Contains '@VG' placeholder")
     for(auto& g : TestHelper::getEditBuffer()->getParameterGroups(vg))
       for(auto& p : g->getParameters())
       {
-        REQUIRE(p->getLongName().find("@VG") == std::string::npos);
-        REQUIRE(p->getShortName().find("@VG") == std::string::npos);
+        CHECK(p->getLongName().find("@VG") == std::string::npos);
+        CHECK(p->getShortName().find("@VG") == std::string::npos);
       }
 }

@@ -172,7 +172,7 @@ static int8_t showHWandFWids(void)
       c       = 0;
       show_id = 0;  // stop
       step    = 0;  // reset sequence
-      break;  
+      break;
   }
   return c;
 }

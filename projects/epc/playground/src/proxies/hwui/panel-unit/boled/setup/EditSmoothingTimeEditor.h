@@ -12,9 +12,9 @@ class EditSmoothingTimeEditor : public SetupLabel, public SetupEditor
 
  public:
   EditSmoothingTimeEditor();
-  virtual ~EditSmoothingTimeEditor();
+  ~EditSmoothingTimeEditor() override;
 
-  virtual Font::Justification getJustification() const override;
+  Font::Justification getJustification() const override;
 
  private:
   bool redraw(FrameBuffer &fb) override;

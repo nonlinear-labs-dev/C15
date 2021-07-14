@@ -75,7 +75,7 @@ bool SelectedParameterModAmount::redraw(FrameBuffer &fb)
 
 void SelectedParameterModAmount::onParamValueChanged(const Parameter *param)
 {
-  if(const ModulateableParameter *p = dynamic_cast<const ModulateableParameter *>(param))
+  if(const auto *p = dynamic_cast<const ModulateableParameter *>(param))
   {
     auto range = p->getModulationRange(true);
     setRange(range.first, range.second);

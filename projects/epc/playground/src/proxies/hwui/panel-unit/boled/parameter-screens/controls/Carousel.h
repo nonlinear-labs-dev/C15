@@ -20,6 +20,6 @@ class Carousel : public ControlWithChildren
  private:
   Carousel(const Carousel &other);
   Carousel &operator=(const Carousel &);
-  
+
   void setupSelected();
 };

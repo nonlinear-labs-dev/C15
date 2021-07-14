@@ -9,11 +9,11 @@ class FileInStream : public InStream
 {
  public:
   FileInStream(const Glib::ustring &fileName, bool tryZip);
-  virtual ~FileInStream();
+  ~FileInStream() override;
 
   Glib::ustring read() override;
   std::vector<uint8_t> readAll() override;
-  bool eof() const;
+  [[nodiscard]] bool eof() const override;
 
  private:
   GDataInputStream *m_stream = nullptr;

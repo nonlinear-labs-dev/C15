@@ -2,8 +2,8 @@
 #include "Attribute.h"
 #include "OutStream.h"
 
-Writer::Writer(std::unique_ptr<OutStream> out)
-    : m_out(std::move(out))
+Writer::Writer(OutStream &out)
+    : m_out(out)
 {
 }
 
@@ -110,12 +110,12 @@ void Writer::writeTag(const Glib::ustring &name, const Attribute &a, const Attri
 
 void Writer::writeToStream(const Glib::ustring &str)
 {
-  m_out->write(str);
+  m_out.write(str);
 }
 
 void Writer::writeToStream(const char *buf, size_t numBytes)
 {
-  m_out->write(buf, numBytes);
+  m_out.write(buf, numBytes);
 }
 
 void Writer::writeAttributes(const std::initializer_list<Attribute> &attr)

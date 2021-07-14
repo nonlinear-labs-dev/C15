@@ -3,9 +3,10 @@
 #include <device-settings/Settings.h>
 #include <proxies/hwui/panel-unit/boled/setup/MenuEditorEntry.h>
 #include <proxies/hwui/panel-unit/boled/setup/PedalEditor.h>
+#include <utility>
 
 PedalEditor::PedalEditor(std::shared_ptr<PedalType> m)
-    : m_mode(m)
+    : m_mode(std::move(m))
 {
   m_mode->onChange(mem_fun(this, &PedalEditor::onSettingChanged));
 }
@@ -14,7 +15,7 @@ PedalEditor::~PedalEditor() = default;
 
 void PedalEditor::incSetting(int inc)
 {
-  m_mode->inc(inc, false);
+  m_mode->incDec(inc, false);
 }
 
 const std::vector<Glib::ustring>& PedalEditor::getDisplayStrings() const

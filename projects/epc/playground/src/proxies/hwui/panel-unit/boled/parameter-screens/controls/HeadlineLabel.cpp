@@ -48,7 +48,7 @@ bool HeadlineLabel::redraw(FrameBuffer &fb)
 void HeadlineLabel::updateText(Parameter *oldParam, Parameter *newParam)
 {
   if(newParam)
-    setText(newParam->getLongName());
+    setText(StringAndSuffix { newParam->getLongName() });
 }
 
 void HeadlineLabel::updateMc(const Parameter *param)
@@ -57,6 +57,6 @@ void HeadlineLabel::updateMc(const Parameter *param)
 
   if(mc != nullptr)
   {
-    setText(mc->getLongName());
+    setText(StringAndSuffix { mc->getLongName() });
   }
 }

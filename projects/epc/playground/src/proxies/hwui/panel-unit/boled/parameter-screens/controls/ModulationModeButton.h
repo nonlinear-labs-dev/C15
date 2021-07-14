@@ -12,8 +12,7 @@ class ModulationModeButton : public Button
 
  public:
   ModulationModeButton(const Glib::ustring &caption, Buttons id);
-
-  virtual ~ModulationModeButton();
+  ~ModulationModeButton() override;
 
  protected:
   virtual void update(const Parameter *parameter) = 0;

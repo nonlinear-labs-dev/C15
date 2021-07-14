@@ -5,6 +5,6 @@
 class UndoIndicator : public Label
 {
  public:
-  UndoIndicator(const Rect &pos);
+  explicit UndoIndicator(const Rect &pos);
   bool redraw(FrameBuffer &fb) override;
 };

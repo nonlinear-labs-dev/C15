@@ -35,13 +35,16 @@ Carousel *ModulationRouterParameterSelectLayout2::createCarousel(const Rect &rec
 
 bool ModulationRouterParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 {
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  EditBufferUseCases ebUseCases { eb };
+
   if(down)
   {
     if(i == Buttons::BUTTON_A)
     {
       if(auto p = dynamic_cast<ModulationRoutingParameter *>(getCurrentParameter()))
       {
-        Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(p->getSourceParameter());
+        ebUseCases.selectParameter(p->getSourceParameter());
       }
 
       return true;
@@ -52,7 +55,7 @@ bool ModulationRouterParameterSelectLayout2::onButton(Buttons i, bool down, Butt
       if(auto p = dynamic_cast<ModulationRoutingParameter *>(getCurrentParameter()))
       {
         p->getSourceParameter()->setUiSelectedModulationRouter(p->getID());
-        Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(p->getTargetParameter());
+        ebUseCases.selectParameter(p->getTargetParameter());
       }
 
       return true;

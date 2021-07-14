@@ -9,7 +9,7 @@ class UnmodulateableUnisonParameter : public Parameter
 {
  public:
   template <typename... tArgs>
-  UnmodulateableUnisonParameter(tArgs... args)
+  explicit UnmodulateableUnisonParameter(tArgs... args)
       : Parameter(args...)
   {
   }

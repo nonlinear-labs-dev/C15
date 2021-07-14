@@ -9,7 +9,7 @@ class BarSlider : public Slider
 
  public:
   BarSlider(Parameter *param, const Rect &rect);
-  BarSlider(const Rect &rect);
+  explicit BarSlider(const Rect &rect);
 
   bool redraw(FrameBuffer &fb) override;
   virtual tDisplayValue getDrawValue() const;

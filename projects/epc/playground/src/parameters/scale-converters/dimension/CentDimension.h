@@ -11,7 +11,7 @@ class CentDimension : public Dimension
   virtual ~CentDimension();
 
   static const CentDimension &get();
-  Glib::ustring getStingizerJS() const override;
+  [[nodiscard]] Glib::ustring getStingizerJS() const override;
 
-  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
+  [[nodiscard]] Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 };

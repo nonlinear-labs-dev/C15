@@ -9,7 +9,7 @@ class LED
   virtual ~LED();
 
   void setID(int id);
-  int getID() const;
+  [[nodiscard]] int getID() const;
 
  private:
   int m_ledID;

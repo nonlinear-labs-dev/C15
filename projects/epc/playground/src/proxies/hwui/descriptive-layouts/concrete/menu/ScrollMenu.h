@@ -26,7 +26,7 @@ class ScrollMenu : public ControlWithChildren, public ButtonReceiver
   MenuOverlay *m_overlay = nullptr;
 
   std::vector<MenuItem *> m_items;
-  int m_selectedItem{ 0 };
+  int m_selectedItem { 0 };
 
   bool handleScrolling(const Buttons &i, bool down);
   bool onButtonOverlay(const Buttons &i, bool down, const ButtonModifiers &mod);

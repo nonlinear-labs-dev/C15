@@ -48,7 +48,7 @@ void MCPositionLabel::updateTarget(const Parameter *parameter)
     }
   }
 
-  setText("");
+  setText(StringAndSuffix::empty());
 }
 
 void MCPositionLabel::updateSource(const Parameter *parameter)
@@ -65,12 +65,12 @@ void MCPositionLabel::updateSource(const Parameter *parameter)
     }
     else
     {
-      setText(t);
+      setText(StringAndSuffix { t });
     }
   }
   else
   {
-    setText("");
+    setText(StringAndSuffix::empty());
   }
 }
 void MCPositionLabel::setSuffixFontColor(FrameBuffer &fb) const
@@ -80,7 +80,8 @@ void MCPositionLabel::setSuffixFontColor(FrameBuffer &fb) const
 
 void MCPositionLabel::onModifiersChanged()
 {
-  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
+  onParameterSelected(
+      Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }
 
 void MCPositionLabel::ensureDisconnectedModulationSourceIfApplicable(const Parameter *parameter)
@@ -90,7 +91,7 @@ void MCPositionLabel::ensureDisconnectedModulationSourceIfApplicable(const Param
     if(modP->getModulationSource() == MacroControls::NONE)
     {
       m_mcValueConnection.disconnect();
-      setText("");
+      setText(StringAndSuffix::empty());
     }
   }
 }

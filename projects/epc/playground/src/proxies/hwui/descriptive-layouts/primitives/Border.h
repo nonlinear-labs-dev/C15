@@ -12,8 +12,8 @@ namespace DescriptiveLayouts
   class Border : public Control, public Styleable, public PropertyOwner
   {
    public:
-    Border(const PrimitiveInstance &e);
-    virtual ~Border();
+    explicit Border(const PrimitiveInstance &e);
+    ~Border() override;
     void setProperty(PrimitiveProperty key, std::experimental::any value) override;
 
    protected:

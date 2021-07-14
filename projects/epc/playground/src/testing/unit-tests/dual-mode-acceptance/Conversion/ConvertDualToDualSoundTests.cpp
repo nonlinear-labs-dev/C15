@@ -281,7 +281,8 @@ TEST_CASE("Convert Layer I to Split")
     THEN("Split is mean of fade from I and II")
     {
       CHECK_PARAMETER_CP_EQUALS_FICTION(EBL::getSplitPoint<VoiceGroup::I>(), (oldFromI + oldFromII) / 2.0);
-      auto II = EBL::getSplitPoint<VoiceGroup::I>()->getValue().getNextStepValue((oldFromI + oldFromII) / 2.0, 1, {});
+      auto II = EBL::getSplitPoint<VoiceGroup::I>()->getValue().getNextStepValue((oldFromI + oldFromII) / 2.0, 1, false,
+                                                                                 false);
       CHECK_PARAMETER_CP_EQUALS_FICTION(EBL::getSplitPoint<VoiceGroup::II>(), II);
     }
 

@@ -35,7 +35,7 @@ namespace DescriptiveLayouts
       setValue(value);
     }
 
-    ButtonParameterMapping m_mapping{};
+    ButtonParameterMapping m_mapping {};
   };
 
   class IsNotOnlyParameterOnButton : public IsOnlyParameterOnButton

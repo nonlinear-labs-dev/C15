@@ -6,7 +6,7 @@ class OscillatorAGroup : public ParameterGroup
 {
  public:
   OscillatorAGroup(ParameterGroupSet *parent, VoiceGroup voicegroup);
-  virtual ~OscillatorAGroup();
+  ~OscillatorAGroup() override;
 
-  void init();
+  void init() override;
 };

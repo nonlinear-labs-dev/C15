@@ -11,7 +11,7 @@ class SOLED : public OLEDProxy
 
  public:
   SOLED();
-  virtual ~SOLED();
+  ~SOLED() override;
   void init();
   void resetSplash();
 

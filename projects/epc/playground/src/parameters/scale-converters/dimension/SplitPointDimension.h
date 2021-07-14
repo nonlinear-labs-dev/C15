@@ -7,6 +7,6 @@
 class SplitPointDimension : public KeyDimension
 {
  public:
-  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
+  [[nodiscard]] Glib::ustring stringize(const tDisplayValue &displayValue) const override;
   static const SplitPointDimension &get();
 };

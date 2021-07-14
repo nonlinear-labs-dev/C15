@@ -1,8 +1,14 @@
+#include <device-settings/ScreenSaverTimeoutSetting.h>
 #include "HardwareUserInterfaceUnit.h"
 #include "UsageMode.h"
+#include <Application.h>
+#include <device-settings/Settings.h>
+#include <proxies/hwui/panel-unit/ScreenSaverUsageMode.h>
 
 HardwareUserInterfaceUnit::HardwareUserInterfaceUnit()
 {
+  Application::get().getSettings()->getSetting<ScreenSaverTimeoutSetting>()->onScreenSaverStateChanged(
+      sigc::mem_fun(this, &HardwareUserInterfaceUnit::onScreenSaverStateChanged));
 }
 
 HardwareUserInterfaceUnit::~HardwareUserInterfaceUnit()
@@ -36,20 +42,28 @@ void HardwareUserInterfaceUnit::restoreUsageMode(std::shared_ptr<UsageMode> mode
     m_usageMode->bruteForceUpdateLeds();
 }
 
-std::shared_ptr<UsageMode> HardwareUserInterfaceUnit::getUsageMode()
+std::shared_ptr<UsageMode> HardwareUserInterfaceUnit::getUsageMode() const
 {
-  return m_usageMode;
-}
-
-std::shared_ptr<const UsageMode> HardwareUserInterfaceUnit::getUsageMode() const
-{
+  if(m_screenSaverActive)
+    return getScreenSaverUsageMode();
   return m_usageMode;
 }
 
 bool HardwareUserInterfaceUnit::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
-  if(m_usageMode)
-    return m_usageMode->onButtonPressed(buttonID, modifiers, state);
+  if(auto mode = getUsageMode())
+    return mode->onButtonPressed(buttonID, modifiers, state);
 
   return false;
+}
+
+void HardwareUserInterfaceUnit::onScreenSaverStateChanged(bool state)
+{
+  m_screenSaverActive = state;
+}
+
+std::shared_ptr<UsageMode> HardwareUserInterfaceUnit::getScreenSaverUsageMode() const
+{
+  static auto sScreenSaver = std::make_shared<ScreenSaverUsageMode>();
+  return sScreenSaver;
 }

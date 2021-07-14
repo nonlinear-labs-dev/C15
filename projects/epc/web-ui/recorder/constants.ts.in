@@ -1,0 +1,5 @@
+
+var httpPort = ":@RECORDER_HTTPSERVER_PORT@";
+var wsPort = ":@RECORDER_WEBSOCKET_PORT@";
+var playgroundHttpPort = ":@PLAYGROUND_HTTPSERVER_PORT@";
+var wsPresetLogPort = ":@PLAYGROUND_PRESETLOAD_LOG_PORT@";

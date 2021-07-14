@@ -11,6 +11,6 @@ void StandardOutStream::implWrite(const void *buf, size_t numBytes)
 }
 
 StandardOutStream::StandardOutStream(std::shared_ptr<std::ostream> out)
-    : m_out{ std::move(out) }
+    : m_out { std::move(out) }
 {
 }

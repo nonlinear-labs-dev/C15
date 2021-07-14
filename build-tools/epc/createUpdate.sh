@@ -1,7 +1,7 @@
 #!/bin/sh
 
 UPDATE_PACKAGE_SERVERS="https://nonlinearlabs.s3.eu-central-1.amazonaws.com/ https://ind.mirror.pkgbuild.com/community/os/x86_64/ https://sgp.mirror.pkgbuild.com/extra/os/x86_64/"
-PACKAGES_TO_INSTALL="fuse-common-3.9.0-1-x86_64.pkg.tar.xz fuse3-3.9.0-1-x86_64.pkg.tar.xz sshfs-3.7.0-1-x86_64.pkg.tar.zst mc-4.8.24-2-x86_64.pkg.tar.zst"
+PACKAGES_TO_INSTALL="fuse-common-3.9.0-1-x86_64.pkg.tar.xz fuse3-3.9.0-1-x86_64.pkg.tar.xz sshfs-3.7.0-1-x86_64.pkg.tar.zst mc-4.8.24-2-x86_64.pkg.tar.zst flac-1.3.3-1-x86_64.pkg.tar.xz"
 
 error() {
     echo "Create ePC update failed: $1"
@@ -96,22 +96,28 @@ download_packages() {
 }
 
 install_packages() {
-    /internal/epc-update-partition/bin/arch-chroot /internal/epc-update-partition /bin/bash -c "\
-        cd /update-packages
-        for package in $PACKAGES_TO_INSTALL; do
-	    
-	    if ! pacman --noconfirm -U ./\$package; then
-              	return 1
-            fi
-        done"
+  /workdir/overlay-fs/bin/arch-chroot /workdir/overlay-fs /bin/bash -c "\
+  cd /update-packages
+  rm /var/lib/pacman/db.lck
+  for package in $PACKAGES_TO_INSTALL; do
+    if ! pacman --noconfirm -U ./\$package; then
+      exit 1
+    fi
+  done
+
+  echo 'Server=https://archive.archlinux.org/repos/2017/04/16/\$repo/os/\$arch' > /etc/pacman.d/mirrorlist
+  pacman --noconfirm -S typescript
+"
+  
     return $?
 }
 
 build_update() {
     download_packages || error "Downloading packages failed."
+    install_packages || error "Installing the packages failed."
 
     /workdir/overlay-fs/bin/arch-chroot /workdir/overlay-fs /bin/bash -c "\
-        cd /build && cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EPC_SCRIPTS=On -DBUILD_AUDIOENGINE=On -DBUILD_PLAYGROUND=On -DBUILD_ONLINEHELP=On -DBUILD_WEBUI=On /sources && make -j8"
+        cd /build && cmake -DTARGET_PLATFORM=epc -DCMAKE_BUILD_TYPE=Release -DBUILD_EPC_SCRIPTS=On -DBUILD_AUDIOENGINE=On -DBUILD_PLAYGROUND=On -DBUILD_ONLINEHELP=On -DBUILD_WEBUI=On /sources && make -j8"
     return $?
 }
 
@@ -124,7 +130,6 @@ setup_install_overlay() {
 }
 
 install_update() {
-    install_packages || error "Installing the packages failed."
     /internal/epc-update-partition/bin/arch-chroot /internal/epc-update-partition /bin/bash -c "cd /build && make install"
     return $?
 }

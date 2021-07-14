@@ -23,8 +23,9 @@ RecallModulationSourceLabel::RecallModulationSourceLabel(Rect pos)
     if(text.empty())
       text = "[-]";
 
-    setText(text);
+    setText(StringAndSuffix { text });
     return;
   }
-  setText(text);
+
+  setText(StringAndSuffix { text });
 }

@@ -3,6 +3,9 @@ package com.nonlinearlabs.client.world.maps.presets.bank;
 import java.util.ArrayList;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
+import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
+import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.contextStates.ClipContext;
@@ -68,6 +71,27 @@ public class Header extends Label {
 		if (isDropTarget) {
 			drawTooth(ctx);
 		}
+
+		if(getParent().isMidiBank())
+			drawMidiSymbol(ctx);
+	}
+
+	private void drawMidiSymbol(Context2d ctx) {
+		Rect pixRect = getPixRect();
+
+		double fontHeightInUnits = getFontHeight();
+		double fontHeightInPixels = toYPixels(fontHeightInUnits);
+
+		TextAlign align = TextAlign.RIGHT;
+		ctx.setTextAlign(align);
+		ctx.setFillStyle(getColorFont().toString());
+		ctx.setFont(fontHeightInPixels + "px " + getFontName());
+
+		Position center = pixRect.getCenterPoint();
+		center.setX(pixRect.getRight());
+		
+		ctx.setTextBaseline(TextBaseline.MIDDLE);
+		ctx.fillText("\uE0C1", center.getX(), center.getY() + toYPixels(moveFontVerticallyBy()));
 	}
 
 	private void drawTooth(Context2d ctx) {
@@ -171,7 +195,7 @@ public class Header extends Label {
 
 	@Override
 	protected String getDisplayText() {
-		return getParent().getOrderNumber() + " - " + bankName + (getParent().isMidiBank() ? " ^" : "");
+		return getParent().getOrderNumber() + " - " + bankName;
 	}
 
 	@Override

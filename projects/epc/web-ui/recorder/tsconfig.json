@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "outFile": "@CMAKE_CURRENT_BINARY_DIR@/recorder.js"
+  },
+  "include": [
+    "./*",
+    "@CMAKE_CURRENT_SOURCE_DIR@/*",
+    "@CMAKE_CURRENT_BINARY_DIR@/ts/*"
+  ]
+}

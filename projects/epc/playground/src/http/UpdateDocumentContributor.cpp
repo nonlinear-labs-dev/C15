@@ -42,15 +42,6 @@ UpdateDocumentContributor::tUpdateID UpdateDocumentContributor::onChange(uint64_
   return m_updateIDOnLastChange;
 }
 
-void UpdateDocumentContributor::propagateChangeDownstream()
-{
-  for(UpdateDocumentContributor *c : m_children)
-  {
-    c->setUpdateID(m_updateIDOnLastChange);
-    c->propagateChangeDownstream();
-  }
-}
-
 bool UpdateDocumentContributor::didChangeSince(tUpdateID clientsUpdateID) const
 {
   return m_updateIDOnLastChange > clientsUpdateID || clientsUpdateID == 0;

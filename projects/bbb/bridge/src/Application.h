@@ -3,6 +3,7 @@
 #include "bbbb.h"
 #include <memory>
 #include <glibmm/ustring.h>
+#include <io/UpdateService.h>
 
 class BBBBOptions;
 class Bridges;
@@ -36,4 +37,5 @@ class Application
   std::unique_ptr<WiFiManager> m_wifiManager;
   std::unique_ptr<USBManager> m_usbManager;
   std::unique_ptr<FileSystemSync> m_fsSync;
+  std::unique_ptr<UpdateService> m_epcUpdateService;
 };

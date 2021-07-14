@@ -7,12 +7,6 @@ XmlReader::XmlReader(InStream& in, UNDO::Transaction* transaction)
     : super(in, transaction)
     , m_context(*this)
 {
-  g_assert(trim(" ") == "");
-  g_assert(trim("\n ") == "");
-  g_assert(trim("  \n\t \t ") == "");
-  g_assert(trim(" \n  \t abc \n\t\n ") == "abc");
-  g_assert(trim(" \n\t abcf s \n \t as \n\t  ") == "abcf s \n \t as");
-  g_assert(trim("INIT für Comb Sound") == "INIT für Comb Sound");
 }
 
 XmlReader::~XmlReader()

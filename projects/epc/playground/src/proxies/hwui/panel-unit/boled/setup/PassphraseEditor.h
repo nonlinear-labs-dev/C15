@@ -11,7 +11,7 @@ class PassphraseEditor : public MenuEditor
 
  public:
   PassphraseEditor();
-  virtual ~PassphraseEditor();
+  ~PassphraseEditor() override;
 
   void incSetting(int inc) override;
   const std::vector<Glib::ustring> &getDisplayStrings() const override;

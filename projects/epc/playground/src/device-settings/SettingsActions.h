@@ -10,10 +10,9 @@ class SettingsActions : public RPCActionManager
   typedef RPCActionManager super;
 
  public:
-  SettingsActions(Settings& settings);
-  virtual ~SettingsActions();
+  explicit SettingsActions(Settings& settings);
+  ~SettingsActions() override;
 
- private:
   SettingsActions(const SettingsActions& other) = delete;
   SettingsActions& operator=(const SettingsActions&) = delete;
 };

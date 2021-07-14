@@ -24,9 +24,7 @@ class MacroControlParameter : public Parameter
   void unregisterTarget(ModulateableParameter *target);
 
   void setCPFromMCView(UNDO::Transaction *transaction, const tControlPositionValue &cpValue);
-  void undoableSetGivenName(const Glib::ustring &newName);
   void undoableSetGivenName(UNDO::Transaction *transaction, const Glib::ustring &newName);
-  void undoableSetInfo(const Glib::ustring &newName);
   void undoableSetInfo(UNDO::Transaction *transaction, const Glib::ustring &newName);
 
   void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount) override;
@@ -71,6 +69,8 @@ class MacroControlParameter : public Parameter
   bool isChangedFromLoaded() const override;
 
  private:
+  friend class MacroControlParameterUseCases;
+
   void updateBoundRibbon();
   void onValueFineQuantizedChanged(Initiator initiator, tControlPositionValue oldValue,
                                    tControlPositionValue newValue) override;

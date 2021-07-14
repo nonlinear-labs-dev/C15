@@ -14,9 +14,7 @@ template <typename tStates, typename tEvents, tStates initalState, tStates inval
   {
   }
 
-  virtual ~StateMachine()
-  {
-  }
+  virtual ~StateMachine() = default;
 
   void registerHandler(tStates s, tHandler h)
   {

@@ -18,13 +18,13 @@ class PresetStoreModeSetting : public EnumSetting<PresetStoreModeSettings>
   typedef EnumSetting<PresetStoreModeSettings> super;
 
  public:
-  PresetStoreModeSetting(UpdateDocumentContributor &settings);
-  virtual ~PresetStoreModeSetting();
+  explicit PresetStoreModeSetting(UpdateDocumentContributor &settings);
+  ~PresetStoreModeSetting() override;
+
+  PresetStoreModeSetting(const PresetStoreModeSetting &other) = delete;
+  PresetStoreModeSetting &operator=(const PresetStoreModeSetting &) = delete;
 
  private:
-  PresetStoreModeSetting(const PresetStoreModeSetting &other);
-  PresetStoreModeSetting &operator=(const PresetStoreModeSetting &);
-
   const std::vector<Glib::ustring> &enumToString() const override;
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
 };

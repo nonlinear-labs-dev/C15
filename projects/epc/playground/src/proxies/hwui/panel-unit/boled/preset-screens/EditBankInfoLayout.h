@@ -14,8 +14,8 @@ class EditBankInfoLayout : public RenameLayout
   EditBankInfoLayout();
 
  protected:
-  virtual void commit(const Glib::ustring& newName) override;
-  virtual Glib::ustring getInitialText() const override;
+  void commit(const Glib::ustring& newName) override;
+  Glib::ustring getInitialText() const override;
 
  private:
   Bank* m_currentBank = nullptr;

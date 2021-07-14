@@ -1,4 +1,3 @@
-#include <math.h>
 #include "pe_exponentiator.h"
 
 /* proper init */
@@ -58,59 +57,4 @@ float exponentiator::hyperfloor(float _value)
 {
   /* the hyperbolic floor function of oscillator pitches */
   return ((m_hyperfloor[0] * _value) / (m_hyperfloor[1] + _value));
-}
-
-float exponentiator::clip(float _min, float _max, float _value)
-{
-  /* clipping of values to ensure that table access does not exceed predefined ranges */
-  return std::clamp(_value, _min, _max);
-}
-
-void exponentiator::setTablePos(float _value)
-{
-  /* convert floating point table position into integer and fractional parts */
-  m_position_step = static_cast<uint32_t>(floor(_value));
-  m_position_fine = _value - static_cast<float>(m_position_step);
-}
-
-float exponentiator::getInterpolated(float _fade, float _first, float _second)
-{
-  /* linear interpolation of two consecutive table values (first, second) by linear crossfade (fade) */
-  return (((1 - _fade) * _first) + (_fade * _second));
-}
-
-/* main, run-time conversion methods */
-
-float exponentiator::eval_lin_pitch(float _value)
-{
-  /* clip and translate value, update table position */
-  setTablePos(clip(m_linear_pitch_from, m_linear_pitch_to, _value) - m_linear_pitch_from);
-  /* perform interpolation and return result */
-  return getInterpolated(m_position_fine, m_linear_pitch_table[m_position_step],
-                         m_linear_pitch_table[m_position_step + 1]);
-}
-
-float exponentiator::eval_osc_pitch(float _value)
-{
-  /* clip and translate value, update table position */
-  setTablePos(clip(m_oscillator_pitch_from, m_oscillator_pitch_to, _value) - m_oscillator_pitch_from);
-  /* perform interpolation and return result */
-  return getInterpolated(m_position_fine, m_oscillator_pitch_table[m_position_step],
-                         m_oscillator_pitch_table[m_position_step + 1]);
-}
-
-float exponentiator::eval_level(float _value)
-{
-  /* clip and translate value, update table position */
-  setTablePos(clip(m_level_from, m_level_to, _value) - m_level_from);
-  /* perform interpolation and return result */
-  return getInterpolated(m_position_fine, m_level_table[m_position_step], m_level_table[m_position_step + 1]);
-}
-
-float exponentiator::eval_time(float _value)
-{
-  /* clip and translate value, update table position */
-  setTablePos(clip(m_time_from, m_time_to, _value) - m_time_from);
-  /* perform interpolation and return result */
-  return getInterpolated(m_position_fine, m_time_table[m_position_step], m_time_table[m_position_step + 1]);
 }

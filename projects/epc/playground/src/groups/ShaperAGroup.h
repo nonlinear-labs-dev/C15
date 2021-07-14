@@ -6,7 +6,7 @@ class ShaperAGroup : public ParameterGroup
 {
  public:
   ShaperAGroup(ParameterGroupSet *parent, VoiceGroup voicegroup);
-  virtual ~ShaperAGroup();
+  ~ShaperAGroup() override;
 
-  void init();
+  void init() override;
 };

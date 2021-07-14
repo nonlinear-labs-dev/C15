@@ -15,7 +15,7 @@
 PresetListBase::PresetListBase(const Rect &pos, bool showBankArrows)
     : super(pos)
 {
-  m_header = addControl(new PresetListHeader(Rect(0, 1, 128, 13), showBankArrows));
+  m_header = addControl(new PresetListHeader(Rect(0, 0, 128, 14), showBankArrows));
   m_content = addControl(new PresetListContent(Rect(0, 14, 128, 49)));
   m_content->setHighlight(true);
 }

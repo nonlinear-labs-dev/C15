@@ -150,11 +150,9 @@ public class Overlay extends OverlayLayout {
 			r.setBottom(belt.getPixRect().getTop());
 		
 		Rect gbr = buttons.getPixRect();
-		Rect ldr = layerDisplay.getPixRect().copy();
-		ldr.setTop(ldr.getTop() + 1);
-		r.setTop(ldr.getTop() + 1);
-		r.setLeft(r.getLeft() + 1);
-		r.setWidth(r.getWidth() - 1);
+		Rect soundTypeDisplayRect = layerDisplay.getPixRect().copy();
+		soundTypeDisplayRect.setTop(soundTypeDisplayRect.getTop() + 1);
+		r.setTop(soundTypeDisplayRect.getTop() + 1);
 
 		double w = 2;
 		double corner = Millimeter.toPixels(1);
@@ -162,14 +160,14 @@ public class Overlay extends OverlayLayout {
 
 		ctx.beginPath();
 		ctx.moveTo(r.getLeft() + corner, r.getTop());
-		ctx.lineTo(ldr.getLeft() - corner, r.getTop());
-		ctx.arcTo(ldr.getLeft(), ldr.getTop(), ldr.getLeft(), r.getTop() + corner, corner);
-		ctx.lineTo(ldr.getLeft(), ldr.getBottom() - corner);
-		ctx.arcTo(ldr.getLeft(), ldr.getBottom(), ldr.getLeft() + corner, ldr.getBottom(), corner);
-		ctx.lineTo(ldr.getRight() - corner, ldr.getBottom());
-		ctx.arcTo(ldr.getRight(), ldr.getBottom(), ldr.getRight(), ldr.getBottom() - corner, corner);
-		ctx.lineTo(ldr.getRight(), r.getTop() + corner);
-		ctx.arcTo(ldr.getRight(), r.getTop(), ldr.getRight() + corner, r.getTop(), corner);
+		ctx.lineTo(soundTypeDisplayRect.getLeft() - corner, r.getTop());
+		ctx.arcTo(soundTypeDisplayRect.getLeft(), r.getTop(), soundTypeDisplayRect.getLeft(), r.getTop() + corner, corner);
+		ctx.lineTo(soundTypeDisplayRect.getLeft(), soundTypeDisplayRect.getBottom() - corner);
+		ctx.arcTo(soundTypeDisplayRect.getLeft(), soundTypeDisplayRect.getBottom(), soundTypeDisplayRect.getLeft() + corner, soundTypeDisplayRect.getBottom(), corner);
+		ctx.lineTo(soundTypeDisplayRect.getRight() - corner, soundTypeDisplayRect.getBottom());
+		ctx.arcTo(soundTypeDisplayRect.getRight(), soundTypeDisplayRect.getBottom(), soundTypeDisplayRect.getRight(), soundTypeDisplayRect.getBottom() - corner, corner);
+		ctx.lineTo(soundTypeDisplayRect.getRight(), r.getTop() + corner);
+		ctx.arcTo(soundTypeDisplayRect.getRight(), r.getTop(), soundTypeDisplayRect.getRight() + corner, r.getTop(), corner);
 
 		ctx.lineTo(r.getRight() - corner, r.getTop());
 		ctx.arcTo(r.getRight(), r.getTop(), r.getRight(), r.getTop() + corner, corner);

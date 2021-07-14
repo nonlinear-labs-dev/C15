@@ -34,6 +34,7 @@ Application::Application(int numArgs, char **argv)
     , m_wifiManager(std::make_unique<WiFiManager>())
     , m_usbManager(std::make_unique<USBManager>())
     , m_fsSync(std::make_unique<FileSystemSync>())
+    , m_epcUpdateService(std::make_unique<UpdateService>())
 {
 }
 

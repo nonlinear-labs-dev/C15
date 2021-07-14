@@ -78,27 +78,27 @@ void MacroControlEditButtonMenu::editInfo()
 void MacroControlEditButtonMenu::unlockGroup()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto scope = Application::get().getUndoScope()->startTransaction("Unlock Group");
-  eb->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup()->undoableUnlock(scope->getTransaction());
+  EditBufferUseCases ebUseCases(eb);
+  ebUseCases.unlockGroup(eb->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup());
 }
 
 void MacroControlEditButtonMenu::lockGroup()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto scope = Application::get().getUndoScope()->startTransaction("Lock Group");
-  eb->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup()->undoableLock(scope->getTransaction());
+  EditBufferUseCases ebUseCases(eb);
+  ebUseCases.lockGroup(eb->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup());
 }
 
 void MacroControlEditButtonMenu::unlockAll()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto scope = Application::get().getUndoScope()->startTransaction("Unlock all");
-  eb->undoableUnlockAllGroups(scope->getTransaction());
+  EditBufferUseCases ebUseCases(eb);
+  ebUseCases.unlockAllGroups();
 }
 
 void MacroControlEditButtonMenu::lockAll()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto scope = Application::get().getUndoScope()->startTransaction("Lock all");
-  eb->undoableLockAllGroups(scope->getTransaction());
+  EditBufferUseCases ebUseCases(eb);
+  ebUseCases.lockAllGroups();
 }

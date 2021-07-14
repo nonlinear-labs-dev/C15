@@ -18,8 +18,6 @@
 #include <groups/MacroControlsGroup.h>
 #include <http/UndoScope.h>
 #include <nltools/messaging/Message.h>
-#include <device-settings/ScreenSaverTimeoutSetting.h>
-#include "ScreenSaverUsageMode.h"
 
 PanelUnit::PanelUnit()
 {
@@ -32,6 +30,8 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::Selected, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
+    EditBufferUseCases ebUseCases { editBuffer };
+
     auto p = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
 
     if(auto mrp = dynamic_cast<ModulationRoutingParameter *>(p))
@@ -40,7 +40,7 @@ PanelUnit::PanelUnit()
     }
 
     auto currentMc = m_macroControlAssignmentStateMachine.getCurrentMCParameter();
-    editBuffer->undoableSelectParameter({ currentMc, VoiceGroup::Global });
+    ebUseCases.selectParameter({ currentMc, VoiceGroup::Global }, true);
     return true;
   });
 
@@ -54,27 +54,19 @@ PanelUnit::PanelUnit()
 
     if(auto modParam = dynamic_cast<ModulateableParameter *>(target))
     {
+      ModParameterUseCases useCase(modParam);
       if(modParam->getModulationSource() == mc)
       {
-        auto scope = Application::get().getUndoScope()->startTransaction("Remove Modulation Source");
-        modParam->undoableSelectModSource(scope->getTransaction(), MacroControls::NONE);
+        useCase.removeModSource();
       }
       else
       {
-        auto scope = Application::get().getUndoScope()->startTransaction("Set Modulation Source");
-        modParam->undoableSelectModSource(scope->getTransaction(), mc);
-
-        editBuffer->undoableSelectParameter(scope->getTransaction(), modParam);
-
         auto hwui = Application::get().getHWUI();
         auto &boled = hwui->getPanelUnit().getEditPanel().getBoled();
-        boled.onLayoutInstalled([&](Layout *l) {
-          if(auto modParamLayout = dynamic_cast<ModulateableParameterSelectLayout2 *>(l))
-          {
-            modParamLayout->installMcAmountScreen();
-            m_macroControlAssignmentStateMachine.setState(MacroControlAssignmentStates::Initial);
-          }
-        });
+        m_signalInitializeInstalledLayoutOnce
+            = boled.onLayoutInstalled(sigc::mem_fun(this, &PanelUnit::initModulateableParameterLayout));
+
+        useCase.selectModSourceAndSelectTargetParameter(mc);
       }
     }
     return true;
@@ -82,15 +74,13 @@ PanelUnit::PanelUnit()
 
   m_macroControlAssignmentStateMachine.registerHandler(MacroControlAssignmentStates::SelectSource, [=]() {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
+    EditBufferUseCases ebUseCases { editBuffer };
     auto p = editBuffer->getSelected(Application::get().getHWUI()->getCurrentVoiceGroup());
     auto currentSource = choseHWBestSourceForMC(p->getID());
-    editBuffer->undoableSelectParameter(currentSource);
+    ebUseCases.selectParameter(currentSource, true);
     m_macroControlAssignmentStateMachine.setState(MacroControlAssignmentStates::Initial);
     return true;
   });
-
-  Application::get().getSettings()->getSetting<ScreenSaverTimeoutSetting>()->onScreenSaverStateChanged(
-      sigc::mem_fun(this, &PanelUnit::onScreenSaverStateChanged));
 
   nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::PanelLed,
                                         sigc::mem_fun(this, &PanelUnit::onBBBBConnected));
@@ -107,18 +97,6 @@ ParameterId PanelUnit::choseHWBestSourceForMC(const ParameterId &mcParamId) cons
   }
 
   return mcParamId;
-}
-
-void PanelUnit::onScreenSaverStateChanged(bool state)
-{
-  if(state)
-  {
-    setUsageMode(new ScreenSaverUsageMode());
-  }
-  else if(std::dynamic_pointer_cast<ScreenSaverUsageMode>(getUsageMode()))
-  {
-    setupFocusAndMode();
-  }
 }
 
 void PanelUnit::init()
@@ -202,7 +180,11 @@ const EditPanel &PanelUnit::getEditPanel() const
 
 bool PanelUnit::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state)
 {
-  if(super::onButtonPressed(buttonID, modifiers, state))
+  if(m_overlayUsageMode)
+  {
+    return m_overlayUsageMode->onButtonPressed(buttonID, modifiers, state);
+  }
+  else if(super::onButtonPressed(buttonID, modifiers, state))
   {
     return true;
   }
@@ -213,6 +195,16 @@ bool PanelUnit::onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, boo
 MacroControlAssignmentStateMachine &PanelUnit::getMacroControlAssignmentStateMachine()
 {
   return m_macroControlAssignmentStateMachine;
+}
+
+void PanelUnit::initModulateableParameterLayout(Layout *l)
+{
+  if(auto modParamLayout = dynamic_cast<ModulateableParameterSelectLayout2 *>(l))
+  {
+    modParamLayout->installMcAmountScreen();
+    m_macroControlAssignmentStateMachine.setState(MacroControlAssignmentStates::Initial);
+  }
+  m_signalInitializeInstalledLayoutOnce.disconnect();
 }
 
 const std::vector<std::shared_ptr<TwoStateLED>> &PanelUnit::getLeds()

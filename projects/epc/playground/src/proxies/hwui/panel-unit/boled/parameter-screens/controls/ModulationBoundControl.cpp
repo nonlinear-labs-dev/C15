@@ -18,14 +18,8 @@ bool ModulationBoundControl::onButton(Buttons i, bool down, ButtonModifiers)
         if(auto modulatedParam
            = dynamic_cast<ModulateableParameter *>(eb->getSelected(getHWUI()->getCurrentVoiceGroup())))
         {
-          auto &undoScope = modulatedParam->getUndoScope();
-          auto dual = modulatedParam->getID().isDual() && eb->isDual();
-          auto scope
-              = undoScope.startContinuousTransaction(modulatedParam, "Set MC Amount for '%0'",
-                                                     dual ? modulatedParam->getGroupAndParameterNameWithVoiceGroup()
-                                                          : modulatedParam->getGroupAndParameterName());
-          auto transaction = scope->getTransaction();
-          modulatedParam->setModulationAmount(transaction, 0);
+          ModParameterUseCases useCase(modulatedParam);
+          useCase.setModulationAmount(0);
         }
         return true;
       }

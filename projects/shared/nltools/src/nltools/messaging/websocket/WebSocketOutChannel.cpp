@@ -13,13 +13,15 @@ namespace nltools
     namespace ws
     {
       WebSocketOutChannel::WebSocketOutChannel(const std::string &targetMachine, guint port,
-                                               nltools::threading::Priority p)
+                                               nltools::threading::Priority p,
+                                               std::function<void()> connectionEstablishedCB)
           : m_uri(nltools::string::concat("http://", targetMachine, ":", port))
           , m_soupSession(soup_session_new(), g_object_unref)
           , m_message(nullptr, g_object_unref)
           , m_connection(nullptr, g_object_unref)
           , m_mainThreadContextQueue(
                 std::make_unique<threading::ContextBoundMessageQueue>(Glib::MainContext::get_default()))
+          , m_onConnectionEstablished(connectionEstablishedCB)
           , m_contextThread([=] { this->backgroundThread(p); })
       {
       }
@@ -90,11 +92,6 @@ namespace nltools
         return m_connectionEstablishedWaiter.waitFor(timeOut);
       }
 
-      void WebSocketOutChannel::onConnectionEstablished(std::function<void()> cb)
-      {
-        m_onConnectionEstablished = cb;
-      }
-
       bool WebSocketOutChannel::isConnected() const
       {
         return m_connectionEstablishedWaiter.isNotified();
@@ -156,9 +153,7 @@ namespace nltools
       void WebSocketOutChannel::signalConnectionEstablished()
       {
         m_connectionEstablishedWaiter.notify();
-
-        if(m_onConnectionEstablished)
-          m_mainThreadContextQueue->pushMessage([this] { this->m_onConnectionEstablished(); });
+        m_mainThreadContextQueue->pushMessage([this] { this->m_onConnectionEstablished(); });
       }
 
       void WebSocketOutChannel::reconnect()

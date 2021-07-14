@@ -12,8 +12,8 @@ class TransitionTime : public Setting
   typedef Setting super;
 
  public:
-  TransitionTime(Settings &parent);
-  virtual ~TransitionTime();
+  explicit TransitionTime(Settings &parent);
+  ~TransitionTime() override;
 
   void load(const Glib::ustring &text, Initiator initiator) override;
   Glib::ustring save() const override;
@@ -24,10 +24,10 @@ class TransitionTime : public Setting
 
   void setDefault();
 
-  Glib::ustring getDisplayString() const;
+  Glib::ustring getDisplayString() const override;
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
-  Glib::ustring getName() const
+  static Glib::ustring getName()
   {
     return "Transition Time";
   }

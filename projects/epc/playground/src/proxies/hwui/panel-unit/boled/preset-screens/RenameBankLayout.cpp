@@ -11,15 +11,13 @@
 RenameBankLayout::RenameBankLayout(UNDO::Transaction *transaction)
     : super()
     , m_transaction(transaction)
-    , m_onCommitCallback { nullptr }
 {
   m_currentBank = Application::get().getPresetManager()->getSelectedBank();
 }
 
-RenameBankLayout::RenameBankLayout(UNDO::Transaction *transaction, std::function<void(UNDO::Transaction *)> onCommitCB)
+RenameBankLayout::RenameBankLayout()
     : super()
-    , m_transaction { transaction }
-    , m_onCommitCallback { std::move(onCommitCB) }
+    , m_transaction { nullptr }
 {
   m_currentBank = Application::get().getPresetManager()->getSelectedBank();
 }
@@ -36,19 +34,8 @@ void RenameBankLayout::commit(const Glib::ustring &newName)
     }
     else
     {
-      auto s = Application::get().getPresetManager()->getUndoScope().startTransaction("Rename Bank");
-      m_currentBank->setName(s->getTransaction(), newName);
-    }
-  }
-
-  if(m_onCommitCallback)
-  {
-    if(m_transaction && !m_transaction->isClosed())
-      m_onCommitCallback(m_transaction);
-    else
-    {
-      auto trash = UNDO::Scope::startTrashTransaction();
-      m_onCommitCallback(trash->getTransaction());
+      BankUseCases useCase(m_currentBank);
+      useCase.renameBank(newName);
     }
   }
 }

@@ -10,8 +10,8 @@ class ModulationBoundSlider : public Control
   typedef Control super;
 
  public:
-  ModulationBoundSlider(const Rect &pos);
-  virtual ~ModulationBoundSlider();
+  explicit ModulationBoundSlider(const Rect &pos);
+  ~ModulationBoundSlider() override;
 
   bool redraw(FrameBuffer &fb) override;
 

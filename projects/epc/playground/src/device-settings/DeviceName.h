@@ -10,8 +10,8 @@ class DeviceName : public Setting
   typedef Setting super;
 
  public:
-  DeviceName(Settings &parent);
-  virtual ~DeviceName();
+  explicit DeviceName(Settings &parent);
+  ~DeviceName() override;
 
   Glib::ustring getDisplayString() const override;
 

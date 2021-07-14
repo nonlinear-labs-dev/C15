@@ -63,11 +63,11 @@ bool InfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
       case Buttons::BUTTON_PRESET:
         if(Application::get().getHWUI()->getFocusAndMode().focus == UIFocus::Presets)
         {
-          Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Select);
+          Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Select });
         }
         else
         {
-          Application::get().getHWUI()->undoableSetFocusAndMode(UIFocus::Presets);
+          Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIFocus::Presets });
         }
         return true;
 
@@ -76,12 +76,12 @@ bool InfoLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
         return true;
 
       case Buttons::BUTTON_EDIT:
-        Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
+        Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Edit });
         return true;
 
       case Buttons::BUTTON_INFO:
       case Buttons::BUTTON_ENTER:
-        Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Select);
+        Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Select });
         return true;
     }
   }

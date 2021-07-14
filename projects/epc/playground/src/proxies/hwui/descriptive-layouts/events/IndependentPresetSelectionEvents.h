@@ -18,7 +18,6 @@ namespace DescriptiveLayouts
 
    private:
     void bruteForce();
-    void sanitize();
     void setString(EventSources e, const std::string &str);
 
     template <typename T, typename... P> void createEventSources(P... e);

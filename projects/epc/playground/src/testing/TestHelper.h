@@ -8,9 +8,20 @@
 #include <libundo/undo/Scope.h>
 #include <Application.h>
 #include <parameters/ModulateableParameter.h>
+#include <nltools/messaging/Message.h>
 
 namespace TestHelper
 {
+  inline nltools::msg::Setting::MidiSettingsMessage::tHWMappingType createFullMappings(bool state)
+  {
+    typedef nltools::msg::Setting::MidiSettingsMessage::tHWMappingType tHW;
+    tHW ret;
+    for(auto& row: ret) {
+      row.fill(state);
+    }
+    return ret;
+  }
+
   namespace floating
   {
     template <typename T> inline bool equals(T first, T second)
@@ -115,6 +126,20 @@ namespace TestHelper
   inline void doMainLoopIteration()
   {
     g_main_context_iteration(nullptr, TRUE);
+  }
+
+  inline void updateMappings(nltools::msg::Setting::MidiSettingsMessage::tHWMappingType& array,
+                      nltools::msg::Setting::MidiSettingsMessage::MAPPING_INDEX index, bool b)
+  {
+    for(auto& hw: array) {
+      hw[static_cast<int>(index)] = b;
+    }
+  }
+
+  inline void updateMappingForHW(int hw, nltools::msg::Setting::MidiSettingsMessage::tHWMappingType& array,
+                             nltools::msg::Setting::MidiSettingsMessage::MAPPING_INDEX index, bool b)
+  {
+    array[hw][static_cast<int>(index)] = b;
   }
 }
 

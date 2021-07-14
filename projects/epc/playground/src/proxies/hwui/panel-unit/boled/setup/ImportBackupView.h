@@ -6,5 +6,5 @@ class ImportBackupView : public SetupLabel
 {
  public:
   ImportBackupView();
-  virtual ~ImportBackupView();
+  ~ImportBackupView() override;
 };

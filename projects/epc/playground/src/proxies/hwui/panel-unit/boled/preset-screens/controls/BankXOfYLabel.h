@@ -12,8 +12,8 @@ class BankXOfYLabel : public Label
   typedef Label super;
 
  public:
-  BankXOfYLabel(const Rect &pos);
-  virtual ~BankXOfYLabel();
+  explicit BankXOfYLabel(const Rect &pos);
+  ~BankXOfYLabel() override;
 
  protected:
   void setBackgroundColor(FrameBuffer &fb) const override;

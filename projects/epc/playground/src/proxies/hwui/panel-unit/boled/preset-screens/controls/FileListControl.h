@@ -10,21 +10,22 @@ class Label;
 
 class FileListControl : public ControlWithChildren
 {
+ public:
+  explicit FileListControl(const Rect& pos);
+  ~FileListControl() override;
+
+  void setFileList(FileSystem::FileList list);
+  void setSelection(int index);
+  void changeSelection(int change);
+  fs::directory_entry getSelection() const;
+  int getSelectedIndex() const;
+
  private:
+  std::string getFileNameAtIndex(int index);
+
   Label* upperFile;
   Label* middleFile;
   Label* bottomFile;
   std::unique_ptr<FileSystem::FileList> fileList;
   int selectedItem;
-
-  std::string getFileNameAtIndex(int index);
-
- public:
-  FileListControl(const Rect& pos);
-  void setFileList(FileSystem::FileList list);
-  virtual ~FileListControl();
-  void setSelection(int index);
-  void changeSelection(int change);
-  fs::directory_entry getSelection() const;
-  int getSelectedIndex() const;
 };

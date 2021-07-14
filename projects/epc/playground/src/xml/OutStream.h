@@ -14,5 +14,5 @@ class OutStream
  private:
   virtual void implWrite(const Glib::ustring &str) = 0;
   virtual void implWrite(const void *buf, size_t numBytes) = 0;
-  Glib::ustring toUTF8(const Glib::ustring &in) const;
+  [[nodiscard]] Glib::ustring toUTF8(const Glib::ustring &in) const;
 };

@@ -14,19 +14,18 @@ class ParameterEditModeRibbonBehaviour : public EnumSetting<ParameterEditModeRib
   typedef EnumSetting<ParameterEditModeRibbonBehaviours> super;
 
  public:
-  ParameterEditModeRibbonBehaviour(Settings &settings);
-  virtual ~ParameterEditModeRibbonBehaviour();
+  explicit ParameterEditModeRibbonBehaviour(Settings &settings);
+  ~ParameterEditModeRibbonBehaviour() override;
 
-  virtual bool set(ParameterEditModeRibbonBehaviours m) override;
+  bool set(ParameterEditModeRibbonBehaviours m) override;
   void sendRelatedSettingToPlaycontroller() const;
 
   void syncExternals(SendReason reason) const override;
 
+  ParameterEditModeRibbonBehaviour(const ParameterEditModeRibbonBehaviour &other) = delete;
+  ParameterEditModeRibbonBehaviour &operator=(const ParameterEditModeRibbonBehaviour &) = delete;
+
  private:
-  ParameterEditModeRibbonBehaviour(const ParameterEditModeRibbonBehaviour &other);
-
-  ParameterEditModeRibbonBehaviour &operator=(const ParameterEditModeRibbonBehaviour &);
-
   const std::vector<Glib::ustring> &enumToString() const override;
   const std::vector<Glib::ustring> &enumToDisplayString() const override;
 };

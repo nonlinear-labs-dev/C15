@@ -11,12 +11,12 @@ class HeadlineLabel : public Label
   typedef Label super;
 
  public:
-  HeadlineLabel(const Rect &pos);
+  explicit HeadlineLabel(const Rect &pos);
 
-  virtual bool redraw(FrameBuffer &fb) override;
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
+  bool redraw(FrameBuffer &fb) override;
+  void setFontColor(FrameBuffer &fb) const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 
  private:
   void updateText(Parameter *oldParam, Parameter *newParam);

@@ -6,13 +6,13 @@ class ParabolicGainDbScaleConverter : public ScaleConverter
 {
  public:
   ParabolicGainDbScaleConverter();
-  virtual ~ParabolicGainDbScaleConverter();
+  ~ParabolicGainDbScaleConverter() override;
 
-  bool isBiPolar() const override;
+  [[nodiscard]] bool isBiPolar() const override;
 
-  tControlPositionValue displayToControlPosition(const tDisplayValue &displayValue) const;
-  tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const override;
-  tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const override;
-  tControlPositionValue tcdToControlPosition(tTcdValue v) const override;
-  Glib::ustring controlPositionToDisplayJS() const override;
+  [[nodiscard]] tControlPositionValue displayToControlPosition(const tDisplayValue &displayValue) const;
+  [[nodiscard]] tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] tControlPositionValue tcdToControlPosition(tTcdValue v) const override;
+  [[nodiscard]] Glib::ustring controlPositionToDisplayJS() const override;
 };

@@ -8,9 +8,8 @@ class DBPerSTDimension : public Dimension
   virtual ~DBPerSTDimension();
 
   static const DBPerSTDimension &get();
-  Glib::ustring getStingizerJS() const override;
-
-  virtual Glib::ustring stringize(const tDisplayValue &displayValue) const override;
+  [[nodiscard]] Glib::ustring getStingizerJS() const override;
+  [[nodiscard]] Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 
  private:
   DBPerSTDimension();

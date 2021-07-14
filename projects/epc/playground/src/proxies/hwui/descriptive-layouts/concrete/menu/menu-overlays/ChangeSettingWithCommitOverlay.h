@@ -10,7 +10,7 @@ template <class tSetting> class ChangeSettingWithCommitOverlay : public ChangeSe
   template <class tCB>
   ChangeSettingWithCommitOverlay(const Rect& r, tCB cb)
       : super(r)
-      , m_commitCB{ cb }
+      , m_commitCB { cb }
   {
   }
 

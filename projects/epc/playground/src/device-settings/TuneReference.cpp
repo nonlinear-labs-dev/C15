@@ -13,7 +13,10 @@ TuneReference::TuneReference(UpdateDocumentContributor& parent)
 
 void TuneReference::load(const Glib::ustring& text, Initiator initiator)
 {
-  m_value.setRawValue(Initiator::EXPLICIT_OTHER, std::stod(text));
+  if(m_value.setRawValue(initiator, std::stod(text)))
+  {
+    notify();
+  }
 }
 
 Glib::ustring TuneReference::save() const

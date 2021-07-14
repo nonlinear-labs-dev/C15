@@ -45,6 +45,6 @@ namespace DescriptiveLayouts
       return m_lastValue;
     }
 
-    T m_lastValue{};
+    T m_lastValue {};
   };
 }

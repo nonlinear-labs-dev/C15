@@ -6,5 +6,5 @@ class PitchCombLinearStScaleConverter : public LinearScaleConverter
 {
  public:
   PitchCombLinearStScaleConverter();
-  virtual ~PitchCombLinearStScaleConverter();
+  ~PitchCombLinearStScaleConverter() override;
 };

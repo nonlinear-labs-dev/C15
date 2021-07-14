@@ -52,14 +52,8 @@ bool UpperModulationBoundControl::onRotary(int inc, ButtonModifiers modifiers)
       if(modulatedParam->isBiPolar())
         newModAmount /= 2;
 
-      auto &undoScope = modulatedParam->getUndoScope();
-      auto scope = undoScope.startContinuousTransaction(modulatedParam, "Set Modulation Limit for '%0'",
-                                                        modulatedParam->getGroupAndParameterName());
-
-      auto transaction = scope->getTransaction();
-
-      modulatedParam->undoableSetModAmount(transaction, newModAmount);
-      modulatedParam->setCPFromHwui(transaction, newValue);
+      ModParameterUseCases useCase(modulatedParam);
+      useCase.setModulationLimit(newModAmount, newValue);
       return true;
     }
   }

@@ -6,7 +6,7 @@ class SVFilterGroup : public ParameterGroup
 {
  public:
   SVFilterGroup(ParameterGroupSet *parent, VoiceGroup voicegroup);
-  virtual ~SVFilterGroup();
+  ~SVFilterGroup() override;
 
-  void init();
+  void init() override;
 };

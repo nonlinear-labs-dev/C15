@@ -14,7 +14,7 @@ namespace DescriptiveLayouts
     {
      public:
       ParameterCondition();
-      virtual ~ParameterCondition();
+      ~ParameterCondition() override;
 
      protected:
       void onParameterSelectionChanged(const Parameter* oldParam, Parameter* newParam);

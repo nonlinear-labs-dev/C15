@@ -16,7 +16,7 @@ void InfoField::setInfo(const Glib::ustring& text, FrameBufferColors c)
   if(auto label = dynamic_cast<SingleLineInfoContent*>(m_content))
   {
     label->setFontColor(c);
-    label->setText(text);
+    label->setText(StringAndSuffix { text });
   }
   else if(auto multiLineLabel = dynamic_cast<MultiLineInfoContent*>(m_content))
   {

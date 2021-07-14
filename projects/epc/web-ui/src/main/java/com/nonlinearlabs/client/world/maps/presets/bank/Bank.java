@@ -414,13 +414,13 @@ public class Bank extends LayoutResizingVertical implements Renameable, IBank {
 	public void setCollapsed(boolean min) {
 		if (collapsed != min) {
 			collapsed = min;
+			NonMaps.get().getServerProxy().setBankCollapsed(this, Boolean.toString(collapsed));
 			requestLayout();
 		}
 	}
 
 	public void toggleMinMax() {
-		collapsed = !collapsed;
-		requestLayout();
+		setCollapsed(!collapsed);
 	}
 
 	public void onMouseLost() {

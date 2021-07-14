@@ -1293,23 +1293,6 @@ td.datePickerYear {
   cursor: row-resize;
 }
 
-input[type="checkbox"] {
-  display: none;
-}
-
-input[type="checkbox"]+label {
-  display: inline-block;
-  vertical-align: middle;
-  background: url("checkbox-unchecked.png") left center no-repeat;
-  background-origin: padding-box;
-  cursor: pointer;
-/*   color: #eee; */
-}
-
-input[type="checkbox"]:checked+label {
-  background: url("checkbox-checked.png") left center no-repeat;
-}
-
 input[type="radio"] {
   display: none;
 }
@@ -1872,4 +1855,26 @@ button {
 
 .voicegroup-menu {
   min-width: 7em;
+}
+
+#oleds {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#boled {
+  position: relative;
+  visibility: hidden;
+  width: 256px;
+  height: 64px;
+  margin: 0.5em;
+}
+
+#soled {
+  position: relative; 
+  visibility: hidden;
+  width: 128px;
+  height: 32px;
+  margin: 0.5em;
 }

@@ -31,13 +31,13 @@ class MacroControlAssignmentStateMachine
 
  public:
   MacroControlAssignmentStateMachine();
-  virtual ~MacroControlAssignmentStateMachine();
+  ~MacroControlAssignmentStateMachine() override;
 
   void setCurrentMCParameter(int mcParamId);
-  int getCurrentMCParameter() const;
+  [[nodiscard]] int getCurrentMCParameter() const;
 
   void setCurrentModulateableParameter(const ParameterId& id);
-  const ParameterId& getCurrentModulateableParameter() const;
+  [[nodiscard]] const ParameterId& getCurrentModulateableParameter() const;
 
  private:
   int m_mcParamId = 0;

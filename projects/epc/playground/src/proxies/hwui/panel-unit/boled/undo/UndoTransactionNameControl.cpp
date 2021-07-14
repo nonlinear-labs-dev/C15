@@ -20,8 +20,8 @@ void UndoTransactionNameControl::assignTransaction(UNDO::Transaction *transactio
     setText("");
 }
 
-UndoTransactionNameControl::StringAndSuffix
-    UndoTransactionNameControl::shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const
+StringAndSuffix UndoTransactionNameControl::shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                                                      const StringAndSuffix &text) const
 {
   auto itLeft = text.text.begin();
   itLeft++;

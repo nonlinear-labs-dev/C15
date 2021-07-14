@@ -12,12 +12,12 @@ TEST_CASE("Mono Parameter Helper")
     {
       for(auto& p : g->getParameters())
       {
-        REQUIRE(MonoGroup::isMonoParameter(p));
+        CHECK(MonoGroup::isMonoParameter(p));
       }
     }
     else
     {
-      REQUIRE(false);
+      CHECK(false);
     }
   }
 }

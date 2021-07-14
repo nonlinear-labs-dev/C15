@@ -9,7 +9,7 @@ class SSIDView : public SetupLabel
 
  public:
   SSIDView();
-  virtual ~SSIDView();
+  ~SSIDView() override;
 
  private:
   void onSettingChanged(const Setting *s);

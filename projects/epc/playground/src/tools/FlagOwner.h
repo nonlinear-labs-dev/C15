@@ -3,12 +3,8 @@
 template <typename TFlags, typename tStorage = uint16_t> class FlagOwner
 {
  public:
-  FlagOwner()
-  {
-  }
-  virtual ~FlagOwner()
-  {
-  }
+  FlagOwner() = default;
+  virtual ~FlagOwner() = default;
 
   void setFlag(TFlags flag)
   {

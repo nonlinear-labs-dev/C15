@@ -9,20 +9,18 @@ ParamEditModeRibbonBehaviourLabel::ParamEditModeRibbonBehaviourLabel(const Rect&
   getSetting()->onChange(mem_fun(this, &ParamEditModeRibbonBehaviourLabel::updateText));
 }
 
-ParamEditModeRibbonBehaviourLabel::~ParamEditModeRibbonBehaviourLabel()
-{
-}
+ParamEditModeRibbonBehaviourLabel::~ParamEditModeRibbonBehaviourLabel() = default;
 
 void ParamEditModeRibbonBehaviourLabel::updateText(const Setting* s)
 {
   switch(dynamic_cast<const ParameterEditModeRibbonBehaviour*>(s)->get())
   {
     case ParameterEditModeRibbonBehaviours::PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR_RELATIVE:
-      setText("r");
+      setText(StringAndSuffix { "r" });
       break;
 
     case ParameterEditModeRibbonBehaviours::PARAMETER_EDIT_MODE_RIBBON_BEHAVIOUR_ABSOLUTE:
-      setText("a");
+      setText(StringAndSuffix { "a" });
       break;
   }
 }

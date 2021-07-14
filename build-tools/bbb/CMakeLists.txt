@@ -1,6 +1,6 @@
 SET(USER $ENV{USER})
 SET(DOCKERNAME nl-cross-build-environment)
-SET(NONLINUX nonlinear_2020.43)
+SET(NONLINUX nonlinear_2021.23)
 
 file(GLOB_RECURSE ALL_FILES_IN_PROJECT ${CMAKE_SOURCE_DIR}/projects/*)
 
@@ -138,6 +138,7 @@ add_custom_command(
     DEPENDS ${SOURCE_FILES}
     COMMAND ${CMAKE_SOURCE_DIR}/build-tools/create-c15-update/create-c15-update.sh
         "unused-epc"
+        "unused-epc2"
         ${CMAKE_BINARY_DIR}/build-tools/bbb/rootfs.tar.gz
         "unused-playcontroller"
         ${CMAKE_BINARY_DIR}

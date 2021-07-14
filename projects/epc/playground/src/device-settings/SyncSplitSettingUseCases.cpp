@@ -23,7 +23,7 @@ void SyncSplitSettingUseCases::enableSyncSetting(UNDO::Transaction* t)
   auto sII = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::II });
 
   auto cpI = sI->getControlPositionValue();
-  auto cpII = sII->getValue().getNextStepValue(cpI, 1, {});
+  auto cpII = sII->getValue().getNextStepValue(cpI, 1, false, false);
   sII->updateCPFromSyncChange(t, cpII);
 }
 

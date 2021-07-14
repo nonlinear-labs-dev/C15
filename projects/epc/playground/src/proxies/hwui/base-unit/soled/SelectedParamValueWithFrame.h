@@ -9,18 +9,18 @@ class SelectedParamValueWithFrame : public SelectedParameterValue
   typedef SelectedParameterValue super;
 
  public:
-  SelectedParamValueWithFrame(const Rect& rect);
-  virtual ~SelectedParamValueWithFrame();
+  explicit SelectedParamValueWithFrame(const Rect& rect);
+  ~SelectedParamValueWithFrame() override;
 
   bool redraw(FrameBuffer& fb) override;
 
- protected:
-  virtual void onModifiersChanged(ButtonModifiers mods) override;
-
- private:
   SelectedParamValueWithFrame(const SelectedParamValueWithFrame& other) = delete;
   SelectedParamValueWithFrame& operator=(const SelectedParamValueWithFrame&) = delete;
 
+ protected:
+  void onModifiersChanged(ButtonModifiers mods) override;
+
+ private:
   std::shared_ptr<Font> getFont() const override;
   int getFontHeight() const override;
 

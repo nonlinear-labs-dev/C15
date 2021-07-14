@@ -10,8 +10,8 @@ class RandomizeAmountLabel : public Label
   typedef Label super;
 
  public:
-  RandomizeAmountLabel(const Rect &rect);
-  virtual ~RandomizeAmountLabel();
+  explicit RandomizeAmountLabel(const Rect &rect);
+  ~RandomizeAmountLabel() override;
 
   void setSuffixFontColor(FrameBuffer &fb) const override;
 

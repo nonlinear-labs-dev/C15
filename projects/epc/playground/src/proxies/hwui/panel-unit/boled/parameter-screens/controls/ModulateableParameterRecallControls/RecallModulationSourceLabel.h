@@ -5,5 +5,5 @@
 class RecallModulationSourceLabel : public Label
 {
  public:
-  RecallModulationSourceLabel(Rect pos);
+  explicit RecallModulationSourceLabel(Rect pos);
 };

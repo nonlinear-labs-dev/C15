@@ -17,15 +17,13 @@ ParameterOverlay::ParameterOverlay(const Rect& rect, Parameter* const parameter)
 void ParameterOverlay::onLeft(bool down)
 {
   ArrowIncrementDecrementOverlay::onLeft(down);
-  auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction("TODO");
-  auto transaction = scope->getTransaction();
-  m_parameter->stepCPFromHwui(transaction, -1, {});
+  ParameterUseCases useCase(m_parameter);
+  useCase.incDec(-1, false, false);
 }
 
 void ParameterOverlay::onRight(bool down)
 {
   ArrowIncrementDecrementOverlay::onRight(down);
-  auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction("TODO");
-  auto transaction = scope->getTransaction();
-  m_parameter->stepCPFromHwui(transaction, 1, {});
+  ParameterUseCases useCase(m_parameter);
+  useCase.incDec(1, false, false);
 }

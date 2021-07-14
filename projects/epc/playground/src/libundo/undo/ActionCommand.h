@@ -13,13 +13,13 @@ namespace UNDO
 
     ActionCommand(tAction doAction, tAction undoAction, tAction redoAction);
     ActionCommand(tAction doRedoAction, tAction undoAction);
-    ActionCommand(tAction doRedoUndoAction);
-    virtual ~ActionCommand();
+    explicit ActionCommand(tAction doRedoUndoAction);
+    ~ActionCommand() override;
 
    protected:
-    void implDoAction() const;
-    void implUndoAction() const;
-    void implRedoAction() const;
+    void implDoAction() const override;
+    void implUndoAction() const override;
+    void implRedoAction() const override;
 
    private:
     tAction m_doAction;

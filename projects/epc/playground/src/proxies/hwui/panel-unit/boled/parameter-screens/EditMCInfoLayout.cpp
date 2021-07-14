@@ -14,7 +14,8 @@ void EditMCInfoLayout::commit(const Glib::ustring &newName)
 {
   if(auto p = getMacroControl())
   {
-    p->undoableSetInfo(newName);
+    MacroControlParameterUseCases useCase(p);
+    useCase.setInfo(newName);
   }
 }
 

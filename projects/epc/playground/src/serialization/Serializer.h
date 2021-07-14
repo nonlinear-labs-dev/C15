@@ -15,12 +15,12 @@ class Attribute;
 class Serializer
 {
  public:
-  Serializer(const Glib::ustring &tag);
+  explicit Serializer(const Glib::ustring &tag);
   virtual ~Serializer();
 
   void write(Glib::RefPtr<Gio::File> folder, const std::string &name);
 
-  const Glib::ustring &getTagName() const;
+  [[nodiscard]] const Glib::ustring &getTagName() const;
   void write(Writer &writer) const;
   void write(Writer &writer, const Attribute &attr) const;
   void read(Reader &read) const;

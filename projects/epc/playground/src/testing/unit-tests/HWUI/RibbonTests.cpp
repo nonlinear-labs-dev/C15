@@ -49,7 +49,7 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
 
     THEN("ALL LEDs Off")
     {
-      r.forEachLED([](auto, const auto& led) { REQUIRE(led.getState() == 0); });
+      r.forEachLED([](auto, const auto& led) { CHECK(led.getState() == 0); });
     }
   }
 
@@ -58,7 +58,7 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
     r.setLEDsForValueUniPolar(1.0);
     THEN("ALL LEDs On")
     {
-      r.forEachLED([](auto, const auto& led) { REQUIRE(led.getState() == 3); });
+      r.forEachLED([](auto, const auto& led) { CHECK(led.getState() == 3); });
     }
   }
 
@@ -70,9 +70,9 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
       r.forEachLED([](auto index, const auto& led) {
         auto isLast = index != NUM_LEDS_PER_RIBBON - 1;
         if(isLast)
-          REQUIRE(led.getState() == 3);
+          CHECK(led.getState() == 3);
         else
-          REQUIRE(led.getState() < 3);
+          CHECK(led.getState() < 3);
       });
     }
   }
@@ -85,9 +85,9 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
       r.forEachLED([](auto index, const auto& led) {
         auto isFirst = index == 0;
         if(isFirst)
-          REQUIRE(led.getState() > 0);
+          CHECK(led.getState() > 0);
         else
-          REQUIRE(led.getState() == 0);
+          CHECK(led.getState() == 0);
       });
     }
   }
@@ -103,15 +103,15 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
 
         if(leftHalf)
         {
-          REQUIRE(led.getState() == 3);
+          CHECK(led.getState() == 3);
         }
         else if(rightHalf)
         {
-          REQUIRE(led.getState() == 0);
+          CHECK(led.getState() == 0);
         }
         else
         {
-          REQUIRE(led.getState() == 1);
+          CHECK(led.getState() == 1);
         }
       });
     }
@@ -124,9 +124,9 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
     {
       r.forEachLED([centerLED](auto index, const auto& led) {
         if(index == centerLED)
-          REQUIRE(led.getState() == 3);
+          CHECK(led.getState() == 3);
         else
-          REQUIRE(led.getState() == 0);
+          CHECK(led.getState() == 0);
       });
     }
   }
@@ -141,9 +141,9 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
         auto right = index > centerLED;
 
         if(left)
-          REQUIRE(led.getState() == 0);
+          CHECK(led.getState() == 0);
         else if(right || index == centerLED)
-          REQUIRE(led.getState() == 3);
+          CHECK(led.getState() == 3);
       });
     }
   }
@@ -158,9 +158,9 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
         auto right = index > centerLED;
 
         if(right)
-          REQUIRE(led.getState() == 0);
+          CHECK(led.getState() == 0);
         else if(left || index == centerLED)
-          REQUIRE(led.getState() == 3);
+          CHECK(led.getState() == 3);
       });
     }
   }
@@ -175,9 +175,9 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
         auto rightHalfOn = right && index <= (centerLED + (centerLED / 2));
 
         if(rightHalfOn || index == centerLED)
-          REQUIRE(led.getState() != 0);
+          CHECK(led.getState() != 0);
         else
-          REQUIRE(led.getState() == 0);
+          CHECK(led.getState() == 0);
       });
     }
   }
@@ -192,7 +192,7 @@ TEST_CASE("Upper Ribbon", "[HWUI][Ribbon]")
         auto leftHalfOn = left && index >= (centerLED / 2);
 
         if(leftHalfOn || index == centerLED)
-          REQUIRE(led.getState() != 0);
+          CHECK(led.getState() != 0);
         else
           REQUIRE(led.getState() == 0);
       });

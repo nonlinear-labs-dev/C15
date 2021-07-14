@@ -4,7 +4,7 @@
 class LegatoDimension : public Dimension
 {
  public:
-  Glib::ustring stringize(const tDisplayValue& displayValue) const override;
-  Glib::ustring getStingizerJS() const override;
+  [[nodiscard]] Glib::ustring stringize(const tDisplayValue& displayValue) const override;
+  [[nodiscard]] Glib::ustring getStingizerJS() const override;
   static const LegatoDimension& get();
 };

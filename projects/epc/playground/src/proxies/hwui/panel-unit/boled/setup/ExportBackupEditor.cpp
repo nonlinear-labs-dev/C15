@@ -72,9 +72,9 @@ void ExportBackupEditor::installState(State s)
   }
 }
 
-void ExportBackupEditor::writeBackupToStream(std::unique_ptr<OutStream> stream)
+void ExportBackupEditor::writeBackupToStream(OutStream &stream)
 {
-  XmlWriter writer(std::move(stream));
+  XmlWriter writer(stream);
   auto pm = Application::get().getPresetManager();
   PresetManagerSerializer serializer(pm);
   serializer.write(writer, VersionAttribute::get());
@@ -115,7 +115,8 @@ void ExportBackupEditor::writeBackupFileXML()
   auto &app = Application::get();
   auto &boled = app.getHWUI()->getPanelUnit().getEditPanel().getBoled();
   boled.setOverlay(new SplashLayout());
-  writeBackupToStream(std::make_unique<FileOutStream>(c_tempBackupFile, true));
+  FileOutStream stream(c_tempBackupFile, true);
+  writeBackupToStream(stream);
   boled.resetOverlay();
 }
 

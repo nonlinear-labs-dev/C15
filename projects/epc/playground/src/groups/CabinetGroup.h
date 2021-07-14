@@ -6,7 +6,7 @@ class CabinetGroup : public ParameterGroup
 {
  public:
   CabinetGroup(ParameterGroupSet *parent, VoiceGroup voicegroup);
-  virtual ~CabinetGroup();
+  ~CabinetGroup() override;
 
-  void init();
+  void init() override;
 };

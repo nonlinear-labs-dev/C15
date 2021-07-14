@@ -109,42 +109,26 @@ void ImportBackupEditor::importBackupFileFromPath(std::filesystem::directory_ent
 
     FileInStream in(path, true);
 
-    if(!in.eof())
+    boled.setOverlay(new SplashLayout());
+    SplashLayout::addStatus("Restoring Backup from File!");
+
+    PresetManagerUseCases useCase(app.getPresetManager());
+    auto ret = useCase.importBackupFile(in);
+    switch(ret)
     {
-      auto scope = app.getUndoScope()->startTransaction("Import Presetmanager Backup");
-      auto pm = app.getPresetManager();
-
-      pm->clear(scope->getTransaction());
-      PresetManagerSerializer serializer(pm);
-
-      boled.resetOverlay();
-      boled.setOverlay(new SplashLayout());
-      SplashLayout::addStatus("Restoring Backup from File!");
-
-      XmlReader reader(in, scope->getTransaction());
-      reader.onFileVersionRead([&](int version) {
-        if(version > VersionAttribute::getCurrentFileVersion())
-        {
-          SplashLayout::setStatus(
-              "Unsupported File Version. The backup was created with a newer firmware. Please update your C15.");
-          std::this_thread::sleep_for(2s);
-          scope->getTransaction()->rollBack();
-          return Reader::FileVersionCheckResult::Unsupported;
-        }
-        return Reader::FileVersionCheckResult::OK;
-      });
-
-      if(auto lock = pm->lockLoading())
-      {
-        if(reader.read<PresetManagerSerializer>(pm))
-        {
-          pm->getEditBuffer()->sendToAudioEngine();
-        }
+      case PresetManagerUseCases::ImportExitCode::Unsupported:
+        SplashLayout::setStatus(
+            "Unsupported File Version. The backup was created with a newer firmware. Please update your C15.");
+        std::this_thread::sleep_for(2s);
+        break;
+      default:
+      case PresetManagerUseCases::ImportExitCode::OK:
         SplashLayout::addStatus("Restore Complete!");
         std::this_thread::sleep_for(0.7s);
-      }
+        break;
     }
   }
+
   boled.resetOverlay();
   Application::get().getHWUI()->getPanelUnit().setupFocusAndMode({ UIFocus::Presets, UIMode::Select });
 }

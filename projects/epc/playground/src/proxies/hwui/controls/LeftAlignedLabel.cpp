@@ -2,7 +2,7 @@
 #include <proxies/hwui/Oleds.h>
 
 LeftAlignedLabel::LeftAlignedLabel(const Glib::ustring &text, const Rect &pos)
-    : Label(text, pos)
+    : Label(StringAndSuffix { text }, pos)
 {
 }
 

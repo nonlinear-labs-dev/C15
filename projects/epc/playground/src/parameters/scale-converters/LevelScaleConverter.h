@@ -8,5 +8,5 @@ class LevelScaleConverter : public LinearScaleConverter
 
  public:
   LevelScaleConverter();
-  virtual ~LevelScaleConverter();
+  ~LevelScaleConverter() override;
 };

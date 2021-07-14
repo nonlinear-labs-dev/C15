@@ -8,9 +8,8 @@ class DottedLine : public Control
   typedef Control super;
 
  public:
-  DottedLine(const Rect& rect);
-
-  bool redraw(FrameBuffer& fb);
+  explicit DottedLine(const Rect& rect);
+  bool redraw(FrameBuffer& fb) override;
 
  private:
   DottedLine(const DottedLine& other);

@@ -8,6 +8,7 @@ import com.nonlinearlabs.client.Animator.DoubleClientData.Client;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.IPreset;
@@ -208,9 +209,16 @@ public class Belt extends OverlayLayout {
 			if (!isPresetView())
 				setPresetView(true);
 
-			EditBufferUseCases.get().toggleDirectLoad();
+			VoiceGroup current = EditBufferModel.get().voiceGroup.getValue();
+
+			if(NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode()) {
+				EditBufferUseCases.get().toggleDirectLoad(NonMaps.get().getNonLinearWorld().getPresetManager().getLoadToPartMode().getCurrentData(), current);
+			} else {
+				EditBufferUseCases.get().toggleDirectLoad(null, current);
+			}
+
 			return this;
-		} else if (event.getNativeKeyCode() == KeyCodes.KEY_R) {
+		} else if (event.getNativeKeyCode() == KeyCodes.KEY_R && !event.getNativeEvent().getCtrlKey()) {
 			getPresetLayout().renameCurrentPreset();
 			return this;
 		} else if (event.getNativeKeyCode() == KeyCodes.KEY_S && !event.isControlKeyDown()) {

@@ -11,5 +11,5 @@ class DimmingModulationModeButton : public ModulationModeButton
 
  public:
   DimmingModulationModeButton(const Glib::ustring &text, Buttons id);
-  virtual ~DimmingModulationModeButton();
+  ~DimmingModulationModeButton() override;
 };

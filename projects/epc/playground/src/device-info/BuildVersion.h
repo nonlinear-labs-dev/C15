@@ -4,7 +4,7 @@
 class BuildVersion : public DeviceInformationItem
 {
  public:
-  BuildVersion(DeviceInformation *parent);
+  explicit BuildVersion(DeviceInformation *parent);
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
   Glib::ustring get() const override;

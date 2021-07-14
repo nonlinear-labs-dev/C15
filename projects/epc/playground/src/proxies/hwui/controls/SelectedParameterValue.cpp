@@ -65,7 +65,7 @@ bool SelectedParameterValue::redraw(FrameBuffer &fb)
   }
   else
   {
-    setText(amount);
+    setText(StringAndSuffix { amount });
   }
 
   return super::redraw(fb);

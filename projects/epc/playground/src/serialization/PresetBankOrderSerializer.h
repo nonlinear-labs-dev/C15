@@ -7,14 +7,13 @@ class PresetManager;
 class PresetBankOrderSerializer : public Serializer
 {
  public:
-  PresetBankOrderSerializer(PresetManager *pm);
+  explicit PresetBankOrderSerializer(PresetManager *pm);
 
   static Glib::ustring getTagName();
-  void finalize(Reader &reader);
 
  protected:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   PresetManager *m_pm = nullptr;
 };

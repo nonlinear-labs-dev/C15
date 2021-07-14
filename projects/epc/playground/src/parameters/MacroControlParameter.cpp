@@ -196,15 +196,6 @@ ParameterId MacroControlParameter::getUiSelectedHardwareSource() const
   return m_UiSelectedHardwareSourceParameterID;
 }
 
-void MacroControlParameter::undoableSetGivenName(const Glib::ustring &newName)
-{
-  if(m_givenName != newName)
-  {
-    auto scope = getUndoScope().startTransaction("Rename MacroControl '%0'", getLongName());
-    undoableSetGivenName(scope->getTransaction(), newName);
-  }
-}
-
 void MacroControlParameter::undoableSetGivenName(UNDO::Transaction *transaction, const Glib::ustring &newName)
 {
   if(m_givenName != newName)
@@ -217,15 +208,6 @@ void MacroControlParameter::undoableSetGivenName(UNDO::Transaction *transaction,
       swapData->swapWith(m_givenName);
       invalidate();
     });
-  }
-}
-
-void MacroControlParameter::undoableSetInfo(const Glib::ustring &info)
-{
-  if(m_info != info)
-  {
-    auto scope = getUndoScope().startTransaction("Set MacroControl Info '%0'", getLongName());
-    undoableSetInfo(scope->getTransaction(), info);
   }
 }
 
@@ -255,14 +237,6 @@ bool MacroControlParameter::isChangedFromLoaded() const
 
 void MacroControlParameter::undoableResetConnectionsToTargets()
 {
-  auto scope = getUndoScope().startTransaction("Reset MacroControls connections");
-
-  while(!m_targets.empty())
-  {
-    auto p = *m_targets.begin();
-    p->undoableSelectModSource(scope->getTransaction(), MacroControls::NONE);
-    p->undoableSetModAmount(scope->getTransaction(), 0);
-  }
 }
 
 void MacroControlParameter::loadDefault(UNDO::Transaction *transaction, Defaults mode)

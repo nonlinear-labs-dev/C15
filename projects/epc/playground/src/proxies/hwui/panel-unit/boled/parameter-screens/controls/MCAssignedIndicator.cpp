@@ -79,7 +79,7 @@ void MCAssignedIndicator::drawSingle(FrameBuffer& fb, const AffectedGroups& mods
   if(mods.master)
     indicator += "M ";
 
-  m_middleRowLabel->setText({ indicator, 0 });
+  m_middleRowLabel->setText(StringAndSuffix { indicator, 0 });
   m_middleRowLabel->redraw(fb);
 
   if(mods.affected(SoundType::Single))
@@ -109,7 +109,7 @@ void MCAssignedIndicator::drawSplit(FrameBuffer& fb, const AffectedGroups& mods)
   if(mods.master)
     text += "M ";
 
-  m_middleRowLabel->setText({ text, 0 });
+  m_middleRowLabel->setText(StringAndSuffix { text, 0 });
   m_middleRowLabel->redraw(fb);
 
   if(mods.affected(SoundType::Split))
@@ -144,7 +144,7 @@ void MCAssignedIndicator::drawLayer(FrameBuffer& fb, const AffectedGroups& mods)
   if(mods.master)
     indicaton += "M ";
 
-  m_middleRowLabel->setText({ indicaton, 0 });
+  m_middleRowLabel->setText(StringAndSuffix { indicaton, 0 });
   m_middleRowLabel->redraw(fb);
 
   if(mods.affected(SoundType::Layer))
@@ -163,7 +163,7 @@ void MCAssignedIndicator::drawNonLEDTargets(FrameBuffer& fb)
 
   auto color = isHighlight() ? FrameBufferColors::C128 : FrameBufferColors::C204;
 
-  m_middleRowLabel->setText({ "", 0 });
+  m_middleRowLabel->setText(StringAndSuffix { "", 0 });
   m_middleRowLabel->setFontColor(color);
 
   for(auto& t : targets)

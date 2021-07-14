@@ -39,7 +39,7 @@ template <typename tSetting> class NumericSettingEditor : public SetupLabel, pub
     return Font::Justification::Left;
   }
 
-  bool redraw(FrameBuffer &fb)
+  bool redraw(FrameBuffer &fb) override
   {
     SetupLabel::redraw(fb);
 
@@ -87,7 +87,7 @@ template <typename tSetting> class BooleanSettingEditor : public SetupLabel, pub
     return Font::Justification::Left;
   }
 
-  bool redraw(FrameBuffer &fb)
+  bool redraw(FrameBuffer &fb) override
   {
     SetupLabel::redraw(fb);
 

@@ -59,8 +59,8 @@ namespace nltools
         {
           parseURI(c.uri, [=](auto scheme, auto host, auto, auto port) {
             nltools_assertOnDevPC(scheme == "ws");  // Currently, only web sockets are supported
-            outChannels[c.peer] = std::make_unique<ws::WebSocketOutChannel>(host, port, c.prio);
-            outChannels[c.peer]->onConnectionEstablished([peer = c.peer] { connectionSignals[peer](); });
+            outChannels[c.peer] = std::make_unique<ws::WebSocketOutChannel>(
+                host, port, c.prio, [peer = c.peer] { connectionSignals[peer](); });
           });
         }
       }

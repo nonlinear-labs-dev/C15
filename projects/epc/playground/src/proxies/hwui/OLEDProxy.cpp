@@ -5,6 +5,8 @@
 #include <glib.h>
 #include <proxies/hwui/Oleds.h>
 
+#include <utility>
+
 OLEDProxy::OLEDProxy(const Rect &posInFrameBuffer)
     : m_posInFrameBuffer(posInFrameBuffer)
 {
@@ -28,6 +30,9 @@ void OLEDProxy::invalidate()
 
 OLEDProxy::tLayoutPtr OLEDProxy::getLayout() const
 {
+  if(m_screenSaver)
+    return m_screenSaver;
+
   if(m_overlay)
     return m_overlay;
 
@@ -62,11 +67,7 @@ void OLEDProxy::reset(tLayoutPtr layout)
   if(!layout->isInitialized())
     layout->init();
 
-  if(m_onLayoutInstalledCB)
-  {
-    m_onLayoutInstalledCB(layout.get());
-    m_onLayoutInstalledCB = nullptr;
-  }
+  m_sigLayoutInstalled.emit(layout.get());
 
   DebugLevel::info(G_STRLOC, typeid(layout.get()).name());
   invalidate();
@@ -120,11 +121,25 @@ void OLEDProxy::clear()
   fb.fillRect(Rect(0, 0, m_posInFrameBuffer.getWidth(), m_posInFrameBuffer.getHeight()));
 }
 
-void OLEDProxy::onLayoutInstalled(std::function<void(Layout *)> cb)
+sigc::connection OLEDProxy::onLayoutInstalled(const sigc::slot<void, Layout *> &slot)
 {
-  if(m_onLayoutInstalledCB != nullptr)
-  {
-    nltools::Log::warning("removing non called onLayoutInstalled Callback!", __LINE__, __PRETTY_FUNCTION__, __FILE__);
-  }
-  m_onLayoutInstalledCB = cb;
+  return m_sigLayoutInstalled.connect(slot);
+}
+
+void OLEDProxy::installScreenSaver(Layout *l)
+{
+  m_screenSaver.reset(l);
+  if(!m_screenSaver->isInitialized())
+    m_screenSaver->init();
+}
+
+void OLEDProxy::removeScreenSaver()
+{
+  m_screenSaver.reset();
+  invalidate();
+}
+
+Layout *OLEDProxy::getScreenSaver()
+{
+  return m_screenSaver.get();
 }

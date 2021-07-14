@@ -112,14 +112,15 @@ void ParameterCarousel::setupChildControls(Parameter* selectedParameter, const s
 void ParameterCarousel::antiTurn()
 {
   auto foundCtrl = std::dynamic_pointer_cast<MiniParameter>(*getControls().rbegin());
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  EditBufferUseCases ebUseCases { eb };
   for(const auto& ctrl : getControls())
   {
     if(auto p = std::dynamic_pointer_cast<MiniParameter>(ctrl))
     {
       if(p->isSelected())
       {
-        Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(
-            foundCtrl->getParameter()->getID());
+        ebUseCases.selectParameter(foundCtrl->getParameter()->getID(), true);
         return;
       }
       foundCtrl = p;
@@ -131,12 +132,15 @@ void ParameterCarousel::turn()
 {
   bool found = false;
   bool handled = false;
+  auto eb = Application::get().getPresetManager()->getEditBuffer();
+  EditBufferUseCases ebUseCases { eb };
+
   tIfCallback cb = ([&](const tControlPtr& ctrl) -> bool {
     if(auto p = std::dynamic_pointer_cast<MiniParameter>(ctrl))
     {
       if(found)
       {
-        Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(p->getParameter()->getID());
+        ebUseCases.selectParameter(p->getParameter()->getID(), true);
         handled = true;
         return false;
       }
@@ -154,7 +158,7 @@ void ParameterCarousel::turn()
 
   if(!handled)
     if(auto p = std::dynamic_pointer_cast<MiniParameter>(first()))
-      Application::get().getPresetManager()->getEditBuffer()->undoableSelectParameter(p->getParameter()->getID());
+      ebUseCases.selectParameter(p->getParameter()->getID(), true);
 }
 
 void ParameterCarousel::setupChildControlsForParameterWithoutButtonMapping(Parameter* selectedParameter)

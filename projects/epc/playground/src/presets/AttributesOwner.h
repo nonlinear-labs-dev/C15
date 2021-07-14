@@ -13,7 +13,7 @@ class AttributesOwner : public UpdateDocumentContributor
  public:
   typedef std::map<std::string, std::string> tAttributes;
 
-  AttributesOwner(UpdateDocumentContributor *parent);
+  explicit AttributesOwner(UpdateDocumentContributor *parent);
   AttributesOwner(UpdateDocumentContributor *parent, const AttributesOwner *other);
   ~AttributesOwner() override;
 
@@ -21,9 +21,9 @@ class AttributesOwner : public UpdateDocumentContributor
   virtual void copyFrom(UNDO::Transaction *transaction, const AttributesOwner *other);
   virtual void clear(UNDO::Transaction *transaction);
 
-  Glib::ustring getAttribute(const Glib::ustring &key, const Glib::ustring &def) const;
-  const tAttributes &getAttributes() const;
-  size_t getHash() const;
+  [[nodiscard]] Glib::ustring getAttribute(const Glib::ustring &key, const Glib::ustring &def) const;
+  [[nodiscard]] const tAttributes &getAttributes() const;
+  [[nodiscard]] size_t getHash() const;
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
   void writeDiff(Writer &writer, const AttributesOwner *other) const;

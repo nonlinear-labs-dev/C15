@@ -24,7 +24,7 @@ ParameterValueLabel::~ParameterValueLabel()
 
 void ParameterValueLabel::updateText(const Parameter *param)
 {
-  setText(param->getDisplayString());
+  setText(StringAndSuffix { param->getDisplayString() });
 }
 
 void ParameterValueLabel::updateVoiceGroup(VoiceGroup newVoiceGroup)

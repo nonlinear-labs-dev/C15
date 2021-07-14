@@ -5,11 +5,11 @@
 class RenameDeviceLayout : public RenameLayout
 {
  public:
-  RenameDeviceLayout(std::shared_ptr<Layout> restore);
-  virtual ~RenameDeviceLayout();
+  explicit RenameDeviceLayout(std::shared_ptr<Layout> restore);
+  ~RenameDeviceLayout() override;
 
-  virtual void commit(const Glib::ustring &newName) override;
-  virtual Glib::ustring getInitialText() const override;
+  void commit(const Glib::ustring &newName) override;
+  Glib::ustring getInitialText() const override;
 
  private:
   std::shared_ptr<Layout> m_restore;

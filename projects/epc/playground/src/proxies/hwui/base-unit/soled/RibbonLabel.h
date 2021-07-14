@@ -12,14 +12,14 @@ class RibbonLabel : public Label
 
  public:
   RibbonLabel(const ParameterId &paramID, const Rect &rect);
-  virtual ~RibbonLabel();
+  ~RibbonLabel() override;
 
   StringAndSuffix getText() const override;
 
- private:
   RibbonLabel(const RibbonLabel &other) = delete;
   RibbonLabel &operator=(const RibbonLabel &) = delete;
 
+ private:
   Glib::ustring crop(const Glib::ustring &text) const;
   Glib::ustring binarySearchLength(const Glib::ustring &text, int min, int max) const;
 

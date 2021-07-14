@@ -8,8 +8,8 @@ class PresetLabel : public Label
   typedef Label super;
 
  public:
-  PresetLabel(const Rect &pos);
-  virtual ~PresetLabel();
+  explicit PresetLabel(const Rect &pos);
+  ~PresetLabel() override;
 
   void setText(const Glib::ustring &text, bool selected, bool loaded);
 

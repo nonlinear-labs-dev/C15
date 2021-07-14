@@ -16,12 +16,6 @@ MessageComposer::~MessageComposer()
 {
 }
 
-bool MessageComposer::canReplace(const MessageComposer *other) const
-{
-  DebugLevel::info("cannot replace existing message with new now");
-  return false;
-}
-
 void MessageComposer::operator<<(const uint16_t &value)
 {
   m_stream->put_uint16(value);

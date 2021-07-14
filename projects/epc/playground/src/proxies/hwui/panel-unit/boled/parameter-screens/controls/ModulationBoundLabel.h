@@ -25,7 +25,8 @@ class ModulationBoundLabel : public LabelRegular8
   void onButtonModifiersChanged(ButtonModifiers mod);
   void updateText();
   void setSuffixFontColor(FrameBuffer &fb) const override;
-  StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override;
+  StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                            const StringAndSuffix &text) const override;
 
   MacroControls m_mc = MacroControls::NONE;
   sigc::connection m_paramConnection;

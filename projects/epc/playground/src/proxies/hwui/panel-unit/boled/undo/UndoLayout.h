@@ -21,10 +21,10 @@ class UndoLayout : public Layout
 
  public:
   UndoLayout();
-  virtual ~UndoLayout();
+  ~UndoLayout() override;
 
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
 
  private:
   bool isTipParentOfCurrentUndo() const;

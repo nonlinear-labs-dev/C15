@@ -93,7 +93,7 @@ class Reader
 
   struct StackEntry
   {
-    StackEntry(size_t depth)
+    explicit StackEntry(size_t depth)
     {
       m_treeDepth = depth;
     }

@@ -8,5 +8,5 @@ class IdentityScaleConverter : public LinearScaleConverter
 
  public:
   IdentityScaleConverter();
-  virtual ~IdentityScaleConverter();
+  ~IdentityScaleConverter() override;
 };

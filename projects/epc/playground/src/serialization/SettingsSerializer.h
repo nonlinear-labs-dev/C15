@@ -6,13 +6,13 @@
 class SettingsSerializer : public Serializer
 {
  public:
-  SettingsSerializer(Settings &settings);
+  explicit SettingsSerializer(Settings &settings);
 
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   Settings &m_settings;
 };

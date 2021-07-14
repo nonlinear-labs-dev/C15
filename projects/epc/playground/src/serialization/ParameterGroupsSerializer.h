@@ -7,13 +7,13 @@ class ParameterGroupSet;
 class ParameterGroupsSerializer : public Serializer
 {
  public:
-  ParameterGroupsSerializer(ParameterGroupSet *paramGroups);
+  explicit ParameterGroupsSerializer(ParameterGroupSet *paramGroups);
 
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   ParameterGroupSet *m_paramGroups;
 };

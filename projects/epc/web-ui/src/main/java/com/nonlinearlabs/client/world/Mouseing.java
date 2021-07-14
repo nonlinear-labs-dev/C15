@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.world.PointerEvent.GwtPointerEvent;
 import com.nonlinearlabs.client.world.pointer.PointerState;
 import com.nonlinearlabs.client.world.pointer.Touch;
 
@@ -21,6 +22,8 @@ public abstract class Mouseing {
 	PointerEvent pointerDown = new PointerEvent("pointerdown");
 	PointerEvent pointerUp = new PointerEvent("pointerup");
 	PointerEvent pointerMove = new PointerEvent("pointermove");
+	PointerEvent pointerCancel = new PointerEvent("pointercancel");
+	PointerEvent pointerLost = new PointerEvent("lostpointercapture");
 
 	ArrayList<Touch> touches = new ArrayList<Touch>();
 
@@ -83,21 +86,16 @@ public abstract class Mouseing {
 		}, pointerMove.eventType);
 
 		canvas.addDomHandler((event) -> {
-			Position p = new Position(event.getNativeEvent());
-
-			touches.removeIf(t -> {
-				return t.id == event.pointerId;
-			});
-
-			if (getPointerType(event.getNativeEvent()) == "touch") {
-				PointerState.get().onTouchEnd(touches);
-			} else {
-				if (event.getNativeEvent().getButton() == com.google.gwt.dom.client.NativeEvent.BUTTON_LEFT)
-					PointerState.get().onLeftUp(p);
-				else if (event.getNativeEvent().getButton() == com.google.gwt.dom.client.NativeEvent.BUTTON_RIGHT)
-					PointerState.get().onRightUp(p);
-			}
+			onTouchEnd(event);
 		}, pointerUp.eventType);
+
+		canvas.addDomHandler((event) -> {
+			onTouchEnd(event);
+		}, pointerLost.eventType);
+
+		canvas.addDomHandler((event) -> {
+			onTouchEnd(event);
+		}, pointerCancel.eventType);
 
 		canvas.addHandler(new ContextMenuHandler() {
 			@Override
@@ -122,10 +120,27 @@ public abstract class Mouseing {
 			}
 		};
 
-		canvas.sinkEvents(Event.ONCONTEXTMENU | Event.KEYEVENTS | Event.MOUSEEVENTS);
+		canvas.sinkEvents(Event.ONCONTEXTMENU | Event.KEYEVENTS | Event.MOUSEEVENTS | Event.TOUCHEVENTS);
 		canvas.addKeyDownHandler(keypress);
 		canvas.addKeyUpHandler(keyUpHandler);
 		canvas.setFocus(true);
+	}
+
+	private void onTouchEnd(GwtPointerEvent event) {
+		Position p = new Position(event.getNativeEvent());
+
+		touches.removeIf(t -> {
+			return t.id == event.pointerId;
+		});
+
+		if (getPointerType(event.getNativeEvent()) == "touch") {
+			PointerState.get().onTouchEnd(touches);
+		} else {
+			if (event.getNativeEvent().getButton() == com.google.gwt.dom.client.NativeEvent.BUTTON_LEFT)
+				PointerState.get().onLeftUp(p);
+			else if (event.getNativeEvent().getButton() == com.google.gwt.dom.client.NativeEvent.BUTTON_RIGHT)
+				PointerState.get().onRightUp(p);
+		}
 	}
 
 	protected abstract boolean handleKeyPress(KeyDownEvent event);

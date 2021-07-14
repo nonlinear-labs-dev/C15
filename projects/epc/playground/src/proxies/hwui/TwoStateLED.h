@@ -8,8 +8,8 @@ class Application;
 class TwoStateLED : public LED
 {
  public:
-  TwoStateLED(int id);
-  virtual ~TwoStateLED();
+  explicit TwoStateLED(int id);
+  ~TwoStateLED() override;
 
   enum LedState
   {

@@ -29,7 +29,7 @@ namespace Engine
     void resetDSP();
 
    private:
-    PolyValue m_sample_interval = {}, m_mute_state_A{ 1 }, m_mute_state_B{ 1 }, m_oscA_selfmix = {},
+    PolyValue m_sample_interval = {}, m_mute_state_A { 1 }, m_mute_state_B { 1 }, m_oscA_selfmix = {},
               m_oscA_crossmix = {}, m_oscA_phase = {}, m_oscA_phase_stateVar = {}, m_oscA_phaseInc = {},
               m_OscA_randVal_float = {}, m_oscB_selfmix = {}, m_oscB_crossmix = {}, m_oscB_phase = {},
               m_oscB_phase_stateVar = {}, m_oscB_phaseInc = {}, m_OscB_randVal_float = {}, m_chiA_stateVar = {},

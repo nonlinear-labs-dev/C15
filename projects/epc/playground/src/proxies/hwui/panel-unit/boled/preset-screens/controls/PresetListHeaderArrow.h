@@ -8,7 +8,7 @@ class PresetListHeaderArrow : public Label
   typedef Label super;
 
  public:
-  PresetListHeaderArrow(const Glib::ustring &text, const Rect &pos, const int xOffset);
+  PresetListHeaderArrow(const Glib::ustring &text, const Rect &pos, int xOffset);
   ~PresetListHeaderArrow() override;
 
   bool redraw(FrameBuffer &fb) override;

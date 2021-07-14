@@ -85,6 +85,12 @@ void HWUI::init()
   m_panelUnit.init();
   m_baseUnit.init();
 
+  m_editBufferParameterReselectionConnection
+      = eb->onParameterReselected(sigc::mem_fun(this, &HWUI::onParameterReselection));
+
+  m_editBufferParameterSelectionConnection
+      = eb->onSelectionChanged(sigc::mem_fun(this, &HWUI::onParameterSelection), std::nullopt);
+
   m_rotaryChangedConnection = getPanelUnit().getEditPanel().getKnob().onRotaryChanged(
       sigc::hide(sigc::mem_fun(this, &HWUI::onRotaryChanged)));
 
@@ -213,7 +219,8 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
       {
         auto eb = Application::get().getPresetManager()->getEditBuffer();
         auto wtf = std::shared_ptr<std::ostream>(&std::cout, [](void *) {});
-        XmlWriter writer(std::make_unique<StandardOutStream>(wtf));
+        StandardOutStream stream(wtf);
+        XmlWriter writer(stream);
         eb->writeDocument(writer, 0);
 
         EditBufferSerializer ebs(eb);
@@ -270,36 +277,6 @@ void HWUI::onKeyboardLineRead(Glib::RefPtr<Gio::AsyncResult> &res)
         f = powf(fabsf(f), 1.5f) * sign;
         auto c = static_cast<signed char>(roundf(f));
         m_panelUnit.getEditPanel().getKnob().fake(c);
-      }
-      else if(line.find('z') == 0)
-      {
-        auto p = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
-            HardwareSourcesGroup::getUpperRibbonParameterID());
-
-        if(auto h = dynamic_cast<PhysicalControlParameter *>(p))
-        {
-          h->onChangeFromPlaycontroller(h->getControlPositionValue() + line.size() * 0.1);
-        }
-        else
-        {
-          auto changer = p->getValue().startUserEdit(Initiator::EXPLICIT_PLAYCONTROLLER);
-          changer->changeBy(1.0 / p->getValue().getCoarseDenominator());
-        }
-      }
-      else if(line.find('x') == 0)
-      {
-        auto p = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
-            HardwareSourcesGroup::getUpperRibbonParameterID());
-
-        if(auto h = dynamic_cast<PhysicalControlParameter *>(p))
-        {
-          h->onChangeFromPlaycontroller(h->getControlPositionValue() - line.size() * 0.1);
-        }
-        else
-        {
-          auto changer = p->getValue().startUserEdit(Initiator::EXPLICIT_PLAYCONTROLLER);
-          changer->changeBy(-1.0 / p->getValue().getCoarseDenominator());
-        }
       }
       else
       {
@@ -597,12 +574,13 @@ void HWUI::undoableUpdateParameterSelection(UNDO::Transaction *transaction)
 
   if(id.getVoiceGroup() != VoiceGroup::Global)
   {
-    eb->undoableSelectParameter(transaction, { id.getNumber(), m_currentVoiceGroup });
+    eb->undoableSelectParameter(transaction, { id.getNumber(), m_currentVoiceGroup }, false);
   }
 }
 
 void HWUI::toggleCurrentVoiceGroupAndUpdateParameterSelection()
 {
+  //TODO examine
   auto currentVG = getCurrentVoiceGroup();
   auto partName = currentVG == VoiceGroup::I ? "II" : "I";
   auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction("Select Part "
@@ -623,6 +601,8 @@ void HWUI::toggleCurrentVoiceGroupAndUpdateParameterSelection(UNDO::Transaction 
 
 void HWUI::toggleCurrentVoiceGroup()
 {
+  auto scope = getParameterFocusLockGuard();
+
   if(Application::get().getPresetManager()->getEditBuffer()->getType() == SoundType::Single)
     return;
 
@@ -635,11 +615,6 @@ void HWUI::toggleCurrentVoiceGroup()
 sigc::connection HWUI::onCurrentVoiceGroupChanged(const sigc::slot<void, VoiceGroup> &cb)
 {
   return m_voiceGoupSignal.connectAndInit(cb, m_currentVoiceGroup);
-}
-
-void HWUI::setFocusAndMode(const UIDetail &detail)
-{
-  setFocusAndMode({ m_focusAndMode.focus, m_focusAndMode.mode, detail });
 }
 
 void HWUI::setFocusAndMode(FocusAndMode focusAndMode)
@@ -657,6 +632,21 @@ void HWUI::undoableSetFocusAndMode(FocusAndMode focusAndMode)
 {
   auto scope = Application::get().getUndoScope()->startCuckooTransaction();
   undoableSetFocusAndMode(scope->getTransaction(), focusAndMode);
+}
+
+void HWUI::setFocusAndMode(const UIMode &mode)
+{
+  setFocusAndMode(FocusAndMode { mode });
+}
+
+void HWUI::setFocusAndMode(const UIFocus &focus)
+{
+  setFocusAndMode(FocusAndMode { focus });
+}
+
+void HWUI::setFocusAndMode(const UIDetail &detail)
+{
+  setFocusAndMode({ m_focusAndMode.focus, m_focusAndMode.mode, detail });
 }
 
 void HWUI::setUiModeDetail(UIDetail detail)
@@ -835,4 +825,42 @@ void HWUI::exportOled(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const std:
   }
 
   boledFile.write(fileName);
+}
+
+void HWUI::onParameterReselection(Parameter *parameter)
+{
+  if(getFocusAndMode().mode == UIMode::Info)
+    setFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Info));
+  else
+    setFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Select));
+}
+
+void HWUI::onParameterSelection(Parameter *oldParameter, Parameter *newParameter)
+{
+  unsetFineMode();
+
+  if(!isParameterFocusLocked())
+  {
+    if(getFocusAndMode().focus == UIFocus::Sound)
+    {
+      if(oldParameter->getID() != newParameter->getID())
+      {
+        setFocusAndMode(FocusAndMode { UIFocus::Parameters });
+      }
+    }
+    else
+    {
+      setFocusAndMode(FocusAndMode { UIFocus::Parameters });
+    }
+  }
+}
+
+bool HWUI::isParameterFocusLocked() const
+{
+  return m_parameterFocusLock.isLocked();
+}
+
+std::shared_ptr<ScopedGuard::Lock> HWUI::getParameterFocusLockGuard()
+{
+  return m_parameterFocusLock.lock();
 }

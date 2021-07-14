@@ -9,7 +9,7 @@ class ButtonRepeat : public sigc::trackable
 {
  public:
   using Callback = std::function<void()>;
-  ButtonRepeat(const Callback& cb);
+  explicit ButtonRepeat(const Callback& cb);
   ~ButtonRepeat();
 
  private:

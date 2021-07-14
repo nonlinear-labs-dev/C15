@@ -6,7 +6,7 @@ namespace DescriptiveLayouts
 {
   class DefaultPresetSelectionEvents : public PresetSelectionEvents
   {
-  public:
+   public:
     DefaultPresetSelectionEvents();
   };
 }

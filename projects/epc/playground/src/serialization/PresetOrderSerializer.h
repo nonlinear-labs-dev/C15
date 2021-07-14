@@ -10,11 +10,10 @@ class PresetOrderSerializer : public Serializer
   PresetOrderSerializer(Bank *bank, bool ignoreUUIDs);
 
   static Glib::ustring getTagName();
-  void finalize(Reader &reader);
 
  protected:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   Bank *m_bank;
   bool m_ignoreUUIDs;

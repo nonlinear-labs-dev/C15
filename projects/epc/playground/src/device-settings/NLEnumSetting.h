@@ -4,6 +4,7 @@
 #include <nltools/enums/EnumTools.h>
 #include "xml/Writer.h"
 #include "xml/Attribute.h"
+#include <nltools/Types.h>
 
 template <typename TEnum> class NLEnumSetting : public Setting
 {
@@ -16,7 +17,11 @@ template <typename TEnum> class NLEnumSetting : public Setting
   NLEnumSetting(UpdateDocumentContributor &settings, tEnum def)
       : super(settings)
       , m_mode(def)
+      , m_displayStrings { getMap<tEnum>().size() }
   {
+    auto in = getAllStrings<tEnum>();
+    std::transform(in.begin(), in.end(), m_displayStrings.begin(), [](auto r) { return r; });
+    assert(in.size() == m_displayStrings.size());
   }
 
   virtual bool set(tEnum m)
@@ -47,10 +52,10 @@ template <typename TEnum> class NLEnumSetting : public Setting
     set(to<TEnum>(text));
   }
 
-  void inc(int dir, bool wrap)
+  virtual void incDec(int dir, bool wrap)
   {
-    auto v = getAllValues<tEnum>();
-    auto it = std::find(v.begin(), v.end(), get());
+    const auto &v = m_displayStrings;
+    auto it = std::find(v.begin(), v.end(), getDisplayString());
     auto idx = std::distance(v.begin(), it);
     idx += dir;
 
@@ -61,10 +66,10 @@ template <typename TEnum> class NLEnumSetting : public Setting
       idx = idx - v.size();
 
     if(idx >= 0 && idx < v.size())
-      set(v.at(idx));
+      set((tEnum) idx);
   }
 
-  Glib::ustring save() const
+  Glib::ustring save() const override
   {
     return toString(get());
   }
@@ -88,9 +93,16 @@ template <typename TEnum> class NLEnumSetting : public Setting
     return "";
   }
 
+  virtual const std::vector<Glib::ustring> &getDisplayStrings() const
+  {
+    return m_displayStrings;
+  }
+
+  NLEnumSetting(const NLEnumSetting &other) = delete;
+  NLEnumSetting &operator=(const NLEnumSetting &) = delete;
+
  private:
-  NLEnumSetting(const NLEnumSetting &other);
-  NLEnumSetting &operator=(const NLEnumSetting &);
+  std::vector<Glib::ustring> m_displayStrings;
 
   tEnum m_mode;
 };

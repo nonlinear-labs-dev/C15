@@ -7,7 +7,7 @@ class Label;
 class BOLEDScreenSaver : public Layout
 {
  public:
-  BOLEDScreenSaver(OLEDProxy& oled);
+  explicit BOLEDScreenSaver(OLEDProxy& oled);
   ~BOLEDScreenSaver() override;
   void init() override;
   bool onRotary(int inc, ButtonModifiers modifiers) override;

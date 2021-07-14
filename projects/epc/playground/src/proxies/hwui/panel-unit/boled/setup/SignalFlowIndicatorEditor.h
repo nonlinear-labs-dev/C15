@@ -4,6 +4,7 @@
 
 class Setting;
 
+//remove this and use enumsettingeditor
 class SignalFlowIndicatorEditor : public MenuEditor
 {
  private:
@@ -11,7 +12,7 @@ class SignalFlowIndicatorEditor : public MenuEditor
 
  public:
   SignalFlowIndicatorEditor();
-  virtual ~SignalFlowIndicatorEditor() = default;
+  ~SignalFlowIndicatorEditor() override = default;
 
   void incSetting(int inc) override;
   const std::vector<Glib::ustring> &getDisplayStrings() const override;

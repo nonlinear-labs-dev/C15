@@ -5,8 +5,8 @@
 class SetupSelectionEntries : public ControlWithChildren
 {
  public:
-  SetupSelectionEntries(const Rect &pos);
-  virtual ~SetupSelectionEntries();
+  explicit SetupSelectionEntries(const Rect &pos);
+  ~SetupSelectionEntries() override;
 
   void addEntry(Control *s);
   void finish(bool selectMode);

@@ -6,13 +6,13 @@ class BipolarParabolic100PercentScaleConverter : public ScaleConverter
 {
  public:
   BipolarParabolic100PercentScaleConverter();
-  virtual ~BipolarParabolic100PercentScaleConverter();
+  ~BipolarParabolic100PercentScaleConverter() override;
 
-  bool isBiPolar() const;
-  tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const;
-  tControlPositionValue tcdToControlPosition(tTcdValue v) const;
-  tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const;
-  Glib::ustring controlPositionToDisplayJS() const;
+  [[nodiscard]] bool isBiPolar() const override;
+  [[nodiscard]] tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] tControlPositionValue tcdToControlPosition(tTcdValue v) const override;
+  [[nodiscard]] tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] Glib::ustring controlPositionToDisplayJS() const override;
 
  private:
   tTcdRange m_tcdRange;

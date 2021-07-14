@@ -52,4 +52,3 @@ HardwareSourcesGroup::tPhysicalControlParameters HardwareSourcesGroup::getPhysic
 
   return ret;
 }
-

@@ -12,21 +12,21 @@ class HWSourceAmountCarousel : public Carousel
   typedef Carousel super;
 
  public:
-  HWSourceAmountCarousel(const Rect& pos);
-  virtual ~HWSourceAmountCarousel();
+  explicit HWSourceAmountCarousel(const Rect& pos);
+  HWSourceAmountCarousel(const HWSourceAmountCarousel& other) = delete;
+  HWSourceAmountCarousel& operator=(const HWSourceAmountCarousel&) = delete;
 
-  virtual void turn() override;
-  virtual void antiTurn() override;
+  ~HWSourceAmountCarousel() override;
+
+  void turn() override;
+  void antiTurn() override;
   void setHighlight(bool isHighlight) override;
   void highlightSelected();
 
  protected:
-  virtual void setup(Parameter* selectedParameter) override;
+  void setup(Parameter* selectedParameter) override;
 
  private:
-  HWSourceAmountCarousel(const HWSourceAmountCarousel& other);
-  HWSourceAmountCarousel& operator=(const HWSourceAmountCarousel&);
-
   void onMacroControlChanged(const Parameter* param);
 
   sigc::connection m_mcConnection;

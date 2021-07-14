@@ -12,16 +12,32 @@ class BankNameLabel : public Label
   typedef Label super;
 
  public:
-  BankNameLabel(const Rect &pos);
-  virtual ~BankNameLabel();
+  explicit BankNameLabel(const Rect &pos);
+  ~BankNameLabel() override;
 
-  void updateLabel(Bank *newBank);
+  virtual void updateLabel(Bank *newBank);
 
  protected:
   void setBackgroundColor(FrameBuffer &fb) const override;
   void setFontColor(FrameBuffer &fb) const override;
   Font::Justification getJustification() const override;
   int getXOffset() const override;
-  virtual StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font,
-                                                    const StringAndSuffix &text) const override;
+  StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                            const StringAndSuffix &text) const override;
+};
+
+class BankMidiLabel : public BankNameLabel
+{
+ private:
+  typedef BankNameLabel super;
+
+ public:
+  explicit BankMidiLabel(const Rect &pos);
+  ~BankMidiLabel() override;
+
+  void updateLabel(Bank *newBank) override;
+
+ protected:
+  int getXOffset() const override;
+  int getYOffset() const override;
 };

@@ -5,9 +5,9 @@ EPC_IP=192.168.10.10
 BBB_IP=192.168.10.11
 
 # general Messages
-MSG_DO_NOT_SWITCH_OFF="DO NOT SWITCH OFF C15!"
-MSG_STARTING_UPDATE="Starting C15 update..."
-MSG_UPDATING_C15="Updating C15"
+MSG_DO_NOT_SWITCH_OFF="DO NOT SWITCH OFF!"
+MSG_STARTING_UPDATE="Starting the C15 update..."
+MSG_UPDATING_C15="Updating the C15"
 MSG_UPDATING_EPC="1/3 Updating..."
 MSG_UPDATING_BBB="2/3 Updating..."
 MSG_UPDATING_RT_FIRMWARE="3/3 Updating..."
@@ -83,7 +83,7 @@ report() {
 }
 
 executeAsRoot() {
-    echo "sscl" | /update/utilities/sshpass -p 'sscl' ssh -o ConnectionAttempts=1 -o ConnectTimeout=1 -o StrictHostKeyChecking=no sscl@$EPC_IP "sudo -S /bin/bash -c '$1'"
+    echo "sscl" | /update/utilities/sshpass -p 'sscl' ssh -o ServerAliveInterval=1 -o ConnectionAttempts=1 -o ConnectTimeout=1 -o StrictHostKeyChecking=no sscl@$EPC_IP "sudo -S /bin/bash -c '$1'"
     return $?
 }
 
@@ -128,8 +128,13 @@ check_preconditions() {
             { report "" "E86: ePC update missing" "Please retry download!"; return 1; }
     fi
 
-    [ -f "/update/BBB/rootfs.tar.gz" ] || { report "" "E87: BBB update missing" "Please retry download!"; return 1; }
-    [ -f "/update/playcontroller/main.bin" ] || { report "" "E88: playcontroller update missing" "Please retry download!"; return 1; }
+    if $UPDATE_BBB == 1; then
+      [ -f "/update/BBB/rootfs.tar.gz" ] || { report "" "E87: BBB update missing" "Please retry download!"; return 1; }
+    fi
+    
+    if $UPDATE_PLAYCONTROLLER == 1; then
+      [ -f "/update/playcontroller/main.bin" ] || { report "" "E88: playcontroller update missing" "Please retry download!"; return 1; }
+    fi
 
     return 0
 }
@@ -260,7 +265,7 @@ main() {
     if [ "$1" = "reboot" ]; then
         pretty "" "$MSG_UPDATING_C15 $MSG_DONE" "$MSG_RESTART_AUT" "$MSG_UPDATING_C15 $MSG_DONE" "$MSG_RESTART_AUT"
         sleep 2
-        executeAsRoot "reboot"
+        executeAsRoot "systemctl --force --force reboot"
         reboot
     fi
 

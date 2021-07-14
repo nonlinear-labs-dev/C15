@@ -11,7 +11,6 @@ class UpdateAvailableView : public SetupLabel
   ~UpdateAvailableView() override;
 
   static bool updateExists();
-
   static void setUpdateAvailable(bool updateAvailable);
 
  private:

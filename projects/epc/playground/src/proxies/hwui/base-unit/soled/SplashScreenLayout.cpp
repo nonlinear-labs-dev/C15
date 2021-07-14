@@ -13,9 +13,7 @@ SplashScreenLayout::SplashScreenLayout()
   auto height = 32;
   auto labelHeight = 9;
   auto y = (height - labelHeight) / 2;
-  addControl(new Label("Nonlinear Labs - C15", Rect(0, y, 128, labelHeight)));
+  addControl(new Label(StringAndSuffix { "Nonlinear Labs - C15" }, Rect(0, y, 128, labelHeight)));
 }
 
-SplashScreenLayout::~SplashScreenLayout()
-{
-}
+SplashScreenLayout::~SplashScreenLayout() = default;

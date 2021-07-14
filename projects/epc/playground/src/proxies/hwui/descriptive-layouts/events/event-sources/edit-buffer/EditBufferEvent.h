@@ -27,11 +27,12 @@ namespace DescriptiveLayouts
     sigc::connection m_onHardwareUIVoiceGroupSelectionChanged;
   };
 
-
-  class VoiceGroupSelectEventBase {
+  class VoiceGroupSelectEventBase
+  {
    public:
     VoiceGroupSelectEventBase();
     virtual void onChange(VoiceGroup newSelection) = 0;
+
    private:
     sigc::connection m_vgSelection;
   };
@@ -48,6 +49,7 @@ namespace DescriptiveLayouts
     }
   };
 
-  template <typename T> class VoiceGroupSelectedEvent : public EventSource<T>, public VoiceGroupSelectEventBase {
+  template <typename T> class VoiceGroupSelectedEvent : public EventSource<T>, public VoiceGroupSelectEventBase
+  {
   };
 }

@@ -8,8 +8,8 @@
 class SoupOutStream : public OutStream
 {
  public:
-  SoupOutStream(SoupMessage *msg, const Glib::ustring &contentType, bool zip);
-  virtual ~SoupOutStream();
+  SoupOutStream(SoupServer *server, SoupMessage *msg, const Glib::ustring &contentType, bool zip);
+  ~SoupOutStream() override;
 
   void flush();
 
@@ -21,6 +21,7 @@ class SoupOutStream : public OutStream
   void push(const char *str, size_t numBytes);
 
   Glib::RefPtr<Gio::ZlibCompressor> m_zip;
+  SoupServer *m_server = nullptr;
   SoupMessage *m_msg = nullptr;
 
   std::vector<char> m_scratchBuffer;

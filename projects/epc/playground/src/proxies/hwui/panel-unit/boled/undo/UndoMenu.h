@@ -14,7 +14,7 @@ class UndoMenu : public ButtonMenu
 
  public:
   UndoMenu(UNDO::Transaction *tip, const Rect &r);
-  virtual ~UndoMenu();
+  ~UndoMenu() override;
 
   void assignTransaction(UNDO::Transaction *tip);
 

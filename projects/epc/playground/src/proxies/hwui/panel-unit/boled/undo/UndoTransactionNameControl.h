@@ -8,11 +8,12 @@ class UndoTransactionNameControl : public UndoEntryLabel
   typedef UndoEntryLabel super;
 
  public:
-  UndoTransactionNameControl(const Rect &r);
-  virtual ~UndoTransactionNameControl();
+  explicit UndoTransactionNameControl(const Rect &r);
+  ~UndoTransactionNameControl() override;
 
-  virtual void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
+  void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
 
  private:
-  StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override;
+  StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                            const StringAndSuffix &text) const override;
 };

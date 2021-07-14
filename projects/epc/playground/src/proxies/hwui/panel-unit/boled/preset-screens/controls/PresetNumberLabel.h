@@ -8,7 +8,7 @@ class PresetNumberLabel : public PresetLabel
   typedef PresetLabel super;
 
  public:
-  PresetNumberLabel(const Rect &pos);
+  explicit PresetNumberLabel(const Rect &pos);
   ~PresetNumberLabel() override;
 
   void update(int presetNumber, bool selected, bool loaded);

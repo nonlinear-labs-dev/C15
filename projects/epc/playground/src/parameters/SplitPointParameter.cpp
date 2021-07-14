@@ -52,7 +52,8 @@ void SplitPointParameter::setCpValue(UNDO::Transaction* transaction, Initiator i
     if(initiator != Initiator::INDIRECT_SPLIT_SYNC)
     {
       auto other = getSibling();
-      auto siblingValue = getValue().getNextStepValue(value, other->getVoiceGroup() == VoiceGroup::I ? -1 : 1, {});
+      auto siblingValue
+          = getValue().getNextStepValue(value, other->getVoiceGroup() == VoiceGroup::I ? -1 : 1, false, false);
       other->setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC, siblingValue, dosendToPlaycontroller);
     }
   }
@@ -67,14 +68,14 @@ void SplitPointParameter::clampToExtremes(UNDO::Transaction* transaction, bool d
   auto other = getSibling();
   if(getVoiceGroup() == VoiceGroup::I)
   {
-    auto myVal = getValue().getNextStepValue(1, -1, {});
+    auto myVal = getValue().getNextStepValue(1, -1, false, false);
     auto otherVal = 1.0;
     other->setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC, otherVal, dosendToPlaycontroller);
     setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC, myVal, dosendToPlaycontroller);
   }
   else if(getVoiceGroup() == VoiceGroup::II)
   {
-    auto myVal = getValue().getNextStepValue(0, 1, {});
+    auto myVal = getValue().getNextStepValue(0, 1, false, false);
     auto otherVal = 0.0;
     other->setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC, otherVal, dosendToPlaycontroller);
     setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC, myVal, dosendToPlaycontroller);
@@ -88,8 +89,8 @@ void SplitPointParameter::preventNegativeOverlap(UNDO::Transaction* transaction,
   auto siblingValue = sibling->getControlPositionValue();
   auto inc = sibling->getVoiceGroup() == VoiceGroup::I ? 1 : -1;
 
-  auto siblingThreshold = getValue().getNextStepValue(siblingValue, inc, {});
-  siblingValue = getValue().getNextStepValue(value, -inc, {});
+  auto siblingThreshold = getValue().getNextStepValue(siblingValue, inc, false, false);
+  siblingValue = getValue().getNextStepValue(value, -inc, false, false);
 
   if(getVoiceGroup() == VoiceGroup::I)
   {
@@ -126,7 +127,10 @@ Glib::ustring SplitPointParameter::stringizeModulationAmount(tControlPositionVal
 
 SplitPointParameter* SplitPointParameter::getSibling() const
 {
-  return static_cast<SplitPointParameter*>(Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
+  auto parent = static_cast<ParameterGroup*>(getParent());
+  auto groupSet = static_cast<ParameterGroupSet*>(parent->getParent());
+
+  return static_cast<SplitPointParameter*>(groupSet->findParameterByID(
       { C15::PID::Split_Split_Point, getVoiceGroup() == VoiceGroup::I ? VoiceGroup::II : VoiceGroup::I }));
 }
 
@@ -144,11 +148,11 @@ bool SplitPointParameter::isAtExtremes(tControlPositionValue value)
 {
   if(getVoiceGroup() == VoiceGroup::I)
   {
-    return value > getValue().getNextStepValue(1, -1, {});
+    return value > getValue().getNextStepValue(1, -1, false, false);
   }
   else if(getVoiceGroup() == VoiceGroup::II)
   {
-    return value < getValue().getNextStepValue(0, 1, {});
+    return value < getValue().getNextStepValue(0, 1, false, false);
   }
 
   return false;
@@ -183,4 +187,17 @@ bool SplitPointParameter::inDefaultSplitBehaviour() const
 void SplitPointParameter::updateCPFromSyncChange(UNDO::Transaction* transaction, double cp)
 {
   setCpValue(transaction, Initiator::INDIRECT_SPLIT_SYNC, cp, true);
+}
+
+void SplitPointParameter::loadDefault(UNDO::Transaction* transaction, Defaults mode)
+{
+  if(!isLocked())
+  {
+    undoableSelectModSource(transaction, MacroControls::NONE);
+    undoableSetModAmount(transaction, 0.0);
+    if(mode == Defaults::FactoryDefault)
+      loadFromPreset(transaction, getFactoryDefaultValue());
+    else
+      loadFromPreset(transaction, getDefaultValue());
+  }
 }

@@ -9,7 +9,7 @@ class ModulateableUnisonParameterWithUnusualModUnit : public ModulateableParamet
 {
  public:
   template <typename... tArgs>
-  ModulateableUnisonParameterWithUnusualModUnit(tArgs... args)
+  explicit ModulateableUnisonParameterWithUnusualModUnit(tArgs... args)
       : ModulateableParameterWithUnusualModUnit(args...)
   {
   }

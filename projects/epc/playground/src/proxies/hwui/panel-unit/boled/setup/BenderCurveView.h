@@ -11,7 +11,7 @@ class BenderCurveView : public SetupLabel
 
  public:
   BenderCurveView();
-  virtual ~BenderCurveView();
+  ~BenderCurveView() override;
 
  private:
   void onSettingChanged(const Setting *s);

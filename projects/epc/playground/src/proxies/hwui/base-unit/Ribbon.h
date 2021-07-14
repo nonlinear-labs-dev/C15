@@ -24,13 +24,13 @@ class Ribbon
   void setLEDsUniPolar(int paramValIdx);
   void setLEDsForValueBiPolar(tDisplayValue paramVal);
 
-  virtual int posToLedID(int pos) const = 0;
+  [[nodiscard]] virtual int posToLedID(int pos) const = 0;
 
   void debugTrace();
 
  private:
-  FourStateLED::State getLEDStateForBipolarValue(int led, tDisplayValue v) const;
-  char handleCenter(tDisplayValue v) const;
+  [[nodiscard]] FourStateLED::State getLEDStateForBipolarValue(int led, tDisplayValue v) const;
+  [[nodiscard]] char handleCenter(tDisplayValue v) const;
 
   FourStateLED m_leds[NUM_LEDS_PER_RIBBON];
 };

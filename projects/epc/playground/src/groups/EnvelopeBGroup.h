@@ -6,7 +6,7 @@ class EnvelopeBGroup : public ParameterGroup
 {
  public:
   EnvelopeBGroup(ParameterGroupSet *parent, VoiceGroup voicegroup);
-  virtual ~EnvelopeBGroup();
+  ~EnvelopeBGroup() override;
 
-  void init();
+  void init() override;
 };

@@ -31,7 +31,7 @@ bool PhysicalControlParameter::isChangedFromLoaded() const
 
 void PhysicalControlParameter::onChangeFromPlaycontroller(tControlPositionValue newVal)
 {
-  getValue().setRawValue(Initiator::EXPLICIT_PLAYCONTROLLER, getValue().clip(newVal));
+  getValue().setRawValue(Initiator::EXPLICIT_PLAYCONTROLLER, getValue().getFineQuantizedClippedValue(newVal));
 }
 
 void PhysicalControlParameter::setCPFromHwui(UNDO::Transaction *transaction, const tControlPositionValue &cpValue)
@@ -51,9 +51,7 @@ void PhysicalControlParameter::onValueChanged(Initiator initiator, tControlPosit
                                               tControlPositionValue newValue)
 {
   if(!m_changingFromHWUI)
-  {
     m_lastChangedFromHWUI = false;
-  }
 
   if(initiator != Initiator::INDIRECT)
   {
@@ -155,7 +153,7 @@ void PhysicalControlParameter::onUnselected()
     m_lastChangedFromHWUI = false;
     getValue().setRawValue(Initiator::EXPLICIT_OTHER, 0);
     sendToPlaycontroller();
-    onChange();
+    onChange(Generic | DontTrustOracle);
     invalidate();
   }
 }

@@ -11,7 +11,7 @@ class SplashLayout : public InfoLayout
 
  public:
   SplashLayout();
-  virtual ~SplashLayout();
+  ~SplashLayout() override;
 
   static void setStatus(const std::string &msg);
   static void addStatus(const std::string &msg);
@@ -20,11 +20,11 @@ class SplashLayout : public InfoLayout
   void addMessage(const std::string &txt);
 
  private:
-  virtual void addHeadline() override;
-  virtual void addModuleCaption() override;
-  virtual void addInfoLabel() override;
-  virtual Scrollable *createScrollableContent() override;
-  virtual Rect getScrollableAreaRect() const override;
+  void addHeadline() override;
+  void addModuleCaption() override;
+  void addInfoLabel() override;
+  Scrollable *createScrollableContent() override;
+  Rect getScrollableAreaRect() const override;
 
   MultiLineLabel *m_message = nullptr;
   std::string m_text;

@@ -26,7 +26,7 @@ namespace DescriptiveLayouts
     explicit LayoutClass(LayoutClasses id, Args... args)
         : id(std::move(id))
     {
-      (void) std::initializer_list<int>{ (addToList(args), 0)... };
+      (void) std::initializer_list<int> { (addToList(args), 0)... };
     }
 
     LayoutClass(LayoutClasses id, std::list<Selector> sel, std::list<ControlInstance> ci,

@@ -9,7 +9,7 @@ class Button;
 class SelectVoiceGroupLayout : public Layout
 {
  public:
-  SelectVoiceGroupLayout(PresetManagerLayout* parent);
+  explicit SelectVoiceGroupLayout(PresetManagerLayout* parent);
 
   bool onButton(Buttons i, bool down, ::ButtonModifiers modifiers) override;
 

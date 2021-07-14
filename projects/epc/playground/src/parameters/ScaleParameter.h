@@ -14,6 +14,6 @@ class ScaleParameter : public Parameter
   Layout *createLayout(FocusAndMode focusAndMode) const override;
   Glib::ustring getMiniParameterEditorName() const override;
   void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
-  virtual Glib::ustring getLongName() const override;
-  virtual size_t getHash() const override;
+  Glib::ustring getLongName() const override;
+  size_t getHash() const override;
 };

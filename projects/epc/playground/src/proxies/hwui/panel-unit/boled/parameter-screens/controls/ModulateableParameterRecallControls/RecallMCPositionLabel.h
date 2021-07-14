@@ -5,5 +5,5 @@
 class RecallMCPositionLabel : public Label
 {
  public:
-  RecallMCPositionLabel(Rect pos);
+  explicit RecallMCPositionLabel(Rect pos);
 };

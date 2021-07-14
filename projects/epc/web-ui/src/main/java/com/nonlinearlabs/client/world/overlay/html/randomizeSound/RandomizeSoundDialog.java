@@ -1,5 +1,8 @@
 package com.nonlinearlabs.client.world.overlay.html.randomizeSound;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.nonlinearlabs.client.NonMaps;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
@@ -70,6 +73,18 @@ public class RandomizeSoundDialog extends GWTDialog {
 	protected void setLastPopupPos(int popupLeft, int popupTop) {
 		lastPopupLeft = popupLeft;
 		lastPopupTop = popupTop;
+	}
+
+	@Override
+	protected void onPreviewNativeEvent(NativePreviewEvent event) {
+		super.onPreviewNativeEvent(event);
+		switch (event.getTypeInt()) {
+		case Event.ONKEYDOWN:
+			if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+				hide();
+			}
+			break;
+		}
 	}
 
 	@Override

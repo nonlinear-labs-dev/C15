@@ -7,7 +7,7 @@
 class EventCounter : public sigc::trackable
 {
  public:
-  EventCounter(const char *name);
+  explicit EventCounter(const char *name);
   virtual ~EventCounter();
 
   void count();

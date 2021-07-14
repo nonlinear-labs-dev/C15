@@ -9,5 +9,5 @@ class UpdateAvailableEditor : public MultiLineLabel, public SetupEditor
 
  public:
   UpdateAvailableEditor();
-  virtual ~UpdateAvailableEditor();
+  ~UpdateAvailableEditor() override;
 };

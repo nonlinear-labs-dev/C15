@@ -12,9 +12,9 @@ class RibbonRelativeFactorSettingEditor : public SetupLabel, public SetupEditor
 
  public:
   RibbonRelativeFactorSettingEditor();
-  virtual ~RibbonRelativeFactorSettingEditor();
+  ~RibbonRelativeFactorSettingEditor() override;
 
-  virtual Font::Justification getJustification() const override;
+  Font::Justification getJustification() const override;
 
  private:
   bool redraw(FrameBuffer &fb) override;

@@ -4,7 +4,7 @@
 FileInfoCaption::FileInfoCaption(const Glib::ustring &str, const Rect &pos)
     : super(pos)
 {
-  super::setText(str);
+  super::setText(StringAndSuffix { str });
   super::setFontColor(FrameBufferColors::C43);
 }
 

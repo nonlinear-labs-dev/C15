@@ -59,9 +59,11 @@ namespace DescriptiveLayouts
       case EventSinks::Commit:
         if(auto preset = m_cursor.getPreset())
         {
-          auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
-          Application::get().getPresetManager()->getEditBuffer()->undoableLoadPresetIntoDualSound(preset, vg);
-          Application::get().getHWUI()->setFocusAndMode(UIMode::Select);
+          auto eb = Application::get().getPresetManager()->getEditBuffer();
+          EditBufferUseCases useCase(eb);
+          auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+          useCase.undoableLoadToPart(preset, VoiceGroup::I, currentVG);
+          Application::get().getHWUI()->setFocusAndMode(FocusAndMode(UIFocus::Sound, UIMode::Select, UIDetail::Init));
         }
         break;
 

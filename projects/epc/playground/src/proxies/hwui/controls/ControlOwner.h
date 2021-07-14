@@ -19,13 +19,13 @@ class ControlOwner : public Uncopyable
   virtual bool redraw(FrameBuffer &fb);
   virtual void setHighlight(bool isHighlight);
 
-  virtual bool isHighlight() const;
+  [[nodiscard]] virtual bool isHighlight() const;
   virtual void setDirty() = 0;
 
   typedef std::shared_ptr<Control> tControlPtr;
   typedef std::list<tControlPtr> tControls;
 
-  const tControls &getControls() const;
+  [[nodiscard]] const tControls &getControls() const;
 
   template <class T> std::list<std::shared_ptr<T>> getControls() const
   {
@@ -113,11 +113,11 @@ class ControlOwner : public Uncopyable
     this->setDirty();
     return ctrl;
   }
-  
+
  protected:
   void remove(const Control *ctrl);
   virtual void clear();
-  size_t getNumChildren() const;
+  [[nodiscard]] size_t getNumChildren() const;
 
   typedef std::function<bool(tControlPtr)> tIfCallback;
   void forEach(const tIfCallback &cb) const;

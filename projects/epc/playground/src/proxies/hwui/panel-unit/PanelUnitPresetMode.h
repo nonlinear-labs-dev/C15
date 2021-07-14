@@ -13,7 +13,7 @@ class PanelUnitPresetMode : public PanelUnitParameterEditMode
 
  public:
   PanelUnitPresetMode();
-  virtual ~PanelUnitPresetMode();
+  ~PanelUnitPresetMode() override;
   void bruteForceUpdateLeds() override;
 
  private:
@@ -28,7 +28,6 @@ class PanelUnitPresetMode : public PanelUnitParameterEditMode
                               std::array<TwoStateLED::LedState, numLeds>& states);
   void applyStateToLeds(std::array<TwoStateLED::LedState, numLeds>& states);
   std::pair<bool, bool> trySpecialCaseParameter(const Parameter* selParam) const;
-
 };
 
 class PanelUnitSoundMode : public PanelUnitPresetMode

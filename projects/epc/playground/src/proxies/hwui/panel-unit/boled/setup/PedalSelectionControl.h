@@ -9,8 +9,8 @@ class PedalSelectionControl : public ControlWithChildren
   typedef ControlWithChildren super;
 
  public:
-  PedalSelectionControl(Parameter *param);
-  virtual ~PedalSelectionControl();
+  explicit PedalSelectionControl(Parameter *param);
+  ~PedalSelectionControl() override;
 
   void setPosition(const Rect &rect) override;
 

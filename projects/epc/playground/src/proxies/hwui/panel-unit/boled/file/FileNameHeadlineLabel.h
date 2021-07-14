@@ -9,6 +9,6 @@ class FileNameHeadlineLabel : public Label
 
  public:
   FileNameHeadlineLabel(const Glib::ustring &str, const Rect &pos);
-  virtual bool redraw(FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
   std::shared_ptr<Font> getFont() const override;
 };

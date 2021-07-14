@@ -23,6 +23,8 @@ class BaseUnitPlayMode : public UsageMode
   void modeButtonShortPress();
   void modeButtonLongPress();
 
+  std::unordered_map<Buttons, bool> m_buttonStates;
   NoteShiftStateMachine m_noteShiftState;
   ShortVsLongPress m_modeButtonHandler;
+  bool checkPanicAffenGriff(Buttons b, bool state);
 };

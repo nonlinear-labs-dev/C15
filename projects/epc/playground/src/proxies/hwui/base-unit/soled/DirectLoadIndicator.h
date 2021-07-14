@@ -8,8 +8,8 @@ class DirectLoadIndicator : public LabelRegular8
   typedef LabelRegular8 base_type;
 
  public:
-  DirectLoadIndicator(const Rect &pos);
-  virtual ~DirectLoadIndicator();
+  explicit DirectLoadIndicator(const Rect &pos);
+  ~DirectLoadIndicator() override;
 
   enum class Mode
   {
@@ -21,7 +21,7 @@ class DirectLoadIndicator : public LabelRegular8
   void setMode(Mode m);
 
  private:
-  bool redraw(FrameBuffer &fb);
+  bool redraw(FrameBuffer &fb) override;
   void drawArrow(FrameBuffer &fb) const;
   void drawDirectLoad(FrameBuffer &fb);
 

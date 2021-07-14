@@ -52,7 +52,7 @@ class Parameter : public UpdateDocumentContributor,
 
   Parameter(ParameterGroup *group, ParameterId id, const ScaleConverter *scaling, tControlPositionValue def,
             tControlPositionValue coarseDenominator, tControlPositionValue fineDenominator);
-  virtual ~Parameter() override;
+  ~Parameter() override;
 
   tControlPositionValue expropriateSnapshotValue();
 
@@ -64,11 +64,12 @@ class Parameter : public UpdateDocumentContributor,
   tControlPositionValue getDefaultValue() const;
   tControlPositionValue getFactoryDefaultValue() const;
 
-  void toggleLoadDefaultValue();
+  void toggleLoadDefaultValue(UNDO::Transaction *transaction);
 
   virtual void setCPFromHwui(UNDO::Transaction *transaction, const tControlPositionValue &cpValue);
   virtual void setCPFromWebUI(UNDO::Transaction *transaction, const tControlPositionValue &cpValue);
 
+  void stepCP(UNDO::Transaction *transaction, int incs, bool fine, bool shift);
   void stepCPFromHwui(UNDO::Transaction *transaction, int incs, ButtonModifiers modifiers);
   void stepCPFromWebUI(UNDO::Transaction *transaction, Step step, ButtonModifiers modifiers);
   void setIndirect(UNDO::Transaction *transaction, const tControlPositionValue &value);
@@ -128,10 +129,7 @@ class Parameter : public UpdateDocumentContributor,
   // CALLBACKS
   sigc::connection onParameterChanged(sigc::slot<void, const Parameter *> slot, bool doInitCall = true) const;
 
-  void check();
-
   //Recall
-  void undoableRecallFromPreset();
   void undoableRecallFromPreset(UNDO::Transaction *transaction);
   const RecallParameter *getOriginalParameter() const;
 
@@ -144,20 +142,23 @@ class Parameter : public UpdateDocumentContributor,
 
   bool isMaximum() const;
   bool isMinimum() const;
-  void resetWasDefaulted(UNDO::Transaction* transaction);
+  void resetWasDefaulted(UNDO::Transaction *transaction);
 
   bool isDisabledForType(SoundType type) const;
   bool isDisabled() const;
 
  protected:
   virtual void sendToPlaycontroller() const;
-  virtual void setCpValue(UNDO::Transaction *transaction, Initiator initiator, tControlPositionValue value, bool dosendToPlaycontroller);
+  virtual void setCpValue(UNDO::Transaction *transaction, Initiator initiator, tControlPositionValue value,
+                          bool dosendToPlaycontroller);
   virtual void writeDocProperties(Writer &writer, tUpdateID knownRevision) const;
   virtual void onValueChanged(Initiator initiator, tControlPositionValue oldValue, tControlPositionValue newValue);
   virtual void onValueFineQuantizedChanged(Initiator initiator, tControlPositionValue oldValue,
                                            tControlPositionValue newValue);
   virtual bool shouldWriteDocProperties(tUpdateID knownRevision) const;
   virtual tControlPositionValue getNextStepValue(int incs, ButtonModifiers modifiers) const;
+  virtual tControlPositionValue getNextStepValue(int incs, bool fine, bool shift) const;
+
   void undoableSetDefaultValue(UNDO::Transaction *transaction, tControlPositionValue value);
 
  private:

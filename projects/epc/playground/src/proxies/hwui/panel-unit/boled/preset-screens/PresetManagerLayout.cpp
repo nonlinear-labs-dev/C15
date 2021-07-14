@@ -32,6 +32,8 @@
 #include <proxies/hwui/panel-unit/boled/preset-screens/controls/LoadToPartPresetList.h>
 #include "presets/Preset.h"
 #include "SelectVoiceGroupLayout.h"
+#include "RenameBankLayout.h"
+#include "clipboard/Clipboard.h"
 
 PresetManagerLayout::PresetManagerLayout(FocusAndMode focusAndMode, FocusAndMode oldFocusAndMode)
     : super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
@@ -204,7 +206,7 @@ void PresetManagerLayout::setupPresetEdit()
 
   addControl(new UndoIndicator(Rect { 5, 14, 15, 5 }));
 
-  if(selectedBank && !selectedBank->empty())
+  if(selectedBank && (!selectedBank->empty() || Application::get().getClipboard()->hasContent()))
   {
     m_menu = addControl(new PresetEditButtonMenu(Rect(195, 1, 58, 62)));
   }
@@ -341,11 +343,17 @@ bool PresetManagerLayout::onButton(Buttons i, bool down, ButtonModifiers modifie
         else if(m_focusAndMode.mode == UIMode::Select)
         {
           auto pm = Application::get().getPresetManager();
+          EditBufferUseCases useCases(pm->getEditBuffer());
+
           auto oldPreset = pm->getEditBuffer()->getUUIDOfLastLoadedPreset();
-          pm->autoLoadPresetAccordingToLoadType();
-          if(pm->getSelectedPreset()->getUuid() == oldPreset)
+
+          if(auto currentSelectedPreset = pm->getSelectedPreset())
           {
-            animateSelectedPreset([] {});
+            useCases.undoableLoad(currentSelectedPreset);
+            if(currentSelectedPreset->getUuid() == oldPreset)
+            {
+              animateSelectedPreset([] {});
+            }
           }
         }
     }

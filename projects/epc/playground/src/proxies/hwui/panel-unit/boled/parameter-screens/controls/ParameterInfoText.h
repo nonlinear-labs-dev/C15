@@ -14,7 +14,7 @@ class ParameterInfoText : public MultiLineLabel, public Scrollable
   typedef MultiLineLabel super;
 
  public:
-  ParameterInfoText(ControlOwner *parent);
+  explicit ParameterInfoText(ControlOwner *parent);
 
   void setPosition(const Rect &rect) override;
   const Rect &getPosition() const override;

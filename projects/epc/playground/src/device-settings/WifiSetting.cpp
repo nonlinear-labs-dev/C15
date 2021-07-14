@@ -36,8 +36,9 @@ std::vector<std::string> getArgs(WifiSettings s)
              "accesspoint;" };
 };
 
-WifiSetting::WifiSetting(UpdateDocumentContributor& settings)
+WifiSetting::WifiSetting(UpdateDocumentContributor& settings, const std::shared_ptr<EpcWifi>& localWifi)
     : super(settings, WifiSettings::Querying)
+    , m_localWifi(localWifi)
 {
   pollAccessPointRunning();
 }
@@ -45,6 +46,11 @@ WifiSetting::WifiSetting(UpdateDocumentContributor& settings)
 bool WifiSetting::set(tEnum m)
 {
   auto ret = super::set(m);
+
+  if(m == WifiSettings::Enabled)
+    m_localWifi->setNewWifiState(true);
+  else if(m == WifiSettings::Disabled)
+    m_localWifi->setNewWifiState(false);
 
   if constexpr(!isDevelopmentPC)
   {
@@ -74,13 +80,21 @@ bool WifiSetting::pollAccessPointRunning()
 {
   if constexpr(!isDevelopmentPC)
   {
-    std::vector<std::string> args { "/usr/bin/ssh", "-o",        "StrictHostKeyChecking=no", "root@192.168.10.11",
-                                    "systemctl",    "is-active", "accesspoint.service" };
-
+    std::vector<std::string> argsBBB { "/usr/bin/ssh", "-o",        "StrictHostKeyChecking=no", "root@192.168.10.11",
+                                       "systemctl",    "is-active", "accesspoint.service" };
+    std::vector<std::string> argsEPC2 { "systemctl", "is-active", "accesspoint.service" };
+    static auto isEpc2 = !strcmp(TARGET_PLATFORM, "epc2");
     GPid pid;
     try
     {
-      Glib::spawn_async("", args, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
+      if(isEpc2)
+      {
+        Glib::spawn_async("", argsEPC2, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
+      }
+      else
+      {
+        Glib::spawn_async("", argsBBB, Glib::SPAWN_DO_NOT_REAP_CHILD, Glib::SlotSpawnChildSetup(), &pid);
+      }
       m_pollConnection = Glib::MainContext::get_default()->signal_child_watch().connect(
           sigc::mem_fun(this, &WifiSetting::onPollReturned), pid);
     }

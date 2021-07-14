@@ -7,10 +7,10 @@ namespace UNDO
   class TransactionCreationScope
   {
    public:
-    TransactionCreationScope(Transaction* transaction, bool ownTransaction = false);
+    explicit TransactionCreationScope(Transaction* transaction, bool ownTransaction = false);
     virtual ~TransactionCreationScope();
 
-    Transaction* getTransaction() const;
+    [[nodiscard]] Transaction* getTransaction() const;
 
    private:
     Transaction* m_transaction = nullptr;

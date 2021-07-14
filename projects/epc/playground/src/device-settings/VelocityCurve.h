@@ -1,15 +1,7 @@
 #pragma once
 
 #include "EnumSetting.h"
-
-enum class VelocityCurves
-{
-  VELOCITY_CURVE_VERY_SOFT = 0,
-  VELOCITY_CURVE_SOFT = 1,
-  VELOCITY_CURVE_NORMAL = 2,
-  VELOCITY_CURVE_HARD = 3,
-  VELOCITY_CURVE_VERY_HARD = 4,
-};
+#include <nltools/Types.h>
 
 class VelocityCurve : public EnumSetting<VelocityCurves>
 {
@@ -17,8 +9,8 @@ class VelocityCurve : public EnumSetting<VelocityCurves>
   typedef EnumSetting<VelocityCurves> super;
 
  public:
-  VelocityCurve(UpdateDocumentContributor &settings);
-  virtual ~VelocityCurve();
+  explicit VelocityCurve(UpdateDocumentContributor &settings);
+  ~VelocityCurve() override;
 
   void syncExternals(SendReason reason) const override;
 

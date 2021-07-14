@@ -8,8 +8,8 @@ class PresetGlitchSuppression : public BooleanSetting
   typedef BooleanSetting super;
 
  public:
-  PresetGlitchSuppression(UpdateDocumentContributor &settings);
-  virtual ~PresetGlitchSuppression();
+  explicit PresetGlitchSuppression(UpdateDocumentContributor &settings);
+  ~PresetGlitchSuppression() override;
 
   void syncExternals(SendReason reason) const override;
 };

@@ -9,8 +9,8 @@ class InvertedLabel : public Label
 
  public:
   InvertedLabel(const Glib::ustring& text, const Rect& pos);
-  InvertedLabel(const Rect& pos);
-  ~InvertedLabel();
+  explicit InvertedLabel(const Rect& pos);
+  ~InvertedLabel() override;
 
   bool redraw(FrameBuffer& fb) override;
 };

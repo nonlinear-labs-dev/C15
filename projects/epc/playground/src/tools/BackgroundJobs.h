@@ -11,7 +11,7 @@ class BackgroundJob
   typedef std::function<void(void)> tCallback;
 
  public:
-  BackgroundJob(tCallback cb);
+  explicit BackgroundJob(tCallback cb);
   virtual ~BackgroundJob();
 
   virtual void start();

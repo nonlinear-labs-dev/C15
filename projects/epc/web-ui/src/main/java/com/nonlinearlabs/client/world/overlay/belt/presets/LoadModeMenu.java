@@ -3,8 +3,10 @@ package com.nonlinearlabs.client.world.overlay.belt.presets;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.LoadToPartMode.LoadToPartModeData;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
+import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.VoiceGroup;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.presenters.EditBufferPresenterProvider;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
@@ -36,7 +38,16 @@ public class LoadModeMenu extends OverlayLayout {
         
         @Override
         public Control click(Position eventPoint) {
-            EditBufferUseCases.get().toggleDirectLoad();
+            boolean inLoadToPart = NonMaps.get().getNonLinearWorld().getPresetManager().isInLoadToPartMode();
+            VoiceGroup current = EditBufferModel.get().voiceGroup.getValue();
+
+            if(inLoadToPart) {
+                LoadToPartModeData data = NonMaps.get().getNonLinearWorld().getPresetManager().getLoadToPartMode().getCurrentData();
+                EditBufferUseCases.get().toggleDirectLoad(data, current);
+            } else {
+                EditBufferUseCases.get().toggleDirectLoad(null, current);
+            }
+            
             return this;
         }
     }

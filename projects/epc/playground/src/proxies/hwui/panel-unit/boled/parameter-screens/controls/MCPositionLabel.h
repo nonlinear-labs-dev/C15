@@ -12,19 +12,19 @@ class MCPositionLabel : public Label
   typedef Label super;
 
  public:
-  MCPositionLabel(const Rect &rect);
-  virtual ~MCPositionLabel();
+  explicit MCPositionLabel(const Rect &rect);
+  ~MCPositionLabel() override;
+
+  MCPositionLabel(const MCPositionLabel &other) = delete;
+  MCPositionLabel &operator=(const MCPositionLabel &) = delete;
 
  private:
-  MCPositionLabel(const MCPositionLabel &other);
-  MCPositionLabel &operator=(const MCPositionLabel &);
-
   void onParameterSelected(Parameter *newParameter);
   void updateTarget(const Parameter *parameter);
   void updateSource(const Parameter *parameter);
   void onModifiersChanged();
 
-  virtual void setSuffixFontColor(FrameBuffer &fb) const override;
+  void setSuffixFontColor(FrameBuffer &fb) const override;
   void ensureDisconnectedModulationSourceIfApplicable(const Parameter *parameter);
   sigc::connection m_paramValueConnection;
   sigc::connection m_mcValueConnection;

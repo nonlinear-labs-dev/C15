@@ -12,7 +12,7 @@ class TextEditControlLetter : public Label
  public:
   TextEditControlLetter(std::shared_ptr<TextEditUsageMode> textUsageMode, int relativeToCursor, const Rect &pos);
 
-  virtual bool redraw(FrameBuffer &fb);
+  bool redraw(FrameBuffer &fb) override;
   StringAndSuffix getText() const override;
 
  private:

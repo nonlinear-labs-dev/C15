@@ -7,8 +7,8 @@ class UpperModulationBoundLabel : public ModulationBoundLabel
   typedef ModulationBoundLabel super;
 
  public:
-  UpperModulationBoundLabel(const Rect &r);
-  virtual ~UpperModulationBoundLabel();
+  explicit UpperModulationBoundLabel(const Rect &r);
+  ~UpperModulationBoundLabel() override;
 
  protected:
   void updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam) override;

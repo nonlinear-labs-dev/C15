@@ -3,7 +3,7 @@
 #include <proxies/hwui/FrameBuffer.h>
 
 InfoLabel::InfoLabel(const Rect &pos, const Glib::ustring &text)
-    : super("Info " + text, pos)
+    : super(StringAndSuffix { "Info " + text }, pos)
 {
 }
 

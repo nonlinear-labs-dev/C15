@@ -9,14 +9,12 @@ NoteShiftDisplay::NoteShiftDisplay(const Rect& rect)
   Application::get().getSettings()->getSetting<NoteShift>()->onChange(mem_fun(this, &NoteShiftDisplay::setDisplayText));
 }
 
-NoteShiftDisplay::~NoteShiftDisplay()
-{
-}
+NoteShiftDisplay::~NoteShiftDisplay() = default;
 
 void NoteShiftDisplay::setDisplayText(const Setting* setting)
 {
   if(auto n = dynamic_cast<const NoteShift*>(setting))
-    setText(formatShift(n->get()));
+    setText(StringAndSuffix { formatShift(n->get()) });
 }
 
 Glib::ustring NoteShiftDisplay::formatShift(int i) const

@@ -9,9 +9,6 @@
 #include <stdio.h>
 #include <iostream>
 
-
 using namespace Glib;
 using namespace std;
 using namespace sigc;
-
-

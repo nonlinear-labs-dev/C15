@@ -8,7 +8,6 @@ class VerticalLine : public Control
   typedef Control super;
 
  public:
-  VerticalLine(const Rect& rect);
-
-  bool redraw(FrameBuffer& fb);
+  explicit VerticalLine(const Rect& rect);
+  bool redraw(FrameBuffer& fb) override;
 };

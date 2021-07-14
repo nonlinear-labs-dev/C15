@@ -15,7 +15,7 @@ class PresetsLayout : public Layout
 
  public:
   PresetsLayout();
-  virtual ~PresetsLayout();
+  ~PresetsLayout() override;
 
  private:
   void onBankSelected(const Uuid &selectedBank);

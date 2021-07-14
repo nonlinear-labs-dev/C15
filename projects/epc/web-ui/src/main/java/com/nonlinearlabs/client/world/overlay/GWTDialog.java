@@ -55,8 +55,12 @@ public abstract class GWTDialog extends DialogBox implements ScreenResizeListene
 
 		@Override
 		public void onTouchStart(TouchStartEvent event) {
-			onMouseDown(getCaption().asWidget(), event.getTouches().get(0).getRelativeX(GWTDialog.this.getElement()),
-					event.getTouches().get(0).getRelativeY(GWTDialog.this.getElement()));
+			int x = event.getTouches().get(0).getRelativeX(GWTDialog.this.getElement());
+			int y = event.getTouches().get(0).getRelativeY(GWTDialog.this.getElement());
+			if (y > getCaption().asWidget().getElement().getClientHeight())
+				return;
+
+			onMouseDown(getCaption().asWidget(), x, y);
 		}
 	}
 

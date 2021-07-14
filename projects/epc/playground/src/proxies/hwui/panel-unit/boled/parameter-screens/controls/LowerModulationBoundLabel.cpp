@@ -13,9 +13,7 @@ LowerModulationBoundLabel::LowerModulationBoundLabel(const Rect &r)
 {
 }
 
-LowerModulationBoundLabel::~LowerModulationBoundLabel()
-{
-}
+LowerModulationBoundLabel::~LowerModulationBoundLabel() = default;
 
 void LowerModulationBoundLabel::updateText(MacroControlParameter *mcParam, ModulateableParameter *modulatedParam)
 {
@@ -23,7 +21,7 @@ void LowerModulationBoundLabel::updateText(MacroControlParameter *mcParam, Modul
   const auto fine = isHighlight() && Application::get().getHWUI()->isModifierSet(ButtonModifier::FINE);
 
   if(fine)
-    setText({ rangeDisplayValues.first, " F" });
+    setText(StringAndSuffix { rangeDisplayValues.first, " F" });
   else
-    setText({ rangeDisplayValues.first });
+    setText(StringAndSuffix { rangeDisplayValues.first });
 }

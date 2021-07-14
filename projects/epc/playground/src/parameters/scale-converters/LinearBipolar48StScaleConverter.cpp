@@ -9,4 +9,3 @@ LinearBipolar48StScaleConverter::LinearBipolar48StScaleConverter()
 LinearBipolar48StScaleConverter::~LinearBipolar48StScaleConverter()
 {
 }
-

@@ -6,6 +6,7 @@
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/panel-unit/boled/preset-screens/EditPresetInfoLayout.h>
+#include <use-cases/PresetUseCases.h>
 
 EditPresetInfoLayout::EditPresetInfoLayout()
     : super()
@@ -20,15 +21,15 @@ void EditPresetInfoLayout::commit(const Glib::ustring &comment)
 {
   if(m_currentPreset)
   {
-    UNDO::Scope::tTransactionScopePtr scope = m_currentPreset->getUndoScope().startTransaction("Set Preset Comment");
-    m_currentPreset->setAttribute(scope->getTransaction(), "Comment", comment);
+    PresetUseCases useCase(m_currentPreset);
+    useCase.setComment(comment);
   }
 }
 
 Glib::ustring EditPresetInfoLayout::getInitialText() const
 {
   if(m_currentPreset)
-    return m_currentPreset->getAttribute("Comment", "");
+    return m_currentPreset->getComment();
 
   return "";
 }

@@ -4,15 +4,15 @@
 
 TEST_CASE("No parameter ID duplicates in mapping")
 {
-    ButtonParameterMapping mapping;
+  ButtonParameterMapping mapping;
 
-    std::set<int> seenIds{};
+  std::set<int> seenIds {};
 
-    mapping.forEachButton([&](auto button, auto ids) {
-        for(auto id: ids)
-        {
-            auto ret = seenIds.insert(id);
-            REQUIRE(ret.second);
-        }
-    });
+  mapping.forEachButton([&](auto button, auto ids) {
+    for(auto id : ids)
+    {
+      auto ret = seenIds.insert(id);
+      REQUIRE(ret.second);
+    }
+  });
 }

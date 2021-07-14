@@ -2,18 +2,20 @@
 class Preset;
 class Bank;
 
-class MockPreset {
-public:
+class MockPreset
+{
+ public:
   MockPreset(Bank* parent);
   ~MockPreset();
   Preset* get();
 
-private:
+ private:
   Bank* m_bank;
 };
 
-class PreDualModePresetBank {
-public:
+class PreDualModePresetBank
+{
+ public:
   static MockPreset createMockPreset();
   static const char* getMockData();
 };

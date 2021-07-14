@@ -9,7 +9,7 @@ class MenuEditorEntry : public SetupLabel
 
  public:
   MenuEditorEntry();
-  virtual ~MenuEditorEntry();
+  ~MenuEditorEntry() override;
 
   void assign(const std::vector<Glib::ustring> &, int idx, bool selected);
 

@@ -26,7 +26,7 @@ MiniParameterLabel::~MiniParameterLabel()
 void MiniParameterLabel::onParameterChanged(const Parameter *p)
 {
   auto stringPlusLen = prepareDisplayString(p);
-  setText({ stringPlusLen.first, stringPlusLen.second });
+  setText(StringAndSuffix { stringPlusLen.first, stringPlusLen.second });
 }
 
 void MiniParameterLabel::setSelected(bool selected)

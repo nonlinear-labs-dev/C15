@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glibmm/ustring.h>
-#include "tools/json.h"
+#include <nltools/nlohmann/json.hpp>
 
 namespace JSONTools
 {

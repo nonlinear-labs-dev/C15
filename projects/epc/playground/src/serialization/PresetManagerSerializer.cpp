@@ -37,8 +37,9 @@ void PresetManagerSerializer::readTagContent(Reader &reader) const
 {
   SplashLayout::addStatus("Reading PresetManager");
 
-  reader.onTextElement("selected-bank-uuid",
-                       [&](const auto &text, const auto &) { m_pm->selectBank(reader.getTransaction(), text); });
+  reader.onTextElement("selected-bank-uuid", [&](const auto &text, const auto &) {
+    m_pm->selectBank(reader.getTransaction(), Uuid { text });
+  });
 
   reader.onTag(PresetBankSerializer::getTagName(),
                [&](const auto &) mutable { return new PresetBankSerializer(m_pm->addBank(reader.getTransaction())); });

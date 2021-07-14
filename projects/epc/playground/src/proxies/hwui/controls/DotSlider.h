@@ -9,9 +9,9 @@ class DotSlider : public Slider
 
  public:
   DotSlider(Parameter *param, const Rect &rect);
-  DotSlider(const Rect &rect);
+  explicit DotSlider(const Rect &rect);
 
-  bool redraw(FrameBuffer &fb);
+  bool redraw(FrameBuffer &fb) override;
 
  protected:
   virtual void drawSliderBackground(FrameBuffer &fb);

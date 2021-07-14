@@ -4,7 +4,7 @@
 class SplitParameterGroups : public ParameterGroup
 {
  public:
-  SplitParameterGroups(ParameterGroupSet *parent, VoiceGroup vg);
+  SplitParameterGroups(ParameterGroupSet* parent, VoiceGroup vg);
   void init() override;
 
   static bool isSplitPoint(const Parameter* p);

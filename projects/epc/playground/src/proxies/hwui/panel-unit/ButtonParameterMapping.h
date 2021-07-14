@@ -12,8 +12,8 @@ class ButtonParameterMapping
   virtual ~ButtonParameterMapping();
 
   void forEachButton(std::function<void(Buttons, const std::list<int> &)> cb);
-  Buttons findButton(int param) const;
-  std::list<int> findParameters(Buttons button) const;
+  [[nodiscard]] Buttons findButton(int param) const;
+  [[nodiscard]] std::list<int> findParameters(Buttons button) const;
 
  private:
   void addMapping(Buttons buttonID, std::initializer_list<int> parameterIDs);

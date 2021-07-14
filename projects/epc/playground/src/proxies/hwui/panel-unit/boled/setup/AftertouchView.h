@@ -11,7 +11,7 @@ class AftertouchView : public SetupLabel
 
  public:
   AftertouchView();
-  virtual ~AftertouchView();
+  ~AftertouchView() override;
 
  private:
   void onSettingChanged(const Setting *s);

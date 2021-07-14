@@ -13,18 +13,18 @@ class SelectedMacroControlsHWSourceValue : public Label
   typedef Label super;
 
  public:
-  SelectedMacroControlsHWSourceValue(const Rect &rect);
-  virtual ~SelectedMacroControlsHWSourceValue();
+  explicit SelectedMacroControlsHWSourceValue(const Rect &rect);
+  ~SelectedMacroControlsHWSourceValue() override;
+
+  SelectedMacroControlsHWSourceValue(const SelectedMacroControlsHWSourceValue &other) = delete;
+  SelectedMacroControlsHWSourceValue &operator=(const SelectedMacroControlsHWSourceValue &) = delete;
 
  private:
-  SelectedMacroControlsHWSourceValue(const SelectedMacroControlsHWSourceValue &other);
-  SelectedMacroControlsHWSourceValue &operator=(const SelectedMacroControlsHWSourceValue &);
-
   void onModifiersChanged();
   void onParameterSelected(Parameter *newOne);
   void onMCChanged(const Parameter *param);
   void updateText(const Parameter *param);
-  virtual void setSuffixFontColor(FrameBuffer &fb) const override;
+  void setSuffixFontColor(FrameBuffer &fb) const override;
   ParameterId getHWSourceID(const Parameter *param) const;
 
   ParameterId m_hwParamID;

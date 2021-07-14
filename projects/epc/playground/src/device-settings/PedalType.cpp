@@ -12,6 +12,31 @@ PedalType::PedalType(UpdateDocumentContributor &settings, uint16_t playcontrolle
 {
 }
 
+void PedalType::incDec(int dir, bool wrap)
+{
+  auto &v = getDisplayStrings();
+  auto currDisplayString = getDisplayString();
+  auto currPos = std::find(v.begin(), v.end(), currDisplayString);
+  if(currPos == v.end())
+    nltools_assertNotReached();
+
+  auto idx = std::distance(v.begin(), currPos);
+
+  idx += dir;
+
+  if(idx < 0 && wrap)
+    idx = v.size() + idx;
+
+  if(idx >= v.size() && wrap)
+    idx = idx - v.size();
+
+  if(idx >= 0 && idx < v.size())
+  {
+    if(auto p = EHC_GetPresetByDisplayName(v[idx].c_str()))
+      set((tEnum) p->id);
+  }
+}
+
 Glib::ustring PedalType::getDisplayString() const
 {
   auto v = getAllValues<PedalTypes>();

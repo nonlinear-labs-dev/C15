@@ -1,0 +1,2037 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><bank version="9">
+ <bank-serialize-date>2021-04-27T15:18:16Z</bank-serialize-date>
+ <name>InitWithAMix</name>
+ <uuid>50e774d9-a152-47db-9313-10aa2c1b8435</uuid>
+ <x>-345</x>
+ <y>825</y>
+ <selected-preset>45c81e2f-a669-4cc6-9b72-dad322cf3258</selected-preset>
+ <attached-to-bank></attached-to-bank>
+ <attach-direction></attach-direction>
+ <preset-order>
+  <uuid>45c81e2f-a669-4cc6-9b72-dad322cf3258</uuid>
+ </preset-order>
+ <attributes>
+ </attributes>
+ <last-changed-timestamp>1619536692</last-changed-timestamp>
+ <preset pos="0">
+  <name>Init Sound With A</name>
+  <uuid>45c81e2f-a669-4cc6-9b72-dad322cf3258</uuid>
+  <type>Single</type>
+  <vg-I-name>Init</vg-I-name>
+  <vg-II-name>Init</vg-II-name>
+  <attributes>
+   <attribute name="DeviceName">Unit-16659</attribute>
+   <attribute name="SoftwareVersion">21-16</attribute>
+   <attribute name="StoreTime">2021-04-27T13:34:47Z</attribute>
+   <attribute name="origin-I">d8ba3300-9d84-4a21-b6c3-928f0ec70f2b</attribute>
+   <attribute name="origin-I-vg">I</attribute>
+   <attribute name="origin-II">d8ba3300-9d84-4a21-b6c3-928f0ec70f2b</attribute>
+   <attribute name="origin-II-vg">I</attribute>
+  </attributes>
+  <parameter-groups>
+   <parameter-group id="Global-CS">
+    <parameter id="Global-254">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+    <parameter id="Global-259">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+    <parameter id="Global-264">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+    <parameter id="Global-269">
+     <value>0.5</value>
+     <pedalMode>0</pedalMode>
+    </parameter>
+    <parameter id="Global-274">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-279">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-284">
+     <value>0.5</value>
+     <ribbon-touch-behaviour>0</ribbon-touch-behaviour>
+     <ribbon-return-mode>0</ribbon-return-mode>
+    </parameter>
+    <parameter id="Global-289">
+     <value>0.5</value>
+     <ribbon-touch-behaviour>0</ribbon-touch-behaviour>
+     <ribbon-return-mode>0</ribbon-return-mode>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Global-MCM">
+    <parameter id="Global-255">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-256">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-257">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-258">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-260">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-261">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-262">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-263">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-265">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-266">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-267">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-268">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-270">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-271">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-272">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-273">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-275">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-276">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-277">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-278">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-280">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-281">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-282">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-283">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-285">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-286">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-287">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-288">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-290">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-291">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-292">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-293">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-373">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-374">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-375">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-376">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-377">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-378">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-379">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-380">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-381">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-382">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-383">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-384">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-385">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-386">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-387">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-388">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Global-MCs">
+    <parameter id="Global-243">
+     <value>0.5</value>
+     <info></info>
+     <givenName></givenName>
+    </parameter>
+    <parameter id="Global-244">
+     <value>0.5</value>
+     <info></info>
+     <givenName></givenName>
+    </parameter>
+    <parameter id="Global-245">
+     <value>0.5</value>
+     <info></info>
+     <givenName></givenName>
+    </parameter>
+    <parameter id="Global-246">
+     <value>0.5</value>
+     <info></info>
+     <givenName></givenName>
+    </parameter>
+    <parameter id="Global-324">
+     <value>0.442</value>
+    </parameter>
+    <parameter id="Global-325">
+     <value>0.442</value>
+    </parameter>
+    <parameter id="Global-326">
+     <value>0.442</value>
+    </parameter>
+    <parameter id="Global-327">
+     <value>0.442</value>
+    </parameter>
+    <parameter id="Global-369">
+     <value>0.5</value>
+     <info></info>
+     <givenName></givenName>
+    </parameter>
+    <parameter id="Global-370">
+     <value>0.442</value>
+    </parameter>
+    <parameter id="Global-371">
+     <value>0.5</value>
+     <info></info>
+     <givenName></givenName>
+    </parameter>
+    <parameter id="Global-372">
+     <value>0.442</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Global-Master">
+    <parameter id="Global-247">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="Global-248">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="Global-Scale">
+    <parameter id="Global-312">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-313">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-314">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-315">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-316">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-317">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-318">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-319">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-320">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-321">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-322">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-323">
+     <value>0</value>
+    </parameter>
+    <parameter id="Global-391">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Cab">
+    <parameter id="I-188">
+     <value>0.40000000000000002</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-190">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="I-191">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="I-192">
+     <value>-0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-194">
+     <value>0.625</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-196">
+     <value>0.125</value>
+    </parameter>
+    <parameter id="I-197">
+     <value>0.71999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-199">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Comb">
+    <parameter id="I-113">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-115">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-117">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="I-118">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-119">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-121">
+     <value>0.33000000000000002</value>
+    </parameter>
+    <parameter id="I-123">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-125">
+     <value>1</value>
+    </parameter>
+    <parameter id="I-126">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-127">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-129">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-131">
+     <value>1</value>
+    </parameter>
+    <parameter id="I-132">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-133">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-135">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-305">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Echo">
+    <parameter id="I-225">
+     <value>0.433</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-227">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-229">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-231">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-232">
+     <value>0.75</value>
+    </parameter>
+    <parameter id="I-233">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-342">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Env A">
+    <parameter id="I-0">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-2">
+     <value>0.58999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-4">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-6">
+     <value>0.79000000000000004</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-8">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-10">
+     <value>0.52970297029702973</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-12">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-14">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-15">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-16">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-17">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-18">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="I-294">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-328">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-330">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-332">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Env B">
+    <parameter id="I-19">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-21">
+     <value>0.58999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-23">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-25">
+     <value>0.79000000000000004</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-27">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-29">
+     <value>0.52970297029702973</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-31">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-33">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-34">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-35">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-36">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-37">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="I-295">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-334">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-336">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-338">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Env C">
+    <parameter id="I-38">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-40">
+     <value>0.58999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-42">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-44">
+     <value>0.79000000000000004</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-46">
+     <value>0.52970297029702973</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-48">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-49">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-50">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-51">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-52">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="I-296">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-297">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-340">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-FB">
+    <parameter id="I-156">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-158">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-160">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-162">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-164">
+     <value>0.2857142857142857</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-166">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-167">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-168">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-299">
+     <value>0.38</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-346">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-348">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-350">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-352">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-354">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Flang">
+    <parameter id="I-211">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-213">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-214">
+     <value>0.317</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-216">
+     <value>0.31680000000000003</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-218">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-219">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-221">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-222">
+     <value>0.75</value>
+    </parameter>
+    <parameter id="I-223">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-307">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-308">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-310">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-389">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Gap Filt">
+    <parameter id="I-201">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-203">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-204">
+     <value>0.125</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-206">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-207">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-209">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Mixer">
+    <parameter id="I-169">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-171">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-172">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-174">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-175">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-177">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-178">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-180">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-181">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-183">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-184">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-185">
+     <value>0.38</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-187">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-362">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Mono">
+    <parameter id="I-364">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-365">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-366">
+     <value>1</value>
+    </parameter>
+    <parameter id="I-367">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Osc A">
+    <parameter id="I-53">
+     <value>0.53333333333333333</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-55">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="I-56">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-57">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-59">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-60">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-62">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-63">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-64">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-66">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-67">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-68">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-70">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-301">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-303">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="I-393">
+     <value>1</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Osc B">
+    <parameter id="I-83">
+     <value>0.53333333333333333</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-85">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="I-86">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-87">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-89">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-90">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-92">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-93">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-94">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-96">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-97">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-98">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-100">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-302">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-304">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="I-394">
+     <value>1</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Part">
+    <parameter id="I-358">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-360">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-395">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-396">
+     <value>1</value>
+    </parameter>
+    <parameter id="I-397">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Reverb">
+    <parameter id="I-235">
+     <value>0.33000000000000002</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-237">
+     <value>0.33000000000000002</value>
+    </parameter>
+    <parameter id="I-238">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-240">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="I-241">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-344">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-SVF">
+    <parameter id="I-136">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-138">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-140">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-142">
+     <value>1</value>
+    </parameter>
+    <parameter id="I-143">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-144">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-146">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-147">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-148">
+     <value>0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-150">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-152">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-153">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-155">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Sh A">
+    <parameter id="I-71">
+     <value>0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-73">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-74">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-75">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-76">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-78">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-80">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-81">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Sh B">
+    <parameter id="I-101">
+     <value>0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-103">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-104">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="I-105">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-106">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-108">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-110">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-111">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Split">
+    <parameter id="I-356">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="I-Unison">
+    <parameter id="I-249">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-250">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="I-252">
+     <value>0</value>
+    </parameter>
+    <parameter id="I-253">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Cab">
+    <parameter id="II-188">
+     <value>0.40000000000000002</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-190">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="II-191">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="II-192">
+     <value>-0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-194">
+     <value>0.625</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-196">
+     <value>0.125</value>
+    </parameter>
+    <parameter id="II-197">
+     <value>0.71999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-199">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Comb">
+    <parameter id="II-113">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-115">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-117">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="II-118">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-119">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-121">
+     <value>0.33000000000000002</value>
+    </parameter>
+    <parameter id="II-123">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-125">
+     <value>1</value>
+    </parameter>
+    <parameter id="II-126">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-127">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-129">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-131">
+     <value>1</value>
+    </parameter>
+    <parameter id="II-132">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-133">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-135">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-305">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Echo">
+    <parameter id="II-225">
+     <value>0.433</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-227">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-229">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-231">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-232">
+     <value>0.75</value>
+    </parameter>
+    <parameter id="II-233">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-342">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Env A">
+    <parameter id="II-0">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-2">
+     <value>0.58999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-4">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-6">
+     <value>0.79000000000000004</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-8">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-10">
+     <value>0.52970297029702973</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-12">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-14">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-15">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-16">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-17">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-18">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="II-294">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-328">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-330">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-332">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Env B">
+    <parameter id="II-19">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-21">
+     <value>0.58999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-23">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-25">
+     <value>0.79000000000000004</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-27">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-29">
+     <value>0.52970297029702973</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-31">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-33">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-34">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-35">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-36">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-37">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="II-295">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-334">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-336">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-338">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Env C">
+    <parameter id="II-38">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-40">
+     <value>0.58999999999999997</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-42">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-44">
+     <value>0.79000000000000004</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-46">
+     <value>0.52970297029702973</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-48">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-49">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-50">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-51">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-52">
+     <value>0.050000000000000003</value>
+    </parameter>
+    <parameter id="II-296">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-297">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-340">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-FB">
+    <parameter id="II-156">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-158">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-160">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-162">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-164">
+     <value>0.2857142857142857</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-166">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-167">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-168">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-299">
+     <value>0.38</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-346">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-348">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-350">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-352">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-354">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Flang">
+    <parameter id="II-211">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-213">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-214">
+     <value>0.317</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-216">
+     <value>0.31680000000000003</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-218">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-219">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-221">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-222">
+     <value>0.75</value>
+    </parameter>
+    <parameter id="II-223">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-307">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-308">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-310">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-389">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Gap Filt">
+    <parameter id="II-201">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-203">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-204">
+     <value>0.125</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-206">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-207">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-209">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Mixer">
+    <parameter id="II-169">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-171">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-172">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-174">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-175">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-177">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-178">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-180">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-181">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-183">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-184">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-185">
+     <value>0.38</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-187">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-362">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Mono">
+    <parameter id="II-364">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-365">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-366">
+     <value>1</value>
+    </parameter>
+    <parameter id="II-367">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Osc A">
+    <parameter id="II-53">
+     <value>0.53333333333333333</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-55">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="II-56">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-57">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-59">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-60">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-62">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-63">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-64">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-66">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-67">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-68">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-70">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-301">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-303">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="II-393">
+     <value>1</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Osc B">
+    <parameter id="II-83">
+     <value>0.53333333333333333</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-85">
+     <value>0.95238095238095233</value>
+    </parameter>
+    <parameter id="II-86">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-87">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-89">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-90">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-92">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-93">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-94">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-96">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-97">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-98">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-100">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-302">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-304">
+     <value>0.66666666666666663</value>
+    </parameter>
+    <parameter id="II-394">
+     <value>1</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Part">
+    <parameter id="II-358">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-360">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-395">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-396">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-397">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Reverb">
+    <parameter id="II-235">
+     <value>0.33000000000000002</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-237">
+     <value>0.33000000000000002</value>
+    </parameter>
+    <parameter id="II-238">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-240">
+     <value>0.25</value>
+    </parameter>
+    <parameter id="II-241">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-344">
+     <value>1</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-SVF">
+    <parameter id="II-136">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-138">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-140">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-142">
+     <value>1</value>
+    </parameter>
+    <parameter id="II-143">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-144">
+     <value>0.5</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-146">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-147">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-148">
+     <value>0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-150">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-152">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-153">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-155">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Sh A">
+    <parameter id="II-71">
+     <value>0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-73">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-74">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-75">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-76">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-78">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-80">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-81">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Sh B">
+    <parameter id="II-101">
+     <value>0.20000000000000001</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-103">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-104">
+     <value>0.5</value>
+    </parameter>
+    <parameter id="II-105">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-106">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-108">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-110">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-111">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Split">
+    <parameter id="II-356">
+     <value>0.51666666666666672</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+   </parameter-group>
+   <parameter-group id="II-Unison">
+    <parameter id="II-249">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-250">
+     <value>0</value>
+     <modAmount>0</modAmount>
+     <modSrc>0</modSrc>
+    </parameter>
+    <parameter id="II-252">
+     <value>0</value>
+    </parameter>
+    <parameter id="II-253">
+     <value>0</value>
+    </parameter>
+   </parameter-group>
+  </parameter-groups>
+ </preset>
+</bank>

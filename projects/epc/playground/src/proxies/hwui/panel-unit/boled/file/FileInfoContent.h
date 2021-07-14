@@ -7,7 +7,7 @@
 class FileInfoContent : public InfoContent
 {
  public:
-  FileInfoContent(std::filesystem::directory_entry file);
+  explicit FileInfoContent(std::filesystem::directory_entry file);
 
   void fillContents() override;
 

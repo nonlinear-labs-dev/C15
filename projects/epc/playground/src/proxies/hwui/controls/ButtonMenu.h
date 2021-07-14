@@ -11,8 +11,8 @@ class ButtonMenu : public ControlWithChildren
   typedef ControlWithChildren super;
 
  public:
-  ButtonMenu(const Rect &rect, size_t numButtonPlaces = 5);
-  virtual ~ButtonMenu();
+  explicit ButtonMenu(const Rect &rect, size_t numButtonPlaces = 5);
+  ~ButtonMenu() override;
 
   using Action = std::function<void()>;
 

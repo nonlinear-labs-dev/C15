@@ -11,7 +11,7 @@ Uuid::Uuid(const Uuid &other)
 {
 }
 
-Uuid::Uuid(Uuid &&other)
+Uuid::Uuid(Uuid &&other) noexcept
     : id(std::move(other.id))
 {
 }
@@ -84,6 +84,11 @@ Uuid Uuid::init()
 Uuid Uuid::converted()
 {
   return Uuid("Converted");
+}
+
+Uuid Uuid::restored()
+{
+  return Uuid("Restored");
 }
 
 void Uuid::generate()

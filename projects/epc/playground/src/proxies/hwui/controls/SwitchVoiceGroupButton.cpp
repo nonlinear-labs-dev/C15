@@ -34,9 +34,9 @@ void SwitchVoiceGroupButton::rebuild()
   auto selected = eb->getSelected(getHWUI()->getCurrentVoiceGroup());
 
   if(allowToggling(selected, eb))
-    setText({ "I / II", 0 });
+    setText(StringAndSuffix { "I / II", 0 });
   else
-    setText({ "", 0 });
+    setText(StringAndSuffix { "", 0 });
 }
 
 void SwitchVoiceGroupButton::onParameterSelectionChanged(Parameter* oldSelected, Parameter* newSelection)
@@ -53,7 +53,7 @@ bool SwitchVoiceGroupButton::allowToggling(const Parameter* selected, const Edit
 {
   if(selected == nullptr)
     return false;
-  
+
   if(selected->getVoiceGroup() == VoiceGroup::Global)
     return false;
 

@@ -9,7 +9,7 @@ class FineBipolar12STScaleConverter : public LinearScaleConverter
 
  public:
   FineBipolar12STScaleConverter();
-  virtual ~FineBipolar12STScaleConverter();
+  ~FineBipolar12STScaleConverter() override;
 
  private:
   FineBipolar12STScaleConverter(const FineBipolar12STScaleConverter& other);

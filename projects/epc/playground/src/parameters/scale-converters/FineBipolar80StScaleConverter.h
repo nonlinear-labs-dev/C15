@@ -6,5 +6,5 @@ class FineBipolar80StScaleConverter : public LinearScaleConverter
 {
  public:
   FineBipolar80StScaleConverter();
-  virtual ~FineBipolar80StScaleConverter();
+  ~FineBipolar80StScaleConverter() override;
 };

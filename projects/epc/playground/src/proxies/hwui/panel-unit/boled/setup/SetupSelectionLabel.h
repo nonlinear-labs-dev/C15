@@ -5,8 +5,8 @@
 class SetupSelectionLabel : public SetupLabel
 {
  public:
-  SetupSelectionLabel(const Glib::ustring &text);
-  virtual ~SetupSelectionLabel();
+  explicit SetupSelectionLabel(const Glib::ustring &text);
+  ~SetupSelectionLabel() override;
 
   bool redraw(FrameBuffer &fb) override;
   void drawBackground(FrameBuffer &fb) override;

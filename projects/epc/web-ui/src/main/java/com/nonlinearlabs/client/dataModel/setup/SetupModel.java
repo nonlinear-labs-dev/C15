@@ -4,8 +4,13 @@ import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.dataModel.BooleanDataModelEntity;
 import com.nonlinearlabs.client.dataModel.EnumDataModelEntity;
 import com.nonlinearlabs.client.dataModel.IntegerDataModelEntity;
+import com.nonlinearlabs.client.dataModel.HardwareSourceEnableSettingsDataModelEntity;
 import com.nonlinearlabs.client.dataModel.StringDataModelEntity;
 import com.nonlinearlabs.client.dataModel.ValueDataModelEntity;
+import com.nonlinearlabs.client.presenters.DeviceSettings.Pedal;
+import com.nonlinearlabs.client.world.maps.parameters.PlayControls.SourcesAndAmounts.Sources.Ribbon;
+
+import org.eclipse.jetty.jndi.local.localContextRoot;
 
 public class SetupModel {
 
@@ -69,6 +74,43 @@ public class SetupModel {
 		off, percent_10, percent_25, percent_50
 	}
 
+	public enum MidiReceiveChannel { 
+		None, Omni, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16 
+	}
+
+	public enum MidiReceiveChannelSplit { 
+		None, Omni, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16, Common 
+	}
+
+	public enum MidiSendChannel {
+		None, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16 
+	}
+
+	public enum MidiSendChannelSplit { 
+		None, CH_1, CH_2, CH_3, CH_4, CH_5, CH_6, CH_7, CH_8, CH_9, CH_10, CH_11, CH_12, CH_13, CH_14, CH_15, CH_16, Common
+	}
+
+	public enum PedalCCMapping {
+		None, CC01, CC02, CC03, CC04, CC05, CC06, CC07, CC08, CC09, CC10, CC11, CC12, CC13, CC14, CC15, CC16, CC17, CC18, CC19, 
+		CC20, CC21, CC22, CC23, CC24, CC25, CC26, CC27, CC28, CC29, CC30, CC31, CC64, CC65, CC66, CC67, CC68, CC69
+	}
+
+	public enum RibbonCCMapping {
+		None, CC01, CC02, CC03, CC04, CC05, CC06, CC07, CC08, CC09, CC10, CC11, CC12, CC13, CC14, CC15, CC16, CC17, CC18, CC19,
+		CC20, CC21, CC22, CC23, CC24, CC25, CC26, CC27, CC28, CC29, CC30, CC31
+	}
+
+	public enum BenderCCMapping {
+		None, Pitchbend, CC01, CC02, CC03, CC04, CC05, CC06, CC07, CC08, CC09, CC10, CC11, CC12, CC13, CC14, CC15, CC16, CC17,
+		CC18, CC19, CC20, CC21, CC22, CC23, CC24, CC25, CC26, CC27, CC28, CC29, CC30, CC31
+	}
+
+	public enum AftertouchCCMapping {
+		None, ChannelPressure, CC01, CC02, CC03, CC04, CC05, CC06, CC07, CC08, CC09, CC10, CC11, CC12, CC13, CC14, CC15, CC16,
+		CC17, CC18, CC19, CC20, CC21, CC22, CC23, CC24, CC25, CC26, CC27, CC28, CC29, CC30, CC31, PitchbendUp, PitchbendDown
+	}
+
+
 	private <T extends Enum<T>> EnumDataModelEntity<T> createEnumDataModelEntity(Class<T> c, T def) {
 		return new EnumDataModelEntity<T>(c, def);
 	}
@@ -93,6 +135,169 @@ public class SetupModel {
 					return 50;
 			}
 			return 0;
+		}
+	}
+
+	public class MidiReceiveChannelSetting extends EnumDataModelEntity<MidiReceiveChannel> {
+		public MidiReceiveChannelSetting() {
+			super(MidiReceiveChannel.class, MidiReceiveChannel.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiReceiveChannel c = MidiReceiveChannel.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Receive Channel value of " + str);				
+			}
+		}
+	}
+
+	public class MidiReceiveChannelSplitSetting extends EnumDataModelEntity<MidiReceiveChannelSplit> {
+		public MidiReceiveChannelSplitSetting() {
+			super(MidiReceiveChannelSplit.class, MidiReceiveChannelSplit.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiReceiveChannelSplit c = MidiReceiveChannelSplit.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Receive Channel Split value of " + str);				
+			}
+		}
+	}
+
+	public class MidiSendChannelSetting extends EnumDataModelEntity<MidiSendChannel> {
+		public MidiSendChannelSetting() {
+			super(MidiSendChannel.class, MidiSendChannel.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiSendChannel c = MidiSendChannel.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Send Channel value of " + str);				
+			}
+		}
+	}
+
+	public class MidiSendChannelSplitSetting extends EnumDataModelEntity<MidiSendChannelSplit> {
+		public MidiSendChannelSplitSetting() {
+			super(MidiSendChannelSplit.class, MidiSendChannelSplit.None);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				MidiSendChannelSplit c = MidiSendChannelSplit.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Send Channel Split value of " + str);				
+			}
+		}
+	}
+
+
+	public class MidiReceiveVelocityCurveSetting extends EnumDataModelEntity<VelocityCurve> {
+		public MidiReceiveVelocityCurveSetting() {
+			super(VelocityCurve.class, VelocityCurve.normal);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				VelocityCurve c = VelocityCurve.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi receive VelocityCurve value of " + str);				
+			}
+		}
+	}
+
+	public class MidiReceiveAftertouchCurve extends EnumDataModelEntity<AftertouchCurve> {
+		public MidiReceiveAftertouchCurve() {
+			super(AftertouchCurve.class, AftertouchCurve.normal);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				AftertouchCurve c = AftertouchCurve.valueOf(str);
+				setValue(c);
+			} catch(Exception c) {
+				Tracer.log("Error: Could not parse Midi Receive AftertouchCurve value of: " + str);
+			}
+		}
+	}
+
+	public class PedalMappingDataModelEntity extends EnumDataModelEntity<PedalCCMapping> {
+		public PedalMappingDataModelEntity() {
+			super(PedalCCMapping.class, PedalCCMapping.CC01);
+		}
+
+
+		@Override
+		public void fromString(String str) {
+			try {
+				PedalCCMapping p = PedalCCMapping.valueOf(str);
+				setValue(p);
+			} catch (Exception e) {
+				Tracer.log("WARNING: Could not parse pedal-mapping type value of " + str);
+			}
+		}
+	}
+
+	public class RibbonMappingDataModelEntity extends EnumDataModelEntity<RibbonCCMapping> {
+		public RibbonMappingDataModelEntity() {
+			super(RibbonCCMapping.class, RibbonCCMapping.CC01);
+		}
+
+
+		@Override
+		public void fromString(String str) {
+			try {
+				RibbonCCMapping p = RibbonCCMapping.valueOf(str);
+				setValue(p);
+			} catch (Exception e) {
+				Tracer.log("WARNING: Could not parse ribbon-mapping type value of " + str);
+			}
+		}
+	}
+
+	public class AftertouchMappingDataModelEntity extends EnumDataModelEntity<AftertouchCCMapping> {
+		public AftertouchMappingDataModelEntity() {
+			super(AftertouchCCMapping.class, AftertouchCCMapping.ChannelPressure);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				AftertouchCCMapping p = AftertouchCCMapping.valueOf(str);
+				setValue(p);
+			} catch (Exception e) {
+				Tracer.log("WARNING: Could not parse aftertouch-mapping type value of " + str);
+			}
+		}
+	}
+
+	public class PitchbendMappingDataModelEntity extends EnumDataModelEntity<BenderCCMapping> {
+		public PitchbendMappingDataModelEntity() {
+			super(BenderCCMapping.class, BenderCCMapping.Pitchbend);
+		}
+
+		@Override
+		public void fromString(String str) {
+			try {
+				BenderCCMapping p = BenderCCMapping.valueOf(str);
+				setValue(p);
+			} catch (Exception e) {
+				Tracer.log("WARNING: Could not parse bender-mapping type value of " + str);
+			}
 		}
 	}
 
@@ -155,7 +360,35 @@ public class SetupModel {
 		public BooleanDataModelEntity forceHighlightChangedParameters = new BooleanDataModelEntity();
 		public BooleanDataModelEntity crashOnError = new BooleanDataModelEntity();
 		public BooleanDataModelEntity syncSplit = new BooleanDataModelEntity();
-		public BooleanDataModelEntity externalMidi = new BooleanDataModelEntity();
+
+		//Midi below
+		public BooleanDataModelEntity localNotes = new BooleanDataModelEntity();
+	
+		public BooleanDataModelEntity sendNotes = new BooleanDataModelEntity();
+		public BooleanDataModelEntity sendProgramChanges = new BooleanDataModelEntity();
+		public MidiSendChannelSetting sendChannel = new MidiSendChannelSetting();
+		public MidiSendChannelSplitSetting sendChannelSplit = new MidiSendChannelSplitSetting();
+
+		public BooleanDataModelEntity receiveNotes = new BooleanDataModelEntity();
+		public BooleanDataModelEntity receiveProgramChanges = new BooleanDataModelEntity();
+		public MidiReceiveChannelSetting receiveChannel = new MidiReceiveChannelSetting();
+		public MidiReceiveChannelSplitSetting receiveChannelSplit = new MidiReceiveChannelSplitSetting();
+		public MidiReceiveVelocityCurveSetting receiveVelocityCurve = new MidiReceiveVelocityCurveSetting();
+		public MidiReceiveAftertouchCurve receiveAftertouchCurve = new MidiReceiveAftertouchCurve();
+
+		public PedalMappingDataModelEntity pedal1Mapping = new PedalMappingDataModelEntity();
+		public PedalMappingDataModelEntity pedal2Mapping = new PedalMappingDataModelEntity();
+		public PedalMappingDataModelEntity pedal3Mapping = new PedalMappingDataModelEntity();
+		public PedalMappingDataModelEntity pedal4Mapping = new PedalMappingDataModelEntity();
+		public RibbonMappingDataModelEntity ribbon1Mapping = new RibbonMappingDataModelEntity();
+		public RibbonMappingDataModelEntity ribbon2Mapping = new RibbonMappingDataModelEntity();
+		public AftertouchMappingDataModelEntity aftertouchMapping = new AftertouchMappingDataModelEntity();
+		public PitchbendMappingDataModelEntity benderMapping = new PitchbendMappingDataModelEntity();
+		public BooleanDataModelEntity highVelocityCC = new BooleanDataModelEntity();
+		public BooleanDataModelEntity enable14BitSupport = new BooleanDataModelEntity();
+		public BooleanDataModelEntity autoStartRecorder = new BooleanDataModelEntity();
+
+		public HardwareSourceEnableSettingsDataModelEntity hwSourceMapping = new HardwareSourceEnableSettingsDataModelEntity();
 	};
 
 	public class LocalSettings {

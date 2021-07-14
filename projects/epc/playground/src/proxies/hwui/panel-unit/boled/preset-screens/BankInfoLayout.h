@@ -11,16 +11,13 @@ class BankInfoLayout : public InfoLayout
 
  public:
   BankInfoLayout();
-  virtual ~BankInfoLayout();
+  ~BankInfoLayout() override;
 
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
  protected:
-  virtual void addModuleCaption() override;
-  virtual void addHeadline() override;
-  virtual void addInfoLabel() override;
-  virtual Scrollable* createScrollableContent() override;
-
-  void onBankChanged(Bank* bank);
-  void onPresetSelectionChanged();
+  void addModuleCaption() override;
+  void addHeadline() override;
+  void addInfoLabel() override;
+  Scrollable* createScrollableContent() override;
 };

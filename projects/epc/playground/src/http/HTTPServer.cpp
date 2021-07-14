@@ -12,12 +12,11 @@
 #include <parameters/MacroControlParameter.h>
 #include <nltools/threading/Throttler.h>
 #include <giomm.h>
-
-#ifdef _DEVELOPMENT_PC
-static const guint port = 8080;
-#else
-static const guint port = 80;
-#endif
+#include <fstream>
+#include <nltools/system/AsyncCommandLine.h>
+#include <nltools/system/SpawnAsyncCommandLine.h>
+#include <nltools/system/SpawnCommandLine.h>
+#include <nltools/messaging/Message.h>
 
 HTTPServer::HTTPServer()
     : m_contentManager()
@@ -45,6 +44,7 @@ void HTTPServer::startServer()
 void HTTPServer::initializeServer()
 {
   soup_server_add_handler(m_server, nullptr, reinterpret_cast<SoupServerCallback>(serverCallback), this, nullptr);
+
   soup_server_add_websocket_handler(m_server, "/ws", nullptr, nullptr,
                                     reinterpret_cast<SoupServerWebsocketCallback>(&HTTPServer::webSocket), this,
                                     nullptr);
@@ -53,7 +53,7 @@ void HTTPServer::initializeServer()
                                     nullptr);
 
   GError *error = nullptr;
-  soup_server_listen_all(m_server, port, static_cast<SoupServerListenOptions>(0), &error);
+  soup_server_listen_all(m_server, PLAYGROUND_HTTPSERVER_PORT, static_cast<SoupServerListenOptions>(0), &error);
 
   if(error)
   {
@@ -106,6 +106,38 @@ void HTTPServer::handleRequest(std::shared_ptr<NetworkRequest> request)
     tServedStream file(new ServedJournal(*this, std::dynamic_pointer_cast<HTTPRequest>(request)));
     m_servedStreams.push_back(file);
     file->startServing();
+  }
+  else if(path == "/C15-Update")
+  {
+    try
+    {
+      auto req = std::dynamic_pointer_cast<HTTPRequest>(request);
+      const auto outFile = "/tmp/nonlinear-c15-update.tar";
+      {
+        std::ofstream out(outFile, std::ofstream::binary);
+        if(out.is_open())
+        {
+          auto buff = req->getFlattenedBuffer();
+          out.write(buff->data, buff->length);
+        }
+        else
+        {
+          nltools::Log::error("could not open /tmp to write");
+        }
+      }
+
+      nltools::msg::Update::UpdateUploadedNotification msg {};
+      nltools::msg::send(nltools::msg::EndPoint::BeagleBone, msg);
+
+      request->okAndComplete();
+    }
+    catch(...)
+    {
+      request->okAndComplete();
+
+      auto currentE = std::current_exception();
+      nltools::Log::error(nltools::handle_eptr(currentE));
+    }
   }
   else
   {
@@ -177,13 +209,13 @@ void HTTPServer::onMessageFinished(SoupMessage *msg)
     m_contentManager.onSectionMessageFinished(msg);
 }
 
-void HTTPServer::serverCallback(SoupServer *, SoupMessage *msg, const char *path, GHashTable *, SoupClientContext *,
-                                HTTPServer *pThis)
+void HTTPServer::serverCallback(SoupServer *server, SoupMessage *msg, const char *path, GHashTable *,
+                                SoupClientContext *, HTTPServer *pThis)
 {
   try
   {
     g_signal_connect(msg, "finished", reinterpret_cast<GCallback>(&HTTPServer::messageFinishedCB), pThis);
-    std::shared_ptr<NetworkRequest> request(new HTTPRequest(msg));
+    std::shared_ptr<NetworkRequest> request(new HTTPRequest(server, msg));
     pThis->handleRequest(request);
   }
   catch(Glib::MarkupError &err)

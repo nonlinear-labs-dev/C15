@@ -125,7 +125,7 @@ void SplashLayout::addMessage(const std::string &txt)
 
 void SplashLayout::addHeadline()
 {
-  addControl(new DETAIL::Headline("Nonlinear Labs - C15", Rect(0, 0, 256, 16)));
+  addControl(new DETAIL::Headline(StringAndSuffix { "Nonlinear Labs - C15" }, Rect(0, 0, 256, 16)));
 }
 
 void SplashLayout::addInfoLabel()

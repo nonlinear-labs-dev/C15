@@ -9,9 +9,7 @@ class DebugOLED : public OLEDProxy
 
  public:
   DebugOLED();
-  virtual ~DebugOLED();
-
- private:
+  ~DebugOLED() override;
   DebugOLED(const DebugOLED& other) = delete;
   DebugOLED& operator=(const DebugOLED&) = delete;
 };

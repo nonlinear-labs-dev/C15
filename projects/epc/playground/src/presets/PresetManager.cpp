@@ -36,7 +36,6 @@ PresetManager::PresetManager(UpdateDocumentContributor *parent, bool readOnly)
     , m_banks(*this, nullptr)
     , m_editBuffer(std::make_unique<EditBuffer>(this))
     , m_initSound(std::make_unique<Preset>(this))
-    , m_autoLoadThrottler(std::chrono::milliseconds(200))
     , m_saveJob(std::bind(&PresetManager::doSaveTask, this))
     , m_readOnly(readOnly)
 {
@@ -84,6 +83,7 @@ void PresetManager::init()
   auto hwui = Application::get().getHWUI();
   hwui->getPanelUnit().getEditPanel().getBoled().setupFocusAndMode(hwui->getFocusAndMode());
   hwui->getBaseUnit().getPlayPanel().getSOLED().resetSplash();
+  m_sigLoadHappened.send();
   onChange();
 }
 
@@ -235,7 +235,7 @@ SaveResult PresetManager::saveBanks(Glib::RefPtr<Gio::File> pmFolder)
   return SaveResult::Nothing;
 }
 
-void PresetManager::doAutoLoadSelectedPreset()
+void PresetManager::undoableLoadSelectedPreset(UNDO::Transaction *currentTransactionPtr)
 {
   if(auto lock = m_isLoading.lock())
   {
@@ -248,18 +248,9 @@ void PresetManager::doAutoLoadSelectedPreset()
 
     if(!isStoringPreset)
     {
-      scheduleAutoLoadPresetAccordingToLoadType();
+      undoableLoadSelectedPresetAccordingToLoadType(currentTransactionPtr);
     }
   }
-}
-
-void PresetManager::scheduleAutoLoadPresetAccordingToLoadType()
-{
-  m_autoLoadScheduled = true;
-  m_autoLoadThrottler.doTask([=]() {
-    m_autoLoadScheduled = false;
-    autoLoadPresetAccordingToLoadType();
-  });
 }
 
 bool PresetManager::isLoading() const
@@ -372,29 +363,9 @@ void PresetManager::forEachBank(std::function<void(Bank *)> cb) const
   m_banks.forEach(cb);
 }
 
-void PresetManager::selectNextBank()
-{
-  selectBank(getNextBankPosition());
-}
-
 std::shared_ptr<ScopedGuard::Lock> PresetManager::lockLoading()
 {
   return m_isLoading.lock();
-}
-
-void PresetManager::selectPreviousBank()
-{
-  selectBank(getPreviousBankPosition());
-}
-
-void PresetManager::selectBank(size_t idx)
-{
-  if(idx < getNumBanks())
-  {
-    auto bank = getBankAt(idx);
-    auto transactionScope = getUndoScope().startTransaction("Select Bank '%0'", bank->getName(true));
-    selectBank(transactionScope->getTransaction(), bank->getUuid());
-  }
 }
 
 bool PresetManager::selectPreviousBank(UNDO::Transaction *transaction)
@@ -513,14 +484,7 @@ void PresetManager::handleDockingOnBankDelete(UNDO::Transaction *transaction, co
 
 void PresetManager::selectBank(UNDO::Transaction *transaction, const Uuid &uuid)
 {
-  if(m_banks.select(transaction, uuid))
-    onPresetSelectionChanged();
-}
-
-void PresetManager::onPresetSelectionChanged()
-{
-  if(Application::get().getSettings()->getSetting<DirectLoadSetting>()->get())
-    doAutoLoadSelectedPreset();
+  m_banks.select(transaction, uuid);
 }
 
 void PresetManager::sortBanks(UNDO::Transaction *transaction, const std::vector<Bank *> &banks)
@@ -691,6 +655,30 @@ sigc::connection PresetManager::onRestoreHappened(sigc::slot<void> cb)
   return m_sigRestoreHappened.connect(cb);
 }
 
+std::pair<double, double> PresetManager::calcDefaultBankPositionForNewBank() const
+{
+  const Bank *rightMost = nullptr;
+
+  m_banks.forEach([&](auto other) {
+    if(!rightMost)
+    {
+      rightMost = other;
+      return;
+    }
+
+    auto x = std::stod(other->getX());
+    auto currentX = std::stod(rightMost->getX());
+
+    if(x > currentX)
+      rightMost = other;
+  });
+
+  if(rightMost)
+    return std::make_pair(std::stod(rightMost->getX()) + 300, std::stod(rightMost->getY()));
+
+  return std::make_pair(0.0, 0.0);
+}
+
 std::pair<double, double> PresetManager::calcDefaultBankPositionFor(const Bank *bank) const
 {
   const Bank *rightMost = nullptr;
@@ -726,7 +714,7 @@ size_t PresetManager::getBankPosition(const Uuid &uuid) const
 void PresetManager::sanitizeBankClusterRelations(UNDO::Transaction *transaction)
 {
   resolveCyclicAttachments(transaction);
-  ClusterEnforcement enforcer;
+  ClusterEnforcement enforcer(this);
   enforcer.enforceClusterRuleOfOne(transaction);
 }
 
@@ -778,7 +766,7 @@ void PresetManager::stress(int numTransactions)
         {
           auto transactionScope = getUndoScope().startTransaction("Stressing Undo System");
           m_editBuffer->undoableSelectParameter(transactionScope->getTransaction(),
-                                                { C15::PID::FB_Mix_FX_Src, VoiceGroup::I });
+                                                { C15::PID::FB_Mix_FX_Src, VoiceGroup::I }, false);
 
           if(auto p = m_editBuffer->getSelected(VoiceGroup::I))
           {
@@ -808,7 +796,7 @@ void PresetManager::stressParam(UNDO::Transaction *trans, Parameter *param)
 {
   if(m_editBuffer->getSelected(VoiceGroup::I) != param)
   {
-    m_editBuffer->undoableSelectParameter(trans, param);
+    m_editBuffer->undoableSelectParameter(trans, param, true);
   }
   param->stepCPFromHwui(trans, g_random_boolean() ? -1 : 1, ButtonModifiers {});
 }
@@ -834,7 +822,7 @@ void PresetManager::stressBlocking(int numTransactions)
   int parameterId = g_random_int_range(0, 200);
   {
     auto transactionScope = getUndoScope().startTransaction("Stressing Undo System");
-    m_editBuffer->undoableSelectParameter(transactionScope->getTransaction(), { parameterId, VoiceGroup::I });
+    m_editBuffer->undoableSelectParameter(transactionScope->getTransaction(), { parameterId, VoiceGroup::I }, false);
 
     if(auto p = m_editBuffer->getSelected(VoiceGroup::I))
     {
@@ -912,62 +900,10 @@ Preset *PresetManager::getSelectedPreset()
   return nullptr;
 }
 
-bool PresetManager::currentLoadedPartIsBeforePresetToLoad() const
+void PresetManager::undoableLoadSelectedPresetAccordingToLoadType(UNDO::Transaction *transaction) const
 {
-  auto currentVG = Application::get().getHWUI()->getCurrentVoiceGroup();
-  auto og = getEditBuffer()->getPartOrigin(currentVG);
+  nltools_assertAlways(transaction != nullptr);
 
-  if(auto selectedBank = getSelectedBank())
-  {
-    if(auto selectedPreset = selectedBank->getSelectedPreset())
-    {
-      if(auto currentOGBank = findBankWithPreset(og.presetUUID))
-      {
-        if(currentOGBank == selectedBank)
-        {
-          if(auto currentOGPreset = currentOGBank->findPreset(og.presetUUID))
-          {
-            return currentOGBank->getPresetPosition(currentOGPreset) < currentOGBank->getPresetPosition(selectedPreset);
-          }
-        }
-        else
-        {
-          return getBankPosition(currentOGBank->getUuid()) < getBankPosition(selectedBank->getUuid());
-        }
-      }
-    }
-  }
-
-  return false;
-}
-
-void PresetManager::scheduleLoadToPart(const Preset *preset, VoiceGroup loadFrom, VoiceGroup loadTo)
-{
-  auto eb = getEditBuffer();
-  m_autoLoadScheduled = true;
-  m_autoLoadThrottler.doTask([=]() {
-    if(preset)
-    {
-      if(auto currentUndo = getUndoScope().getUndoTransaction())
-      {
-        if(!currentUndo->isClosed())
-        {
-          eb->undoableLoadPresetPartIntoPart(currentUndo, preset, loadFrom, loadTo);
-          m_autoLoadScheduled = false;
-          return;
-        }
-      }
-
-      auto scope = getUndoScope().startContinuousTransaction(this, std::chrono::milliseconds(500), "Load Preset Part");
-      eb->undoableLoadPresetPartIntoPart(scope->getTransaction(), preset, loadFrom, loadTo);
-      m_autoLoadScheduled = false;
-    }
-  });
-}
-
-//How could this ever have worked?
-void PresetManager::autoLoadPresetAccordingToLoadType()
-{
   auto eb = getEditBuffer();
   auto hwui = Application::get().getHWUI();
   auto currentVoiceGroup = hwui->getCurrentVoiceGroup();
@@ -982,18 +918,19 @@ void PresetManager::autoLoadPresetAccordingToLoadType()
       switch(selPreset->getType())
       {
         case SoundType::Single:
-          eb->undoableLoadSelectedPreset(currentVoiceGroup);
+          eb->undoableLoadSelectedPreset(transaction, currentVoiceGroup);
+
           break;
         case SoundType::Layer:
         case SoundType::Split:
           if(loadToPartActive)
           {
             auto load = hwui->getPresetPartSelection(currentVoiceGroup);
-            eb->undoableLoadToPart(load->m_preset, load->m_voiceGroup, currentVoiceGroup);
+            eb->undoableLoadToPart(transaction, load->m_preset, load->m_voiceGroup, currentVoiceGroup);
           }
           else
           {
-            eb->undoableLoadSelectedPreset(currentVoiceGroup);
+            eb->undoableLoadSelectedPreset(transaction, currentVoiceGroup);
           }
           break;
         default:
@@ -1038,10 +975,15 @@ void PresetManager::selectMidiBank(UNDO::Transaction *trans, const Uuid &uuid)
 
 sigc::connection PresetManager::onMidiBankSelectionHappened(sigc::slot<void, Uuid> cb)
 {
-  return m_sigMidiBankSelection.connect(cb);
+  return m_sigMidiBankSelection.connectAndInit(cb, getMidiSelectedBank());
 }
 
 Bank *PresetManager::findMidiSelectedBank() const
 {
   return m_banks.find(getMidiSelectedBank());
+}
+
+sigc::connection PresetManager::onLoadHappened(sigc::slot<void> cb)
+{
+  return m_sigLoadHappened.connect(cb);
 }

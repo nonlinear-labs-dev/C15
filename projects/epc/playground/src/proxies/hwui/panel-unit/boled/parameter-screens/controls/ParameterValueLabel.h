@@ -13,7 +13,7 @@ class ParameterValueLabel : public Label
 
  public:
   ParameterValueLabel(const Parameter *param, const Rect &pos);
-  ~ParameterValueLabel();
+  ~ParameterValueLabel() override;
   void updateParameter(const Parameter *param);
 
  private:
@@ -21,5 +21,5 @@ class ParameterValueLabel : public Label
   void updateVoiceGroup(VoiceGroup newVoiceGroup);
   sigc::connection m_connection;
   sigc::connection m_vgSelectionConnection;
-  const Parameter* m_currentParameter;
+  const Parameter *m_currentParameter;
 };

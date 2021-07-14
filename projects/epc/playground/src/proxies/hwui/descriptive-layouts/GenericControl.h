@@ -13,7 +13,7 @@ namespace DescriptiveLayouts
   {
    public:
     GenericControl(const ControlInstance& prototype, EventProvider* eventProvider);
-    virtual ~GenericControl();
+    ~GenericControl() override;
 
     void style(const LayoutClasses& layout);
     void connect();

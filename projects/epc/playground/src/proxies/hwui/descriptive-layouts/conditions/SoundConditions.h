@@ -11,7 +11,7 @@ namespace DescriptiveLayouts
     {
      public:
       EditBufferCondition();
-      virtual ~EditBufferCondition();
+      ~EditBufferCondition() override;
 
      protected:
       virtual void onEditBufferChanged();

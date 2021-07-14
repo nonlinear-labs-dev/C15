@@ -77,20 +77,7 @@ Glib::ustring MemoryInStream::read()
     return {};
   }
 
-  return Glib::ustring(str);
-}
-
-bool MemoryInStream::isBufferCorrectC15Backup()
-{
-  do
-  {
-    if(read().find("preset-manager") != Glib::ustring::npos)
-    {
-      return true;
-    }
-  } while(!m_eof);
-
-  return false;
+  return Glib::ustring(str) + '\n';
 }
 
 std::vector<uint8_t> MemoryInStream::readAll()

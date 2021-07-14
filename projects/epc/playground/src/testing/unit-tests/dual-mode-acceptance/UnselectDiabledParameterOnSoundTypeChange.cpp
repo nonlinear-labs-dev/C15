@@ -8,7 +8,8 @@ TEST_CASE("FROM Layer")
   MockPresetStorage presets;
 
   auto eb = TestHelper::getEditBuffer();
-  eb->undoableLoad(presets.getLayerPreset());
+  EditBufferUseCases ebUseCases(eb);
+  ebUseCases.undoableLoad(presets.getLayerPreset());
 
   Application::get().getHWUI()->setCurrentVoiceGroup(VoiceGroup::II);
 
@@ -16,17 +17,17 @@ TEST_CASE("FROM Layer")
 
   WHEN("FB A/B x selected")
   {
-    eb->undoableSelectParameter({ 346, VoiceGroup::II });
+    ebUseCases.selectParameter({ 346, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 346, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      eb->undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
@@ -47,17 +48,17 @@ TEST_CASE("FROM Layer")
 
   WHEN("FB A/B x - A-B selected")
   {
-    eb->undoableSelectParameter({ 348, VoiceGroup::II });
+    ebUseCases.selectParameter({ 348, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 346, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      eb->undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 346, VoiceGroup::II });
     }
 
@@ -78,17 +79,17 @@ TEST_CASE("FROM Layer")
 
   WHEN("FB: Comb - From x selected")
   {
-    eb->undoableSelectParameter({ 350, VoiceGroup::II });
+    ebUseCases.selectParameter({ 350, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 156, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      eb->undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 156, VoiceGroup::II });
     }
 
@@ -109,17 +110,17 @@ TEST_CASE("FROM Layer")
 
   WHEN("FB: SV Filter - From x selected")
   {
-    eb->undoableSelectParameter({ 352, VoiceGroup::II });
+    ebUseCases.selectParameter({ 352, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 158, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      eb->undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 158, VoiceGroup::II });
     }
 
@@ -140,17 +141,17 @@ TEST_CASE("FROM Layer")
 
   WHEN("FB: Effects - From x selected")
   {
-    eb->undoableSelectParameter({ 354, VoiceGroup::II });
+    ebUseCases.selectParameter({ 354, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 160, VoiceGroup::I });
     }
 
     THEN("Split Preset Loaded")
     {
-      eb->undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 160, VoiceGroup::II });
     }
 
@@ -171,11 +172,11 @@ TEST_CASE("FROM Layer")
 
   WHEN("OUT: To FX x selected")
   {
-    eb->undoableSelectParameter({ 362, VoiceGroup::II });
+    ebUseCases.selectParameter({ 362, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
 
@@ -189,11 +190,11 @@ TEST_CASE("FROM Layer")
 
   WHEN("Part: Volume selected")
   {
-    eb->undoableSelectParameter({ 358, VoiceGroup::II });
+    ebUseCases.selectParameter({ 358, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
@@ -207,11 +208,11 @@ TEST_CASE("FROM Layer")
 
   WHEN("Part: Tune selected")
   {
-    eb->undoableSelectParameter({ 360, VoiceGroup::II });
+    ebUseCases.selectParameter({ 360, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
 
@@ -225,17 +226,17 @@ TEST_CASE("FROM Layer")
 
   WHEN("Part: Fade From selected")
   {
-    eb->undoableSelectParameter({ 396, VoiceGroup::II });
+    ebUseCases.selectParameter({ 396, VoiceGroup::II });
 
     THEN("Split Preset Loaded")
     {
-      eb->undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
 
@@ -256,17 +257,17 @@ TEST_CASE("FROM Layer")
 
   WHEN("Part: Fade Range selected")
   {
-    eb->undoableSelectParameter({ 397, VoiceGroup::II });
+    ebUseCases.selectParameter({ 397, VoiceGroup::II });
 
     THEN("Split Preset Loaded")
     {
-      eb->undoableLoad(presets.getSplitPreset());
+      ebUseCases.undoableLoad(presets.getSplitPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId({ 358, VoiceGroup::II }));
     }
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId({ 247, VoiceGroup::Global }));
     }
 
@@ -291,18 +292,20 @@ TEST_CASE("Split Loaded")
   MockPresetStorage presets;
 
   auto eb = TestHelper::getEditBuffer();
-  eb->undoableLoad(presets.getSplitPreset());
+  EditBufferUseCases ebUseCases(eb);
+
+  ebUseCases.undoableLoad(presets.getSplitPreset());
 
   Application::get().getHWUI()->setCurrentVoiceGroup(VoiceGroup::II);
   CHECK(eb->getType() == SoundType::Split);
 
   WHEN("OUT: To FX x selected")
   {
-    eb->undoableSelectParameter({ 362, VoiceGroup::II });
+    ebUseCases.selectParameter({ 362, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::I)->getID() == ParameterId { 185, VoiceGroup::I });
     }
 
@@ -316,11 +319,11 @@ TEST_CASE("Split Loaded")
 
   WHEN("Part: Volume selected")
   {
-    eb->undoableSelectParameter({ 358, VoiceGroup::II });
+    ebUseCases.selectParameter({ 358, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
@@ -334,11 +337,11 @@ TEST_CASE("Split Loaded")
 
   WHEN("Part: Tune selected")
   {
-    eb->undoableSelectParameter({ 360, VoiceGroup::II });
+    ebUseCases.selectParameter({ 360, VoiceGroup::II });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 248, VoiceGroup::Global });
     }
 
@@ -352,17 +355,17 @@ TEST_CASE("Split Loaded")
 
   WHEN("Split Point selected")
   {
-    eb->undoableSelectParameter({ 356, VoiceGroup::I });
+    ebUseCases.selectParameter({ 356, VoiceGroup::I });
 
     THEN("Single Preset Loaded")
     {
-      eb->undoableLoad(presets.getSinglePreset());
+      ebUseCases.undoableLoad(presets.getSinglePreset());
       CHECK(eb->getSelected(VoiceGroup::Global)->getID() == ParameterId { 247, VoiceGroup::Global });
     }
 
     THEN("Layer Preset Loaded")
     {
-      eb->undoableLoad(presets.getLayerPreset());
+      ebUseCases.undoableLoad(presets.getLayerPreset());
       CHECK(eb->getSelected(VoiceGroup::II)->getID() == ParameterId { 358, VoiceGroup::II });
     }
 

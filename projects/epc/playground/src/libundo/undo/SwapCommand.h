@@ -11,13 +11,13 @@ namespace UNDO
    public:
     typedef std::function<void(State)> tAction;
 
-    SwapCommand(tAction doUndoRedoAction);
-    virtual ~SwapCommand();
+    explicit SwapCommand(tAction doUndoRedoAction);
+    ~SwapCommand() override;
 
    protected:
-    void implDoAction() const;
-    void implUndoAction() const;
-    void implRedoAction() const;
+    void implDoAction() const override;
+    void implUndoAction() const override;
+    void implRedoAction() const override;
 
    private:
     tAction m_theAction;

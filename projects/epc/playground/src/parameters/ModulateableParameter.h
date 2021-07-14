@@ -11,10 +11,10 @@ class ModulateableParameter : public Parameter
  public:
   ModulateableParameter(ParameterGroup *group, ParameterId id, const ScaleConverter *scaling, tDisplayValue def,
                         tControlPositionValue coarseDenominator, tControlPositionValue fineDenominator);
-  virtual ~ModulateableParameter();
+  ~ModulateableParameter() override;
 
   void writeToPlaycontroller(MessageComposer &cmp) const override;
-  virtual size_t getHash() const override;
+  size_t getHash() const override;
 
   tDisplayValue getModulationAmount() const;
   virtual void setModulationAmount(UNDO::Transaction *transaction, const tDisplayValue &amount);
@@ -27,13 +27,6 @@ class ModulateableParameter : public Parameter
   virtual void undoableSelectModSource(UNDO::Transaction *transaction, MacroControls src);
   virtual void undoableSetModAmount(UNDO::Transaction *transaction, double amount);
 
-  void undoableIncrementMCSelect(int inc);
-  virtual void undoableIncrementMCAmount(int inc, ButtonModifiers modifiers);
-  void undoableIncrementMCSelect(UNDO::Transaction *transaction, int inc);
-  virtual void undoableIncrementMCAmount(UNDO::Transaction *transaction, int inc, ButtonModifiers modifiers);
-
-  void undoableLoadPackedModulationInfo(UNDO::Transaction *transaction, const Glib::ustring &packedModulationInfo);
-
   void loadDefault(UNDO::Transaction *transaction, Defaults mode) override;
 
   uint16_t getModulationSourceAndAmountPacked() const;
@@ -44,7 +37,7 @@ class ModulateableParameter : public Parameter
   void copyFrom(UNDO::Transaction *transaction, const PresetParameter *other) override;
   void copyTo(UNDO::Transaction *transaction, PresetParameter *other) const override;
 
-  virtual void exportReaktorParameter(std::stringstream &target) const override;
+  void exportReaktorParameter(std::stringstream &target) const override;
 
   virtual Glib::ustring stringizeModulationAmount() const;
   virtual Glib::ustring stringizeModulationAmount(tControlPositionValue amt) const;
@@ -53,7 +46,7 @@ class ModulateableParameter : public Parameter
   virtual double getModulationAmountCoarseDenominator() const;
   virtual std::pair<Glib::ustring, Glib::ustring> getModRangeAsDisplayValues() const;
 
-  virtual Layout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
   void *getAmountCookie();
 
   std::pair<tControlPositionValue, tControlPositionValue> getModulationRange(bool clipped) const;
@@ -65,14 +58,8 @@ class ModulateableParameter : public Parameter
   bool isMacroControlAssignedAndChanged() const;
   MacroControlParameter *getMacroControl() const;
 
-  void undoableRecallMCPos();
-  void undoableRecallMCSource();
-  void undoableRecallMCAmount();
   bool isDefaultLoaded() const override;
 
-  void undoableUndoRecallMCSel(MacroControls &controls);
-  void undoableUndoRecallMCAmount(float mcAmt);
-  void undoableUndoRecallMCPos(float mcPos);
  protected:
   void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
 

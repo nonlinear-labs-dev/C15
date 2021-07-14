@@ -25,7 +25,7 @@ template <class T> class OnEditBufferChangedNotifier : public OnEditBufferChange
   {
   }
 
-  void onEditBufferChanged()
+  void onEditBufferChanged() override
   {
     if(m_parent)
       m_parent->onEditBufferChanged(getEditBuffer());

@@ -8,5 +8,5 @@ class EnvelopeTimeMSScaleConverter : public TimeScaleConverter
 
  public:
   EnvelopeTimeMSScaleConverter();
-  virtual ~EnvelopeTimeMSScaleConverter();
+  ~EnvelopeTimeMSScaleConverter() override;
 };

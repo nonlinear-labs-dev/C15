@@ -12,7 +12,7 @@ class PresetListHeader : public ControlWithChildren
 
  public:
   PresetListHeader(const Rect &pos, bool showBankArrows);
-  virtual ~PresetListHeader();
+  ~PresetListHeader() override;
 
   void setup(Bank *bank);
 

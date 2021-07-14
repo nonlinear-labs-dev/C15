@@ -1,13 +1,7 @@
 #pragma once
 
 #include "EnumSetting.h"
-
-enum class AftertouchCurves
-{
-  AFTERTOUCH_CURVE_SOFT = 0,
-  AFTERTOUCH_CURVE_NORMAL = 1,
-  AFTERTOUCH_CURVE_HARD = 2
-};
+#include <nltools/Types.h>
 
 class AftertouchCurve : public EnumSetting<AftertouchCurves>
 {
@@ -15,8 +9,8 @@ class AftertouchCurve : public EnumSetting<AftertouchCurves>
   typedef EnumSetting<AftertouchCurves> super;
 
  public:
-  AftertouchCurve(UpdateDocumentContributor &settings);
-  virtual ~AftertouchCurve();
+  explicit AftertouchCurve(UpdateDocumentContributor &settings);
+  ~AftertouchCurve() override;
 
   void syncExternals(SendReason reason) const override;
 

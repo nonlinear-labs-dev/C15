@@ -100,5 +100,6 @@ void SelectedMacroControlsHWSourceAmount::updateTextFromRouter(const Parameter *
 
 void SelectedMacroControlsHWSourceAmount::onModifiersChanged()
 {
-  onParameterSelected(Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
+  onParameterSelected(
+      Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup()));
 }

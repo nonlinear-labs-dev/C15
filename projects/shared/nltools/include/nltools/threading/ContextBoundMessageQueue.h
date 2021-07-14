@@ -7,6 +7,7 @@
 #include <atomic>
 #include <memory>
 #include <list>
+#include <mutex>
 
 namespace nltools
 {
@@ -24,11 +25,12 @@ namespace nltools
 
      private:
       Glib::RefPtr<Glib::MainContext> m_context;
-      std::atomic<uint32_t> m_pendingCalls {};
+      uint32_t m_pendingCalls = 0;
 
       using Job = std::function<void()>;
       using tJob = std::shared_ptr<Job>;
       std::list<tJob> m_jobs;
+      std::shared_ptr<std::recursive_mutex> m_mutex;
     };
   }
 }

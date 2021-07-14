@@ -11,7 +11,7 @@ namespace HWUIConditions
    public:
    public:
     HWUICondition();
-    virtual ~HWUICondition();
+    ~HWUICondition() override;
 
    protected:
     void onModifiersChanged(const ButtonModifiers& mod);

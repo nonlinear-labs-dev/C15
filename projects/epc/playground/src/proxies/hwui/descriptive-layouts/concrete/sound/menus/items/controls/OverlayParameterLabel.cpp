@@ -17,7 +17,7 @@ OverlayParameterLabel::OverlayParameterLabel(const Rect &r, const Parameter *par
 
 void OverlayParameterLabel::updateText()
 {
-  setText({ m_parameter->getDisplayString(), 0 });
+  setText(StringAndSuffix { m_parameter->getDisplayString(), 0 });
 }
 
 const Parameter *OverlayParameterLabel::getParameter() const

@@ -112,21 +112,6 @@ void PresetTypeLabel::drawBackground(FrameBuffer &fb)
   }
 }
 
-std::string typeToString(const SoundType &type)
-{
-  switch(type)
-  {
-    case SoundType::Single:
-    case SoundType::Invalid:
-      return "";
-    case SoundType::Layer:
-      return "\uE0F5";
-    case SoundType::Split:
-      return "\uE0F2";
-  }
-  return {};
-}
-
 SinglePresetTypeLabel::SinglePresetTypeLabel(const Rect &r)
     : PresetLabel(r)
 {
@@ -141,15 +126,14 @@ void SinglePresetTypeLabel::update(const Preset *newPreset)
 {
   if(newPreset)
   {
-    auto type = newPreset->getType();
-    auto loaded
-        = Application::get().getPresetManager()->getEditBuffer()->getUUIDOfLastLoadedPreset() == newPreset->getUuid();
-
-    auto selected = Application::get().getPresetManager()->getSelectedPreset() == newPreset;
-
-    setText(typeToString(type), selected, loaded);
+    auto pm = Application::get().getPresetManager();
+    auto eb = pm->getEditBuffer();
+    auto loaded = eb->getUUIDOfLastLoadedPreset() == newPreset->getUuid();
+    auto selected = pm->getSelectedPreset() == newPreset;
+    setText(newPreset->getTypeUnicode(), selected, loaded);
   }
 }
+
 Font::Justification SinglePresetTypeLabel::getJustification() const
 {
   return Font::Justification::Left;

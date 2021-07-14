@@ -13,8 +13,8 @@ namespace DescriptiveLayouts
   class Circle : public Control, public Styleable, public PropertyOwner
   {
    public:
-    Circle(const PrimitiveInstance &e);
-    virtual ~Circle();
+    explicit Circle(const PrimitiveInstance &e);
+    ~Circle() override;
 
     using Range = std::pair<tControlPositionValue, tControlPositionValue>;
 

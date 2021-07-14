@@ -15,7 +15,7 @@ class PresetDualParameterGroups : public AttributesOwner
   using GroupPtr = std::unique_ptr<PresetParameterGroup>;
   using GroupsMap = std::map<GroupId, GroupPtr>;
 
-  PresetDualParameterGroups(UpdateDocumentContributor* parent);
+  explicit PresetDualParameterGroups(UpdateDocumentContributor* parent);
   PresetDualParameterGroups(UpdateDocumentContributor* parent, const Preset& other);
   PresetDualParameterGroups(UpdateDocumentContributor* parent, const EditBuffer& eb);
   ~PresetDualParameterGroups() override;

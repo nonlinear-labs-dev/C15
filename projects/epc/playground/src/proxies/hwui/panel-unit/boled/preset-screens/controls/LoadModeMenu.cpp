@@ -1,4 +1,6 @@
 #include "LoadModeMenu.h"
+#include "LoadToPartPresetList.h"
+#include "use-cases/DirectLoadUseCases.h"
 #include <Application.h>
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
@@ -24,6 +26,12 @@ bool LoadModeMenu::redraw(FrameBuffer& fb)
 
 LoadModeMenu::LoadModeMenu(const Rect& rect)
     : ControlWithChildren(rect)
+    , m_toggleDirectLoadAction { [this]
+                  {
+                    DirectLoadUseCases useCase(getDirectLoadSetting().get());
+                    auto hwui = Application::get().getHWUI();
+                    useCase.toggleDirectLoadFromHWUI(hwui);
+                  } }
 {
   m_soundTypeConnection = Application::get().getPresetManager()->getEditBuffer()->onSoundTypeChanged(
       sigc::hide(sigc::mem_fun(this, &LoadModeMenu::bruteForce)));
@@ -71,8 +79,7 @@ void toggleLoadToPartDetail()
 
 void LoadModeMenu::installSingle()
 {
-  m_buttonDHandler = std::make_unique<ShortVsLongPress>([this] { getDirectLoadSetting()->toggle(); },
-                                                        [this] { getDirectLoadSetting()->toggle(); });
+  m_buttonDHandler = std::make_unique<ShortVsLongPress>(m_toggleDirectLoadAction, m_toggleDirectLoadAction);
 
   auto directLoadButton = addControl(new Button("Direct Load", { 0, 15, 58, 11 }));
   directLoadButton->setHighlight(isDirectLoadEnabled());
@@ -85,8 +92,7 @@ void LoadModeMenu::setBackgroundColor(FrameBuffer& fb) const
 
 void LoadModeMenu::installDual()
 {
-  m_buttonDHandler = std::make_unique<ShortVsLongPress>([this] { toggleLoadToPartDetail(); },
-                                                        [this] { getDirectLoadSetting()->toggle(); });
+  m_buttonDHandler = std::make_unique<ShortVsLongPress>([this] { toggleLoadToPartDetail(); }, m_toggleDirectLoadAction);
 
   auto loadToPartButton = addControl(new Button("To Part", { 0, 15, 58, 11 }));
   loadToPartButton->setHighlight(isLoadToPartEnabled());

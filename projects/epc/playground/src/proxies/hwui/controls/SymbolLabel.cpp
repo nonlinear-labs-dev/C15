@@ -2,13 +2,11 @@
 #include "proxies/hwui/Oleds.h"
 
 SymbolLabel::SymbolLabel(const Glib::ustring &text, const Rect &pos)
-    : super(text, pos)
+    : super(StringAndSuffix { text }, pos)
 {
 }
 
-SymbolLabel::~SymbolLabel()
-{
-}
+SymbolLabel::~SymbolLabel() = default;
 
 std::shared_ptr<Font> SymbolLabel::getFont() const
 {

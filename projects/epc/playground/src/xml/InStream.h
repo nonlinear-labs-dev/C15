@@ -11,5 +11,5 @@ class InStream
 
   virtual Glib::ustring read() = 0;
   virtual std::vector<uint8_t> readAll() = 0;
-  virtual bool eof() const = 0;
+  [[nodiscard]] virtual bool eof() const = 0;
 };

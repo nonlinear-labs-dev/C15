@@ -11,7 +11,7 @@ class MacroControlMappingGroup : public ParameterGroup
 {
  public:
   MacroControlMappingGroup(ParameterGroupSet *parent, ParameterGroup *hw, ParameterGroup *mc);
-  virtual ~MacroControlMappingGroup();
+  ~MacroControlMappingGroup() override;
 
   typedef ModulationRoutingParameter *tModRoutingParam;
   typedef std::list<tModRoutingParam> tModRoutingParams;
@@ -24,7 +24,7 @@ class MacroControlMappingGroup : public ParameterGroup
   typedef std::list<tPhysicalControlParameter> tPhysicalControlParameters;
   tPhysicalControlParameters getPhysicalControlParameters();
 
-  void init();
+  void init() override;
 
  private:
   ParameterGroup *m_mc = nullptr;

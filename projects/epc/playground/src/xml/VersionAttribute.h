@@ -10,6 +10,6 @@ class VersionAttribute : public Attribute
   static int getCurrentFileVersion();
 
  private:
-  VersionAttribute(int v);
-  virtual ~VersionAttribute();
+  explicit VersionAttribute(int v);
+  ~VersionAttribute() override;
 };

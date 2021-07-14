@@ -12,7 +12,7 @@ class Slider : public Control
 
  public:
   Slider(Parameter *param, const Rect &rect);
-  Slider(const Rect &rect);
+  explicit Slider(const Rect &rect);
 
   virtual void setParameter(Parameter *param);
   Parameter *getParameter() const;

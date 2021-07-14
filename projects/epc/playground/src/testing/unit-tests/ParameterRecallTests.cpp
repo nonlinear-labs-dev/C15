@@ -14,11 +14,11 @@ TEST_CASE("Recall write and Read")
 
   SECTION("a")
   {
-    auto fos = std::make_unique<FileOutStream>("/tmp/recalldata.xml", false);
-    auto fosPtr = fos.get();
-    XmlWriter writer { std::move(fos) };
+    FileOutStream fos("/tmp/recalldata.xml", false);
+
+    XmlWriter writer { fos };
     serializer.write(writer);
-    fosPtr->commit();
+    fos.commit();
 
     {
       auto fis = std::make_shared<FileInStream>("/tmp/recalldata.xml", false);

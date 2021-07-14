@@ -1,6 +1,9 @@
 #pragma once
 #include <nltools/threading/Expiration.h>
 #include "Setting.h"
+#include <proxies/hwui/HWUIEnums.h>
+
+class Layout;
 
 class ScreenSaverTimeoutSetting : public Setting, public sigc::trackable
 {
@@ -12,17 +15,21 @@ class ScreenSaverTimeoutSetting : public Setting, public sigc::trackable
 
   sigc::connection onScreenSaverStateChanged(sigc::slot<void, bool> s);
   void init() override;
-  bool persistent() const override;
 
+  int getSelectedIndex() const;
+  const std::vector<Glib::ustring>& getDisplayStrings() const;
+
+  void incDec(int inc, ButtonModifiers m);
   void incDec(int inc);
   void sendState(bool state);
   void endAndReschedule();
 
  private:
-  std::unique_ptr<Expiration> m_expiration = nullptr;
+  void onLayoutInstalled(Layout* l);
+
+  Expiration m_expiration;
   Signal<void, bool> m_screenSaverSignal;
 
-  size_t selectedIndex;
+  int m_selectedIndex = 2;
   std::chrono::minutes m_timeout;
-  const std::array<int, 6> s_logTimeOuts = { 0, 1, 2, 5, 10, 20 };
 };

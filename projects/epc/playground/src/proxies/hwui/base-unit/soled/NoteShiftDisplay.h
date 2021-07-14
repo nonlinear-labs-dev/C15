@@ -11,13 +11,12 @@ class NoteShiftDisplay : public Label
   typedef Label super;
 
  public:
-  NoteShiftDisplay(const Rect& rect);
-  virtual ~NoteShiftDisplay();
-
- private:
+  explicit NoteShiftDisplay(const Rect& rect);
+  ~NoteShiftDisplay() override;
   NoteShiftDisplay(const NoteShiftDisplay& other) = delete;
   NoteShiftDisplay& operator=(const NoteShiftDisplay&) = delete;
 
+ private:
   void setDisplayText(const Setting* setting);
   Glib::ustring formatShift(int i) const;
 };

@@ -1,4 +1,5 @@
 #include "NeverHighlitButton.h"
 
-void NeverHighlitButton::setHighlight(bool isHighlight) {
+void NeverHighlitButton::setHighlight(bool isHighlight)
+{
 }

@@ -17,7 +17,8 @@ class LoadToPartPresetList : public PresetListBase
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
   std::pair<size_t, size_t> getSelectedPosition() const override;
   void onRotary(int inc, ButtonModifiers modifiers) override;
-  
+  void doEnterAction();
+
  protected:
   void onVoiceGroupChanged();
 

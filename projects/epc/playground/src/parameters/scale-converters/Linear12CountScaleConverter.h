@@ -6,5 +6,5 @@ class Linear12CountScaleConverter : public LinearScaleConverter
 {
  public:
   Linear12CountScaleConverter();
-  virtual ~Linear12CountScaleConverter();
+  ~Linear12CountScaleConverter() override;
 };

@@ -12,21 +12,19 @@ class ModuleCaption : public Label
   typedef Label super;
 
  public:
-  ModuleCaption(const Rect &pos);
-
+  explicit ModuleCaption(const Rect &pos);
   bool redraw(FrameBuffer &fb) override;
-
- private:
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
 
  protected:
   virtual void updateText(Parameter *newOne);
-
-  StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override;
+  StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                            const StringAndSuffix &text) const override;
 
  private:
+  void setFontColor(FrameBuffer &fb) const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
+
   void onParameterSelected(Parameter *newOne);
   void onSelectionChanged();
   void onSoundTypeChanged();

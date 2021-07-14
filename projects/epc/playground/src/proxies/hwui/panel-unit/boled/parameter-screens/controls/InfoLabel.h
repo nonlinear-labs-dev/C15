@@ -8,10 +8,10 @@ class InfoLabel : public Label
   typedef Label super;
 
  public:
-  InfoLabel(const Rect &pos, const Glib::ustring &text = "");
+  explicit InfoLabel(const Rect &pos, const Glib::ustring &text = "");
 
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual bool redraw(FrameBuffer &fb) override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
+  void setFontColor(FrameBuffer &fb) const override;
+  bool redraw(FrameBuffer &fb) override;
 };

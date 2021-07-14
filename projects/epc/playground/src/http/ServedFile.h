@@ -11,12 +11,12 @@ class ServedFile : public ServedStream
 {
  public:
   ServedFile(HTTPServer &server, std::shared_ptr<HTTPRequest> request);
-  virtual ~ServedFile();
+  ~ServedFile() override;
 
-  void startServing();
+  void startServing() override;
 
  private:
-  Glib::ustring getFilePathFromMessagePath() const;
+  [[nodiscard]] Glib::ustring getFilePathFromMessagePath() const;
   void startServingLocalFile(Glib::RefPtr<Gio::File> file);
   void setFilesContentType(Glib::RefPtr<Gio::File> file);
   void onAsyncFileRead(Glib::RefPtr<Gio::AsyncResult> res, Glib::RefPtr<Gio::File> file);

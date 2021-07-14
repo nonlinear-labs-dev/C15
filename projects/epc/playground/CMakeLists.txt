@@ -110,7 +110,7 @@ target_link_libraries(${BINARY_NAME} PRIVATE ${LIB_NAME})
 
 ## TEST BINARY
 add_executable(${TEST_BINARY_NAME} ${${TEST_BINARY_NAME}_SOURCES})
-target_include_directories(${TEST_BINARY_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/epc/third-party/include)
+target_include_directories(${TEST_BINARY_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/shared/third-party/include)
 target_link_libraries(${TEST_BINARY_NAME} PRIVATE ${LIB_NAME})
 
 # TESTS

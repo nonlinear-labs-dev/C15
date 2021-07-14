@@ -13,6 +13,7 @@
 #include <memory>
 #include <glibmm/refptr.h>
 #include <png++/image.hpp>
+#include <tools/ScopedGuard.h>
 
 class Application;
 class UsageMode;
@@ -22,12 +23,9 @@ namespace UNDO
   class Transaction;
 }
 
-namespace nltools
+namespace nltools::msg
 {
-  namespace msg
-  {
-    struct ButtonChangedMessage;
-  }
+  struct ButtonChangedMessage;
 }
 
 class PresetPartSelection;
@@ -46,6 +44,8 @@ class HWUI
   void setUiModeDetail(UIDetail detail);
   void undoableSetFocusAndMode(FocusAndMode focusAndMode);
   void setFocusAndMode(const UIDetail &detail);
+  void setFocusAndMode(const UIMode &mode);
+  void setFocusAndMode(const UIFocus &focus);
   void setFocusAndMode(FocusAndMode focusAndMode);
   FocusAndMode getFocusAndMode() const;
   FocusAndMode getOldFocusAndMode() const;
@@ -90,8 +90,12 @@ class HWUI
   std::string exportSoled();
   std::string exportBoled();
 
+  std::shared_ptr<ScopedGuard::Lock> getParameterFocusLockGuard();
+
  private:
   void exportOled(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const std::string &fileName) const;
+
+  bool isParameterFocusLocked() const;
 
   void onPresetLoaded();
   void onEditBufferSoundTypeChanged(SoundType type);
@@ -141,6 +145,12 @@ class HWUI
   ButtonModifiers m_modifiers;
 
   sigc::connection m_blinkTimerConnection;
+  sigc::connection m_editBufferParameterReselectionConnection;
+  sigc::connection m_editBufferParameterSelectionConnection;
+
+  void onParameterReselection(Parameter *parameter);
+  void onParameterSelection(Parameter *oldParameter, Parameter *newParameter);
+
   Signal<void, ButtonModifiers> m_modifersChanged;
   Signal<void, int> m_blinkTimer;
 
@@ -157,4 +167,5 @@ class HWUI
   bool m_focusAndModeFrozen = false;
 
   DelayedJob m_setupJob;
+  ScopedGuard m_parameterFocusLock;
 };

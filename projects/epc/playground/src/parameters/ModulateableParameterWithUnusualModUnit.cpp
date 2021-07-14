@@ -12,18 +12,6 @@ ModulateableParameterWithUnusualModUnit::ModulateableParameterWithUnusualModUnit
 {
 }
 
-void ModulateableParameterWithUnusualModUnit::undoableIncrementMCAmount(UNDO::Transaction *transaction, int inc,
-                                                                        ButtonModifiers modifiers)
-{
-  double denominator
-      = modifiers[ButtonModifier::FINE] ? getModulationAmountFineDenominator() : getModulationAmountCoarseDenominator();
-
-  tDisplayValue controlVal = getModulationAmount();
-  int rasterized = round(controlVal * denominator);
-  controlVal = ScaleConverter::getControlPositionRangeBipolar().clip((rasterized + inc) / denominator);
-  setModulationAmount(transaction, controlVal);
-}
-
 void ModulateableParameterWithUnusualModUnit::writeDocProperties(
     Writer &writer, UpdateDocumentContributor::tUpdateID knownRevision) const
 {

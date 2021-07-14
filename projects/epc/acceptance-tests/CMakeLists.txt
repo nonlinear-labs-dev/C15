@@ -14,6 +14,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${AE_LIB_NAME})
 include_directories(src)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC pthread audio-engine-lib playground-lib)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/epc/third-party/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/shared/third-party/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/epc/playground/src)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/projects/epc/audio-engine/src)

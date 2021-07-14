@@ -10,15 +10,15 @@ class WebSocketRequest : public NetworkRequest
 
  public:
   WebSocketRequest(SoupWebsocketConnection *socket, GBytes *message);
-  virtual ~WebSocketRequest();
+  ~WebSocketRequest() override;
 
-  virtual std::unique_ptr<OutStream> createStream(const Glib::ustring &contentType, bool zip);
-  virtual void okAndComplete();
-  virtual void unpause();
-  virtual void pause();
-  virtual Glib::ustring getPath();
+  std::unique_ptr<OutStream> createStream(const Glib::ustring &contentType, bool zip) override;
+  void okAndComplete() override;
+  void unpause() override;
+  void pause() override;
+  Glib::ustring getPath() override;
 
-  const SoupWebsocketConnection *getSocket() const;
+  [[nodiscard]] const SoupWebsocketConnection *getSocket() const;
 
  private:
   SoupWebsocketConnection *m_socket = nullptr;

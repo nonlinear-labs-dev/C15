@@ -24,7 +24,7 @@ void MenuEditor::setPosition(const Rect &)
 
   int y = 0;
   int h = 12;
-  int w = 2 * menuEditorPosition.getWidth() / 3;
+  int w = menuEditorPosition.getWidth();
   int x = (menuEditorPosition.getWidth() - w) / 2;
 
   for(auto &c : getControls())

@@ -8,8 +8,8 @@ class PrevUndoTransactionSiblingControl : public UndoEntryLabel
   typedef UndoEntryLabel super;
 
  public:
-  PrevUndoTransactionSiblingControl(const Rect &r);
-  virtual void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
+  explicit PrevUndoTransactionSiblingControl(const Rect &r);
+  void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
 
   std::shared_ptr<Font> getFont() const override;
   void setFontColor(FrameBuffer &fb) const override;

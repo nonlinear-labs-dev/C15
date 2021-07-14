@@ -32,10 +32,10 @@ class DateTimeEditor : public ControlWithChildren, public SetupEditor
   const Selection step(Selection s, int inc = 1) const;
 
   Selection m_selection = Selection::Hour;
-  std::array<Label *, Selection::NumFields> m_labels{};
-  std::array<Label *, Selection::NumFields> m_controls{};
+  std::array<Label *, Selection::NumFields> m_labels {};
+  std::array<Label *, Selection::NumFields> m_controls {};
   uint64_t m_diff = 0;
   std::time_t m_originalTime;
 
-  const Rect c_fullRightSidePosition{ 129, 16, 126, 48 };
+  const Rect c_fullRightSidePosition { 129, 16, 126, 48 };
 };

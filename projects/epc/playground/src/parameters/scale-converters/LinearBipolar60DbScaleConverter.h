@@ -4,7 +4,7 @@
 
 class LinearBipolar60DbScaleConverter : public LinearScaleConverter
 {
-public:
+ public:
   LinearBipolar60DbScaleConverter();
   ~LinearBipolar60DbScaleConverter() override;
 };

@@ -9,11 +9,11 @@ class SymbolLabel : public Label
 
  public:
   SymbolLabel(const Glib::ustring& text, const Rect& pos);
-  virtual ~SymbolLabel();
+  ~SymbolLabel() override;
 
  protected:
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 
  private:
   SymbolLabel(const SymbolLabel& other);

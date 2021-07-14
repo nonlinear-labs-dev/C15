@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.xml.client.Node;
@@ -710,6 +711,9 @@ public class PresetManager extends MapsLayout {
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_M
 				&& NonMaps.get().getNonLinearWorld().isCtrlDown()) {
 			Window.open("/NonMaps/MCView/index.html", "", "");
+		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_R
+				&& NonMaps.get().getNonLinearWorld().isCtrlDown()) {
+			Window.open("/NonMaps/recorder/index.html", "", "");
 		} else if (keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_ONE
 				|| keyCode == com.google.gwt.event.dom.client.KeyCodes.KEY_NUM_ONE) {
 			EditBufferUseCases.get().selectVoiceGroup(VoiceGroup.I);

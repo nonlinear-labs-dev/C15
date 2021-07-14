@@ -20,7 +20,7 @@ class Oleds
   void registerProxy(OLEDProxy *proxy);
   void syncRedraw();
   void setDirty();
-  bool isDirty() const;
+  [[nodiscard]] bool isDirty() const;
 
   tFont getFont(const Glib::ustring &name, int height);
   void deInit();

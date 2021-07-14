@@ -11,15 +11,15 @@ class MiniParameterLabel : public LabelRegular8
 
  public:
   MiniParameterLabel(Parameter* parameter, const Rect& pos);
-  virtual ~MiniParameterLabel();
+  ~MiniParameterLabel() override;
+
+  MiniParameterLabel(const MiniParameterLabel& other) = delete;
+  MiniParameterLabel& operator=(const MiniParameterLabel&) = delete;
 
   void setSelected(bool selected);
   bool isSelected() const;
 
  private:
-  MiniParameterLabel(const MiniParameterLabel& other);
-  MiniParameterLabel& operator=(const MiniParameterLabel&);
-
   void onParameterChanged(const Parameter* p);
   const std::pair<Glib::ustring, size_t> prepareDisplayString(const Parameter* p) const;
 

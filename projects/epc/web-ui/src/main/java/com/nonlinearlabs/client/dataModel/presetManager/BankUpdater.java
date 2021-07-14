@@ -2,7 +2,6 @@ package com.nonlinearlabs.client.dataModel.presetManager;
 
 import java.util.ArrayList;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.xml.client.Node;
 import com.nonlinearlabs.client.dataModel.Updater;
 
@@ -24,10 +23,8 @@ public class BankUpdater extends Updater {
 		bank.uuid.setValue(getAttributeValue(root, "uuid"));
 		bank.isMidiBank.setValue(selectedMidiUuid.equals(bank.uuid.getValue()));
 
-		GWT.log("BankUpdater::doUpdate() Bank: " + bank.name.getValue() + "is Midi? " + bank.isMidiBank.isTrue());
-
 		if (bank.isMidiBank.isTrue()) {
-			bank.name.setValue(bank.name.getValue() + " ^");
+			bank.name.setValue(bank.name.getValue() + " \uE0C1");
 		}
 
 		ArrayList<Preset> existingPresets = new ArrayList<Preset>(bank.getPresets().getValue());

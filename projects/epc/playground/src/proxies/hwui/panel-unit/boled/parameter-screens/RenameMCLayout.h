@@ -13,8 +13,8 @@ class RenameMCLayout : public RenameLayout
   RenameMCLayout();
 
  private:
-  virtual void commit(const Glib::ustring &newName) override;
-  virtual Glib::ustring getInitialText() const override;
+  void commit(const Glib::ustring &newName) override;
+  Glib::ustring getInitialText() const override;
 
   MacroControlParameter *getMacroControl() const;
 };

@@ -10,8 +10,8 @@ class NumPresetsInBankLabel : public Label
   typedef Label super;
 
  public:
-  NumPresetsInBankLabel(const Rect &pos);
-  virtual ~NumPresetsInBankLabel();
+  explicit NumPresetsInBankLabel(const Rect &pos);
+  ~NumPresetsInBankLabel() override;
 
  private:
   void updateText(const Uuid &selectedBank);

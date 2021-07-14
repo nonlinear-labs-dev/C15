@@ -20,7 +20,7 @@ class ArrowIncrementDecrementOverlay : public LeftRightUpDownCommitOverlay
   void onDown(bool down) override {};
   void onCommit(bool down) override {};
 
-private:
+ private:
   ArrowRight* m_rightArrow;
   ArrowLeft* m_leftArrow;
 

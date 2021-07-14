@@ -9,6 +9,8 @@
 #include <device-settings/ScreenSaverTimeoutSetting.h>
 #include <glibmm/main.h>
 #include <chrono>
+#include <device-settings/Settings.h>
+#include <device-settings/ScreenSaverTimeoutSetting.h>
 
 BOLEDScreenSaver::BOLEDScreenSaver(OLEDProxy& oled)
     : Layout(oled)
@@ -23,7 +25,7 @@ BOLEDScreenSaver::BOLEDScreenSaver(OLEDProxy& oled)
 
 void BOLEDScreenSaver::init()
 {
-  m_label = addControl(new Label({ "C15", 0 }, { 128, 40, 18, 9 }));
+  m_label = addControl(new Label(StringAndSuffix { "C15", 0 }, { 128, 40, 18, 9 }));
   Layout::init();
 }
 
@@ -34,34 +36,37 @@ BOLEDScreenSaver::~BOLEDScreenSaver()
 
 bool BOLEDScreenSaver::animate()
 {
-  auto old = m_label->getPosition();
-
-  if(old.getRight() >= 256)
+  if(m_label)
   {
-    m_vel.first = -1;
+    auto old = m_label->getPosition();
+
+    if(old.getRight() >= 256)
+    {
+      m_vel.first = -1;
+    }
+
+    if(old.getLeft() <= 0)
+    {
+      m_vel.first = 1;
+    }
+
+    if(old.getBottom() >= 64)
+    {
+      m_vel.second = -1;
+    }
+
+    if(old.getTop() <= 0)
+    {
+      m_vel.second = 1;
+    }
+
+    old.setLeft(old.getLeft() + m_vel.first);
+    old.setTop(old.getTop() + m_vel.second);
+
+    m_label->setPosition(old);
+
+    setDirty();
   }
-
-  if(old.getLeft() <= 0)
-  {
-    m_vel.first = 1;
-  }
-
-  if(old.getBottom() >= 64)
-  {
-    m_vel.second = -1;
-  }
-
-  if(old.getTop() <= 0)
-  {
-    m_vel.second = 1;
-  }
-
-  old.setLeft(old.getLeft() + m_vel.first);
-  old.setTop(old.getTop() + m_vel.second);
-
-  m_label->setPosition(old);
-
-  setDirty();
   return true;
 }
 

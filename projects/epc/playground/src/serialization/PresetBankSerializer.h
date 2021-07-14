@@ -10,9 +10,9 @@ class PresetBankSerializer : public PresetBankMetadataSerializer
   typedef PresetBankMetadataSerializer super;
 
  public:
-  PresetBankSerializer(Bank *bank, bool ignoreUUIDs = false);
+  explicit PresetBankSerializer(Bank *bank, bool ignoreUUIDs = false);
 
  private:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 };

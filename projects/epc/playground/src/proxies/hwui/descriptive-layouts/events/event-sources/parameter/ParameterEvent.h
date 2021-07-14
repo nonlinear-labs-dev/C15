@@ -11,7 +11,7 @@ namespace DescriptiveLayouts
   {
    public:
     explicit ParameterEvent();
-    ~ParameterEvent();
+    ~ParameterEvent() override;
 
     virtual void onParameterChanged(const Parameter *p);
     virtual void onParameterSelectionChanged(Parameter *oldParam, Parameter *newParam);

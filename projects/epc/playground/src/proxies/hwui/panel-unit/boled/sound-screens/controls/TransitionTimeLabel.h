@@ -10,7 +10,7 @@ class TransitionTimeLabel : public Label
   typedef Label super;
 
  public:
-  TransitionTimeLabel(const Rect &rect);
+  explicit TransitionTimeLabel(const Rect &rect);
 
   void setSuffixFontColor(FrameBuffer &fb) const override;
 

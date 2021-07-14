@@ -65,10 +65,11 @@ bool PlayControlParameterLayout2::onRotary(int i, ButtonModifiers modifiers)
   if(s_mode == Mode::Select)
   {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
+    EditBufferUseCases ebUseCases(editBuffer);
     auto hw = dynamic_cast<HardwareSourcesGroup *>(editBuffer->getParameterGroupByID({ "CS", VoiceGroup::Global }));
     auto currentID = getCurrentParameter()->getID();
     auto newParamID = getIdOfAdvancedParameter(hw->getPhysicalControlParameters(), currentID, i);
-    editBuffer->undoableSelectParameter(newParamID);
+    ebUseCases.selectParameter(newParamID, true);
     return true;
   }
 
@@ -228,7 +229,7 @@ bool PedalParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modif
 {
   if(down && Buttons::BUTTON_EDIT == i)
   {
-    Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
+    Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Edit });
     return true;
   }
 
@@ -280,12 +281,13 @@ bool PlayControlParameterSelectLayout2::onButton(Buttons i, bool down, ButtonMod
   if(down)
   {
     auto editBuffer = Application::get().getPresetManager()->getEditBuffer();
+    EditBufferUseCases ebUseCases { editBuffer };
 
     switch(i)
     {
       case Buttons::BUTTON_C:
         if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
-          editBuffer->undoableSelectParameter(p->getUiSelectedModulationRouter());
+          ebUseCases.selectParameter(p->getUiSelectedModulationRouter(), true);
 
         return true;
     }
@@ -306,7 +308,7 @@ PlayControlParameterEditLayout2::PlayControlParameterEditLayout2()
   {
     if(b->getText().text == "Select")
     {
-      b->setText({ "", 0 });
+      b->setText(StringAndSuffix { "", 0 });
       break;
     }
   }
@@ -395,7 +397,7 @@ bool RibbonParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modi
 {
   if(down && Buttons::BUTTON_EDIT == i)
   {
-    Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
+    Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Edit });
     return true;
   }
 
@@ -478,6 +480,7 @@ bool RibbonParameterSelectLayout2::onRotary(int inc, ButtonModifiers modifiers)
   {
     if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
     {
+      //TODO move into useCase?
       auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
 
       int step = inc > 0 ? 1 : -1;
@@ -529,6 +532,7 @@ bool PedalParameterSelectLayout2::onRotary(int inc, ButtonModifiers modifiers)
   {
     if(auto p = dynamic_cast<PhysicalControlParameter *>(getCurrentParameter()))
     {
+      //TODO move into useCase?
       auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
 
       int step = inc > 0 ? 1 : -1;

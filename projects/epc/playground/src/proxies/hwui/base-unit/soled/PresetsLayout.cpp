@@ -21,14 +21,15 @@ class ShortenLabel : public Label
 {
  public:
   ShortenLabel(const Glib::ustring &text, const Rect &pos)
-      : Label(text, pos)
+      : Label(StringAndSuffix { text }, pos)
   {
   }
 
  protected:
-  StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override
+  StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                            const StringAndSuffix &text) const override
   {
-    return TextCropper::shortenStringIfNeccessary(font, text.text, getPosition().getWidth());
+    return StringAndSuffix { TextCropper::shortenStringIfNeccessary(font, text.text, getPosition().getWidth()) };
   }
 };
 
@@ -55,9 +56,7 @@ PresetsLayout::PresetsLayout()
       sigc::mem_fun(this, &PresetsLayout::onAutoLoadSettingChanged));
 }
 
-PresetsLayout::~PresetsLayout()
-{
-}
+PresetsLayout::~PresetsLayout() = default;
 
 void PresetsLayout::onBankSelected(const Uuid &selectedBank)
 {
@@ -93,8 +92,8 @@ void PresetsLayout::update()
 
   if(!updateNameAndNumber())
   {
-    m_number->setText("---");
-    m_name->setText("---");
+    m_number->setText(StringAndSuffix { "---" });
+    m_name->setText(StringAndSuffix { "---" });
   }
 }
 
@@ -116,7 +115,7 @@ bool PresetsLayout::updateNameAndNumber()
       auto presetNumberString = formatBankAndPresetNumber(bankNumber, presetPosition, modified);
       m_number->setText(presetNumberString);
       m_name->setText(preset->getDisplayNameWithSuffixes(false));
-      m_type->setText(Preset::getTypeUnicode(preset));
+      m_type->setText(preset->getTypeUnicode());
       return true;
     }
   }

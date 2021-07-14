@@ -26,7 +26,7 @@ void MonoModeParameterLayout::init()
   {
     if(c->getButtonPos(Buttons::BUTTON_C) == c->getPosition())
     {
-      c->setText({ "back..", 0 });
+      c->setText(StringAndSuffix { "back..", 0 });
     }
   }
 }

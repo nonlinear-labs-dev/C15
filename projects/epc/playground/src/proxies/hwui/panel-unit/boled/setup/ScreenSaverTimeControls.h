@@ -1,6 +1,8 @@
 #pragma once
 #include "SetupLabel.h"
 #include "SetupEditor.h"
+#include "MenuEditor.h"
+#include "device-settings/ScreenSaverTimeoutSetting.h"
 
 class ScreenSaverTimeView : public SetupLabel
 {
@@ -9,26 +11,20 @@ class ScreenSaverTimeView : public SetupLabel
   void onSettingChanged(const Setting *s);
 };
 
-class ScreenSaverTimeEditor : public SetupLabel, public SetupEditor
+class ScreenSaverTimeEditor : public MenuEditor
 {
  private:
-  typedef SetupLabel super;
+  typedef MenuEditor super;
 
  public:
   ScreenSaverTimeEditor();
   ~ScreenSaverTimeEditor() override;
 
-
-  void setBackgroundColor(FrameBuffer &fb) const;
-
-  Font::Justification getJustification() const;
-
-  void setFontColor(FrameBuffer &fb) const;
-  bool redraw(FrameBuffer &fb) override;
+ protected:
+  void incSetting(int inc) override;
+  const std::vector<Glib::ustring> &getDisplayStrings() const override;
+  int getSelectedIndex() const override;
 
  private:
-  void onSettingChanged(const Setting *s);
-  bool onRotary(int inc, ButtonModifiers modifiers) override;
-  
-  SetupLabel *m_label = nullptr;
+  static ScreenSaverTimeoutSetting *getSetting();
 };

@@ -1,17 +1,18 @@
 #include "RenameLetter.h"
 #include <proxies/hwui/TextEditUsageMode.h>
 #include <proxies/hwui/FrameBuffer.h>
+#include <utility>
 
 RenameLetter::RenameLetter(std::shared_ptr<TextEditUsageMode> mode, Buttons buttonID, const Rect &pos)
     : super(pos)
-    , m_mode(mode)
+    , m_mode(std::move(mode))
     , m_buttonID(buttonID)
 {
 }
 
-Label::StringAndSuffix RenameLetter::getText() const
+StringAndSuffix RenameLetter::getText() const
 {
-  return m_mode->getKeyLabel(m_buttonID);
+  return StringAndSuffix { m_mode->getKeyLabel(m_buttonID) };
 }
 
 bool RenameLetter::redraw(FrameBuffer &fb)

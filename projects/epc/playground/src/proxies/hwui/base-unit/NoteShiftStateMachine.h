@@ -26,14 +26,13 @@ class NoteShiftStateMachine
 
  public:
   NoteShiftStateMachine();
+  NoteShiftStateMachine(const NoteShiftStateMachine& other) = delete;
+  NoteShiftStateMachine& operator=(const NoteShiftStateMachine&) = delete;
 
   bool traverse(NoteShiftEvents event) override;
 
  private:
   bool setState(NoteShiftStates s) override;
-
-  NoteShiftStateMachine(const NoteShiftStateMachine& other) = delete;
-  NoteShiftStateMachine& operator=(const NoteShiftStateMachine&) = delete;
 
   bool m_plusButtonState;
   bool m_minusButtonState;

@@ -12,12 +12,12 @@ class RenamePresetLayout : public RenameLayout
  public:
   typedef std::function<void(const Glib::ustring &)> tCommitCB;
   typedef std::function<void(void)> tCancelCB;
-  RenamePresetLayout(tCommitCB commitCB, tCancelCB cancelCB = nullptr);
+  explicit RenamePresetLayout(tCommitCB commitCB, tCancelCB cancelCB = nullptr);
 
  protected:
-  virtual void commit(const Glib::ustring &newName) override;
-  virtual void cancel() override;
-  virtual Glib::ustring getInitialText() const override;
+  void commit(const Glib::ustring &newName) override;
+  void cancel() override;
+  Glib::ustring getInitialText() const override;
 
  private:
   Preset *m_currentPreset;

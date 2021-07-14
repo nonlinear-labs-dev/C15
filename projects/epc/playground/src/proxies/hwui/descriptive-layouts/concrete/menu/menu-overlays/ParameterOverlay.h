@@ -7,7 +7,7 @@ class ParameterValueLabel;
 class ParameterOverlay : public ArrowIncrementDecrementOverlay
 {
  public:
-  explicit ParameterOverlay(const Rect& rect, Parameter* const parameter);
+  explicit ParameterOverlay(const Rect& rect, Parameter* parameter);
   void onLeft(bool down) override;
   void onRight(bool down) override;
 

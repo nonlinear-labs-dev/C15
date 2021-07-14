@@ -1,4 +1,5 @@
 #include <Application.h>
+#include <Application.h>
 #include <device-info/DateTimeInfo.h>
 #include <device-info/DeviceInformation.h>
 #include <device-info/SoftwareVersion.h>
@@ -51,7 +52,7 @@
 #include <proxies/hwui/panel-unit/boled/setup/SignalFlowIndicatorEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/WiFiSettingEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/SettingView.h>
-#include <proxies/hwui/panel-unit/boled/setup/EnumSettingEditor.h>
+#include <proxies/hwui/panel-unit/boled/setup/SettingEditors.h>
 #include <proxies/hwui/panel-unit/boled/setup/NumericSettingEditor.h>
 #include <proxies/hwui/panel-unit/boled/setup/WiFiSettingView.h>
 #include <proxies/hwui/panel-unit/EditPanel.h>
@@ -70,8 +71,33 @@
 #include <device-settings/SyncVoiceGroupsAcrossUIS.h>
 #include "UISoftwareVersionEditor.h"
 #include "ScreenSaverTimeControls.h"
+#include "MenuEditorEntry.h"
 
 #include <proxies/hwui/descriptive-layouts/concrete/menu/menu-items/AnimatedGenericItem.h>
+#include <device-settings/midi/MidiChannelSettings.h>
+#include <device-settings/midi/receive/MidiReceiveProgramChangesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveNotesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveControllersSetting.h>
+#include <device-settings/midi/send/MidiSendControllersSetting.h>
+#include <device-settings/midi/send/MidiSendProgramChangesSetting.h>
+#include <device-settings/midi/send/MidiSendNotesSetting.h>
+#include <device-settings/midi/receive/MidiReceiveVelocityCurveSetting.h>
+#include <device-settings/midi/receive/MidiReceiveAftertouchCurveSetting.h>
+#include <device-settings/midi/local/LocalNotesSetting.h>
+#include <device-settings/midi/local/LocalControllersSetting.h>
+#include <device-settings/midi/mappings/PedalCCMapping.h>
+#include <device-settings/midi/mappings/RibbonCCMapping.h>
+#include <device-settings/midi/mappings/BenderCCMapping.h>
+#include <device-settings/midi/mappings/AftertouchCCMapping.h>
+#include <device-settings/midi/mappings/EnableHighVelocityCC.h>
+#include <device-settings/midi/mappings/Enable14BitSupport.h>
+#include <device-settings/flac/AutoStartRecorderSetting.h>
+
+#include <presets/Bank.h>
+#include <use-cases/SettingsUseCases.h>
+#include <device-settings/ScreenSaverTimeoutSetting.h>
+#include <device-settings/UsedRAM.h>
+#include <device-settings/TotalRAM.h>
 
 namespace NavTree
 {
@@ -140,6 +166,24 @@ namespace NavTree
     }
 
     std::list<std::unique_ptr<Node>> children;
+  };
+
+  template <typename tSetting> struct EnumSettingItem : EditableLeaf
+  {
+    EnumSettingItem(InnerNode *parent, const std::string &text)
+        : EditableLeaf(parent, text)
+    {
+    }
+
+    Control *createView() override
+    {
+      return new SettingView<tSetting>();
+    }
+
+    Control *createEditor() override
+    {
+      return new EnumSettingEditor<tSetting>();
+    }
   };
 
   struct Velocity : EditableLeaf
@@ -291,8 +335,8 @@ namespace NavTree
     StoreInitSound(InnerNode *p)
         : OneShotEntry(p, "Store Init Sound", [] {
           auto pm = Application::get().getPresetManager();
-          auto scope = pm->getUndoScope().startTransaction("Store Init Sound");
-          pm->storeInitSound(scope->getTransaction());
+          SoundUseCases useCases(pm->getEditBuffer(), pm);
+          useCases.storeInitSound();
         })
     {
     }
@@ -303,8 +347,8 @@ namespace NavTree
     ResetInitSound(InnerNode *p)
         : OneShotEntry(p, "Reset Init Sound", [] {
           auto pm = Application::get().getPresetManager();
-          auto scope = pm->getUndoScope().startTransaction("Reset Init Sound");
-          pm->resetInitSound(scope->getTransaction());
+          SoundUseCases useCases(pm->getEditBuffer(), pm);
+          useCases.resetInitSound();
         })
     {
     }
@@ -403,7 +447,7 @@ namespace NavTree
       children.emplace_back(new BenderCurveSetting(this));
       children.emplace_back(new PedalSettings(this));
       children.emplace_back(new PresetGlitchSuppression(this));
-      children.emplace_back(new SettingItem<SyncVoiceGroupsAcrossUIS>(this, "Sync Parts across UIs"));
+      children.emplace_back(new EnumSettingItem<SyncVoiceGroupsAcrossUIS>(this, "Sync Parts across UIs"));
       children.emplace_back(new WiFiSetting(this));
       children.emplace_back(new StoreInitSound(this));
       children.emplace_back(new ResetInitSound(this));
@@ -557,6 +601,44 @@ namespace NavTree
     }
   };
 
+  struct RamUsage : Leaf
+  {
+    struct RamUsageLabel : public SetupLabel
+    {
+      RamUsageLabel()
+          : SetupLabel("", Rect(0, 0, 0, 0))
+      {
+
+        m_connection = Application::get().getSettings()->getSetting<UsedRAM>()->onChange(
+            sigc::mem_fun(this, &RamUsageLabel::onSettingChanged));
+      }
+
+      void onSettingChanged(const Setting *s)
+      {
+        if(auto used = dynamic_cast<const UsedRAM *>(s))
+        {
+          auto settings = Application::get().getSettings();
+          auto total = settings->getSetting<TotalRAM>();
+          StringAndSuffix str { used->getDisplayString() + " / " + total->getDisplayString() + " MB", 0 };
+          setText(str);
+        }
+      }
+
+     private:
+      sigc::connection m_connection;
+    };
+
+    RamUsage(InnerNode *parent)
+        : Leaf(parent, "RAM usage:")
+    {
+    }
+
+    Control *createView() override
+    {
+      return new RamUsageLabel();
+    }
+  };
+
   struct SystemInfo : InnerNode
   {
     SystemInfo(InnerNode *parent)
@@ -567,6 +649,7 @@ namespace NavTree
       children.emplace_back(new Passphrase(this));
       children.emplace_back(new WebUIAdress(this));
       children.emplace_back(new FreeInternalMemory(this));
+      children.emplace_back(new RamUsage(this));
       children.emplace_back(new UISoftwareVersion(this));
       children.emplace_back(new DateTime(this));
       children.emplace_back(new UpdateAvailable(this));
@@ -742,6 +825,259 @@ namespace NavTree
     }
   };
 
+  struct SettingView : SetupLabel
+  {
+    SettingView()
+        : SetupLabel("...", Rect(0, 0, 0, 0))
+    {
+      setText("...");
+    }
+  };
+
+  struct MidiReceiveSettings : InnerNode
+  {
+    MidiReceiveSettings(InnerNode *parent)
+        : InnerNode(parent, "Receive")
+    {
+      children.emplace_back(new EnumSettingItem<MidiReceiveChannelSetting>(this, "Channel"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveChannelSplitSetting>(this, "Split Channel (Part II)"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveProgramChangesSetting>(this, "Enable Program Change"));
+      children.emplace_back(new EnumSettingItem<MidiReceiveNotesSetting>(this, "Enable Notes"));
+    }
+  };
+
+  struct MidiSendSettings : InnerNode
+  {
+    MidiSendSettings(InnerNode *parent)
+        : InnerNode(parent, "Send")
+    {
+      children.emplace_back(new EnumSettingItem<MidiSendChannelSetting>(this, "Channel"));
+      children.emplace_back(new EnumSettingItem<MidiSendChannelSplitSetting>(this, "Split Channel (Part II)"));
+      children.emplace_back(new EnumSettingItem<MidiSendProgramChangesSetting>(this, "Enable Program Change"));
+      children.emplace_back(new EnumSettingItem<MidiSendNotesSetting>(this, "Enable Notes"));
+    }
+  };
+
+  struct MidiLocalSettings : InnerNode
+  {
+    MidiLocalSettings(InnerNode *parent)
+        : InnerNode(parent, "Local")
+    {
+      children.emplace_back(new EnumSettingItem<LocalNotesSetting>(this, "Enable Notes"));
+    }
+  };
+
+  struct MidiMappingSettings : InnerNode
+  {
+    MidiMappingSettings(InnerNode *parent)
+        : InnerNode { parent, "Mappings" }
+    {
+      children.emplace_back(new EnumSettingItem<PedalCCMapping<1>>(this, "Pedal 1"));
+      children.emplace_back(new EnumSettingItem<PedalCCMapping<2>>(this, "Pedal 2"));
+      children.emplace_back(new EnumSettingItem<PedalCCMapping<3>>(this, "Pedal 3"));
+      children.emplace_back(new EnumSettingItem<PedalCCMapping<4>>(this, "Pedal 4"));
+      children.emplace_back(new EnumSettingItem<RibbonCCMapping<1>>(this, "Ribbon 1"));
+      children.emplace_back(new EnumSettingItem<RibbonCCMapping<2>>(this, "Ribbon 2"));
+      children.emplace_back(new EnumSettingItem<BenderCCMapping>(this, "Bender"));
+      children.emplace_back(new EnumSettingItem<AftertouchCCMapping>(this, "Aftertouch"));
+      children.emplace_back(new EnumSettingItem<EnableHighVelocityCC>(this, "High-Res. Velocity (CC 88)"));
+      children.emplace_back(new EnumSettingItem<Enable14BitSupport>(this, "High-Res. CCs (use LSB)"));
+    }
+  };
+
+  struct MidiProgramChangeBank : EditableLeaf
+  {
+   private:
+    struct View : SetupLabel
+    {
+      View()
+          : SetupLabel({ 0, 0, 0, 0 })
+      {
+      }
+
+      StringAndSuffix getText() const override
+      {
+        auto pm = Application::get().getPresetManager();
+        auto selected = pm->getMidiSelectedBank();
+        auto selectedBank = pm->findBank(selected);
+
+        if(selectedBank)
+        {
+          auto pos = pm->getBankPosition(selected);
+          return { std::to_string(pos + 1) + "-" + selectedBank->getName(true), 0 };
+        }
+        else
+        {
+          return { "none", 0 };
+        }
+      }
+    };
+
+    struct Editor : MenuEditor
+    {
+      Editor()
+          : MenuEditor()
+      {
+        m_midiSelectionChanged
+            = getPresetManager()->onMidiBankSelectionHappened([this](auto uuid) { updateOnSettingChanged(); });
+      }
+
+      ~Editor() override
+      {
+        m_midiSelectionChanged.disconnect();
+      }
+
+     protected:
+      sigc::connection m_midiSelectionChanged;
+      static PresetManager *getPresetManager()
+      {
+        return Application::get().getPresetManager();
+      }
+
+      static Bank *getMidiBank()
+      {
+        return getPresetManager()->findMidiSelectedBank();
+      }
+
+      void incSetting(int inc) override
+      {
+        auto pm = getPresetManager();
+        PresetManagerUseCases useCase(pm);
+        const auto numBanks = pm->getNumBanks();
+
+        if(auto current = getMidiBank())
+        {
+          auto currentIndex = getSelectedIndex();
+          auto newIndex = currentIndex + inc;
+          auto size = getDisplayStrings().size();
+
+          newIndex %= static_cast<int>(size);
+
+          if(newIndex != 0)
+            useCase.selectMidiBank(pm->getBankAt(newIndex - 1));
+          else
+            useCase.selectMidiBank(nullptr);
+        }
+        else if(numBanks > 0)
+        {
+          if(inc > 0)
+            useCase.selectMidiBank(pm->getBankAt(0));
+          else if(inc < 0)
+            useCase.selectMidiBank(pm->getBankAt(pm->getNumBanks() - 1));
+        }
+      }
+
+      const std::vector<Glib::ustring> &getDisplayStrings() const override
+      {
+        static std::vector<Glib::ustring> sBankStrings;
+        auto pm = Application::get().getPresetManager();
+        int displayIndex = 1;
+        sBankStrings.clear();
+        sBankStrings.emplace_back("None");
+        for(auto b : pm->getBanks())
+        {
+          sBankStrings.emplace_back(std::to_string(displayIndex) + "-" + b->getName(true));
+          displayIndex++;
+        }
+        return sBankStrings;
+      }
+
+      int getSelectedIndex() const override
+      {
+        if(auto sel = getMidiBank())
+          return static_cast<int>(getPresetManager()->getBankPosition(sel->getUuid()) + 1);
+        else
+          return 0;
+      }
+    };
+
+   public:
+    explicit MidiProgramChangeBank(InnerNode *n)
+        : EditableLeaf(n, "Program Change Bank \uE0C1")
+    {
+    }
+
+    Control *createView() override
+    {
+      return new View();
+    }
+
+    Control *createEditor() override
+    {
+      return new Editor();
+    }
+  };
+
+  struct ResetMidiSettingsToHighRes : public OneShotEntry
+  {
+
+    explicit ResetMidiSettingsToHighRes(InnerNode *parent)
+        : OneShotEntry(parent, getName(), []() {
+          SettingsUseCases useCases(Application::get().getSettings());
+          useCases.setMappingsToHighRes();
+        })
+    {
+    }
+
+    constexpr const char *getName()
+    {
+      return "Set to High-Res. Defaults";
+    }
+  };
+
+  struct ResetMidiSettingsToClassic : public OneShotEntry
+  {
+
+    explicit ResetMidiSettingsToClassic(InnerNode *parent)
+        : OneShotEntry(parent, getName(), []() {
+          SettingsUseCases useCases(Application::get().getSettings());
+          useCases.setMappingsToClassicMidi();
+        })
+    {
+    }
+
+    constexpr const char *getName()
+    {
+      return "Set to Classic MIDI Defaults";
+    }
+  };
+
+  struct MidiPanicButton : OneShotEntry
+  {
+    MidiPanicButton(InnerNode *p)
+        : OneShotEntry(p, "Panic Button", []() {
+          SettingsUseCases useCase(Application::get().getSettings());
+          useCase.panicAudioEngine();
+        })
+    {
+    }
+  };
+
+  struct MidiSettings : InnerNode
+  {
+    MidiSettings(InnerNode *parent)
+        : InnerNode(parent, "MIDI Settings")
+    {
+      children.emplace_back(new MidiReceiveSettings(this));
+      children.emplace_back(new MidiSendSettings(this));
+      children.emplace_back(new MidiLocalSettings(this));
+      children.emplace_back(new MidiMappingSettings(this));
+      children.emplace_back(new MidiProgramChangeBank(this));
+      children.emplace_back(new MidiPanicButton(this));
+      children.emplace_back(new ResetMidiSettingsToClassic(this));
+      children.emplace_back(new ResetMidiSettingsToHighRes(this));
+    }
+  };
+
+  struct FlacSettings : InnerNode
+  {
+    FlacSettings(InnerNode *parent)
+        : InnerNode(parent, "Recorder Settings")
+    {
+      children.emplace_back(new EnumSettingItem<AutoStartRecorderSetting>(this, "Auto-Start Recorder"));
+    }
+  };
+
   struct Setup : InnerNode
   {
     Setup()
@@ -749,6 +1085,8 @@ namespace NavTree
     {
       children.emplace_back(new DeviceSettings(this));
       children.emplace_back(new HardwareUI(this));
+      children.emplace_back(new MidiSettings(this));
+      children.emplace_back(new FlacSettings(this));
       children.emplace_back(new SystemInfo(this));
       children.emplace_back(new About(this));
       children.emplace_back(new Backup(this));

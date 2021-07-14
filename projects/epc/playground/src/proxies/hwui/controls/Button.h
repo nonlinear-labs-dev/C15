@@ -14,7 +14,7 @@ class Button : public LabelRegular8
   Button(const Glib::ustring &caption, int buttonID);
   Button(const Glib::ustring &caption, Buttons button);
   Button(const Glib::ustring &caption, const Rect &rect);
-  virtual ~Button();
+  ~Button() override;
 
   bool redraw(FrameBuffer &fb) override;
   void blind(bool b);

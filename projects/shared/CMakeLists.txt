@@ -5,3 +5,4 @@ ENDIF()
 
 add_subdirectory(parameter-db)
 add_subdirectory(playcontroller)
+add_subdirectory(third-party)

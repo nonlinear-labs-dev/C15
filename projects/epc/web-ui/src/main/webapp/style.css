@@ -302,7 +302,7 @@ caption {
 }
 
 .tabcontainer {
-	min-width: 21em;
+	min-width: 41.5em;
 	max-width: 100%;
 	/* 	height: 12em; */
 	margin: 0em;
@@ -313,6 +313,7 @@ caption {
 	box-shadow: none;
 	border: none;
 	border-radius: 5px;
+	overflow: hidden;
 }
 
 .tabcontent {
@@ -320,6 +321,7 @@ caption {
 	background-color: #1d233b;
 	border-radius: 4px;
 	border-top-left-radius: 0px;
+	overflow-y: auto;
 }
 
 .tab, .bb-tab {
@@ -1339,8 +1341,8 @@ input[type="range"]::-moz-range-track {
 	font-family: 'SSP-LW25';
 }
 
-.w33 {
-	width: 33em;
+.w36 {
+	width: 36em;
 }
 
 .h33p {
@@ -1745,4 +1747,36 @@ input[type="range"]::-moz-range-track {
 
 .dialogcontainer .w70p {
 	margin: initial;
+}
+
+.progress-bar {
+	background-image: url(loader.gif);
+    min-width: 20px;
+    min-height: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.hidden {
+	display: none;
+}
+
+.table-parent {
+	display: table;
+    min-height: 281px;
+}
+
+.midi-table {
+	height: 100%;
+	width: 100%;
+    display: table;
+}
+
+.midi-table table, th, td {
+	border: 1px solid black;
+}
+
+.midi-table td {
+	vertical-align: middle;
+    text-align: center;
 }

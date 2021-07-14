@@ -22,11 +22,11 @@ void PlayModeRibbonBehaviourLabel::updateText(const Parameter *s)
     switch(ribbonParameter->getRibbonTouchBehaviour())
     {
       case RibbonTouchBehaviour::ABSOLUTE:
-        setText("a");
+        setText(StringAndSuffix { "a" });
         break;
 
       case RibbonTouchBehaviour::RELATIVE:
-        setText("r");
+        setText(StringAndSuffix { "r" });
         break;
 
       default:

@@ -13,7 +13,7 @@ class AboutText : public MultiLineLabel, public Scrollable
  public:
   AboutText();
 
-  virtual void setPosition(const Rect &rect) override;
-  virtual const Rect &getPosition() const override;
-  virtual void setDirty() override;
+  void setPosition(const Rect &rect) override;
+  const Rect &getPosition() const override;
+  void setDirty() override;
 };

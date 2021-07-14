@@ -19,15 +19,15 @@ class PresetEditButtonMenu : public ButtonMenu
     Delete
   };
 
-  PresetEditButtonMenu(const Rect& rect);
-  virtual ~PresetEditButtonMenu();
+  explicit PresetEditButtonMenu(const Rect& rect);
+  ~PresetEditButtonMenu() override;
+
+  PresetEditButtonMenu(const PresetEditButtonMenu& other) = delete;
+  PresetEditButtonMenu& operator=(const PresetEditButtonMenu&) = delete;
 
   void selectButton(size_t i) override;
 
  private:
-  PresetEditButtonMenu(const PresetEditButtonMenu& other);
-  PresetEditButtonMenu& operator=(const PresetEditButtonMenu&);
-
   void onClipboardChanged();
 
   void renamePreset();

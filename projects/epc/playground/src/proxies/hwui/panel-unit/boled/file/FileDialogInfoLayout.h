@@ -7,7 +7,7 @@ class FileDialogInfoLayout : public InfoLayout
 {
  public:
   FileDialogInfoLayout(std::filesystem::directory_entry file, std::string header);
-  virtual ~FileDialogInfoLayout() = default;
+  ~FileDialogInfoLayout() override = default;
 
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 

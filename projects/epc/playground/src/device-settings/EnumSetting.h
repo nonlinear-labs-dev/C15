@@ -36,6 +36,11 @@ template <typename TEnum> class EnumSetting : public Setting
     return m_mode;
   }
 
+  size_t getEnumIndex() const
+  {
+    return static_cast<size_t>(EnumSetting<tEnum>::get());
+  }
+
   void load(const Glib::ustring &text, Initiator initiator) override
   {
     int i = 0;
@@ -48,6 +53,11 @@ template <typename TEnum> class EnumSetting : public Setting
       }
       i++;
     }
+  }
+
+  void incDec(int i, bool wrap)
+  {
+    inc(i, wrap);
   }
 
   void inc(int dir, bool wrap)
@@ -95,7 +105,12 @@ template <typename TEnum> class EnumSetting : public Setting
     return enumToString()[idx];
   }
 
-  Glib::ustring getDisplayString() const
+  const std::vector<Glib::ustring> &getDisplayStrings() const
+  {
+    return enumToDisplayString();
+  }
+
+  Glib::ustring getDisplayString() const override
   {
     int idx = static_cast<int>(get());
     return enumToDisplayString()[idx];
@@ -111,10 +126,10 @@ template <typename TEnum> class EnumSetting : public Setting
     return ret;
   }
 
- private:
-  EnumSetting(const EnumSetting &other);
-  EnumSetting &operator=(const EnumSetting &);
+  EnumSetting(const EnumSetting &other) = delete;
+  EnumSetting &operator=(const EnumSetting &) = delete;
 
+ private:
   tEnum m_mode;
   std::weak_ptr<tEnum> m_overlay;
 };

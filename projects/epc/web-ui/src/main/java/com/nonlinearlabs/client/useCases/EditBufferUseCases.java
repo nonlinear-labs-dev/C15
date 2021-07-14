@@ -2,6 +2,7 @@ package com.nonlinearlabs.client.useCases;
 
 import com.nonlinearlabs.client.Millimeter;
 import com.nonlinearlabs.client.NonMaps;
+import com.nonlinearlabs.client.LoadToPartMode.LoadToPartModeData;
 import com.nonlinearlabs.client.dataModel.editBuffer.BasicParameterModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel;
 import com.nonlinearlabs.client.dataModel.editBuffer.EditBufferModel.SoundType;
@@ -16,7 +17,6 @@ import com.nonlinearlabs.client.dataModel.editBuffer.PhysicalControlParameterMod
 import com.nonlinearlabs.client.dataModel.editBuffer.RibbonParameterModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.tools.NLMath;
-import com.nonlinearlabs.client.world.maps.presets.PresetManager;
 import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 
 public class EditBufferUseCases {
@@ -472,13 +472,18 @@ public class EditBufferUseCases {
 		NonMaps.theMaps.getServerProxy().resetModulation(id, getVoiceGroupFor(id));
 	}
 
-	public void toggleDirectLoad() {
+	public void toggleDirectLoad(LoadToPartModeData data, VoiceGroup currentDisplayedVoiceGroup) {
+
 		if (SetupModel.get().systemSettings.directLoad.getBool()) {
 			SetupModel.get().systemSettings.directLoad.setValue(false);
-			NonMaps.theMaps.getServerProxy().setSetting("DirectLoad", "off");
+			NonMaps.theMaps.getServerProxy().setDirectLoadNoLoadToPart("off");
 		} else {
 			SetupModel.get().systemSettings.directLoad.setValue(true);
-			NonMaps.theMaps.getServerProxy().setSetting("DirectLoad", "on");
+			if(data != null && currentDisplayedVoiceGroup != null) {
+				NonMaps.theMaps.getServerProxy().setDirectLoadWithLoadToPart("on", data.m_selectedPreset, data.m_selectedVoiceGroup, currentDisplayedVoiceGroup);
+			} else {
+				NonMaps.theMaps.getServerProxy().setDirectLoadNoLoadToPart("on");
+			}
 		}
 	}
 
@@ -491,12 +496,7 @@ public class EditBufferUseCases {
 			NonMaps.theMaps.getServerProxy().setSetting("SyncSplit", "on");
 		}
 	}
-
-	public void setExternalMidiSetting(boolean b) {
-		SetupModel.get().systemSettings.externalMidi.setValue(b);
-		NonMaps.theMaps.getServerProxy().setSetting("ExternalMidi", b ? "on" : "off");
-	}
-
+	
 	public void loadPreset(String uuid) {
 		NonMaps.theMaps.getServerProxy().loadPreset(uuid);
 	}

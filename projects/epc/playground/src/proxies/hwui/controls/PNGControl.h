@@ -22,7 +22,7 @@ class PNGControl : public Control
 
   bool m_useColors = false;
   bool m_transparentBackground = true;
-  
+
   int offsetX = 0;
   int offsetY = 0;
 

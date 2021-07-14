@@ -9,15 +9,14 @@ class Options
 
   Options(int &argc, char **&argv);
 
-  const Glib::ustring &getPresetManagerPath() const;
-  const Glib::ustring &getSettingsFile() const;
-  const Glib::ustring &getKioskModeFile() const;
-  const Glib::ustring &getHardwareTestsFolder() const;
-  const Glib::ustring &getBBBB() const;
-  const Glib::ustring &getLayoutFolder() const;
-  const Glib::ustring &getAudioEngineHost() const;
-  const Glib::ustring &getMidiBridge() const;
-  bool sendBBBBTurnaroundTimestamps() const;
+  [[nodiscard]] const Glib::ustring &getPresetManagerPath() const;
+  [[nodiscard]] const Glib::ustring &getSettingsFile() const;
+  [[nodiscard]] const Glib::ustring &getKioskModeFile() const;
+  [[nodiscard]] const Glib::ustring &getBBBB() const;
+  [[nodiscard]] const Glib::ustring &getLayoutFolder() const;
+  [[nodiscard]] const Glib::ustring &getAudioEngineHost() const;
+  [[nodiscard]] const Glib::ustring &getMidiBridge() const;
+  [[nodiscard]] bool sendBBBBTurnaroundTimestamps() const;
 
  private:
   void setDefaults();

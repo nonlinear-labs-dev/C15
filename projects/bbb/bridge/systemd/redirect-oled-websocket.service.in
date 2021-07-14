@@ -1,0 +1,13 @@
+[Unit]
+Description=Redirect websocket for requesting the current OLED framebuffer
+After=syslog.target network.target
+
+[Service]
+ExecStart=/bin/socat TCP-LISTEN:@PLAYGROUND_OLED_WEBSOCKET_PORT@,fork TCP:192.168.10.10:@PLAYGROUND_OLED_WEBSOCKET_PORT@
+Restart=always
+RestartSec=1
+StartLimitInterval=200
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

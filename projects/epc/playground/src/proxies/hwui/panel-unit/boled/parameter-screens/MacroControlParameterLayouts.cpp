@@ -192,7 +192,7 @@ void MacroControlParameterLayout2::setButtonAText(const std::string &s)
 {
   if(m_buttonA)
   {
-    m_buttonA->setText({ s, 0 });
+    m_buttonA->setText(StringAndSuffix { s, 0 });
   }
 }
 
@@ -202,7 +202,7 @@ void MacroControlParameterLayout2::setButtonText(Buttons b, const std::string &s
   {
     if(Button::getButtonPos(b) == button->getPosition())
     {
-      button->setText({ s, 0 });
+      button->setText(StringAndSuffix { s, 0 });
     }
   }
 }
@@ -303,9 +303,11 @@ void MacroControlParameterLayout2::setMode(Mode desiredMode)
 void MacroControlParameterLayout2::selectSmoothingParameterForMC()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
+  EditBufferUseCases ebUseCases { eb };
+
   if(auto mc = dynamic_cast<MacroControlParameter *>(getCurrentParameter()))
   {
-    eb->undoableSelectParameter(mc->getSmoothingParameter());
+    ebUseCases.selectParameter(mc->getSmoothingParameter(), true);
   }
 }
 

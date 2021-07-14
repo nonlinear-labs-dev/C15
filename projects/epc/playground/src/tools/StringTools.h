@@ -24,4 +24,5 @@ namespace StringTools
     return UNDO::StringTools::buildString(parts...);
   }
 
+  std::vector<Glib::ustring> convert(const std::vector<std::string>& in);
 };

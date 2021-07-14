@@ -10,8 +10,8 @@ class NumBanksLabel : public Label
   typedef Label super;
 
  public:
-  NumBanksLabel(const Rect& pos);
-  virtual ~NumBanksLabel();
+  explicit NumBanksLabel(const Rect& pos);
+  ~NumBanksLabel() override;
 
  private:
   void onNumBanksChanged(size_t numBanks);

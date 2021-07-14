@@ -18,7 +18,7 @@ class ContentManager : public PendingHTTPRequests, public UpdateDocumentMaster, 
 {
  public:
   ContentManager();
-  virtual ~ContentManager();
+  ~ContentManager() override;
 
   void init();
   void handleRequest(std::shared_ptr<NetworkRequest> request);
@@ -32,7 +32,7 @@ class ContentManager : public PendingHTTPRequests, public UpdateDocumentMaster, 
 
   bool isSendResponsesScheduled() const;
 
-  virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+  void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
  private:
   using tContentSectionPtr = ContentSection *;
@@ -65,14 +65,14 @@ class ContentManager : public PendingHTTPRequests, public UpdateDocumentMaster, 
   struct WebsocketConnection
   {
    public:
-    WebsocketConnection(SoupWebsocketConnection *c);
+    explicit WebsocketConnection(SoupWebsocketConnection *c);
     ~WebsocketConnection();
 
     void onWebsocketRequestDone(std::shared_ptr<WebSocketRequest> request, tUpdateID oldID, tUpdateID newId);
     SoupWebsocketConnection *getConnection();
-    tUpdateID getLastSentUpdateId() const;
+    [[nodiscard]] tUpdateID getLastSentUpdateId() const;
     void setLastSentUpdateId(int currentUpdateId);
-    bool canOmitOracles(int currentUpdateId) const;
+    [[nodiscard]] bool canOmitOracles(int currentUpdateId) const;
 
    private:
     SoupWebsocketConnection *ws;
@@ -83,8 +83,8 @@ class ContentManager : public PendingHTTPRequests, public UpdateDocumentMaster, 
 
   typedef std::shared_ptr<WebsocketConnection> tWebsocketConnection;
 
-  void feedWebSockets();
-  bool feedWebSocket(const tWebsocketConnection& ws);
+  void feedWebSockets(bool trustOracles);
+  bool feedWebSocket(const tWebsocketConnection &ws, bool trustOracles);
   void onUpdateIdChangedByNetworkRequest(std::shared_ptr<NetworkRequest> request,
                                          UpdateDocumentContributor::tUpdateID oldUpdateID,
                                          UpdateDocumentContributor::tUpdateID newUpdateID);

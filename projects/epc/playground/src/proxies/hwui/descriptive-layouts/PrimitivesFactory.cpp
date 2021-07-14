@@ -22,7 +22,7 @@ namespace DescriptiveLayouts
         return new Text(primitive);
       case PrimitiveClasses::Circle:
         return new Circle(primitive);
-      case  PrimitiveClasses::Image:
+      case PrimitiveClasses::Image:
         return new Image(primitive);
       default:
         throw ExceptionTools::TemplateException(Glib::ustring("PrimitiveInstance Type not found: ")

@@ -12,6 +12,6 @@ class UndoActions : public RPCActionManager
   typedef RPCActionManager super;
 
  public:
-  UndoActions(UNDO::Scope &scope);
-  virtual ~UndoActions();
+  explicit UndoActions(UNDO::Scope &scope);
+  ~UndoActions() override;
 };

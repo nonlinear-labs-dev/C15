@@ -16,30 +16,30 @@ class PhysicalControlParameter : public Parameter
   virtual void onChangeFromPlaycontroller(tControlPositionValue newValue);
   void registerTarget(ModulationRoutingParameter *target);
   Glib::ustring generateName() const;
-  virtual void loadFromPreset(UNDO::Transaction *transaction, const tControlPositionValue &value) override;
+  void loadFromPreset(UNDO::Transaction *transaction, const tControlPositionValue &value) override;
 
-  virtual void setCPFromHwui(UNDO::Transaction *transaction, const tControlPositionValue &cpValue) override;
-  virtual void setCPFromWebUI(UNDO::Transaction *transaction, const tControlPositionValue &cpValue) override;
+  void setCPFromHwui(UNDO::Transaction *transaction, const tControlPositionValue &cpValue) override;
+  void setCPFromWebUI(UNDO::Transaction *transaction, const tControlPositionValue &cpValue) override;
 
-  virtual Glib::ustring getDisplayString() const override;
+  Glib::ustring getDisplayString() const override;
 
   virtual ReturnMode getReturnMode() const = 0;
-  virtual Layout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
   bool lockingEnabled() const override;
-  void setUiSelectedModulationRouter(const ParameterId& paramNumber);
+  void setUiSelectedModulationRouter(const ParameterId &paramNumber);
   void toggleUiSelectedModulationRouter(int inc);
   ParameterId getUiSelectedModulationRouter() const;
 
-  virtual void onSelected() override;
-  virtual void onUnselected() override;
+  void onSelected() override;
+  void onUnselected() override;
 
   virtual bool hasBehavior() const;
   virtual Glib::ustring getCurrentBehavior() const;
   virtual void undoableStepBehavior(UNDO::Transaction *transaction, int direction);
 
-  virtual void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount) override;
+  void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount) override;
 
-  virtual size_t getHash() const override;
+  size_t getHash() const override;
   bool isLocked() const override;
 
  protected:

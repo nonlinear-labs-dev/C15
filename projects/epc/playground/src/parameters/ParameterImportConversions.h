@@ -14,31 +14,31 @@ class ParameterImportConversions
   typedef int tFileVersion;
   typedef uint16_t tParameterID;
 
-  tControlPositionValue convert(const tParameterID parameterID, const tControlPositionValue in,
-                                const tFileVersion inVersion, SoundType type) const;
-  tControlPositionValue convertMCAmount(const tParameterID parameterID, const tControlPositionValue in,
-                                        const tFileVersion inVersion) const;
+  [[nodiscard]] tControlPositionValue convert(tParameterID parameterID, tControlPositionValue in,
+                                              tFileVersion inVersion, SoundType type) const;
+  [[nodiscard]] tControlPositionValue convertMCAmount(tParameterID parameterID, tControlPositionValue in,
+                                                      tFileVersion inVersion) const;
 
   virtual ~ParameterImportConversions();
 
  private:
-  ParameterImportConversions(bool registerDefaults);
+  explicit ParameterImportConversions(bool registerDefaults);
 
-  void registerConverter(const tParameterID parameterID, const tFileVersion srcVersion, tConverter c);
-  void registerMCAmountConverter(const tParameterID parameterID, const tFileVersion srcVersion, tConverter c);
+  void registerConverter(tParameterID parameterID, tFileVersion srcVersion, tConverter c);
+  void registerMCAmountConverter(tParameterID parameterID, tFileVersion srcVersion, tConverter c);
 
-  tControlPositionValue attackV2ToV3(tControlPositionValue in) const;
-  tControlPositionValue decayV2ToV3(tControlPositionValue in) const;
-  tControlPositionValue releaseV2ToV3(tControlPositionValue in) const;
-  tControlPositionValue driveV2ToV3(tControlPositionValue in) const;
-  tControlPositionValue driveV5ToV6(tControlPositionValue in) const;
-  tControlPositionValue voicesV5ToV6(tControlPositionValue unisonVoices) const;
-  tControlPositionValue voicesV7ToV8(tControlPositionValue unisonVoices, SoundType type) const;
-  tControlPositionValue splitV8ToV9(tControlPositionValue split) const;
+  [[nodiscard]] tControlPositionValue attackV2ToV3(tControlPositionValue in) const;
+  [[nodiscard]] tControlPositionValue decayV2ToV3(tControlPositionValue in) const;
+  [[nodiscard]] tControlPositionValue releaseV2ToV3(tControlPositionValue in) const;
+  [[nodiscard]] tControlPositionValue driveV2ToV3(tControlPositionValue in) const;
+  [[nodiscard]] tControlPositionValue driveV5ToV6(tControlPositionValue in) const;
+  [[nodiscard]] tControlPositionValue voicesV5ToV6(tControlPositionValue unisonVoices) const;
+  [[nodiscard]] tControlPositionValue voicesV7ToV8(tControlPositionValue unisonVoices, SoundType type) const;
+  [[nodiscard]] tControlPositionValue splitV8ToV9(tControlPositionValue split) const;
 
   struct ConvertersBySourceFileVersion
   {
-    tControlPositionValue convert(const tControlPositionValue in, const tFileVersion inVersion, SoundType type) const;
+    [[nodiscard]] tControlPositionValue convert(tControlPositionValue in, tFileVersion inVersion, SoundType type) const;
     std::map<tFileVersion, tConverter> from;
   };
 

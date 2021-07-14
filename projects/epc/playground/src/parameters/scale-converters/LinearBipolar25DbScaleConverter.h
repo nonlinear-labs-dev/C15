@@ -6,5 +6,5 @@ class LinearBipolar25DbScaleConverter : public LinearScaleConverter
 {
  public:
   LinearBipolar25DbScaleConverter();
-  virtual ~LinearBipolar25DbScaleConverter();
+  ~LinearBipolar25DbScaleConverter() override;
 };

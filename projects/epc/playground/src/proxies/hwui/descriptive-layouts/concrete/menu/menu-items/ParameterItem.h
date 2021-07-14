@@ -6,7 +6,7 @@ class Parameter;
 class ParameterItem : public EditorItem
 {
  public:
-  ParameterItem(Parameter *const parameter, const Rect &r);
+  ParameterItem(Parameter *parameter, const Rect &r);
   MenuOverlay *createOverlay() override;
 
  private:

@@ -2,7 +2,7 @@
 #include <proxies/hwui/FrameBuffer.h>
 
 ButtonMenuButton::ButtonMenuButton(bool isFirst, bool isLast, const Glib::ustring &text, const Rect &pos)
-    : super(text, pos)
+    : super(StringAndSuffix { text }, pos)
     , m_isFirst(isFirst)
     , m_isLast(isLast)
     , m_justification(Font::Justification::Center)

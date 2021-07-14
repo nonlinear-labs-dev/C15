@@ -17,9 +17,8 @@ ServedJournal::~ServedJournal()
 
 void ServedJournal::startServing()
 {
-  auto command = getResourcesDir() + "/pack-journal.sh";
   GError *error = nullptr;
-  auto process = g_subprocess_new(G_SUBPROCESS_FLAGS_STDOUT_PIPE, &error, command.c_str(), nullptr);
+  auto process = g_subprocess_new(G_SUBPROCESS_FLAGS_STDOUT_PIPE, &error, "journalctl", "-b0", nullptr);
 
   if(error)
   {

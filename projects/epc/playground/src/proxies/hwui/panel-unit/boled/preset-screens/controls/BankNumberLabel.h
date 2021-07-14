@@ -12,8 +12,8 @@ class BankNumberLabel : public Label
   typedef Label super;
 
  public:
-  BankNumberLabel(const Rect &pos);
-  virtual ~BankNumberLabel();
+  explicit BankNumberLabel(const Rect &pos);
+  ~BankNumberLabel() override;
 
  protected:
   void setBackgroundColor(FrameBuffer &fb) const override;
@@ -21,7 +21,6 @@ class BankNumberLabel : public Label
   Font::Justification getJustification() const override;
 
  private:
-  // private methods
   BankNumberLabel(const BankNumberLabel &other);
   BankNumberLabel &operator=(const BankNumberLabel &);
 

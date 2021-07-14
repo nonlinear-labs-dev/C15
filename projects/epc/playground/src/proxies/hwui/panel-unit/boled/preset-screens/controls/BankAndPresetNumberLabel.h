@@ -10,8 +10,8 @@ class BankAndPresetNumberLabel : public Label
   typedef Label super;
 
  public:
-  BankAndPresetNumberLabel(const Rect& pos);
-  virtual bool redraw(FrameBuffer& fb) override;
+  explicit BankAndPresetNumberLabel(const Rect& pos);
+  bool redraw(FrameBuffer& fb) override;
 
  private:
   void onEditBufferChanged();

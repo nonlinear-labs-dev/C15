@@ -6,5 +6,5 @@ class PhaseBipolar180DegreeScaleConverter : public LinearScaleConverter
 {
  public:
   PhaseBipolar180DegreeScaleConverter();
-  virtual ~PhaseBipolar180DegreeScaleConverter();
+  ~PhaseBipolar180DegreeScaleConverter() override;
 };

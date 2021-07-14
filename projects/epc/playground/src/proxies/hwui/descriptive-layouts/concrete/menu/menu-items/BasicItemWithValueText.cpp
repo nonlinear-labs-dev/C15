@@ -16,5 +16,5 @@ BasicItemWithValueText::BasicItemWithValueText(const Glib::ustring &label, const
   m_valueLabel = addControl(new CaptionLabel<LeftAligned9pxCaptionLabel>(value, rightHalf, true, false));
 
   auto indicationPos = Rect { rightHalf.getRight(), rightHalf.getTop(), indicationWidth, rightHalf.getHeight() - 1 };
-  m_enterLabel = addControl(new Label("...", indicationPos));
+  m_enterLabel = addControl(new Label(StringAndSuffix { "..." }, indicationPos));
 }

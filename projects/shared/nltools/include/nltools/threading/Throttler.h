@@ -13,6 +13,7 @@ class Throttler
   bool isPending() const;
 
   void doActionSync();
+
  private:
   void delayedCallback();
 

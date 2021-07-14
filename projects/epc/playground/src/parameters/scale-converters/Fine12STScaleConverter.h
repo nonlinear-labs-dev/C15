@@ -9,5 +9,5 @@ class Fine12STScaleConverter : public LinearScaleConverter
 
  public:
   Fine12STScaleConverter();
-  virtual ~Fine12STScaleConverter();
+  ~Fine12STScaleConverter() override;
 };

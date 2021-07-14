@@ -11,7 +11,6 @@ public class DeveloperSettings extends LayoutResizingVertical {
 	public DeveloperSettings(MapsLayout parent) {
 		super(parent);
 
-		// TODO: move into data model
 		addChild(new SetupHeader(this));
 		addChild(new SendPresetAsPlaycontrollerWriteFallback(this));
 		addChild(new ResetEditBuffer(this));
@@ -26,7 +25,7 @@ public class DeveloperSettings extends LayoutResizingVertical {
 		addChild(new CrashOnError(this));
 		addChild(new ExportBoled(this));
 		addChild(new ExportSoled(this));
-		addChild(new EnableUSBCommunication(this));
+		addChild(new ShowOleds(this));
 
 		SetupModel.get().localSettings.showDeveloperOptions.onChange(v -> {
 			invalidate(INVALIDATION_FLAG_UI_CHANGED);

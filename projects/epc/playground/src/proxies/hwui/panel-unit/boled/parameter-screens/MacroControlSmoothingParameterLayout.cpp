@@ -47,11 +47,13 @@ bool MacroControlSmoothingParameterLayout::onButton(Buttons i, bool down, Button
 void MacroControlSmoothingParameterLayout::resetMod()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
+  EditBufferUseCases ebUseCases { eb };
+
   if(auto modTime = dynamic_cast<MacroControlSmoothingParameter *>(eb->getSelected(getHWUI()->getCurrentVoiceGroup())))
   {
-    if(auto mc = dynamic_cast<MacroControlParameter *>(eb->findParameterByID(modTime->getMC())))
+    if(auto mcUseCases = ebUseCases.getMCUseCase(modTime->getMC()))
     {
-      mc->undoableResetConnectionsToTargets();
+      mcUseCases->resetConnectionsToTargets();
       m_modResetActive = false;
       highlightButtonWithCaption("Mod Reset", false);
     }
@@ -61,9 +63,10 @@ void MacroControlSmoothingParameterLayout::resetMod()
 void MacroControlSmoothingParameterLayout::selectMacroControl()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
+  EditBufferUseCases ebUseCases { eb };
   if(auto modTime = dynamic_cast<MacroControlSmoothingParameter *>(eb->getSelected(getHWUI()->getCurrentVoiceGroup())))
   {
-    eb->undoableSelectParameter(modTime->getMC());
+    ebUseCases.selectParameter(modTime->getMC(), true);
   }
 }
 

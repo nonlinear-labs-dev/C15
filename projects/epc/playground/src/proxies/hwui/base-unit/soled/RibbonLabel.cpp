@@ -18,11 +18,11 @@ RibbonLabel::RibbonLabel(const ParameterId &paramID, const Rect &rect)
 
 RibbonLabel::~RibbonLabel() = default;
 
-Label::StringAndSuffix RibbonLabel::getText() const
+StringAndSuffix RibbonLabel::getText() const
 {
   auto param = dynamic_cast<PhysicalControlParameter *>(
       Application::get().getPresetManager()->getEditBuffer()->findParameterByID(m_parameterID));
-  return crop(param->generateName());
+  return StringAndSuffix { crop(param->generateName()) };
 }
 
 Glib::ustring RibbonLabel::crop(const Glib::ustring &text) const

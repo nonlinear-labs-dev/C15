@@ -11,7 +11,7 @@ class AftertouchEditor : public MenuEditor
 
  public:
   AftertouchEditor();
-  virtual ~AftertouchEditor();
+  ~AftertouchEditor() override;
 
   void incSetting(int inc) override;
   const std::vector<Glib::ustring> &getDisplayStrings() const override;

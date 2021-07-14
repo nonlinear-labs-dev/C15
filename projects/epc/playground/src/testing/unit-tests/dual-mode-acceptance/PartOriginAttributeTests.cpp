@@ -6,6 +6,7 @@
 #include <testing/unit-tests/mock/MockPresetStorage.h>
 #include <proxies/hwui/buttons.h>
 #include <proxies/hwui/HWUI.h>
+#include <use-cases/DirectLoadUseCases.h>
 
 namespace detail
 {
@@ -25,16 +26,19 @@ namespace detail
 TEST_CASE("Part Origin Attribute")
 {
   auto eb = TestHelper::getEditBuffer();
+  EditBufferUseCases ebUseCases(eb);
+
   auto hwui = Application::get().getHWUI();
 
   MockPresetStorage presets;
 
-  detail::getDirectLoad()->set(BooleanSettings::BOOLEAN_SETTING_FALSE);
+  DirectLoadUseCases useCase(detail::getDirectLoad().get());
+  useCase.disableDirectLoad();
   hwui->setFocusAndMode(UIDetail::Init);
 
   SECTION("Load Single Full")
   {
-    eb->undoableLoad(presets.getSinglePreset());
+    ebUseCases.undoableLoad(presets.getSinglePreset());
 
     auto originI = eb->getPartOrigin(VoiceGroup::I);
     auto originII = eb->getPartOrigin(VoiceGroup::II);
@@ -54,8 +58,8 @@ TEST_CASE("Part Origin Attribute")
     auto originI = eb->getPartOrigin(VoiceGroup::I);
     auto originII = eb->getPartOrigin(VoiceGroup::II);
 
-    CHECK(originI.presetUUID == "");
-    CHECK(originII.presetUUID == "");
+    CHECK(originI.presetUUID == Uuid::none());
+    CHECK(originII.presetUUID == Uuid::none());
     CHECK(originI.sourceGroup == VoiceGroup::Global);
     CHECK(originII.sourceGroup == VoiceGroup::Global);
   }
@@ -67,18 +71,18 @@ TEST_CASE("Part Origin Attribute")
 
     eb->undoableInitPart(scope->getTransaction(), VoiceGroup::I, Defaults::FactoryDefault);
     auto originI = eb->getPartOrigin(VoiceGroup::I);
-    CHECK(originI.presetUUID == "");
+    CHECK(originI.presetUUID == Uuid::none());
     CHECK(originI.sourceGroup == VoiceGroup::Global);
 
     eb->undoableInitPart(scope->getTransaction(), VoiceGroup::II, Defaults::FactoryDefault);
     auto originII = eb->getPartOrigin(VoiceGroup::II);
-    CHECK(originII.presetUUID == "");
+    CHECK(originII.presetUUID == Uuid::none());
     CHECK(originII.sourceGroup == VoiceGroup::Global);
   }
 
   SECTION("Load Dual Full")
   {
-    eb->undoableLoad(presets.getLayerPreset());
+    ebUseCases.undoableLoad(presets.getLayerPreset());
     auto originI = eb->getPartOrigin(VoiceGroup::I);
     auto originII = eb->getPartOrigin(VoiceGroup::II);
 
@@ -132,26 +136,26 @@ TEST_CASE("Step Direct Load and Load to Part Preset List", "[Preset][Loading]")
   auto [ogI, ogII] = getOrigins();
 
   CHECK(eb->getOrigin() == nullptr);
-  CHECK(ogI.presetUUID == "");
-  CHECK(ogII.presetUUID == "");
+  CHECK(ogI.presetUUID == Uuid::none());
+  CHECK(ogII.presetUUID == Uuid::none());
   CHECK(eb->getUUIDOfLastLoadedPreset() == Uuid::init());
+
+  auto min = std::chrono::milliseconds(20);
+  auto max = std::chrono::milliseconds(500);
 
   SECTION("Select First Preset in Bank")
   {
 
-    detail::getDirectLoad()->set(BooleanSettings::BOOLEAN_SETTING_TRUE);
+    DirectLoadUseCases dlUseCase(detail::getDirectLoad().get());
+    dlUseCase.enableDirectLoadFromWebUI(nullptr, VoiceGroup::Global, VoiceGroup::Global);
 
     {
-      auto scope = TestHelper::createTestScope();
-      auto transaction = scope->getTransaction();
-      pm->selectBank(transaction, bank->getUuid());
-      bank->selectPreset(transaction, 0);
-
-      Application::get().getHWUI()->undoableSetFocusAndMode(transaction,
-                                                            { UIFocus::Presets, UIMode::Select, UIDetail::Init });
+      PresetManagerUseCases useCase(pm);
+      useCase.selectPreset(bank->getPresetAt(0));
+      Application::get().getHWUI()->undoableSetFocusAndMode({ UIFocus::Presets, UIMode::Select, UIDetail::Init });
     }
 
-    TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&]() {
+    TestHelper::doMainLoop(min, max, [&]() {
       auto uuid = eb->getUUIDOfLastLoadedPreset();
       return uuid == bank->getPresetAt(0)->getUuid();
     });
@@ -160,42 +164,42 @@ TEST_CASE("Step Direct Load and Load to Part Preset List", "[Preset][Loading]")
 
     detail::pressButton(Buttons::BUTTON_INC);
 
-    TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&]() {
+    TestHelper::doMainLoop(min, max, [&]() {
       auto [ogI, ogII] = getOrigins();
       auto x = ogI.presetUUID == bank->getPresetAt(0)->getUuid();
       return x && ogI.sourceGroup == VoiceGroup::II;
     });
 
     detail::pressButton(Buttons::BUTTON_INC);
-    TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&] {
+    TestHelper::doMainLoop(min, max, [&] {
       auto [ogI, ogII] = getOrigins();
       auto x = ogI.presetUUID == bank->getPresetAt(1)->getUuid();
       return x && ogI.sourceGroup == VoiceGroup::I;
     });
 
     detail::pressButton(Buttons::BUTTON_INC);
-    TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&] {
+    TestHelper::doMainLoop(min, max, [&] {
       auto [ogI, ogII] = getOrigins();
       auto x = ogI.presetUUID == bank->getPresetAt(1)->getUuid();
       return x && ogI.sourceGroup == VoiceGroup::II;
     });
 
     detail::pressButton(Buttons::BUTTON_DEC);
-    TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&] {
+    TestHelper::doMainLoop(min, max, [&] {
       auto [ogI, ogII] = getOrigins();
       auto x = ogI.presetUUID == bank->getPresetAt(1)->getUuid();
       return x && ogI.sourceGroup == VoiceGroup::I;
     });
 
     detail::pressButton(Buttons::BUTTON_DEC);
-    TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&] {
+    TestHelper::doMainLoop(min, max, [&] {
       auto [ogI, ogII] = getOrigins();
       auto x = ogI.presetUUID == bank->getPresetAt(0)->getUuid();
       return x && ogI.sourceGroup == VoiceGroup::II;
     });
 
     detail::pressButton(Buttons::BUTTON_DEC);
-    TestHelper::doMainLoop(std::chrono::milliseconds(200), std::chrono::milliseconds(1000), [&] {
+    TestHelper::doMainLoop(min, max, [&] {
       auto [ogI, ogII] = getOrigins();
       auto x = ogI.presetUUID == bank->getPresetAt(0)->getUuid();
       return x && ogI.sourceGroup == VoiceGroup::I;

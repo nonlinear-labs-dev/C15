@@ -8,7 +8,7 @@
 
 ModulationCarousel::ModulationCarousel(Mode mode, const Rect &pos)
     : super(pos)
-    , m_mode{ mode }
+    , m_mode { mode }
 {
   addControl(new UpperModulationBoundControl(Rect(0, 1, pos.getWidth(), 20)))->setHighlight(m_mode == Mode::UpperBound);
   addControl(new CurrentModulatedValueLabel(Rect(0, 21, pos.getWidth(), 20)))

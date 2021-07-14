@@ -16,20 +16,20 @@ class ScaleConverter
 
   virtual ~ScaleConverter();
 
-  virtual tControlPositionValue getCoarseDenominator(const QuantizedValue &v) const;
-  virtual tControlPositionValue getFineDenominator(const QuantizedValue &v) const;
+  [[nodiscard]] virtual tControlPositionValue getCoarseDenominator(const QuantizedValue &v) const;
+  [[nodiscard]] virtual tControlPositionValue getFineDenominator(const QuantizedValue &v) const;
 
-  virtual tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const = 0;
-  virtual tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const = 0;
-  virtual tControlPositionValue tcdToControlPosition(tTcdValue v) const = 0;
+  [[nodiscard]] virtual tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const = 0;
+  [[nodiscard]] virtual tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const = 0;
+  [[nodiscard]] virtual tControlPositionValue tcdToControlPosition(tTcdValue v) const = 0;
 
-  virtual Glib::ustring controlPositionToDisplayJS() const = 0;
+  [[nodiscard]] virtual Glib::ustring controlPositionToDisplayJS() const = 0;
 
-  const ScaleConverter::tControlPositionRange getControlPositionRange() const;
-  virtual bool isBiPolar() const = 0;
+  [[nodiscard]] const ScaleConverter::tControlPositionRange getControlPositionRange() const;
+  [[nodiscard]] virtual bool isBiPolar() const = 0;
 
-  const Dimension &getDimension() const;
-  tTcdRange getTcdRange() const;
+  [[nodiscard]] const Dimension &getDimension() const;
+  [[nodiscard]] tTcdRange getTcdRange() const;
 
   template <typename T> static const ScaleConverter *get()
   {
@@ -46,13 +46,13 @@ class ScaleConverter
     return it->second.get();
   }
 
-  virtual size_t hash() const;
+  [[nodiscard]] virtual size_t hash() const;
 
   static const tControlPositionRange &getControlPositionRangeUnipolar();
   static const tControlPositionRange &getControlPositionRangeBipolar();
 
  protected:
-  ScaleConverter(const Dimension &dim);
+  explicit ScaleConverter(const Dimension &dim);
 
  private:
   const Dimension &m_dimension;

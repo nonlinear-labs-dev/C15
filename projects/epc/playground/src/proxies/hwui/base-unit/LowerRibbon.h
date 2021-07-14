@@ -18,10 +18,9 @@ class LowerRibbon : public Ribbon, public sigc::trackable
   void indicateBlockingMainThread(bool onOff);
 
  private:
-  void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne);
   void onParamValueChanged(const Parameter* param);
 
-  int posToLedID(int pos) const;
+  int posToLedID(int pos) const override;
 
   bool m_indicateBlockingMainThread = false;
 };

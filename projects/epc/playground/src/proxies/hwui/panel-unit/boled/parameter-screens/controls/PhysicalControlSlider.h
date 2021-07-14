@@ -11,5 +11,5 @@ class PhysicalControlSlider : public SelectedParameterDotSlider
   using super::super;
 
  protected:
-  virtual void drawSliderBackground(FrameBuffer &fb) override;
+  void drawSliderBackground(FrameBuffer &fb) override;
 };

@@ -37,11 +37,13 @@ namespace Engine
       }
     };
 
-    template <class Layer> struct Parameter_Handle
+    struct Param_Handle
     {
+      using Layer = C15::Properties::LayerId;
       Layer_Storage m_layer[static_cast<uint32_t>(Layer::_LENGTH_)];
       Global_Storage m_global;
-      const uint32_t m_layer_count = static_cast<uint32_t>(Layer::_LENGTH_);
+      constexpr static uint32_t m_layer_count = static_cast<uint32_t>(Layer::_LENGTH_);
+
       inline void init_modMatrix()
       {
         m_global.m_assignment.reset();
@@ -192,32 +194,30 @@ namespace Engine
       }
       inline Target_Param* globalChainFirst(const uint32_t _mcId)
       {
-        return &m_global.m_target[m_global.m_assignment.first(_mcId)];
+        const auto idx = m_global.m_assignment.first(_mcId);
+        return idx < 0 ? nullptr : &m_global.m_target[idx];
       }
-      inline bool globalChainRunning()
-      {
-        return m_global.m_assignment.running();
-      }
+
       inline Target_Param* globalChainNext()
       {
-        return &m_global.m_target[m_global.m_assignment.next()];
+        const auto idx = m_global.m_assignment.next();
+        return idx < 0 ? nullptr : &m_global.m_target[idx];
       }
+
       inline Target_Param* localChainFirst(const uint32_t _layer, const uint32_t _mcId)
       {
-        return &m_layer[_layer].m_target[m_layer[_layer].m_assignment.first(_mcId)];
+        const auto idx = m_layer[_layer].m_assignment.first(_mcId);
+        return idx < 0 ? nullptr : &m_layer[_layer].m_target[idx];
       }
-      inline bool localChainRunning(const uint32_t _layer)
-      {
-        return m_layer[_layer].m_assignment.running();
-      }
+
       inline Target_Param* localChainNext(const uint32_t _layer)
       {
-        return &m_layer[_layer].m_target[m_layer[_layer].m_assignment.next()];
+        const auto idx = m_layer[_layer].m_assignment.next();
+        return idx < 0 ? nullptr : &m_layer[_layer].m_target[idx];
       }
     };
 
-  }  // namepsace Engine::Handle
+  }  // namespace Engine::Handle
 
-  using Param_Handle = Handle::Parameter_Handle<C15::Properties::LayerId>;
-
+  using Param_Handle = Handle::Param_Handle;
 }  // namespace Engine

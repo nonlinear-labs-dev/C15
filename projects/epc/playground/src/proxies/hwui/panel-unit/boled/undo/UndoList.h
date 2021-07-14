@@ -13,7 +13,7 @@ class UndoList : public ControlWithChildren
   typedef ControlWithChildren super;
 
  public:
-  UndoList(const Rect &pos);
+  explicit UndoList(const Rect &pos);
 
   void assignTransactions(UNDO::Transaction *tip);
   bool redraw(FrameBuffer &fb) override;

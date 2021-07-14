@@ -7,28 +7,26 @@ OPTION(BUILD_EPC_SCRIPTS "Install the shell scripts on the ePC" Off)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wdouble-promotion -march=native")
 
-IF(BUILD_ACCEPTANCE_TESTS)
+IF (BUILD_ACCEPTANCE_TESTS)
     add_subdirectory(acceptance-tests)
-ENDIF()
+ENDIF ()
 
-IF(BUILD_AUDIOENGINE)
+IF (BUILD_AUDIOENGINE)
     add_subdirectory(audio-engine)
-ENDIF()
+ENDIF ()
 
-IF(BUILD_ONLINEHELP)
+IF (BUILD_ONLINEHELP)
     add_subdirectory(online-help)
-ENDIF()
+ENDIF ()
 
-IF(BUILD_PLAYGROUND)
+IF (BUILD_PLAYGROUND)
     add_subdirectory(playground)
-ENDIF()
+ENDIF ()
 
-IF(BUILD_WEBUI)
+IF (BUILD_WEBUI)
     add_subdirectory(web-ui)
-ENDIF()
+ENDIF ()
 
-IF(BUILD_EPC_SCRIPTS)
+IF (BUILD_EPC_SCRIPTS)
     add_subdirectory(scripts)
-ENDIF()
-
-add_subdirectory(third-party)
+ENDIF ()

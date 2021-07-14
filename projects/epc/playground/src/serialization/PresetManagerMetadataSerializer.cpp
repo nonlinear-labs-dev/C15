@@ -30,11 +30,13 @@ void PresetManagerMetadataSerializer::writeTagContent(Writer &writer) const
 
 void PresetManagerMetadataSerializer::readTagContent(Reader &reader) const
 {
-  reader.onTextElement("selected-bank-uuid",
-                       [&](const auto &text, const auto &) { m_pm->selectBank(reader.getTransaction(), text); });
+  reader.onTextElement("selected-bank-uuid", [&](const auto &text, const auto &) {
+    m_pm->selectBank(reader.getTransaction(), Uuid { text });
+  });
 
-  reader.onTextElement("selected-midi-bank-uuid",
-                       [&](const auto &text, const auto &) { m_pm->selectMidiBank(reader.getTransaction(), text); });
+  reader.onTextElement("selected-midi-bank-uuid", [&](const auto &text, const auto &) {
+    m_pm->selectMidiBank(reader.getTransaction(), Uuid { text });
+  });
 
   reader.onTag(EditBufferSerializer::getTagName(),
                [&](const auto &) mutable { return new EditBufferSerializer(m_pm->getEditBuffer()); });

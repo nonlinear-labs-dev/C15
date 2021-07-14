@@ -23,6 +23,8 @@
 #include <proxies/audio-engine/AudioEngineProxy.h>
 #include <device-settings/Settings.h>
 #include <filesystem>
+#include <use-cases/IncrementalChangerUseCases.h>
+#include <device-settings/midi/local/LocalControllersSetting.h>
 
 PlaycontrollerProxy::PlaycontrollerProxy()
     : m_lastTouchedRibbon(HardwareSourcesGroup::getUpperRibbonParameterID().getNumber())
@@ -77,11 +79,7 @@ gint16 PlaycontrollerProxy::separateSignedBitToComplementary(uint16_t v) const
 
 void PlaycontrollerProxy::onMessageReceived(const MessageParser::NLMessage &msg)
 {
-  if(msg.type == MessageParser::HARDWARE_SOURCE)
-  {
-    onHardwareSourceReceived(msg);
-  }
-  else if(msg.type == MessageParser::EDIT_CONTROL)
+  if(msg.type == MessageParser::EDIT_CONTROL)
   {
     onEditControlMessageReceived(msg);
   }
@@ -198,46 +196,6 @@ Parameter *PlaycontrollerProxy::findPhysicalControlParameterFromPlaycontrollerHW
   return Application::get().getPresetManager()->getEditBuffer()->findParameterByID(paramId);
 }
 
-void PlaycontrollerProxy::onHardwareSourceReceived(const MessageParser::NLMessage &msg)
-{
-  uint16_t id = msg.params[0];
-  DebugLevel::info("received hw source message with hw source id:", id);
-
-  gint16 value = separateSignedBitToComplementary(msg.params[1]);
-
-  if(auto *param
-     = dynamic_cast<PhysicalControlParameter *>(findPhysicalControlParameterFromPlaycontrollerHWSourceID(id)))
-  {
-    notifyRibbonTouch(param->getID().getNumber());
-    DebugLevel::info("physical control parameter:", param->getMiniParameterEditorName(), ": ", value);
-    applyParamMessageAbsolutely(param, value);
-  }
-  else if(id == HW_SOURCE_ID_LAST_KEY)
-  {
-    notifyLastKey(value);
-  }
-  else
-  {
-    DebugLevel::info("could not parse hw id", id, " to physical control parameter");
-  }
-}
-
-void PlaycontrollerProxy::applyParamMessageAbsolutely(PhysicalControlParameter *p, gint16 value)
-{
-  DebugLevel::info(G_STRLOC, value);
-
-  if(p->isBiPolar())
-  {
-    DebugLevel::info(G_STRLOC);
-    p->onChangeFromPlaycontroller((value - 8000.0) / 8000.0);
-  }
-  else
-  {
-    DebugLevel::info(G_STRLOC);
-    p->onChangeFromPlaycontroller(value / 16000.0);
-  }
-}
-
 void PlaycontrollerProxy::onEditControlMessageReceived(const MessageParser::NLMessage &msg)
 {
   DebugLevel::info("it is an edit control message");
@@ -274,8 +232,9 @@ void PlaycontrollerProxy::onRelativeEditControlMessageReceived(Parameter *p, gin
     if(!m_relativeEditControlMessageChanger || !m_relativeEditControlMessageChanger->isManaging(p->getValue()))
       m_relativeEditControlMessageChanger = p->getValue().startUserEdit(Initiator::EXPLICIT_PLAYCONTROLLER);
 
-    m_relativeEditControlMessageChanger->changeBy(m_throttledRelativeParameterAccumulator
-                                                  / (p->isBiPolar() ? 8000.0 : 16000.0));
+    auto amount = m_throttledRelativeParameterAccumulator / (p->isBiPolar() ? 8000.0 : 16000.0);
+    IncrementalChangerUseCases useCase(m_relativeEditControlMessageChanger.get());
+    useCase.changeBy(amount, false);
     m_throttledRelativeParameterAccumulator = 0;
   });
 }
@@ -285,18 +244,15 @@ void PlaycontrollerProxy::onAbsoluteEditControlMessageReceived(Parameter *p, gin
   m_throttledAbsoluteParameterValue = value;
 
   m_throttledAbsoluteParameterChange.doTask([this, p]() {
-    auto scope
-        = Application::get().getUndoScope()->startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
+    ParameterUseCases useCase(p);
 
     if(p->isBiPolar())
     {
-      p->setCPFromHwui(scope->getTransaction(), (m_throttledAbsoluteParameterValue - 8000.0) / 8000.0);
-      DebugLevel::info("set it (absolutely - bipolar) to", p->getControlPositionValue());
+      useCase.setControlPosition((m_throttledAbsoluteParameterValue - 8000.0) / 8000.0);
     }
     else
     {
-      p->setCPFromHwui(scope->getTransaction(), (m_throttledAbsoluteParameterValue / 16000.0));
-      DebugLevel::info("set it (absolutely - unipolar) to", p->getControlPositionValue());
+      useCase.setControlPosition(m_throttledAbsoluteParameterValue / 16000.0);
     }
   });
 }

@@ -15,14 +15,13 @@ class RenameBankLayout : public RenameLayout
   typedef RenameLayout super;
 
  public:
-  RenameBankLayout(UNDO::Transaction* transaction = nullptr);
-  RenameBankLayout(UNDO::Transaction* transaction, std::function<void(UNDO::Transaction*)> onCommit);
+  explicit RenameBankLayout(UNDO::Transaction* transaction);
+  RenameBankLayout();
 
  private:
-  virtual void commit(const Glib::ustring& newName) override;
-  virtual Glib::ustring getInitialText() const override;
+  void commit(const Glib::ustring& newName) override;
+  Glib::ustring getInitialText() const override;
 
   Bank* m_currentBank = nullptr;
   UNDO::Transaction* m_transaction;
-  std::function<void(UNDO::Transaction*)> m_onCommitCallback { nullptr };
 };

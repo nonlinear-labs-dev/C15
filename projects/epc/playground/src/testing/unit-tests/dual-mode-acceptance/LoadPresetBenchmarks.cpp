@@ -59,6 +59,7 @@ TEST_CASE("Load Presets", "[Benchmark]")
   preparePresets(presets2, 1.0);
 
   auto eb = TestHelper::getEditBuffer();
+  EditBufferUseCases ebUseCases(eb);
 
   constexpr auto cNumTests = 10;
 
@@ -70,18 +71,18 @@ TEST_CASE("Load Presets", "[Benchmark]")
   {
 
     avgSingle.put(measure([&]() {
-      eb->undoableLoad(presets1.getSinglePreset());
-      eb->undoableLoad(presets2.getSinglePreset());
+      ebUseCases.undoableLoad(presets1.getSinglePreset());
+      ebUseCases.undoableLoad(presets2.getSinglePreset());
     }));
 
     avgLayer.put(measure([&]() {
-      eb->undoableLoad(presets1.getLayerPreset());
-      eb->undoableLoad(presets2.getLayerPreset());
+      ebUseCases.undoableLoad(presets1.getLayerPreset());
+      ebUseCases.undoableLoad(presets2.getLayerPreset());
     }));
 
     avgSplit.put(measure([&] {
-      eb->undoableLoad(presets1.getSplitPreset());
-      eb->undoableLoad(presets2.getSplitPreset());
+      ebUseCases.undoableLoad(presets1.getSplitPreset());
+      ebUseCases.undoableLoad(presets2.getSplitPreset());
     }));
   }
 }

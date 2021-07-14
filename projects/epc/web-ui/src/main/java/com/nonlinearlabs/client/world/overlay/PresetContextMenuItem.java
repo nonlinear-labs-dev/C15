@@ -28,9 +28,4 @@ public class PresetContextMenuItem extends ContextMenuItem {
 		return Millimeter.toPixels(10);
 	}
 
-	@Override
-	public double getDesiredWidth() {
-		return Millimeter.toPixels(17);
-	}
-
 }

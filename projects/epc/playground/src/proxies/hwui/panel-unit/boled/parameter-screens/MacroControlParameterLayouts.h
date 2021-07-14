@@ -7,14 +7,14 @@ class MacroControlParameterLayout2 : public virtual ParameterLayout2
  public:
   typedef ParameterLayout2 super;
   MacroControlParameterLayout2();
-  ~MacroControlParameterLayout2();
+  ~MacroControlParameterLayout2() override;
 
-  virtual void copyFrom(Layout *other) override;
+  void copyFrom(Layout *other) override;
 
  protected:
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
-  virtual Parameter *getCurrentEditParameter() const override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
+  Parameter *getCurrentEditParameter() const override;
 
   enum class Mode
   {
@@ -27,8 +27,6 @@ class MacroControlParameterLayout2 : public virtual ParameterLayout2
   void toggleMode(Mode desiredMode);
   virtual void setMode(Mode desiredMode);
   Mode getMode() const;
-
-  Overlay *getModeOverlay();
 
  protected:
   void setButtonText(Buttons b, const std::string &s);
@@ -59,11 +57,11 @@ class MacroControlParameterSelectLayout2 : public ParameterSelectLayout2, public
   MacroControlParameterSelectLayout2();
 
  protected:
-  virtual void init() override;
-  virtual Carousel *createCarousel(const Rect &rect) override;
+  void init() override;
+  Carousel *createCarousel(const Rect &rect) override;
 
-  virtual void setMode(Mode desiredMode) override;
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  void setMode(Mode desiredMode) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };
 
 class MacroControlParameterEditLayout2 : public ParameterEditLayout2, public MacroControlParameterLayout2
@@ -75,8 +73,8 @@ class MacroControlParameterEditLayout2 : public ParameterEditLayout2, public Mac
   MacroControlParameterEditLayout2();
 
  protected:
-  virtual void setMode(Mode desiredMode) override;
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual ButtonMenu *createMenu(const Rect &rect) override;
+  void setMode(Mode desiredMode) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  ButtonMenu *createMenu(const Rect &rect) override;
   Control *createMCAssignmentIndicator() override;
 };

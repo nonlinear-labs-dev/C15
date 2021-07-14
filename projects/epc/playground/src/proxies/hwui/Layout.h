@@ -15,8 +15,8 @@ class HWUI;
 class Layout : public sigc::trackable, public ControlOwner
 {
  public:
-  Layout(OLEDProxy &oled);
-  virtual ~Layout();
+  explicit Layout(OLEDProxy &oled);
+  ~Layout() override;
 
   virtual bool redrawLayout();
   virtual void init();

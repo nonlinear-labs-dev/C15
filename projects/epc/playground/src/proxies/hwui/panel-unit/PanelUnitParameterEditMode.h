@@ -23,17 +23,17 @@ class PanelUnitParameterEditMode : public UsageMode
 
  public:
   PanelUnitParameterEditMode();
-  virtual ~PanelUnitParameterEditMode();
+  ~PanelUnitParameterEditMode() override;
 
   void setup() override;
+  void setupFocusAndMode(FocusAndMode focusAndMode) override;
+  void bruteForceUpdateLeds() override;
+
   Buttons findButtonForParameter(Parameter *param) const;
   std::list<int> getButtonAssignments(Buttons button) const;
   std::list<int> getButtonAssignments(Buttons button, SoundType type) const;
-  virtual void setupFocusAndMode(FocusAndMode focusAndMode) override;
 
   static const int NUM_LEDS = 96;
-
-  virtual void bruteForceUpdateLeds() override;
 
  protected:
   ButtonParameterMapping &getMappings();

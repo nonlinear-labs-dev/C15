@@ -114,8 +114,3 @@ const Glib::ustring &MultiLineLabel::getText() const
 {
   return m_text;
 }
-
-void MultiLineLabel::setForceUpdateLine(bool update)
-{
-  m_forceUpdateOnSetPos = update;
-}

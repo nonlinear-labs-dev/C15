@@ -28,16 +28,16 @@ template <SoundType tNewSoundType> void loadPreset(Preset *newPreset)
   editBuffer->undoableLoad(scope->getTransaction(), newPreset, true);
   editBuffer->TEST_doDeferredJobs();
 
-  REQUIRE(editBuffer->getType() == tNewSoundType);
-  REQUIRE_FALSE(editBuffer->isModified());
-  REQUIRE_FALSE(editBuffer->findAnyParameterChanged());
-  REQUIRE(editBuffer->getUUIDOfLastLoadedPreset() == newPreset->getUuid());
+  CHECK(editBuffer->getType() == tNewSoundType);
+  CHECK_FALSE(editBuffer->isModified());
+  CHECK_FALSE(editBuffer->findAnyParameterChanged());
+  CHECK(editBuffer->getUUIDOfLastLoadedPreset() == newPreset->getUuid());
 }
 
 TEST_CASE("EditBuffer Initialized")
 {
   auto eb = getEditBuffer();
-  REQUIRE(eb != nullptr);
+  CHECK(eb != nullptr);
 }
 
 TEST_CASE("Simple EditBuffer Conversion")
@@ -53,9 +53,9 @@ TEST_CASE("Simple EditBuffer Conversion")
     editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Layer);
     editBuffer->TEST_doDeferredJobs();
 
-    REQUIRE(editBuffer->getType() == SoundType::Layer);
-    REQUIRE(editBuffer->isModified());
-    REQUIRE_FALSE(editBuffer->findAnyParameterChanged());
+    CHECK(editBuffer->getType() == SoundType::Layer);
+    CHECK(editBuffer->isModified());
+    CHECK_FALSE(editBuffer->findAnyParameterChanged());
   }
 
   SECTION("Convert Single to Split Sound")
@@ -64,12 +64,12 @@ TEST_CASE("Simple EditBuffer Conversion")
     editBuffer->undoableConvertToDual(scope->getTransaction(), SoundType::Split);
     editBuffer->TEST_doDeferredJobs();
 
-    REQUIRE(editBuffer->getType() == SoundType::Split);
-    REQUIRE(editBuffer->isModified());
-    REQUIRE_FALSE(editBuffer->findAnyParameterChanged());
+    CHECK(editBuffer->getType() == SoundType::Split);
+    CHECK(editBuffer->isModified());
+    CHECK_FALSE(editBuffer->findAnyParameterChanged());
 
-    REQUIRE(editBuffer->findParameterByID({ 249, VoiceGroup::I })->getValue().getFineDenominator() == 11);
-    REQUIRE(editBuffer->findParameterByID({ 249, VoiceGroup::II })->getValue().getFineDenominator() == 11);
+    CHECK(editBuffer->findParameterByID({ 249, VoiceGroup::I })->getValue().getFineDenominator() == 11);
+    CHECK(editBuffer->findParameterByID({ 249, VoiceGroup::II })->getValue().getFineDenominator() == 11);
   }
 
   SECTION("Undo Convert Single to Split")
@@ -80,11 +80,11 @@ TEST_CASE("Simple EditBuffer Conversion")
       editBuffer->TEST_doDeferredJobs();
     }
 
-    REQUIRE(editBuffer->isModified());
-    REQUIRE_FALSE(editBuffer->findAnyParameterChanged());
-    REQUIRE(editBuffer->getType() == SoundType::Split);
-    REQUIRE(editBuffer->findParameterByID({ 249, VoiceGroup::I })->getValue().getFineDenominator() == 11);
-    REQUIRE(editBuffer->findParameterByID({ 249, VoiceGroup::II })->getValue().getFineDenominator() == 11);
+    CHECK(editBuffer->isModified());
+    CHECK_FALSE(editBuffer->findAnyParameterChanged());
+    CHECK(editBuffer->getType() == SoundType::Split);
+    CHECK(editBuffer->findParameterByID({ 249, VoiceGroup::I })->getValue().getFineDenominator() == 11);
+    CHECK(editBuffer->findParameterByID({ 249, VoiceGroup::II })->getValue().getFineDenominator() == 11);
 
     editBuffer->getParent()->getUndoScope().undo();
     editBuffer->TEST_doDeferredJobs();
@@ -396,12 +396,14 @@ TEST_CASE("Load <-> Changed")
       REQUIRE(param->isChangedFromLoaded());
     }
 
+    ParameterUseCases useCase(param);
+
     REQUIRE(param != nullptr);
     REQUIRE(param->isChangedFromLoaded());
     REQUIRE(editBuffer->isModified());
     REQUIRE(editBuffer->findAnyParameterChanged());
 
-    param->undoableRecallFromPreset();
+    useCase.recallParameterFromPreset();
     editBuffer->TEST_doDeferredJobs();
 
     REQUIRE_FALSE(editBuffer->isModified());
@@ -428,12 +430,14 @@ TEST_CASE("Load <-> Changed")
       REQUIRE(param->isChangedFromLoaded());
     }
 
+    ParameterUseCases useCase(param);
+
     REQUIRE(param != nullptr);
     REQUIRE(param->isChangedFromLoaded());
     REQUIRE(editBuffer->isModified());
     REQUIRE(editBuffer->findAnyParameterChanged());
 
-    param->undoableRecallFromPreset();
+    useCase.recallParameterFromPreset();
     editBuffer->TEST_doDeferredJobs();
 
     REQUIRE_FALSE(editBuffer->isModified());
@@ -450,7 +454,7 @@ TEST_CASE("Load <-> Changed")
       editBuffer->undoableLoad(scope->getTransaction(), presets.getLayerPreset(), true);
       editBuffer->TEST_doDeferredJobs();
 
-      param = editBuffer->findParameterByID({ 247, VoiceGroup::Global });
+      param = editBuffer->findParameterByID({ C15::PID::Master_Volume, VoiceGroup::Global });
       REQUIRE(param != nullptr);
       REQUIRE_FALSE(param->isChangedFromLoaded());
 
@@ -460,12 +464,14 @@ TEST_CASE("Load <-> Changed")
       REQUIRE(param->isChangedFromLoaded());
     }
 
+    ParameterUseCases useCase(param);
+
     REQUIRE(param != nullptr);
     REQUIRE(param->isChangedFromLoaded());
     REQUIRE(editBuffer->isModified());
     REQUIRE(editBuffer->findAnyParameterChanged());
 
-    param->undoableRecallFromPreset();
+    useCase.recallParameterFromPreset();
     editBuffer->TEST_doDeferredJobs();
 
     REQUIRE_FALSE(editBuffer->isModified());

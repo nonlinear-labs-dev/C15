@@ -5,7 +5,7 @@
 class RandomizeItem : public EditorItem
 {
  public:
-  RandomizeItem(const Rect& rect);
+  explicit RandomizeItem(const Rect& rect);
   ~RandomizeItem() override;
   MenuOverlay* createOverlay() override;
 };
@@ -13,7 +13,7 @@ class RandomizeItem : public EditorItem
 class RandomizePart : public EditorItem
 {
  public:
-  RandomizePart(const Rect& r);
+  explicit RandomizePart(const Rect& r);
   ~RandomizePart() override;
 
   MenuOverlay* createOverlay() override;

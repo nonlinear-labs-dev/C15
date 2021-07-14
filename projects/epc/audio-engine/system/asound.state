@@ -1,0 +1,23 @@
+state.PCH {
+    control.1 {
+        iface MIXER
+        name 'Master Playback Volume'
+        value.0 87
+        value.1 87
+        comment {
+            access 'read write'
+            type INTEGER
+            count 2
+            range '0 - 87'
+            dbmin -6525
+            dbmax 0
+            dbvalue.0 0
+            dbvalue.1 0
+        }
+    }
+}
+
+state.EMPHASE {
+    control {
+    }
+}

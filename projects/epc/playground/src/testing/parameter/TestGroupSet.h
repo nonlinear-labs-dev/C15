@@ -5,7 +5,7 @@
 
 class TestGroupSet : public ParameterGroupSet
 {
-public:
+ public:
   explicit TestGroupSet(TestRootDocument *root);
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 };

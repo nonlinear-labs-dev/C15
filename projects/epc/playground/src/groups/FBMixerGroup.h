@@ -6,7 +6,7 @@ class FBMixerGroup : public ParameterGroup
 {
  public:
   FBMixerGroup(ParameterGroupSet *parent, VoiceGroup voicegroup);
-  virtual ~FBMixerGroup();
+  ~FBMixerGroup() override;
 
-  void init();
+  void init() override;
 };

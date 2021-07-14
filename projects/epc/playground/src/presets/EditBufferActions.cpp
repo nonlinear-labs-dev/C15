@@ -19,6 +19,12 @@
 #include <parameter_declarations.h>
 #include <http/SoupOutStream.h>
 #include <parameters/SplitPointParameter.h>
+#include <use-cases/ParameterUseCases.h>
+#include <use-cases/ModParameterUseCases.h>
+#include <use-cases/RibbonParameterUseCases.h>
+#include <use-cases/PedalParameterUseCases.h>
+#include <iomanip>
+#include <presets/LoadedPresetLog.h>
 
 //NonMember helperFunctions pre:
 IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer);
@@ -30,73 +36,92 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     Application::get().getAudioEngineProxy()->sendEditBuffer();
   });
 
+  addAction("restore", [=](std::shared_ptr<NetworkRequest> request) mutable {
+    using namespace std::chrono;
+    auto time = std::stoll(request->get("timestamp"));
+    auto& scope = editBuffer->getUndoScope();
+
+    if(auto transaction = scope.findTransactionAt(system_clock::time_point(system_clock::duration(time))))
+    {
+      auto currentTip = scope.getUndoTransaction();
+      auto log = editBuffer->getLoadedPresetLog();
+      log->freeze();
+      scope.undoJump(UNDO::StringTools::buildString(reinterpret_cast<size_t>(transaction)));
+      auto p = std::make_unique<Preset>(editBuffer->getParent(), *editBuffer, Uuid::restored());
+      scope.undoJump(UNDO::StringTools::buildString(reinterpret_cast<size_t>(currentTip)));
+      EditBufferUseCases ebUseCases(editBuffer);
+      std::stringstream nameBuilder;
+      std::time_t tt = system_clock::to_time_t(system_clock::time_point(system_clock::duration(time)));
+      std::tm tm = *std::localtime(&tt);
+      nameBuilder << "Restore at " << std::put_time(&tm, "%H:%M:%S");
+      ebUseCases.undoableLoad(p.get(), nameBuilder.str());
+      log->thaw();
+    }
+  });
+
   addAction("select-param", [=](std::shared_ptr<NetworkRequest> request) mutable {
     Glib::ustring id = request->get("id");
-    editBuffer->undoableSelectParameter(ParameterId(id));
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.selectParameter(ParameterId(id), false);
   });
 
   addAction("set-param", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto value = std::stod(request->get("value"));
-    editBuffer->setParameter(ParameterId(id), value);
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setParameter(ParameterId(id), value);
   });
 
   addAction("set-splits", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto value = std::stod(request->get("value"));
     auto otherValue = std::stod(request->get("other-value"));
-
-    if(auto s = dynamic_cast<SplitPointParameter*>(editBuffer->findParameterByID(ParameterId(id))))
-    {
-      auto other = s->getSibling();
-      auto scope
-          = s->getUndoScope().startContinuousTransaction(s, "Set '%0'", s->getGroupAndParameterNameWithVoiceGroup());
-      s->setCPFromWebUI(scope->getTransaction(), value);
-      other->setCPFromWebUI(scope->getTransaction(), otherValue);
-    }
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setSplits(ParameterId(id), value, otherValue);
   });
 
   addAction("set-mod-amount", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto amount = std::stod(request->get("amount"));
     auto id = request->get("id");
-    editBuffer->setModulationAmount(amount, ParameterId { id });
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setModulationAmount(amount, ParameterId { id });
   });
 
   addAction("set-mod-src", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto src = std::stoi(request->get("source"));
     auto id = request->get("id");
-    editBuffer->setModulationSource(static_cast<MacroControls>(src), ParameterId { id });
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setModulationSource(static_cast<MacroControls>(src), ParameterId { id });
   });
 
   addAction("reset", [=](std::shared_ptr<NetworkRequest>) mutable {
-    auto scope = editBuffer->getUndoScope().startTransaction("Init Sound");
-    editBuffer->undoableInitSound(scope->getTransaction(), Defaults::UserDefault);
+    SoundUseCases useCase { editBuffer, editBuffer->getParent() };
+    useCase.initSound();
   });
 
   addAction("rename-mc", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto newName = request->get("new-name");
-
-    if(auto param = dynamic_cast<MacroControlParameter*>(editBuffer->findParameterByID(ParameterId(id))))
-      param->undoableSetGivenName(newName);
+    EditBufferUseCases useCase { editBuffer };
+    if(auto mcUseCase = useCase.getMCUseCase(ParameterId { id }))
+    {
+      mcUseCase->setName(newName);
+    }
   });
 
   addAction("reset-scale", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto scope = editBuffer->getUndoScope().startTransaction("Reset Scale Group");
-
-    for(auto scaleParam : getScaleParameters(editBuffer))
-    {
-      auto transaction = scope->getTransaction();
-      scaleParam->reset(transaction, Initiator::EXPLICIT_WEBUI);
-    }
+    EditBufferUseCases useCase { editBuffer };
+    useCase.resetScaleGroup();
   });
 
   addAction("set-macrocontrol-info", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
     auto info = request->get("info");
-
-    if(auto param = dynamic_cast<MacroControlParameter*>(editBuffer->findParameterByID(ParameterId(id))))
-      param->undoableSetInfo(info);
+    EditBufferUseCases useCase { editBuffer };
+    if(auto mcUseCase = useCase.getMCUseCase(ParameterId { id }))
+    {
+      mcUseCase->setInfo(info);
+    }
   });
 
   addAction("set-ribbon-touch-behaviour", [=](std::shared_ptr<NetworkRequest> request) mutable {
@@ -105,8 +130,8 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
     if(auto param = dynamic_cast<RibbonParameter*>(editBuffer->findParameterByID(ParameterId(id))))
     {
-      auto scope = editBuffer->getUndoScope().startTransaction("Set ribbon touch behaviour");
-      param->undoableSetRibbonTouchBehaviour(scope->getTransaction(), mode);
+      RibbonParameterUseCases useCase(param);
+      useCase.setTouchBehaviour(mode);
     }
   });
 
@@ -116,8 +141,8 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
     if(auto param = dynamic_cast<RibbonParameter*>(editBuffer->findParameterByID(ParameterId(id))))
     {
-      auto scope = editBuffer->getUndoScope().startTransaction("Set ribbon return mode");
-      param->undoableSetRibbonReturnMode(scope->getTransaction(), mode);
+      RibbonParameterUseCases useCase(param);
+      useCase.setReturnMode(mode);
     }
   });
 
@@ -127,176 +152,149 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
 
     if(auto param = dynamic_cast<PedalParameter*>(editBuffer->findParameterByID(ParameterId(id))))
     {
-      auto scope = editBuffer->getUndoScope().startTransaction("Set pedal mode");
-      param->undoableSetPedalMode(scope->getTransaction(), mode);
+      PedalParameterUseCases useCase(param);
+      useCase.setPedalMode(mode);
     }
   });
 
   addAction("reset-modulation", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
-
-    if(auto param = dynamic_cast<MacroControlParameter*>(editBuffer->findParameterByID(ParameterId(id))))
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto mcUseCase = ebUseCases.getMCUseCase(ParameterId { id }))
     {
-      param->undoableResetConnectionsToTargets();
+      mcUseCase->resetConnectionsToTargets();
     }
   });
 
-  addAction("randomize-sound", [=](std::shared_ptr<NetworkRequest>) mutable {
-    auto scope = editBuffer->getUndoScope().startTransaction("Randomize Sound");
-    editBuffer->undoableRandomize(scope->getTransaction(), Initiator::EXPLICIT_WEBUI);
+  addAction("randomize-sound", [=](const std::shared_ptr<NetworkRequest>&) mutable {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.randomizeSound();
   });
 
-  addAction("init-sound", [=](std::shared_ptr<NetworkRequest>) mutable {
-    auto scope = editBuffer->getUndoScope().startTransaction("Init Sound");
-    editBuffer->undoableInitSound(scope->getTransaction(), Defaults::UserDefault);
+  addAction("init-sound", [=](const std::shared_ptr<NetworkRequest>&) mutable {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.initSound();
   });
 
-  addAction("init-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Init Part");
-    editBuffer->undoableInitPart(scope->getTransaction(), vg, Defaults::UserDefault);
+  addAction("init-part", [=](const std::shared_ptr<NetworkRequest>& request) mutable {
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.initPart(to<VoiceGroup>(request->get("part")));
   });
 
   addAction("rename-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
     auto name = request->get("name");
-    auto scope = editBuffer->getUndoScope().startTransaction("Rename Part");
-    editBuffer->setVoiceGroupName(scope->getTransaction(), name, vg);
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.renamePart(vg, name);
   });
 
   addAction("randomize-part", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Randomize Part");
-    editBuffer->undoableRandomizePart(scope->getTransaction(), vg, Initiator::EXPLICIT_WEBUI);
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.randomizePart(to<VoiceGroup>(request->get("part")));
   });
 
   addAction("mute", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Mute " + toString(vg));
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg })->setCPFromWebUI(scope->getTransaction(), 1);
+    EditBufferUseCases useCase(editBuffer);
+    useCase.mutePart(vg);
   });
 
   addAction("unmute", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Unmute " + toString(vg));
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg })->setCPFromWebUI(scope->getTransaction(), 0);
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.unmutePart(vg);
   });
 
   addAction("mute-part-unmute-other", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto vg = to<VoiceGroup>(request->get("part"));
-    auto scope = editBuffer->getUndoScope().startTransaction("Mute " + toString(vg));
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg })->setCPFromWebUI(scope->getTransaction(), 1);
-    editBuffer->findParameterByID({ C15::PID::Voice_Grp_Mute, vg == VoiceGroup::I ? VoiceGroup::II : VoiceGroup::I })
-        ->setCPFromWebUI(scope->getTransaction(), 0);
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.mutePartUnmuteOtherPart(vg);
   });
 
   addAction("set-modamount-and-value", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = request->get("id");
+    auto modAmount = std::stod(request->get("mod-amount"));
+    auto value = std::stod(request->get("value"));
     auto paramId = ParameterId(id);
-    if(auto param = dynamic_cast<ModulateableParameter*>(editBuffer->findParameterByID(paramId)))
-    {
-      auto modAmount = std::stod(request->get("mod-amount"));
-      auto value = std::stod(request->get("value"));
-
-      auto isDual = editBuffer->isDual();
-      auto withSuffix = isDual && paramId.isDual();
-
-      auto scope = editBuffer->getUndoScope().startContinuousTransaction(
-          param->getAmountCookie(), "Set Modulation Amount for '%0'",
-          withSuffix ? param->getGroupAndParameterNameWithVoiceGroup() : param->getGroupAndParameterName());
-      auto transaction = scope->getTransaction();
-      param->undoableSetModAmount(transaction, modAmount);
-      param->setCPFromHwui(transaction, value);
-    }
+    EditBufferUseCases useCase(editBuffer);
+    useCase.setModAmountAndValue(paramId, modAmount, value);
   });
 
   addAction("set-modulation-limit", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto id = ParameterId { request->get("id") };
     auto newAmt = std::stod(request->get("mod-amt"));
     auto newParamVal = std::stod(request->get("param-val"));
-    if(auto param = dynamic_cast<ModulateableParameter*>(editBuffer->findParameterByID(id)))
-    {
-      auto scope = param->getUndoScope().startContinuousTransaction(param, "Set Modulation Limit for '%0'",
-                                                                    param->getGroupAndParameterName());
-
-      param->undoableSetModAmount(scope->getTransaction(), newAmt);
-      param->setCPFromHwui(scope->getTransaction(), newParamVal);
-    }
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.setModulationLimit(id, newAmt, newParamVal);
   });
 
   addAction("unlock-all-groups", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto scope = editBuffer->getUndoScope().startTransaction("Unlock all Groups");
-    editBuffer->undoableUnlockAllGroups(scope->getTransaction());
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.unlockAllGroups();
   });
 
   addAction("lock-all-groups", [=](std::shared_ptr<NetworkRequest> request) mutable {
-    auto scope = editBuffer->getUndoScope().startTransaction("Unlock all Groups");
-    editBuffer->undoableLockAllGroups(scope->getTransaction());
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.lockAllGroups();
   });
 
   addAction("toggle-group-lock", [=](std::shared_ptr<NetworkRequest> request) mutable {
     auto groupId = request->get("group");
-    auto scope = editBuffer->getUndoScope().startTransaction("Toggle Group Lock");
-    editBuffer->undoableToggleGroupLock(scope->getTransaction(), groupId);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    ebUseCases.toggleLock(groupId);
   });
 
   addAction("recall-current-from-preset", [=](auto request) {
     auto id = request->get("id");
-    if(auto selParam = editBuffer->findParameterByID(ParameterId(id)))
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto paramUseCase = ebUseCases.getUseCase(ParameterId { id }))
     {
-      if(selParam->isChangedFromLoaded())
-      {
-        selParam->undoableRecallFromPreset();
-      }
+      paramUseCase->recallParameterFromPreset();
     }
   });
 
   addAction("recall-mc-for-current-mod-param", [=](auto request) {
     auto id = request->get("id");
-    if(auto selParam = editBuffer->findParameterByID(ParameterId(id)))
-    {
-      if(auto modP = dynamic_cast<ModulateableParameter*>(selParam))
-      {
-        modP->undoableRecallMCPos();
-      }
-    }
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto modUseCase = ebUseCases.getModParamUseCase(ParameterId { id }))
+      modUseCase->recallMCPos();
   });
 
   addAction("recall-mc-amount-for-current-mod-param", [=](auto request) {
     auto id = request->get("id");
-    if(auto selParam = editBuffer->findParameterByID(ParameterId(id)))
-    {
-      if(auto modP = dynamic_cast<ModulateableParameter*>(selParam))
-      {
-        modP->undoableRecallMCAmount();
-      }
-    }
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto modUseCase = ebUseCases.getModParamUseCase(ParameterId { id }))
+      modUseCase->recallMCAmount();
   });
 
   addAction("convert-to-single", [=](auto request) {
-    auto scope = editBuffer->getUndoScope().startTransaction("Convert to Single");
-    auto transaction = scope->getTransaction();
     auto voiceGroup = to<VoiceGroup>(request->get("voice-group"));
-    editBuffer->undoableConvertToSingle(transaction, voiceGroup);
-    Application::get().getHWUI()->setCurrentVoiceGroupAndUpdateParameterSelection(transaction, VoiceGroup::I);
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.convertToSingle(voiceGroup);
+    //TODO move functionality someplace else -> hwui subscribe to eb->onConverted?
+    //Application::get().getHWUI()->setCurrentVoiceGroupAndUpdateParameterSelection(transaction, VoiceGroup::I);
   });
 
   addAction("convert-to-split", [=](auto request) {
-    auto scope = editBuffer->getUndoScope().startTransaction("Convert to Split");
-    auto transaction = scope->getTransaction();
-    editBuffer->undoableConvertToDual(transaction, SoundType::Split);
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.convertToSplit();
   });
 
   addAction("convert-to-layer", [=](auto request) {
-    auto scope = editBuffer->getUndoScope().startTransaction("Convert to Layer");
-    auto transaction = scope->getTransaction();
-    editBuffer->undoableConvertToDual(transaction, SoundType::Layer);
+    SoundUseCases soundUseCases { editBuffer, editBuffer->getParent() };
+    soundUseCases.convertToLayer();
   });
 
   addAction("load-selected-preset-part-into-editbuffer-part", [=](auto request) {
     auto presetPart = to<VoiceGroup>(request->get("preset-part"));
     auto editbufferPartPart = to<VoiceGroup>(request->get("editbuffer-part"));
-    editBuffer->undoableLoadSelectedPresetPartIntoPart(presetPart, editbufferPartPart);
+
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto selectedPreset = editBuffer->getParent()->getSelectedPreset())
+    {
+      ebUseCases.undoableLoadToPart(selectedPreset, presetPart, editbufferPartPart);
+    }
   });
 
   addAction("load-preset-part-into-editbuffer-part", [=](auto request) {
@@ -305,13 +303,14 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto presetUUID = request->get("preset-uuid");
     auto pm = Application::get().getPresetManager();
 
-    if(auto presetToLoad = pm->findPreset(presetUUID))
+    EditBufferUseCases ebUseCases(editBuffer);
+    if(auto presetToLoad = pm->findPreset(Uuid { presetUUID }))
     {
-      editBuffer->undoableLoadToPart(presetToLoad, presetPart, loadTo);
+      ebUseCases.undoableLoadToPart(presetToLoad, presetPart, loadTo);
     }
   });
 
-  addAction("download-soled-as-png", [=](std::shared_ptr<NetworkRequest> request) {
+  addAction("download-soled-as-png", [=](const std::shared_ptr<NetworkRequest>& request) {
     if(auto httpRequest = std::dynamic_pointer_cast<HTTPRequest>(request))
     {
       auto hwui = Application::get().getHWUI();
@@ -328,6 +327,7 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
   });
 
   addAction("select-part-from-webui", [=](auto request) {
+    //TODO rethink what selected part really should be: datamodel? but not really as we have X foci for each webUI?
     auto part = to<VoiceGroup>(request->get("part"));
     auto hwui = Application::get().getHWUI();
     auto eb = Application::get().getPresetManager()->getEditBuffer();
@@ -344,13 +344,8 @@ EditBufferActions::EditBufferActions(EditBuffer* editBuffer)
     auto id = ParameterId(request->get("id"));
     if(auto p = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(id))
     {
-      p->toggleLoadDefaultValue();
+      ParameterUseCases useCase(p);
+      useCase.toggleLoadDefault();
     }
   });
-}
-
-IntrusiveList<EditBufferActions::tParameterPtr> getScaleParameters(EditBuffer* editBuffer)
-{
-  auto paramGroup = editBuffer->getParameterGroupByID({ "Scale", VoiceGroup::Global });
-  return paramGroup->getParameters();
 }

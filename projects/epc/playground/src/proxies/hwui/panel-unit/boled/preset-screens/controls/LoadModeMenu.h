@@ -30,6 +30,8 @@ class LoadModeMenu : public ControlWithChildren
   static bool isLoadToPartEnabled();
   static SoundType getSoundType();
 
+  const std::function<void(void)> m_toggleDirectLoadAction;
+
  protected:
   void setBackgroundColor(FrameBuffer& fb) const override;
 };

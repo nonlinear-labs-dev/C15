@@ -6,5 +6,5 @@ class PitchOscLinearStScaleConverter : public LinearScaleConverter
 {
  public:
   PitchOscLinearStScaleConverter();
-  virtual ~PitchOscLinearStScaleConverter();
+  ~PitchOscLinearStScaleConverter() override;
 };

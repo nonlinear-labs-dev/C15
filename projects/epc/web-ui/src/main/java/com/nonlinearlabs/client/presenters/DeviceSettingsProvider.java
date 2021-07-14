@@ -136,12 +136,6 @@ public class DeviceSettingsProvider {
 			notifyClients();
 			return true;
 		});
-
-		SetupModel.get().systemSettings.externalMidi.onChange(t -> {
-			settings.externalMidiEnabled = t.equals(BooleanValues.on);
-			notifyClients();
-			return true;
-		});
 	}
 
 	public void connectToPedal(int id, Pedal target) {

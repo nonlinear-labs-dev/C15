@@ -24,7 +24,7 @@ void MCAmountButton::update(const Parameter* parameter)
   {
     if(u->getModulationSource() == MacroControls::NONE)
     {
-      setText("back..");
+      setText(StringAndSuffix { "back.." });
       return;
     }
   }
@@ -32,12 +32,12 @@ void MCAmountButton::update(const Parameter* parameter)
   if(const auto* p = dynamic_cast<const ModulateableParameter*>(parameter))
   {
     if(p->getModulationSource() == MacroControls::NONE)
-      setText("");
+      setText(StringAndSuffix::empty());
     else
-      setText({ std::string("MC Amt") + (p->isModAmountChanged() ? "*" : "") });
+      setText(StringAndSuffix { std::string("MC Amt") + (p->isModAmountChanged() ? "*" : "") });
   }
   else
   {
-    setText("");
+    setText(StringAndSuffix::empty());
   }
 }

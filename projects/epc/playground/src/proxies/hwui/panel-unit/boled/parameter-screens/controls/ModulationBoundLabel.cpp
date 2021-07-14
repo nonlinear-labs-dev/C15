@@ -34,7 +34,7 @@ void ModulationBoundLabel::onParameterSelectionChanged(Parameter *oldParam, Para
   }
   else
   {
-    setText("");
+    setText(StringAndSuffix::empty());
   }
 }
 
@@ -57,7 +57,7 @@ void ModulationBoundLabel::onParameterChanged(const Parameter *param)
       }
       else
       {
-        setText("");
+        setText(StringAndSuffix::empty());
       }
     }
   }
@@ -91,15 +91,15 @@ void ModulationBoundLabel::setSuffixFontColor(FrameBuffer &fb) const
   fb.setColor(FrameBufferColors::C103);
 }
 
-Label::StringAndSuffix ModulationBoundLabel::shortenStringIfNeccessary(std::shared_ptr<Font> font,
-                                                                       const StringAndSuffix &text) const
+StringAndSuffix ModulationBoundLabel::shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                                                const StringAndSuffix &text) const
 {
   if(font->getStringWidth(text.text) >= getWidth())
   {
     auto sText = StringTools::removeSpaces(text.text);
     if(sText.find_last_of('F') != Glib::ustring::npos)
-      return { sText, 1 };
-    return { sText };
+      return StringAndSuffix { sText, 1 };
+    return StringAndSuffix { sText };
   }
-  return text;
+  return StringAndSuffix { text };
 }

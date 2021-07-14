@@ -4,7 +4,7 @@
 
 class VoiceGroupMasterGroup : public ParameterGroup
 {
-public:
+ public:
   VoiceGroupMasterGroup(ParameterGroupSet *parent, VoiceGroup voicegroup);
   void init() override;
 };

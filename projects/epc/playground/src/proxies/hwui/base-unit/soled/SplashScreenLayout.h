@@ -9,5 +9,5 @@ class SplashScreenLayout : public Layout
 
  public:
   SplashScreenLayout();
-  virtual ~SplashScreenLayout();
+  ~SplashScreenLayout() override;
 };

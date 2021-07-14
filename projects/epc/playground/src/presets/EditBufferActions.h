@@ -12,10 +12,9 @@ class EditBufferActions : public RPCActionManager
 
  public:
   typedef Parameter* tParameterPtr;
-  EditBufferActions(EditBuffer* editBuffer);
-  virtual ~EditBufferActions() = default;
+  explicit EditBufferActions(EditBuffer* editBuffer);
+  ~EditBufferActions() override = default;
 
- private:
   EditBufferActions(const EditBufferActions& other) = delete;
   EditBufferActions& operator=(const EditBufferActions&) = delete;
 };

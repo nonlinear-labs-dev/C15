@@ -8,18 +8,18 @@ class ParameterGroupSet;
 class ScaleGroup : public ParameterGroup
 {
  public:
-  ScaleGroup(ParameterGroupSet *parent);
-  virtual ~ScaleGroup();
+  explicit ScaleGroup(ParameterGroupSet* parent);
+  ~ScaleGroup() override;
 
-  void init();
+  void init() override;
   bool isAnyOffsetChanged() const;
   static int getScaleBaseParameterNumber();
 
   static bool isScaleParameter(const ParameterId& id);
   static bool isScaleParameter(const Parameter* parameter);
 
-private:
-  void onBaseKeyParameterChanged(const Parameter *baseKeyParameter);
+ private:
+  void onBaseKeyParameterChanged(const Parameter* baseKeyParameter);
 
   Throttler m_updateNames;
 };

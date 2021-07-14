@@ -6,8 +6,8 @@ class Point
   Point(int x, int y);
   virtual ~Point();
 
-  int getX() const;
-  int getY() const;
+  [[nodiscard]] int getX() const;
+  [[nodiscard]] int getY() const;
   void moveBy(int x, int y);
 
   void setX(int x);

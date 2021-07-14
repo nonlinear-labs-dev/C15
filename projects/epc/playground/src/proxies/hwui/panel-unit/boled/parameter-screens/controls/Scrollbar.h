@@ -12,7 +12,7 @@ class Scrollbar : public Control
  public:
   Scrollbar(Scrollable *content, const Rect &pos);
 
-  virtual bool redraw(FrameBuffer &fb) override;
+  bool redraw(FrameBuffer &fb) override;
 
  private:
   void onClientsDirtyStateChanged(bool isDirty);

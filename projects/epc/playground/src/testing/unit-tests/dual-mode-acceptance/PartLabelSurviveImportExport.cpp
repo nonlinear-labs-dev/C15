@@ -46,7 +46,8 @@ TEST_CASE("Export/Import Presets With Part Names", "[Preset][Store][Export][Impo
 
       {
         PresetBankSerializer serializer(bank, false);
-        XmlWriter writer(std::make_unique<FileOutStream>("/tmp/testbank.xml", false));
+        FileOutStream stream("/tmp/testbank.xml", false);
+        XmlWriter writer(stream);
         serializer.write(writer, VersionAttribute::get());
       }
 

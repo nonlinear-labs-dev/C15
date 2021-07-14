@@ -15,14 +15,16 @@ ToOledsBridge::ToOledsBridge()
   if(Application::get().getOptions()->doTimeStamps())
     Glib::MainContext::get_default()->signal_timeout().connect_seconds(
         sigc::mem_fun(this, &ToOledsBridge::printTurnaroundTime), 1);
+
+  nltools::msg::send(nltools::msg::EndPoint::Playground, nltools::msg::OLEDState { 0 });
 }
 
 void ToOledsBridge::onMessageReceived(const nltools::msg::SetOLEDMessage &msg)
 {
   if(auto fbs = static_cast<FrameBufferSender *>(m_sender.get()))
-  {
     fbs->send(msg.pixels, sizeof(msg.pixels));
-  }
+
+  nltools::msg::send(nltools::msg::EndPoint::Playground, nltools::msg::OLEDState { msg.messageId });
 }
 
 void ToOledsBridge::onTimestampedMessageRecieved(const nltools::msg::SetTimestampedOledMessage &msg)

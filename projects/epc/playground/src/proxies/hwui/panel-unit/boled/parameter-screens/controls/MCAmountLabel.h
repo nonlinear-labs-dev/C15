@@ -12,8 +12,8 @@ class MCAmountLabel : public Label
   typedef Label super;
 
  public:
-  MCAmountLabel(const Rect &rect);
-  virtual ~MCAmountLabel();
+  explicit MCAmountLabel(const Rect &rect);
+  ~MCAmountLabel() override;
 
  private:
   MCAmountLabel(const MCAmountLabel &other);
@@ -22,7 +22,7 @@ class MCAmountLabel : public Label
   void onParameterSelected(Parameter *newParameter);
   void onModifiersChanged();
   void update(const Parameter *parameter);
-  virtual void setSuffixFontColor(FrameBuffer &fb) const override;
+  void setSuffixFontColor(FrameBuffer &fb) const override;
 
   sigc::connection m_paramValueConnection;
 };

@@ -6,7 +6,7 @@ import com.nonlinearlabs.client.world.Control;
 import com.nonlinearlabs.client.world.Position;
 import com.nonlinearlabs.client.world.pointer.Gesture.HasPosition;
 
-public class TouchPinch extends Gesture implements HasPosition {
+public class TouchPinch extends Gesture implements HasPosition, Gesture.NeedsFocus {
 
 	private ArrayList<Position> touches;
 

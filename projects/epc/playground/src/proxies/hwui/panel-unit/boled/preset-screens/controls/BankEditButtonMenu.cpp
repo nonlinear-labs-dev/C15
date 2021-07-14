@@ -20,7 +20,6 @@
 #include <tools/TimeTools.h>
 #include <nltools/GenericScopeGuard.h>
 #include <device-settings/Settings.h>
-#include <device-settings/ExternalMidiEnabledSetting.h>
 
 static size_t s_lastSelectedButton = 0;
 
@@ -79,17 +78,14 @@ void BankEditButtonMenu::rebuildFullMenu()
 
   addButton("Delete", std::bind(&BankEditButtonMenu::deleteBank, this));
 
-  if(Application::get().getSettings()->getSetting<ExternalMidiEnabledSetting>()->get())
+  if(Application::get().getPresetManager()->findMidiSelectedBank()
+     != Application::get().getPresetManager()->getSelectedBank())
   {
-    if(Application::get().getPresetManager()->findMidiSelectedBank()
-       != Application::get().getPresetManager()->getSelectedBank())
-    {
-      addButton("Rec. Midi PC", std::bind(&BankEditButtonMenu::selectMidi, this));
-    }
-    else
-    {
-      addButton("Rem. Midi PC", std::bind(&BankEditButtonMenu::removeMidi, this));
-    }
+    addButton("MIDI PC: On", std::bind(&BankEditButtonMenu::selectMidi, this));
+  }
+  else
+  {
+    addButton("MIDI PC: Off", std::bind(&BankEditButtonMenu::removeMidi, this));
   }
 
   addButton("Move Left", std::bind(&BankEditButtonMenu::moveLeft, this));
@@ -121,22 +117,12 @@ void BankEditButtonMenu::selectButton(size_t i)
 void BankEditButtonMenu::newBank()
 {
   auto pm = Application::get().getPresetManager();
-  auto scope = pm->getUndoScope().startTransaction("New bank");
-  auto transaction = scope->getTransaction();
-  auto newBank = pm->addBank(transaction);
-  auto pos = pm->calcDefaultBankPositionFor(newBank);
-  newBank->setX(transaction, to_string(pos.first));
-  newBank->setY(transaction, to_string(pos.second));
-  pm->selectBank(transaction, newBank->getUuid());
-  auto layout = new RenameBankLayout(transaction, [](auto transaction) {
-    Application::get().getHWUI()->undoableSetFocusAndMode(transaction, FocusAndMode(UIFocus::Presets, UIMode::Select));
-  });
-  Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
-}
+  PresetManagerUseCases useCases(pm);
+  auto pos = pm->calcDefaultBankPositionForNewBank();
+  useCases.newBank(std::to_string(pos.first), std::to_string(pos.second));
 
-BankEditButtonMenu::FileInfos BankEditButtonMenu::extractFileInfos(const std::filesystem::directory_entry& file)
-{
-  return FileInfos { file };
+  auto layout = new RenameBankLayout();
+  Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().setOverlay(layout);
 }
 
 bool BankEditButtonMenu::applicableBackupFilesFilter(const std::filesystem::directory_entry& term)
@@ -149,17 +135,14 @@ bool BankEditButtonMenu::applicableBackupFilesFilter(const std::filesystem::dire
 void BankEditButtonMenu::importBankFromPath(const std::filesystem::directory_entry& file)
 {
   auto hwui = Application::get().getHWUI();
+
   if(file != std::filesystem::directory_entry())
   {
-    auto fileInfos = extractFileInfos(file);
-
     hwui->getPanelUnit().getEditPanel().getBoled().setOverlay(new SplashLayout());
-
-    FileInStream stream(fileInfos.filePath, false);
-    SplashLayout::addStatus("Importing " + fileInfos.fileName);
-    auto& bankActions = Application::get().getPresetManager()->findActionManager<BankActions>();
-    bankActions.importBank(stream, "0", "0", fileInfos.fileName);
+    PresetManagerUseCases useCase(Application::get().getPresetManager());
+    useCase.importBankFromPath(file, [](const std::string& name) { SplashLayout::addStatus("Importing " + name); });
   }
+
   hwui->getPanelUnit().getEditPanel().getBoled().resetOverlay();
   hwui->getPanelUnit().setupFocusAndMode({ UIFocus::Presets, UIMode::Select });
 }
@@ -198,14 +181,12 @@ void BankEditButtonMenu::exportBank()
 
 void BankEditButtonMenu::writeSelectedBankToFile(Bank* selBank, const std::string& outFile)
 {
-  GenericScopeGuard syncAfterAllFileOperation([] {}, FileSystem::syncAll);
-  SplashLayout::addStatus("Exporting " + selBank->getName(true));
-  auto scope = UNDO::Scope::startTrashTransaction();
-  selBank->setAttribute(scope->getTransaction(), "Date of Export File", TimeTools::getAdjustedIso());
-  selBank->setAttribute(scope->getTransaction(), "Name of Export File", outFile);
-  PresetBankSerializer serializer(selBank, false);
-  XmlWriter writer(std::make_unique<FileOutStream>(outFile, false));
-  serializer.write(writer, VersionAttribute::get());
+  if(selBank)
+  {
+    SplashLayout::addStatus("Exporting " + selBank->getName(true));
+    BankUseCases useCase(selBank);
+    useCase.exportBankToFile(outFile);
+  }
 }
 
 void BankEditButtonMenu::renameBank()
@@ -237,10 +218,10 @@ void BankEditButtonMenu::pasteBank()
 void BankEditButtonMenu::deleteBank()
 {
   auto pm = Application::get().getPresetManager();
-  auto useCases = Application::get().getPresetManagerUseCases();
+  PresetManagerUseCases useCases(pm);
   if(auto bank = pm->getSelectedBank())
   {
-    useCases->deleteBank(bank);
+    useCases.deleteBank(bank);
   }
 
   auto hwui = Application::get().getHWUI();
@@ -251,44 +232,32 @@ void BankEditButtonMenu::deleteBank()
 void BankEditButtonMenu::moveLeft()
 {
   auto pm = Application::get().getPresetManager();
-
+  PresetManagerUseCases useCase(pm);
   if(auto bank = pm->getSelectedBank())
-  {
-    auto pos = pm->getBankPosition(bank->getUuid());
-    if(pos > 0)
-    {
-      auto scope = bank->getUndoScope().startTransaction("Move bank '%0' left", bank->getName(true));
-      pm->setOrderNumber(scope->getTransaction(), bank->getUuid(), pos - 1);
-    }
-  }
+    useCase.moveLeft(bank);
 }
 
 void BankEditButtonMenu::moveRight()
 {
   auto pm = Application::get().getPresetManager();
+  PresetManagerUseCases useCase(pm);
 
   if(auto bank = pm->getSelectedBank())
-  {
-    auto pos = pm->getBankPosition(bank->getUuid()) + 1;
-    if(pos < pm->getNumBanks())
-    {
-      auto scope = bank->getUndoScope().startTransaction("Move bank '%0' right", bank->getName(true));
-      pm->setOrderNumber(scope->getTransaction(), bank->getUuid(), pos);
-    }
-  }
+    useCase.moveRight(bank);
 }
 
 void BankEditButtonMenu::selectMidi()
 {
-  auto bank = Application::get().getPresetManager()->getSelectedBank();
-  auto useCases = Application::get().getPresetManagerUseCases();
-  useCases->selectMidiBank(bank);
+  auto pm = Application::get().getPresetManager();
+  auto bank = pm->getSelectedBank();
+  PresetManagerUseCases useCases(pm);
+  useCases.selectMidiBank(bank);
 }
 
 void BankEditButtonMenu::removeMidi()
 {
-  auto useCases = Application::get().getPresetManagerUseCases();
-  useCases->selectMidiBank(nullptr);
+  PresetManagerUseCases useCases(Application::get().getPresetManager());
+  useCases.selectMidiBank(nullptr);
 }
 
 void BankEditButtonMenu::correctMenuSelection()

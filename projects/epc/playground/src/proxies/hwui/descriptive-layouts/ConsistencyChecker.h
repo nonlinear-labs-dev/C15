@@ -9,7 +9,7 @@ namespace DescriptiveLayouts
   class ConsistencyChecker
   {
    public:
-    ConsistencyChecker(std::ostream &out);
+    explicit ConsistencyChecker(std::ostream &out);
 
     bool checkAll();
 

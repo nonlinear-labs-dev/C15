@@ -1,0 +1,13 @@
+[Unit]
+Description=Redirect websocket for preset loading logs
+After=syslog.target network.target
+
+[Service]
+ExecStart=/bin/socat TCP-LISTEN:@PLAYGROUND_PRESETLOAD_LOG_PORT@,fork TCP:192.168.10.10:@PLAYGROUND_PRESETLOAD_LOG_PORT@
+Restart=always
+RestartSec=1
+StartLimitInterval=200
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

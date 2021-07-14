@@ -14,7 +14,7 @@ class UpperRibbon : public Ribbon
 
  public:
   UpperRibbon();
-  ~UpperRibbon();
+  ~UpperRibbon() override;
 
  private:
   void onParamSelectionChanged(Parameter* oldOne, Parameter* newOne);
@@ -24,7 +24,7 @@ class UpperRibbon : public Ribbon
   void reconnect();
   Parameter* getResponsibleParameter();
 
-  int posToLedID(int pos) const;  // 0 -> 32 ... 16 -> 0
+  [[nodiscard]] int posToLedID(int pos) const override;  // 0 -> 32 ... 16 -> 0
 
   sigc::connection m_paramConnection;
 

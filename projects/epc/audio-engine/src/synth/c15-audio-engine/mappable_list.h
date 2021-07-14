@@ -28,6 +28,7 @@ template <uint32_t Length> class SortedList
     for(uint32_t i = 0; i < Length; i++)
     {
       m_prev[i] = m_next[i] = -1;
+      m_set[i] = false;
     }
   }
   inline void appendElement(const uint32_t _element)
@@ -47,6 +48,7 @@ template <uint32_t Length> class SortedList
       m_prev[_element] = last;
       m_next[_element] = -1;
     }
+    m_set[_element] = true;
     m_assigned++;
   }
   inline void insertElement(const uint32_t _element)
@@ -90,6 +92,7 @@ template <uint32_t Length> class SortedList
         }
       }
     }
+    m_set[_element] = true;
     m_assigned++;
   }
   inline void removeElement(const uint32_t _element)
@@ -126,6 +129,7 @@ template <uint32_t Length> class SortedList
         m_head = m_tail = -1;
         break;
     }
+    m_set[_element] = false;
     m_assigned--;
   }
   inline const bool isFirstElement(const uint32_t _element)
@@ -144,9 +148,14 @@ template <uint32_t Length> class SortedList
   {
     return m_tail;
   }
+  inline bool containsElement(const uint32_t _element)
+  {
+    return m_set[_element];
+  }
 
  private:
   int32_t m_prev[Length] = {}, m_next[Length] = {}, m_head = -1, m_tail = -1;
+  bool m_set[Length] = {};
 };
 
 // mappable list (multiple assignments)

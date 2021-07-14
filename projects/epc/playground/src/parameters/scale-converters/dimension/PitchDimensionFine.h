@@ -11,6 +11,6 @@ class PitchDimensionFine : public Dimension
   virtual ~PitchDimensionFine();
 
   static const PitchDimensionFine& get();
-  Glib::ustring getStingizerJS() const override;
-  Glib::ustring stringize(const tDisplayValue& displayValue) const override;
+  [[nodiscard]] Glib::ustring getStingizerJS() const override;
+  [[nodiscard]] Glib::ustring stringize(const tDisplayValue& displayValue) const override;
 };

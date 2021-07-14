@@ -20,15 +20,15 @@ void EditBankInfoLayout::commit(const Glib::ustring &comment)
 {
   if(m_currentBank)
   {
-    UNDO::Scope::tTransactionScopePtr scope = m_currentBank->getUndoScope().startTransaction("Set Bank Comment");
-    m_currentBank->setAttribute(scope->getTransaction(), "Comment", comment);
+    BankUseCases useCase(m_currentBank);
+    useCase.setBankComment(comment);
   }
 }
 
 Glib::ustring EditBankInfoLayout::getInitialText() const
 {
   if(m_currentBank)
-    return m_currentBank->getAttribute("Comment", "");
+    return m_currentBank->getComment();
 
   return "";
 }

@@ -7,7 +7,7 @@
 class StandardOutStream : public OutStream
 {
  public:
-  StandardOutStream(std::shared_ptr<std::ostream> out);
+  explicit StandardOutStream(std::shared_ptr<std::ostream> out);
 
  private:
   void implWrite(const Glib::ustring &str) override;

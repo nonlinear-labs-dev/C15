@@ -49,7 +49,7 @@ bool SOLEDScreenSaver::redraw(FrameBuffer& fb)
 
 void SOLEDScreenSaver::init()
 {
-  m_scrollingLabel = addControl(new Label({ "C15", 0 }, { 1, 0, 18, 9 }));
+  m_scrollingLabel = addControl(new Label(StringAndSuffix { "C15", 0 }, { 1, 0, 18, 9 }));
 }
 
 void SOLEDScreenSaver::destroy()

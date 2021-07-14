@@ -181,7 +181,8 @@ std::string PresetManagerCursor::getPresetType() const
 {
   if(auto p = getPreset())
   {
-    switch(p->getType()) {
+    switch(p->getType())
+    {
       case SoundType::Single:
         return "";
       case SoundType::Split:
@@ -194,7 +195,6 @@ std::string PresetManagerCursor::getPresetType() const
   }
   g_assert_not_reached();
 }
-
 
 std::string PresetManagerCursor::getBankName() const
 {

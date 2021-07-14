@@ -29,6 +29,7 @@
 #include <glibmm/main.h>
 #include <proxies/hwui/HWUI.h>
 #include <proxies/hwui/controls/SelectedParameterValue.h>
+#include <parameter_declarations.h>
 
 ParameterLayout2::ParameterLayout2()
     : super(Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled())
@@ -103,7 +104,7 @@ bool ParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
         return true;
 
       case Buttons::BUTTON_INFO:
-        Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Info);
+        Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Info });
         return true;
 
       case Buttons::BUTTON_DEFAULT:
@@ -121,7 +122,10 @@ bool ParameterLayout2::onButton(Buttons i, bool down, ButtonModifiers modifiers)
 void ParameterLayout2::setDefault()
 {
   if(auto p = getCurrentEditParameter())
-    p->toggleLoadDefaultValue();
+  {
+    ParameterUseCases useCase(p);
+    useCase.toggleLoadDefault();
+  }
 }
 
 void ParameterLayout2::onSoundTypeChanged()
@@ -135,14 +139,9 @@ bool ParameterLayout2::onRotary(int inc, ButtonModifiers modifiers)
 {
   if(auto p = getCurrentEditParameter())
   {
-    if(!p->isDisabled())
-    {
-      auto name = ParameterId::isGlobal(p->getID().getNumber()) ? p->getGroupAndParameterName()
-                                                                : p->getGroupAndParameterNameWithVoiceGroup();
-      auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", name);
-      p->stepCPFromHwui(scope->getTransaction(), inc, modifiers);
-      return true;
-    }
+    ParameterUseCases useCase(p);
+    useCase.incDec(inc, modifiers[ButtonModifier::FINE], modifiers[ButtonModifier::SHIFT]);
+    return true;
   }
 
   return super::onRotary(inc, modifiers);
@@ -233,7 +232,7 @@ bool ParameterSelectLayout2::onButton(Buttons i, bool down, ButtonModifiers modi
         return true;
 
       case Buttons::BUTTON_EDIT:
-        Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Edit);
+        Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Edit });
         return true;
     }
   }
@@ -286,7 +285,7 @@ bool ParameterEditLayout2::onButton(Buttons i, bool down, ButtonModifiers modifi
 
     if(Buttons::BUTTON_EDIT == i)
     {
-      Application::get().getHWUI()->undoableSetFocusAndMode(UIMode::Select);
+      Application::get().getHWUI()->undoableSetFocusAndMode(FocusAndMode { UIMode::Select });
       return true;
     }
   }
@@ -326,11 +325,11 @@ ParameterRecallLayout2::ParameterRecallLayout2()
         break;
     }
 
-    m_leftValue = addControl(new Label(p->getDisplayString(), Rect(67, 35, 58, 11)));
+    m_leftValue = addControl(new Label(StringAndSuffix { p->getDisplayString() }, Rect(67, 35, 58, 11)));
 
     auto displayString = p->getDisplayString(originalValue);
 
-    m_rightValue = addControl(new Label(displayString, Rect(131, 35, 58, 11)));
+    m_rightValue = addControl(new Label(StringAndSuffix { displayString }, Rect(131, 35, 58, 11)));
   }
 
   m_recallValue = getCurrentParameter()->getControlPositionValue();
@@ -402,20 +401,18 @@ void ParameterRecallLayout2::doRecall()
   {
     m_recallString = curr->getDisplayString();
     m_recallValue = curr->getControlPositionValue();
-    curr->undoableRecallFromPreset();
+    ParameterUseCases useCase(curr);
+    useCase.recallParameterFromPreset();
     updateUI(true);
   }
 }
 
 void ParameterRecallLayout2::undoRecall()
 {
-  auto &scope = Application::get().getPresetManager()->getUndoScope();
-  auto transactionScope
-      = scope.startTransaction("Recall %0 value from Editbuffer", getCurrentParameter()->getLongName());
-  auto transaction = transactionScope->getTransaction();
   if(auto curr = getCurrentParameter())
   {
-    curr->setCPFromHwui(transaction, m_recallValue);
+    ParameterUseCases useCase(curr);
+    useCase.undoRecallParameterFromPreset(m_recallValue);
     updateUI(false);
   }
 }
@@ -433,13 +430,13 @@ void ParameterRecallLayout2::updateUI(bool paramLikeInPreset)
   {
     if(paramLikeInPreset)
     {
-      m_leftValue->setText(p->getDisplayString());
-      m_rightValue->setText(m_recallString);
+      m_leftValue->setText(StringAndSuffix { p->getDisplayString() });
+      m_rightValue->setText(StringAndSuffix { m_recallString });
       m_slider->setValue(p->getControlPositionValue(), p->isBiPolar());
       m_rightValue->setHighlight(false);
       m_leftValue->setHighlight(true);
-      m_buttonB->setText("");
-      m_buttonC->setText("Recall");
+      m_buttonB->setText(StringAndSuffix::empty());
+      m_buttonC->setText(StringAndSuffix { "Recall" });
     }
     else
     {
@@ -447,13 +444,13 @@ void ParameterRecallLayout2::updateUI(bool paramLikeInPreset)
       auto originalValue = originalParam ? originalParam->getRecallValue() : p->getDefaultValue();
       auto displayString = p->getDisplayString(originalValue);
 
-      m_leftValue->setText(displayString);
-      m_rightValue->setText(p->getDisplayString());
+      m_leftValue->setText(StringAndSuffix { displayString });
+      m_rightValue->setText(StringAndSuffix { p->getDisplayString() });
       m_slider->setValue(m_recallValue, p->isBiPolar());
       m_leftValue->setHighlight(false);
       m_rightValue->setHighlight(true);
-      m_buttonC->setText("");
-      m_buttonB->setText("Recall");
+      m_buttonC->setText(StringAndSuffix::empty());
+      m_buttonB->setText(StringAndSuffix { "Recall" });
     }
   }
 }
@@ -474,7 +471,7 @@ void ParameterRecallLayout2::onParameterChanged(const Parameter *)
 PartMasterRecallLayout2::PartMasterRecallLayout2()
     : ParameterRecallLayout2()
     , m_muteParameter { Application::get().getPresetManager()->getEditBuffer()->findParameterByID(
-          { 395, Application::get().getHWUI()->getCurrentVoiceGroup() }) }
+          { C15::PID::Voice_Grp_Mute, Application::get().getHWUI()->getCurrentVoiceGroup() }) }
 {
   m_muteParameterConnection
       = m_muteParameter->onParameterChanged(sigc::hide(sigc::mem_fun(this, &PartMasterRecallLayout2::onMuteChanged)));
@@ -491,10 +488,10 @@ void PartMasterRecallLayout2::updateUI(bool paramLikeInPreset)
 
   if(!shouldShowNormalRecallScreen())
   {
-    m_buttonB->setText("");
-    m_buttonC->setText("");
-    m_leftValue->setText("");
-    m_rightValue->setText("");
+    m_buttonB->setText(StringAndSuffix::empty());
+    m_buttonC->setText(StringAndSuffix::empty());
+    m_leftValue->setText(StringAndSuffix::empty());
+    m_rightValue->setText(StringAndSuffix::empty());
   }
 }
 
@@ -530,19 +527,16 @@ bool PartMasterRecallLayout2::onButton(Buttons i, bool down, ButtonModifiers mod
 
 void PartMasterRecallLayout2::toggleMute() const
 {
-  auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction(
-      "Toggle Mute " + toString(m_muteParameter->getID().getVoiceGroup()));
-
-  if(m_muteParameter->getControlPositionValue() >= 0.5)
-    m_muteParameter->setCPFromHwui(scope->getTransaction(), 0);
-  else
-    m_muteParameter->setCPFromHwui(scope->getTransaction(), 1);
+  auto pm = Application::get().getPresetManager();
+  auto eb = pm->getEditBuffer();
+  EditBufferUseCases useCase(eb);
+  useCase.toggleMute(m_muteParameter->getID().getVoiceGroup());
 }
 
 void PartMasterRecallLayout2::onMuteChanged()
 {
   if(m_muteParameter->getControlPositionValue() > 0.5)
-    m_buttonA->setText("Unmute");
+    m_buttonA->setText(StringAndSuffix { "Unmute" });
   else
-    m_buttonA->setText("Mute");
+    m_buttonA->setText(StringAndSuffix { "Mute" });
 }

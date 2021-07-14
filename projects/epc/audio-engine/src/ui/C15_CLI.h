@@ -5,11 +5,12 @@
 #include <functional>
 
 class C15Synth;
+class AudioOutput;
 
 class C15_CLI : public CommandLineInterface
 {
  public:
-  C15_CLI(C15Synth *synth);
+  C15_CLI(C15Synth *synth, AudioOutput *audioOut);
 
  protected:
   void processByte(char c) override;

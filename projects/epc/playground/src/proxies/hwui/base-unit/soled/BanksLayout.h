@@ -16,8 +16,7 @@ class BanksLayout : public Layout
 
  public:
   BanksLayout();
-
-  virtual ~BanksLayout();
+  ~BanksLayout() override;
 
  private:
   void updateFromBank(const Bank *bank) const;
@@ -27,6 +26,7 @@ class BanksLayout : public Layout
 
   Label *m_number;
   Label *m_name;
+  Label *m_midiSymbol;
   sigc::connection m_bankconnection;
   DirectLoadIndicator *m_directLoad;
   Bank *m_bank = nullptr;

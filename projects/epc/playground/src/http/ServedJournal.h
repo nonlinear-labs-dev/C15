@@ -6,7 +6,7 @@ class ServedJournal : public ServedStream
 {
  public:
   ServedJournal(HTTPServer &server, std::shared_ptr<HTTPRequest> request);
-  virtual ~ServedJournal();
+  ~ServedJournal() override;
 
   void startServing() override;
 };

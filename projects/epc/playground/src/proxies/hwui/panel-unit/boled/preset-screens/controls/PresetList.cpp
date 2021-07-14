@@ -11,6 +11,8 @@
 #include <proxies/hwui/controls/Label.h>
 #include <proxies/hwui/controls/LeftAlignedLabel.h>
 #include "presets/Preset.h"
+#include <device-settings/Settings.h>
+#include <device-settings/DirectLoadSetting.h>
 
 PresetList::PresetList(const Rect& pos, bool showBankArrows)
     : super(pos, showBankArrows)
@@ -79,31 +81,22 @@ bool PresetList::onButton(Buttons i, bool down, ButtonModifiers modifiers)
   {
     auto focusAndMode = Application::get().getHWUI()->getFocusAndMode();
     auto pm = Application::get().getPresetManager();
+    PresetManagerUseCases useCase(pm);
 
     switch(i)
     {
       case Buttons::BUTTON_B:
         if(focusAndMode.focus == UIFocus::Banks)
-        {
-          if(auto bank = pm->getSelectedBank())
-            bank->selectPreviousPreset();
-        }
+          useCase.selectPreviousPreset();
         else
-        {
-          pm->selectPreviousBank();
-        }
+          useCase.selectPreviousBank();
         return true;
 
       case Buttons::BUTTON_C:
         if(focusAndMode.focus == UIFocus::Banks)
-        {
-          if(auto bank = pm->getSelectedBank())
-            bank->selectNextPreset();
-        }
+          useCase.selectNextPreset();
         else
-        {
-          pm->selectNextBank();
-        }
+          useCase.selectNextBank();
         return true;
     }
   }
@@ -128,56 +121,17 @@ void PresetList::onRotary(int inc, ButtonModifiers modifiers)
 
 void PresetList::stepBankSelection(int inc, const ButtonModifiers& modifiers, PresetManager* pm) const
 {
-  auto scope = pm->getUndoScope().startTransaction("Select Bank");
-
-  if(modifiers[SHIFT] && pm->getNumBanks() > 0)
-  {
-    selectFirstOrLastBank(inc, pm, scope);
-  }
-  else
-  {
-    stepBankSelection(inc, pm, scope);
-  }
+  PresetManagerUseCases useCase(pm);
+  useCase.stepBankSelection(inc, modifiers[SHIFT]);
 }
 
 void PresetList::stepPresetSelection(int inc, PresetManager* pm, Bank* bank) const
 {
-  if(auto current = bank->getSelectedPreset())
+  if(bank)
   {
-    auto currentPos = bank->getPresetPosition(current);
-    auto presetPosToSelect = std::max(0, std::min<int>(bank->getNumPresets() - 1, currentPos + inc));
-
-    if(auto presetToSelect = bank->getPresetAt(presetPosToSelect))
-    {
-      UNDO::Scope::tTransactionScopePtr scope = pm->getUndoScope().startContinuousTransaction(
-          pm, std::chrono::hours(1), presetToSelect->buildUndoTransactionTitle("Select Preset"));
-
-      bank->selectPreset(scope->getTransaction(), presetToSelect->getUuid());
-    }
+    BankUseCases useCase(bank);
+    useCase.stepPresetSelection(inc);
   }
-}
-
-void PresetList::stepBankSelection(int inc, PresetManager* pm, const UNDO::Scope::tTransactionScopePtr& scope) const
-{
-  while(inc < 0)
-  {
-    pm->selectPreviousBank(scope->getTransaction());
-    inc++;
-  }
-
-  while(inc > 0)
-  {
-    pm->selectNextBank(scope->getTransaction());
-    inc--;
-  }
-}
-
-void PresetList::selectFirstOrLastBank(int inc, PresetManager* pm, const UNDO::Scope::tTransactionScopePtr& scope) const
-{
-  if(inc < 0)
-    pm->selectBank(scope->getTransaction(), pm->getBanks().front()->getUuid());
-  else
-    pm->selectBank(scope->getTransaction(), pm->getBanks().back()->getUuid());
 }
 
 std::pair<size_t, size_t> PresetList::getSelectedPosition() const

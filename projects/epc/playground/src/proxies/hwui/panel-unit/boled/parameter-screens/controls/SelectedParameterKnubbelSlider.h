@@ -8,8 +8,8 @@ class SelectedParameterKnubbelSlider : public SelectedParameterDotSlider
   typedef SelectedParameterDotSlider super;
 
  public:
-  SelectedParameterKnubbelSlider(const Rect &rect);
+  explicit SelectedParameterKnubbelSlider(const Rect &rect);
 
  protected:
-  virtual void drawHandle(FrameBuffer &fb) override;
+  void drawHandle(FrameBuffer &fb) override;
 };

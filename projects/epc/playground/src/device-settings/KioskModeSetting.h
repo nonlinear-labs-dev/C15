@@ -4,8 +4,8 @@
 class KioskModeSetting : public BooleanSetting
 {
  public:
-  KioskModeSetting(UpdateDocumentContributor& settings);
-  virtual ~KioskModeSetting();
+  explicit KioskModeSetting(UpdateDocumentContributor& settings);
+  ~KioskModeSetting() override;
 
   bool set(Glib::ustring value);
   bool setBool(bool value);

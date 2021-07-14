@@ -152,5 +152,8 @@ void ModulationRoutingParameter::undoableRandomize(UNDO::Transaction *transactio
 
 void ModulationRoutingParameter::sendParameterMessage() const
 {
-  Application::get().getAudioEngineProxy()->createAndSendParameterMessage<ModulationRoutingParameter>(this);
+  if(Application::exists())
+  {
+    Application::get().getAudioEngineProxy()->createAndSendParameterMessage<ModulationRoutingParameter>(this);
+  }
 }

@@ -7,13 +7,13 @@ class Parameter;
 class ParameterSerializer : public Serializer
 {
  public:
-  ParameterSerializer(Parameter* param);
+  explicit ParameterSerializer(Parameter* param);
 
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer& writer) const;
-  void readTagContent(Reader& reader) const;
+  void writeTagContent(Writer& writer) const override;
+  void readTagContent(Reader& reader) const override;
 
   void tryLoadModulateableParameter(Reader& reader) const;
   void tryLoadMacroControlParameter(Reader& reader) const;

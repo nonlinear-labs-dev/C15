@@ -15,10 +15,10 @@ class GroupId
   bool operator==(const GroupId &other) const;
   bool operator!=(const GroupId &other) const;
 
-  const std::string &getName() const;
-  VoiceGroup getVoiceGroup() const;
+  [[nodiscard]] const std::string &getName() const;
+  [[nodiscard]] VoiceGroup getVoiceGroup() const;
 
-  std::string toString() const
+  [[nodiscard]] std::string toString() const
   {
     return ::toString(getVoiceGroup()) + "-" + getName();
   }

@@ -1,7 +1,5 @@
 #include "UnmodulateableUnisonParameter.h"
 
-
-
 Layout *UnmodulateableUnisonParameter::createLayout(FocusAndMode focusAndMode) const
 {
   switch(focusAndMode.mode)

@@ -11,7 +11,7 @@ class PassphraseView : public SetupLabel
 
  public:
   PassphraseView();
-  virtual ~PassphraseView();
+  ~PassphraseView() override;
 
  private:
   void onSettingChanged(const Setting *s);

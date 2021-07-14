@@ -12,14 +12,12 @@ class Caption : public Label
 
  public:
   Caption(const Glib::ustring &text, const Rect &pos);
-  virtual ~Caption();
+  ~Caption() override;
 
   bool redraw(FrameBuffer &fb) override;
 
  private:
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
-
-  void onParameterSelected(Parameter *newOne);
+  void setFontColor(FrameBuffer &fb) const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 };

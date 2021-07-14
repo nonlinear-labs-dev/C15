@@ -97,4 +97,14 @@ namespace StringTools
       return false;
     }
   }
+
+  std::vector<Glib::ustring> convert(const std::vector<std::string> &in)
+  {
+    std::vector<Glib::ustring> ret;
+    ret.reserve(in.size());
+    for(const auto &i : in)
+      ret.emplace_back(i);
+    return ret;
+  }
+
 }

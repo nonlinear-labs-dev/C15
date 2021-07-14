@@ -9,29 +9,31 @@
 
 ConvertToSoundTypeItem::ConvertToSoundTypeItem(const Rect& rect, SoundType toType)
     : AnimatedGenericItem(nltools::string::concat("Convert to ", toString(toType)), rect, [=] {
-      auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction(
-          nltools::string::concat("Convert Sound to ", toString(toType)));
-      auto transaction = scope->getTransaction();
-      auto currentVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
-
+      SoundUseCases useCases(Application::get().getPresetManager()->getEditBuffer(),
+                             Application::get().getPresetManager());
       switch(toType)
       {
         case SoundType::Single:
-          Application::get().getPresetManager()->getEditBuffer()->undoableConvertToSingle(transaction,
-                                                                                          currentVoiceGroup);
+        {
+          auto selectedVG = Application::get().getHWUI()->getCurrentVoiceGroup();
+          useCases.convertToSingle(selectedVG);
           break;
-
+        }
         case SoundType::Split:
-        case SoundType::Layer:
-          Application::get().getPresetManager()->getEditBuffer()->undoableConvertToDual(transaction, toType);
+        {
+          useCases.convertToSplit();
           break;
-
-        case SoundType::Invalid:
-          assert(false);
+        }
+        case SoundType::Layer:
+        {
+          useCases.convertToLayer();
+          break;
+        }
+        default:
+          break;
       }
 
-      Application::get().getHWUI()->undoableSetFocusAndMode(transaction,
-                                                            { UIFocus::Sound, UIMode::Select, UIDetail::Init });
+      Application::get().getHWUI()->undoableSetFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
     })
 {
 }

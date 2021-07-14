@@ -9,7 +9,7 @@ class FileOutStream : public OutStream
 {
  public:
   FileOutStream(const Glib::ustring &fileName, bool zip);
-  virtual ~FileOutStream();
+  ~FileOutStream() override;
 
   void commit();
 

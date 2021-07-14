@@ -49,6 +49,7 @@ namespace nltools
         }
 
         uint8_t program;
+        SoundType programType = SoundType::Invalid;
       };
     }
 
@@ -99,6 +100,17 @@ namespace nltools
         constexpr static MessageType getType()
         {
           return MessageType::SyncFS;
+        }
+      };
+    }
+
+    namespace Update
+    {
+      struct UpdateUploadedNotification
+      {
+        constexpr static MessageType getType()
+        {
+          return MessageType::UpdateUploaded;
         }
       };
     }
@@ -169,6 +181,14 @@ namespace nltools
       };
     }
 
+    struct PanicAudioEngine
+    {
+      constexpr static MessageType getType()
+      {
+        return MessageType::AEPanic;
+      }
+    };
+
     namespace Setting
     {
       struct NoteShiftMessage
@@ -179,6 +199,16 @@ namespace nltools
         }
 
         int m_shift;
+      };
+
+      struct FlacRecorderAutoStart
+      {
+        constexpr static MessageType getType()
+        {
+          return MessageType::AutoStartRecorderMessage;
+        }
+
+        bool enabled;
       };
 
       struct PresetGlitchMessage
@@ -201,14 +231,67 @@ namespace nltools
         double m_tuneReference;
       };
 
-      struct MidiBridgeSettings
+      struct MidiSettingsMessage
       {
         constexpr static MessageType getType()
         {
-          return MessageType::MidiBridgeSettings;
+          return MessageType::MidiSettings;
         }
 
-        bool enable = false;
+        enum class HW_INDEX : std::size_t
+        {
+          Pedal1 = 0,
+          Pedal2 = 1,
+          Pedal3 = 2,
+          Pedal4 = 3,
+          Bender = 4,
+          Aftertouch = 5,
+          Ribbon1 = 6,
+          Ribbon2 = 7,
+          LENGTH = 8
+        };
+
+        enum class MAPPING_INDEX : std::size_t
+        {
+          SEND_PRIMARY = 0,
+          RECEIVE_PRIMARY = 1,
+          SEND_SPLIT = 2,
+          RECEIVE_SPLIT = 3,
+          LOCAL = 4,
+          LENGTH = 5
+        };
+
+        typedef std::array<std::array<bool, static_cast<size_t>(MAPPING_INDEX::LENGTH)>,
+                           static_cast<size_t>(HW_INDEX::LENGTH)>
+            tHWMappingType;
+
+        MidiReceiveChannel receiveChannel;
+        MidiReceiveChannelSplit receiveSplitChannel;
+
+        MidiSendChannel sendChannel;
+        MidiSendChannelSplit sendSplitChannel;
+
+        bool receiveProgramChange = false;
+        bool receiveNotes = false;
+
+        bool sendProgramChange = false;
+        bool sendNotes = false;
+
+        bool localNotes = false;
+
+        bool highVeloCCEnabled = true;
+        bool highResCCEnabled = true;
+
+        PedalCC pedal1cc;
+        PedalCC pedal2cc;
+        PedalCC pedal3cc;
+        PedalCC pedal4cc;
+        RibbonCC ribbon1cc;
+        RibbonCC ribbon2cc;
+        AftertouchCC aftertouchcc;
+        BenderCC bendercc;
+
+        tHWMappingType hwMappings;
       };
 
       struct TransitionTimeMessage
@@ -355,7 +438,18 @@ namespace nltools
         return MessageType::SetOLED;
       }
 
+      uint64_t messageId = 0;
       uint8_t pixels[256][96];
+    };
+
+    struct OLEDState
+    {
+      constexpr static MessageType getType()
+      {
+        return MessageType::OLEDState;
+      }
+
+      uint64_t displaysMessageId = 0;
     };
 
     struct SetTimestampedOledMessage
@@ -419,6 +513,7 @@ namespace nltools
         auto bytes = g_bytes_new_take(scratch, numBytes + 2);
         return Glib::wrap(bytes);
       }
+
     }
 
     namespace ParameterGroups

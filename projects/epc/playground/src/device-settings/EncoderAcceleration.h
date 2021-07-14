@@ -9,8 +9,8 @@ class EncoderAcceleration : public Setting
   typedef Setting super;
 
  public:
-  EncoderAcceleration(Settings &parent);
-  virtual ~EncoderAcceleration();
+  explicit EncoderAcceleration(Settings &parent);
+  ~EncoderAcceleration() override;
 
   void load(const Glib::ustring &text, Initiator initiator) override;
   Glib::ustring save() const override;
@@ -19,7 +19,7 @@ class EncoderAcceleration : public Setting
   tControlPositionValue get() const;
   void setDefault();
   void incDec(int incs, ButtonModifiers modifiers);
-  Glib::ustring getDisplayString() const;
+  Glib::ustring getDisplayString() const override;
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 

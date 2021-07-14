@@ -65,21 +65,6 @@ public class PresetManagerContextMenu extends ContextMenu {
 
 
 		PresetManager pm = NonMaps.get().getNonLinearWorld().getPresetManager();
-		Bank bank = pm.findBank(pm.getSelectedBank());
-
-		if(bank != null) {
-			String name = "Export Bank (" + bank.getOrderNumber() + " - " + bank.getCurrentName() + ") to File ...";
-			addChild(new ContextMenuItem(this, name) {
-				@Override
-				public Control click(final Position eventPoint) {
-					String bankName = URL.encodePathSegment(bank.getCurrentName());
-					String uri = "/presets/banks/download-bank/" + bankName + ".xml?uuid=" + bank.getUUID();
-					Window.open(uri, "", "");
-					return super.click(eventPoint);
-				}
-			});
-		}
-
 
 		if(!pm.getBanks().isEmpty()) {
 			addChild(new ContextMenuItem(this, "Save all Banks as Backup File ...") {

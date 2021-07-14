@@ -4,7 +4,7 @@
 
 class EditBufferMockFactory
 {
-public:
+ public:
   static nltools::msg::SinglePresetMessage initialMessage();
   static nltools::msg::SplitPresetMessage splitMessage();
   static nltools::msg::SinglePresetMessage splitToSingleMessage();

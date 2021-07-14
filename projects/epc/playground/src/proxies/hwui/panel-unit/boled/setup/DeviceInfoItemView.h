@@ -13,8 +13,8 @@ class DeviceInfoItemView : public SetupLabel
  public:
   using Duration = std::chrono::steady_clock::duration;
 
-  DeviceInfoItemView(DeviceInformationItem* item, Duration updateInterval = Duration::zero());
-  virtual ~DeviceInfoItemView();
+  explicit DeviceInfoItemView(DeviceInformationItem* item, Duration updateInterval = Duration::zero());
+  ~DeviceInfoItemView() override;
 
  private:
   void onInfoChanged(const DeviceInformationItem* s);

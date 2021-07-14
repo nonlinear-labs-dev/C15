@@ -6,5 +6,5 @@ class Linear24StScaleConverter : public LinearScaleConverter
 {
  public:
   Linear24StScaleConverter();
-  virtual ~Linear24StScaleConverter();
+  ~Linear24StScaleConverter() override;
 };

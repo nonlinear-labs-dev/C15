@@ -6,5 +6,5 @@ class Parabolic10HzScaleConverter : public ParabolicScaleConverter
 {
  public:
   Parabolic10HzScaleConverter();
-  virtual ~Parabolic10HzScaleConverter();
+  ~Parabolic10HzScaleConverter() override;
 };

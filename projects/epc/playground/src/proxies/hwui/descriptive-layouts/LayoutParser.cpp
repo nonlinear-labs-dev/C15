@@ -1,7 +1,7 @@
 #include <fstream>
 #include <Application.h>
 #include <Options.h>
-#include <tools/json.h>
+#include <nltools/nlohmann/json.hpp>
 #include "LayoutParser.h"
 #include "LayoutFactory.h"
 #include "ConditionRegistry.h"

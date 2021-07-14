@@ -7,7 +7,7 @@ class SplitPointSyncParameters;
 class SplitPointEditMenu : public ParameterEditButtonMenu
 {
  public:
-  explicit SplitPointEditMenu(const Rect &rect);
+  explicit SplitPointEditMenu(const Rect& rect);
 
  protected:
   SplitPointSyncParameters* m_syncSetting;

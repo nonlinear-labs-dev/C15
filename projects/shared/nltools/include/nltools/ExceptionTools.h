@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nltools/StringTools.h>
+#include <glibmm/spawn.h>
 
 namespace nltools
 {
@@ -12,6 +13,10 @@ namespace nltools
       {
         std::rethrow_exception(eptr);
       }
+    }
+    catch(const Glib::SpawnError &e)
+    {
+      return std::string("Caught Glib::SpawnError: " + e.what());
     }
     catch(const std::out_of_range &e)
     {

@@ -28,18 +28,16 @@ class ParameterLayout2 : public Layout
   constexpr static int BIG_SLIDER_X = 77;
   constexpr static int BIG_SLIDER_WIDTH = 102;
 
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
+  void copyFrom(Layout *src) override;
+
   virtual Parameter *getCurrentParameter() const;
   virtual Parameter *getCurrentEditParameter() const;
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
   virtual void setDefault();
   virtual void handlePresetValueRecall();
   virtual Control *createParameterValueControl();
-  
-  void copyFrom(Layout *src) override;
-
   void onSoundTypeChanged();
-
   virtual ModuleCaption *createModuleCaption() const;
 
  private:

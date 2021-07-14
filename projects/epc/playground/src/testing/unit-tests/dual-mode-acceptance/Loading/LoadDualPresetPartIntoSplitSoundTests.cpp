@@ -18,7 +18,7 @@ TEST_CASE("Load Part I of Split into Split Part I")
   MockPresetStorage presets;
   auto preset = presets.getSplitPreset();
 
-  REQUIRE(preset->getType() == SoundType::Split);
+  CHECK(preset->getType() == SoundType::Split);
 
   {
     auto scope = TestHelper::createTestScope();
@@ -57,7 +57,7 @@ TEST_CASE("Load Part I of Split into Split Part I")
       }
       else
       {
-        REQUIRE(false);
+        CHECK(false);
       }
     }
 
@@ -181,7 +181,7 @@ TEST_CASE("Load Part I of Split into Split Part II")
   MockPresetStorage presets;
   auto preset = presets.getSplitPreset();
 
-  REQUIRE(preset->getType() == SoundType::Split);
+  CHECK(preset->getType() == SoundType::Split);
 
   {
     auto scope = TestHelper::createTestScope();
@@ -198,10 +198,10 @@ TEST_CASE("Load Part I of Split into Split Part II")
     auto tune = preset->findParameterByID({ 248, VoiceGroup::Global }, true);
     tune->setValue(transaction, 0.265);
 
-    auto pSplit = preset->findParameterByID({C15::PID::Split_Split_Point, VoiceGroup::I}, false);
+    auto pSplit = preset->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::I }, false);
     pSplit->setValue(transaction, 1);
 
-    auto eSplit = eb->findParameterByID({C15::PID::Split_Split_Point, VoiceGroup::I});
+    auto eSplit = eb->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::I });
     eSplit->setCPFromHwui(transaction, 0);
 
     auto partVolume = preset->findParameterByID({ 358, VoiceGroup::I }, true);
@@ -219,7 +219,7 @@ TEST_CASE("Load Part I of Split into Split Part II")
       }
       else
       {
-        REQUIRE(false);
+        CHECK(false);
       }
     }
 
@@ -628,6 +628,205 @@ TEST_CASE("Load Part II of Layer into Split Part II")
       CHECK(EBL::createHashOfVector(EBL::getMaster()) == oldMasterHash);
       CHECK(EBL::createHashOfVector(EBL::getModMatrix()) == oldMCMHash);
       CHECK(EBL::createHashOfVector(EBL::getScale()) == oldScaleHash);
+    }
+  }
+}
+
+TEST_CASE("Split EditBuffer With Split Modulation Load into Part of already Modulated Split")
+{
+  MockPresetStorage presets;
+
+  TestHelper::initDualEditBuffer<SoundType::Split>();
+  auto eb = TestHelper::getEditBuffer();
+
+  auto sI = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::I });
+  auto sII = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::II });
+
+  {
+    CHECK(sI->getModulationSource() == MacroControls::NONE);
+    CHECK(sII->getModulationSource() == MacroControls::NONE);
+
+    ModParameterUseCases useCase(sI);
+    useCase.selectModSource(MacroControls::MC1);
+    useCase.setModulationAmount(50);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+    CHECK(sI->getModulationSource() == MacroControls::MC1);
+    CHECK(sII->getModulationSource() == MacroControls::MC1);
+  }
+
+  auto preset = presets.getSplitPreset();
+
+  {
+    auto psI = preset->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::I }, false);
+    auto psII = preset->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::II }, false);
+    CHECK(psI->getModulationSource() == MacroControls::NONE);
+    CHECK(psII->getModulationSource() == MacroControls::NONE);
+    CHECK(psI->getModulationAmount() == 0);
+    CHECK(psII->getModulationAmount() == 0);
+  }
+
+  EditBufferUseCases useCases(eb);
+
+  WHEN("Default split loaded into part of modulated split I -> II")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::II);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+
+  WHEN("Default split loaded into part of modulated split II -> I")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::II, VoiceGroup::I);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+
+  WHEN("Default split loaded into part of modulated split I -> I")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::I);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+
+  WHEN("Default split loaded into part of modulated split II -> II")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::II, VoiceGroup::II);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+}
+
+TEST_CASE("Single EditBuffer Load into Part of already Modulated Split")
+{
+  MockPresetStorage presets;
+
+  TestHelper::initDualEditBuffer<SoundType::Split>();
+  auto eb = TestHelper::getEditBuffer();
+
+  auto sI = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::I });
+  auto sII = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::II });
+
+  {
+    CHECK(sI->getModulationSource() == MacroControls::NONE);
+    CHECK(sII->getModulationSource() == MacroControls::NONE);
+
+    ModParameterUseCases useCase(sI);
+    useCase.selectModSource(MacroControls::MC1);
+    useCase.setModulationAmount(50);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+    CHECK(sI->getModulationSource() == MacroControls::MC1);
+    CHECK(sII->getModulationSource() == MacroControls::MC1);
+  }
+
+  //TODO LOAD default split and check for inconsistencys
+  auto preset = presets.getSinglePreset();
+
+  {
+    auto psI = preset->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::I }, false);
+    auto psII = preset->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::II }, false);
+    CHECK(psI->getModulationSource() == MacroControls::NONE);
+    CHECK(psII->getModulationSource() == MacroControls::NONE);
+    CHECK(psI->getModulationAmount() == 0);
+    CHECK(psII->getModulationAmount() == 0);
+  }
+
+  EditBufferUseCases useCases(eb);
+
+  WHEN("Default split loaded into part of modulated split I -> II")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::II);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+
+  WHEN("Default split loaded into part of modulated split II -> I")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::II, VoiceGroup::I);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+
+  WHEN("Default split loaded into part of modulated split I -> I")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::I);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+
+  WHEN("Default split loaded into part of modulated split II -> II")
+  {
+    useCases.undoableLoadToPart(preset, VoiceGroup::II, VoiceGroup::II);
+
+    CHECK(sI->getModulationSource() == sII->getModulationSource());
+    CHECK(sI->getModulationAmount() == sII->getModulationAmount());
+  }
+}
+
+TEST_CASE("Load To Part of Split could lead to missing assignements")
+{
+  MockPresetStorage presets;
+  TestHelper::initDualEditBuffer<SoundType::Split>();
+
+  auto eb = TestHelper::getEditBuffer();
+  auto sI = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::I });
+  auto sII = eb->findAndCastParameterByID<SplitPointParameter>({ C15::PID::Split_Split_Point, VoiceGroup::II });
+
+  WHEN("Split Point - I is set to C1")
+  {
+    ParameterUseCases useCase(sI);
+    useCase.incDec(-1, false, true);
+
+    THEN("No Gap was created moving sI explicitly")
+    {
+      CHECK(sI->getDisplayString() == "C1");
+      CHECK(sII->getDisplayString() == "C#1");
+    }
+
+    WHEN("Default Single Sound loaded to Part II")
+    {
+      EditBufferUseCases useCases(eb);
+      useCases.undoableLoadToPart(presets.getSinglePreset(), VoiceGroup::I, VoiceGroup::II);
+
+      THEN("No Gap was created as Split params were not loaded")
+      {
+        CHECK(sI->getDisplayString() == "C1");
+        CHECK(sII->getDisplayString() == "C#1");
+      }
+    }
+
+    WHEN("Default Split Sound loaded to Part II")
+    {
+      EditBufferUseCases useCases(eb);
+      useCases.undoableLoadToPart(presets.getSplitPreset(), VoiceGroup::I, VoiceGroup::II);
+
+      THEN("No Gap was created as Split params were not loaded")
+      {
+        CHECK(sI->getDisplayString() == "C1");
+        CHECK(sII->getDisplayString() == "C#1");
+      }
+    }
+
+    WHEN("Default Layer Sound loaded to Part II")
+    {
+      EditBufferUseCases useCases(eb);
+      useCases.undoableLoadToPart(presets.getLayerPreset(), VoiceGroup::I, VoiceGroup::II);
+
+      THEN("No Gap was created as Split params were not loaded")
+      {
+        CHECK(sI->getDisplayString() == "C1");
+        CHECK(sII->getDisplayString() == "C#1");
+      }
     }
   }
 }

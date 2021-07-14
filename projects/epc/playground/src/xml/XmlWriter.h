@@ -12,15 +12,15 @@ class XmlWriter : public Writer
   typedef Writer super;
 
  public:
-  XmlWriter(std::unique_ptr<OutStream> out);
-  virtual ~XmlWriter();
+  explicit XmlWriter(OutStream &out);
+  ~XmlWriter() override;
 
  private:
-  virtual void implWriteTextElement(const Glib::ustring &name, const Glib::ustring &text,
-                                    const std::initializer_list<Attribute> &attributes) override;
-  virtual void implWriteTag(const Glib::ustring &name, const std::initializer_list<Attribute> &attributes,
-                            const tTagContentWriter &w) override;
-  virtual void implWriteAttribute(const Attribute &a) override;
+  void implWriteTextElement(const Glib::ustring &name, const Glib::ustring &text,
+                            const std::initializer_list<Attribute> &attributes) override;
+  void implWriteTag(const Glib::ustring &name, const std::initializer_list<Attribute> &attributes,
+                    const tTagContentWriter &w) override;
+  void implWriteAttribute(const Attribute &a) override;
 
  private:
   size_t m_stackSize = 0;

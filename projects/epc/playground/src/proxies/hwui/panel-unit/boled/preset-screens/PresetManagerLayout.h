@@ -26,12 +26,12 @@ class PresetManagerLayout : public Layout
 
  public:
   PresetManagerLayout(FocusAndMode focusAndMode, FocusAndMode oldFocusAndMode);
-  virtual ~PresetManagerLayout();
+  ~PresetManagerLayout() override;
 
   void setFocusAndMode(FocusAndMode focusAndMode);
 
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
 
   bool animateSelectedPreset(std::function<void()> cb);
   void animateSelectedPresetIfInLoadPartMode(std::function<void()> cb);

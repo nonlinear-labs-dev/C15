@@ -9,5 +9,5 @@ class AnyParameterLockedIndicator : public LockedIndicator
   ~AnyParameterLockedIndicator() override = default;
 
  private:
-  void onParameterGroupChanged();
+  void onParameterGroupChanged() override;
 };

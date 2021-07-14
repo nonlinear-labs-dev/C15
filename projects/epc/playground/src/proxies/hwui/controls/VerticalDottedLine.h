@@ -8,6 +8,6 @@ class VerticalDottedLine : public Control
   typedef Control super;
 
  public:
-  VerticalDottedLine(const Rect& rect);
-  bool redraw(FrameBuffer& fb);
+  explicit VerticalDottedLine(const Rect& rect);
+  bool redraw(FrameBuffer& fb) override;
 };

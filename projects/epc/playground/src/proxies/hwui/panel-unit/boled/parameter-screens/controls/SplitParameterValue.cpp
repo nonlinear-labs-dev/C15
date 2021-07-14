@@ -22,7 +22,7 @@ SplitParameterValue::SplitParameterValue(const Rect& pos)
   init();
 }
 
-SplitParameterValue::SplitParameterValue(const Label::StringAndSuffix& text, const Rect& pos)
+SplitParameterValue::SplitParameterValue(const StringAndSuffix& text, const Rect& pos)
     : Label(text, pos)
 {
   setFontColor(FrameBufferColors::C179);
@@ -122,7 +122,7 @@ bool SplitParameterValue::redraw(FrameBuffer& fb)
   return true;
 }
 
-Label::StringAndSuffix SplitParameterValue::getText() const
+StringAndSuffix SplitParameterValue::getText() const
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   auto sI = dynamic_cast<SplitPointParameter*>(eb->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::I }));

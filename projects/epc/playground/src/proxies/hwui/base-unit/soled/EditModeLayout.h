@@ -12,9 +12,8 @@ class EditModeLayout : public PlayOrEditModeLayout
 
  public:
   EditModeLayout();
-  virtual ~EditModeLayout();
+  ~EditModeLayout() override;
 
- private:
-  EditModeLayout(const EditModeLayout& other);
-  EditModeLayout& operator=(const EditModeLayout&);
+  EditModeLayout(const EditModeLayout& other) = delete;
+  EditModeLayout& operator=(const EditModeLayout&) = delete;
 };

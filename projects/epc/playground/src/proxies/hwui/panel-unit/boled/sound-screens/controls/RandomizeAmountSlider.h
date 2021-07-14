@@ -11,8 +11,8 @@ class RandomizeAmountSlider : public BarSlider
   typedef BarSlider super;
 
  public:
-  RandomizeAmountSlider(const Rect &rect);
-  virtual ~RandomizeAmountSlider();
+  explicit RandomizeAmountSlider(const Rect &rect);
+  ~RandomizeAmountSlider() override;
 
  private:
   void onSettingChanged(const Setting *s);

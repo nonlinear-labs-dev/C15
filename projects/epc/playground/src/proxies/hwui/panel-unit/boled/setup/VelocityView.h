@@ -11,7 +11,7 @@ class VelocityView : public SetupLabel
 
  public:
   VelocityView();
-  virtual ~VelocityView();
+  ~VelocityView() override;
 
  private:
   void onSettingChanged(const Setting *s);

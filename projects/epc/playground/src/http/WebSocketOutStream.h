@@ -10,8 +10,8 @@ class WebSocketOutStream : public OutStream
   typedef OutStream super;
 
  public:
-  WebSocketOutStream(SoupWebsocketConnection *connection);
-  virtual ~WebSocketOutStream();
+  explicit WebSocketOutStream(SoupWebsocketConnection *connection);
+  ~WebSocketOutStream() override;
 
  private:
   void implWrite(const Glib::ustring &str) override;

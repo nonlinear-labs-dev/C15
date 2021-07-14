@@ -38,8 +38,7 @@ namespace DescriptiveLayouts
   {
    public:
     explicit ParameterDisplayStringEventSource();
-
-    ~ParameterDisplayStringEventSource();
+    ~ParameterDisplayStringEventSource() override;
 
     void onSelectedParameterChanged(const Parameter *p) override;
 

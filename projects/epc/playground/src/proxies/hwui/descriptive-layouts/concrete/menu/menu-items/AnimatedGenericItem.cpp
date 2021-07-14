@@ -50,15 +50,16 @@ bool Animator::finishAnimation()
 void AnimatedGenericItem::startAnimation()
 {
   if(!m_animator)
-    m_animator = std::make_unique<Animator>(std::chrono::milliseconds(500), [this] { this->setDirty(); },
-                                            [this] {
-                                              this->setDirty();
+    m_animator = std::make_unique<Animator>(
+        std::chrono::milliseconds(500), [this] { this->setDirty(); },
+        [this] {
+          this->setDirty();
 
-                                              m_animator.reset();
+          m_animator.reset();
 
-                                              if(m_animationFinishedCB)
-                                                m_animationFinishedCB();
-                                            });
+          if(m_animationFinishedCB)
+            m_animationFinishedCB();
+        });
 }
 
 bool AnimatedGenericItem::drawAnimationZug(FrameBuffer &buffer)

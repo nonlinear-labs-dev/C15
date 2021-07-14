@@ -13,7 +13,7 @@ import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
 
 public class LoadToPartMode implements CustomPresetSelector {
 
-	private class LoadToPartModeData {
+	public class LoadToPartModeData {
 		public Preset m_selectedPreset;
 		public Bank m_selectedBank;
 		public VoiceGroup m_selectedVoiceGroup;
@@ -57,6 +57,10 @@ public class LoadToPartMode implements CustomPresetSelector {
 		m_currentData = m_otherData;
 		m_otherData = tmp;
 		updateUI();
+	}
+
+	public LoadToPartModeData getCurrentData() {
+		return m_currentData;
 	}
 
 	public void setSelectedPreset(Preset p) {

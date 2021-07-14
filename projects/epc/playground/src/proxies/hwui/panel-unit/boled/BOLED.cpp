@@ -43,11 +43,11 @@ void BOLED::toggleScreenSaver(bool enabled)
 {
   if(enabled)
   {
-    setOverlay(new BOLEDScreenSaver(*this));
+    installScreenSaver(new BOLEDScreenSaver(*this));
   }
-  else if(std::dynamic_pointer_cast<BOLEDScreenSaver>(getOverlay()) != nullptr)
+  else if(dynamic_cast<BOLEDScreenSaver *>(getScreenSaver()) != nullptr)
   {
-    resetOverlay();
+    removeScreenSaver();
   }
 }
 
@@ -115,7 +115,7 @@ void BOLED::setupParameterScreen(FocusAndMode focusAndMode)
 
     if(auto currentLayout = getLayout().get())
     {
-      auto descriptiveLayout = dynamic_cast<DescriptiveLayouts::GenericLayout*>(currentLayout) != nullptr;
+      auto descriptiveLayout = dynamic_cast<DescriptiveLayouts::GenericLayout *>(currentLayout) != nullptr;
 
       if(descriptiveLayout && currentLayout && typeid(*layout) == typeid(*currentLayout))
       {

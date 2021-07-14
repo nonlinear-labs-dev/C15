@@ -7,9 +7,9 @@ SendEditBufferScopeGuard::SendEditBufferScopeGuard(UNDO::Transaction* transactio
     : m_transaction { transaction }
     , sendToAudioEngine { sendToAE }
 {
-  m_transaction->addSimpleCommand([=](auto s) {
+  m_transaction->addSimpleCommand([send = sendToAudioEngine](auto s) {
     if(s == UNDO::Transaction::UNDOING)
-      Application::get().getAudioEngineProxy()->thawParameterMessages(sendToAudioEngine);
+      Application::get().getAudioEngineProxy()->thawParameterMessages(send);
     else
       Application::get().getAudioEngineProxy()->freezeParameterMessages();
   });
@@ -17,9 +17,9 @@ SendEditBufferScopeGuard::SendEditBufferScopeGuard(UNDO::Transaction* transactio
 
 SendEditBufferScopeGuard::~SendEditBufferScopeGuard()
 {
-  m_transaction->addSimpleCommand([=](auto s) {
+  m_transaction->addSimpleCommand([send = sendToAudioEngine](auto s) {
     if(s == UNDO::Transaction::REDOING || s == UNDO::Transaction::DOING)
-      Application::get().getAudioEngineProxy()->thawParameterMessages(sendToAudioEngine);
+      Application::get().getAudioEngineProxy()->thawParameterMessages(send);
     else
       Application::get().getAudioEngineProxy()->freezeParameterMessages();
   });

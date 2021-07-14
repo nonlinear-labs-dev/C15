@@ -11,14 +11,13 @@ class DelayedJob
   typedef std::function<void()> tJob;
 
   DelayedJob(int maxDelayMS, tJob job);
+  DelayedJob(const DelayedJob& other) = delete;
+  DelayedJob& operator=(const DelayedJob&) = delete;
   virtual ~DelayedJob();
 
   void trigger();
 
  private:
-  DelayedJob(const DelayedJob& other) = delete;
-  DelayedJob& operator=(const DelayedJob&) = delete;
-
   bool onTimeout();
 
   int m_maxDelay;

@@ -10,8 +10,7 @@ namespace DescriptiveLayouts
   {
    public:
     explicit CurrentParameterGroupLockStatus();
-
-    ~CurrentParameterGroupLockStatus();
+    ~CurrentParameterGroupLockStatus() override;
 
     void onSelectedParameterChanged(const Parameter *p) override;
 

@@ -12,7 +12,7 @@ class PresetInfoContent : public InfoContent
 
  public:
   PresetInfoContent();
-  virtual ~PresetInfoContent();
+  ~PresetInfoContent() override;
 
   void fillContents() override;
   static Glib::ustring createPresetTypeString(const Preset *preset);

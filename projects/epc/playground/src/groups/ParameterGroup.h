@@ -17,7 +17,7 @@ class ParameterGroup : public UpdateDocumentContributor, public IntrusiveListIte
  public:
   ParameterGroup(ParameterGroupSet *parent, GroupId id, const char *shortName, const char *longName,
                  const char *webUIName);
-  virtual ~ParameterGroup();
+  ~ParameterGroup() override;
 
   virtual void init() = 0;
 
@@ -29,6 +29,13 @@ class ParameterGroup : public UpdateDocumentContributor, public IntrusiveListIte
   tParameterPtr getParameterByID(const ParameterId &id) const;
 
   tParameterPtr findParameterByID(const ParameterId &id) const;
+
+  template <typename tParameterPtrT> tParameterPtrT *findAndCastParameterByID(const ParameterId &id) const
+  {
+    if(auto p = getParameterByID(id))
+      return dynamic_cast<tParameterPtrT *>(p);
+    return nullptr;
+  }
 
   void forEachParameter(const std::function<void(Parameter *p)> &cb)
   {
@@ -71,7 +78,6 @@ class ParameterGroup : public UpdateDocumentContributor, public IntrusiveListIte
   // CALLBACKS
   sigc::connection onGroupChanged(const sigc::slot<void> &slot);
 
-  void check();
   VoiceGroup getVoiceGroup() const;
 
   void undoableLoadDefault(UNDO::Transaction *transaction, Defaults mode);

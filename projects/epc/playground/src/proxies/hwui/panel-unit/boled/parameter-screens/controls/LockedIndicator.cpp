@@ -33,8 +33,12 @@ void LockedIndicator::onParameterSelected(Parameter *newOne)
 
 void LockedIndicator::onParameterGroupChanged()
 {
-  auto group = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup())->getParentGroup();
-  setText(group->areAllParametersLocked() ? "\uE30E" : "");
+  auto group = Application::get()
+                   .getPresetManager()
+                   ->getEditBuffer()
+                   ->getSelected(getHWUI()->getCurrentVoiceGroup())
+                   ->getParentGroup();
+  setText(StringAndSuffix { group->areAllParametersLocked() ? "\uE30E" : "" });
 }
 
 void LockedIndicator::setFontColor(FrameBuffer &fb) const

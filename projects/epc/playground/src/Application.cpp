@@ -87,7 +87,6 @@ Application::Application(int numArgs, char **argv)
     , m_isQuit(false)
     , m_usbChangeListener(std::make_unique<USBChangeListener>())
     , m_webUISupport(std::make_unique<WebUISupport>(m_http->getUpdateDocumentMaster()))
-    , m_presetUseCases { std::make_unique<PresetManagerUseCases>(m_presetManager.get()) }
 {
 #ifdef _PROFILING
   Profiler::get().enable(true);
@@ -131,6 +130,8 @@ Application::~Application()
   Profiler::get().print();
 #endif
   DebugLevel::warning(__PRETTY_FUNCTION__, __LINE__);
+
+  theApp = nullptr;
 }
 
 Application &Application::get()
@@ -268,11 +269,6 @@ const HWUI *Application::getHWUI() const
 UndoScope *Application::getUndoScope()
 {
   return m_undoScope.get();
-}
-
-PresetManagerUseCases *Application::getPresetManagerUseCases()
-{
-  return m_presetUseCases.get();
 }
 
 DeviceInformation *Application::getDeviceInformation()

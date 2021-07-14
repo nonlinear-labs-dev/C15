@@ -29,7 +29,7 @@ void ScaleParameterSelectLayout::addButtons()
 
 void ScaleParameterSelectLayout::updateResetButton()
 {
-  m_resetButton->setText(resetEnabled() ? "Reset" : "");
+  m_resetButton->setText(StringAndSuffix { resetEnabled() ? "Reset" : "" });
 }
 
 bool ScaleParameterSelectLayout::onButton(Buttons i, bool down, ButtonModifiers modifiers)
@@ -71,10 +71,8 @@ bool ScaleParameterSelectLayout::onButton(Buttons i, bool down, ButtonModifiers 
 
 void ScaleParameterSelectLayout::reset()
 {
-  auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto scope = Application::get().getUndoScope()->startTransaction("Reset Custom Scale");
-  eb->getParameterGroupByID({ "Scale", VoiceGroup::Global })
-      ->undoableReset(scope->getTransaction(), Initiator::EXPLICIT_HWUI);
+  EditBufferUseCases ebUseCases(Application::get().getPresetManager()->getEditBuffer());
+  ebUseCases.resetCustomScale();
 }
 
 bool ScaleParameterSelectLayout::resetEnabled() const
@@ -88,6 +86,7 @@ void ScaleParameterSelectLayout::selectParameter(int inc)
 {
   static const auto ids = std::vector<int> { 312, 391, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323 };
   auto eb = Application::get().getPresetManager()->getEditBuffer();
+  EditBufferUseCases ebUseCases { eb };
   auto id = eb->getSelectedParameterNumber();
 
   auto idIt = std::find(ids.begin(), ids.end(), id);
@@ -114,7 +113,7 @@ void ScaleParameterSelectLayout::selectParameter(int inc)
     id = *idIt;
   }
 
-  eb->undoableSelectParameter({ id, VoiceGroup::Global });
+  ebUseCases.selectParameter({ id, VoiceGroup::Global }, true);
 }
 
 void toggleHightlight(Control* c)

@@ -17,5 +17,5 @@ cp $SCRIPT $TMPSCRIPT
 GROUP_ID=$(id -g $USER)
 USER_ID=$(id -u $USER)
 
-docker run -e GROUP_ID=$GROUP_ID -e USER_ID=$USER_ID --privileged --rm -v $TMPDIRNAME:/script -v $BINARY_DIR:/bindir -v $SOURCE_DIR:/sources \
+docker run -ti -e GROUP_ID=$GROUP_ID -e USER_ID=$USER_ID --privileged --rm -v $TMPDIRNAME:/script -v $BINARY_DIR:/bindir -v $SOURCE_DIR:/sources \
 $DOCKERNAME bash /script/$TMPSCRIPTBASE

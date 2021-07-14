@@ -1,0 +1,38 @@
+****************************************
+*********** NEU 2021-04-15 *************
+****************************************
+
+
+1. MIDI Symbole für Bank-Header:
+
+midi_in.a	E0C0 (M invertiert in Quadrat)
+midi_in.b	E0C1 (5-Pol Midi-Stecker)
+
+
+2. Symbole für Audio Recorder (GUI)
+
+"*" -> nach Stand v. 2021-04-15 in Audio-Recorder verwendete Symbole
+"a" -> invertierte Version von "b"
+
+delete.one.a	E0CB (Mülltonne invertiert in Quadrat)
+delete.two.a	E0CC (Kreuz invertiert in Quadrat)
+delete.one.b *	E0CD (Mülltonne)
+delete.two.b	E0CE (Kreuz)
+play.a		E0D0 (Dreieck nach rechts invertiert in Quadrat)
+record.a	E0D1 (Kreis invertiert in Quadrat)
+pause.a		E0D2 (2 Balken invertiert in Quadrat)
+reset.a		E0D3 (Balken + Dreieck nach links invertiert in Quadrat)
+download.a	E0D4 (Dreieck nach unten + Balken invertiert in Quadrat)
+zoomin.a	E0D5 (Plus invertiert in Quadrat)
+zoomout.a	E0D6 (Minus invertiert in Quadrat)
+play.b	*	E0D7 (Dreieck nach rechts)
+record.b *	E0D8 (Kreis)
+pause.b	*	E0D9 (2 Balken)
+reset.b		E0DA (Balken + Dreieck nach links)
+download.b *	E0DB (Dreieck nach unten + Balken)
+zoomin.b	E0DC (Plus)
+zoomout.b	E0DD (Minus)
+zoomin.c *	E0DE (Plus mit Lupe)
+zoomout.c *	E0DF (Minus mit Lupe)
+undo.a		E0E0 (geschwungener Pfeil nach links invertiert in Quadrat)
+undo.b *	E0E1 (geschwungener Pfeil nach links)

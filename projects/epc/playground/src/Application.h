@@ -5,7 +5,9 @@
 #include <glibmm/refptr.h>
 #include <proxies/usb/USBChangeListener.h>
 #include <nltools/messaging/Messaging.h>
-#include <presets/PresetManagerUseCases.h>
+#include <use-cases/PresetManagerUseCases.h>
+#include <use-cases/SoundUseCases.h>
+#include <use-cases/EditBufferUseCases.h>
 
 class DeviceInformation;
 class WatchDog;
@@ -39,22 +41,21 @@ class Application
   void run();
   Glib::RefPtr<Glib::MainContext> getMainContext();
 
-  PresetManager *getPresetManager() const;
+  [[nodiscard]] PresetManager *getPresetManager() const;
   HTTPServer *getHTTPServer();
-  const Options *getOptions() const;
-  PlaycontrollerProxy *getPlaycontrollerProxy() const;
-  AudioEngineProxy *getAudioEngineProxy() const;
+  [[nodiscard]] const Options *getOptions() const;
+  [[nodiscard]] PlaycontrollerProxy *getPlaycontrollerProxy() const;
+  [[nodiscard]] AudioEngineProxy *getAudioEngineProxy() const;
   HWUI *getHWUI();
-  const HWUI *getHWUI() const;
+  [[nodiscard]] const HWUI *getHWUI() const;
   UndoScope *getUndoScope();
   Settings *getSettings();
   DeviceInformation *getDeviceInformation();
   Clipboard *getClipboard();
   WebUISupport *getWebUISupport();
-  PresetManagerUseCases *getPresetManagerUseCases();
 
   void quit();
-  bool isQuit() const;
+  [[nodiscard]] bool isQuit() const;
 
   void runWatchDog();
   void stopWatchDog();
@@ -74,7 +75,6 @@ class Application
   std::unique_ptr<PlaycontrollerProxy> m_playcontrollerProxy;
   std::unique_ptr<AudioEngineProxy> m_audioEngineProxy;
   std::unique_ptr<HWUI> m_hwui;
-  std::unique_ptr<PresetManagerUseCases> m_presetUseCases;
 
   std::unique_ptr<WatchDog> m_watchDog;
   std::unique_ptr<WatchDog> m_aggroWatchDog;

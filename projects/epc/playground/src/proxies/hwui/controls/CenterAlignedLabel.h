@@ -4,7 +4,7 @@
 
 class CenterAlignedLabel : public LeftAlignedLabel
 {
-public:
+ public:
   CenterAlignedLabel(const Glib::ustring& text, const Rect& r);
   Font::Justification getJustification() const override;
 };

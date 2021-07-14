@@ -27,7 +27,7 @@ template <class tSetting> class SettingLabel : public Label
   {
     if(setting)
     {
-      setText({ setting->getDisplayString(), 0 });
+      setText(StringAndSuffix { setting->getDisplayString(), 0 });
     }
   }
 

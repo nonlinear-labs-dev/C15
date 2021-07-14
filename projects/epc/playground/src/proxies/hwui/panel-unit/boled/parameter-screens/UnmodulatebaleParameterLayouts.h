@@ -31,9 +31,9 @@ class UnmodulateableParameterEditLayout2 : public ParameterEditLayout2, public U
   typedef UnmodulateableParameterLayout2 super2;
 
   UnmodulateableParameterEditLayout2();
-  virtual void init() override;
+  void init() override;
 
  protected:
-  virtual ButtonMenu *createMenu(const Rect &rect) override;
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  ButtonMenu *createMenu(const Rect &rect) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 };

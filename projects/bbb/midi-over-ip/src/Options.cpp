@@ -23,8 +23,6 @@ Options::Options(int& argc, char**& argv)
   Glib::OptionContext ctx;
 
   OptionDetail::createOption(mainGroup, "audioengine-host", 'a', "where to find the audio engine", m_audioengineHost);
-  OptionDetail::createOption(mainGroup, "midi-in-device", 'i', "the device to use for input", m_iDevice);
-  OptionDetail::createOption(mainGroup, "midi-out-device", 'o', "the device to use for output", m_oDevice);
   ctx.set_main_group(mainGroup);
   ctx.set_help_enabled(true);
 
@@ -55,14 +53,4 @@ Options::Options(int& argc, char**& argv)
 Glib::ustring Options::getAudioEngineHost() const
 {
   return m_audioengineHost;
-}
-
-Glib::ustring Options::getMidiInDevice() const
-{
-  return m_iDevice;
-}
-
-Glib::ustring Options::getMidiOutDevice() const
-{
-  return m_oDevice;
 }

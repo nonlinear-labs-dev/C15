@@ -11,36 +11,36 @@ class PresetManagerCursor
  public:
   using Matcher = std::function<bool(const Preset*)>;
 
-  PresetManagerCursor(Matcher matcher = [](auto) { return true; });
+  explicit PresetManagerCursor(Matcher matcher = [](auto) { return true; });
 
   void moveToSelected();
 
   bool nextBank();
-  bool canNextBank() const;
+  [[nodiscard]] bool canNextBank() const;
 
   bool previousBank();
-  bool canPreviousBank() const;
+  [[nodiscard]] bool canPreviousBank() const;
 
   bool nextPreset();
-  bool canNextPreset() const;
+  [[nodiscard]] bool canNextPreset() const;
 
   bool previousPreset();
-  bool canPreviousPreset() const;
+  [[nodiscard]] bool canPreviousPreset() const;
 
-  Preset* getPreset() const;
-  Uuid getPresetUuid() const;
-  Bank* getBank() const;
-  Uuid getBankUuid() const;
+  [[nodiscard]] Preset* getPreset() const;
+  [[nodiscard]] Uuid getPresetUuid() const;
+  [[nodiscard]] Bank* getBank() const;
+  [[nodiscard]] Uuid getBankUuid() const;
 
-  std::string getPresetNumberString() const;
-  std::string getPresetName() const;
-  std::string getPresetType() const;
-  std::string getBankName() const;
+  [[nodiscard]] std::string getPresetNumberString() const;
+  [[nodiscard]] std::string getPresetName() const;
+  [[nodiscard]] std::string getPresetType() const;
+  [[nodiscard]] std::string getBankName() const;
 
  private:
   bool advanceBank(int i);
   bool advancePreset(int i);
-  bool canAdvanceBank(int i) const;
+  [[nodiscard]] bool canAdvanceBank(int i) const;
 
   Preset* findFirstMatchingPreset(Bank* bank) const;
   Preset* findLastMatchingPreset(Bank* bank) const;

@@ -6,7 +6,7 @@ class EditBuffer;
 class RecallEditBufferSerializer : public Serializer
 {
  public:
-  RecallEditBufferSerializer(EditBuffer *edit);
+  explicit RecallEditBufferSerializer(EditBuffer *edit);
   static Glib::ustring getTagName();
 
  protected:

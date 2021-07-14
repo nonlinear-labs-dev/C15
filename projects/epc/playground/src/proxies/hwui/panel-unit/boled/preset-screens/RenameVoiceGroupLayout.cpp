@@ -23,8 +23,9 @@ void RenameVoiceGroupLayout::cancel()
 void RenameVoiceGroupLayout::commit(const Glib::ustring& newName)
 {
   auto eb = getEditBuffer();
-  auto scope = eb->getParent()->getUndoScope().startTransaction("Rename Part to %s", newName);
-  eb->setVoiceGroupName(scope->getTransaction(), newName, m_targetGroup);
+  EditBufferUseCases useCase(eb);
+  useCase.renamePart(m_targetGroup, newName);
+
   Application::get().getHWUI()->setFocusAndMode(FocusAndMode(UIFocus::Sound, UIMode::Select, UIDetail::Init));
 }
 

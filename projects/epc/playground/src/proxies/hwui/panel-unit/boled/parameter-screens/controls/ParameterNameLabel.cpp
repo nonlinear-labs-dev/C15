@@ -37,11 +37,6 @@ void ParameterNameLabel::onParameterSelected(Parameter *param)
   }
 }
 
-void ParameterNameLabel::updateParameter(const Parameter *parameter)
-{
-  onParameterChanged(parameter);
-}
-
 Glib::ustring removeLastChar(const Glib::ustring &s)
 {
   if(!s.empty())
@@ -131,6 +126,7 @@ void ParameterNameLabel::setSuffixFontColor(FrameBuffer &fb) const
 
 void ParameterNameLabel::onPresetLoaded()
 {
-  const auto param = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
+  const auto param
+      = Application::get().getPresetManager()->getEditBuffer()->getSelected(getHWUI()->getCurrentVoiceGroup());
   onParameterChanged(param);
 }

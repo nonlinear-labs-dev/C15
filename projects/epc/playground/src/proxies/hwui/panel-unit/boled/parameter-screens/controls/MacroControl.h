@@ -15,15 +15,12 @@ class MacroControl : public ControlWithChildren
   typedef ControlWithChildren super;
 
  public:
-  // public methods
-  MacroControl(const Rect &pos);
-  virtual ~MacroControl();
+  explicit MacroControl(const Rect &pos);
+  ~MacroControl() override;
+  MacroControl(const MacroControl &other) = delete;
+  MacroControl &operator=(const MacroControl &) = delete;
 
  private:
-  // private methods
-  MacroControl(const MacroControl &other);
-  MacroControl &operator=(const MacroControl &);
-
   void onSelectionChanged(Parameter *parameter);
   void onTargetChanged(const Parameter *modulatingParameter);
 

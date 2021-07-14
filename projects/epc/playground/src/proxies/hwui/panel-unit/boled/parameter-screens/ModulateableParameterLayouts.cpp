@@ -295,11 +295,8 @@ bool ModulateableParameterSelectLayout2::onRotary(int inc, ButtonModifiers modif
     case Mode::MacroControlSelection:
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
-        auto isDual = Application::get().getPresetManager()->getEditBuffer()->isDual() && p->getID().isDual();
-        auto scope = p->getUndoScope().startTransaction("Set MC Select for '%0'",
-                                                        isDual ? p->getGroupAndParameterNameWithVoiceGroup()
-                                                               : p->getGroupAndParameterName());
-        p->undoableIncrementMCSelect(scope->getTransaction(), inc);
+        ModParameterUseCases useCase(p);
+        useCase.incMCSelection(inc);
       }
 
       return true;
@@ -307,11 +304,8 @@ bool ModulateableParameterSelectLayout2::onRotary(int inc, ButtonModifiers modif
     case Mode::MacroControlAmount:
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
-        auto isDual = Application::get().getPresetManager()->getEditBuffer()->isDual() && p->getID().isDual();
-        auto scope = p->getUndoScope().startContinuousTransaction(p->getAmountCookie(), "Set MC Amount for '%0'",
-                                                                  isDual ? p->getGroupAndParameterNameWithVoiceGroup()
-                                                                         : p->getGroupAndParameterName());
-        p->undoableIncrementMCAmount(scope->getTransaction(), inc, modifiers);
+        ModParameterUseCases useCase(p);
+        useCase.incModAmount(inc, modifiers[ButtonModifier::FINE]);
       }
 
       return true;
@@ -343,11 +337,8 @@ void ModulateableParameterSelectLayout2::setDefault()
     case Mode::MacroControlSelection:
       if(auto p = dynamic_cast<ModulateableParameter *>(getCurrentParameter()))
       {
-        auto isDual = Application::get().getPresetManager()->getEditBuffer()->isDual() && p->getID().isDual();
-        auto scope = p->getUndoScope().startTransaction("Set MC Select for '%0'",
-                                                        isDual ? p->getGroupAndParameterNameWithVoiceGroup()
-                                                               : p->getGroupAndParameterName());
-        p->undoableSelectModSource(scope->getTransaction(), MacroControls::NONE);
+        ModParameterUseCases useCases(p);
+        useCases.selectModSource(MacroControls::NONE);
       }
 
       return;
@@ -415,9 +406,9 @@ void ModulateableParameterSelectLayout2::setMode(Mode desiredMode)
 
   if(isCurrentParameterDisabled())
   {
-    m_mcPosButton->setText("");
-    m_mcAmtButton->setText("");
-    m_mcSelButton->setText("");
+    m_mcPosButton->setText(StringAndSuffix { "" });
+    m_mcAmtButton->setText(StringAndSuffix { "" });
+    m_mcSelButton->setText(StringAndSuffix { "" });
   }
 
   handleSelectPartButton();

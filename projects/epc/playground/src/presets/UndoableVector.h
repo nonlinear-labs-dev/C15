@@ -19,13 +19,13 @@ class UndoableVectorBase
   }
 
   static constexpr size_t invalidPosition = std::numeric_limits<size_t>::max();
-  bool shouldCrashOnError() const;
+  [[nodiscard]] bool shouldCrashOnError() const;
 
   bool select(UNDO::Transaction *transaction, const Uuid &uuid);
 
   struct Checker
   {
-    Checker(UndoableVectorBase *p);
+    explicit Checker(UndoableVectorBase *p);
     ~Checker();
 
     UndoableVectorBase *m_p;
@@ -73,12 +73,12 @@ template <typename Owner, typename Element> class UndoableVector : private Undoa
     return find(m_selection);
   }
 
-  const Uuid &getSelectedUuid() const
+  [[nodiscard]] const Uuid &getSelectedUuid() const
   {
     return m_selection;
   }
 
-  bool empty() const
+  [[nodiscard]] bool empty() const
   {
     return m_elements.empty();
   }
@@ -102,7 +102,7 @@ template <typename Owner, typename Element> class UndoableVector : private Undoa
     return m_elements.at(0).get();
   }
 
-  size_t getIndexOf(const Uuid &uuid) const
+  [[nodiscard]] size_t getIndexOf(const Uuid &uuid) const
   {
     auto it = std::find_if(m_elements.begin(), m_elements.end(), [&](const auto &b) { return b->getUuid() == uuid; });
 
@@ -122,7 +122,7 @@ template <typename Owner, typename Element> class UndoableVector : private Undoa
     throw std::out_of_range(Environment::getStackTrace("Element is not in std::vector"));
   }
 
-  size_t size() const
+  [[nodiscard]] size_t size() const
   {
     return m_elements.size();
   }
@@ -369,7 +369,7 @@ template <typename Owner, typename Element> class UndoableVector : private Undoa
     return m_elements;
   }
 
-  size_t getPreviousPosition(const Uuid &uuid) const
+  [[nodiscard]] size_t getPreviousPosition(const Uuid &uuid) const
   {
     try
     {
@@ -383,7 +383,7 @@ template <typename Owner, typename Element> class UndoableVector : private Undoa
     return invalidPosition;
   }
 
-  size_t getNextPosition(const Uuid &uuid) const
+  [[nodiscard]] size_t getNextPosition(const Uuid &uuid) const
   {
     try
     {

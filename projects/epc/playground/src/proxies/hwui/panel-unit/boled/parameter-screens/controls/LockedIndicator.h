@@ -12,13 +12,13 @@ class LockedIndicator : public Label
   typedef Label super;
 
  public:
-  LockedIndicator(const Rect &pos);
-  virtual ~LockedIndicator();
+  explicit LockedIndicator(const Rect &pos);
+  ~LockedIndicator() override;
 
  protected:
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
+  void setFontColor(FrameBuffer &fb) const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 
   void onParameterSelected(Parameter *newOne);
 

@@ -26,19 +26,19 @@ class FineButton : public StateMachine<FineButtonStates, FineButtonEvents, TOGGL
 
  public:
   FineButton();
-  virtual ~FineButton();
+  ~FineButton() override;
+
+  FineButton(const FineButton& other) = delete;
+  FineButton& operator=(const FineButton&) = delete;
 
   void setButtonState(bool pressed);
-  bool getModifierState() const;
+  [[nodiscard]] bool getModifierState() const;
   bool setState(FineButtonStates s) override;
   bool onTimeout();
   bool onlyTemporary();
   void setShiftedWhilePressDown(bool down);
 
  private:
-  FineButton(const FineButton& other) = delete;
-  FineButton& operator=(const FineButton&) = delete;
-
   bool m_buttonState;
   bool m_modifierState;
   bool m_shifted;

@@ -14,14 +14,14 @@ class MCRoutings : public Control
 
  public:
   MCRoutings(const ParameterId &ribbonParamID, const Rect &pos);
-  virtual ~MCRoutings();
+  ~MCRoutings() override;
 
   bool redraw(FrameBuffer &fb) override;
 
- private:
   MCRoutings(const MCRoutings &other) = delete;
   MCRoutings &operator=(const MCRoutings &) = delete;
 
+ private:
   EditBuffer *getEditBuffer() const;
   void connectToRoutingParameters();
   void onRoutingParameterChanged(const Parameter *p);

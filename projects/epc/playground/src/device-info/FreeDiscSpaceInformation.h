@@ -5,7 +5,7 @@
 class FreeDiscSpaceInformation : public DeviceInformationItem
 {
  public:
-  FreeDiscSpaceInformation(DeviceInformation *parent);
+  explicit FreeDiscSpaceInformation(DeviceInformation *parent);
 
   virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
   virtual Glib::ustring get() const override;

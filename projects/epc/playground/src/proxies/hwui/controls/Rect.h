@@ -11,22 +11,22 @@ class Rect
   Rect(const Point &leftTop, const Point &rightBottom);
   virtual ~Rect();
 
-  bool contains(int x, int y) const;
-  bool intersects(const Rect &other) const;
-  Rect getIntersection(const Rect &other) const;
+  [[nodiscard]] bool contains(int x, int y) const;
+  [[nodiscard]] bool intersects(const Rect &other) const;
+  [[nodiscard]] Rect getIntersection(const Rect &other) const;
 
-  const Point &getPosition() const;
-  int getX() const;
-  int getY() const;
-  int getTop() const;
-  int getLeft() const;
-  int getBottom() const;
-  int getRight() const;
-  int getWidth() const;
-  int getHeight() const;
+  [[nodiscard]] const Point &getPosition() const;
+  [[nodiscard]] int getX() const;
+  [[nodiscard]] int getY() const;
+  [[nodiscard]] int getTop() const;
+  [[nodiscard]] int getLeft() const;
+  [[nodiscard]] int getBottom() const;
+  [[nodiscard]] int getRight() const;
+  [[nodiscard]] int getWidth() const;
+  [[nodiscard]] int getHeight() const;
 
-  Point getLeftTop() const;
-  Point getCenter() const;
+  [[nodiscard]] Point getLeftTop() const;
+  [[nodiscard]] Point getCenter() const;
 
   void setTop(int y);
   void setLeft(int x);
@@ -39,10 +39,10 @@ class Rect
   void moveBy(int x, int y);
   void normalize();
 
-  bool isEmpty() const;
+  [[nodiscard]] bool isEmpty() const;
 
-  Rect getMovedBy(const Point &p) const;
-  Rect getMargined(int h, int v) const;
+  [[nodiscard]] Rect getMovedBy(const Point &p) const;
+  [[nodiscard]] Rect getMargined(int h, int v) const;
 
   void reduceByMargin(int i);
   void addMargin(int left, int top, int right, int bottom);

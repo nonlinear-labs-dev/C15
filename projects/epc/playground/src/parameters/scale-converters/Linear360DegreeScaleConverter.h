@@ -9,9 +9,8 @@ class Linear360DegreeScaleConverter : public LinearScaleConverter
 
  public:
   Linear360DegreeScaleConverter();
-  virtual ~Linear360DegreeScaleConverter();
+  ~Linear360DegreeScaleConverter() override;
 
- private:
-  Linear360DegreeScaleConverter(const Linear360DegreeScaleConverter& other);
-  Linear360DegreeScaleConverter& operator=(const Linear360DegreeScaleConverter&);
+  Linear360DegreeScaleConverter(const Linear360DegreeScaleConverter& other) = delete;
+  Linear360DegreeScaleConverter& operator=(const Linear360DegreeScaleConverter&) = delete;
 };

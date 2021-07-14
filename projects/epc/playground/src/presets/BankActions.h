@@ -13,8 +13,8 @@ class BankActions : public RPCActionManager
   typedef RPCActionManager super;
 
  public:
-  BankActions(PresetManager &presetManager);
-  virtual ~BankActions();
+  explicit BankActions(PresetManager &presetManager);
+  ~BankActions() override;
 
   bool handleRequest(const Glib::ustring &path, std::shared_ptr<NetworkRequest> request) override;
 
@@ -25,13 +25,10 @@ class BankActions : public RPCActionManager
  private:
   typedef Preset *tPresetPtr;
 
-  void dropPresets(UNDO::Transaction *transaction, const Glib::ustring &anchorUUID, int offset,
-                   const Glib::ustring &csv);
   void insertBank(Bank *bank, Bank *targetBank, size_t insertPos);
   void insertBank(std::shared_ptr<NetworkRequest> request, size_t offset);
-  Glib::ustring guessNameBasedOnEditBuffer() const;
 
   PresetManager &m_presetManager;
 
-  void insertBankInCluster(Bank *bankToInsert, Bank *bankAtInsert, const Glib::ustring directionSeenFromBankInCluster);
+  void insertBankInCluster(Bank *bankToInsert, Bank *bankAtInsert, Glib::ustring directionSeenFromBankInCluster);
 };

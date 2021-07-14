@@ -53,7 +53,7 @@ class DebugLevel : public EnumSetting<DebugLevels>
   typedef EnumSetting<DebugLevels> super;
 
  public:
-  DebugLevel(Settings& settings);
+  explicit DebugLevel(Settings& settings);
   ~DebugLevel() override;
 
   bool set(DebugLevels m) override;

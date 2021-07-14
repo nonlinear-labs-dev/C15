@@ -10,7 +10,7 @@ class DeviceInformationItem;
 class DeviceInformation : public ContentSection
 {
  public:
-  DeviceInformation(UpdateDocumentContributor *parent);
+  explicit DeviceInformation(UpdateDocumentContributor *parent);
   virtual ~DeviceInformation();
 
   virtual void handleHTTPRequest(std::shared_ptr<NetworkRequest> request, const Glib::ustring &path) override;

@@ -5,6 +5,7 @@ class SyncVoiceGroupsAcrossUIS : public BooleanSetting
 {
  private:
   typedef BooleanSetting super;
+
  public:
   explicit SyncVoiceGroupsAcrossUIS(UpdateDocumentContributor &settings);
 };

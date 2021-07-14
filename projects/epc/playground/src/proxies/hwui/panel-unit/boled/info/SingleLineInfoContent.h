@@ -5,6 +5,6 @@
 class SingleLineInfoContent : public LeftAlignedLabel
 {
  public:
-  SingleLineInfoContent(Glib::ustring name);
+  explicit SingleLineInfoContent(Glib::ustring name);
   SingleLineInfoContent();
 };

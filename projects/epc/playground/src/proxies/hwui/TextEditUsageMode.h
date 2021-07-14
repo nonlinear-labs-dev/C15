@@ -14,12 +14,11 @@ class TextEditUsageMode : public UsageMode
   typedef UsageMode super;
 
  public:
-  TextEditUsageMode(const Glib::ustring &initalText);
-  ~TextEditUsageMode();
+  explicit TextEditUsageMode(const Glib::ustring &initalText);
+  ~TextEditUsageMode() override;
 
-  virtual void setup();
-
-  virtual bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state);
+  void setup() override;
+  bool onButtonPressed(Buttons buttonID, ButtonModifiers modifiers, bool state) override;
 
   Glib::ustring getKeyLabel(Buttons buttonID) const;
   sigc::connection onTextChanged(const sigc::slot<void, const Glib::ustring &> &cb);

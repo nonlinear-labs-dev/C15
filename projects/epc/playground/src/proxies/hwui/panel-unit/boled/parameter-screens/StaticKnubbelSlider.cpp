@@ -6,8 +6,3 @@ StaticKnubbelSlider::StaticKnubbelSlider(tControlPositionValue value, bool biPol
   setHighlight(true);
   setValue(value, biPolar);
 }
-
-void StaticKnubbelSlider::setValueExplicit(tControlPositionValue value, bool biPolar)
-{
-  setValue(value, biPolar);
-}

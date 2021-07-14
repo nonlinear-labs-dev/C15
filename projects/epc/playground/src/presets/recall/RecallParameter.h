@@ -14,15 +14,15 @@ class RecallParameter : public UpdateDocumentContributor
   void writeDocument(Writer& writer, tUpdateID knownRevision) const override;
   void copyFrom(UNDO::Transaction* transaction, const Parameter* other);
 
-  ParameterId getID() const;
+  [[nodiscard]] ParameterId getID() const;
 
-  tControlPositionValue getRecallValue() const;
-  MacroControls getRecallModSource() const;
-  tControlPositionValue getRecallModulationAmount() const;
+  [[nodiscard]] tControlPositionValue getRecallValue() const;
+  [[nodiscard]] MacroControls getRecallModSource() const;
+  [[nodiscard]] tControlPositionValue getRecallModulationAmount() const;
 
-  const std::string& getGivenName() const;
-  const std::string& getInfo() const;
-  
+  [[nodiscard]] const std::string& getGivenName() const;
+  [[nodiscard]] const std::string& getInfo() const;
+
  private:
   ParameterId m_id;
   tControlPositionValue m_recallValue = 0;

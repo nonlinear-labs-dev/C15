@@ -29,10 +29,10 @@ ModuleCaption::ModuleCaption(const Rect &pos)
       sigc::hide(sigc::mem_fun(this, &ModuleCaption::onSoundTypeChanged)));
 }
 
-Label::StringAndSuffix ModuleCaption::shortenStringIfNeccessary(std::shared_ptr<Font> font,
-                                                                const Label::StringAndSuffix &text) const
+StringAndSuffix ModuleCaption::shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                                         const StringAndSuffix &text) const
 {
-  return TextCropper::shortenStringIfNeccessary(font, text.text, getWidth());
+  return StringAndSuffix { TextCropper::shortenStringIfNeccessary(font, text.text, getWidth()) };
 }
 
 void ModuleCaption::onParameterSelected(Parameter *newOne)
@@ -46,7 +46,7 @@ void ModuleCaption::updateText(Parameter *newOne)
   {
     auto group = newOne->getParentGroup();
     auto groupName = group->getShortName();
-    setText(groupName);
+    setText(StringAndSuffix { groupName });
   }
 }
 

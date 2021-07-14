@@ -20,14 +20,14 @@ namespace nltools
       class WebSocketOutChannel : public OutChannel
       {
        public:
-        WebSocketOutChannel(const std::string &targetMachine, guint port, nltools::threading::Priority p);
+        WebSocketOutChannel(const std::string &targetMachine, guint port, nltools::threading::Priority p,
+                            std::function<void()> connectionEstablishedCB);
 
         ~WebSocketOutChannel() override;
 
         bool send(const SerializedMessage &msg) override;
         void flush(const std::chrono::milliseconds timeout) override;
         bool waitForConnection(std::chrono::milliseconds timeOut) override;
-        void onConnectionEstablished(std::function<void()> cb) override;
         bool isConnected() const override;
         void signalConnectionEstablished();
 

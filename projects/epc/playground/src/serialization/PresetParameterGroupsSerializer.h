@@ -7,13 +7,13 @@ class Preset;
 class PresetParameterGroupsSerializer : public Serializer
 {
  public:
-  PresetParameterGroupsSerializer(Preset *preset);
+  explicit PresetParameterGroupsSerializer(Preset *preset);
 
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   Preset *m_preset;
 };

@@ -12,12 +12,11 @@ class ModulateableParameterWithUnusualModUnit : public ModulateableParameter
                                           const ScaleConverter *modAmountScaling, tDisplayValue def,
                                           int coarseDenominator, int fineDenominator);
 
-  virtual void undoableIncrementMCAmount(UNDO::Transaction *transaction, int inc, ButtonModifiers modifiers) override;
-  virtual void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
-  virtual Glib::ustring stringizeModulationAmount() const override;
-  virtual Glib::ustring stringizeModulationAmount(tControlPositionValue amount) const override;
-  virtual double getModulationAmountFineDenominator() const override;
-  virtual double getModulationAmountCoarseDenominator() const override;
+  void writeDocProperties(Writer &writer, tUpdateID knownRevision) const override;
+  Glib::ustring stringizeModulationAmount() const override;
+  Glib::ustring stringizeModulationAmount(tControlPositionValue amount) const override;
+  double getModulationAmountFineDenominator() const override;
+  double getModulationAmountCoarseDenominator() const override;
 
  private:
   const ScaleConverter *m_modAmountScaling;

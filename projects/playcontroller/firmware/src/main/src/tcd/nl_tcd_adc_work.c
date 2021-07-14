@@ -673,6 +673,16 @@ void ADC_WORK_Resume(void)
 /*****************************************************************************
 * @brief  Process Aftertouch and Bender
 ******************************************************************************/
+static void SendBenderIfChanged(int32_t value)
+{
+  static int32_t oldValue = 0x7FFFFFFF;
+  if (value != oldValue)
+  {
+    ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_PITCHBEND, value);
+    ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_PITCHBEND, value);
+    oldValue = value;
+  }
+}
 static void ProcessAtfertouchAndBender(void)
 {
   int32_t value;
@@ -765,8 +775,7 @@ static void ProcessAtfertouchAndBender(void)
 
       valueToSend = 8000 + valueToSend;  // 8001 ... 16000
 
-      ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_PITCHBEND, valueToSend);
-      ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      SendBenderIfChanged(valueToSend);
     }
     else if (value < -BENDER_DEADRANGE)  // is in the negative work range
     {
@@ -789,16 +798,12 @@ static void ProcessAtfertouchAndBender(void)
 
       valueToSend = 8000 - valueToSend;  // 7999 ... 0
 
-      ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_PITCHBEND, valueToSend);
-      ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_PITCHBEND, valueToSend);
+      SendBenderIfChanged(valueToSend);
     }
     else  // is in the dead range
     {
       if ((lastPitchbend > BENDER_DEADRANGE) || (lastPitchbend < -BENDER_DEADRANGE))  // was outside of the dead range before
-      {
-        ADC_WORK_WriteHWValueForAE(HW_SOURCE_ID_PITCHBEND, 8000);
-        ADC_WORK_WriteHWValueForUI(HW_SOURCE_ID_PITCHBEND, 8000);
-      }
+        SendBenderIfChanged(8000);
     }
 
     lastPitchbend = value;

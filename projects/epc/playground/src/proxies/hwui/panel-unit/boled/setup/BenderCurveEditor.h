@@ -11,7 +11,7 @@ class BenderCurveEditor : public MenuEditor
 
  public:
   BenderCurveEditor();
-  virtual ~BenderCurveEditor();
+  ~BenderCurveEditor() override;
 
   void incSetting(int inc) override;
   const std::vector<Glib::ustring> &getDisplayStrings() const override;

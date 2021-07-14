@@ -8,16 +8,13 @@ class RenameVoiceGroupLayout : public RenameLayout
   typedef RenameLayout super;
 
  public:
-  RenameVoiceGroupLayout(VoiceGroup vg);
+  explicit RenameVoiceGroupLayout(VoiceGroup vg);
+
+ protected:
+  void cancel() override;
 
  private:
   void commit(const Glib::ustring& newName) override;
   Glib::ustring getInitialText() const override;
-
-protected:
-  void cancel() override;
-
-private:
-
   const VoiceGroup m_targetGroup;
 };

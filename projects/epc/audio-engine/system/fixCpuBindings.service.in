@@ -1,0 +1,11 @@
+[Unit]
+Description=Fix CPU bindings
+After=syslog.target persistent.mount audio-engine.service
+
+[Service]
+ExecStart=@C15_INSTALL_PATH@/scripts/fixCpuBindings.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

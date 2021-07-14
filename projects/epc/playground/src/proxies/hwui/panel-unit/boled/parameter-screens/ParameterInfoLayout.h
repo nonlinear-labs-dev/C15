@@ -13,8 +13,8 @@ class ParameterInfoLayout : public InfoLayout
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
  protected:
-  virtual void addHeadline() override;
-  virtual void addModuleCaption() override;
-  virtual void addInfoLabel() override;
-  virtual Scrollable *createScrollableContent() override;
+  void addHeadline() override;
+  void addModuleCaption() override;
+  void addInfoLabel() override;
+  Scrollable *createScrollableContent() override;
 };

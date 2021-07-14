@@ -17,12 +17,12 @@ class SetupLayout : public Layout
   typedef Layout super;
 
  public:
-  SetupLayout(FocusAndMode focusAndMode);
-  virtual ~SetupLayout();
+  explicit SetupLayout(FocusAndMode focusAndMode);
+  ~SetupLayout() override;
 
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
-  virtual bool redraw(FrameBuffer &fb) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
+  bool redraw(FrameBuffer &fb) override;
   void diveUp();
 
  private:

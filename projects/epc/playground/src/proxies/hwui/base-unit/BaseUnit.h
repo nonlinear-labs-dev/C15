@@ -14,10 +14,9 @@ class BaseUnit : public HardwareUserInterfaceUnit, public sigc::trackable
 
  public:
   BaseUnit();
-  virtual ~BaseUnit();
+  ~BaseUnit() override;
 
   void onTimeout();
-  int getLastTouchedRibbon();
   void indicateBlockingMainThread(bool onOff);
 
   void init();
@@ -25,7 +24,6 @@ class BaseUnit : public HardwareUserInterfaceUnit, public sigc::trackable
   PlayPanel &getPlayPanel();
 
  private:
-  void onScreenSaverState(bool screenSaverState);
   void respectUsageMode(const Setting *s);
   void onBBBBConnected();
 

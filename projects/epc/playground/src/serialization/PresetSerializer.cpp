@@ -46,7 +46,7 @@ void PresetSerializer::readTagContent(Reader &reader) const
   reader.onTextElement("vg-I-name", [&](auto &text, auto) {
     m_preset->undoableSetVoiceGroupName(reader.getTransaction(), VoiceGroup::I, text);
   });
-  
+
   reader.onTextElement("vg-II-name", [&](auto &text, auto) {
     m_preset->undoableSetVoiceGroupName(reader.getTransaction(), VoiceGroup::II, text);
   });
@@ -54,7 +54,7 @@ void PresetSerializer::readTagContent(Reader &reader) const
   if(!m_ignoreUUIDs)
   {
     reader.onTextElement("uuid", [&](const Glib::ustring &text, const Attributes &) {
-      m_preset->setUuid(reader.getTransaction(), text);
+      m_preset->setUuid(reader.getTransaction(), Uuid { text });
     });
   }
 

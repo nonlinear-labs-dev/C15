@@ -28,9 +28,9 @@ class Attribute
 
   virtual ~Attribute();
 
-  Glib::ustring toXmlString() const;
-  const Glib::ustring &getName() const;
-  const Glib::ustring &getValue() const;
+  [[nodiscard]] Glib::ustring toXmlString() const;
+  [[nodiscard]] const Glib::ustring &getName() const;
+  [[nodiscard]] const Glib::ustring &getValue() const;
 
  private:
   Glib::ustring m_name;

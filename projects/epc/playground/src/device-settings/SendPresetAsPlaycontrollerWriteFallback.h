@@ -8,10 +8,9 @@ class SendPresetAsPlaycontrollerWriteFallback : public BooleanSetting
   typedef BooleanSetting super;
 
  public:
-  SendPresetAsPlaycontrollerWriteFallback(UpdateDocumentContributor& settings);
-  virtual ~SendPresetAsPlaycontrollerWriteFallback();
+  explicit SendPresetAsPlaycontrollerWriteFallback(UpdateDocumentContributor& settings);
+  ~SendPresetAsPlaycontrollerWriteFallback() override;
 
- private:
   SendPresetAsPlaycontrollerWriteFallback(const SendPresetAsPlaycontrollerWriteFallback& other) = delete;
   SendPresetAsPlaycontrollerWriteFallback& operator=(const SendPresetAsPlaycontrollerWriteFallback&) = delete;
 };

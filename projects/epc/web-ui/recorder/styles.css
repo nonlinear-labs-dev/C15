@@ -1,0 +1,498 @@
+body {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #000;
+    
+	font-family: 'SSP-LW00';
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+}
+
+#pane {
+    position: absolute;
+    width: 80vw;
+    height: 40vw;
+    color: white;
+    background-color: black;
+    text-align: center;
+    user-select: none;
+    touch-action: none;
+}
+
+#bars {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: calc(100% - 1cm);
+    pointer-events: none;
+}
+
+#waveform {
+    position: absolute;
+    background-color: #3c3c3c;
+    border: 1px solid #555;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#selected-range {
+    top: 0;
+    bottom: 1cm;
+    position: absolute;
+    background-color: rgba(174, 206, 255, 0.4);
+	box-shadow: #222 0px 0px 10px;
+    pointer-events: none;
+}
+
+#range-selector {
+    width: 100%;
+    left: 0;
+    top: calc(25% - 5mm);
+    height: 50%;
+    position: absolute;
+    background-color: #999;
+    opacity: 0.5;
+}
+
+#selected-range .buttons {
+    position: absolute;
+    left: 0;
+    right:0;
+    bottom: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#info {
+	line-height: 115%;
+	color: #ddd;	
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    background: rgba(128, 128, 128, 0.5);
+	box-shadow: #222 1px 1px 5px;
+    padding: 2px 7px;
+    border-radius: 3px;
+}
+
+#available-frames .first:after {
+    content: " – ";
+}
+
+#options {
+	font-size: 250%;
+	color: #ddd;
+    position: absolute;
+    display: flex;
+    right: 10px;
+    top: 15px;
+}
+
+#options span {
+	width: 37px;
+	height: 37px;
+	margin: 0px 5px;
+	padding: 3px;
+	background-color: rgb(100,100,100);
+	box-shadow: #000 1px 1px 5px;
+	line-height: 34px;
+	border-radius: 3px;
+}
+
+#options span:hover {
+	color: #fff;
+	background-color: rgba(200,200,200,0.8);
+}
+
+#options span:active {
+	color: #bbb;
+	background-color: rgba(100,100,100,0.8);
+	box-shadow: none;
+}
+
+#toggle-recording.recording, #toggle-recording.recording:hover  {
+    color: #f00;
+}
+
+#zoom {
+	font-size: 200%;
+	color: #ddd;
+    position: absolute;
+    display: flex;
+    right: 15px;
+    bottom: 60px; 
+}
+
+#zoom span {
+	width: 37px;
+	height: 37px;
+	margin: 0px 5px;
+	padding: 3px;
+	background-color: rgb(100,100,100);
+	box-shadow: #000 1px 1px 5px;
+	line-height: 34px;
+	border-radius: 3px;
+}
+
+#zoom span:hover {
+	color: #fff;
+	background-color: rgba(200,200,200,0.8);
+}
+
+#zoom span:active {
+	color: #bbb;
+	background-color: rgba(100,100,100,0.8);
+	box-shadow: none;
+}
+
+#zoom > span.disabled {
+    color: gray;
+    pointer-events: none;
+}
+
+#toggle-playback.disabled {
+    color: gray
+}
+
+#toggle-playback.playing::after {
+    content: "\E0D9";
+}
+
+#toggle-playback.paused::after {
+    content: "\E0D7";
+}
+
+#toggle-recording.recording::after {
+     content: "\E0D8";
+     color: #ff0000;
+}
+
+#toggle-recording.paused::after {
+    content: "\E0D8";
+}
+
+#download.disabled {
+    color: gray;
+}
+
+#download::after {
+    content: "\E0DB"
+}
+
+#reset::after {
+    content: "\E0CE"
+}
+
+#zoom-in::after {
+    content: "\E0DE"
+}
+
+#zoom-out::after {
+    content: "\E0DF"
+}
+
+#undo.disabled {
+    color: gray
+}
+
+#undo::after {
+    content: "\E0E1"
+}
+
+.unselectable {
+    /* For Opera and <= IE9, we need to add unselectable="on" attribute onto each element */
+    /* Check this site for more details: http://help.dottoro.com/lhwdpnva.php */
+    -moz-user-select: none; /* These user-select properties are inheritable, used to prevent text selection */
+    -webkit-user-select: none;
+    -ms-user-select: none; /* From IE10 only */
+    user-select: none; /* Not valid CSS yet, as of July 2012 */
+
+    -webkit-user-drag: none; /* Prevents dragging of images/divs etc */
+    user-drag: none;
+}
+
+.clipping {
+    position: relative;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#play-pos {
+    background-color: #56ff56;
+    width: 0.8mm;
+    position: absolute;
+    left: -100px;
+    top: 0;
+    bottom: 1cm;
+}
+
+#play-pos-time {
+    position: absolute;
+    width: fit-content;
+    text-align: left;
+    white-space: nowrap;
+    padding: 0.7mm 1.5mm;
+    top: calc(25% - 5mm);
+    margin-left: 0.8mm;
+    background-color: rgba(10, 51, 10, 0.5);
+    border: 1px solid rgba(22, 132, 22, 1);
+    border-left: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#selected-range-times {
+    color: #fff;
+	text-shadow: #000 1px 1px 5px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+#one-border {
+    position: absolute;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background-color: black;
+}
+
+#other-border {
+    position: absolute;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: black;
+}
+
+#one-handle, #other-handle {
+    position: absolute;
+    width: 1cm;
+    height: 1cm;
+    left: -0.5cm;
+    top: calc(50% - 0.5cm);
+    background: #c5dcff center center no-repeat;
+    background-image: url(img/sel-handle-top.svg);    
+    border: 1px solid #435168;
+    pointer-events: all;
+    border-radius: 5px;
+    box-shadow: #29384f 0px 0px 3px;
+}
+
+#scrollbar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1cm;
+    bottom: 0;
+    background-color: rgba(0,0,0,.5);
+    border-radius: 7px;
+}
+
+#scrollbar-selected-range {
+    visibility: hidden;
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 0%;
+    bottom: 0%;
+    background-color: rgba(174, 206, 255, 0.4);
+}
+
+#scrollbar-play-position {
+    visibility: hidden;
+    position: absolute;
+    left: 0%;
+    width: 0.8mm;
+    top: 0%;
+    bottom: 0%;
+    background-color: #2abb2a;
+}
+
+#scrollbar-handle {
+    position: absolute;
+    left: 40%;
+    width: 30%;
+    min-width: 3cm;
+    height: 100%;
+    background-color: rgba(150, 150, 150, 0.5);
+    border-radius: 7px; 
+    border: 1px solid #333;
+    box-sizing: border-box; 
+    overflow: hidden; 
+}
+
+#scrollbar-handle-left {
+    position: absolute;
+    left: 0;
+    width: 1cm;
+    height: 100%;
+    background: #b3b3b3 center center no-repeat;
+    background-image: url(img/sb-handle-top.svg);
+}
+
+#scrollbar-handle-right {
+    position: absolute;
+    right: 0cm;
+    width: 1cm;
+    height: 100%;
+    background-color: #444;
+    background: #b3b3b3 center center no-repeat;
+    background-image: url(img/sb-handle-top.svg);
+}
+
+#not-connected-box {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#not-connected-box p {
+    color: black;
+}
+
+#not-connected-box div {
+    position: absolute;
+    border-width: 3px;
+    border-style: solid;
+    border-color: rgb(231, 231, 231);
+    border-image: initial;
+    padding: 10px;
+    background: white;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+#prompt-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#prompt-box {
+    position: absolute;
+    border-width: 3px;
+    border-style: solid;
+    border-color: rgb(231, 231, 231);
+    border-image: initial;
+    padding: 10px;
+    background: white;
+}
+
+#prompt-options-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#prompt-options-wrapper > * {
+    min-width: 2cm;
+    min-height: 1cm;
+}
+
+#prompt-yes {
+    margin-right: 1cm;
+}
+
+#download-dialog {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#download-box {
+    position: absolute;
+    border-width: 3px;
+    border-style: solid;
+    border-color: rgb(231, 231, 231);
+    border-image: initial;
+    padding: 10px;
+    background: white;
+}
+
+#download-name {
+    width: 40em;
+    line-height: 1cm;
+    margin: 0;
+    padding-right: 12mm;
+    height: 1cm;
+    padding: 0;
+    padding-right: 1cm;
+    border: 1px solid black;
+    padding-left: 2mm;
+}
+
+#reset-download-name {
+    width: 1cm;
+    display: inline-block;
+    height: 1cm;
+    text-align: center;
+    margin-left: -1cm;
+    padding: 0;
+    position: absolute;
+    line-height: 1cm;
+}
+
+#reset-download-name::after {
+    content: "×";
+}
+
+#download-options > * {
+    min-width: 2cm;
+    min-height: 1cm;
+    margin-left: 1em;
+}
+
+#download-options {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5em;
+}
+
+#flac-size {
+    display: block;
+}
+
+#wave-size {
+    display: block;
+}

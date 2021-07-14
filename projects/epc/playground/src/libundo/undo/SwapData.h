@@ -14,14 +14,12 @@ namespace UNDO
     typedef std::shared_ptr<tThis> tPtr;
 
     template <typename... Q>
-    SwapData(Q &&... args)
+    explicit SwapData(Q &&... args)
         : tBase(std::forward<Q>(args)...)
     {
     }
 
-    virtual ~SwapData()
-    {
-    }
+    virtual ~SwapData() = default;
 
     template <int N> typename std::tuple_element<N, tBase>::type &get()
     {

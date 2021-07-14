@@ -12,8 +12,8 @@ namespace DescriptiveLayouts
   class Bar : public Control, public Styleable, public PropertyOwner
   {
    public:
-    Bar(const PrimitiveInstance &e);
-    virtual ~Bar();
+    explicit Bar(const PrimitiveInstance &e);
+    ~Bar() override;
 
     using Range = std::pair<tControlPositionValue, tControlPositionValue>;
 

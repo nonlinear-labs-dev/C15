@@ -2,20 +2,20 @@
 #include "proxies/hwui/Oleds.h"
 #include <proxies/hwui/FrameBuffer.h>
 
-Label::Label(const StringAndSuffix &text, const Rect &pos)
+#include <utility>
+
+Label::Label(StringAndSuffix text, const Rect &pos)
     : super(pos)
-    , m_text(text)
+    , m_text(std::move(text))
 {
 }
 
 Label::Label(const Rect &pos)
-    : Label("", pos)
+    : Label(StringAndSuffix { "" }, pos)
 {
 }
 
-Label::~Label()
-{
-}
+Label::~Label() = default;
 
 void Label::setFontColor(FrameBufferColors color)
 {
@@ -59,12 +59,12 @@ bool Label::setText(const StringAndSuffix &text)
   return false;
 }
 
-Label::StringAndSuffix Label::getText() const
+StringAndSuffix Label::getText() const
 {
   return m_text;
 }
 
-Label::StringAndSuffix Label::shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const
+StringAndSuffix Label::shortenStringIfNeccessary(const std::shared_ptr<Font> &font, const StringAndSuffix &text) const
 {
   return text;
 }

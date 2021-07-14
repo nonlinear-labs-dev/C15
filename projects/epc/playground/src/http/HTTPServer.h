@@ -51,7 +51,6 @@ class HTTPServer
   void redirectToIndexPage(std::shared_ptr<HTTPRequest> request) const;
 
   static bool isStaticFileURL(const Glib::ustring &path);
-  void deliverJournal(std::shared_ptr<HTTPRequest> request) const;
 
   SoupServer *m_server = nullptr;
   ContentManager m_contentManager;

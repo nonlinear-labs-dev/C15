@@ -48,9 +48,9 @@ void MuteIndicator::onParameterChanged(const Parameter* p)
       = SwitchVoiceGroupButton::allowToggling(p, Application::get().getPresetManager()->getEditBuffer());
 
   if(muteActive && currentFocusIsNotGlobal)
-    setText({ "\uE0BA", 0 });
+    setText(StringAndSuffix { "\uE0BA", 0 });
   else
-    setText({ "", 0 });
+    setText(StringAndSuffix::empty());
 }
 
 std::shared_ptr<Font> MuteIndicator::getFont() const

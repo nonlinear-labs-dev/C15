@@ -10,8 +10,8 @@ class MCPositionButton : public ModulationModeButton
   typedef ModulationModeButton super;
 
  public:
-  MCPositionButton(Buttons id);
-  virtual ~MCPositionButton();
+  explicit MCPositionButton(Buttons id);
+  ~MCPositionButton() override;
 
-  void update(const Parameter *parameter);
+  void update(const Parameter *parameter) override;
 };

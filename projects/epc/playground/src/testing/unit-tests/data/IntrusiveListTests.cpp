@@ -5,7 +5,7 @@ template <typename tData> class Item : public IntrusiveListItem<Item<tData> *>
 {
  public:
   explicit Item(tData t)
-      : data{ t }
+      : data { t }
   {
   }
   tData data;
@@ -29,11 +29,11 @@ TEST_CASE("Simple IntrusiveList Operations")
 
     for(auto i : l)
     {
-      REQUIRE(i->data == expected);
+      CHECK(i->data == expected);
       expected++;
     }
 
-    REQUIRE(expected == 4);
+    CHECK(expected == 4);
 
     expected = 0;
 
@@ -41,11 +41,11 @@ TEST_CASE("Simple IntrusiveList Operations")
 
     for(auto i : l)
     {
-      REQUIRE(i->data == expected);
+      CHECK(i->data == expected);
       expected++;
     }
 
-    REQUIRE(expected == 4);
+    CHECK(expected == 4);
   }
 
   SECTION("Remove Middle")
@@ -61,11 +61,11 @@ TEST_CASE("Simple IntrusiveList Operations")
 
     for(auto i : l)
     {
-      REQUIRE(i->data == expected);
+      CHECK(i->data == expected);
       expected++;
     }
 
-    REQUIRE(expected == 4);
+    CHECK(expected == 4);
 
     l.remove(one);
 
@@ -73,14 +73,14 @@ TEST_CASE("Simple IntrusiveList Operations")
 
     for(auto i : l)
     {
-      REQUIRE(i->data == expected);
+      CHECK(i->data == expected);
       expected++;
 
       if(expected == 1)
         expected = 2;
     }
 
-    REQUIRE(expected == 4);
+    CHECK(expected == 4);
   }
 
   SECTION("Remove First")
@@ -98,11 +98,11 @@ TEST_CASE("Simple IntrusiveList Operations")
 
     for(auto i : l)
     {
-      REQUIRE(i->data == expected);
+      CHECK(i->data == expected);
       expected++;
     }
 
-    REQUIRE(expected == 4);
+    CHECK(expected == 4);
   }
 
   SECTION("Remove Last")
@@ -119,14 +119,15 @@ TEST_CASE("Simple IntrusiveList Operations")
 
     for(auto i : l)
     {
-      REQUIRE(i->data == expected);
+      CHECK(i->data == expected);
       expected++;
     }
 
-    REQUIRE(expected == 3);
+    CHECK(expected == 3);
   }
 
-  SECTION("Clear") {
+  SECTION("Clear")
+  {
     auto last = new Item<int>(3);
 
     l.append(new Item<int>(2));
@@ -139,11 +140,11 @@ TEST_CASE("Simple IntrusiveList Operations")
 
     for(auto i : l)
     {
-      REQUIRE(i->data == expected);
+      CHECK(i->data == expected);
       expected++;
     }
 
-    REQUIRE(expected == 3);
+    CHECK(expected == 3);
     l.clear();
   }
 }

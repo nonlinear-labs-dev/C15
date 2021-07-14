@@ -12,7 +12,7 @@ class MessageParser
   enum MessageTypes
   {
     PRESET_DIRECT = 0x0100,
-    HARDWARE_SOURCE = 0x0400,
+    // Deprecated HARDWARE_SOURCE = 0x0400,
     EDIT_CONTROL = 0x0500,
     SETTING = 0x0700,
     NOTIFICATION = 0x0800,
@@ -36,13 +36,13 @@ class MessageParser
     std::vector<uint16_t> params;
   };
 
-  const NLMessage &getMessage() const;
+  [[nodiscard]] const NLMessage &getMessage() const;
   size_t parse(const uint8_t *buffer, size_t numBytes);
   static size_t getNumInitialBytesNeeded();
 
  private:
-  bool hasReadHeader() const;
-  size_t getNumHeaderBytesMissing() const;
+  [[nodiscard]] bool hasReadHeader() const;
+  [[nodiscard]] size_t getNumHeaderBytesMissing() const;
 
   size_t parseBody(const uint8_t *buffer, size_t numBytes);
 

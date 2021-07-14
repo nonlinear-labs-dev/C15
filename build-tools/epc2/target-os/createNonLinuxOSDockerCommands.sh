@@ -1,5 +1,19 @@
 set -e
 
+mkdir -p /extracted-packages
+cd /extracted-packages
+tar -xvzf /packages/packages_${ARCH_VERSION}.tar.gz
+
+echo "Server=file:///extracted-packages" > /etc/pacman.d/mirrorlist
+sed -i 's/\[core\]//g' /etc/pacman.conf
+sed -i 's/\[extra\]//g' /etc/pacman.conf
+sed -i 's/\[community\]//g' /etc/pacman.conf
+echo "[nonlinux]" >> /etc/pacman.conf
+echo "SigLevel = Optional TrustAll" >> /etc/pacman.conf
+echo "Server=file:///extracted-packages" >> /etc/pacman.conf
+
+
+pacman --noconfirm -Syyu
 pacman --noconfirm --overwrite '*' -S ${INSTALL_PACKAGES}
 yes | truncate -s 8G /out/rootfs.ext4
 yes | truncate -s 512M /out/bootfs.fat
@@ -9,9 +23,7 @@ pacman --noconfirm -Sw ${INSTALL_PACKAGES}
 mount -o loop /out/rootfs.ext4 /mnt
 mkdir /mnt/boot
 mount -o loop /out/bootfs.fat /mnt/boot/
-echo Server\ =\ file:///var/lib/pacman/sync > /etc/pacman.d/mirrorlist
-echo [dvzrv] >> /etc/pacman.d/mirrorlist
-echo Server\ =\ file:///var/lib/pacman/sync >> /etc/pacman.d/mirrorlist
+mkdir -p /run/shm
 
 pacstrap -c /mnt base ${INSTALL_PACKAGES}
 

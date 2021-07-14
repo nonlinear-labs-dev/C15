@@ -4,7 +4,6 @@
 
 USBManager::USBManager()
     : m_backgroundThread { [this] {
-
       while(m_running)
       {
         std::unique_lock<std::mutex> lock(cv_m);

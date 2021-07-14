@@ -209,7 +209,7 @@ void PanelUnitSoundMode::setup()
         else
           hwui->setFocusAndMode(hwui->getOldFocusAndMode());
       else
-        hwui->undoableSetFocusAndMode(UIFocus::Sound);
+        hwui->undoableSetFocusAndMode(FocusAndMode { UIFocus::Sound });
     }
 
     return true;

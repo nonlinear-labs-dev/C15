@@ -4,6 +4,7 @@
 #include <parameters/messaging/ParameterMessageFactory.h>
 #include <groups/MonoGroup.h>
 #include <tools/RecursionGuard.h>
+#include <presets/PresetManager.h>
 #include "playground.h"
 
 namespace UNDO
@@ -13,6 +14,7 @@ namespace UNDO
 
 class EditBuffer;
 class Uuid;
+class Settings;
 
 class AudioEngineProxy : public sigc::trackable
 {
@@ -54,10 +56,23 @@ class AudioEngineProxy : public sigc::trackable
   static void fillMonoPart(nltools::msg::ParameterGroups::MonoGroup& monoGroup, ParameterGroup* const& g);
   static void fillUnisonPart(nltools::msg::ParameterGroups::UnisonGroup& unisonGroup, ParameterGroup* const& g);
 
-  void onBankSelectionChanged(const Uuid& uuid);
-  void onBankChanged();
+  void onMidiBankSelectionChanged(const Uuid& newMidiBankUuid);
+  void setLastKnownMIDIProgramChangeNumber(int pc);
+  void sendSelectedMidiPresetAsProgramChange();
+  void onPresetManagerLoaded();
 
+  uint8_t m_lastMIDIKnownProgramNumber = std::numeric_limits<uint8_t>::max();
   uint m_suppressParamChanges = 0;
-  sigc::connection m_presetSelectionConnection;
+
+  sigc::connection m_midiBankChangedConnection;
+  sigc::connection m_midiBankConnection;
   RecursionGuard m_programChangeRecursion;
+  template <typename T> void subscribeToMidiSetting(Settings* s);
+  template <typename... TT> void subscribeToMidiSettings(Settings* s);
+  void connectSettingsToAudioEngineMessage();
+  void scheduleMidiSettingsMessage();
+
+  Throttler m_sendMidiSettingThrottler { std::chrono::milliseconds { 250 } };
+
+  std::vector<sigc::connection> m_settingConnections;
 };

@@ -12,7 +12,7 @@ class PhysicalControlBehaviorLabel : public Label
   typedef Label super;
 
  public:
-  PhysicalControlBehaviorLabel(const Rect &pos);
+  explicit PhysicalControlBehaviorLabel(const Rect &pos);
 
  protected:
   void setBackgroundColor(FrameBuffer &fb) const override;

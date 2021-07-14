@@ -7,8 +7,8 @@ class UpperModulationBoundSlider : public ModulationBoundSlider
   typedef ModulationBoundSlider super;
 
  public:
-  UpperModulationBoundSlider(const Rect &pos);
-  virtual ~UpperModulationBoundSlider();
+  explicit UpperModulationBoundSlider(const Rect &pos);
+  ~UpperModulationBoundSlider() override;
 
  protected:
   BoundPosition getBoundPosition() const override;

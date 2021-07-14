@@ -1,10 +1,11 @@
 #include "SoupOutStream.h"
 #include <giomm.h>
 
-constexpr size_t scratchbufferSize = 1024 * 16;
+constexpr size_t scratchbufferSize = 1500;  // as suggested by https://de.wikipedia.org/wiki/Maximum_Transmission_Unit
 
-SoupOutStream::SoupOutStream(SoupMessage *msg, const Glib::ustring &contentType, bool zip)
-    : m_msg(msg)
+SoupOutStream::SoupOutStream(SoupServer *server, SoupMessage *msg, const Glib::ustring &contentType, bool zip)
+    : m_server(server)
+    , m_msg(msg)
 {
   m_scratchBuffer.reserve(scratchbufferSize);
 
@@ -38,6 +39,7 @@ void SoupOutStream::flush()
     }
     soup_message_body_append(m_msg->response_body, SOUP_MEMORY_COPY, m_scratchBuffer.data(), m_scratchBuffer.size());
     soup_message_body_complete(m_msg->response_body);
+    soup_server_unpause_message(m_server, m_msg);
   }
   m_completed = true;
 }
@@ -60,6 +62,7 @@ void SoupOutStream::push(const char *str, size_t numBytes)
       soup_message_body_append(m_msg->response_body, SOUP_MEMORY_COPY, m_scratchBuffer.data(), m_scratchBuffer.size());
 
     soup_message_body_append(m_msg->response_body, SOUP_MEMORY_COPY, str, numBytes);
+    soup_server_unpause_message(m_server, m_msg);
     m_scratchBuffer.clear();
   }
   else

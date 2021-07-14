@@ -8,8 +8,8 @@ class DateTimeAdjustment : public Setting
   typedef Setting super;
 
  public:
-  DateTimeAdjustment(Settings& parent);
-  virtual ~DateTimeAdjustment();
+  explicit DateTimeAdjustment(Settings& parent);
+  ~DateTimeAdjustment() override;
 
   Glib::ustring getDisplayString() const override;
 
@@ -21,9 +21,9 @@ class DateTimeAdjustment : public Setting
 
   void adjust(time_t modifiedTime);
 
- private:
   DateTimeAdjustment(const DateTimeAdjustment& other) = delete;
   DateTimeAdjustment& operator=(const DateTimeAdjustment&) = delete;
 
+ private:
   int64_t m_adjustment = 0;
 };

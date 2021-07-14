@@ -14,8 +14,8 @@ class SelectedMacroControlsHWSourceName : public Label
 
  public:
   // public methods
-  SelectedMacroControlsHWSourceName(const Rect& rect);
-  virtual ~SelectedMacroControlsHWSourceName();
+  explicit SelectedMacroControlsHWSourceName(const Rect& rect);
+  ~SelectedMacroControlsHWSourceName() override;
 
  private:
   // private methods

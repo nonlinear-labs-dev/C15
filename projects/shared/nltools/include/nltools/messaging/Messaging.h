@@ -25,8 +25,8 @@ namespace nltools
     ENUM(MessageType, uint16_t, Preset, Morph_A, Morph_B, Parameter, EditControl, MorphPosition, Setting, Notification,
          Assertion, Request,
 
-         SetRibbonLED, SetPanelLED, SetOLED, SetOLEDTimestamped, RotaryChanged, TimestampedRotaryChanged, ButtonChanged,
-         Playcontroller, Ping,
+         SetRibbonLED, SetPanelLED, SetOLED, OLEDState, SetOLEDTimestamped, RotaryChanged, TimestampedRotaryChanged,
+         ButtonChanged, Playcontroller, Ping,
 
          SinglePreset, LayerPreset, SplitPreset, UnmodulateableParameter, ModulateableParameter, MacroControlParameter,
          HWAmountParameter, HWSourceParameter,
@@ -41,9 +41,9 @@ namespace nltools
 
          NotifyHardwareSourceChanged,
 
-         MidiSimpleMessage, MidiAck, MidiProgramChange, MidiBridgeSettings,
+         MidiSimpleMessage, MidiAck, MidiProgramChange, MidiBridgeSettings, MidiSettings, MidiHardwareChange,
 
-         SyncFS);
+         SyncFS, UpdateUploaded, AutoStartRecorderMessage, AEPanic);
 
     namespace detail
     {

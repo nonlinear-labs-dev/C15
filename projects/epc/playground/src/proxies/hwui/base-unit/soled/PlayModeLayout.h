@@ -12,5 +12,5 @@ class PlayModeLayout : public PlayOrEditModeLayout
 
  public:
   PlayModeLayout();
-  virtual ~PlayModeLayout();
+  ~PlayModeLayout() override;
 };

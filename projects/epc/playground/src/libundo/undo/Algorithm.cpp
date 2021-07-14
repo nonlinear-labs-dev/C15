@@ -45,7 +45,7 @@ namespace UNDO
 
   std::list<Transaction*> Algorithm::getPathAsList(Transaction* target, const Transaction* stop)
   {
-    std::list<Transaction*> ret{};
+    std::list<Transaction*> ret {};
 
     while(target != stop)
     {

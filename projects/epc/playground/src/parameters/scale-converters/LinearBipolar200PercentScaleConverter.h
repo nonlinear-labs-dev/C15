@@ -6,8 +6,8 @@ class LinearBipolar200PercentScaleConverter : public LinearScaleConverter
 {
  public:
   LinearBipolar200PercentScaleConverter();
-  virtual ~LinearBipolar200PercentScaleConverter();
+  ~LinearBipolar200PercentScaleConverter() override;
 
-  virtual tControlPositionValue getCoarseDenominator(const QuantizedValue &v) const override;
-  virtual tControlPositionValue getFineDenominator(const QuantizedValue &v) const override;
+  [[nodiscard]] tControlPositionValue getCoarseDenominator(const QuantizedValue &v) const override;
+  [[nodiscard]] tControlPositionValue getFineDenominator(const QuantizedValue &v) const override;
 };

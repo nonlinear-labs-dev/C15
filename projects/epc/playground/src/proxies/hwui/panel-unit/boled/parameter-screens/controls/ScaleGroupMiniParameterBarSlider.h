@@ -8,10 +8,10 @@ class ScaleGroupMiniParameterBarSlider : public MiniParameterBarSlider
 
  public:
   ScaleGroupMiniParameterBarSlider(Parameter *param, const Rect &rect);
-  virtual ~ScaleGroupMiniParameterBarSlider();
+  ~ScaleGroupMiniParameterBarSlider() override;
 
   tDisplayValue getDrawValue() const override;
 
-private:
+ private:
   sigc::connection m_connection;
 };

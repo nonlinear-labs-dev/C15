@@ -28,9 +28,10 @@ TEST_CASE("Load to Part should lead to changed star and recall buffer unchanged"
   }
 
   auto eb = TestHelper::getEditBuffer();
+  EditBufferUseCases ebUseCases(eb);
 
   auto loadPresetAndCheck = [&](auto preset, auto from, auto to) {
-    eb->undoableLoadToPart(preset, from, to);
+    ebUseCases.undoableLoadToPart(preset, from, to);
     CHECK(eb->findAnyParameterChanged());
   };
 

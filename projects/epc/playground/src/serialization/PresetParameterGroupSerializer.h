@@ -9,13 +9,13 @@ class PresetParameterGroupSerializer : public Serializer
 {
  public:
   PresetParameterGroupSerializer(PresetParameterGroup *paramGroup, SoundType type);
-  virtual ~PresetParameterGroupSerializer();
+  ~PresetParameterGroupSerializer() override;
 
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   PresetParameterGroup *m_paramGroup = nullptr;
   SoundType m_type;

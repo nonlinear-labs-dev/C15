@@ -9,8 +9,8 @@ class RandomizeAmount : public Setting
   typedef Setting super;
 
  public:
-  RandomizeAmount(Settings &parent);
-  virtual ~RandomizeAmount();
+  explicit RandomizeAmount(Settings &parent);
+  ~RandomizeAmount() override;
 
   void load(const Glib::ustring &text, Initiator initiator) override;
   Glib::ustring save() const override;

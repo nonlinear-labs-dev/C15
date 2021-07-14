@@ -33,7 +33,7 @@ class UndoButtonStateMachine
 
  public:
   UndoButtonStateMachine();
-  virtual ~UndoButtonStateMachine();
+  ~UndoButtonStateMachine() override;
 
  private:
   bool setState(UndoStates s) override;

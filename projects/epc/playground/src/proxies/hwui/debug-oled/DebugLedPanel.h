@@ -9,11 +9,9 @@ class DebugLedPanel : public ControlWithChildren
 
  public:
   DebugLedPanel(const Rect& pos, int startID);
-  virtual ~DebugLedPanel();
+  ~DebugLedPanel() override;
 
   bool setLedState(int led, bool onOrOff);
-
- private:
   DebugLedPanel(const DebugLedPanel& other) = delete;
   DebugLedPanel& operator=(const DebugLedPanel&) = delete;
 };

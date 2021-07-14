@@ -12,7 +12,7 @@ class SoledHeader : public LabelRegular8
 
  public:
   SoledHeader(const Glib::ustring &text, const Rect &pos);
-  virtual ~SoledHeader();
+  ~SoledHeader() override;
 
  private:
   void setFontColor(FrameBuffer &fb) const override;

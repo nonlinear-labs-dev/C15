@@ -10,9 +10,9 @@ class MCSelectButton : public ModulationModeButton
   typedef ModulationModeButton super;
 
  public:
-  MCSelectButton(Buttons id);
-  virtual ~MCSelectButton();
+  explicit MCSelectButton(Buttons id);
+  ~MCSelectButton() override;
 
  protected:
-  virtual void update(const Parameter *parameter) override;
+  void update(const Parameter *parameter) override;
 };

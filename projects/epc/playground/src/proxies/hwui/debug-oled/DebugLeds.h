@@ -8,12 +8,11 @@ class DebugLeds : public Layout
   typedef Layout super;
 
  public:
-  DebugLeds(OLEDProxy& oled);
-  virtual ~DebugLeds();
+  explicit DebugLeds(OLEDProxy& oled);
+  ~DebugLeds() override;
 
   void setLedState(int led, bool onOrOff);
 
- private:
   DebugLeds(const DebugLeds& other) = delete;
   DebugLeds& operator=(const DebugLeds&) = delete;
 };

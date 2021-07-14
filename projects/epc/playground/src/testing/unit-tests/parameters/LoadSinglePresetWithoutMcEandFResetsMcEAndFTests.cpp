@@ -33,7 +33,7 @@ TEST_CASE("Load Single Preset Without MacroControl E and F defaults MC E and F")
   THEN("Loading old Preset resets non existing parameters")
   {
     eb->undoableLoad(scope->getTransaction(), mockPreset.get(), true);
-    REQUIRE(mcE->getGivenName() == "");
+    CHECK(mcE->getGivenName() == "");
     REQUIRE(mcF->getGivenName() == "");
     REQUIRE(partTune->getModulationSource() == MacroControls::NONE);
     REQUIRE(partVolume->getModulationSource() == MacroControls::NONE);

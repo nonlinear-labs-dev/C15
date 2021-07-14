@@ -16,11 +16,11 @@ class InfoLayout : public Layout
  public:
   InfoLayout();
 
-  virtual void init() override;
+  void init() override;
 
  protected:
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
 
   virtual void addModuleCaption() = 0;
   virtual void addHeadline() = 0;

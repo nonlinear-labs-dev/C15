@@ -12,8 +12,8 @@ class EditSmoothingTime : public Setting
   typedef Setting super;
 
  public:
-  EditSmoothingTime(Settings &parent);
-  virtual ~EditSmoothingTime();
+  explicit EditSmoothingTime(Settings &parent);
+  ~EditSmoothingTime() override;
 
   void load(const Glib::ustring &text, Initiator initiator) override;
   Glib::ustring save() const override;
@@ -24,7 +24,7 @@ class EditSmoothingTime : public Setting
 
   void setDefault();
 
-  Glib::ustring getDisplayString() const;
+  Glib::ustring getDisplayString() const override;
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
  private:

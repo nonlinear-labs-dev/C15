@@ -19,6 +19,8 @@
 #include <proxies/hwui/controls/SwitchVoiceGroupButton.h>
 #include <Application.h>
 #include <device-settings/Settings.h>
+#include <parameter_declarations.h>
+#include <use-cases/DirectLoadUseCases.h>
 
 namespace DescriptiveLayouts
 {
@@ -33,40 +35,50 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::IncParam, [eb, hwui]() {
       if(auto p = eb->getSelected(hwui->getCurrentVoiceGroup()))
       {
-        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
-        p->stepCPFromHwui(scope->getTransaction(), 1, hwui->getButtonModifiers());
+        auto modifiers = hwui->getButtonModifiers();
+        ParameterUseCases useCase(p);
+        useCase.incDec(1, modifiers[ButtonModifier::FINE], modifiers[ButtonModifier::SHIFT]);
       }
     });
 
     registerEvent(EventSinks::DecParam, [eb, hwui]() {
       if(auto p = eb->getSelected(hwui->getCurrentVoiceGroup()))
       {
-        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
-        p->stepCPFromHwui(scope->getTransaction(), -1, hwui->getButtonModifiers());
+        auto modifiers = hwui->getButtonModifiers();
+        ParameterUseCases useCase(p);
+        useCase.incDec(-1, modifiers[ButtonModifier::FINE], modifiers[ButtonModifier::SHIFT]);
       }
     });
 
     registerEvent(EventSinks::IncMCSel, [eb, hwui]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
-        modParam->undoableIncrementMCSelect(1);
+      {
+        ModParameterUseCases useCase(modParam);
+        useCase.incMCSelection(1);
+      }
     });
 
     registerEvent(EventSinks::DecMCSel, [eb, hwui]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
-        modParam->undoableIncrementMCSelect(-1);
+      {
+        ModParameterUseCases useCase(modParam);
+        useCase.incMCSelection(-1);
+      }
     });
 
     registerEvent(EventSinks::IncMCAmt, [eb, hwui]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
-        modParam->undoableIncrementMCAmount(1, {});
+        ModParameterUseCases useCase(modParam);
+        useCase.incModAmount(1, false);
       }
     });
 
     registerEvent(EventSinks::DecMCAmt, [eb, hwui]() {
       if(auto modParam = dynamic_cast<ModulateableParameter *>(eb->getSelected(hwui->getCurrentVoiceGroup())))
       {
-        modParam->undoableIncrementMCAmount(-1, {});
+        ModParameterUseCases useCase(modParam);
+        useCase.incModAmount(-1, false);
       }
     });
 
@@ -75,9 +87,11 @@ namespace DescriptiveLayouts
       {
         if(auto mc = modP->getMacroControl())
         {
-          UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction("Inc. MC Pos");
-          auto trans = rootScope->getTransaction();
-          mc->stepCPFromHwui(trans, 1, hwui->getButtonModifiers());
+          auto hwuiModifiers = hwui->getButtonModifiers();
+          auto fine = hwuiModifiers[ButtonModifier::FINE];
+          auto shift = hwuiModifiers[ButtonModifier::SHIFT];
+          MacroControlParameterUseCases useCase(mc);
+          useCase.incDecPosition(1, fine, shift);
         }
       }
     });
@@ -87,9 +101,11 @@ namespace DescriptiveLayouts
       {
         if(auto mc = modP->getMacroControl())
         {
-          UNDO::Scope::tTransactionScopePtr rootScope = eb->getParent()->getUndoScope().startTransaction("Dec. MC Pos");
-          auto trans = rootScope->getTransaction();
-          mc->stepCPFromHwui(trans, -1, hwui->getButtonModifiers());
+          auto hwuiModifiers = hwui->getButtonModifiers();
+          auto fine = hwuiModifiers[ButtonModifier::FINE];
+          auto shift = hwuiModifiers[ButtonModifier::SHIFT];
+          MacroControlParameterUseCases useCase(mc);
+          useCase.incDecPosition(-1, fine, shift);
         }
       }
     });
@@ -101,19 +117,25 @@ namespace DescriptiveLayouts
     /*
        * UIFocus
        */
-    registerEvent(EventSinks::SwitchToParameterFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Parameters); });
+    registerEvent(EventSinks::SwitchToParameterFocus,
+                  [hwui] { hwui->undoableSetFocusAndMode(FocusAndMode { UIFocus::Parameters }); });
     registerEvent(EventSinks::SwitchToSoundFocus, [hwui] {
       hwui->undoableSetFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
     });
-    registerEvent(EventSinks::SwitchToPresetFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Presets); });
-    registerEvent(EventSinks::SwitchToBankFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Banks); });
-    registerEvent(EventSinks::SwitchToSetupFocus, [hwui] { hwui->undoableSetFocusAndMode(UIFocus::Setup); });
+    registerEvent(EventSinks::SwitchToPresetFocus,
+                  [hwui] { hwui->undoableSetFocusAndMode(FocusAndMode { UIFocus::Presets }); });
+    registerEvent(EventSinks::SwitchToBankFocus,
+                  [hwui] { hwui->undoableSetFocusAndMode(FocusAndMode { UIFocus::Banks }); });
+    registerEvent(EventSinks::SwitchToSetupFocus,
+                  [hwui] { hwui->undoableSetFocusAndMode(FocusAndMode { UIFocus::Setup }); });
 
     /*
        * UIMode
        */
-    registerEvent(EventSinks::SwitchToEditMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Edit); });
-    registerEvent(EventSinks::SwitchToSelectMode, [hwui]() { hwui->undoableSetFocusAndMode(UIMode::Select); });
+    registerEvent(EventSinks::SwitchToEditMode,
+                  [hwui]() { hwui->undoableSetFocusAndMode(FocusAndMode { UIMode::Edit }); });
+    registerEvent(EventSinks::SwitchToSelectMode,
+                  [hwui]() { hwui->undoableSetFocusAndMode(FocusAndMode { UIMode::Select }); });
 
     /*
        * UIDetail
@@ -125,9 +147,9 @@ namespace DescriptiveLayouts
     registerEvent(EventSinks::SwitchToButtonDDetail, [hwui] { hwui->setUiModeDetail(UIDetail::ButtonD); });
     registerEvent(EventSinks::SwitchToVoicesDetail, [hwui] { hwui->setUiModeDetail(UIDetail::Voices); });
 
-    registerEvent(EventSinks::ToggleDirectLoad, [] {
-      auto eb = Application::get().getPresetManager()->getEditBuffer();
-      Application::get().getSettings()->getSetting<DirectLoadSetting>()->toggle();
+    registerEvent(EventSinks::ToggleDirectLoad, [hwui] {
+      DirectLoadUseCases useCase(Application::get().getSettings()->getSetting<DirectLoadSetting>().get());
+      useCase.toggleDirectLoadFromHWUI(hwui);
     });
 
     registerEvent(EventSinks::SwitchToMCAmtDetail, [hwui, eb]() {
@@ -235,45 +257,51 @@ namespace DescriptiveLayouts
     });
 
     registerEvent(EventSinks::OpenMonoParameterScreen, [eb]() {
+      EditBufferUseCases useCase(eb);
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
       if(eb->getType() == SoundType::Split)
-        eb->undoableSelectParameter({ 364, vg });
+        useCase.selectParameter(ParameterId { 364, vg }, true);
       else
-        eb->undoableSelectParameter({ 364, VoiceGroup::I });
+        useCase.selectParameter(ParameterId { 364, VoiceGroup::I }, true);
     });
 
     registerEvent(EventSinks::OpenPartScreen, [eb]() {
-      eb->undoableSelectParameter({ 358, Application::get().getHWUI()->getCurrentVoiceGroup() });
+      EditBufferUseCases ebUseCases { eb };
+      ebUseCases.selectParameter({ 358, Application::get().getHWUI()->getCurrentVoiceGroup() }, true);
     });
 
-    registerEvent(EventSinks::OpenMasterParameter, [eb] { eb->undoableSelectParameter({ 247, VoiceGroup::Global }); });
+    registerEvent(EventSinks::OpenMasterParameter, [eb] {
+      EditBufferUseCases ebUseCases { eb };
+      ebUseCases.selectParameter({ 247, VoiceGroup::Global }, true);
+    });
 
     registerEvent(EventSinks::InitSound, [eb] {
-      auto scope = eb->getParent()->getUndoScope().startTransaction("Init Sound");
-      eb->undoableInitSound(scope->getTransaction(), Defaults::UserDefault);
+      SoundUseCases useCases { eb, eb->getParent() };
+      useCases.initSound();
       Application::get().getHWUI()->setFocusAndMode({ UIFocus::Sound, UIMode::Select, UIDetail::Init });
     });
 
     registerEvent(EventSinks::OpenUnisonParameter, [eb]() {
       auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
-      eb->undoableSelectParameter({ 249, vg });
+      EditBufferUseCases ebUseCases { eb };
+      ebUseCases.selectParameter({ 249, vg }, true);
     });
 
     registerEvent(EventSinks::IncSplitPoint, [hwui, eb]() {
+      EditBufferUseCases ebUseCases(eb);
       auto currentVG = hwui->getCurrentVoiceGroup();
-      if(auto p = eb->findParameterByID({ 356, currentVG }))
+      if(auto parameterUseCases = ebUseCases.getUseCase({ C15::PID::Split_Split_Point, currentVG }))
       {
-        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
-        p->stepCPFromHwui(scope->getTransaction(), 1, hwui->getButtonModifiers());
+        parameterUseCases->incDec(1, false, false);
       }
     });
 
     registerEvent(EventSinks::DecSplitPoint, [hwui, eb]() {
+      EditBufferUseCases ebUseCases(eb);
       auto currentVG = hwui->getCurrentVoiceGroup();
-      if(auto p = eb->findParameterByID({ 356, currentVG }))
+      if(auto parameterUseCases = ebUseCases.getUseCase({ C15::PID::Split_Split_Point, currentVG }))
       {
-        auto scope = p->getUndoScope().startContinuousTransaction(p, "Set '%0'", p->getGroupAndParameterName());
-        p->stepCPFromHwui(scope->getTransaction(), -1, hwui->getButtonModifiers());
+        parameterUseCases->incDec(-1, false, false);
       }
     });
 
@@ -282,17 +310,15 @@ namespace DescriptiveLayouts
       auto muteII = eb->findParameterByID({ 395, VoiceGroup::II });
       const auto vgIMuted = muteI->getControlPositionValue() > 0.5;
       const auto vgIIMuted = muteII->getControlPositionValue() > 0.5;
+      EditBufferUseCases useCases(eb);
 
       if(!vgIMuted && !vgIIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part I");
-        muteI->setCPFromHwui(scope->getTransaction(), 1);
+        useCases.mutePart(VoiceGroup::I);
       }
       else if(vgIIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Unmute Part II");
-        muteI->setCPFromHwui(scope->getTransaction(), 0);
-        muteII->setCPFromHwui(scope->getTransaction(), 0);
+        useCases.unmuteBothPartsWithTransactionNameForPart(VoiceGroup::II);
       }
     });
 
@@ -301,17 +327,15 @@ namespace DescriptiveLayouts
       auto muteII = eb->findParameterByID({ 395, VoiceGroup::II });
       const auto vgIMuted = muteI->getControlPositionValue() > 0.5;
       const auto vgIIMuted = muteII->getControlPositionValue() > 0.5;
+      EditBufferUseCases useCases(eb);
 
       if(!vgIMuted && !vgIIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Mute Part II");
-        muteII->setCPFromHwui(scope->getTransaction(), 1);
+        useCases.mutePart(VoiceGroup::II);
       }
       else if(vgIMuted)
       {
-        auto scope = eb->getParent()->getUndoScope().startTransaction("Unmute Part I");
-        muteI->setCPFromHwui(scope->getTransaction(), 0);
-        muteII->setCPFromHwui(scope->getTransaction(), 0);
+        useCases.unmuteBothPartsWithTransactionNameForPart(VoiceGroup::I);
       }
     });
   }

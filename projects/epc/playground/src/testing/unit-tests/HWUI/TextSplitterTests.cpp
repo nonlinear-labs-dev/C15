@@ -6,17 +6,17 @@
 TEST_CASE("Text Splitter concat utf8", "[HWUI][Text]")
 {
   Glib::ustring in("\u24b6\u24b7\u24b8\u24b9");
-  REQUIRE(in.length() == 4);
+  CHECK(in.length() == 4);
   std::stringstream str;
   str << in;
   Glib::ustring out = str.str();
-  REQUIRE(out.length() == 4);
+  CHECK(out.length() == 4);
 }
 
 TEST_CASE("Text Splitter iterate utf8", "[HWUI][Text]")
 {
   Glib::ustring in("\u24b6\u24b7\u24b8\u24b9");
-  REQUIRE(in.length() == 4);
+  CHECK(in.length() == 4);
   std::stringstream str;
 
   for(auto it = in.begin(); it != in.end(); it++)
@@ -27,5 +27,5 @@ TEST_CASE("Text Splitter iterate utf8", "[HWUI][Text]")
   }
 
   Glib::ustring out = str.str();
-  REQUIRE(out.length() == 4);
+  CHECK(out.length() == 4);
 }

@@ -12,13 +12,11 @@ class MemoryInStream : public InStream
   MemoryInStream(const Glib::ustring &mem, bool zipped);
   MemoryInStream(SoupBuffer *buffer, bool zipped);
   MemoryInStream(std::vector<uint8_t> buffer, bool zipped);
-  virtual ~MemoryInStream();
+  ~MemoryInStream() override;
 
-  virtual bool eof() const;
-  virtual Glib::ustring read() override;
-  virtual std::vector<uint8_t> readAll() override;
-
-  bool isBufferCorrectC15Backup();
+  [[nodiscard]] bool eof() const override;
+  Glib::ustring read() override;
+  std::vector<uint8_t> readAll() override;
 
  private:
   std::vector<uint8_t> m_buffer;

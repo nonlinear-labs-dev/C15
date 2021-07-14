@@ -6,5 +6,5 @@ class LinearBipolar60DbtScaleConverter : public LinearScaleConverter
 {
  public:
   LinearBipolar60DbtScaleConverter();
-  virtual ~LinearBipolar60DbtScaleConverter();
+  ~LinearBipolar60DbtScaleConverter() override;
 };

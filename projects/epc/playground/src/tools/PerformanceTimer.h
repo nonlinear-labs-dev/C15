@@ -10,7 +10,7 @@ class PerformanceTimer
   using Clock = steady_clock;
 
  public:
-  PerformanceTimer(const char *name, int indent = 0)
+  explicit PerformanceTimer(const char *name, int indent = 0)
       : m_name(name)
       , m_indent(indent)
       , m_start(Clock::now())

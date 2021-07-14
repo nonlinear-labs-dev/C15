@@ -7,7 +7,7 @@ class AttributesOwner;
 class AttributesOwnerSerializer : public Serializer
 {
  public:
-  AttributesOwnerSerializer(AttributesOwner *owner);
+  explicit AttributesOwnerSerializer(AttributesOwner *owner);
 
   static Glib::ustring getTagName();
 

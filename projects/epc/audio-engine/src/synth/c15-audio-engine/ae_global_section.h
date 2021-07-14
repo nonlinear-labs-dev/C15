@@ -13,6 +13,9 @@
 #include "ae_info.h"
 #include "nltoolbox.h"
 
+// specify if soft clipping should be applied
+constexpr bool APPLY_SOFT_CLIP = true;
+
 class GlobalSection
 {
  public:

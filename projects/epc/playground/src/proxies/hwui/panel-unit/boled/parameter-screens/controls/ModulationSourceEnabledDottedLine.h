@@ -12,16 +12,16 @@ class ModulationSourceEnabledDottedLine : public DottedLine
   typedef DottedLine super;
 
  public:
-  ModulationSourceEnabledDottedLine(const Rect& rect);
-  virtual ~ModulationSourceEnabledDottedLine();
+  explicit ModulationSourceEnabledDottedLine(const Rect& rect);
+  ~ModulationSourceEnabledDottedLine() override;
+
+  ModulationSourceEnabledDottedLine(const ModulationSourceEnabledDottedLine& other) = delete;
+  ModulationSourceEnabledDottedLine& operator=(const ModulationSourceEnabledDottedLine&) = delete;
 
  private:
-  ModulationSourceEnabledDottedLine(const ModulationSourceEnabledDottedLine& other);
-  ModulationSourceEnabledDottedLine& operator=(const ModulationSourceEnabledDottedLine&);
-
   void onParameterSelected(Parameter* parameter);
   void onParamValueChanged(const Parameter* param);
-  bool redraw(FrameBuffer& fb);
+  bool redraw(FrameBuffer& fb) override;
   void setEnabled(bool e);
 
   sigc::connection m_paramValueConnection;

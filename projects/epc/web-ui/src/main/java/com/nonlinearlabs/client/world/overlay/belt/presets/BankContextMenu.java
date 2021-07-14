@@ -71,26 +71,6 @@ public abstract class BankContextMenu extends ContextMenu {
 		}
 
 		if (bank != null) {
-			if (DeviceSettingsProvider.get().getPresenter().externalMidiEnabled) {
-				if (!bank.isMidiBank()) {
-					addChild(new ContextMenuItem(this, "Select Bank as Midi PC Receiver") {
-						@Override
-						public Control click(Position eventPoint) {
-							EditBufferUseCases.get().selectMidiBank(bank);
-							return super.click(eventPoint);
-						}
-					});
-				} else {
-					addChild(new ContextMenuItem(this, "Remove Bank as Midi PC Receiver") {
-						@Override
-						public Control click(Position eventPoint) {
-							EditBufferUseCases.get().selectMidiBank(null);
-							return super.click(eventPoint);
-						}
-					});
-				}
-			}
-
 			addChild(new ContextMenuItem(this, "Export Bank as File ...") {
 				@Override
 				public Control click(Position eventPoint) {
@@ -176,6 +156,24 @@ public abstract class BankContextMenu extends ContextMenu {
 					@Override
 					public Control click(Position eventPoint) {
 						bank.toggleMinMax();
+						return super.click(eventPoint);
+					}
+				});
+			}
+
+			if (!bank.isMidiBank()) {
+				addChild(new ContextMenuItem(this, "Connect Bank to MIDI PC") {
+					@Override
+					public Control click(Position eventPoint) {
+						EditBufferUseCases.get().selectMidiBank(bank);
+						return super.click(eventPoint);
+					}
+				});
+			} else {
+				addChild(new ContextMenuItem(this, "Disconnect Bank from MIDI PC") {
+					@Override
+					public Control click(Position eventPoint) {
+						EditBufferUseCases.get().selectMidiBank(null);
 						return super.click(eventPoint);
 					}
 				});

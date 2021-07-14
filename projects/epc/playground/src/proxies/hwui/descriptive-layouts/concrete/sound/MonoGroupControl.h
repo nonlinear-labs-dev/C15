@@ -7,8 +7,8 @@
 class MonoGroupControl : public ControlWithChildren
 {
  public:
-  MonoGroupControl(const Rect& r);
-  ~MonoGroupControl();
+  explicit MonoGroupControl(const Rect& r);
+  ~MonoGroupControl() override;
   void rebuild();
 
  private:

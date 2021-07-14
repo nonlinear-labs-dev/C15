@@ -17,7 +17,7 @@ void MCSelectButton::update(const Parameter *parameter)
 {
   if(parameter == nullptr || parameter->isDisabled())
   {
-    setText("");
+    setText(StringAndSuffix::empty());
     return;
   }
 
@@ -25,9 +25,9 @@ void MCSelectButton::update(const Parameter *parameter)
   {
     if(p->isModSourceChanged())
     {
-      setText("MC Sel*");
+      setText(StringAndSuffix { "MC Sel*" });
       return;
     }
   }
-  setText("MC Sel");
+  setText(StringAndSuffix { "MC Sel" });
 }

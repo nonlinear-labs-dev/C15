@@ -13,8 +13,8 @@ ScrollArea::ScrollArea(Scrollable *content, const Rect &position)
   content->setArea(this);
   content->setPosition(Rect(2, 0, position.getWidth() - c_scrollbarWidth, content->getPosition().getHeight()));
   addControl(dynamic_cast<Control *>(content));
-  addControl(
-      new Scrollbar(content, Rect(position.getWidth() - c_scrollbarDrawWidth, 0, c_scrollbarDrawWidth, position.getHeight())));
+  addControl(new Scrollbar(
+      content, Rect(position.getWidth() - c_scrollbarDrawWidth, 0, c_scrollbarDrawWidth, position.getHeight())));
 
   scroll(0);
 

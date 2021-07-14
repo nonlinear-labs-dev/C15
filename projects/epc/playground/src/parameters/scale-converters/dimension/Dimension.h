@@ -6,10 +6,10 @@ class Dimension
  public:
   Dimension();
 
-  virtual Glib::ustring getStingizerJS() const;
-  virtual Glib::ustring stringize(const tDisplayValue &displayValue) const = 0;
+  [[nodiscard]] virtual Glib::ustring getStingizerJS() const;
+  [[nodiscard]] virtual Glib::ustring stringize(const tDisplayValue &displayValue) const = 0;
 
-  size_t hash() const;
+  [[nodiscard]] size_t hash() const;
 
  protected:
   static Glib::ustring formatDimensionRounded(tControlPositionValue in, const Glib::ustring &unit,

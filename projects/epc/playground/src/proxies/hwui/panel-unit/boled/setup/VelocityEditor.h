@@ -11,7 +11,7 @@ class VelocityEditor : public MenuEditor
 
  public:
   VelocityEditor();
-  virtual ~VelocityEditor();
+  ~VelocityEditor() override;
 
   void incSetting(int inc) override;
   const std::vector<Glib::ustring> &getDisplayStrings() const override;

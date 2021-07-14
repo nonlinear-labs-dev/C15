@@ -6,8 +6,8 @@ class PitchCombLinearStModulationScaleConverter : public LinearScaleConverter
 {
  public:
   PitchCombLinearStModulationScaleConverter();
-  virtual ~PitchCombLinearStModulationScaleConverter();
+  ~PitchCombLinearStModulationScaleConverter() override;
 
-  virtual tControlPositionValue getCoarseDenominator(const QuantizedValue &v) const override;
-  virtual tControlPositionValue getFineDenominator(const QuantizedValue &v) const override;
+  [[nodiscard]] tControlPositionValue getCoarseDenominator(const QuantizedValue &v) const override;
+  [[nodiscard]] tControlPositionValue getFineDenominator(const QuantizedValue &v) const override;
 };

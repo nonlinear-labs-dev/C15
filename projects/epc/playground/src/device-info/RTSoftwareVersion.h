@@ -5,7 +5,7 @@
 class RTSoftwareVersion : public DeviceInformationItem
 {
  public:
-  RTSoftwareVersion(DeviceInformation *parent);
+  explicit RTSoftwareVersion(DeviceInformation *parent);
 
   virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
   Glib::ustring get() const override;

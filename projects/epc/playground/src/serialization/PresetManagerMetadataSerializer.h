@@ -10,13 +10,13 @@ class PresetManagerMetadataSerializer : public Serializer
   typedef Serializer super;
 
  public:
-  PresetManagerMetadataSerializer(PresetManager *pm);
+  explicit PresetManagerMetadataSerializer(PresetManager *pm);
 
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   PresetManager *m_pm = nullptr;
 };

@@ -10,13 +10,13 @@ class NetworkRequest;
 class RPCActionManager
 {
  public:
-  RPCActionManager(const Glib::ustring &basePath);
+  explicit RPCActionManager(const Glib::ustring &basePath);
   virtual ~RPCActionManager();
 
-  bool matches(const Glib::ustring &path) const;
+  [[nodiscard]] bool matches(const Glib::ustring &path) const;
   virtual bool handleRequest(const Glib::ustring &path, std::shared_ptr<NetworkRequest> request);
   bool handleRequest(std::shared_ptr<NetworkRequest> request);
-  const Glib::ustring &getBasePath() const;
+  [[nodiscard]] const Glib::ustring &getBasePath() const;
 
   typedef std::function<void(std::shared_ptr<NetworkRequest> request)> tAction;
   void addAction(const Glib::ustring &path, tAction action);

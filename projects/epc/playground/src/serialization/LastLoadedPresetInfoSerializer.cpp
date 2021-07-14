@@ -31,7 +31,7 @@ void LastLoadedPresetInfoSerializer::writeTagContent(Writer &writer) const
 
 void LastLoadedPresetInfoSerializer::readTagContent(Reader &reader) const
 {
-  reader.onTextElement("loaded-preset", [&](auto txt, auto) { m_editBuffer->m_lastLoadedPreset = txt; });
+  reader.onTextElement("loaded-preset", [&](auto txt, auto) { m_editBuffer->m_lastLoadedPreset = Uuid { txt }; });
   reader.loadTextElement("loaded-presets-name", m_editBuffer->m_name);
   reader.loadTextElement("voice-group-label-I", m_editBuffer->m_voiceGroupLabels[0]);
   reader.loadTextElement("voice-group-label-II", m_editBuffer->m_voiceGroupLabels[1]);

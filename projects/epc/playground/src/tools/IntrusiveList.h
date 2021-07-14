@@ -10,9 +10,7 @@ template <typename TSelfPtr> class IntrusiveListItem : public Uncopyable
  public:
   using tSelfPtr = TSelfPtr;
 
-  ~IntrusiveListItem()
-  {
-  }
+  ~IntrusiveListItem() = default;
 
   tSelfPtr getNext() const
   {
@@ -36,13 +34,8 @@ template <typename TItemPtr> class IntrusiveList
   using tItemPtr = TItemPtr;
   using tItem = IntrusiveListItem<tItemPtr>;
 
-  IntrusiveList()
-  {
-  }
-
-  virtual ~IntrusiveList()
-  {
-  }
+  IntrusiveList() = default;
+  virtual ~IntrusiveList() = default;
 
   void prepend(tItemPtr item)
   {
@@ -131,7 +124,7 @@ template <typename TItemPtr> class IntrusiveList
   class Iterator
   {
    public:
-    Iterator(tItemPtr item)
+    explicit Iterator(tItemPtr item)
         : m_item(item)
     {
     }
@@ -175,7 +168,7 @@ template <typename TItemPtr> class IntrusiveList
   class ConstIterator
   {
    public:
-    ConstIterator(const tItemPtr item)
+    explicit ConstIterator(const tItemPtr item)
         : m_item(item)
     {
     }

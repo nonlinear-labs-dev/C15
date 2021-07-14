@@ -6,5 +6,4 @@ class StaticKnubbelSlider : public DotSlider
 {
  public:
   StaticKnubbelSlider(tControlPositionValue value, bool biPolar, Rect pos);
-  void setValueExplicit(tControlPositionValue value, bool biPolar);
 };

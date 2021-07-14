@@ -13,7 +13,7 @@ class InfoContent : public Scrollable, public ControlWithChildren
 
  public:
   InfoContent();
-  ~InfoContent();
+  ~InfoContent() override;
 
   void setPosition(const Rect& rect) override;
   const Rect& getPosition() const override;

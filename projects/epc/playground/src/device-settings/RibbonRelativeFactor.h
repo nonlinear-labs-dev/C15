@@ -9,8 +9,8 @@ class RibbonRelativeFactor : public Setting
   typedef Setting super;
 
  public:
-  RibbonRelativeFactor(Settings &parent);
-  virtual ~RibbonRelativeFactor();
+  explicit RibbonRelativeFactor(Settings &parent);
+  ~RibbonRelativeFactor() override;
 
   void load(const Glib::ustring &text, Initiator initiator) override;
   Glib::ustring save() const override;
@@ -19,7 +19,7 @@ class RibbonRelativeFactor : public Setting
   tControlPositionValue get() const;
   void setDefault();
   void incDec(int incs, ButtonModifiers modifiers);
-  Glib::ustring getDisplayString() const;
+  Glib::ustring getDisplayString() const override;
 
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
   void syncExternals(SendReason reason) const override;

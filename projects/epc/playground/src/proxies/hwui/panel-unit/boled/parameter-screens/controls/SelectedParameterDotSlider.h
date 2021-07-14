@@ -10,10 +10,9 @@ class SelectedParameterDotSlider : public DotSlider
   typedef DotSlider super;
 
  public:
-  SelectedParameterDotSlider(const Rect& rect);
-  virtual ~SelectedParameterDotSlider();
+  explicit SelectedParameterDotSlider(const Rect& rect);
+  ~SelectedParameterDotSlider() override;
 
- private:
-  SelectedParameterDotSlider(const SelectedParameterDotSlider& other);
-  SelectedParameterDotSlider& operator=(const SelectedParameterDotSlider&);
+  SelectedParameterDotSlider(const SelectedParameterDotSlider& other) = delete;
+  SelectedParameterDotSlider& operator=(const SelectedParameterDotSlider&) = delete;
 };

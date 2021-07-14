@@ -50,7 +50,7 @@ void AlsaAudioOutput::open(const std::string& deviceName)
   if(checkAlsa(snd_pcm_hw_params_set_format(m_handle, hwparams, SND_PCM_FORMAT_FLOAT)))
     if(checkAlsa(snd_pcm_hw_params_set_format(m_handle, hwparams, SND_PCM_FORMAT_S32_LE)))
       if(checkAlsa(snd_pcm_hw_params_set_format(m_handle, hwparams, SND_PCM_FORMAT_S16_LE)))
-        checkAlsa(snd_pcm_hw_params_set_format(m_handle, hwparams, SND_PCM_FORMAT_S24_3LE));
+        throw std::invalid_argument("unsupported format");
 
   snd_pcm_format_t format = SND_PCM_FORMAT_UNKNOWN;
   checkAlsa(snd_pcm_hw_params_get_format(hwparams, &format));

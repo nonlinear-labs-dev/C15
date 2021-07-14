@@ -11,8 +11,8 @@ class TransitionTimeSlider : public BarSlider
   typedef BarSlider super;
 
  public:
-  TransitionTimeSlider(const Rect &rect);
-  virtual ~TransitionTimeSlider();
+  explicit TransitionTimeSlider(const Rect &rect);
+  ~TransitionTimeSlider() override;
 
  private:
   void onSettingChanged(const Setting *s);

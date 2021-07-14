@@ -6,15 +6,15 @@
 class MacroControlsGroup : public ParameterGroup
 {
  public:
-  MacroControlsGroup(ParameterGroupSet *parent);
-  virtual ~MacroControlsGroup();
+  explicit MacroControlsGroup(ParameterGroupSet* parent);
+  ~MacroControlsGroup() override;
 
-  void init();
+  void init() override;
 
   static ParameterId modSrcToSmoothingId(MacroControls src);
   static ParameterId modSrcToParamId(MacroControls src);
   static MacroControls paramIDToModSrc(const ParameterId& pid);
-  static bool isMacroTime(const ParameterId &id);
+  static bool isMacroTime(const ParameterId& id);
   static bool isMacroControl(int paramNumber);
-static ParameterId smoothingIdToMCId(const ParameterId& smoothingId);
+  static ParameterId smoothingIdToMCId(const ParameterId& smoothingId);
 };

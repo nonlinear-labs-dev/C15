@@ -5,8 +5,8 @@
 class ViewEntries : public ControlWithChildren
 {
  public:
-  ViewEntries(const Rect &pos);
-  ~ViewEntries();
+  explicit ViewEntries(const Rect &pos);
+  ~ViewEntries() override;
 
   void addEntry(Control *child, bool focussed);
   void finish();

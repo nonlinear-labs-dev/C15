@@ -15,7 +15,7 @@ class PresetListBase : public ControlWithChildren
   typedef ControlWithChildren super;
 
  public:
-  virtual ~PresetListBase();
+  ~PresetListBase() override;
 
   bool redraw(FrameBuffer &fb) override;
   bool animateSelectedPreset(std::function<void()> cb);

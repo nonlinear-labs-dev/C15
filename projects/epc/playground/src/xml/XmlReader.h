@@ -19,14 +19,15 @@ class XmlReader : public Parser, public Reader
 
  public:
   XmlReader(InStream& in, UNDO::Transaction* transaction);
-  virtual ~XmlReader();
+  ~XmlReader() override;
 
   static Glib::ustring trim(const Glib::ustring& text);
 
  protected:
-  void on_start_element(ParseContext& context, const Glib::ustring& element_name, const AttributeMap& attributes);
-  void on_end_element(ParseContext& context, const Glib::ustring& element_name);
-  void on_text(ParseContext& context, const Glib::ustring& text);
+  void on_start_element(ParseContext& context, const Glib::ustring& element_name,
+                        const AttributeMap& attributes) override;
+  void on_end_element(ParseContext& context, const Glib::ustring& element_name) override;
+  void on_text(ParseContext& context, const Glib::ustring& text) override;
 
  private:
   void feed() override;

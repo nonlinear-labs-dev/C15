@@ -19,7 +19,7 @@ class AppendOverwriteInsertButtonMenu : public ButtonMenu
 
  public:
   AppendOverwriteInsertButtonMenu(PresetManagerLayout& parent, const Rect& rect);
-  ~AppendOverwriteInsertButtonMenu();
+  ~AppendOverwriteInsertButtonMenu() override;
 
   void selectButton(size_t i) override;
   void buildMenu();

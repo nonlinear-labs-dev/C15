@@ -39,6 +39,16 @@ namespace UNDO
     return m_closingCommand.get();
   }
 
+  void ContinuousTransaction::stopContinuation()
+  {
+    m_continuing = false;
+  }
+
+  bool ContinuousTransaction::isContinuing() const
+  {
+    return m_continuing;
+  }
+
   void ContinuousTransaction::implUndoAction() const
   {
     if(m_closingCommand)

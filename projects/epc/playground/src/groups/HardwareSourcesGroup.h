@@ -9,8 +9,8 @@ class MacroControlParameter;
 class HardwareSourcesGroup : public ParameterGroup
 {
  public:
-  HardwareSourcesGroup(ParameterGroupSet* parent);
-  virtual ~HardwareSourcesGroup();
+  explicit HardwareSourcesGroup(ParameterGroupSet* parent);
+  ~HardwareSourcesGroup() override;
 
   typedef PhysicalControlParameter* tPhysicalControlParameter;
   typedef std::list<tPhysicalControlParameter> tPhysicalControlParameters;

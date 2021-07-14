@@ -47,6 +47,7 @@ class SplitPointParameter : public ModulateableParameterWithUnusualModUnit
   bool hasOverlap();
   bool inDefaultSplitBehaviour() const;
   void updateCPFromSyncChange(UNDO::Transaction* transaction, double cp);
+  void loadDefault(UNDO::Transaction* transaction, Defaults mode) override;
 
  protected:
   void setCpValue(UNDO::Transaction* transaction, Initiator initiator, tControlPositionValue value,

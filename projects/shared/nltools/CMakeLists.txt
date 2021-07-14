@@ -2,10 +2,15 @@ cmake_minimum_required(VERSION 3.2)
 
 project(nltools)
 
+add_subdirectory(tests)
+
 set(BUILD_SHARED_LIBS ON)
 
 file(GLOB_RECURSE HEADER_FILES ./include/*.h)
 file(GLOB_RECURSE SOURCE_FILES ./*.cpp)
+file(GLOB_RECURSE TEST_FILES ./tests/*)
+
+list(REMOVE_ITEM SOURCE_FILES EXCLUDE REGEX ${TEST_FILES})
 
 set(LIBS glibmm-2.4 giomm-2.4 libsoup-2.4)
 

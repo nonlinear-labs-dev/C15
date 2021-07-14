@@ -24,17 +24,17 @@ class ParameterGroupSet : public AttributesOwner
 
   typedef ParameterGroup *tParameterGroupPtr;
 
-  virtual tParameterGroupPtr getParameterGroupByID(const GroupId &id) const;
-  virtual const IntrusiveList<tParameterGroupPtr> &getParameterGroups(VoiceGroup vg) const;
+  [[nodiscard]] virtual tParameterGroupPtr getParameterGroupByID(const GroupId &id) const;
+  [[nodiscard]] virtual const IntrusiveList<tParameterGroupPtr> &getParameterGroups(VoiceGroup vg) const;
 
-  virtual std::map<int, Parameter *> getParametersSortedByNumber(VoiceGroup vg) const;
+  [[nodiscard]] virtual std::map<int, Parameter *> getParametersSortedByNumber(VoiceGroup vg) const;
 
   template <typename tP> tP *findAndCastParameterByID(const ParameterId &id) const
   {
     return dynamic_cast<tP *>(findParameterByID(id));
   }
 
-  virtual Parameter *findParameterByID(const ParameterId &id) const;
+  [[nodiscard]] virtual Parameter *findParameterByID(const ParameterId &id) const;
 
   template <VoiceGroup VG> void forEachParameter(const std::function<void(Parameter *)> &cb)
   {

@@ -8,15 +8,15 @@ class TimeScaleConverter : public ScaleConverter
 
  public:
   TimeScaleConverter(const tTcdRange &tcdRange, const tDisplayRange &displayRange);
-  virtual ~TimeScaleConverter();
+  ~TimeScaleConverter() override;
 
-  tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const override;
-  Glib::ustring controlPositionToDisplayJS() const override;
-  bool isBiPolar() const override;
-  tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const override;
-  tControlPositionValue tcdToControlPosition(tTcdValue v) const override;
+  [[nodiscard]] tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] Glib::ustring controlPositionToDisplayJS() const override;
+  [[nodiscard]] bool isBiPolar() const override;
+  [[nodiscard]] tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] tControlPositionValue tcdToControlPosition(tTcdValue v) const override;
 
-  size_t hash() const override;
+  [[nodiscard]] size_t hash() const override;
 
  private:
   tTcdRange m_tcdRange;

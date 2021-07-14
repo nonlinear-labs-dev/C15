@@ -11,8 +11,7 @@ class PresetNameLabel : public PresetLabel
 
  public:
   explicit PresetNameLabel(const Rect &pos);
-
-  ~PresetNameLabel() = default;
+  ~PresetNameLabel() override = default;
 
   void drawBackground(FrameBuffer &fb) override;
   void update(const Glib::ustring &presetName, bool selected, bool loaded);
@@ -21,5 +20,6 @@ class PresetNameLabel : public PresetLabel
   Font::Justification getJustification() const override;
   int getXOffset() const override;
   int getRightMargin() const override;
-  StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override;
+  StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                            const StringAndSuffix &text) const override;
 };

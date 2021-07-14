@@ -7,7 +7,7 @@
 class DeviceInformationItem : public UpdateDocumentContributor
 {
  public:
-  DeviceInformationItem(DeviceInformation *parent);
+  explicit DeviceInformationItem(DeviceInformation *parent);
 
   tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic) override;
   sigc::connection onChange(sigc::slot<void, const DeviceInformationItem *> slot);

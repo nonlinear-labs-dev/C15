@@ -17,7 +17,7 @@ report_and_quit(){
 }
 
 executeAsRoot() {
-    echo "sscl" | /update/utilities/sshpass -p 'sscl' ssh -o ConnectionAttempts=1 -o ConnectTimeout=1 -o StrictHostKeyChecking=no sscl@$EPC_IP "sudo -S /bin/bash -c '$1' "
+    echo "sscl" | /update/utilities/sshpass -p 'sscl' ssh -o ServerAliveInterval=1 -o ConnectionAttempts=1 -o ConnectTimeout=1 -o StrictHostKeyChecking=no sscl@$EPC_IP "sudo -S /bin/bash -c '$1' "
     return $?
 }
 
@@ -57,7 +57,7 @@ main () {
     check_preconditions
     update
 
-    executeAsRoot "reboot"
+    executeAsRoot "systemctl --force --force reboot"
     if ! wait4playground; then
         report_and_quit "E45: ePC update: Reboot taking too long... timed out" "45"
     fi

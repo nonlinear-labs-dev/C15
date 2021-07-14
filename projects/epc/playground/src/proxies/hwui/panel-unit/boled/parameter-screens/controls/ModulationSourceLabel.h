@@ -12,11 +12,10 @@ class ModulationSourceLabel : public Label
   typedef Label super;
 
  public:
-  ModulationSourceLabel(const Rect &r, Font::Justification justification = Font::Justification::Center);
-  virtual ~ModulationSourceLabel();
+  explicit ModulationSourceLabel(const Rect &r, Font::Justification justification = Font::Justification::Center);
+  ~ModulationSourceLabel() override;
 
   bool redraw(FrameBuffer &fb) override;
-  void setDimmed();
 
   Font::Justification getJustification() const override;
 

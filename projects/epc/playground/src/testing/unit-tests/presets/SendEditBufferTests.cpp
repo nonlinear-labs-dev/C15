@@ -42,8 +42,10 @@ TEST_CASE("Preset Load sends EditBuffer")
                                         [&](const auto &singleEditMessage) { singleMessageRecieved = true; });
 
   auto eb = TestHelper::getEditBuffer();
+  EditBufferUseCases ebUseCases(eb);
+
   MockPresetStorage presets;
-  eb->undoableLoad(presets.getSinglePreset());
+  ebUseCases.undoableLoad(presets.getSinglePreset());
 
   TestHelper::doMainLoop(1s, 1s, [&] { return singleMessageRecieved; });
   c.disconnect();
@@ -74,12 +76,11 @@ TEST_CASE("Store Action do not send EditBuffer")
   CHECK(waitForConnection(EndPoint::AudioEngine));
   auto c = receive<SinglePresetMessage>(EndPoint::AudioEngine,
                                         [&](const auto &singleEditMessage) { singleMessageReceived = true; });
-
-  auto useCases = Application::get().getPresetManagerUseCases();
+  PresetManagerUseCases useCases(pm);
 
   //Store EditBuffer as new Bank
   auto oldNumBanks = pm->getNumBanks();
-  useCases->createBankAndStoreEditBuffer();
+  useCases.createBankAndStoreEditBuffer();
   auto newNumBanks = pm->getNumBanks();
   TestHelper::doMainLoopIteration();
   CHECK(newNumBanks > oldNumBanks);
@@ -88,13 +89,13 @@ TEST_CASE("Store Action do not send EditBuffer")
 
   //Append preset into bank
   auto oldNumPresets = bank->getNumPresets();
-  useCases->appendPreset(bank);
+  useCases.appendPreset(bank);
   auto newNumPresets = bank->getNumPresets();
   CHECK(newNumPresets > oldNumPresets);
 
   //Insert preset into bank at pos 0
   oldNumPresets = bank->getNumPresets();
-  useCases->insertPreset(bank, 0);
+  useCases.insertPreset(bank, 0);
   newNumPresets = bank->getNumPresets();
   CHECK(newNumPresets > oldNumPresets);
 

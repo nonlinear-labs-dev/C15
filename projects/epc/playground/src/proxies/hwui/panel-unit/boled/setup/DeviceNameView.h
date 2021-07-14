@@ -11,7 +11,7 @@ class DeviceNameView : public SetupLabel
 
  public:
   DeviceNameView();
-  virtual ~DeviceNameView();
+  ~DeviceNameView() override;
 
  private:
   void onSettingChanged(const Setting *s);

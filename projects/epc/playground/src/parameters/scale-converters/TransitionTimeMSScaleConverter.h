@@ -8,5 +8,5 @@ class TransitionTimeMSScaleConverter : public TimeScaleConverter
 
  public:
   TransitionTimeMSScaleConverter();
-  virtual ~TransitionTimeMSScaleConverter();
+  ~TransitionTimeMSScaleConverter() override;
 };

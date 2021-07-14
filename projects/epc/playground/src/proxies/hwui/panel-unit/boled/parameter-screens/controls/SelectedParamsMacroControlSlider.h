@@ -10,18 +10,16 @@ class SelectedParamsMacroControlSlider : public DotSlider
   typedef DotSlider super;
 
  public:
-  // public methods
-  SelectedParamsMacroControlSlider(const Rect& rect);
-  virtual ~SelectedParamsMacroControlSlider();
+  explicit SelectedParamsMacroControlSlider(const Rect& rect);
+  ~SelectedParamsMacroControlSlider() override;
 
   bool isVisible() const override;
-void setParameter(Parameter* param) override;
+  void setParameter(Parameter* param) override;
+
+  SelectedParamsMacroControlSlider(const SelectedParamsMacroControlSlider& other) = delete;
+  SelectedParamsMacroControlSlider& operator=(const SelectedParamsMacroControlSlider&) = delete;
 
  private:
-  // private methods
-  SelectedParamsMacroControlSlider(const SelectedParamsMacroControlSlider& other);
-  SelectedParamsMacroControlSlider& operator=(const SelectedParamsMacroControlSlider&);
-
   void onTargetParamValueChanged(const Parameter* param);
   void setTargetParameter(Parameter* param);
 

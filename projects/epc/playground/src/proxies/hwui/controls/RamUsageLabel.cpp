@@ -12,10 +12,10 @@ RamUsageLabel::RamUsageLabel(const Rect &r)
   settings->getSetting<UsedRAM>()->onChange(sigc::hide<0>(sigc::mem_fun(this, &RamUsageLabel::setDirty)));
 }
 
-Label::StringAndSuffix RamUsageLabel::getText() const
+StringAndSuffix RamUsageLabel::getText() const
 {
   auto settings = Application::get().getSettings();
   auto used = settings->getSetting<UsedRAM>();
   auto total = settings->getSetting<TotalRAM>();
-  return { used->getDisplayString() + "/" + total->getDisplayString() + "MB", 0 };
+  return StringAndSuffix { used->getDisplayString() + "/" + total->getDisplayString() + "MB", 0 };
 }

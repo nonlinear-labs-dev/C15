@@ -8,10 +8,18 @@
 #include <proxies/hwui/panel-unit/boled/BOLED.h>
 #include <proxies/hwui/panel-unit/boled/BOLEDScreenSaver.h>
 #include "ScreenSaverTimeoutSetting.h"
+#include <device-settings/Settings.h>
+
+static constexpr auto c_disabled = std::chrono::minutes::zero();
+static constexpr std::array<int, 6> s_logTimeOuts = { 0, 1, 5, 20, 60, 180 };
+static const std::vector<Glib::ustring> s_displayStrings
+    = { "Disabled", "1 Minute", "5 Minutes", "20 Minutes", "1 Hour", "3 Hours" };
 
 ScreenSaverTimeoutSetting::ScreenSaverTimeoutSetting(UpdateDocumentContributor& parent)
     : Setting(parent)
+    , m_expiration([this] { sendState(true); })
 {
+  nltools_assertOnDevPC(s_logTimeOuts.size() == s_displayStrings.size());
 }
 
 void ScreenSaverTimeoutSetting::load(const Glib::ustring& text, Initiator initiator)
@@ -20,24 +28,15 @@ void ScreenSaverTimeoutSetting::load(const Glib::ustring& text, Initiator initia
   {
     auto loadedValue = std::stoi(text);
 
-    selectedIndex = 0;
+    if(auto pos = std::find(s_logTimeOuts.begin(), s_logTimeOuts.end(), loadedValue); pos != s_logTimeOuts.end())
+      m_selectedIndex = std::distance(s_logTimeOuts.begin(), pos);
 
-    for(auto i = 0; i < s_logTimeOuts.size(); i++)
-    {
-      auto v = s_logTimeOuts[i];
-      if(loadedValue == v)
-      {
-        selectedIndex = i;
-        break;
-      }
-    }
-
-    m_timeout = std::chrono::minutes(s_logTimeOuts[selectedIndex]);
+    m_timeout = std::chrono::minutes(s_logTimeOuts[m_selectedIndex]);
   }
   catch(...)
   {
-    m_timeout = std::chrono::minutes(0);
-    selectedIndex = 0;
+    m_timeout = c_disabled;
+    m_selectedIndex = 0;
   }
 }
 
@@ -46,23 +45,14 @@ Glib::ustring ScreenSaverTimeoutSetting::save() const
   return std::to_string(m_timeout.count());
 }
 
-bool ScreenSaverTimeoutSetting::persistent() const
+int ScreenSaverTimeoutSetting::getSelectedIndex() const
 {
-  return true;
+  return m_selectedIndex;
 }
 
 Glib::ustring ScreenSaverTimeoutSetting::getDisplayString() const
 {
-  if(m_timeout.count() == 0)
-    return "Disabled";
-  if(m_timeout.count() == 1)
-    return "1 Minute";
-  if(m_timeout.count() == 60)
-    return "1 Hour";
-  if(m_timeout.count() > 60)
-    return std::to_string(m_timeout.count() / 60) + " Hours";
-
-  return std::to_string(m_timeout.count()) + " Minutes";
+  return s_displayStrings.at(getSelectedIndex());
 }
 
 sigc::connection ScreenSaverTimeoutSetting::onScreenSaverStateChanged(sigc::slot<void, bool> s)
@@ -72,24 +62,19 @@ sigc::connection ScreenSaverTimeoutSetting::onScreenSaverStateChanged(sigc::slot
 
 void ScreenSaverTimeoutSetting::init()
 {
-  if(m_timeout.count() > 0)
-  {
-    m_expiration = std::make_unique<Expiration>([&] { sendState(true); }, m_timeout);
-  }
+  if(m_timeout != c_disabled)
+    m_expiration.refresh(m_timeout);
 
-  Application::get().getPresetManager()->getEditBuffer()->onSelectionChanged(
-      [this](auto* n, auto* old) { endAndReschedule(); }, std::nullopt);
+  auto& app = Application::get();
+  auto editBuffer = app.getPresetManager()->getEditBuffer();
+  auto reschedule = sigc::mem_fun(this, &ScreenSaverTimeoutSetting::endAndReschedule);
 
-  Application::get().getPresetManager()->getEditBuffer()->onChange([this]() { endAndReschedule(); }, false);
-
-  Application::get().getPlaycontrollerProxy()->onLastKeyChanged([this](int key) { endAndReschedule(); });
-
-  Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstalled([this](Layout* l) {
-    if(dynamic_cast<BOLEDScreenSaver*>(l) == nullptr)
-    {
-      endAndReschedule();
-    }
-  });
+  editBuffer->onSelectionChanged(sigc::hide(sigc::hide(reschedule)), std::nullopt);
+  editBuffer->onChange(reschedule, false);
+  app.getPlaycontrollerProxy()->onLastKeyChanged(sigc::hide(reschedule));
+  app.getSettings()->onSettingsChanged(reschedule);
+  app.getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstalled(
+      sigc::mem_fun(this, &ScreenSaverTimeoutSetting::onLayoutInstalled));
 }
 
 void ScreenSaverTimeoutSetting::sendState(bool state)
@@ -101,34 +86,35 @@ void ScreenSaverTimeoutSetting::endAndReschedule()
 {
   sendState(false);
 
-  if(m_expiration)
-  {
-    m_expiration->refresh(m_timeout);
-  }
+  if(m_timeout != c_disabled)
+    m_expiration.refresh(m_timeout);
 }
 
 void ScreenSaverTimeoutSetting::incDec(int inc)
 {
+  m_selectedIndex = std::clamp<int>(m_selectedIndex + inc, 0, s_logTimeOuts.size() - 1);
+  m_timeout = std::chrono::minutes(s_logTimeOuts[m_selectedIndex]);
 
-  selectedIndex = std::min<int>(std::max<int>(selectedIndex + inc, 0), s_logTimeOuts.size() - 1);
-  m_timeout = std::chrono::minutes(s_logTimeOuts[selectedIndex]);
-
-  if(m_timeout.count() == 0)
-  {
-    m_expiration.reset(nullptr);
-    sendState(false);
-  }
+  if(m_timeout != c_disabled)
+    m_expiration.refresh(m_timeout);
   else
-  {
-    if(m_expiration)
-    {
-      m_expiration->refresh(m_timeout);
-    }
-    else
-    {
-      m_expiration = std::make_unique<Expiration>([&] { sendState(true); }, m_timeout);
-    }
-  }
+    m_expiration.cancel();
 
   notify();
+}
+
+void ScreenSaverTimeoutSetting::onLayoutInstalled(Layout* l)
+{
+  if(!dynamic_cast<BOLEDScreenSaver*>(l))
+    endAndReschedule();
+}
+
+void ScreenSaverTimeoutSetting::incDec(int inc, ButtonModifiers m)
+{
+  incDec(inc);
+}
+
+const std::vector<Glib::ustring>& ScreenSaverTimeoutSetting::getDisplayStrings() const
+{
+  return s_displayStrings;
 }

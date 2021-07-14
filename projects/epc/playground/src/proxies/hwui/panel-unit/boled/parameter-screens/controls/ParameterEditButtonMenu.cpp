@@ -99,32 +99,28 @@ void ParameterEditButtonMenu::toggleGroupLock()
   auto eb = Application::get().getPresetManager()->getEditBuffer();
   auto vg = getHWUI()->getCurrentVoiceGroup();
   auto group = eb->getSelected(vg)->getParentGroup();
+  EditBufferUseCases useCases(eb);
 
   if(group->areAllParametersLocked())
-  {
-    auto scope = Application::get().getUndoScope()->startTransaction("Unlock Group");
-    eb->getSelected(vg)->getParentGroup()->undoableUnlock(scope->getTransaction());
-  }
+    useCases.unlockGroup(group);
   else
-  {
-    auto scope = Application::get().getUndoScope()->startTransaction("Lock Group");
-    eb->getSelected(vg)->getParentGroup()->undoableLock(scope->getTransaction());
-  }
+    useCases.lockGroup(group);
+
   setup();
 }
 
 void ParameterEditButtonMenu::unlockAll()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto scope = Application::get().getUndoScope()->startTransaction("Unlock all");
-  eb->undoableUnlockAllGroups(scope->getTransaction());
+  EditBufferUseCases useCase(eb);
+  useCase.unlockAllGroups();
   setup();
 }
 
 void ParameterEditButtonMenu::lockAll()
 {
   auto eb = Application::get().getPresetManager()->getEditBuffer();
-  auto scope = Application::get().getUndoScope()->startTransaction("Lock all");
-  eb->undoableLockAllGroups(scope->getTransaction());
+  EditBufferUseCases useCase(eb);
+  useCase.lockAllGroups();
   setup();
 }

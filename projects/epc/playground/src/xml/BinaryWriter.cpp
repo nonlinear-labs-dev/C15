@@ -2,8 +2,8 @@
 #include <xml/Attribute.h>
 #include <xml/OutStream.h>
 
-BinaryWriter::BinaryWriter(std::unique_ptr<OutStream> out)
-    : Writer(std::move(out))
+BinaryWriter::BinaryWriter(OutStream &out)
+    : Writer(out)
 {
 }
 

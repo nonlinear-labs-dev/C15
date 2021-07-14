@@ -36,7 +36,8 @@ namespace DescriptiveLayouts
     int getFontHeight() const override;
 
     void drawBackground(FrameBuffer &fb) override;
-    StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override;
+    StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                              const StringAndSuffix &text) const override;
 
    private:
     PrimitiveInstance m_primitive;

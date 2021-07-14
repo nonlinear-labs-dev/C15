@@ -12,15 +12,15 @@ class BankInfoCaption : public Label
   typedef Label super;
 
  public:
-  BankInfoCaption(const Rect &pos);
-  virtual ~BankInfoCaption();
+  explicit BankInfoCaption(const Rect &pos);
+  ~BankInfoCaption() override;
 
   bool redraw(FrameBuffer &fb) override;
 
  private:
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
+  void setFontColor(FrameBuffer &fb) const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 
   void onBankSelection(const Uuid &selectedBank);
   void onBankChanged();

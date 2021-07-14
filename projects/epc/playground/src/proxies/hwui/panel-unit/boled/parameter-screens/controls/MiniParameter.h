@@ -13,7 +13,10 @@ class MiniParameter : public ControlWithChildren
 
  public:
   MiniParameter(Parameter* param, const Rect& pos);
-  virtual ~MiniParameter();
+  ~MiniParameter() override;
+
+  MiniParameter(const MiniParameter& other) = delete;
+  MiniParameter& operator=(const MiniParameter&) = delete;
 
   Parameter* getParameter();
   const Parameter* getParameter() const;
@@ -21,10 +24,6 @@ class MiniParameter : public ControlWithChildren
   bool isSelected() const;
 
  private:
-  // private methods
-  MiniParameter(const MiniParameter& other);
-  MiniParameter& operator=(const MiniParameter&);
-
   Parameter* m_param = nullptr;
   MiniParameterLabel* m_label = nullptr;
 };

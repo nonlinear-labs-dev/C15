@@ -66,6 +66,11 @@ public class PresetColorTagContextMenu extends ContextMenu {
 				}
 
 				@Override
+				public double getDesiredWidth() {
+					return super.getDesiredWidth() + getColorTagWidth();
+				}
+
+				@Override
 				public double getLeftPadding() {
 					return super.getLeftPadding() + getColorTagWidth();
 				}

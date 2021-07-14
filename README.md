@@ -5,8 +5,12 @@
 Preconditions:
 - g++-8 has to be installed and must be the default g++ see: [how to have different g++ installations for ubuntu](https://askubuntu.com/a/1028656)
 - git, cmake, docker have to be installed, docker has to be enabled/started
-- current user has to be in group 'docker' (pitfall: one has to logout/login after adding user to group)
+- current user has to be in group 'docker' ``sudo usermod -aG docker $USER`` (pitfall: logout/login required to make it effective) 
 - at least one target expects a qemu installation
+- needed Ubuntu packages for an Developer Setup: 
+```
+sudo apt install libfreetype-dev libglibmm-2.4-dev libgio2.0-cil-dev libsoup2.4-dev libgtkmm-3.0-dev libboost-dev libpng++-dev cmake git build-essential libasound2-dev openjdk-16-jdk-headless openjdk-16-jre-headless libflac-dev
+```
 
 Then:
 - checkout the repository, for example git clone https://github.com/nonlinear-labs-dev/C15.git ~/C15

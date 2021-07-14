@@ -17,6 +17,9 @@ class ParameterCarousel : public Carousel
   explicit ParameterCarousel(const Rect &pos);
   ~ParameterCarousel() override;
 
+  ParameterCarousel(const ParameterCarousel &other) = delete;
+  ParameterCarousel &operator=(const ParameterCarousel &) = delete;
+
   void turn() override;
   void antiTurn() override;
 
@@ -24,11 +27,9 @@ class ParameterCarousel : public Carousel
   void setup(Parameter *selectedParameter) override;
 
  private:
-  ParameterCarousel(const ParameterCarousel &other);
-  ParameterCarousel &operator=(const ParameterCarousel &);
-  void setupChildControls(const std::shared_ptr<PanelUnitParameterEditMode> &edit, Parameter *selectedParameter,
-                          Buttons button);
-  void setupChildControls(Parameter *selectedParameter, const std::__cxx11::list<int> &buttonAssignments);
+  using tPanelParameterEditMode = std::shared_ptr<PanelUnitParameterEditMode>;
 
+  void setupChildControls(const tPanelParameterEditMode &edit, Parameter *selectedParameter, Buttons button);
+  void setupChildControls(Parameter *selectedParameter, const std::__cxx11::list<int> &buttonAssignments);
   void setupChildControlsForParameterWithoutButtonMapping(Parameter *selectedParameter);
 };

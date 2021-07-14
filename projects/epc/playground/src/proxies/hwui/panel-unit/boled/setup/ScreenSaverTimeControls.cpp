@@ -19,48 +19,29 @@ void ScreenSaverTimeView::onSettingChanged(const Setting* s)
 
 //Editor
 ScreenSaverTimeEditor::ScreenSaverTimeEditor()
-    : super(Rect(0, 0, 0, 0))
+    : super()
 {
-
-  Application::get().getSettings()->getSetting<ScreenSaverTimeoutSetting>()->onChange(
-      mem_fun(this, &ScreenSaverTimeEditor::onSettingChanged));
+  getSetting()->onChange(sigc::mem_fun(this, &ScreenSaverTimeEditor::onSettingChanged));
 }
 
-ScreenSaverTimeEditor::~ScreenSaverTimeEditor()
+ScreenSaverTimeEditor::~ScreenSaverTimeEditor() = default;
+
+void ScreenSaverTimeEditor::incSetting(int inc)
 {
+  getSetting()->incDec(inc);
 }
 
-void ScreenSaverTimeEditor::onSettingChanged(const Setting* s)
+const std::vector<Glib::ustring>& ScreenSaverTimeEditor::getDisplayStrings() const
 {
-  if(auto p = dynamic_cast<const ScreenSaverTimeoutSetting*>(s))
-    setText(p->getDisplayString());
+  return getSetting()->getDisplayStrings();
 }
 
-bool ScreenSaverTimeEditor::onRotary(int inc, ButtonModifiers modifiers)
+int ScreenSaverTimeEditor::getSelectedIndex() const
 {
-  Application::get().getSettings()->getSetting<ScreenSaverTimeoutSetting>()->incDec(inc);
-  return true;
+  return getSetting()->getSelectedIndex();
 }
 
-void ScreenSaverTimeEditor::setFontColor(FrameBuffer& fb) const
+ScreenSaverTimeoutSetting* ScreenSaverTimeEditor::getSetting()
 {
-  fb.setColor(FrameBufferColors::C255);
-}
-
-Font::Justification ScreenSaverTimeEditor::getJustification() const
-{
-  return Font::Justification::Left;
-}
-
-void ScreenSaverTimeEditor::setBackgroundColor(FrameBuffer& fb) const
-{
-  fb.setColor(FrameBufferColors::C103);
-}
-
-bool ScreenSaverTimeEditor::redraw(FrameBuffer& fb)
-{
-  auto ret = SetupLabel::redraw(fb);
-  fb.setColor(FrameBufferColors::C179);
-  fb.drawRect(getPosition());
-  return ret;
+  return Application::get().getSettings()->getSetting<ScreenSaverTimeoutSetting>().get();
 }

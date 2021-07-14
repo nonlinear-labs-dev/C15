@@ -15,7 +15,7 @@ void DirectLoadIndicator::setMode(Mode m)
   if(m_mode != m)
   {
     m_mode = m;
-    setText({ m_mode == Mode::DirectLoad ? "DL" : "" });
+    setText(StringAndSuffix { m_mode == Mode::DirectLoad ? "DL" : "" });
     setDirty();
   }
 }

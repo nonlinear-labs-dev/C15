@@ -9,6 +9,7 @@
 #include <serialization/PresetManagerSerializer.h>
 #include <serialization/PresetSerializer.h>
 #include <xml/MemoryInStream.h>
+#include <xml/ZippedMemoryOutStream.h>
 #include <xml/OutStream.h>
 #include <xml/VersionAttribute.h>
 #include <boost/algorithm/string.hpp>
@@ -27,73 +28,40 @@
 PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
     : RPCActionManager("/presets/")
     , m_presetManager(presetManager)
+    , pmUseCases { &m_presetManager }
+    , soundUseCases { m_presetManager.getEditBuffer(), &m_presetManager }
 {
   addAction("new-bank", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto x = request->get("x");
     auto y = request->get("y");
     auto name = request->get("name");
-    auto scope = presetManager.getUndoScope().startTransaction("New Bank");
-    auto transaction = scope->getTransaction();
-    auto bank = presetManager.addBank(transaction);
-    bank->setX(transaction, x);
-    bank->setY(transaction, y);
-    bank->setName(scope->getTransaction(), name);
-    presetManager.selectBank(scope->getTransaction(), bank->getUuid());
+    pmUseCases.newBank(x, y, name);
   });
 
   addAction("new-bank-from-edit-buffer", [&](std::shared_ptr<NetworkRequest> request) mutable {
-    Glib::ustring x = request->get("x");
-    Glib::ustring y = request->get("y");
-
-    auto scope = presetManager.getUndoScope().startTransaction("New Bank");
-    auto transaction = scope->getTransaction();
-    auto bank = presetManager.addBank(transaction);
-    bank->setX(transaction, x);
-    bank->setY(transaction, y);
-    auto preset
-        = bank->appendAndLoadPreset(transaction, std::make_unique<Preset>(bank, *presetManager.getEditBuffer()));
-    bank->selectPreset(transaction, preset->getUuid());
-    presetManager.selectBank(transaction, bank->getUuid());
+    auto x = request->get("x");
+    auto y = request->get("y");
+    pmUseCases.newBank(x, y);
   });
 
   addAction("rename-bank", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto uuid = request->get("uuid");
     auto newName = request->get("name");
-
-    if(auto bank = presetManager.findBank(uuid))
+    if(auto b = m_presetManager.findBank(Uuid { uuid }))
     {
-      auto &undoScope = presetManager.getUndoScope();
-      auto transactionScope = undoScope.startTransaction("Rename Bank '%0' to '%1'", bank->getName(true), newName);
-      auto transaction = transactionScope->getTransaction();
-      bank->setName(transaction, newName);
-      presetManager.getEditBuffer()->undoableUpdateLoadedPresetInfo(transaction);
+      BankUseCases useCase(b);
+      useCase.renameBank(newName);
     }
   });
 
   addAction("select-bank", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto uuid = request->get("uuid");
-
-    if(auto bank = presetManager.findBank(uuid))
-    {
-      auto &undoScope = presetManager.getUndoScope();
-      auto transactionScope = undoScope.startTransaction("Select Bank '%0'", bank->getName(true));
-      auto transaction = transactionScope->getTransaction();
-      presetManager.selectBank(transaction, uuid);
-    }
+    pmUseCases.selectBank(Uuid(uuid));
   });
 
   addAction("delete-bank", [&](std::shared_ptr<NetworkRequest> request) mutable {
     auto uuid = request->get("uuid");
-    auto useCases = Application::get().getPresetManagerUseCases();
-    if(auto bank = presetManager.findBank(uuid))
-    {
-      useCases->deleteBank(bank);
-
-      auto scope = presetManager.getUndoScope().startTransaction("Delete Bank '%0'", bank->getName(true));
-      auto transaction = scope->getTransaction();
-
-      presetManager.deleteBank(transaction, uuid);
-    }
+    pmUseCases.deleteBank(Uuid(uuid));
   });
 
   addAction("find-unique-preset-name", [&](std::shared_ptr<NetworkRequest> request) mutable {
@@ -105,29 +73,22 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
     }
   });
 
-  addAction("store-init", [&](std::shared_ptr<NetworkRequest>) mutable {
-    auto scope = presetManager.getUndoScope().startTransaction("Store Init");
-    auto transaction = scope->getTransaction();
-    presetManager.storeInitSound(transaction);
-  });
+  addAction("store-init", [&](std::shared_ptr<NetworkRequest>) mutable { soundUseCases.storeInitSound(); });
 
-  addAction("reset-init", [&](std::shared_ptr<NetworkRequest>) mutable {
-    auto scope = presetManager.getUndoScope().startTransaction("Reset Init");
-    auto transaction = scope->getTransaction();
-    presetManager.resetInitSound(transaction);
-  });
+  addAction("reset-init", [&](std::shared_ptr<NetworkRequest>) mutable { soundUseCases.resetInitSound(); });
 
   addAction("import-all-banks", [&](std::shared_ptr<NetworkRequest> request) mutable {
     if(auto http = std::dynamic_pointer_cast<HTTPRequest>(request))
     {
       auto &boled = Application::get().getHWUI()->getPanelUnit().getEditPanel().getBoled();
-      auto scope = presetManager.getUndoScope().startTransaction("Import all Banks");
-      auto transaction = scope->getTransaction();
-
       boled.setOverlay(new SplashLayout());
       auto *buffer = http->getFlattenedBuffer();
 
-      handleImportBackupFile(transaction, buffer, http);
+      PresetManagerUseCases useCase(&m_presetManager);
+      if(!useCase.importBackupFile(buffer))
+      {
+        http->respond("Invalid File. Please choose correct xml.tar.gz or xml.zip file.");
+      }
 
       boled.resetOverlay();
       soup_buffer_free(buffer);
@@ -137,93 +98,27 @@ PresetManagerActions::PresetManagerActions(PresetManager &presetManager)
   addAction("load-preset-from-xml", [&](std::shared_ptr<NetworkRequest> request) mutable {
     if(auto http = std::dynamic_pointer_cast<HTTPRequest>(request))
     {
-      auto editBuffer = presetManager.getEditBuffer();
-
-      Preset p(editBuffer);
-
+      auto xml = http->get("xml", "");
+      PresetManagerUseCases useCase(&m_presetManager);
+      if(!useCase.loadPresetFromCompareXML(xml))
       {
-        auto scope = presetManager.getUndoScope().startTrashTransaction();
-        auto transaction = scope->getTransaction();
-        auto xml = http->get("xml", "");
-
-        MemoryInStream stream(xml, false);
-        XmlReader reader(stream, transaction);
-
-        if(!reader.read<PresetSerializer>(&p))
-        {
-          http->respond("Invalid File!");
-          DebugLevel::warning("Could not read Preset xml!");
-          return;
-        }
+        http->respond("Invalid File!");
       }
-
-      auto loadscope = presetManager.getUndoScope().startTransaction("Load Compare Buffer");
-      auto loadtransaction = loadscope->getTransaction();
-
-      SendEditBufferScopeGuard scopeGuard(loadtransaction, true);
-
-      auto autoLoadSetting = Application::get().getSettings()->getSetting<DirectLoadSetting>();
-      auto scopedLock = autoLoadSetting->scopedOverlay(BooleanSettings::BOOLEAN_SETTING_FALSE);
-      editBuffer->copyFrom(loadtransaction, &p);
-      editBuffer->undoableSetLoadedPresetInfo(loadtransaction, &p);
     }
   });
 
   addAction("move-cluster", [&](std::shared_ptr<NetworkRequest> request) mutable {
-    auto scope = presetManager.getUndoScope().startTransaction("Moved Banks");
-    auto transaction = scope->getTransaction();
-
-    std::vector<std::string> values;
-
     auto csv = request->get("csv");
-    boost::split(values, csv, boost::is_any_of(","));
-
-    nltools_assertAlways(values.size() % 3 == 0);
-
-    for(auto i = values.begin(); i != values.end();)
-    {
-      if(auto selBank = presetManager.findBank(*(i++)))
-      {
-        auto x = *(i++);
-        auto y = *(i++);
-        selBank->setX(transaction, x);
-        selBank->setY(transaction, y);
-      }
-      else
-      {
-        std::advance(i, 2);
-      }
-    }
+    std::vector<std::string> uuids;
+    boost::split(uuids, csv, boost::is_any_of(","));
+    pmUseCases.moveBankCluster(uuids);
   });
 
   addAction("select-midi-bank", [&](std::shared_ptr<NetworkRequest> request) mutable {
-    auto useCases = Application::get().getPresetManagerUseCases();
     auto bankUuid = request->get("bank", "");
-    auto bank = Application::get().getPresetManager()->findBank(bankUuid);
-    useCases->selectMidiBank(bank);
+    auto bank = Application::get().getPresetManager()->findBank(Uuid { bankUuid });
+    pmUseCases.selectMidiBank(bank);
   });
-}
-
-void PresetManagerActions::handleImportBackupFile(UNDO::Transaction *transaction, SoupBuffer *buffer,
-                                                  std::shared_ptr<HTTPRequest> http)
-{
-  if(auto lock = m_presetManager.getLoadingLock())
-  {
-    m_presetManager.clear(transaction);
-
-    MemoryInStream stream(buffer, true);
-    XmlReader reader(stream, transaction);
-
-    if(!reader.read<PresetManagerSerializer>(&m_presetManager))
-    {
-      transaction->rollBack();
-      http->respond("Invalid File. Please choose correct xml.tar.gz or xml.zip file.");
-    }
-    else
-    {
-      m_presetManager.getEditBuffer()->sendToAudioEngine();
-    }
-  }
 }
 
 bool PresetManagerActions::handleRequest(const Glib::ustring &path, std::shared_ptr<NetworkRequest> request)
@@ -251,7 +146,8 @@ bool PresetManagerActions::handleRequest(const Glib::ustring &path, std::shared_
           fields.push_back(SearchQuery::Fields::DeviceName);
       });
 
-      XmlWriter writer(request->createStream("text/xml", false));
+      auto stream = request->createStream("text/xml", false);
+      XmlWriter writer(*stream);
       Application::get().getPresetManager()->searchPresets(writer, query, mode, std::move(fields));
       return true;
     }
@@ -267,10 +163,11 @@ bool PresetManagerActions::handleRequest(const Glib::ustring &path, std::shared_
       const auto time = TimeTools::getDisplayStringFromStamp(TimeTools::getAdjustedTimestamp());
       const auto timeWithoutWhitespaces = StringTools::replaceAll(time, " ", "-");
       const auto timeSanitized = StringTools::replaceAll(timeWithoutWhitespaces, ":", "-");
-      httpRequest->setHeader("Content-Disposition",
-                             "attachment; filename=\"" + timeSanitized + "-nonlinear-c15-banks.xml.tar.gz\"");
-      ExportBackupEditor::writeBackupToStream(request->createStream("application/zip", true));
-
+      auto disposition = "attachment; filename=\"" + timeSanitized + "-nonlinear-c15-banks.xml.tar.gz\"";
+      ZippedMemoryOutStream stream;
+      ExportBackupEditor::writeBackupToStream(stream);
+      httpRequest->respondComplete(SOUP_STATUS_OK, "application/zip", { { "Content-Disposition", disposition } },
+                                   stream.exhaust());
       boled.resetOverlay();
       return true;
     }
@@ -287,11 +184,12 @@ bool PresetManagerActions::handleRequest(const Glib::ustring &path, std::shared_
       auto bUUID = request->get("p2");
       auto voiceGroupOfA = request->get("vg1");
       auto voiceGroupOfB = request->get("vg2");
-      auto a = pm->findPreset(aUUID);
-      auto b = pm->findPreset(bUUID);
+      auto a = pm->findPreset(Uuid { aUUID });
+      auto b = pm->findPreset(Uuid { bUUID });
       a = a ? a : ebAsPreset.get();
       b = b ? b : ebAsPreset.get();
-      XmlWriter writer(request->createStream("text/xml", false));
+      auto stream = request->createStream("text/xml", false);
+      XmlWriter writer(*stream);
       a->writeDiff(writer, b, to<VoiceGroup>(voiceGroupOfA), to<VoiceGroup>(voiceGroupOfB));
       return true;
     }

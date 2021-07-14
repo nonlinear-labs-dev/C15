@@ -1,4 +1,5 @@
 #pragma once
+#include <presets/PresetPartSelection.h>
 #include "BooleanSetting.h"
 
 class DirectLoadSetting : public BooleanSetting
@@ -9,9 +10,9 @@ class DirectLoadSetting : public BooleanSetting
   DirectLoadSetting(const DirectLoadSetting& other) = delete;
   DirectLoadSetting& operator=(const DirectLoadSetting&) = delete;
 
-  bool set(tEnum m) override;
-  void load(const Glib::ustring& text, Initiator initiator) override;
-
  private:
-  bool m_isLoading = false;
+  using BooleanSetting::toggle;
+  using BooleanSetting::set;
+
+  friend class DirectLoadUseCases;
 };

@@ -31,7 +31,7 @@ class Bank : public AttributesOwner
     count
   };
 
-  Bank(UpdateDocumentContributor *parent);
+  explicit Bank(UpdateDocumentContributor *parent);
   Bank(UpdateDocumentContributor *parent, const Bank &other, bool ignoreUuids);
   ~Bank() override;
 
@@ -65,10 +65,6 @@ class Bank : public AttributesOwner
   Bank *getSlaveBottom() const;
   time_t getLastChangedTimestamp() const;
 
-  // convenience
-  void selectNextPreset();
-  void selectPreviousPreset();
-  void selectPreset(size_t pos);
   void rename(const Glib::ustring &name);
   void attachBank(UNDO::Transaction *transaction, const Uuid &otherBank, AttachmentDirection dir);
   void invalidate();
@@ -81,8 +77,6 @@ class Bank : public AttributesOwner
   void setUuid(UNDO::Transaction *transaction, const Uuid &uuid);
   void selectPreset(UNDO::Transaction *transaction, const Uuid &uuid);
   void selectPreset(UNDO::Transaction *transaction, size_t pos);
-  void selectNextPreset(UNDO::Transaction *transaction);
-  void selectPreviousPreset(UNDO::Transaction *transaction);
   void ensurePresetSelection(UNDO::Transaction *transaction);
   void setAttachedToBank(UNDO::Transaction *transaction, const Uuid &uuid);
   void setAttachedDirection(UNDO::Transaction *transaction, const std::string &direction);
@@ -118,6 +112,9 @@ class Bank : public AttributesOwner
   const Preset *getFirstPreset() const;
 
   PresetManager *getPresetManager() const;
+
+  bool isMidiSelectedBank() const;
+  Glib::ustring getComment();
 
  private:
   using Attributes = std::map<std::string, std::string>;

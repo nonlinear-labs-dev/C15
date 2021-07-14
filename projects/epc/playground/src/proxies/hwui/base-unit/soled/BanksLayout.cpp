@@ -20,14 +20,15 @@ class ShortenLabel : public Label
 {
  public:
   ShortenLabel(const Glib::ustring &text, const Rect &pos)
-      : Label(text, pos)
+      : Label(StringAndSuffix { text }, pos)
   {
   }
 
  protected:
-  StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const override
+  StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                            const StringAndSuffix &text) const override
   {
-    return TextCropper::shortenStringIfNeccessary(font, text.text, getPosition().getWidth());
+    return StringAndSuffix { TextCropper::shortenStringIfNeccessary(font, text.text, getPosition().getWidth()) };
   }
 };
 
@@ -38,7 +39,9 @@ BanksLayout::BanksLayout()
   addControl(new SoledHeader("Bank", Rect(0, 0, 31, headlineHeight + 1)));
 
   m_number = addControl(new LabelRegular8("", Rect(32, 1, 64, headlineHeight - 1)));
-  m_name = addControl(new ShortenLabel("", Rect(0, headlineHeight + 2, 128, 32 - headlineHeight - 2)));
+  m_name = addControl(new ShortenLabel("", Rect(9, headlineHeight + 2, 107, 32 - headlineHeight - 2)));
+  m_midiSymbol = addControl(new LabelRegular8("\uE0C1", Rect(116, headlineHeight + 2, 9, 32 - headlineHeight - 2)));
+  m_midiSymbol->setVisible(false);
   m_directLoad = addControl(new DirectLoadIndicator(Rect(96, 0, 32, headlineHeight)));
   addControl(new DottedLine(Rect(31, headlineHeight, 96, 1)));
 
@@ -67,13 +70,14 @@ void BanksLayout::updateFromBank(const Bank *bank) const
   {
     auto order = Application::get().getPresetManager()->getBankPosition(bank->getUuid()) + 1;
     auto str = Glib::ustring::format(order);
-    m_number->setText(str);
-    m_name->setText({ bank->getName(true) });
+    m_number->setText(StringAndSuffix { str });
+    m_name->setText(StringAndSuffix { bank->getName(true) });
+    m_midiSymbol->setVisible(bank->isMidiSelectedBank());
   }
   else
   {
-    m_number->setText("---");
-    m_name->setText("---");
+    m_number->setText(StringAndSuffix { "---" });
+    m_name->setText(StringAndSuffix { "---" });
   }
 }
 

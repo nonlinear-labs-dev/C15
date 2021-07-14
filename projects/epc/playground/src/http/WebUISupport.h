@@ -7,10 +7,10 @@
 class WebUISupport : public ContentSection, public RPCActionManager
 {
  public:
-  WebUISupport(UpdateDocumentContributor *master);
+  explicit WebUISupport(UpdateDocumentContributor *master);
 
   void handleHTTPRequest(std::shared_ptr<NetworkRequest> request, const Glib::ustring &path) override;
-  Glib::ustring getPrefix() const override;
+  [[nodiscard]] Glib::ustring getPrefix() const override;
 
  private:
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;

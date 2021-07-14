@@ -10,7 +10,7 @@ namespace DescriptiveLayouts
   class PresetSelectionEvents : public EventProvider
   {
    public:
-    PresetSelectionEvents(const PresetManagerCursor::Matcher &filter);
+    explicit PresetSelectionEvents(const PresetManagerCursor::Matcher &filter);
     ~PresetSelectionEvents() override;
 
     sigc::connection connect(EventSources source, const Callback &cb) override;
@@ -18,7 +18,6 @@ namespace DescriptiveLayouts
 
    private:
     void bruteForce();
-    void sanitize();
     void setString(EventSources e, const std::string &str);
 
     template <typename T, typename... P> void createEventSources(P... e);

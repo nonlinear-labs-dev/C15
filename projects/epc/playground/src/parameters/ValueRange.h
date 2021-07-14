@@ -16,7 +16,7 @@ template <typename tValue> class ValueRange
   tValue m_max;
 
  public:
-  ValueRange(tValue min = 0, tValue max = 0)
+  explicit ValueRange(tValue min = 0, tValue max = 0)
       : m_min(min)
       , m_max(max)
   {
@@ -32,7 +32,7 @@ template <typename tValue> class ValueRange
     return m_max;
   }
 
-  bool isBiPolar() const
+  [[nodiscard]] bool isBiPolar() const
   {
     return m_min == -m_max;
   }
@@ -87,7 +87,7 @@ template <typename tValue> class ValueRange
     return m_min <= in && m_max > in;
   }
 
-  size_t hash() const
+  [[nodiscard]] size_t hash() const
   {
     std::hash<tValue> h;
     return h(m_min) ^ h(m_max);

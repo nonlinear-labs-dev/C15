@@ -13,12 +13,12 @@ class RenameLayout : public Layout
 
  public:
   RenameLayout();
-  virtual ~RenameLayout();
+  ~RenameLayout() override;
 
-  virtual bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
-  virtual bool onRotary(int inc, ButtonModifiers modifiers) override;
+  bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;
+  bool onRotary(int inc, ButtonModifiers modifiers) override;
 
-  virtual void init() override;
+  void init() override;
 
  protected:
   virtual void commit(const Glib::ustring &newName) = 0;

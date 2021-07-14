@@ -12,7 +12,7 @@ class MenuEditor : public ControlWithChildren, public SetupEditor
 
  public:
   MenuEditor();
-  virtual ~MenuEditor();
+  ~MenuEditor() override;
 
   void setPosition(const Rect &r) override;
   bool onButton(Buttons i, bool down, ButtonModifiers modifiers) override;

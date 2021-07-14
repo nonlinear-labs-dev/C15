@@ -8,11 +8,11 @@ class Uuid
  public:
   Uuid();
   Uuid(const Uuid &other);
-  Uuid(Uuid &&other);
+  Uuid(Uuid &&other) noexcept;
 
-  Uuid(const std::string &id);
-  Uuid(const Glib::ustring &id);
-  Uuid(const char *id);
+  explicit Uuid(const std::string &id);
+  explicit Uuid(const Glib::ustring &id);
+  explicit Uuid(const char *id);
 
   virtual ~Uuid();
 
@@ -22,13 +22,14 @@ class Uuid
   bool operator!=(const Uuid &other) const;
   bool operator<(const Uuid &other) const;
 
-  const std::string &raw() const;
+  [[nodiscard]] const std::string &raw() const;
   std::string &raw();
-  bool empty() const;
+  [[nodiscard]] bool empty() const;
 
   static Uuid none();
   static Uuid init();
   static Uuid converted();
+  static Uuid restored();
 
  private:
   std::string id;

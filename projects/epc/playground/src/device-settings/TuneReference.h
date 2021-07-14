@@ -6,7 +6,7 @@
 class TuneReference : public Setting
 {
  public:
-  TuneReference(UpdateDocumentContributor& parent);
+  explicit TuneReference(UpdateDocumentContributor& parent);
 
  public:
   void load(const Glib::ustring& text, Initiator initiator) override;

@@ -7,5 +7,5 @@ class Settings;
 class CrashOnError : public BooleanSetting
 {
  public:
-  CrashOnError(Settings& parent);
+  explicit CrashOnError(Settings& parent);
 };

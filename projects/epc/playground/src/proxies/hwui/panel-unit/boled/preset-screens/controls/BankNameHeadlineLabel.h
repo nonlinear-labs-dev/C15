@@ -10,10 +10,10 @@ class BankNameHeadlineLabel : public Label
   typedef Label super;
 
  public:
-  BankNameHeadlineLabel(const Rect &pos);
+  explicit BankNameHeadlineLabel(const Rect &pos);
 
-  virtual bool redraw(FrameBuffer &fb) override;
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
+  bool redraw(FrameBuffer &fb) override;
+  void setFontColor(FrameBuffer &fb) const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 };

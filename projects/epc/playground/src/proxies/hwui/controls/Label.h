@@ -4,6 +4,7 @@
 #include <proxies/hwui/HWUIEnums.h>
 #include <proxies/hwui/Font.h>
 #include <memory>
+#include <tools/StringAndSuffix.h>
 
 class Label : public Control
 {
@@ -11,50 +12,8 @@ class Label : public Control
   typedef Control super;
 
  public:
-  struct StringAndSuffix
-  {
-    StringAndSuffix(const Glib::ustring &first, const Glib::ustring &second)
-        : text(first + second)
-        , suffix(second.length())
-    {
-    }
-
-    StringAndSuffix(const Glib::ustring &first, size_t suffix = 0)
-        : text(first)
-        , suffix(suffix)
-    {
-    }
-
-    StringAndSuffix(const char *first, size_t suffix = 0)
-        : text(first)
-        , suffix(suffix)
-    {
-    }
-
-    StringAndSuffix(const char c, size_t suffix = 0)
-        : text(std::to_string(c))
-        , suffix(suffix)
-    {
-    }
-
-    bool operator!=(const StringAndSuffix &other) const
-    {
-
-      return text.raw() != other.text.raw() || suffix != other.suffix;
-    }
-
-    std::pair<Glib::ustring, Glib::ustring> getSplits() const
-    {
-      return std::make_pair<Glib::ustring, Glib::ustring>(text.substr(0, text.length() - suffix),
-                                                          text.substr(text.length() - suffix));
-    }
-
-    Glib::ustring text;
-    size_t suffix = 0;
-  };
-
-  Label(const StringAndSuffix &text, const Rect &pos);
-  Label(const Rect &pos);
+  Label(StringAndSuffix text, const Rect &pos);
+  explicit Label(const Rect &pos);
   ~Label() override;
 
   bool redraw(FrameBuffer &fb) override;
@@ -71,7 +30,8 @@ class Label : public Control
   virtual Font::Justification getJustification() const;
   virtual int getFontHeight() const;
 
-  virtual StringAndSuffix shortenStringIfNeccessary(std::shared_ptr<Font> font, const StringAndSuffix &text) const;
+  virtual StringAndSuffix shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                                    const StringAndSuffix &text) const;
 
   virtual void setFontColor(FrameBuffer &fb) const;
   virtual void setSuffixFontColor(FrameBuffer &fb) const;

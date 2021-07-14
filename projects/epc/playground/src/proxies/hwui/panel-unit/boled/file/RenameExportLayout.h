@@ -10,8 +10,8 @@ class RenameExportLayout : public RenameLayout
   using Callback = std::function<void(Glib::ustring, Bank *)>;
   RenameExportLayout(Bank *bank, Callback callBack);
 
-  Glib::ustring getInitialText() const;
-  void commit(const Glib::ustring &newName);
+  Glib::ustring getInitialText() const override;
+  void commit(const Glib::ustring &newName) override;
 
  private:
   Glib::ustring initialName;

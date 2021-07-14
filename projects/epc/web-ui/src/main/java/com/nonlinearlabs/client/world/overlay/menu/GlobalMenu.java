@@ -214,6 +214,20 @@ public class GlobalMenu extends OverlayLayout {
 
 		});
 
+
+		addChild(new MenuEntry(this, "Ctrl-R") {
+			@Override
+			public String getDrawText(Context2d ctx) {
+				return "Open Recorder";
+			}
+
+			@Override
+			public Control mouseDown(Position eventPoint) {
+				getParent().toggle();
+				Window.open("/NonMaps/recorder/index.html", "", "");
+				return this;
+			}
+		});
 	}
 
 	@Override

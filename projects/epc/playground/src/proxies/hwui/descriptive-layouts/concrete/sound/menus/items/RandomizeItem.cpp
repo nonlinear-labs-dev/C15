@@ -25,9 +25,10 @@ RandomizeItem::~RandomizeItem() = default;
 MenuOverlay* RandomizeItem::createOverlay()
 {
   return new ChangeSettingWithCommitOverlay<RandomizeAmount>(getDefaultOverlayRect(), [] {
-    auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction("Randomize Sound");
-    Application::get().getPresetManager()->getEditBuffer()->undoableRandomize(scope->getTransaction(),
-                                                                              Initiator::EXPLICIT_HWUI);
+    auto pm = Application::get().getPresetManager();
+    auto eb = pm->getEditBuffer();
+    SoundUseCases useCases(eb, pm);
+    useCases.randomizeSound();
   });
 }
 
@@ -47,10 +48,9 @@ MenuOverlay* RandomizePart::createOverlay()
 {
   return new ChangeSettingWithCommitOverlay<RandomizeAmount>(getDefaultOverlayRect(), [] {
     auto vg = Application::get().getHWUI()->getCurrentVoiceGroup();
-    auto currentVoiceGroup = toString(vg);
-    auto scope = Application::get().getPresetManager()->getUndoScope().startTransaction("Randomize Part %s",
-                                                                                        currentVoiceGroup);
-    Application::get().getPresetManager()->getEditBuffer()->undoableRandomizePart(scope->getTransaction(), vg,
-                                                                                  Initiator::EXPLICIT_HWUI);
+    auto pm = Application::get().getPresetManager();
+    auto eb = pm->getEditBuffer();
+    SoundUseCases useCases(eb, pm);
+    useCases.randomizePart(vg);
   });
 }

@@ -19,7 +19,7 @@ class UpdateDocumentContributor : public IntrusiveListItem<UpdateDocumentContrib
  public:
   typedef int tUpdateID;
 
-  UpdateDocumentContributor(UpdateDocumentContributor *parent);
+  explicit UpdateDocumentContributor(UpdateDocumentContributor *parent);
   virtual ~UpdateDocumentContributor();
 
   UpdateDocumentContributor(const UpdateDocumentContributor &other) = delete;
@@ -29,23 +29,23 @@ class UpdateDocumentContributor : public IntrusiveListItem<UpdateDocumentContrib
   {
     Generic = 1 << 0,
     LockState = 1 << 1,
+    DontTrustOracle = 1 << 2
   };
 
   virtual tUpdateID onChange(uint64_t flags = UpdateDocumentContributor::ChangeFlags::Generic);
 
-  bool didChangeSince(tUpdateID clientsUpdateID) const;
-  tUpdateID getUpdateIDOfLastChange() const;
+  [[nodiscard]] bool didChangeSince(tUpdateID clientsUpdateID) const;
+  [[nodiscard]] tUpdateID getUpdateIDOfLastChange() const;
 
   virtual void writeDocument(Writer &writer, tUpdateID knownRevision) const = 0;
 
-  UpdateDocumentContributor *getParent() const;
+  [[nodiscard]] UpdateDocumentContributor *getParent() const;
   UpdateDocumentMaster *getRoot();
-  const UpdateDocumentMaster *getRoot() const;
+  [[nodiscard]] const UpdateDocumentMaster *getRoot() const;
 
   virtual UNDO::Scope &getUndoScope();
-  virtual const UNDO::Scope &getUndoScope() const;
+  [[nodiscard]] virtual const UNDO::Scope &getUndoScope() const;
 
-  void propagateChangeDownstream();
   void orphan();
 
  protected:

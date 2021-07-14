@@ -13,6 +13,11 @@
 class Font;
 class UDPSender;
 
+namespace nltools::msg
+{
+  class WebSocketJsonAPI;
+}
+
 class FrameBuffer : public Uncopyable, public sigc::trackable
 {
  public:
@@ -28,7 +33,7 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
   typedef uint8_t tPixel;
   using Colors = ::FrameBufferColors;
 
-  tPixel interpolateColor(float normalized)
+  [[nodiscard]] static tPixel interpolateColor(float normalized)
   {
     return normalized * 0x0F;
   }
@@ -57,8 +62,8 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
   {
     FrameBuffer *m_fb;
 
-    StackScopeGuard(FrameBuffer *fb);
-    StackScopeGuard(StackScopeGuard &&other);
+    explicit StackScopeGuard(FrameBuffer *fb);
+    StackScopeGuard(StackScopeGuard &&other) noexcept;
     virtual ~StackScopeGuard();
     StackScopeGuard(const Uncopyable &) = delete;
     StackScopeGuard &operator=(const Uncopyable &) = delete;
@@ -67,17 +72,17 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
   struct Clip : StackScopeGuard
   {
     Clip(FrameBuffer *fb, const Rect &clip);
-    Clip(Clip &&other);
-    ~Clip();
+    Clip(Clip &&other) noexcept;
+    ~Clip() override;
 
-    bool isEmpty() const;
+    [[nodiscard]] bool isEmpty() const;
   };
 
   struct Offset : StackScopeGuard
   {
     Offset(FrameBuffer *fb, const Point &offset);
-    Offset(Offset &&other);
-    ~Offset();
+    Offset(Offset &&other) noexcept;
+    ~Offset() override;
   };
 
   friend struct Clip;
@@ -87,7 +92,7 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
   Clip clipRespectingOffset(const Rect &rect);
   Offset offset(const Point &offset);
 
-  const std::vector<tPixel>& getBackBuffer() const;
+  const std::vector<tPixel> &getBackBuffer() const;
 
   bool swapBuffers();
   bool isValidColor(Colors c) const;
@@ -110,4 +115,10 @@ class FrameBuffer : public Uncopyable, public sigc::trackable
   std::stack<Rect> m_clips;
   std::stack<Point> m_offsets;
   bool m_perPixelDebug = false;
+
+  std::unique_ptr<nltools::msg::WebSocketJsonAPI> m_api;
+
+  uint64_t m_oledMessageId = 1;
+  uint64_t m_oledCurrentlyShowsMessageId = 0;
+  bool m_oledsDirty = false;
 };

@@ -6,5 +6,5 @@ class Linear180DegreeScaleConverter : public LinearScaleConverter
 {
  public:
   Linear180DegreeScaleConverter();
-  virtual ~Linear180DegreeScaleConverter();
+  ~Linear180DegreeScaleConverter() override;
 };

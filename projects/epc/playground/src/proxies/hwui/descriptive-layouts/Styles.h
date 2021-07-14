@@ -19,7 +19,7 @@ namespace DescriptiveLayouts
   {
     struct StyleSelector
     {
-      template <typename... tArgs> StyleSelector(tArgs... args)
+      template <typename... tArgs> explicit StyleSelector(tArgs... args)
       {
         (void) std::initializer_list<bool> { (setupSelector(args), false)... };
       }

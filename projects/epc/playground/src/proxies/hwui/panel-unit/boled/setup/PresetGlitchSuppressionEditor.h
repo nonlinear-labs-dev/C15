@@ -11,7 +11,7 @@ class PresetGlitchSuppressionEditor : public MenuEditor
 
  public:
   PresetGlitchSuppressionEditor();
-  virtual ~PresetGlitchSuppressionEditor();
+  ~PresetGlitchSuppressionEditor() override;
 
   void incSetting(int inc) override;
   const std::vector<Glib::ustring> &getDisplayStrings() const override;

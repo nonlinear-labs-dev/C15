@@ -2,8 +2,8 @@
 #include <libsoup/soup.h>
 #include <glibmm.h>
 
-XmlWriter::XmlWriter(std::unique_ptr<OutStream> out)
-    : super(std::move(out))
+XmlWriter::XmlWriter(OutStream &out)
+    : super(out)
     , m_stackSize(0)
 {
   writeToStream("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");

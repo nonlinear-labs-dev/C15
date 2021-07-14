@@ -14,12 +14,12 @@ class ParameterId
   bool operator==(const ParameterId &other) const;
   bool operator!=(const ParameterId &other) const;
 
-  uint16_t getNumber() const;
-  VoiceGroup getVoiceGroup() const;
-  bool isDual() const;
-  bool isGlobal() const;
+  [[nodiscard]] uint16_t getNumber() const;
+  [[nodiscard]] VoiceGroup getVoiceGroup() const;
+  [[nodiscard]] bool isDual() const;
+  [[nodiscard]] bool isGlobal() const;
 
-  std::string toString() const
+  [[nodiscard]] std::string toString() const
   {
     return ::toString(getVoiceGroup()) + "-" + std::to_string(getNumber());
   }

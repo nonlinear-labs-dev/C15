@@ -13,7 +13,7 @@ TEST_CASE("Override Single Preset With new!", "[Preset][Store]")
     TestHelper::initSingleEditBuffer(scope->getTransaction());
     eb->setName(scope->getTransaction(), "Name");
     toOverwrite->copyFrom(scope->getTransaction(), eb);
-    REQUIRE(toOverwrite->getName() == "Name");
+    CHECK(toOverwrite->getName() == "Name");
   }
 }
 
@@ -33,8 +33,8 @@ TEST_CASE("Override Dual Preset With new!", "[Preset][Store]")
 
     toOverwrite->copyFrom(scope->getTransaction(), eb);
 
-    REQUIRE(toOverwrite->getVoiceGroupName(VoiceGroup::I) == "1");
-    REQUIRE(toOverwrite->getVoiceGroupName(VoiceGroup::II) == "2");
-    REQUIRE(toOverwrite->getName() == "Name");
+    CHECK(toOverwrite->getVoiceGroupName(VoiceGroup::I) == "1");
+    CHECK(toOverwrite->getVoiceGroupName(VoiceGroup::II) == "2");
+    CHECK(toOverwrite->getName() == "Name");
   }
 }

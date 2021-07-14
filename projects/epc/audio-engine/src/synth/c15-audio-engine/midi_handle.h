@@ -2,9 +2,18 @@
 
 #include <stdint.h>
 #include <parameter_declarations.h>
+#include <nltools/Types.h>
 
 namespace Midi
 {
+
+  namespace Channel
+  {
+    inline int statusToChannel(uint8_t status)
+    {
+      return status & 0b00001111;
+    }
+  }
 
   namespace MSB
   {
@@ -173,8 +182,9 @@ namespace Midi
 
     static bool isValidNoteOnVelocity(const uint16_t& _midiValue)
     {
-      return !(_midiValue < BottomOffset);
+      return _midiValue >= BottomOffset;
     }
+
     static float decodeUnipolarMidiValue(const uint16_t& _midiValue)
     {
       if(isValidNoteOnVelocity(_midiValue))

@@ -13,7 +13,7 @@ class NetworkRequest
   NetworkRequest();
   virtual ~NetworkRequest();
 
-  Glib::ustring get(const Glib::ustring &key, Glib::ustring def = "") const;
+  [[nodiscard]] Glib::ustring get(const Glib::ustring &key, Glib::ustring def = "") const;
   void forEach(std::function<void(const Glib::ustring &key, const Glib::ustring &val)> cb);
 
   virtual Glib::ustring getPath() = 0;
@@ -22,7 +22,7 @@ class NetworkRequest
   virtual void unpause() = 0;
   virtual void okAndComplete() = 0;
   virtual std::unique_ptr<OutStream> createStream(const Glib::ustring &contentType, bool zip) = 0;
-  virtual bool isOracle() const;
+  [[nodiscard]] virtual bool isOracle() const;
 
  protected:
   void createMapFromQueryString(const Glib::ustring &queryString);

@@ -16,17 +16,18 @@
 #include <presets/PresetManager.h>
 #include <presets/EditBuffer.h>
 #include <parameter_declarations.h>
+#include <proxies/hwui/controls/Label.h>
 
 PlayOrEditModeLayout::PlayOrEditModeLayout()
     : super(Application::get().getHWUI()->getBaseUnit().getPlayPanel().getSOLED())
 {
-  addControl(new Label("Shift", Rect(1, 1, 23, 14)));
+  addControl(new Label(StringAndSuffix { "Shift" }, Rect(1, 1, 23, 14)));
   addControl(new NoteShiftDisplay(Rect(1, 17, 23, 14)));
   addControl(new VerticalLine(Rect(24, 0, 1, 32)));
   addControl(new DottedLine(Rect(25, 16, 103, 1)));
 
-  m_upperArrow = addControl(new Label("<", Rect(123, 1, 5, 14)));
-  m_lowerArrow = addControl(new Label("<", Rect(123, 17, 5, 14)));
+  m_upperArrow = addControl(new Label(StringAndSuffix { "<" }, Rect(123, 1, 5, 14)));
+  m_lowerArrow = addControl(new Label(StringAndSuffix { "<" }, Rect(123, 17, 5, 14)));
 
   addControl(new RibbonLabel(HardwareSourcesGroup::getLowerRibbonParameterID(), Rect(25, 17, 74, 14)));
   addControl(new MCRoutings(HardwareSourcesGroup::getLowerRibbonParameterID(), Rect(99, 20, 8, 8)));
@@ -39,9 +40,7 @@ PlayOrEditModeLayout::PlayOrEditModeLayout()
       mem_fun(this, &PlayOrEditModeLayout::onParameterSelectionChanged), {});
 }
 
-PlayOrEditModeLayout::~PlayOrEditModeLayout()
-{
-}
+PlayOrEditModeLayout::~PlayOrEditModeLayout() = default;
 
 int PlayOrEditModeLayout::getBehaviourLeft() const
 {

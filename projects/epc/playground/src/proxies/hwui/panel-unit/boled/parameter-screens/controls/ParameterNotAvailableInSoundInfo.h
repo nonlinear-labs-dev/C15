@@ -9,7 +9,7 @@ class Label;
 class ParameterNotAvailableInSoundInfo : public ControlWithChildren
 {
  public:
-  ParameterNotAvailableInSoundInfo(const Rect& r);
+  explicit ParameterNotAvailableInSoundInfo(const Rect& r);
   void setVisible(bool b) override;
   int getZPriority() const override;
 

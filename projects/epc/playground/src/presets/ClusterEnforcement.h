@@ -63,13 +63,11 @@ class ClusterEnforcement
   typedef std::shared_ptr<TreeNode> tCluster;
 
  public:
-  ClusterEnforcement();
+  explicit ClusterEnforcement(PresetManager *pm);
   virtual ~ClusterEnforcement();
   void enforceClusterRuleOfOne(UNDO::Transaction *transaction);
   void sanitizeBankThatWillBeDeleted(UNDO::Transaction *transaction, Bank *bank);
   std::vector<Bank *> sortBanks();
-
-  static void sortBankNumbers();
 
  private:
   PresetManager *m_presetManager = nullptr;

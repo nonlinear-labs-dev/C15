@@ -11,6 +11,6 @@ class VoicesDimension : public Dimension
   virtual ~VoicesDimension();
 
   static const VoicesDimension &get();
-  Glib::ustring getStingizerJS() const override;
-  Glib::ustring stringize(const tDisplayValue &displayValue) const override;
+  [[nodiscard]] Glib::ustring getStingizerJS() const override;
+  [[nodiscard]] Glib::ustring stringize(const tDisplayValue &displayValue) const override;
 };

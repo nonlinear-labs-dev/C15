@@ -14,7 +14,8 @@ void RenameMCLayout::commit(const Glib::ustring &newName)
 {
   if(auto p = getMacroControl())
   {
-    p->undoableSetGivenName(newName);
+    MacroControlParameterUseCases mcUseCase(p);
+    mcUseCase.setName(newName);
   }
 }
 

@@ -13,13 +13,13 @@ class ParamEditModeRibbonBehaviourLabel : public Label
   typedef Label super;
 
  public:
-  ParamEditModeRibbonBehaviourLabel(const Rect& rect);
-  virtual ~ParamEditModeRibbonBehaviourLabel();
+  explicit ParamEditModeRibbonBehaviourLabel(const Rect& rect);
+  ~ParamEditModeRibbonBehaviourLabel() override;
 
- private:
   ParamEditModeRibbonBehaviourLabel(const ParamEditModeRibbonBehaviourLabel& other) = delete;
   ParamEditModeRibbonBehaviourLabel& operator=(const ParamEditModeRibbonBehaviourLabel&) = delete;
 
+ private:
   void updateText(const Setting* s);
   std::shared_ptr<ParameterEditModeRibbonBehaviour> getSetting() const;
   Settings* getSettings() const;

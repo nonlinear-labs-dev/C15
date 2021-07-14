@@ -12,7 +12,7 @@ class HWUI;
 class Control : public sigc::trackable, public Uncopyable
 {
  public:
-  Control(const Rect &pos);
+  explicit Control(const Rect &pos);
   virtual ~Control();
 
   virtual bool redraw(FrameBuffer &fb);

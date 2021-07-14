@@ -15,16 +15,13 @@ class ModulationRoutersCarousel : public Carousel
   explicit ModulationRoutersCarousel(const Rect &pos);
   ~ModulationRoutersCarousel() override;
 
+  ModulationRoutersCarousel(const ModulationRoutersCarousel &other) = delete;
+  ModulationRoutersCarousel &operator=(const ModulationRoutersCarousel &) = delete;
+
   void turn() override;
   void antiTurn() override;
-
- protected:
- public:
   void setHighlight(bool isHighlight) override;
+
  protected:
   void setup(Parameter *selectedParameter) override;
-
- private:
-  ModulationRoutersCarousel(const ModulationRoutersCarousel &other);
-  ModulationRoutersCarousel &operator=(const ModulationRoutersCarousel &);
 };

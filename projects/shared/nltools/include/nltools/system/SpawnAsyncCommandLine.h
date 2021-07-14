@@ -11,7 +11,8 @@ class SpawnAsyncCommandLine
 
   static size_t removeDone();
   static size_t getNumCommands();
-  private:
+
+ private:
   friend class AsyncCommandLine;
   static std::list<std::unique_ptr<AsyncCommandLine>> m_commands;
 };

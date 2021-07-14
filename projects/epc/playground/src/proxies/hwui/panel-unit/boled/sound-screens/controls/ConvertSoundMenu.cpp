@@ -16,21 +16,21 @@ ConvertSoundMenu::ConvertSoundMenu(const Rect &rect)
 void ConvertSoundMenu::convertSoundTo(SoundType newType)
 {
   auto pm = Application::get().getPresetManager();
-  if(newType != SoundType::Single)
+  SoundUseCases useCases(pm->getEditBuffer(), pm);
+
+  switch(newType)
   {
-    auto scope = pm->getUndoScope().startTransaction("Convert to " + toString(newType));
-    auto transaction = scope->getTransaction();
-    Application::get().getPresetManager()->getEditBuffer()->undoableConvertToDual(transaction, newType);
-    Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });
+    case SoundType::Single:
+      useCases.convertToSingle(Application::get().getHWUI()->getCurrentVoiceGroup());
+      break;
+    case SoundType::Layer:
+      useCases.convertToLayer();
+      break;
+    case SoundType::Split:
+      useCases.convertToSplit();
+      break;
   }
-  else
-  {
-    auto scope = pm->getUndoScope().startTransaction("Convert to Single");
-    auto transaction = scope->getTransaction();
-    auto copyFromVoiceGroup = Application::get().getHWUI()->getCurrentVoiceGroup();
-    Application::get().getPresetManager()->getEditBuffer()->undoableConvertToSingle(transaction, copyFromVoiceGroup);
-    Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });
-  }
+  Application::get().getHWUI()->setFocusAndMode(FocusAndMode { UIFocus::Sound, UIMode::Select, UIDetail::Init });
 }
 
 void ConvertSoundMenu::setup()

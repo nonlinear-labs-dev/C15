@@ -10,23 +10,26 @@ class RawValue
   typedef tControlPositionValue tValueType;
 
   RawValue(const ScaleConverter *scale, tValueType def);
+  RawValue(const RawValue &other) = delete;
+  RawValue &operator=(const RawValue &) = delete;
+
   virtual ~RawValue();
 
-  tValueType getRawValue() const;
+  [[nodiscard]] tValueType getRawValue() const;
   bool setRawValue(Initiator initiator, tValueType newRawValue);
-  bool differs(tValueType other) const;
-  bool equals(tValueType other) const;
+  [[nodiscard]] bool differs(tValueType other) const;
+  [[nodiscard]] bool equals(tValueType other) const;
   void changeRawValue(Initiator initiator, tValueType diff);
   void setDefaultValue(tValueType defaultValue);
-  tValueType getDefaultValue() const;
-  tValueType getFactoryDefaultValue() const;
+  [[nodiscard]] tValueType getDefaultValue() const;
+  [[nodiscard]] tValueType getFactoryDefaultValue() const;
 
-  bool isBiPolar() const;
-  bool isBoolean() const;
+  [[nodiscard]] bool isBiPolar() const;
+  [[nodiscard]] bool isBoolean() const;
   void setToDefault(Initiator initiator);
-  virtual size_t getHash() const;
+  [[nodiscard]] virtual size_t getHash() const;
 
-  const ScaleConverter *getScaleConverter() const;
+  [[nodiscard]] const ScaleConverter *getScaleConverter() const;
   void setScaleConverter(const ScaleConverter *c);
 
   bool setIsBoolean(bool v);
@@ -34,9 +37,6 @@ class RawValue
   virtual void onRawValueChanged(Initiator initiator, tValueType oldRawValue, tValueType newRawValue);
 
  private:
-  RawValue(const RawValue &other) = delete;
-  RawValue &operator=(const RawValue &) = delete;
-
   tValueType m_defaultValue;
   tValueType m_rawValue;
   tValueType m_factoryDefaultValue;

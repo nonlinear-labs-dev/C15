@@ -5,11 +5,11 @@
 class InitSound : public AnimatedGenericItem
 {
  public:
-  InitSound(const Rect& rect);
+  explicit InitSound(const Rect& rect);
 };
 
 class InitPart : public AnimatedGenericItem
 {
  public:
-  InitPart(const Rect& r);
+  explicit InitPart(const Rect& r);
 };

@@ -6,5 +6,5 @@ class Linear100PercentScaleConverter : public LinearScaleConverter
 {
  public:
   Linear100PercentScaleConverter();
-  virtual ~Linear100PercentScaleConverter();
+  ~Linear100PercentScaleConverter() override;
 };

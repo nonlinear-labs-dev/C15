@@ -6,5 +6,5 @@ class ExportBackupView : public SetupLabel
 {
  public:
   ExportBackupView();
-  virtual ~ExportBackupView();
+  ~ExportBackupView() override;
 };

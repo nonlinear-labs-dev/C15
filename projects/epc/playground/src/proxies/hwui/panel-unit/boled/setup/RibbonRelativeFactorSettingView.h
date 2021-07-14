@@ -9,7 +9,7 @@ class RibbonRelativeFactorSettingView : public SetupLabel
 
  public:
   RibbonRelativeFactorSettingView();
-  virtual ~RibbonRelativeFactorSettingView();
+  ~RibbonRelativeFactorSettingView() override;
 
  private:
   void onSettingChanged(const Setting *s);

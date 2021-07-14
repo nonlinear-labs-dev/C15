@@ -11,7 +11,7 @@ class FreeInternalMemoryView : public SetupLabel
 
  public:
   FreeInternalMemoryView();
-  virtual ~FreeInternalMemoryView();
+  ~FreeInternalMemoryView() override;
 
  private:
   void onSettingChanged(const DeviceInformationItem *s);

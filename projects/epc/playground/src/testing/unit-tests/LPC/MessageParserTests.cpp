@@ -25,10 +25,10 @@ TEST_CASE("Message Parser")
         if(needed == 0)
         {
           const MessageParser::NLMessage &msg = foo.getMessage();
-          REQUIRE(msg.type == MessageParser::PRESET_DIRECT);
-          REQUIRE(msg.length == 2);
-          REQUIRE(msg.params[0] == 99);
-          REQUIRE(msg.params[1] == 77);
+          CHECK(msg.type == MessageParser::PRESET_DIRECT);
+          CHECK(msg.length == 2);
+          CHECK(msg.params[0] == 99);
+          CHECK(msg.params[1] == 77);
           break;
         }
 

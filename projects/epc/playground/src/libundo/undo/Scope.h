@@ -12,6 +12,8 @@ namespace UNDO
   class TransactionCreationScope;
   class Transaction;
 
+  class TransactionLog;
+
   class Scope : public ContentSection
   {
    public:
@@ -22,8 +24,10 @@ namespace UNDO
       return std::chrono::seconds(2);
     }
 
-    Scope(UpdateDocumentContributor *parent);
-    virtual ~Scope();
+    explicit Scope(UpdateDocumentContributor *parent);
+    ~Scope() override;
+
+    tUpdateID onChange(uint64_t flags = ChangeFlags::Generic) override;
 
     void reset();
 
@@ -58,14 +62,14 @@ namespace UNDO
     tTransactionScopePtr startCuckooTransaction();
     void resetCukooTransaction();
 
-    Transaction *getUndoTransaction() const;
-    Transaction *getRedoTransaction() const;
-    Transaction *getRootTransaction() const;
+    [[nodiscard]] Transaction *getUndoTransaction() const;
+    [[nodiscard]] Transaction *getRedoTransaction() const;
+    [[nodiscard]] Transaction *getRootTransaction() const;
 
     void rebase(Transaction *newRoot);
 
-    bool canUndo() const;
-    bool canRedo() const;
+    [[nodiscard]] bool canUndo() const;
+    [[nodiscard]] bool canRedo() const;
 
     void undo();
     void undoAndHushUp();
@@ -77,9 +81,13 @@ namespace UNDO
     void eraseBranch(const Glib::ustring &id);
     void eraseBranch(Transaction *branch);
 
-    Glib::ustring getPrefix() const override;
+    [[nodiscard]] Glib::ustring getPrefix() const override;
     void handleHTTPRequest(std::shared_ptr<NetworkRequest> request, const Glib::ustring &path) override;
     void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
+
+    [[nodiscard]] const Transaction *findTransactionAt(std::chrono::system_clock::time_point timestamp) const;
+
+    void onTransactionDestroyed(const Transaction *p);
 
    protected:
     virtual void onTransactionAdded();
@@ -91,12 +99,14 @@ namespace UNDO
     Scope(const Scope &other);
     void operator=(const Scope &other);
 
-    size_t getDepth() const;
+    [[nodiscard]] size_t getDepth() const;
     void addTransaction(tTransactionPtr cmd);
 
     friend class Transaction;
     void onTransactionUndoStart();
     void onTransactionRedone(const Transaction *transaction);
+
+    std::unique_ptr<TransactionLog> m_transactionLog;
 
     UndoActions m_undoActions;
 

@@ -35,13 +35,10 @@ class ButtonModifiers : public std::bitset<ButtonModifier::NUM_MODIFIERS>
   typedef std::bitset<ButtonModifier::NUM_MODIFIERS> super;
 
  public:
-  ButtonModifiers()
-  {
-  }
+  ButtonModifiers() = default;
+  ButtonModifiers(unsigned long long dontCallme) = delete;
 
-  ButtonModifiers(unsigned long long dontCallme);
-
-  ButtonModifiers(ButtonModifier mod)
+  explicit ButtonModifiers(ButtonModifier mod)
   {
     set(mod);
   }
@@ -75,6 +72,11 @@ struct FocusAndMode
 
   FocusAndMode(UIMode m)
       : FocusAndMode(UIFocus::Unchanged, m)
+  {
+  }
+
+  FocusAndMode(UIDetail d)
+      : FocusAndMode(UIFocus::Unchanged, UIMode::Unchanged, d)
   {
   }
 

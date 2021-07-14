@@ -42,6 +42,7 @@ import com.nonlinearlabs.client.world.maps.parameters.ModulatableParameter;
 import com.nonlinearlabs.client.world.maps.presets.bank.Bank;
 import com.nonlinearlabs.client.world.maps.presets.bank.Tape.Orientation;
 import com.nonlinearlabs.client.world.maps.presets.bank.preset.Preset;
+import com.nonlinearlabs.client.world.overlay.html.setup.Setup.UploadDoneReceiver;
 
 public class ServerProxy {
 
@@ -254,7 +255,7 @@ public class ServerProxy {
 	public void selectPreset(String uuid) {
 		StaticURI.Path path = new StaticURI.Path("presets", "banks", "select-preset");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", uuid));
-		queueJob(uri, true);
+		queueJob(uri, false);
 	}
 
 	public void newBank(String initialName, NonPosition pos) {
@@ -771,6 +772,14 @@ public class ServerProxy {
 		queueJob(uri, false);
 	}
 
+
+	public void setBankCollapsed(Bank theBank, String collapsed) {
+		StaticURI.Path path = new StaticURI.Path("presets", "banks", "set-bank-collapse");
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("uuid", theBank.getUUID()), 
+		new StaticURI.KeyValue("value", collapsed));
+		queueJob(uri, false);
+	}
+
 	public void undoJump(long id) {
 		StaticURI.Path path = new StaticURI.Path("undo", "undo-jump");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("target", id));
@@ -931,6 +940,27 @@ public class ServerProxy {
 																	var blob = new Blob([ buffer ]);
 																	oReq.send(blob);
 																	}-*/;
+
+	public native void uploadUpdate(JavaScriptObject buffer, UploadDoneReceiver uploadDoneReceiver) /*-{
+																	
+																		var oReq = new XMLHttpRequest();
+																		oReq.open("POST", "/C15-Update", true);
+																		oReq.setRequestHeader("Content-Type", "application/binary");
+																		
+																		oReq.onreadystatechange = function() {
+																		if (oReq.readyState == 4 && oReq.status == 200) {
+																		var ret = oReq.responseText;
+																		uploadDoneReceiver.@com.nonlinearlabs.client.world.overlay.html.setup.Setup.UploadDoneReceiver::onUploadFinished(Lcom/google/gwt/xhr/client/XMLHttpRequest;)(oReq);
+																		var sub = "Invalid";
+																		if (ret.includes(sub)) {
+																		alert(oReq.responseText);
+																		}
+																		}
+																		}
+																		
+																		var blob = new Blob([ buffer ]);
+																		oReq.send(blob);
+																		}-*/;
 
 	public void onBankClusterMoved(List<Bank> changedBanks) {
 		String csv = "";
@@ -1135,7 +1165,10 @@ public class ServerProxy {
 		if (bank != null) {
 			uuid = bank.getUUID();
 		}
+		selectMidiBank(uuid);
+	}
 
+	public void selectMidiBank(String uuid) {
 		StaticURI.Path path = new StaticURI.Path("presets", "select-midi-bank");
 		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("bank", uuid));
 		queueJob(uri, false);
@@ -1189,4 +1222,46 @@ public class ServerProxy {
 		return lastOmitOracles;
 	}
 
+	public void resetToClassicMidi() {
+		StaticURI.Path path = new StaticURI.Path("settings", "default-classic-midi");
+		StaticURI uri = new StaticURI(path);
+		queueJob(uri, false);
+	}
+
+    public void resetToHighResMidi() {
+		StaticURI.Path path = new StaticURI.Path("settings", "default-high-res");
+		StaticURI uri = new StaticURI(path);
+		queueJob(uri, false);
+    }
+
+    public void setHWSourceEnable(int hw, int xx, boolean b) {
+		StaticURI.Path path = new StaticURI.Path("settings", "hw-source-enable-set");
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("hw", hw), new StaticURI.KeyValue("aspect", xx), new StaticURI.KeyValue("value", b));
+		queueJob(uri, false);
+    }
+
+	public void setDirectLoadWithLoadToPart(String value, Preset selectedPreset, VoiceGroup selectedVoiceGroup, VoiceGroup currentDisplayedVoiceGroup) {
+		StaticURI.Path path = new StaticURI.Path("settings", "set-direct-load-with-load-to-part");
+
+		StaticURI.KeyValue state = new StaticURI.KeyValue("state", value);
+		StaticURI.KeyValue preset = new StaticURI.KeyValue("preset", selectedPreset == null ? "" : selectedPreset.getUUID());
+		StaticURI.KeyValue from = new StaticURI.KeyValue("from", selectedVoiceGroup == null ? "" : selectedVoiceGroup.name());
+		StaticURI.KeyValue to = new StaticURI.KeyValue("to", currentDisplayedVoiceGroup == null ? "" : currentDisplayedVoiceGroup.name());
+
+		StaticURI uri = new StaticURI(path, state, preset, from, to);
+		queueJob(uri, false);
+	}
+
+	public void setDirectLoadNoLoadToPart(String value) {
+		StaticURI.Path path = new StaticURI.Path("settings", "set-direct-load-without-load-to-part");
+		StaticURI.KeyValue state = new StaticURI.KeyValue("state", value);
+		StaticURI uri = new StaticURI(path, state);
+		queueJob(uri, false);
+	}
+
+	public void triggerPanic() {
+		StaticURI.Path path = new StaticURI.Path("settings", "panic-audio-engine");
+		StaticURI uri = new StaticURI(path);
+		queueJob(uri, false);
+	}
 }

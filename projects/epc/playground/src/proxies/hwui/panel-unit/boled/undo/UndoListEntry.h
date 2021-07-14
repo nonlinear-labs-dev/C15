@@ -9,11 +9,11 @@ class UndoListEntry : public ControlWithChildren, public UndoTransactionClient
   typedef ControlWithChildren super;
 
  public:
-  UndoListEntry(const Rect &pos);
-  virtual ~UndoListEntry();
+  explicit UndoListEntry(const Rect &pos);
+  ~UndoListEntry() override;
 
-  virtual bool redraw(FrameBuffer &fb) override;
-  virtual void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
+  bool redraw(FrameBuffer &fb) override;
+  void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
 
  private:
   bool m_selected = false;

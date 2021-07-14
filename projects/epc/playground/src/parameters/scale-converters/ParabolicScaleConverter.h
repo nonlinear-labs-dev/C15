@@ -6,14 +6,14 @@ class ParabolicScaleConverter : public ScaleConverter
 {
  public:
   ParabolicScaleConverter(tTcdRange tcdRange, tDisplayRange displayRange, const Dimension &dimension);
-  virtual ~ParabolicScaleConverter();
+  ~ParabolicScaleConverter() override;
 
-  bool isBiPolar() const override;
-  tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const override;
-  Glib::ustring controlPositionToDisplayJS() const override;
+  [[nodiscard]] bool isBiPolar() const override;
+  [[nodiscard]] tDisplayValue controlPositionToDisplay(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] Glib::ustring controlPositionToDisplayJS() const override;
 
-  tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const override;
-  tControlPositionValue tcdToControlPosition(tTcdValue v) const override;
+  [[nodiscard]] tTcdValue controlPositionToTcd(const tControlPositionValue &cpValue) const override;
+  [[nodiscard]] tControlPositionValue tcdToControlPosition(tTcdValue v) const override;
 
  private:
   tTcdRange m_tcdRange;

@@ -89,7 +89,8 @@ Attribute BinaryReader::readAttribute()
 
 uint32_t BinaryReader::readUInt()
 {
-  union {
+  union
+  {
     uint32_t ret = 0;
     uint8_t bytes[4];
   } r;

@@ -5,6 +5,6 @@
 class XmlClass : public Attribute
 {
  public:
-  XmlClass(const Glib::ustring &classes);
-  virtual ~XmlClass();
+  explicit XmlClass(const Glib::ustring &classes);
+  ~XmlClass() override;
 };

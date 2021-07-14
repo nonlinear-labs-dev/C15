@@ -29,7 +29,10 @@ namespace UNDO
     numTransactionsCreated++;
   }
 
-  Transaction::~Transaction() = default;
+  Transaction::~Transaction()
+  {
+    m_scope.onTransactionDestroyed(this);
+  }
 
   int Transaction::getAndResetNumTransactions()
   {

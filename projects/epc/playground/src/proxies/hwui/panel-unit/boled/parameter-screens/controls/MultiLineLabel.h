@@ -9,8 +9,8 @@ class MultiLineLabel : public ControlWithChildren
   typedef ControlWithChildren super;
 
  public:
-  MultiLineLabel(Glib::ustring text);
-  MultiLineLabel(const Rect& r, Glib::ustring text);
+  explicit MultiLineLabel(Glib::ustring text);
+  MultiLineLabel(const Rect &r, Glib::ustring text);
 
   bool setText(const Glib::ustring &text, FrameBufferColors c);
   const Glib::ustring &getText() const;
@@ -18,9 +18,7 @@ class MultiLineLabel : public ControlWithChildren
 
   void drawBackground(FrameBuffer &fb) override;
   bool redraw(FrameBuffer &fb) override;
-
-  void setForceUpdateLine(bool update);
-  virtual void setPosition(const Rect &rect) override;
+  void setPosition(const Rect &rect) override;
 
  protected:
   virtual std::shared_ptr<Font> getFont();

@@ -8,7 +8,7 @@ class BinaryReader : public Reader
 {
  public:
   BinaryReader(InStream &in, UNDO::Transaction *transaction);
-  virtual ~BinaryReader();
+  ~BinaryReader() override;
 
  private:
   void feed() override;

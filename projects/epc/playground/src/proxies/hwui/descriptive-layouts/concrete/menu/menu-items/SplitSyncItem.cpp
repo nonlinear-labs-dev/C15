@@ -19,7 +19,7 @@ SplitSyncItem::SplitSyncItem(const Rect& r)
   Application::get().getSettings()->getSetting<SplitPointSyncParameters>()->onChange(
       sigc::mem_fun(this, &SplitSyncItem::onSettingChanged));
 
-  m_enterLabel->setText({ "" });
+  m_enterLabel->setText(StringAndSuffix { "" });
 }
 
 void SplitSyncItem::onSettingChanged(const Setting* s)

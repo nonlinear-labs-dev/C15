@@ -22,7 +22,8 @@ TEST_CASE("Rect Basic", "[Rect]")
   CHECK(b.getBottom() == 0);
 }
 
-TEST_CASE("Rect Intersect", "[Rect]") {
+TEST_CASE("Rect Intersect", "[Rect]")
+{
   Rect a(0, 0, 10, 10);
   Rect b(20, 20, 10, 10);
   Rect i = a.getIntersection(b);

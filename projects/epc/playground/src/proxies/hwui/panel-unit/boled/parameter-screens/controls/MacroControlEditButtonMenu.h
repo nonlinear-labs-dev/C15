@@ -10,8 +10,8 @@ class MacroControlEditButtonMenu : public ButtonMenu
   typedef ButtonMenu super;
 
  public:
-  MacroControlEditButtonMenu(const Rect &rect);
-  virtual ~MacroControlEditButtonMenu();
+  explicit MacroControlEditButtonMenu(const Rect &rect);
+  ~MacroControlEditButtonMenu() override;
 
   void selectButton(size_t i) override;
 

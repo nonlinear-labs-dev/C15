@@ -96,17 +96,14 @@ tControlPositionValue Parameter::expropriateSnapshotValue()
   return v == c_invalidSnapshotValue ? getControlPositionValue() : v;
 }
 
-void Parameter::toggleLoadDefaultValue()
+void Parameter::toggleLoadDefaultValue(UNDO::Transaction *transaction)
 {
   if(getValue().equals(getDefaultValue()) && m_cpBeforeDefault.has_value())
   {
-    auto scope = getUndoScope().startTransaction("Set '%0'", getGroupAndParameterName());
-    setCPFromHwui(scope->getTransaction(), m_cpBeforeDefault.value());
+    setCPFromHwui(transaction, m_cpBeforeDefault.value());
   }
   else
   {
-    auto scope = getUndoScope().startContinuousTransaction(this, "Set '%0'", getGroupAndParameterName());
-    auto transaction = scope->getTransaction();
     transaction->addUndoSwap(m_cpBeforeDefault, { getControlPositionValue() });
     setCPFromHwui(transaction, getDefaultValue());
   }
@@ -272,6 +269,11 @@ void Parameter::sendToPlaycontroller() const
 tControlPositionValue Parameter::getNextStepValue(int incs, ButtonModifiers modifiers) const
 {
   return m_value.getNextStepValue(incs, modifiers);
+}
+
+tControlPositionValue Parameter::getNextStepValue(int incs, bool fine, bool shift) const
+{
+  return m_value.getNextStepValue(incs, fine, shift);
 }
 
 const RecallParameter *Parameter::getOriginalParameter() const
@@ -574,48 +576,6 @@ bool Parameter::isLocked() const
   return m_isLocked;
 }
 
-void Parameter::check()
-{
-  auto cp = 0;
-
-  auto scope = getUndoScope().startTransaction("Test parameter '%1'", getLongName());
-  setCpValue(scope->getTransaction(), Initiator::EXPLICIT_OTHER, m_value.getLowerBorder(), false);
-
-  // test inc and dec reaches min and max:
-
-  for(int i = 0; i < m_value.getCoarseDenominator(); i++)
-    stepCPFromHwui(scope->getTransaction(), 1, ButtonModifiers());
-
-  cp = getControlPositionValue();
-  g_assert(cp == m_value.getUpperBorder());
-
-  for(int i = 0; i < m_value.getCoarseDenominator(); i++)
-    stepCPFromHwui(scope->getTransaction(), -1, ButtonModifiers());
-
-  cp = getControlPositionValue();
-  g_assert(cp == m_value.getLowerBorder());
-
-  for(int i = 0; i < m_value.getFineDenominator(); i++)
-    stepCPFromHwui(scope->getTransaction(), 1, ButtonModifiers(ButtonModifier::FINE));
-
-  cp = getControlPositionValue();
-  g_assert(cp == m_value.getUpperBorder());
-
-  for(int i = 0; i < m_value.getFineDenominator(); i++)
-    stepCPFromHwui(scope->getTransaction(), -1, ButtonModifiers(ButtonModifier::FINE));
-
-  cp = getControlPositionValue();
-  g_assert(cp == m_value.getLowerBorder());
-}
-
-void Parameter::undoableRecallFromPreset()
-{
-  auto &scope = Application::get().getPresetManager()->getUndoScope();
-  auto transactionScope = scope.startTransaction("Recall value from Preset for '%0'", getGroupAndParameterName());
-  auto transaction = transactionScope->getTransaction();
-  undoableRecallFromPreset(transaction);
-}
-
 void Parameter::undoableRecallFromPreset(UNDO::Transaction *transaction)
 {
   auto original = getOriginalParameter();
@@ -655,4 +615,9 @@ bool Parameter::isDisabled() const
 {
   auto eb = static_cast<EditBuffer *>(getParentGroup()->getParent());
   return isDisabledForType(eb->getType());
+}
+
+void Parameter::stepCP(UNDO::Transaction *transaction, int incs, bool fine, bool shift)
+{
+  setCPFromHwui(transaction, getNextStepValue(incs, fine, shift));
 }

@@ -19,9 +19,9 @@ TEST_CASE("Load Part I of Split into Layer Part I")
   MockPresetStorage presets;
   auto preset = presets.getSplitPreset();
 
-  REQUIRE(preset->getType() == SoundType::Split);
+  CHECK(preset->getType() == SoundType::Split);
 
-  REQUIRE_NOTHROW(preset->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::I }, true));
+  CHECK_NOTHROW(preset->findParameterByID({ C15::PID::Split_Split_Point, VoiceGroup::I }, true));
 
   {
     auto scope = TestHelper::createTestScope();
@@ -168,7 +168,7 @@ TEST_CASE("Load Part I of Split into Layer Part II")
   MockPresetStorage presets;
   auto preset = presets.getSplitPreset();
 
-  REQUIRE(preset->getType() == SoundType::Split);
+  CHECK(preset->getType() == SoundType::Split);
 
   {
     auto scope = TestHelper::createTestScope();
@@ -472,7 +472,7 @@ TEST_CASE("Load Part I of Layer into Layer Part II")
   auto preset = presets.getLayerPreset();
 
   REQUIRE(preset->getType() == SoundType::Layer);
-  
+
   {
     auto scope = TestHelper::createTestScope();
     auto transaction = scope->getTransaction();

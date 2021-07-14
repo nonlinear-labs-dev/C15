@@ -5,10 +5,9 @@
 class MasterGroup : public ParameterGroup
 {
  public:
-  MasterGroup(ParameterGroupSet *parent);
-  virtual ~MasterGroup();
+  explicit MasterGroup(ParameterGroupSet *parent);
+  ~MasterGroup() override;
 
-  void init();
-
-  virtual void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount) override;
+  void init() override;
+  void undoableRandomize(UNDO::Transaction *transaction, Initiator initiator, double amount) override;
 };

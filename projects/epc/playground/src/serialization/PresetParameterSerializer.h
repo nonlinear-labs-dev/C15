@@ -13,17 +13,8 @@ class PresetParameterSerializer : public Serializer
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer& writer) const;
-  void readTagContent(Reader& reader) const;
-
-  void tryLoadModulateableParameter(Reader& reader) const;
-  void tryLoadMacroControlParameter(Reader& reader) const;
-  void tryLoadHardwareSourceParameter(Reader& reader) const;
-  void loadModulationAmount(Reader& reader, const Glib::ustring& text) const;
-
-  void tryWriteModulateableParameter(Writer& writer) const;
-  void tryWriteMacroControlParameter(Writer& writer) const;
-  void tryWriteHardwareSourceParameter(Writer& writer) const;
+  void writeTagContent(Writer& writer) const override;
+  void readTagContent(Reader& reader) const override;
 
   PresetParameter* m_param = nullptr;
   SoundType m_type;

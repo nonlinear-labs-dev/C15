@@ -9,6 +9,7 @@
 #include <iostream>
 #include "device-settings/DebugLevel.h"
 #include <xml/Writer.h>
+#include "TransactionLog.h"
 
 namespace UNDO
 {
@@ -16,12 +17,21 @@ namespace UNDO
   Scope::Scope(UpdateDocumentContributor *parent)
       : ContentSection(parent)
       , m_undoActions(*this)
+      , m_transactionLog(std::make_unique<TransactionLog>())
   {
     reset();
   }
 
   Scope::~Scope()
   {
+    m_transactionLog.reset();
+  }
+
+  UpdateDocumentContributor::tUpdateID Scope::onChange(uint64_t flags)
+  {
+    auto ret = ContentSection::onChange(flags);
+    m_transactionLog->addEntryIfChanged(m_undoPosition);
+    return ret;
   }
 
   Transaction *Scope::getRootTransaction() const
@@ -51,7 +61,11 @@ namespace UNDO
     m_redoPosition = nullptr;
     m_root = std::make_unique<Transaction>(*this, "Root", 0);
     m_root->close();
+
     m_undoPosition = m_root.get();
+    m_transactionLog = std::make_unique<TransactionLog>();
+
+    onChange();
   }
 
   void Scope::rebase(Transaction *newRoot)
@@ -117,7 +131,7 @@ namespace UNDO
     {
       if(auto last = dynamic_cast<ContinuousTransaction *>(getUndoTransaction()))
       {
-        if(last->getID() == id && last->getAge() <= timeout)
+        if(last->isContinuing() && last->getID() == id && last->getAge() <= timeout)
         {
           auto ret = std::make_unique<TransactionCreationScope>(transaction.get());
           last->setClosingCommand(std::move(transaction));
@@ -165,6 +179,7 @@ namespace UNDO
 
   void Scope::onTransactionAdded()
   {
+    onChange();
   }
 
   void Scope::onAddTransaction(Transaction *transaction)
@@ -253,7 +268,8 @@ namespace UNDO
         if(predecessor->getNumSuccessors() > (size_t) way)
         {
           m_cuckooTransaction.reset();
-          predecessor->getSuccessor(way)->redoAction();
+          auto p = predecessor->getSuccessor(way);
+          p->redoAction();
           onChange();
         }
       }
@@ -318,6 +334,17 @@ namespace UNDO
         getRootTransaction()->traverse([&](const Transaction *p) mutable { p->writeDocument(writer, knownRevision); });
       });
     }
+  }
+
+  void Scope::onTransactionDestroyed(const Transaction *p)
+  {
+    if(m_transactionLog)
+      m_transactionLog->removeTransaction(p);
+  }
+
+  const Transaction *Scope::findTransactionAt(std::chrono::system_clock::time_point timestamp) const
+  {
+    return m_transactionLog->findRecentTransactionAt(timestamp);
   }
 
 } /* namespace UNDO */

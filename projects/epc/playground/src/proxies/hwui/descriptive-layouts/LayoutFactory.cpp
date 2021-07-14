@@ -48,8 +48,6 @@ namespace DescriptiveLayouts
     std::copy_if(m_layouts.begin(), m_layouts.end(), std::back_inserter(matches),
                  [=](const LayoutClass& e) { return e.matches(fam) && e.meetsConditions(); });
 
-
-
     if(matches.size() > 1)
     {
       auto text = std::string("Found:\n");

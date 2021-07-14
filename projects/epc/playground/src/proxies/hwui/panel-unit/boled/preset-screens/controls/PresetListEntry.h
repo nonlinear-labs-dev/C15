@@ -20,7 +20,7 @@ class PresetListEntry : public ControlWithChildren
  public:
   using tCallback = std::function<void()>;
 
-  PresetListEntry(const Rect &pos);
+  explicit PresetListEntry(const Rect &pos);
   ~PresetListEntry() override;
 
   void setPreset(Preset *preset, bool selected);

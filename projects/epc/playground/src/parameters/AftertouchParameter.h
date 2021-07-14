@@ -10,8 +10,8 @@ class AftertouchParameter : public PhysicalControlParameter
  public:
   using super::super;
 
-  virtual ReturnMode getReturnMode() const override;
+  ReturnMode getReturnMode() const override;
 
  protected:
-  virtual Layout *createLayout(FocusAndMode focusAndMode) const override;
+  Layout *createLayout(FocusAndMode focusAndMode) const override;
 };

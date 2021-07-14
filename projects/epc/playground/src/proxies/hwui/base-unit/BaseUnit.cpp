@@ -7,8 +7,6 @@
 #include "device-settings/Settings.h"
 #include "device-settings/BaseUnitUIMode.h"
 #include <nltools/messaging/Message.h>
-#include <device-settings/ScreenSaverTimeoutSetting.h>
-#include <proxies/hwui/panel-unit/ScreenSaverUsageMode.h>
 #include <proxies/hwui/HWUI.h>
 
 BaseUnit::BaseUnit()
@@ -16,25 +14,9 @@ BaseUnit::BaseUnit()
   Application::get().getSettings()->getSetting<BaseUnitUIMode>()->onChange(mem_fun(this, &BaseUnit::respectUsageMode));
   nltools::msg::onConnectionEstablished(nltools::msg::EndPoint::RibbonLed,
                                         sigc::mem_fun(this, &BaseUnit::onBBBBConnected));
-
-  Application::get().getSettings()->getSetting<ScreenSaverTimeoutSetting>()->onScreenSaverStateChanged(
-      mem_fun(this, &BaseUnit::onScreenSaverState));
 }
 
 BaseUnit::~BaseUnit() = default;
-
-void BaseUnit::onScreenSaverState(bool state)
-{
-  if(state)
-  {
-    setUsageMode(new ScreenSaverUsageMode());
-  }
-  else if(std::dynamic_pointer_cast<ScreenSaverUsageMode>(getUsageMode()))
-  {
-    auto hwui = Application::get().getHWUI();
-    respectUsageMode(Application::get().getSettings()->getSetting<BaseUnitUIMode>().get());
-  }
-}
 
 void BaseUnit::init()
 {

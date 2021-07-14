@@ -142,15 +142,6 @@ void ParameterGroup::undoableRandomize(UNDO::Transaction *transaction, Initiator
   }
 }
 
-void ParameterGroup::check()
-{
-  for(auto p : getParameters())
-  {
-    p->check();
-    getUndoScope().reset();
-  }
-}
-
 void ParameterGroup::undoableLock(UNDO::Transaction *transaction)
 {
   for(auto p : getParameters())

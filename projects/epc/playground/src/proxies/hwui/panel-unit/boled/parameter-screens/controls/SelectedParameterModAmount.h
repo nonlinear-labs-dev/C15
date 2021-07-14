@@ -12,9 +12,9 @@ class SelectedParameterModAmount : public Control
   typedef Control super;
 
  public:
-  SelectedParameterModAmount(const Rect& rect);
+  explicit SelectedParameterModAmount(const Rect& rect);
 
-  virtual bool redraw(FrameBuffer& fb) override;
+  bool redraw(FrameBuffer& fb) override;
   void setRange(float from, float to);
 
  protected:

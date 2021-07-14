@@ -11,7 +11,7 @@ class ScaleParameterSelectLayout : public UnmodulateableParameterSelectLayout2
  public:
   using super::super;
 
-  virtual void init() override;
+  void init() override;
 
  private:
   void addButtons() override;

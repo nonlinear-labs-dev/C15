@@ -9,7 +9,7 @@ class PresetGlitchSuppressionView : public SetupLabel
 
  public:
   PresetGlitchSuppressionView();
-  virtual ~PresetGlitchSuppressionView();
+  ~PresetGlitchSuppressionView() override;
 
  private:
   void onSettingChanged(const Setting *s);

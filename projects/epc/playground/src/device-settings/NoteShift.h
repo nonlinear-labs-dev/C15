@@ -8,8 +8,8 @@ class NoteShift : public Setting
   typedef Setting super;
 
  public:
-  NoteShift(Settings& parent);
-  virtual ~NoteShift();
+  explicit NoteShift(Settings& parent);
+  ~NoteShift() override;
 
   void load(const Glib::ustring& text, Initiator initiator) override;
   Glib::ustring save() const override;
@@ -26,9 +26,9 @@ class NoteShift : public Setting
   Glib::ustring getDisplayString() const override;
   void syncExternals(SendReason reason) const override;
 
- private:
   NoteShift(const NoteShift& other) = delete;
   NoteShift& operator=(const NoteShift&) = delete;
 
+ private:
   int m_shift;
 };

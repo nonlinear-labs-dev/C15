@@ -12,13 +12,11 @@ class ParameterNameLabel : public Label
   typedef Label super;
 
  public:
-  ParameterNameLabel(const Rect &pos);
-  virtual ~ParameterNameLabel();
-
-  void updateParameter(const Parameter *parameter);
+  explicit ParameterNameLabel(const Rect &pos);
+  ~ParameterNameLabel() override;
 
  protected:
-  virtual void setSuffixFontColor(FrameBuffer &fb) const;
+  void setSuffixFontColor(FrameBuffer &fb) const override;
 
  private:
   ParameterNameLabel(const ParameterNameLabel &other);
@@ -27,17 +25,14 @@ class ParameterNameLabel : public Label
   void onParameterSelected(Parameter *param);
   void onParameterChanged(const Parameter *param);
 
-  virtual void setFontColor(FrameBuffer &fb) const override;
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
+  void setFontColor(FrameBuffer &fb) const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 
   sigc::connection m_connection;
 
   void handleMCParameterName(const Parameter *pParameter);
-
   void handleParameterName(const Parameter *pParameter);
-
-  Glib::ustring truncateMCName(const bool changed, const Glib::ustring &name) const;
-
+  Glib::ustring truncateMCName(bool changed, const Glib::ustring &name) const;
   void onPresetLoaded();
 };

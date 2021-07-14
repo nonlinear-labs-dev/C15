@@ -11,13 +11,11 @@ class ScopedGuard
   class Lock
   {
    public:
-    Lock()
-    {
-    }
+    Lock() = default;
   };
 
   std::shared_ptr<Lock> lock();
-  bool isLocked() const;
+  [[nodiscard]] bool isLocked() const;
 
  private:
   std::weak_ptr<Lock> m_currentLock;

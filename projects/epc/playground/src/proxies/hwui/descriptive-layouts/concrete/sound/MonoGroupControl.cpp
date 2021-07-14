@@ -40,12 +40,14 @@ void MonoGroupControl::rebuild()
       if(paramid[y + x] != 364)
       {
         auto str = param->getShortName() + ": " + param->getDisplayString();
-        m_grid[y][x] = addControl(new Label(str, { (x * width) + (x), y * height + (y), width, height }));
+        m_grid[y][x]
+            = addControl(new Label(StringAndSuffix { str }, { (x * width) + (x), y * height + (y), width, height }));
       }
       else
       {
         auto str = param->getDisplayString();
-        m_grid[y][x] = addControl(new Label(str, { (x * width) + (x), y * height + (y), width, height }));
+        m_grid[y][x]
+            = addControl(new Label(StringAndSuffix { str }, { (x * width) + (x), y * height + (y), width, height }));
       }
     }
   }

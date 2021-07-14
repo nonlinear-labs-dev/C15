@@ -107,21 +107,23 @@ void ModAspectRecallOverlay::doRecall()
   auto& recall = m_oldRecallValues[m_mode];
   recall.anyRecallHappened = true;
 
+  ModParameterUseCases useCase(m_modParam);
+
   switch(m_mode)
   {
     case Mode::MC_SEL:
       recall.rightRecallValue = m_modParam->getModulationSource();
-      m_modParam->undoableRecallMCSource();
+      useCase.recallMCSource();
       recall.leftRecallValue = m_modParam->getModulationSource();
       break;
     case Mode::MC_AMT:
       recall.rightRecallValue = m_modParam->getModulationAmount();
-      m_modParam->undoableRecallMCAmount();
+      useCase.recallMCAmount();
       recall.leftRecallValue = m_modParam->getModulationAmount();
       break;
     case Mode::MC_POS:
       recall.rightRecallValue = m_modParam->getMacroControl()->getControlPositionValue();
-      m_modParam->undoableRecallMCPos();
+      useCase.recallMCPos();
       recall.leftRecallValue = m_modParam->getMacroControl()->getControlPositionValue();
       break;
   }
@@ -132,6 +134,7 @@ void ModAspectRecallOverlay::doRecall()
 
 void ModAspectRecallOverlay::undoRecall()
 {
+  ModParameterUseCases useCase(m_modParam);
   auto& recall = m_oldRecallValues[m_mode];
   auto old = recall.rightRecallValue;
   recall.anyRecallHappened = true;
@@ -140,17 +143,17 @@ void ModAspectRecallOverlay::undoRecall()
   {
     case Mode::MC_SEL:
       recall.leftRecallValue = m_modParam->getModulationSource();
-      m_modParam->undoableUndoRecallMCSel(std::get<MacroControls>(old));
+      useCase.undoRecallMCSel(std::get<MacroControls>(old));
       recall.rightRecallValue = m_modParam->getModulationSource();
       break;
     case Mode::MC_AMT:
       recall.leftRecallValue = m_modParam->getModulationAmount();
-      m_modParam->undoableUndoRecallMCAmount(std::get<double>(old));
+      useCase.undoRecallMCAmt(std::get<double>(old));
       recall.rightRecallValue = m_modParam->getModulationAmount();
       break;
     case Mode::MC_POS:
       recall.leftRecallValue = m_modParam->getMacroControl()->getControlPositionValue();
-      m_modParam->undoableUndoRecallMCPos(std::get<double>(old));
+      useCase.undoRecallMCPos(std::get<double>(old));
       recall.rightRecallValue = m_modParam->getMacroControl()->getControlPositionValue();
       break;
   }
@@ -220,34 +223,36 @@ void ModAspectRecallOverlay::updateUI()
     case MC_POS:
       arrowsEnabled = isMCAmtChanged() || isMCSelChanged() || m_oldRecallValues[MC_AMT].anyRecallHappened
           || m_oldRecallValues[MC_SEL].anyRecallHappened;
-      m_labelA->setText("MC Position");
-      m_labelB->setText({ stringizeMCPos(std::get<double>(recall.leftRecallValue)), 0 });
-      m_labelC->setText({ stringizeMCPos(std::get<double>(recall.rightRecallValue)), 0 });
+      m_labelA->setText(StringAndSuffix { "MC Position" });
+      m_labelB->setText(StringAndSuffix { stringizeMCPos(std::get<double>(recall.leftRecallValue)), 0 });
+      m_labelC->setText(StringAndSuffix { stringizeMCPos(std::get<double>(recall.rightRecallValue)), 0 });
       break;
     case MC_SEL:
       arrowsEnabled = isMCAmtChanged() || isMCAssignedAndChanged() || m_oldRecallValues[MC_AMT].anyRecallHappened
           || m_oldRecallValues[MC_POS].anyRecallHappened;
-      m_labelA->setText("MC Selection");
-      m_labelB->setText({ mcSelectionToDisplay(std::get<MacroControls>(recall.leftRecallValue)), 0 });
-      m_labelC->setText({ mcSelectionToDisplay(std::get<MacroControls>(recall.rightRecallValue)), 0 });
+      m_labelA->setText(StringAndSuffix { "MC Selection" });
+      m_labelB->setText(StringAndSuffix { mcSelectionToDisplay(std::get<MacroControls>(recall.leftRecallValue)), 0 });
+      m_labelC->setText(StringAndSuffix { mcSelectionToDisplay(std::get<MacroControls>(recall.rightRecallValue)), 0 });
       break;
     case MC_AMT:
       arrowsEnabled = isMCAssignedAndChanged() || isMCSelChanged() || m_oldRecallValues[MC_SEL].anyRecallHappened
           || m_oldRecallValues[MC_POS].anyRecallHappened;
-      m_labelA->setText("MC Amount");
-      m_labelB->setText({ m_modParam->stringizeModulationAmount(std::get<double>(recall.leftRecallValue)), 0 });
-      m_labelC->setText({ m_modParam->stringizeModulationAmount(std::get<double>(recall.rightRecallValue)), 0 });
+      m_labelA->setText(StringAndSuffix { "MC Amount" });
+      m_labelB->setText(
+          StringAndSuffix { m_modParam->stringizeModulationAmount(std::get<double>(recall.leftRecallValue)), 0 });
+      m_labelC->setText(
+          StringAndSuffix { m_modParam->stringizeModulationAmount(std::get<double>(recall.rightRecallValue)), 0 });
       break;
   }
 
   m_labelB->setHighlight(recall.likeInPreset);
   m_labelC->setHighlight(!recall.likeInPreset);
 
-  m_buttonB->setText(recall.likeInPreset ? "" : "Recall");
-  m_buttonC->setText(recall.likeInPreset ? "Recall" : "");
+  m_buttonB->setText(StringAndSuffix { recall.likeInPreset ? "" : "Recall" });
+  m_buttonC->setText(StringAndSuffix { recall.likeInPreset ? "Recall" : "" });
 
-  m_buttonA->setText(arrowsEnabled ? "<" : "");
-  m_buttonD->setText(arrowsEnabled ? ">" : "");
+  m_buttonA->setText(StringAndSuffix { arrowsEnabled ? "<" : "" });
+  m_buttonD->setText(StringAndSuffix { arrowsEnabled ? ">" : "" });
 }
 
 //Helper

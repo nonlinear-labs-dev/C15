@@ -34,9 +34,9 @@ namespace DescriptiveLayouts
         tValue m_value;
 
         InitEntry(tPrimitiveInstance i, tPrimitiveProperty p, tValue v)
-            : m_instance{ std::move(i) }
-            , m_property{ p }
-            , m_value{ std::move(v) } {};
+            : m_instance { std::move(i) }
+            , m_property { p }
+            , m_value { std::move(v) } {};
       };
 
       void addToList(tPrimitiveInstance i, tPrimitiveProperty p, tValue v)

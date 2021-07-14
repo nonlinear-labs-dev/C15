@@ -2,8 +2,9 @@
 #include <device-settings/Settings.h>
 #include <device-settings/SSID.h>
 
-SSID::SSID(Settings &parent)
+SSID::SSID(Settings &parent, const std::shared_ptr<EpcWifi> &localWifi)
     : Setting(parent)
+    , m_localWifi(localWifi)
 {
   parent.getSetting<DeviceName>()->onChange([=](const Setting *s) {
     static const std::string dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-_";
@@ -14,7 +15,7 @@ SSID::SSID(Settings &parent)
       if(dict.find(it) == std::string::npos)
         it = '_';
 
-    setSSIDAndNotifyBBB(ssid);
+    updateSSID(ssid);
   });
 }
 
@@ -22,7 +23,7 @@ SSID::~SSID() = default;
 
 void SSID::load(const Glib::ustring &ssid, Initiator initiator)
 {
-  setSSIDAndNotifyBBB(ssid);
+  updateSSID(ssid);
 }
 
 Glib::ustring SSID::save() const
@@ -40,12 +41,17 @@ Glib::ustring SSID::getDisplayString() const
   return m_ssid;
 }
 
-void SSID::setSSIDAndNotifyBBB(const Glib::ustring &str)
+void SSID::updateSSID(const Glib::ustring &str)
 {
   m_ssid = str;
 
-  auto ssidMsg = nltools::msg::WiFi::SetWiFiSSIDMessage(m_ssid);
+  static auto isEpc2 = !strcmp(TARGET_PLATFORM, "epc2");
+  static auto suffix = (isEpc2 ? "_BBB" : "");
+
+  auto ssidMsg = nltools::msg::WiFi::SetWiFiSSIDMessage(m_ssid + suffix);
   nltools::msg::send(nltools::msg::EndPoint::BeagleBone, ssidMsg);
+
+  m_localWifi->setNewSSID(m_ssid);
 
   notify();
 }

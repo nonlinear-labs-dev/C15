@@ -1,11 +1,9 @@
 #include "HTTPRequest.h"
 #include "SoupOutStream.h"
-#include "Application.h"
-#include "HTTPServer.h"
-#include <iostream>
 
-HTTPRequest::HTTPRequest(SoupMessage *msg)
-    : m_message(msg)
+HTTPRequest::HTTPRequest(SoupServer *server, SoupMessage *msg)
+    : m_server(server)
+    , m_message(msg)
 {
   g_object_ref(m_message);
 
@@ -51,22 +49,22 @@ Glib::ustring HTTPRequest::getPath()
 
 std::unique_ptr<OutStream> HTTPRequest::createStream(const Glib::ustring &contentType, bool zip)
 {
-  return std::make_unique<SoupOutStream>(m_message, contentType, zip);
+  return std::make_unique<SoupOutStream>(m_server, m_message, contentType, zip);
 }
 
 void HTTPRequest::pause()
 {
-  Application::get().getHTTPServer()->pauseMessage(m_message);
+  soup_server_pause_message(m_server, m_message);
 }
 
 void HTTPRequest::unpause()
 {
-  Application::get().getHTTPServer()->unpauseMessage(m_message);
+  soup_server_unpause_message(m_server, m_message);
 }
 
 void HTTPRequest::setContentType(const Glib::ustring &contentType)
 {
-  soup_message_headers_append(m_message->response_headers, "Content-Type", contentType.c_str());
+  setHeader("Content-Type", contentType);
 }
 
 void HTTPRequest::okAndComplete()
@@ -100,6 +98,28 @@ void HTTPRequest::respond(const uint8_t *data, gsize numBytes)
 void HTTPRequest::respond(const Glib::ustring &str)
 {
   respond((const uint8_t *) str.c_str(), str.length());
+}
+
+void HTTPRequest::respondComplete(uint status, const char *contentType,
+                                  const std::initializer_list<std::pair<std::string, std::string> > &headers,
+                                  std::vector<uint8_t> &&buffer)
+{
+  using Data = std::vector<uint8_t>;
+
+  setStatusOK();
+  setContentType(contentType);
+
+  for(const auto &h : headers)
+    setHeader(h.first, h.second);
+
+  setHeader("Content-Length", std::to_string(buffer.size()));
+
+  auto ptr = new Data(std::move(buffer));
+
+  g_object_weak_ref(
+      G_OBJECT(m_message), +[](gpointer data, GObject *) { delete static_cast<Data *>(data); }, ptr);
+  soup_message_body_append(m_message->response_body, SOUP_MEMORY_TEMPORARY, ptr->data(), ptr->size());
+  complete();
 }
 
 void HTTPRequest::setChunkedEncoding()

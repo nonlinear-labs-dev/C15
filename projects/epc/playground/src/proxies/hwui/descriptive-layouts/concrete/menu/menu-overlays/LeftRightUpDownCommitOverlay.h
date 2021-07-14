@@ -4,7 +4,7 @@
 class LeftRightUpDownCommitOverlay : public MenuOverlay
 {
  public:
-  LeftRightUpDownCommitOverlay(const Rect& r);
+  explicit LeftRightUpDownCommitOverlay(const Rect& r);
   bool onButton(Buttons i, bool down, ButtonModifiers mod) override;
 
   virtual void onLeft(bool down) = 0;

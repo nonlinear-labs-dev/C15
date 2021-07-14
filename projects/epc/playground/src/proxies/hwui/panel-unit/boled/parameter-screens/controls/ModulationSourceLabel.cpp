@@ -42,7 +42,7 @@ void ModulationSourceLabel::onParamValueChanged(const Parameter *param)
       auto id = MacroControlsGroup::modSrcToParamId(src);
       if(auto mc = Application::get().getPresetManager()->getEditBuffer()->findParameterByID(id))
       {
-        setText(mc->getShortName());
+        setText(StringAndSuffix { mc->getShortName() });
         return;
       }
     }

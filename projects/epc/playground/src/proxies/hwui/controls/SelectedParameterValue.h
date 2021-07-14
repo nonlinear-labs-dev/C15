@@ -12,8 +12,8 @@ class SelectedParameterValue : public Label
   typedef Label super;
 
  public:
-  SelectedParameterValue(const Rect &rect);
-  virtual ~SelectedParameterValue();
+  explicit SelectedParameterValue(const Rect &rect);
+  ~SelectedParameterValue() override;
 
  protected:
   virtual void onParameterSelected(Parameter *parameter);

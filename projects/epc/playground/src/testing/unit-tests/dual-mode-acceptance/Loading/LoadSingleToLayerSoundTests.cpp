@@ -15,6 +15,7 @@ using EBL = EditBufferLogicalParts;
 TEST_CASE("Load Single into Layer Part I")
 {
   auto eb = TestHelper::getEditBuffer();
+  EditBufferUseCases ebUseCases(eb);
   MockPresetStorage presets;
   auto preset = presets.getSinglePreset();
 
@@ -57,7 +58,7 @@ TEST_CASE("Load Single into Layer Part I")
     const auto oldCrossFBIHash = EBL::createValueHash(EBL::getCrossFB<VoiceGroup::I>());
     const auto oldVoicesIHash = EBL::createHashOfVector(EBL::getVoices<VoiceGroup::I>());
 
-    eb->undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::I);
+    ebUseCases.undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::I);
 
     THEN("Type is Same")
     {
@@ -135,6 +136,8 @@ TEST_CASE("Load Single into Layer Part I")
 TEST_CASE("Load Single into Layer Part II")
 {
   auto eb = TestHelper::getEditBuffer();
+  EditBufferUseCases ebUseCases(eb);
+
   MockPresetStorage presets;
   auto preset = presets.getSinglePreset();
 
@@ -179,7 +182,7 @@ TEST_CASE("Load Single into Layer Part II")
     const auto oldCrossFBIIHash = EBL::createValueHash(EBL::getCrossFB<VoiceGroup::II>());
     const auto oldVoicesIHash = EBL::createHashOfVector(EBL::getVoices<VoiceGroup::I>());
 
-    eb->undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::II);
+    ebUseCases.undoableLoadToPart(preset, VoiceGroup::I, VoiceGroup::II);
 
     THEN("Voice Group Label was loaded")
     {

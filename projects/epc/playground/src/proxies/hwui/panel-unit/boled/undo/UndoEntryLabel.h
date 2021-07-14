@@ -9,9 +9,9 @@ class UndoEntryLabel : public Label, public UndoTransactionClient
   typedef Label super;
 
  public:
-  UndoEntryLabel(const Rect &pos);
-  virtual ~UndoEntryLabel();
+  explicit UndoEntryLabel(const Rect &pos);
+  ~UndoEntryLabel() override;
 
-  virtual void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
-  virtual void setBackgroundColor(FrameBuffer &fb) const override;
+  void assignTransaction(UNDO::Transaction *transaction, bool selected, bool current) override;
+  void setBackgroundColor(FrameBuffer &fb) const override;
 };

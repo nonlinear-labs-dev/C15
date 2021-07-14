@@ -8,6 +8,7 @@ prepare_nltools()
 set(LIBS giomm-2.4 libsoup-2.4)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+file(GLOB_RECURSE SERVICES systemd/*.service.in)
 
 IF(NOT DEV_PC)
     file(GLOB_RECURSE UI_SOURCES src/ui/*.cpp)
@@ -42,34 +43,24 @@ endforeach(lib)
 target_link_libraries(${PROJECT_NAME} PUBLIC pthread)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-configure_file(${PROJECT_SOURCE_DIR}/systemd/${PROJECT_NAME}.service.in ${PROJECT_BINARY_DIR}/systemd/${PROJECT_NAME}.service @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/systemd/install-update-from-usb.service.in ${PROJECT_BINARY_DIR}/systemd/install-update-from-usb.service @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/systemd/splash-screen.service.in ${PROJECT_BINARY_DIR}/systemd/splash-screen.service @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/systemd/gettimefromepc.service.in ${PROJECT_BINARY_DIR}/systemd/gettimefromepc.service @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/systemd/chkphy.service.in ${PROJECT_BINARY_DIR}/systemd/chkphy.service @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/systemd/reset-playcontroller.service.in ${PROJECT_BINARY_DIR}/systemd/reset-playcontroller.service @ONLY)
+foreach(SERVICE ${SERVICES})
+  string(REGEX REPLACE ".in$" "" WITHOUT_IN ${SERVICE})
+  get_filename_component(SERVICENAME ${WITHOUT_IN} NAME)
+  configure_file(${SERVICE} ${PROJECT_BINARY_DIR}/systemd/${SERVICENAME} @ONLY)
+  install(FILES ${PROJECT_BINARY_DIR}/systemd/${SERVICENAME} DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
 
-install(FILES ${PROJECT_BINARY_DIR}/systemd/${PROJECT_NAME}.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
-install(FILES ${PROJECT_BINARY_DIR}/systemd/install-update-from-usb.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
-install(FILES ${PROJECT_BINARY_DIR}/systemd/splash-screen.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
-install(FILES ${PROJECT_BINARY_DIR}/systemd/gettimefromepc.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
-install(FILES ${PROJECT_BINARY_DIR}/systemd/chkphy.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
-install(FILES ${PROJECT_BINARY_DIR}/systemd/reset-playcontroller.service DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR} COMPONENT init)
+  string(REGEX MATCH ".*-oneshot.service$" IS_ONESHOT ${SERVICENAME})
+
+  if("${IS_ONESHOT}" STREQUAL "")
+      install(CODE "execute_process(
+          COMMAND bash -c \"set -e
+          mkdir -p $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants
+          mkdir -p $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants
+          ln -sf ../${SERVICENAME} $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/${SERVICENAME}
+          \")")
+  endif()
+endforeach(SERVICE)
 
 install(DIRECTORY DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants)
 install(DIRECTORY DESTINATION ${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants)
-
-install(CODE "execute_process(
-    COMMAND bash -c \"set -e
-    mkdir -p $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants
-    mkdir -p $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants
-    ln -sf ../${PROJECT_NAME}.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/${PROJECT_NAME}.service
-    ln -sf ../install-update-from-usb.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/multi-user.target.wants/install-update-from-usb.service
-    ln -sf ../splash-screen.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants/splash-screen.service
-    ln -sf ../gettimefromepc.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants/gettimefromepc.service
-    ln -sf ../chkphy.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants/chkphy.service
-    ln -sf ../reset-playcontroller.service $DESTDIR/${SYSTEMD_SERVICES_INSTALL_DIR}/sysinit.target.wants/reset-playcontroller.service
-    \")")
-
 install(TARGETS ${PROJECT_NAME} DESTINATION ${C15_INSTALL_PATH}/${PROJECT_NAME})
-

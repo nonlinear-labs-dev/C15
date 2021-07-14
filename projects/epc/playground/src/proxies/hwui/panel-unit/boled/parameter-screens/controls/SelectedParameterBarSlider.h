@@ -10,12 +10,10 @@ class SelectedParameterBarSlider : public BarSlider
   typedef BarSlider super;
 
  public:
-  // public methods
-  SelectedParameterBarSlider(const Rect& rect);
-  virtual ~SelectedParameterBarSlider();
+  explicit SelectedParameterBarSlider(const Rect& rect);
+  ~SelectedParameterBarSlider() override;
 
  private:
-  // private methods
   SelectedParameterBarSlider(const SelectedParameterBarSlider& other);
   SelectedParameterBarSlider& operator=(const SelectedParameterBarSlider&);
 };

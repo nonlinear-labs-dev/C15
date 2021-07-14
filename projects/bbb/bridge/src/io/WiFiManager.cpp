@@ -61,8 +61,10 @@ void WiFiManager::scheduleRestart()
 #ifndef _DEVELOPMENT_PC
   nltools::Log::info(__FILE__, __FUNCTION__, "schedule Restart!");
   auto thread = std::thread([]() {
-    system("systemctl restart accesspoint");
-    nltools::Log::info(__FILE__, __FUNCTION__, "WiFi Restarted!");
+    if(system("systemctl restart accesspoint"))
+      nltools::Log::warning("Could not restart WiFi!");
+    else
+      nltools::Log::info(__FILE__, __FUNCTION__, "WiFi Restarted!");
   });
   thread.detach();
 #endif

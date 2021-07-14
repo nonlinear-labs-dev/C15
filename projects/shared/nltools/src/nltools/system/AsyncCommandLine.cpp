@@ -4,6 +4,7 @@
 #include <glibmm/main.h>
 #include <nltools/Assert.h>
 #include <glibmm/shell.h>
+#include <unistd.h>
 #include "nltools/system/AsyncCommandLine.h"
 
 AsyncCommandLine::AsyncCommandLine(const std::vector<std::string>& command,
@@ -23,6 +24,13 @@ AsyncCommandLine::AsyncCommandLine(const std::vector<std::string>& command,
   m_isRunning = true;
 
   Glib::signal_child_watch().connect(sigc::mem_fun(*this, &AsyncCommandLine::watchHandler), m_childPid);
+}
+
+AsyncCommandLine::~AsyncCommandLine()
+{
+  closeWatch(m_childPid);
+  close(m_coutFD);
+  close(m_cerrFD);
 }
 
 void AsyncCommandLine::watchHandler(Glib::Pid pid, int status)
@@ -54,8 +62,4 @@ void AsyncCommandLine::closeWatch(Glib::Pid pid)
 bool AsyncCommandLine::isRunning() const
 {
   return m_isRunning;
-}
-
-AsyncCommandLine::~AsyncCommandLine(){
-    closeWatch(m_childPid);
 }

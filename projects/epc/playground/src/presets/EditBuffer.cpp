@@ -43,6 +43,8 @@
 #include <presets/Preset.h>
 #include <device-settings/SplitPointSyncParameters.h>
 #include <device-settings/SyncSplitSettingUseCases.h>
+#include <libundo/undo/ContinuousTransaction.h>
+#include "LoadedPresetLog.h"
 
 EditBuffer::EditBuffer(PresetManager *parent)
     : ParameterGroupSet(parent)
@@ -51,6 +53,7 @@ EditBuffer::EditBuffer(PresetManager *parent)
     , m_recallSet(this)
     , m_type(SoundType::Single)
     , m_lastSelectedParameter { 0, VoiceGroup::I }
+    , m_loadedPresetLog(std::make_unique<LoadedPresetLog>())
 {
   m_hashOnStore = getHash();
 }
@@ -197,6 +200,7 @@ UpdateDocumentContributor::tUpdateID EditBuffer::onChange(uint64_t flags)
 void EditBuffer::doDeferedJobs()
 {
   checkModified();
+  m_loadedPresetLog->update(m_presetOriginDescription);
 }
 
 void EditBuffer::checkModified()
@@ -239,61 +243,13 @@ sigc::connection EditBuffer::onSelectionChanged(const sigc::slot<void, Parameter
   }
 }
 
-void EditBuffer::undoableSelectParameter(const ParameterId &id)
+void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, const ParameterId &id,
+                                         bool sendReselectionSignal)
 {
   if(auto p = findParameterByID(id))
-    undoableSelectParameter(p);
-}
-
-void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, const ParameterId &id)
-{
-  if(auto p = findParameterByID(id))
-    undoableSelectParameter(transaction, p);
+    undoableSelectParameter(transaction, p, sendReselectionSignal);
   else
     throw std::runtime_error("could not select parameter: " + id.toString());
-}
-
-void EditBuffer::setParameter(ParameterId id, double cpValue)
-{
-  if(auto p = findParameterByID(id))
-  {
-    DebugLevel::gassy("EditBuffer::setParameter", id, cpValue);
-    Glib::ustring name {};
-    if(m_type == SoundType::Single || ParameterId::isGlobal(id.getNumber()))
-      name = UNDO::StringTools::formatString("Set '%0'", p->getGroupAndParameterName());
-    else
-      name = UNDO::StringTools::formatString("Set '%0'", p->getGroupAndParameterNameWithVoiceGroup());
-
-    if(cpValue == p->getDefaultValue())
-      name += " to Default";
-
-    auto scope = getUndoScope().startContinuousTransaction(p, name);
-    p->setCPFromWebUI(scope->getTransaction(), cpValue);
-    onChange();
-  }
-}
-
-void EditBuffer::setModulationSource(MacroControls src, const ParameterId &id)
-{
-  if(auto p = dynamic_cast<ModulateableParameter *>(findParameterByID(id)))
-  {
-    auto dual = isDual() && id.isDual();
-    auto scope = getUndoScope().startTransaction(
-        "Set MC Select for '%0'", dual ? p->getGroupAndParameterNameWithVoiceGroup() : p->getGroupAndParameterName());
-    p->undoableSelectModSource(scope->getTransaction(), src);
-  }
-}
-
-void EditBuffer::setModulationAmount(double amount, const ParameterId &id)
-{
-  if(auto p = dynamic_cast<ModulateableParameter *>(findParameterByID(id)))
-  {
-    auto dual = isDual() && id.isDual();
-    auto scope = getUndoScope().startContinuousTransaction(p->getAmountCookie(), "Set MC Amount for '%0'",
-                                                           dual ? p->getGroupAndParameterNameWithVoiceGroup()
-                                                                : p->getGroupAndParameterName());
-    p->undoableSetModAmount(scope->getTransaction(), amount);
-  }
 }
 
 bool EditBuffer::hasLocks(VoiceGroup vg) const
@@ -337,26 +293,6 @@ bool EditBuffer::isDual() const
   return getType() != SoundType::Single;
 }
 
-void EditBuffer::undoableSelectParameter(Parameter *p)
-{
-  if(p->getID().getNumber() != m_lastSelectedParameter.getNumber())
-  {
-    auto newSelection = p;
-    auto scope = getUndoScope().startContinuousTransaction(&newSelection, std::chrono::hours(1), "Select '%0'",
-                                                           p->getGroupAndParameterName());
-    undoableSelectParameter(scope->getTransaction(), p);
-  }
-  else
-  {
-    auto hwui = Application::get().getHWUI();
-
-    if(hwui->getFocusAndMode().mode == UIMode::Info)
-      hwui->undoableSetFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Info));
-    else
-      hwui->undoableSetFocusAndMode(FocusAndMode(UIFocus::Parameters, UIMode::Select));
-  }
-}
-
 bool EditBuffer::isParameterFocusLocked() const
 {
   return m_lockParameterFocusChanges;
@@ -372,7 +308,7 @@ void EditBuffer::unlockParameterFocusChanges()
   m_lockParameterFocusChanges = false;
 }
 
-void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p)
+void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, Parameter *p, bool sendReselectionSignal)
 {
   if(m_lastSelectedParameter != p->getID())
   {
@@ -396,29 +332,12 @@ void EditBuffer::undoableSelectParameter(UNDO::Transaction *transaction, Paramet
       if(newP)
         newP->onSelected();
 
-      if(!getParent()->isLoading() && !isParameterFocusLocked())
-      {
-        if(auto hwui = Application::get().getHWUI())
-        {
-          if(hwui->getFocusAndMode().focus == UIFocus::Sound)
-          {
-            if(oldP->getID() != newP->getID())
-              hwui->setFocusAndMode(UIFocus::Parameters);
-          }
-          else
-          {
-            hwui->setFocusAndMode(UIFocus::Parameters);
-          }
-        }
-      }
-
       onChange();
     });
-
-    if(auto hwui = Application::get().getHWUI())
-    {
-      hwui->unsetFineMode();
-    }
+  }
+  else if(sendReselectionSignal)
+  {
+    transaction->addSimpleCommand([=](auto) mutable { m_signalReselectParameter.send(p); });
   }
 }
 
@@ -504,7 +423,7 @@ bool isLoadToPartActive()
   return hwui->isInLoadToPart();
 }
 
-void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto)
+void EditBuffer::undoableLoadSelectedPreset(UNDO::Transaction *transaction, VoiceGroup loadInto)
 {
   if(auto bank = getParent()->getSelectedBank())
   {
@@ -513,26 +432,25 @@ void EditBuffer::undoableLoadSelectedPreset(VoiceGroup loadInto)
       if(isLoadToPartActive() && isDual())
       {
         if(!preset->isDual())
-          undoableLoadPresetIntoDualSound(preset, loadInto);
+          undoableLoadPresetIntoDualSound(transaction, preset, loadInto);
       }
       else
       {
-        undoableLoad(preset);
+        undoableLoad(transaction, preset, true);
       }
     }
   }
 }
 
-void EditBuffer::undoableLoad(Preset *preset)
+void EditBuffer::undoableLoad(UNDO::Transaction *transaction, const Preset *preset, bool sendToAudioEngine)
 {
-  auto scope = getUndoScope().startTransaction(preset->buildUndoTransactionTitle("Load"));
-  undoableLoad(scope->getTransaction(), preset, true);
-}
+  if(auto p = dynamic_cast<UNDO::ContinuousTransaction *>(transaction))
+    p->stopContinuation();  // if transaction was created for a select operation, direct-load has to stop replacing the transaction
 
-void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset, bool sendToAudioEngine)
-{
+  auto hwui = Application::get().getHWUI();
+  auto parameterFocusLock = hwui->getParameterFocusLockGuard();
+
   PerformanceTimer timer(__PRETTY_FUNCTION__);
-
   SendEditBufferScopeGuard scope(transaction, sendToAudioEngine);
 
   const auto oldType = getType();
@@ -562,13 +480,6 @@ void EditBuffer::undoableLoad(UNDO::Transaction *transaction, Preset *preset, bo
   resetModifiedIndicator(transaction, getHash());
 }
 
-void EditBuffer::undoableLoadToPart(const Preset *preset, VoiceGroup from, VoiceGroup to)
-{
-  UNDO::Scope::tTransactionScopePtr scope = getUndoScope().startTransaction(
-      preset->buildUndoTransactionTitle("Load Part " + toString(from) + " To Part " + toString(to)));
-  undoableLoadToPart(scope->getTransaction(), preset, from, to);
-}
-
 void EditBuffer::undoableLoadToPart(UNDO::Transaction *trans, const Preset *p, VoiceGroup from, VoiceGroup to)
 {
   undoableLoadPresetPartIntoPart(trans, p, from, to);
@@ -582,21 +493,49 @@ void EditBuffer::copyFrom(UNDO::Transaction *transaction, const Preset *preset)
   resetModifiedIndicator(transaction, getHash());
 }
 
-void EditBuffer::undoableSetLoadedPresetInfo(UNDO::Transaction *transaction, Preset *preset)
+void EditBuffer::undoableSetLoadedPresetInfo(UNDO::Transaction *transaction, const Preset *preset)
 {
   Uuid newId = Uuid::none();
+  std::string presetOriginDescription = "Init";
+
   if(preset)
   {
     setName(transaction, preset->getName());
     setVoiceGroupName(transaction, preset->getVoiceGroupName(VoiceGroup::I), VoiceGroup::I);
     setVoiceGroupName(transaction, preset->getVoiceGroupName(VoiceGroup::II), VoiceGroup::II);
     newId = preset->getUuid();
+
+    if(auto d = preset->getOriginDescription())
+    {
+      presetOriginDescription = d.value();
+    }
+    else
+    {
+      auto pm = getParent();
+
+      if(auto preset = pm->findPreset(newId))
+      {
+        if(auto bank = dynamic_cast<Bank *>(preset->getParent()))
+        {
+          auto pPos = bank->getPresetPosition(preset);
+          auto bPos = pm->getBankPosition(bank->getUuid());
+          auto bName = bank->getName(true);
+          presetOriginDescription
+              = StringTools::buildString(bPos + 1, ": ", bName, " / ", pPos + 1, ": ", preset->getName());
+        }
+        else
+        {
+          presetOriginDescription = preset->getName();
+        }
+      }
+    }
   }
 
-  auto swap = UNDO::createSwapData(std::move(newId));
+  auto swap = UNDO::createSwapData(std::move(newId), std::move(presetOriginDescription));
 
   transaction->addSimpleCommand([=](auto) {
-    swap->swapWith(m_lastLoadedPreset);
+    swap->swapWith<0>(m_lastLoadedPreset);
+    swap->swapWith<1>(m_presetOriginDescription);
     m_signalPresetLoaded.send();
     onChange();
   });
@@ -737,14 +676,13 @@ void EditBuffer::combineSplitPartGlobalMaster(UNDO::Transaction *transaction, Vo
 {
   auto masterGroup = getParameterGroupByID({ "Master", VoiceGroup::Global });
 
-  auto originVolume
-      = dynamic_cast<ModulateableParameter *>(findParameterByID({ C15::PID::Voice_Grp_Volume, copyFrom }));
-  auto originTune = dynamic_cast<ModulateableParameter *>(findParameterByID({ C15::PID::Voice_Grp_Tune, copyFrom }));
+  auto originVolume = findAndCastParameterByID<ModulateableParameter>({ C15::PID::Voice_Grp_Volume, copyFrom });
+  auto originTune = findAndCastParameterByID<ModulateableParameter>({ C15::PID::Voice_Grp_Tune, copyFrom });
 
-  auto masterVolumeParameter = dynamic_cast<ModulateableParameter *>(
-      masterGroup->getParameterByID({ C15::PID::Master_Volume, VoiceGroup::Global }));
-  auto masterTuneParameter = dynamic_cast<ModulateableParameter *>(
-      masterGroup->getParameterByID({ C15::PID::Master_Tune, VoiceGroup::Global }));
+  auto masterVolumeParameter
+      = masterGroup->findAndCastParameterByID<ModulateableParameter>({ C15::PID::Master_Volume, VoiceGroup::Global });
+  auto masterTuneParameter
+      = masterGroup->findAndCastParameterByID<ModulateableParameter>({ C15::PID::Master_Tune, VoiceGroup::Global });
 
   // unmute both parts
   findParameterByID({ 395, VoiceGroup::I })->setCPFromHwui(transaction, 0);
@@ -944,28 +882,8 @@ void EditBuffer::undoableSetType(UNDO::Transaction *transaction, SoundType type)
   }
 }
 
-void EditBuffer::undoableSetTypeFromConvert(UNDO::Transaction *transaction, SoundType type)
+void EditBuffer::undoableLoadPresetIntoDualSound(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup vg)
 {
-  if(m_type != type)
-  {
-    auto swap = UNDO::createSwapData(type);
-
-    cleanupParameterSelection(transaction, m_type, type);
-
-    transaction->addSimpleCommand([=](auto state) {
-      swap->swapWith(m_type);
-      initUnisonVoicesScaling(m_type);
-      m_signalTypeChanged.send(m_type);
-      m_signalConversionHappened.send(m_type);
-      onChange();
-    });
-  }
-}
-
-void EditBuffer::undoableLoadPresetIntoDualSound(const Preset *preset, VoiceGroup vg)
-{
-  auto scope = getUndoScope().startTransaction("Load Preset into Part " + toString(vg));
-  auto transaction = scope->getTransaction();
   undoableLoadSinglePresetIntoDualSound(transaction, preset, vg);
 }
 
@@ -1046,19 +964,6 @@ Glib::ustring EditBuffer::getNameWithSuffix() const
   }
 
   return getName() + " " + (hasMono ? "\uE040" : "") + (hasUnison ? "\uE041" : "");
-}
-
-void EditBuffer::undoableLoadSelectedPresetPartIntoPart(VoiceGroup from, VoiceGroup copyTo)
-{
-  auto selectedPreset = getParent()->getSelectedPreset();
-
-  if(!selectedPreset)
-    return;
-
-  auto transString = UNDO::StringTools::buildString("Load Preset Part", toString(from), "into", toString(copyTo));
-  auto scope = getParent()->getUndoScope().startTransaction(transString);
-
-  undoableLoadToPart(scope->getTransaction(), selectedPreset, from, copyTo);
 }
 
 void EditBuffer::undoableLoadPresetPartIntoPart(UNDO::Transaction *transaction, const Preset *preset, VoiceGroup from,
@@ -1291,12 +1196,12 @@ EditBuffer::PartOrigin EditBuffer::getPartOrigin(VoiceGroup vg) const
 
   if(vg == VoiceGroup::I)
   {
-    ret.presetUUID = getAttribute("origin-I", "");
+    ret.presetUUID = Uuid { getAttribute("origin-I", "") };
     ret.sourceGroup = to<VoiceGroup>(getAttribute("origin-I-vg", "Global"));
   }
   else if(vg == VoiceGroup::II)
   {
-    ret.presetUUID = getAttribute("origin-II", "");
+    ret.presetUUID = Uuid { getAttribute("origin-II", "") };
     ret.sourceGroup = to<VoiceGroup>(getAttribute("origin-II-vg", "Global"));
   }
 
@@ -1406,12 +1311,15 @@ void EditBuffer::calculateSplitPointFromFadeParams(UNDO::Transaction *transactio
 void EditBuffer::loadSinglePresetIntoSplitPart(UNDO::Transaction *transaction, const Preset *preset,
                                                VoiceGroup loadInto)
 {
-
   {
     auto toFxParam = findParameterByID({ C15::PID::Out_Mix_To_FX, loadInto });
+    auto splitPointI = findParameterByID({C15::PID::Split_Split_Point, VoiceGroup::I});
+    auto splitPointII = findParameterByID({C15::PID::Split_Split_Point, VoiceGroup::II});
 
     ScopedLock locks(transaction);
     locks.addLock(toFxParam);
+    locks.addLock(splitPointI);
+    locks.addLock(splitPointII);
 
     super::copyFrom(transaction, preset, VoiceGroup::I, loadInto);
   }
@@ -1466,11 +1374,8 @@ void EditBuffer::undoableLoadPresetPartIntoSplitSound(UNDO::Transaction *transac
     for(auto p : getCrossFBParameters(copyTo))
       locks.addLock(p);
 
-    if(preset->getType() == SoundType::Split)
-    {
-      for(auto vg : { VoiceGroup::I, VoiceGroup::II })
-        locks.addLock(findParameterByID({ C15::PID::Split_Split_Point, vg }));
-    }
+    for(auto vg : { VoiceGroup::I, VoiceGroup::II })
+      locks.addLock(findParameterByID({ C15::PID::Split_Split_Point, vg }));
 
     if(!preset->isDual())
       locks.addLock(toFxParam);
@@ -1575,21 +1480,11 @@ void EditBuffer::undoableLoadPresetPartIntoSingleSound(UNDO::Transaction *transa
 
 void EditBuffer::undoableLoadSelectedToPart(VoiceGroup from, VoiceGroup to)
 {
-  auto scope = getUndoScope().startTransaction("Load Selected Preset Part", toString(from), "into", toString(to));
-  undoableLoadSelectedToPart(scope->getTransaction(), from, to);
-}
-
-void EditBuffer::undoableLoadSelectedToPart(UNDO::Transaction *transaction, VoiceGroup from, VoiceGroup to)
-{
-  auto selectedPreset = getParent()->getSelectedPreset();
-
-  if(!selectedPreset)
+  if(auto selectedPreset = getParent()->getSelectedPreset())
   {
-    transaction->rollBack();
-    return;
+    EditBufferUseCases useCase(this);
+    useCase.undoableLoadToPart(selectedPreset, from, to);
   }
-
-  undoableLoadToPart(transaction, selectedPreset, from, to);
 }
 
 void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, SoundType oldType, SoundType newType)
@@ -1630,40 +1525,60 @@ void EditBuffer::cleanupParameterSelection(UNDO::Transaction *transaction, Sound
                                          { C15::PID::Voice_Grp_Volume, C15::PID::Master_Volume },
                                          { C15::PID::Out_Mix_To_FX, C15::PID::Out_Mix_Lvl } } } };
 
-  auto hwui = Application::get().getHWUI();
-  auto currentVg = hwui->getCurrentVoiceGroup();
-
-  auto itMap = conversions.find({ oldType, newType });
-  if(itMap != conversions.end())
+  if(Application::exists())
   {
-    const auto &conv = itMap->second;
-    auto id = getSelectedParameterNumber();
-    auto itConv = conv.find(id);
-    if(itConv != conv.end())
+    auto hwui = Application::get().getHWUI();
+
+    auto currentVg = hwui->getCurrentVoiceGroup();
+
+    auto itMap = conversions.find({ oldType, newType });
+    if(itMap != conversions.end())
     {
-      auto vg = ParameterId::isGlobal(itConv->second) ? VoiceGroup::Global : currentVg;
+      const auto &conv = itMap->second;
+      auto id = getSelectedParameterNumber();
+      auto itConv = conv.find(id);
+      if(itConv != conv.end())
+      {
+        auto vg = ParameterId::isGlobal(itConv->second) ? VoiceGroup::Global : currentVg;
 
-      if(newType == SoundType::Single && vg == VoiceGroup::II)
-        vg = VoiceGroup::I;
+        if(newType == SoundType::Single && vg == VoiceGroup::II)
+          vg = VoiceGroup::I;
 
-      undoableSelectParameter(transaction, { itConv->second, vg });
-      hwui->setCurrentVoiceGroup(vg);
+        undoableSelectParameter(transaction, { itConv->second, vg }, false);
+        hwui->setCurrentVoiceGroup(vg);
+      }
     }
-  }
 
-  if(newType == SoundType::Single && currentVg == VoiceGroup::II)
-  {
-    auto selNum = getSelectedParameterNumber();
-    if(!ParameterId::isGlobal(selNum))
-      undoableSelectParameter(transaction, { selNum, VoiceGroup::I });
+    if(newType == SoundType::Single && currentVg == VoiceGroup::II)
+    {
+      auto selNum = getSelectedParameterNumber();
+      if(!ParameterId::isGlobal(selNum))
+        undoableSelectParameter(transaction, { selNum, VoiceGroup::I }, false);
 
-    hwui->setCurrentVoiceGroup(VoiceGroup::I);
+      hwui->setCurrentVoiceGroup(VoiceGroup::I);
+    }
   }
 }
 
 int EditBuffer::getSelectedParameterNumber() const
 {
   return m_lastSelectedParameter.getNumber();
+}
+
+std::string EditBuffer::getPresetOriginDescription() const
+{
+  if(m_lastLoadedPreset == Uuid::init())
+    return "Init";
+
+  if(m_lastLoadedPreset == Uuid::converted())
+    return "Converted";
+
+  return m_presetOriginDescription;
+}
+
+LoadedPresetLog *EditBuffer::getLoadedPresetLog() const
+{
+  return m_loadedPresetLog.get();
 }
 
 void EditBuffer::fakeParameterSelectionSignal(VoiceGroup oldGroup, VoiceGroup group)
@@ -1703,5 +1618,28 @@ void EditBuffer::setSyncSplitSettingAccordingToLoadedPreset(UNDO::Transaction *t
     {
       SyncSplitSettingUseCases::get().enableSyncSetting(transaction);
     }
+  }
+}
+
+sigc::connection EditBuffer::onParameterReselected(const sigc::slot<void, Parameter *> &s)
+{
+  return m_signalReselectParameter.connect(s);
+}
+
+void EditBuffer::undoableSetTypeFromConvert(UNDO::Transaction *transaction, SoundType type)
+{
+  if(m_type != type)
+  {
+    auto swap = UNDO::createSwapData(type);
+
+    cleanupParameterSelection(transaction, m_type, type);
+
+    transaction->addSimpleCommand([=](auto state) {
+      swap->swapWith(m_type);
+      initUnisonVoicesScaling(m_type);
+      m_signalTypeChanged.send(m_type);
+      m_signalConversionHappened.send(m_type);
+      onChange();
+    });
   }
 }

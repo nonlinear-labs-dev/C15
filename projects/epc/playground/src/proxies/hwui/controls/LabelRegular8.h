@@ -9,15 +9,14 @@ class LabelRegular8 : public Label
 
  public:
   LabelRegular8(const Glib::ustring &text, const Rect &pos);
-  LabelRegular8(const Rect &pos);
-  virtual ~LabelRegular8();
+  explicit LabelRegular8(const Rect &pos);
+  ~LabelRegular8() override;
 
  protected:
-  virtual std::shared_ptr<Font> getFont() const override;
-  virtual int getFontHeight() const override;
+  std::shared_ptr<Font> getFont() const override;
+  int getFontHeight() const override;
 
  private:
-  // private methods
   LabelRegular8(const LabelRegular8 &other);
   LabelRegular8 &operator=(const LabelRegular8 &);
 };

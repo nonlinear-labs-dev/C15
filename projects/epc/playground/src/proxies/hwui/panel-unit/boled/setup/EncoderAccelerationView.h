@@ -11,7 +11,7 @@ class EncoderAccelerationView : public SetupLabel
 
  public:
   EncoderAccelerationView();
-  virtual ~EncoderAccelerationView();
+  ~EncoderAccelerationView() override;
 
  private:
   void onSettingChanged(const Setting *s);

@@ -5,5 +5,5 @@
 class RecallMCAmountLabel : public Label
 {
  public:
-  RecallMCAmountLabel(Rect pos);
+  explicit RecallMCAmountLabel(Rect pos);
 };

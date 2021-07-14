@@ -28,7 +28,7 @@ class PresetManager : public ContentSection
   using SaveSubTask = std::function<SaveResult()>;
 
  public:
-  PresetManager(UpdateDocumentContributor *parent, bool readOnly = false);
+  explicit PresetManager(UpdateDocumentContributor *parent, bool readOnly = false);
   ~PresetManager() override;
 
   void init();
@@ -57,14 +57,14 @@ class PresetManager : public ContentSection
     throw std::runtime_error("ActionManager does not exist in object");
   }
 
-  void doAutoLoadSelectedPreset();
+  void undoableLoadSelectedPreset(UNDO::Transaction *currentTransactionPtr);
   bool isLoading() const;
   std::shared_ptr<ScopedGuard::Lock> getLoadingLock();
 
   // accessors
   Bank *findBank(const Uuid &uuid) const;
   Uuid getMidiSelectedBank() const;
-  Bank* findMidiSelectedBank() const;
+  Bank *findMidiSelectedBank() const;
   Preset *findPreset(const Uuid &uuid) const;
   Bank *findBankWithPreset(const Uuid &uuid) const;
   size_t getNumBanks() const;
@@ -76,15 +76,12 @@ class PresetManager : public ContentSection
   void forEachBank(std::function<void(Bank *b)> cb) const;
   void selectMidiBank(UNDO::Transaction *trans, const Uuid &uuid);
 
-  // convenience
-  void selectPreviousBank();
-  void selectNextBank();
-  void onPresetSelectionChanged();
   void onPresetStored();
 
   std::shared_ptr<ScopedGuard::Lock> lockLoading();
 
   // algorithms
+  std::pair<double, double> calcDefaultBankPositionForNewBank() const;
   std::pair<double, double> calcDefaultBankPositionFor(const Bank *bank) const;
   size_t getBankPosition(const Uuid &uuid) const;
 
@@ -107,7 +104,7 @@ class PresetManager : public ContentSection
   void resolveCyclicAttachments(UNDO::Transaction *transaction);
   void ensureBankSelection(UNDO::Transaction *transaction);
 
-  void autoLoadPresetAccordingToLoadType();
+  void undoableLoadSelectedPresetAccordingToLoadType(UNDO::Transaction *transaction) const;
 
   // algorithms
   Glib::ustring createPresetNameBasedOn(const Glib::ustring &basedOn) const;
@@ -120,13 +117,10 @@ class PresetManager : public ContentSection
   sigc::connection onRestoreHappened(sigc::slot<void> cb);
   sigc::connection onPresetStoreHappened(sigc::slot<void> cb);
   sigc::connection onMidiBankSelectionHappened(sigc::slot<void, Uuid> cb);
+  sigc::connection onLoadHappened(sigc::slot<void> cb);
 
   const Preset *getSelectedPreset() const;
   Preset *getSelectedPreset();
-
-  bool currentLoadedPartIsBeforePresetToLoad() const;
-
-  void scheduleLoadToPart(const Preset *preset, VoiceGroup loadFrom, VoiceGroup loadTo);
 
  private:
   void loadMetadataAndSendEditBufferToPlaycontroller(UNDO::Transaction *transaction,
@@ -135,7 +129,6 @@ class PresetManager : public ContentSection
   void loadBanks(UNDO::Transaction *transaction, Glib::RefPtr<Gio::File> pmFolder);
   void fixMissingPresetSelections(UNDO::Transaction *transaction);
   Glib::ustring getBaseName(const Glib::ustring &basedOn) const;
-  void scheduleAutoLoadPresetAccordingToLoadType();
 
   std::list<PresetManager::SaveSubTask> createListOfSaveSubTasks();
   SaveResult saveMetadata(Glib::RefPtr<Gio::File> pmFolder);
@@ -150,7 +143,6 @@ class PresetManager : public ContentSection
 
   size_t getPreviousBankPosition() const;
   size_t getNextBankPosition() const;
-  void selectBank(size_t idx);
   bool selectBank(UNDO::Transaction *transaction, size_t idx);
 
   UndoableVector<PresetManager, Bank> m_banks;
@@ -165,12 +157,9 @@ class PresetManager : public ContentSection
   SignalWithCache<void, Uuid> m_sigBankSelection;
   SignalWithCache<void, size_t> m_sigNumBanksChanged;
   Signal<void> m_sigRestoreHappened;
+  Signal<void> m_sigLoadHappened;
   Signal<void> m_presetStoreHappened;
   Signal<void, Uuid> m_sigMidiBankSelection;
-
-  std::atomic_bool m_autoLoadScheduled { false };
-
-  Throttler m_autoLoadThrottler;
 
   Expiration m_saveJob;
   tUpdateID m_lastSavedInitSoundUpdateID = 0;
@@ -181,4 +170,5 @@ class PresetManager : public ContentSection
   bool m_readOnly = false;
 
   friend class PresetManagerSerializer;
+  friend class PresetManagerUseCases;
 };

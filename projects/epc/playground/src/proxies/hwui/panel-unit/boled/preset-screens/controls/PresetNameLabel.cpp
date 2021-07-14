@@ -34,8 +34,8 @@ Font::Justification PresetNameLabel::getJustification() const
   return Font::Justification::Left;
 }
 
-PresetNameLabel::StringAndSuffix PresetNameLabel::shortenStringIfNeccessary(std::shared_ptr<Font> font,
-                                                                            const StringAndSuffix &text) const
+StringAndSuffix PresetNameLabel::shortenStringIfNeccessary(const std::shared_ptr<Font> &font,
+                                                           const StringAndSuffix &text) const
 {
   return TextCropper::shortenStringIfNeccessary(font, text.text, getPosition().getWidth() - getXOffset());
 }

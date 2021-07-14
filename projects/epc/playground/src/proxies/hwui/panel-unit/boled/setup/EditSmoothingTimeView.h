@@ -11,7 +11,7 @@ class EditSmoothingTimeView : public SetupLabel
 
  public:
   EditSmoothingTimeView();
-  virtual ~EditSmoothingTimeView();
+  ~EditSmoothingTimeView() override;
 
  private:
   void onSettingChanged(const Setting *s);

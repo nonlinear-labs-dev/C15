@@ -7,14 +7,14 @@ class PresetManager;
 class PresetManagerSerializer : public Serializer
 {
  public:
-  PresetManagerSerializer(PresetManager *pm);
-  ~PresetManagerSerializer();
+  explicit PresetManagerSerializer(PresetManager *pm);
+  ~PresetManagerSerializer() override;
 
   static Glib::ustring getTagName();
 
  private:
-  void writeTagContent(Writer &writer) const;
-  void readTagContent(Reader &reader) const;
+  void writeTagContent(Writer &writer) const override;
+  void readTagContent(Reader &reader) const override;
 
   PresetManager *m_pm = nullptr;
 };

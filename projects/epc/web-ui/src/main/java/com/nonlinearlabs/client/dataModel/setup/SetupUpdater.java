@@ -53,7 +53,29 @@ public class SetupUpdater extends Updater {
 		m.put("TotalRAM", DeviceInformation.get().totalRam);
 		m.put("UsedRAM", DeviceInformation.get().usedRam);
 		m.put("SyncSplit", SetupModel.get().systemSettings.syncSplit);
-		m.put("ExternalMidi", SetupModel.get().systemSettings.externalMidi);
+		m.put("LocalNotes", SetupModel.get().systemSettings.localNotes);
+		m.put("ReceiveChannel", SetupModel.get().systemSettings.receiveChannel);
+		m.put("ReceiveChannelSplit", SetupModel.get().systemSettings.receiveChannelSplit);
+		m.put("ReceiveNotes", SetupModel.get().systemSettings.receiveNotes);
+		m.put("ReceiveProgramChanges", SetupModel.get().systemSettings.receiveProgramChanges);
+		m.put("ReceiveAftertouchCurve", SetupModel.get().systemSettings.receiveAftertouchCurve);
+		m.put("ReceiveVelocityCurve", SetupModel.get().systemSettings.receiveVelocityCurve);
+		m.put("SendChannel", SetupModel.get().systemSettings.sendChannel);
+		m.put("SendChannelSplit", SetupModel.get().systemSettings.sendChannelSplit);
+		m.put("SendProgramChanges", SetupModel.get().systemSettings.sendProgramChanges);
+		m.put("SendNotes", SetupModel.get().systemSettings.sendNotes);
+		m.put("Pedal1Mapping", SetupModel.get().systemSettings.pedal1Mapping);
+		m.put("Pedal2Mapping", SetupModel.get().systemSettings.pedal2Mapping);
+		m.put("Pedal3Mapping", SetupModel.get().systemSettings.pedal3Mapping);
+		m.put("Pedal4Mapping", SetupModel.get().systemSettings.pedal4Mapping);
+		m.put("Ribbon1Mapping", SetupModel.get().systemSettings.ribbon1Mapping);
+		m.put("Ribbon2Mapping", SetupModel.get().systemSettings.ribbon2Mapping);
+		m.put("BenderMapping", SetupModel.get().systemSettings.benderMapping);
+		m.put("HighVeloCC", SetupModel.get().systemSettings.highVelocityCC);
+		m.put("HighResCC", SetupModel.get().systemSettings.enable14BitSupport);
+		m.put("AftertouchMapping", SetupModel.get().systemSettings.aftertouchMapping);
+		m.put("AutoStartRecorder", SetupModel.get().systemSettings.autoStartRecorder);
+		m.put("HardwareControlEnables", SetupModel.get().systemSettings.hwSourceMapping);
 		return m;
 	}
 

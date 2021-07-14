@@ -19,9 +19,9 @@ class Font
     Right
   };
 
-  uint32_t getStringWidth(const Glib::ustring &str) const;
+  [[nodiscard]] uint32_t getStringWidth(const Glib::ustring &str) const;
   uint32_t draw(const Glib::ustring &text, tCoordinate x, tCoordinate y);
-  int getHeight() const;
+  [[nodiscard]] int getHeight() const;
 
  private:
   FT_Face m_face;

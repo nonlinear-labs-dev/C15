@@ -7,12 +7,12 @@
 
 class SpecialParameterCarousel : public ParameterCarousel
 {
-public:
+ public:
   explicit SpecialParameterCarousel(const Rect &rect);
   ~SpecialParameterCarousel() override;
   void setup(Parameter *selectedParameter) override;
 
-private:
+ private:
   virtual std::vector<ParameterId> getParameterIdsForMode(SoundType type) = 0;
   void setupControls(Parameter *parameter);
   void rebuild();

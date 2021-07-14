@@ -6,5 +6,5 @@ class LinearBipolar100PercentScaleConverter : public LinearScaleConverter
 {
  public:
   LinearBipolar100PercentScaleConverter();
-  virtual ~LinearBipolar100PercentScaleConverter();
+  ~LinearBipolar100PercentScaleConverter() override;
 };

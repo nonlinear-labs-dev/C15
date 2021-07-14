@@ -6,7 +6,7 @@
 class VoiceGroupMasterParameterCarousel : public ParameterCarousel
 {
  public:
-  VoiceGroupMasterParameterCarousel(const Rect &r);
+  explicit VoiceGroupMasterParameterCarousel(const Rect &r);
   ~VoiceGroupMasterParameterCarousel() override;
 
  private:
