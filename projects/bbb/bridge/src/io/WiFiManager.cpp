@@ -83,7 +83,7 @@ void WiFiManager::scheduleRestart()
 
 void WiFiManager::enableAndStartAP()
 {
-  std::vector<std::string> commands = {"/usr/C15/scripts/enableAndStart.sh"};
+  std::vector<std::string> commands = {"/usr/C15/scripts/enableAndStartAP.sh"};
 
   SpawnAsyncCommandLine::spawn(commands, [](auto ret){
       nltools::Log::error(__LINE__, ret);
@@ -94,7 +94,7 @@ void WiFiManager::enableAndStartAP()
 
 void WiFiManager::disableAndStopAP()
 {
-  std::vector<std::string> commands = {"/usr/C15/scripts/disableAndStop.sh"};
+  std::vector<std::string> commands = {"/usr/C15/scripts/disableAndStopAP.sh"};
 
   SpawnAsyncCommandLine::spawn(commands, [](auto ret){
       nltools::Log::error(__LINE__, ret);
