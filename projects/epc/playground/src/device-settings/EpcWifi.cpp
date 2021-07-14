@@ -2,7 +2,7 @@
 #include "EpcWifi.h"
 
 EpcWifi::EpcWifi()
-    : m_currentEpcWifiState(false)
+    : m_currentEpcWifiState(std::nullopt)
     , m_newEpcWifiState(false)
     , m_busy(false)
 {
@@ -48,7 +48,7 @@ void EpcWifi::updateCredentials(bool _reload)
     else if (m_currentSSID != m_newSSID){
         updateSSID();
     }
-    else if (m_currentEpcWifiState != m_newEpcWifiState ){
+    else if (!m_currentEpcWifiState.has_value() || m_currentEpcWifiState != m_newEpcWifiState ){
         updateWifiSwitch();
     }
     else if (_reload){
@@ -60,6 +60,9 @@ void EpcWifi::updateCredentials(bool _reload)
 
 void EpcWifi::updateWifiSwitch()
 {
+  nltools::Log::error("udpateWiFiSwitch!");
+  Environment::getStackTrace("updateWifiSwitch");
+
   if(m_newEpcWifiState)
     enableConnection();
   else
