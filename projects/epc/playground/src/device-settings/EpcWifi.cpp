@@ -1,3 +1,4 @@
+#include <playground-helpers.h>
 #include "EpcWifi.h"
 
 EpcWifi::EpcWifi()
@@ -100,7 +101,10 @@ void EpcWifi::reloadConnection()
 
 void EpcWifi::enableConnection()
 {
+  Environment::getStackTrace(std::to_string(__LINE__));
+
   spawn({ "nmcli", "con", "up", "C15" }, [this](auto) {
+    nltools::Log::error(__LINE__, "c15 up");
     m_currentEpcWifiState = true;
     m_busy = false;
   });
@@ -108,7 +112,10 @@ void EpcWifi::enableConnection()
 
 void EpcWifi::disableConnection()
 {
+  Environment::getStackTrace(std::to_string(__LINE__));
+
   spawn({ "nmcli", "con", "down", "C15" }, [this](auto) {
+    nltools::Log::error(__LINE__, "c15 down");
     m_currentEpcWifiState = false;
     m_busy = false;
   });
