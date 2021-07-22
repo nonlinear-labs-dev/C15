@@ -72,12 +72,10 @@ void ScreenSaverTimeoutSetting::init()
 
   editBuffer->onSelectionChanged(sigc::hide(sigc::hide(reschedule)), std::nullopt);
   editBuffer->onChange(reschedule, false);
-  app.getPlaycontrollerProxy()->onLastKeyChanged(sigc::hide(reschedule));
+  app.getPlaycontrollerProxy()->onLastKeyChanged(reschedule);
   app.getSettings()->onSettingsChanged(reschedule);
   app.getHWUI()->getPanelUnit().getEditPanel().getBoled().onLayoutInstalled(
       sigc::mem_fun(this, &ScreenSaverTimeoutSetting::onLayoutInstalled));
-
-  nltools::msg::receive<nltools::msg::Keyboard::ActionHappened>(nltools::msg::EndPoint::Playground, sigc::mem_fun(this, &ScreenSaverTimeoutSetting::onKeyBedMessageReceived));
 }
 
 void ScreenSaverTimeoutSetting::sendState(bool state)
@@ -120,9 +118,4 @@ void ScreenSaverTimeoutSetting::incDec(int inc, ButtonModifiers m)
 const std::vector<Glib::ustring>& ScreenSaverTimeoutSetting::getDisplayStrings() const
 {
   return s_displayStrings;
-}
-
-void ScreenSaverTimeoutSetting::onKeyBedMessageReceived(const nltools::msg::Keyboard::ActionHappened& m)
-{
-  endAndReschedule();
 }

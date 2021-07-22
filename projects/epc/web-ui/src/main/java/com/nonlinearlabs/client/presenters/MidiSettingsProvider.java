@@ -5,10 +5,7 @@ import java.util.function.Function;
 
 import com.nonlinearlabs.client.dataModel.setup.SetupModel;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.SystemSettings;
-import com.nonlinearlabs.client.presenters.MidiSettings.HWSourceEnableSettings;
-
-import org.apache.xpath.operations.Bool;
-
+import com.nonlinearlabs.client.presenters.MidiSettings.RoutingSetting;
 import com.nonlinearlabs.client.dataModel.setup.SetupModel.BooleanValues;
 
 public class MidiSettingsProvider {
@@ -23,16 +20,6 @@ public class MidiSettingsProvider {
 
 	private MidiSettingsProvider() {
 		SystemSettings s = SetupModel.get().systemSettings;
-
-        //Local
-        s.localNotes.onChange(t -> {
-            boolean newValue = t == BooleanValues.on;
-            if(settings.localNotes.value != newValue) {
-                settings.localNotes.value = newValue;   
-                notifyClients();
-            }
-            return true;
-        });
 
         //Send
         s.sendChannel.onChange(t -> {
@@ -51,25 +38,7 @@ public class MidiSettingsProvider {
                 notifyClients();
             }
             return true;
-        });
-
-        s.sendProgramChanges.onChange(t -> {
-            boolean newValue = t == BooleanValues.on;
-            if(settings.sendProgramChanges.value != newValue) {
-                settings.sendProgramChanges.value = newValue;
-                notifyClients();
-            }
-            return true;
-        });
-
-        s.sendNotes.onChange(t -> {
-            boolean newValue = t == BooleanValues.on;
-            if(settings.sendNotes.value != newValue) {
-                settings.sendNotes.value = newValue;
-                notifyClients();
-            }
-            return true;
-        });
+        });    
 
         //Receive
         s.receiveChannel.onChange(t -> {
@@ -85,24 +54,6 @@ public class MidiSettingsProvider {
             int newValue = t.ordinal();
             if(settings.receiveChannelSplit.selected != newValue) {
                 settings.receiveChannelSplit.selected = newValue;
-                notifyClients();
-            }
-            return true;
-        });
-
-        s.receiveProgramChanges.onChange(t -> {
-            boolean newValue = t == BooleanValues.on;
-            if(settings.receiveProgramChanges.value != newValue) {
-                settings.receiveProgramChanges.value = newValue;
-                notifyClients();
-            }
-            return true;
-        });
-
-        s.receiveNotes.onChange(t -> {
-            boolean newValue = t == BooleanValues.on;
-            if(settings.receiveNotes.value != newValue) {
-                settings.receiveNotes.value = newValue;
                 notifyClients();
             }
             return true;
@@ -225,10 +176,19 @@ public class MidiSettingsProvider {
             return true;
         });
 
-        s.hwSourceMapping.onChange(t -> {
-            HWSourceEnableSettings d = MidiSettings.convert(t);
-            if(d != settings.hwControlEnables) {
-                settings.hwControlEnables = d;
+        s.routingAspects.onChange(t -> {
+            RoutingSetting d = MidiSettings.convert(t);
+            if(d != settings.routingSetting) {
+                settings.routingSetting = d;
+                notifyClients();
+            }
+            return true;
+        });
+
+        s.globalLocalEnable.onChange(t -> {
+            boolean val = t.equals(BooleanValues.on);
+            if(val != settings.globalLocalEnable.value != val) {
+                settings.globalLocalEnable.value = val;
                 notifyClients();
             }
             return true;

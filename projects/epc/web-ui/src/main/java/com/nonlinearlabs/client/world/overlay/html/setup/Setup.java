@@ -62,6 +62,7 @@ import com.nonlinearlabs.client.tools.Pair;
 import com.nonlinearlabs.client.useCases.EditBufferUseCases;
 import com.nonlinearlabs.client.useCases.SystemSettings;
 import com.nonlinearlabs.client.world.overlay.html.Range;
+import com.nonlinearlabs.client.presenters.MidiSettings.RoutingEntry;
 
 public class Setup extends Composite {
 	interface SetupUiBinder extends UiBinder<HTMLPanel, Setup> {
@@ -94,10 +95,8 @@ public class Setup extends Composite {
 	@UiField
 	RadioButton presetGlitchSuppressionOn, presetGlitchSuppressionOff, showContextMenusOn, showContextMenusOff,
 			presetDragDropOn, presetDragDropOff, bitmapCacheOn, bitmapCacheOff, developerOptionsOn, developerOptionsOff,
-			highlightChangedOn, highlightChangedOff, syncPartsOn, syncPartsOff, receivePCOn, receivePCOff, receiveNotesOn, 
-			receiveNotesOff, sendPCOn, sendPCOff, sendNotesOn, 
-			sendNotesOff, localNotesOn, 
-			localNotesOff, highVeloCCOn, highVeloCCOff, enable14Bit, disable14Bit, autoStartRecordOn, autoStartRecordOff;
+			highlightChangedOn, highlightChangedOff, syncPartsOn, syncPartsOff, globalLocalOn, 
+			globalLocalOff, highVeloCCOn, highVeloCCOff, enable14Bit, disable14Bit, autoStartRecordOn, autoStartRecordOff;
 
 	@UiField
 	Label transitionTimeDisplayString, tuneReferenceDisplayString;
@@ -114,19 +113,19 @@ public class Setup extends Composite {
 	TextArea deviceName;
 
 	@UiField
-	Button saveDeviceName, storeInitSound, resetInitSound, classicMidi, highResMidi, panicAE;
+	Button saveDeviceName, storeInitSound, resetInitSound, classicMidi, highResMidi, panicAE, routingsOn, routingsOff;
 
 	Range editSmoothingTimeRange;
 	Range pedal1Range, pedal2Range, pedal3Range, pedal4Range;
 
 	@UiField
-	CheckBox pson0, pson1, pson2, pson3, pson4, pson5, pson6, pson7, pron0, pron1, pron2, pron3, pron4, pron5, pron6, pron7, 
-				sson0, sson1, sson2, sson3, sson4, sson5, sson6, sson7, sron0, sron1, sron2, sron3, sron4, sron5, sron6, sron7, 
-				lon0, lon1, lon2, lon3, lon4, lon5, lon6, lon7;
+	CheckBox psonNotes, psonPC, pson0, pson1, pson2, pson3, pson4, pson5, pson6, pson7, pronNotes, pronPC, pron0, pron1, pron2, pron3, pron4, pron5, pron6, pron7, 
+				ssonNotes, ssonPC, sson0, sson1, sson2, sson3, sson4, sson5, sson6, sson7, sronNotes, sronPC, sron0, sron1, sron2, sron3, sron4, sron5, sron6, sron7, 
+				lonNotes, lon0, lon1, lon2, lon3, lon4, lon5, lon6, lon7;
 
 
-	private class HWEnableMap {
-		public HWEnableMap(CheckBox pson, CheckBox pron, CheckBox sson, CheckBox sron, CheckBox lon) {
+	private class RoutingsMap {
+		public RoutingsMap(CheckBox pson, CheckBox pron, CheckBox sson, CheckBox sron, CheckBox lon) {
 			primSendOn = pson;
 			primRecOn = pron;
 			splitSendOn = sson;
@@ -155,18 +154,20 @@ public class Setup extends Composite {
 
 	} 
 
-	private HWEnableMap[] m_hwEnableMap;
+	private RoutingsMap[] m_routingMap;
 
 	private void createUIData() {
-		m_hwEnableMap = new HWEnableMap[8];
-		m_hwEnableMap[0] = new HWEnableMap(pson0, pron0, sson0, sron0, lon0);
-		m_hwEnableMap[1] = new HWEnableMap(pson1, pron1, sson1, sron1, lon1);
-		m_hwEnableMap[2] = new HWEnableMap(pson2, pron2, sson2, sron2, lon2);
-		m_hwEnableMap[3] = new HWEnableMap(pson3, pron3, sson3, sron3, lon3);
-		m_hwEnableMap[4] = new HWEnableMap(pson4, pron4, sson4, sron4, lon4);
-		m_hwEnableMap[5] = new HWEnableMap(pson5, pron5, sson5, sron5, lon5);
-		m_hwEnableMap[6] = new HWEnableMap(pson6, pron6, sson6, sron6, lon6);
-		m_hwEnableMap[7] = new HWEnableMap(pson7, pron7, sson7, sron7, lon7);
+		m_routingMap = new RoutingsMap[10];
+		m_routingMap[0] = new RoutingsMap(pson0, pron0, sson0, sron0, lon0);
+		m_routingMap[1] = new RoutingsMap(pson1, pron1, sson1, sron1, lon1);
+		m_routingMap[2] = new RoutingsMap(pson2, pron2, sson2, sron2, lon2);
+		m_routingMap[3] = new RoutingsMap(pson3, pron3, sson3, sron3, lon3);
+		m_routingMap[4] = new RoutingsMap(pson4, pron4, sson4, sron4, lon4);
+		m_routingMap[5] = new RoutingsMap(pson5, pron5, sson5, sron5, lon5);
+		m_routingMap[6] = new RoutingsMap(pson6, pron6, sson6, sron6, lon6);
+		m_routingMap[7] = new RoutingsMap(pson7, pron7, sson7, sron7, lon7);
+		m_routingMap[8] = new RoutingsMap(psonNotes, pronNotes, ssonNotes, sronNotes, lonNotes);
+		m_routingMap[9] = new RoutingsMap(psonPC, pronPC, ssonPC, sronPC, null);
 	}
 
 	public Setup() {
@@ -236,14 +237,10 @@ public class Setup extends Composite {
 		fillRadioButtons(developerOptionsOn, developerOptionsOff, LocalSettings.ShowDeveloperOptions.options);
 		fillRadioButtons(highlightChangedOn, highlightChangedOff, DeviceSettings.HighlightChanged.options);
 		fillRadioButtons(syncPartsOn, syncPartsOff, DeviceSettings.SyncPartsAcrossUI.options);
-		fillRadioButtons(receivePCOn, receivePCOff, MidiSettings.OnOffOption.options);
-		fillRadioButtons(receiveNotesOn, receiveNotesOff, MidiSettings.OnOffOption.options);
-		fillRadioButtons(sendPCOn, sendPCOff, MidiSettings.OnOffOption.options);
-		fillRadioButtons(sendNotesOn, sendNotesOff, MidiSettings.OnOffOption.options);
-		fillRadioButtons(localNotesOn, localNotesOff, MidiSettings.OnOffOption.options);
 		fillRadioButtons(highVeloCCOn, highVeloCCOff, MidiSettings.OnOffOption.options);
 		fillRadioButtons(enable14Bit, disable14Bit, MidiSettings.OnOffOption.options);
 		fillRadioButtons(autoStartRecordOn, autoStartRecordOff, MidiSettings.OnOffOption.options);
+		fillRadioButtons(globalLocalOn, globalLocalOff, MidiSettings.OnOffOption.options);
 	}
 
 	public void connectEventHandlers() {
@@ -320,20 +317,9 @@ public class Setup extends Composite {
 
 		midiReceiveChannel.addChangeHandler(e -> settings.setReceiveMidiChannel(MidiReceiveChannel.values()[midiReceiveChannel.getSelectedIndex()]));
 		midiReceiveChannelSplit.addChangeHandler(e -> settings.setReceiveMidiChannelSplit(MidiReceiveChannelSplit.values()[midiReceiveChannelSplit.getSelectedIndex()]));
-		receivePCOn.addValueChangeHandler(e -> settings.setReceiveProgramChanges(BooleanValues.on));
-		receivePCOff.addValueChangeHandler(e -> settings.setReceiveProgramChanges(BooleanValues.off));
-		receiveNotesOn.addValueChangeHandler(e -> settings.setReceiveNotes(BooleanValues.on));
-		receiveNotesOff.addValueChangeHandler(e -> settings.setReceiveNotes(BooleanValues.off));
 
 		midiSendChannel.addChangeHandler(e -> settings.setSendChannel(MidiSendChannel.values()[midiSendChannel.getSelectedIndex()]));
 		midiSendChannelSplit.addChangeHandler(e -> settings.setSendChannelSplit(MidiSendChannelSplit.values()[midiSendChannelSplit.getSelectedIndex()]));
-		sendPCOn.addValueChangeHandler(e -> settings.setSendProgramChanges(BooleanValues.on));
-		sendPCOff.addValueChangeHandler(e -> settings.setSendProgramChanges(BooleanValues.off));
-		sendNotesOn.addValueChangeHandler(e -> settings.setSendNotes(BooleanValues.on));
-		sendNotesOff.addValueChangeHandler(e -> settings.setSendNotes(BooleanValues.off));
-
-		localNotesOn.addValueChangeHandler(e -> settings.setLocalNotes(BooleanValues.on));
-		localNotesOff.addValueChangeHandler(e -> settings.setLocalNotes(BooleanValues.off));
 
 		pedal1Mapping.addChangeHandler(e -> settings.setPedal1Mapping(PedalCCMapping.values()[pedal1Mapping.getSelectedIndex()]));
 		pedal2Mapping.addChangeHandler(e -> settings.setPedal2Mapping(PedalCCMapping.values()[pedal2Mapping.getSelectedIndex()]));
@@ -360,6 +346,11 @@ public class Setup extends Composite {
 
 		classicMidi.addClickHandler(e -> settings.resetToClassicMidi());
 		highResMidi.addClickHandler(e -> settings.resetToHighResMidi());
+		routingsOn.addClickHandler(e -> settings.resetRoutings(true));
+		routingsOff.addClickHandler(e -> settings.resetRoutings(false));
+
+		globalLocalOn.addValueChangeHandler(e -> settings.setGlobalLocal(BooleanValues.on));
+		globalLocalOff.addValueChangeHandler(e -> settings.setGlobalLocal(BooleanValues.off));
 
 		updateFile.addChangeHandler(new ChangeHandler() {
 
@@ -385,20 +376,22 @@ public class Setup extends Composite {
 		});
 
 
-		int hwSource = 0;
-		for(HWEnableMap m: m_hwEnableMap) {
+		int entryIndex = 0;
+		for(RoutingsMap m: m_routingMap) {
 			for(int i = 0; i < 5; i++) {
 				final int currentSettingIndex = i;
-				final int currentHWSource = hwSource;
+				final int currentEntryIndex = entryIndex;
 				CheckBox ret = m.getCheckBoxForOptionIndex(i);
 
-				ret.addValueChangeHandler(e -> {
-					final int hw = currentHWSource;
-					final int xx = currentSettingIndex;
-					settings.setHWSourceEnable(hw, xx, e.getValue());
-				});
+				if(ret != null) {
+					ret.addValueChangeHandler(e -> {
+						final int hw = currentEntryIndex;
+						final int xx = currentSettingIndex;
+						settings.setRoutingAspect(hw, xx, e.getValue());
+					});	
+				}
 			}
-			hwSource++;
+			entryIndex++;
 		}
 	}
 
@@ -558,20 +551,8 @@ public class Setup extends Composite {
 	private void applyPresenter(MidiSettings t) {
 		midiReceiveChannel.setSelectedIndex(t.receiveChannel.selected);
 		midiReceiveChannelSplit.setSelectedIndex(t.receiveChannelSplit.selected);
-		receiveNotesOn.setValue(t.receiveNotes.value);
-		receiveNotesOff.setValue(!t.receiveNotes.value);
-		receivePCOn.setValue(t.receiveProgramChanges.value);
-		receivePCOff.setValue(!t.receiveProgramChanges.value);
-
 		midiSendChannel.setSelectedIndex(t.sendChannel.selected);
 		midiSendChannelSplit.setSelectedIndex(t.sendChannelSplit.selected);
-		sendPCOn.setValue(t.sendProgramChanges.value);
-		sendPCOff.setValue(!t.sendProgramChanges.value);
-		sendNotesOn.setValue(t.sendNotes.value);
-		sendNotesOff.setValue(!t.sendNotes.value);
-		
-		localNotesOn.setValue(t.localNotes.value);
-		localNotesOff.setValue(!t.localNotes.value);
 
 		pedal1Mapping.setSelectedIndex(t.pedalMapping1.selected);
 		pedal2Mapping.setSelectedIndex(t.pedalMapping2.selected);
@@ -590,16 +571,19 @@ public class Setup extends Composite {
 		
 		
 		int hwSource = 0;
-		for(HWEnableMap m: m_hwEnableMap) {
-			for(int i = 0; i < 5; i++) {
-				final int currentSettingIndex = i;
+		for(RoutingsMap routing: m_routingMap) {
+			for(int aspect = 0; aspect < RoutingEntry.numAspects; aspect++) {
+				final int currentSettingIndex = aspect;
 				final int currentHWSource = hwSource;
 
-				CheckBox ret = m.getCheckBoxForOptionIndex(i);
+				CheckBox ret = routing.getCheckBoxForOptionIndex(aspect);
 
-				boolean state = t.hwControlEnables.hws[currentHWSource].states[currentSettingIndex].value;
+				boolean state = t.routingSetting.routings[currentHWSource].states[currentSettingIndex].value;
+				
+				if(ret != null) {
+					ret.setValue(state);
+				}
 
-				ret.setValue(state);
 			}
 			hwSource++;
 		}

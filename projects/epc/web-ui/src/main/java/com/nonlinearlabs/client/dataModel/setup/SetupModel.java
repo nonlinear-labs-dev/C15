@@ -4,7 +4,7 @@ import com.nonlinearlabs.client.Tracer;
 import com.nonlinearlabs.client.dataModel.BooleanDataModelEntity;
 import com.nonlinearlabs.client.dataModel.EnumDataModelEntity;
 import com.nonlinearlabs.client.dataModel.IntegerDataModelEntity;
-import com.nonlinearlabs.client.dataModel.HardwareSourceEnableSettingsDataModelEntity;
+import com.nonlinearlabs.client.dataModel.RoutingAspectsDataModelEntity;
 import com.nonlinearlabs.client.dataModel.StringDataModelEntity;
 import com.nonlinearlabs.client.dataModel.ValueDataModelEntity;
 import com.nonlinearlabs.client.presenters.DeviceSettings.Pedal;
@@ -362,17 +362,11 @@ public class SetupModel {
 		public BooleanDataModelEntity syncSplit = new BooleanDataModelEntity();
 
 		//Midi below
-		public BooleanDataModelEntity localNotes = new BooleanDataModelEntity();
-	
-		public BooleanDataModelEntity sendNotes = new BooleanDataModelEntity();
-		public BooleanDataModelEntity sendProgramChanges = new BooleanDataModelEntity();
 		public MidiSendChannelSetting sendChannel = new MidiSendChannelSetting();
 		public MidiSendChannelSplitSetting sendChannelSplit = new MidiSendChannelSplitSetting();
-
-		public BooleanDataModelEntity receiveNotes = new BooleanDataModelEntity();
-		public BooleanDataModelEntity receiveProgramChanges = new BooleanDataModelEntity();
 		public MidiReceiveChannelSetting receiveChannel = new MidiReceiveChannelSetting();
 		public MidiReceiveChannelSplitSetting receiveChannelSplit = new MidiReceiveChannelSplitSetting();
+		
 		public MidiReceiveVelocityCurveSetting receiveVelocityCurve = new MidiReceiveVelocityCurveSetting();
 		public MidiReceiveAftertouchCurve receiveAftertouchCurve = new MidiReceiveAftertouchCurve();
 
@@ -388,7 +382,8 @@ public class SetupModel {
 		public BooleanDataModelEntity enable14BitSupport = new BooleanDataModelEntity();
 		public BooleanDataModelEntity autoStartRecorder = new BooleanDataModelEntity();
 
-		public HardwareSourceEnableSettingsDataModelEntity hwSourceMapping = new HardwareSourceEnableSettingsDataModelEntity();
+		public RoutingAspectsDataModelEntity routingAspects = new RoutingAspectsDataModelEntity();
+		public BooleanDataModelEntity globalLocalEnable = new BooleanDataModelEntity();
 	};
 
 	public class LocalSettings {

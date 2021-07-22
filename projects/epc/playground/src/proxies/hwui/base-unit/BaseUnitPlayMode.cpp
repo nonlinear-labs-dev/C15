@@ -13,8 +13,8 @@
 #include <use-cases/SettingsUseCases.h>
 
 BaseUnitPlayMode::BaseUnitPlayMode()
-    : m_modeButtonHandler(std::bind(&BaseUnitPlayMode::modeButtonShortPress, this),
-                          std::bind(&BaseUnitPlayMode::modeButtonLongPress, this))
+    : m_modeButtonHandler([] { modeButtonShortPress(); },
+                          [] { modeButtonLongPress(); })
 {
   for(auto b : { Buttons::BUTTON_MINUS, Buttons::BUTTON_PLUS, Buttons::BUTTON_MODE, Buttons::BUTTON_FUNCTION })
     m_buttonStates.emplace(b, false);
@@ -113,8 +113,7 @@ bool BaseUnitPlayMode::checkPanicAffenGriff(Buttons b, bool state)
   m_buttonStates[b] = state;
   if(std::all_of(m_buttonStates.cbegin(), m_buttonStates.cend(), [](auto x) { return x.second == true; }))
   {
-    SettingsUseCases useCase(Application::get().getSettings());
-    useCase.panicAudioEngine();
+    SettingsUseCases::panicAudioEngine();
     return true;
   }
   return false;

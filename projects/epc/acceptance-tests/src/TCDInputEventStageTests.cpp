@@ -3,24 +3,21 @@
 #include <synth/C15Synth.h>
 #include <mock/MockDSPHosts.h>
 #include <testing/TestHelper.h>
+#include <mock/TCDHelpers.h>
 
 MidiRuntimeOptions createTCDSettings()
 {
   MidiRuntimeOptions options;
-  nltools::msg::Setting::MidiSettingsMessage msg;
-  msg.receiveNotes = true;
-  msg.receiveProgramChange = true;
+  using tMSG = nltools::msg::Setting::MidiSettingsMessage;
+  tMSG msg;
+
   msg.receiveChannel = MidiReceiveChannel::Omni;
   msg.receiveSplitChannel = MidiReceiveChannelSplit::Omni;
 
-  msg.sendProgramChange = true;
-  msg.sendNotes = true;
   msg.sendChannel = MidiSendChannel::CH_1;
   msg.sendSplitChannel = MidiSendChannelSplit::CH_1;
 
-  msg.localNotes = true;
-
-  msg.hwMappings = TestHelper::createFullMappings(true);
+  msg.routings = TestHelper::createFullMappings(true);
 
   msg.bendercc = BenderCC::Pitchbend;
   msg.aftertouchcc = AftertouchCC::ChannelPressure;
@@ -34,12 +31,6 @@ MidiRuntimeOptions createTCDSettings()
   options.update(msg);
   return options;
 }
-
-constexpr static uint8_t BASE_TCD = 0b11100000;
-constexpr static uint8_t TCD_KEY_POS = 13;
-constexpr static uint8_t TCD_KEY_DOWN = 14;
-constexpr static uint8_t TCD_KEY_UP = 15;
-constexpr static uint8_t TCD_UNUSED_VAL = 0x00;
 
 class MockTCDDecoder : public TCDDecoder
 {
@@ -84,12 +75,13 @@ TEST_CASE("TCD in leads to key down and send midi", "[MIDI][TCD]")
   PassOnKeyDownHost dsp { 17, 1.0, VoiceGroup::I };
   auto settings = createTCDSettings();
   InputEventStage eventStage { &dsp, &settings, [] {},
-                               [&](nltools::msg::Midi::SimpleMessage msg) { sendMessages.push_back(msg); }, [](auto) {}};
+                               [&](nltools::msg::Midi::SimpleMessage msg) { sendMessages.push_back(msg); },
+                               [](auto) {} };
 
   WHEN("Keypos and KeyDown is received")
   {
-    eventStage.onTCDMessage({ BASE_TCD | TCD_KEY_POS, TCD_UNUSED_VAL, 17 });
-    eventStage.onTCDMessage({ BASE_TCD | TCD_KEY_DOWN, 127, 127 });
+    eventStage.onTCDMessage(TCD_HELPER::createKeyPosEvent(17));
+    eventStage.onTCDMessage(TCD_HELPER::createKeyDownEvent(127, 127));
 
     THEN("DSP got notified")
     {
@@ -124,12 +116,13 @@ TEST_CASE("TCD in leads to key up and send midi", "[MIDI][TCD]")
   PassOnKeyUpHost dsp { 17, 1.0, VoiceGroup::I };
   auto settings = createTCDSettings();
   InputEventStage eventStage { &dsp, &settings, [] {},
-                               [&](nltools::msg::Midi::SimpleMessage msg) { sendMessages.push_back(msg); } , [](auto) {}};
+                               [&](nltools::msg::Midi::SimpleMessage msg) { sendMessages.push_back(msg); },
+                               [](auto) {} };
 
   WHEN("Keypos and KeyUp is received")
   {
-    eventStage.onTCDMessage({ BASE_TCD | TCD_KEY_POS, TCD_UNUSED_VAL, 17 });
-    eventStage.onTCDMessage({ BASE_TCD | TCD_KEY_UP, 127, 127 });
+    eventStage.onTCDMessage(TCD_HELPER::createKeyPosEvent(17));
+    eventStage.onTCDMessage(TCD_HELPER::createKeyUpEvent(127, 127));
 
     THEN("DSP got notified")
     {
@@ -174,7 +167,8 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
   dsp.setType(SoundType::Single);
   auto settings = createTCDSettings();
   InputEventStage eventStage { &dsp, &settings, [] {},
-                               [&](nltools::msg::Midi::SimpleMessage msg) { sendMessages.push_back(msg); } , [](auto) {}};
+                               [&](nltools::msg::Midi::SimpleMessage msg) { sendMessages.push_back(msg); },
+                               [](auto) {} };
   const auto sixteenThousand = 0b11111010000000;
 
   WHEN("HW Change Received")
@@ -182,7 +176,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
     THEN("DSP got notified")
     {
-      eventStage.onTCDMessage({ BASE_TCD | Pedal1, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+      eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Pedal1));
       CHECK(dsp.didReceiveHW());
     }
 
@@ -193,8 +187,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
       WHEN("Pedal value is received from Internal")
       {
-        eventStage.onTCDMessage(
-            { BASE_TCD | Pedal1, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+        eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Pedal1));
         THEN("No midi got send")
         {
           CHECK(sendMessages.empty());
@@ -210,8 +203,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
       WHEN("Bender value is received from Internal")
       {
-        eventStage.onTCDMessage(
-            { BASE_TCD | Bender, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+        eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Bender));
         THEN("No midi got send")
         {
           CHECK(sendMessages.empty());
@@ -227,8 +219,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
       WHEN("Ribbon value is received from Internal")
       {
-        eventStage.onTCDMessage(
-            { BASE_TCD | Ribbon1, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+        eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Ribbon1));
         THEN("No midi got send")
         {
           CHECK(sendMessages.empty());
@@ -244,8 +235,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
 
       WHEN("Aftertouch value is received from Internal")
       {
-        eventStage.onTCDMessage(
-            { BASE_TCD | Aftertouch, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+        eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Aftertouch));
         THEN("No midi got send")
         {
           CHECK(sendMessages.empty());
@@ -258,7 +248,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
       settings.setPedal1(PedalCC::CC01);
       settings.setSendSplitChannel(MidiSendChannelSplit::CH_2);
       settings.set14BitSupportEnabled(true);
-      eventStage.onTCDMessage({ BASE_TCD | Pedal1, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+      eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Pedal1));
 
       THEN("MIDI got send")
       {
@@ -278,7 +268,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
       settings.setPedal1(PedalCC::CC01);
       settings.setSendSplitChannel(MidiSendChannelSplit::CH_2);
       settings.set14BitSupportEnabled(false);
-      eventStage.onTCDMessage({ BASE_TCD | Pedal1, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+      eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Pedal1));
 
       THEN("MIDI got send")
       {
@@ -294,7 +284,7 @@ TEST_CASE("TCD in leads to HW Change and send midi", "[MIDI][TCD]")
     {
       settings.setPedal1(PedalCC::CC02);
       settings.setSendSplitChannel(MidiSendChannelSplit::CH_2);
-      eventStage.onTCDMessage({ BASE_TCD | Pedal1, (uint8_t)(sixteenThousand >> 7), (uint8_t)(sixteenThousand & 127) });
+      eventStage.onTCDMessage(TCD_HELPER::createFullPressureHWEvent(TCD_HELPER::TCD_HW_IDS::Pedal1));
 
       THEN("MIDI got send")
       {

@@ -207,7 +207,7 @@ void C15Synth::syncPlayground()
 
   if(m_inputEventStage.getAndResetKeyBedStatus())
   {
-    send(EndPoint::Playground, Keyboard::ActionHappened {});
+    send(EndPoint::Playground, Keyboard::NoteEventHappened {});
   }
 
   auto engineHWSourceValues = m_dsp->getHWSourceValues();

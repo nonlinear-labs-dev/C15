@@ -20,8 +20,8 @@ class BaseUnitPlayMode : public UsageMode
   void setupBaseUnitUIModeButton();
   void setupBaseUnitMinusButton();
   void setupBaseUnitPlusButton();
-  void modeButtonShortPress();
-  void modeButtonLongPress();
+  static void modeButtonShortPress();
+  static void modeButtonLongPress();
 
   std::unordered_map<Buttons, bool> m_buttonStates;
   NoteShiftStateMachine m_noteShiftState;

@@ -1,7 +1,5 @@
 package com.nonlinearlabs.client.presenters;
-
-import com.nonlinearlabs.client.Tracer;
-import com.nonlinearlabs.client.dataModel.HardwareSourceEnableSettings;
+import com.nonlinearlabs.client.dataModel.RoutingAspectsSetting;
 
 public class MidiSettings {
 
@@ -95,40 +93,37 @@ public class MidiSettings {
         public int selected = 0;
     }
 
-    static public class HWControlEnable {
-        public HWControlEnable() {
-            for(int i = 0; i < 5; i++) {
+    static public class RoutingEntry {
+        public static final int numAspects = 5;
+        public RoutingEntry() {
+            for(int i = 0; i < numAspects; i++) {
                 states[i] = new OnOffOption();
             }
         }
 
-        public OnOffOption states[] = new OnOffOption[5];
+        public OnOffOption states[] = new OnOffOption[numAspects];
     }
 
-    static public class HWSourceEnableSettings {
-        HWSourceEnableSettings() {
-            for(int i = 0; i < 8; i++) {
-                hws[i] = new HWControlEnable();
+    static public class RoutingSetting {
+        public static final int numRoutings = 10;
+        RoutingSetting() {
+            for(int i = 0; i < numRoutings; i++) {
+                routings[i] = new RoutingEntry();
             }
         }
-        public HWControlEnable hws[] = new HWControlEnable[8]; 
+        public RoutingEntry routings[] = new RoutingEntry[numRoutings]; 
     }
-    
 
-    //Local
-    public OnOffOption localNotes = new OnOffOption();
+    //Global
+    public OnOffOption globalLocalEnable = new OnOffOption();
 
-    //Send
+    //Channels
     public SendChannel sendChannel = new SendChannel();
     public SendChannelSplit sendChannelSplit = new SendChannelSplit();
-    public OnOffOption sendProgramChanges = new OnOffOption();
-    public OnOffOption sendNotes = new OnOffOption();
-
-    //Receive
     public ReceiveChannel receiveChannel = new ReceiveChannel();
     public ReceiveChannelSplit receiveChannelSplit = new ReceiveChannelSplit();
-    public OnOffOption receiveProgramChanges = new OnOffOption();
-    public OnOffOption receiveNotes = new OnOffOption();
+
+    //Unused
     public VelocityCurve receiveVelocityCurve = new VelocityCurve();
     public AftertouchCurve receiveAftertouchCurve = new AftertouchCurve();
 
@@ -143,16 +138,19 @@ public class MidiSettings {
     public AftertouchMapping aftertouchMapping = new AftertouchMapping();
     public OnOffOption highVelocityCC = new OnOffOption();
     public OnOffOption enable14BitCC = new OnOffOption();
-    public HWSourceEnableSettings hwControlEnables = new HWSourceEnableSettings();
+
+    //Routing
+    public RoutingSetting routingSetting = new RoutingSetting();
 
     //FLAC
     public OnOffOption autoStartRecorder = new OnOffOption();
 
-    public static HWSourceEnableSettings convert(HardwareSourceEnableSettings s) {
-        HWSourceEnableSettings ret = new HWSourceEnableSettings();
-        for(int hw = 0; hw < 8; hw++) {
-            for(int m = 0; m < 5; m++) {
-                ret.hws[hw].states[m].value = s.m_data[hw][m];
+    public static RoutingSetting convert(RoutingAspectsSetting s) {
+        RoutingSetting ret = new RoutingSetting();
+        for(int routing = 0; routing < RoutingSetting.numRoutings; routing++) {
+            for(int aspect = 0; aspect < RoutingEntry.numAspects; aspect++) {
+                boolean state = s.m_data[routing][aspect];
+                ret.routings[routing].states[aspect].value = state;
             }
         }
         return ret;

@@ -25,7 +25,7 @@ TEST_CASE("HW Source Enable Tests")
 
   //prepare default settings
 
-  auto initSettings = [&](const std::vector<nltools::msg::Setting::MidiSettingsMessage::MAPPING_INDEX>& aspects)
+  auto initSettings = [&](const std::vector<nltools::msg::Setting::MidiSettingsMessage::RoutingAspect>& aspects)
   {
     nltools::msg::Setting::MidiSettingsMessage msg;
     msg.pedal1cc = PedalCC::CC01;
@@ -45,11 +45,11 @@ TEST_CASE("HW Source Enable Tests")
     msg.highVeloCCEnabled = false;
     msg.highResCCEnabled = false;
 
-    msg.hwMappings = TestHelper::createFullMappings(false);
+    msg.routings = TestHelper::createFullMappings(false);
 
     for(auto aspect : aspects)
     {
-      TestHelper::updateMappings(msg.hwMappings, aspect, true);
+      TestHelper::updateMappings(msg.routings, aspect, true);
     }
 
     options.update(msg);
@@ -65,7 +65,7 @@ TEST_CASE("HW Source Enable Tests")
   constexpr MidiEvent pedal1PressureMIDIEvent = { 0xB0, 1, 69 };
   constexpr MidiEvent pedal1PressureMIDIEvent_split = { 0xB1, 1, 69 };
 
-  typedef nltools::msg::Setting::MidiSettingsMessage::MAPPING_INDEX tMAPPING_INDEX;
+  typedef nltools::msg::Setting::MidiSettingsMessage::RoutingAspect tMAPPING_INDEX;
 
   WHEN("none")
   {
@@ -218,8 +218,8 @@ TEST_CASE("Aftertouch & Bender Enable/Disable Tests")
 
   //prepare default settings
 
-  auto initSettings = [&](const std::vector<nltools::msg::Setting::MidiSettingsMessage::HW_INDEX>& hws,
-                          const std::vector<nltools::msg::Setting::MidiSettingsMessage::MAPPING_INDEX>& aspects)
+  auto initSettings = [&](const std::vector<nltools::msg::Setting::MidiSettingsMessage::RoutingIndex>& idx,
+                          const std::vector<nltools::msg::Setting::MidiSettingsMessage::RoutingAspect>& aspects)
   {
     nltools::msg::Setting::MidiSettingsMessage msg;
     msg.pedal1cc = PedalCC::CC01;
@@ -239,13 +239,13 @@ TEST_CASE("Aftertouch & Bender Enable/Disable Tests")
     msg.highVeloCCEnabled = false;
     msg.highResCCEnabled = false;
 
-    msg.hwMappings = TestHelper::createFullMappings(false);
+    msg.routings = TestHelper::createFullMappings(false);
 
-    for(auto hw : hws)
+    for(auto i : idx)
     {
       for(auto aspect : aspects)
       {
-        TestHelper::updateMappingForHW(static_cast<int>(hw), msg.hwMappings, aspect, true);
+        TestHelper::updateMappingForHW(msg.routings, i, aspect, true);
       }
     }
 
@@ -263,8 +263,8 @@ TEST_CASE("Aftertouch & Bender Enable/Disable Tests")
   constexpr MidiEvent fullPressureTCDEventBender
       = { BASE_TCD | Bender, (uint8_t) (sixteenThousand >> 7), (uint8_t) (sixteenThousand & 127) };
 
-  typedef nltools::msg::Setting::MidiSettingsMessage::MAPPING_INDEX tMAPPING_INDEX;
-  typedef nltools::msg::Setting::MidiSettingsMessage::HW_INDEX tHW_INDEX;
+  typedef nltools::msg::Setting::MidiSettingsMessage::RoutingAspect tMAPPING_INDEX;
+  typedef nltools::msg::Setting::MidiSettingsMessage::RoutingIndex tHW_INDEX;
 
   WHEN("Aftertouch")
   {

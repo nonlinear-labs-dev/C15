@@ -24,7 +24,7 @@ TEST_CASE("Pitchbend Mappings", "[MIDI][TCD]")
   //set settings to not interfere with CC01
   {
     nltools::msg::Setting::MidiSettingsMessage msg;
-    msg.hwMappings = TestHelper::createFullMappings(true);
+    msg.routings = TestHelper::createFullMappings(true);
     msg.receiveChannel = MidiReceiveChannel::CH_1;
     msg.sendChannel = MidiSendChannel::CH_1;
     msg.pedal1cc = PedalCC::CC02;

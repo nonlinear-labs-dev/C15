@@ -6,7 +6,7 @@
 #include <device-settings/midi/mappings/BenderCCMapping.h>
 #include <device-settings/midi/mappings/Enable14BitSupport.h>
 #include <device-settings/midi/mappings/EnableHighVelocityCC.h>
-#include <device-settings/midi/HardwareControlEnables.h>
+#include <device-settings/midi/RoutingSettings.h>
 #include <nltools/messaging/Message.h>
 
 SettingsUseCases::SettingsUseCases(Settings *s)
@@ -64,14 +64,14 @@ void SettingsUseCases::setMappingsToClassicMidi()
   be->set(BenderCC::Pitchbend);
 }
 
-void SettingsUseCases::updateHWSourceEnable(int hw, int aspect, bool value)
+void SettingsUseCases::updateRoutingAspect(int entry, int aspect, bool value)
 {
-  if(auto s = m_settings->getSetting<HardwareControlEnables>())
+  if(auto s = m_settings->getSetting<RoutingSettings>())
   {
-    if(hw < (int) HardwareControlEnables::tHWIdx::LENGTH && aspect < (int) HardwareControlEnables::tSettingIdx::LENGTH)
+    if(entry < (int) RoutingSettings::tRoutingIndex::LENGTH && aspect < (int) RoutingSettings::tAspectIndex::LENGTH)
     {
-      s->setState(static_cast<HardwareControlEnables::tHWIdx>(hw),
-                  static_cast<HardwareControlEnables::tSettingIdx>(aspect), value);
+      s->setState(static_cast<RoutingSettings::tRoutingIndex>(entry),
+                  static_cast<RoutingSettings::tAspectIndex>(aspect), value);
     }
   }
 }
@@ -81,4 +81,12 @@ void SettingsUseCases::panicAudioEngine()
   using namespace nltools::msg;
   PanicAudioEngine msg {};
   send<PanicAudioEngine>(EndPoint::AudioEngine, msg);
+}
+
+void SettingsUseCases::setAllRoutingEntries(bool state)
+{
+  if(auto s = m_settings->getSetting<RoutingSettings>())
+  {
+    s->setAllValues(state);
+  }
 }

@@ -18,7 +18,7 @@ WiFiManager::WiFiManager()
 
   nltools::msg::receive<nltools::msg::WiFi::EnableWiFiMessage>(nltools::msg::EndPoint::BeagleBone,
                                                                [this](const auto& msg) {
-                                                                 if(msg.m_enable)
+                                                                 if(msg.m_state)
                                                                    enableAndStartAP();
                                                                  else
                                                                    disableAndStopAP();

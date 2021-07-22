@@ -28,6 +28,7 @@ namespace HWID
 class InputEventStage
 {
  public:
+  using RoutingIndex = nltools::msg::Setting::MidiSettingsMessage::RoutingIndex;
   using MIDIOutType = nltools::msg::Midi::SimpleMessage;
   using MIDIOut = std::function<void(MIDIOutType)>;
   using HWChangedNotification = std::function<void()>;

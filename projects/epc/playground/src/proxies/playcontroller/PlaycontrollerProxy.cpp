@@ -24,7 +24,6 @@
 #include <device-settings/Settings.h>
 #include <filesystem>
 #include <use-cases/IncrementalChangerUseCases.h>
-#include <device-settings/midi/local/LocalControllersSetting.h>
 
 PlaycontrollerProxy::PlaycontrollerProxy()
     : m_lastTouchedRibbon(HardwareSourcesGroup::getUpperRibbonParameterID().getNumber())
@@ -38,6 +37,10 @@ PlaycontrollerProxy::PlaycontrollerProxy()
 
   nltools::msg::receive<nltools::msg::PlaycontrollerMessage>(
       nltools::msg::EndPoint::Playground, sigc::mem_fun(this, &PlaycontrollerProxy::onPlaycontrollerMessage));
+
+  nltools::msg::receive<nltools::msg::Keyboard::NoteEventHappened>(
+      nltools::msg::EndPoint::Playground,
+      sigc::hide(sigc::mem_fun(this, &PlaycontrollerProxy::notifyKeyBedActionHappened)));
 }
 
 PlaycontrollerProxy::~PlaycontrollerProxy()
@@ -48,19 +51,19 @@ PlaycontrollerProxy::~PlaycontrollerProxy()
 void PlaycontrollerProxy::onPlaycontrollerMessage(const nltools::msg::PlaycontrollerMessage &msg)
 {
   gsize numBytes = 0;
-  const uint8_t *buffer = (const uint8_t *) (msg.message->get_data(numBytes));
+  const auto *buffer = (const uint8_t *) (msg.message->get_data(numBytes));
 
   if(numBytes > 0)
   {
     if(m_msgParser->parse(buffer, numBytes) == 0)
     {
-      onMessageReceived(std::move(m_msgParser->getMessage()));
+      onMessageReceived(m_msgParser->getMessage());
       m_msgParser.reset(new MessageParser());
     }
   }
 }
 
-sigc::connection PlaycontrollerProxy::onRibbonTouched(sigc::slot<void, int> s)
+sigc::connection PlaycontrollerProxy::onRibbonTouched(const sigc::slot<void, int> &s)
 {
   return m_signalRibbonTouched.connectAndInit(s, m_lastTouchedRibbon);
 }
@@ -70,11 +73,11 @@ int PlaycontrollerProxy::getLastTouchedRibbonParameterID() const
   return m_lastTouchedRibbon;
 }
 
-gint16 PlaycontrollerProxy::separateSignedBitToComplementary(uint16_t v) const
+gint16 PlaycontrollerProxy::separateSignedBitToComplementary(uint16_t v)
 {
   gint16 sign = (v & 0x8000) ? -1 : 1;
-  gint16 value = (v & 0x7FFF);
-  return sign * value;
+  auto value = static_cast<gint16>(v & 0x7FFF);
+  return static_cast<gint16>(sign * value);
 }
 
 void PlaycontrollerProxy::onMessageReceived(const MessageParser::NLMessage &msg)
@@ -162,7 +165,8 @@ void PlaycontrollerProxy::sendCalibrationData()
 
 Parameter *PlaycontrollerProxy::findPhysicalControlParameterFromPlaycontrollerHWSourceID(uint16_t id) const
 {
-  auto paramId = [](uint16_t id) {
+  auto paramId = [](uint16_t id)
+  {
     switch(id)
     {
       case HW_SOURCE_ID_PEDAL_1:
@@ -228,33 +232,37 @@ void PlaycontrollerProxy::onRelativeEditControlMessageReceived(Parameter *p, gin
 {
   m_throttledRelativeParameterAccumulator += value;
 
-  m_throttledRelativeParameterChange.doTask([this, p]() {
-    if(!m_relativeEditControlMessageChanger || !m_relativeEditControlMessageChanger->isManaging(p->getValue()))
-      m_relativeEditControlMessageChanger = p->getValue().startUserEdit(Initiator::EXPLICIT_PLAYCONTROLLER);
+  m_throttledRelativeParameterChange.doTask(
+      [this, p]()
+      {
+        if(!m_relativeEditControlMessageChanger || !m_relativeEditControlMessageChanger->isManaging(p->getValue()))
+          m_relativeEditControlMessageChanger = p->getValue().startUserEdit(Initiator::EXPLICIT_PLAYCONTROLLER);
 
-    auto amount = m_throttledRelativeParameterAccumulator / (p->isBiPolar() ? 8000.0 : 16000.0);
-    IncrementalChangerUseCases useCase(m_relativeEditControlMessageChanger.get());
-    useCase.changeBy(amount, false);
-    m_throttledRelativeParameterAccumulator = 0;
-  });
+        auto amount = m_throttledRelativeParameterAccumulator / (p->isBiPolar() ? 8000.0 : 16000.0);
+        IncrementalChangerUseCases useCase(m_relativeEditControlMessageChanger.get());
+        useCase.changeBy(amount, false);
+        m_throttledRelativeParameterAccumulator = 0;
+      });
 }
 
 void PlaycontrollerProxy::onAbsoluteEditControlMessageReceived(Parameter *p, gint16 value)
 {
   m_throttledAbsoluteParameterValue = value;
 
-  m_throttledAbsoluteParameterChange.doTask([this, p]() {
-    ParameterUseCases useCase(p);
+  m_throttledAbsoluteParameterChange.doTask(
+      [this, p]()
+      {
+        ParameterUseCases useCase(p);
 
-    if(p->isBiPolar())
-    {
-      useCase.setControlPosition((m_throttledAbsoluteParameterValue - 8000.0) / 8000.0);
-    }
-    else
-    {
-      useCase.setControlPosition(m_throttledAbsoluteParameterValue / 16000.0);
-    }
-  });
+        if(p->isBiPolar())
+        {
+          useCase.setControlPosition((m_throttledAbsoluteParameterValue - 8000.0) / 8000.0);
+        }
+        else
+        {
+          useCase.setControlPosition(m_throttledAbsoluteParameterValue / 16000.0);
+        }
+      });
 }
 
 void PlaycontrollerProxy::notifyRibbonTouch(int ribbonsParameterID)
@@ -351,7 +359,7 @@ sigc::connection PlaycontrollerProxy::onPlaycontrollerSoftwareVersionChanged(con
   return m_signalPlaycontrollerSoftwareVersionChanged.connectAndInit(s, m_playcontrollerSoftwareVersion);
 }
 
-sigc::connection PlaycontrollerProxy::onLastKeyChanged(sigc::slot<void, int> s)
+sigc::connection PlaycontrollerProxy::onLastKeyChanged(sigc::slot<void> s)
 {
   return m_lastKeyChanged.connect(s);
 }
@@ -371,7 +379,7 @@ std::string PlaycontrollerProxy::getPlaycontrollerSoftwareVersion() const
   return (m_playcontrollerSoftwareVersion == -1) ? "-" : std::to_string(m_playcontrollerSoftwareVersion);
 }
 
-void PlaycontrollerProxy::notifyLastKey(gint16 key)
+void PlaycontrollerProxy::notifyKeyBedActionHappened()
 {
-  m_lastKeyChanged.send(key);
+  m_lastKeyChanged.send();
 }

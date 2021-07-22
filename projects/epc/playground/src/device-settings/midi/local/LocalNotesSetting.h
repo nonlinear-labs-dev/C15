@@ -3,6 +3,4 @@
 
 class LocalNotesSetting : public BooleanSetting
 {
- public:
-  explicit LocalNotesSetting(UpdateDocumentContributor& s);
 };

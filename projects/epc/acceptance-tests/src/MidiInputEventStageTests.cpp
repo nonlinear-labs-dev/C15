@@ -7,9 +7,9 @@
 MidiRuntimeOptions createMidiSettings()
 {
   MidiRuntimeOptions options;
-  nltools::msg::Setting::MidiSettingsMessage msg;
-  msg.receiveNotes = true;
-  msg.receiveProgramChange = true;
+  using tMSG = nltools::msg::Setting::MidiSettingsMessage;
+  tMSG msg;
+
   msg.receiveChannel = MidiReceiveChannel::Omni;
   msg.receiveSplitChannel = MidiReceiveChannelSplit::Omni;
 
@@ -22,7 +22,7 @@ MidiRuntimeOptions createMidiSettings()
   msg.ribbon1cc = RibbonCC::CC24;
   msg.ribbon2cc = RibbonCC::CC25;
 
-  msg.hwMappings = TestHelper::createFullMappings(true);
+  msg.routings = TestHelper::createFullMappings(true);
 
   options.update(msg);
   return options;

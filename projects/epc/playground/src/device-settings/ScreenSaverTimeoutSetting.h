@@ -10,15 +10,15 @@ class ScreenSaverTimeoutSetting : public Setting, public sigc::trackable
 {
  public:
   explicit ScreenSaverTimeoutSetting(UpdateDocumentContributor& parent);
+
   void load(const Glib::ustring& text, Initiator initiator) override;
   Glib::ustring save() const override;
   Glib::ustring getDisplayString() const override;
-
-  sigc::connection onScreenSaverStateChanged(sigc::slot<void, bool> s);
   void init() override;
 
-  int getSelectedIndex() const;
+  sigc::connection onScreenSaverStateChanged(sigc::slot<void, bool> s);
   const std::vector<Glib::ustring>& getDisplayStrings() const;
+  int getSelectedIndex() const;
 
   void incDec(int inc, ButtonModifiers m);
   void incDec(int inc);
@@ -26,8 +26,6 @@ class ScreenSaverTimeoutSetting : public Setting, public sigc::trackable
   void endAndReschedule();
 
  private:
-  void onKeyBedMessageReceived(const nltools::msg::Keyboard::ActionHappened& m);
-
   void onLayoutInstalled(Layout* l);
 
   Expiration m_expiration;

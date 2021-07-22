@@ -8,8 +8,10 @@ class SettingsUseCases
   void setMappingsToHighRes();
   void setMappingsToClassicMidi();
 
-  void updateHWSourceEnable(int hw, int aspect, bool value);
-  void panicAudioEngine();
+  void updateRoutingAspect(int entry, int aspect, bool value);
+  static void panicAudioEngine();
+
+  void setAllRoutingEntries(bool state);
 
  private:
   Settings* m_settings;

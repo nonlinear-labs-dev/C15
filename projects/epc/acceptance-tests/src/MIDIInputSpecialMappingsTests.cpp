@@ -2,23 +2,17 @@
 #include <synth/input/InputEventStage.h>
 #include <synth/C15Synth.h>
 #include <mock/MockDSPHosts.h>
+#include <testing/TestHelper.h>
 
 MidiRuntimeOptions createSpecialSettings()
 {
   MidiRuntimeOptions options;
   nltools::msg::Setting::MidiSettingsMessage msg;
-  msg.receiveNotes = true;
-  msg.receiveProgramChange = true;
   msg.receiveChannel = MidiReceiveChannel::Omni;
   msg.receiveSplitChannel = MidiReceiveChannelSplit::Omni;
 
-  msg.sendProgramChange = true;
-  msg.sendNotes = true;
   msg.sendChannel = MidiSendChannel::CH_1;
   msg.sendSplitChannel = MidiSendChannelSplit::CH_1;
-
-  msg.localNotes = true;
-
 
   msg.bendercc = BenderCC::Pitchbend;
   msg.aftertouchcc = AftertouchCC::ChannelPressure;
@@ -28,6 +22,8 @@ MidiRuntimeOptions createSpecialSettings()
   msg.pedal4cc = PedalCC::CC23;
   msg.ribbon1cc = RibbonCC::CC24;
   msg.ribbon2cc = RibbonCC::CC25;
+
+  msg.routings = TestHelper::createFullMappings(true);
 
   options.update(msg);
   return options;

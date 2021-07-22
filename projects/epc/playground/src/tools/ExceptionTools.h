@@ -5,6 +5,7 @@
 #include <string>
 #include <stdexcept>
 #include <glibmm/ustring.h>
+#include <nltools/logging/Log.h>
 
 namespace ExceptionTools
 {
@@ -34,6 +35,10 @@ namespace ExceptionTools
       return "Unknown Exception!";
     }
     return "";
+  }
+
+  static void errorLogCurrentException() {
+    nltools::Log::error(handle_eptr(std::current_exception()));
   }
 
   class TemplateException : public std::exception

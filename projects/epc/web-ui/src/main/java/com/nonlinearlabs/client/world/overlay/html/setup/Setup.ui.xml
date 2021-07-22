@@ -324,52 +324,44 @@
 
 			<div ui:field="midiSettings" class="tabcontent midi-tab">
 				<div class="forms-container">
-					<div class="eins-he fl-j-center">
-						<h3 class="uneditable">Receive</h3>
-					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Channel</p>
+							<p>Panic</p>
 						</div>
-						<div class="w40p">
-							<g:ListBox ui:field="midiReceiveChannel">
-							</g:ListBox>
+						<div class="w20p">
+							<g:Button ui:field="panicAE">All Sounds Off</g:Button>
 						</div>
-					</div>
-					<div class="eins-he">
-						<div class="w60p">
-							<p>Split Channel (Part II)</p>
-						</div>
-						<div class="w40p">
-							<g:ListBox ui:field="midiReceiveChannelSplit">
-							</g:ListBox>
+						<div class="w20p">
 						</div>
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Enable Program Change</p>
+							<p>Global Local Enable</p>
 						</div>
 						<div class="w40p mw-fit-content">
-							<g:RadioButton ui:field="receivePCOn" name="rad_recPC" value="true"></g:RadioButton>
-							<g:RadioButton ui:field="receivePCOff" name="rad_recPC" value="false"></g:RadioButton>
+							<g:RadioButton ui:field="globalLocalOn" name="rad_globalLocal" value="true"></g:RadioButton>
+							<g:RadioButton ui:field="globalLocalOff" name="rad_globalLocal" value="false"></g:RadioButton>
 						</div>
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Enable Notes</p>
+							<p>Program Change Bank</p>
 						</div>
-						<div class="w40p mw-fit-content">
-							<g:RadioButton ui:field="receiveNotesOn" name="rad_recNotes" value="true"></g:RadioButton>
-							<g:RadioButton ui:field="receiveNotesOff" name="rad_recNotes" value="false"></g:RadioButton>
+						<div class="w40p">
+							<g:ListBox ui:field="pcBanks">
+							</g:ListBox>
 						</div>
 					</div>
 					<div class="linie"></div>
 					<div class="eins-he fl-j-center">
-						<h3 class="uneditable">Send</h3>
+						<h3 class="uneditable">Channels</h3>
+					</div>
+					<div class="eins-he fl-j-center">
+						<h2>Send</h2>
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Channel</p>
+							<p>Primary Channel</p>
 						</div>
 						<div class="w40p">
 							<g:ListBox ui:field="midiSendChannel">
@@ -385,40 +377,31 @@
 							</g:ListBox>
 						</div>
 					</div>
+					<div class="eins-he fl-j-center">
+						<h2>Receive</h2>
+					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Enable Program Change</p>
+							<p>Primary Channel</p>
 						</div>
-						<div class="w40p mw-fit-content">
-							<g:RadioButton ui:field="sendPCOn" name="rad_sendPC" value="true"></g:RadioButton>
-							<g:RadioButton ui:field="sendPCOff" name="rad_sendPC" value="false"></g:RadioButton>
+						<div class="w40p">
+							<g:ListBox ui:field="midiReceiveChannel">
+							</g:ListBox>
 						</div>
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Enable Notes</p>
+							<p>Split Channel (Part II)</p>
 						</div>
-						<div class="w40p mw-fit-content">
-							<g:RadioButton ui:field="sendNotesOn" name="rad_sendNotes" value="true"></g:RadioButton>
-							<g:RadioButton ui:field="sendNotesOff" name="rad_sendNotes" value="false"></g:RadioButton>
+						<div class="w40p">
+							<g:ListBox ui:field="midiReceiveChannelSplit">
+							</g:ListBox>
 						</div>
 					</div>
+
 					<div class="linie"></div>
 					<div class="eins-he fl-j-center">
-						<h3 class="uneditable">Local</h3>
-					</div>
-					<div class="eins-he">
-						<div class="w60p">
-							<p>Enable Notes</p>
-						</div>
-						<div class="w40p mw-fit-content">
-							<g:RadioButton ui:field="localNotesOn" name="rad_localNotes" value="true"></g:RadioButton>
-							<g:RadioButton ui:field="localNotesOff" name="rad_localNotes" value="false"></g:RadioButton>
-						</div>
-					</div>
-					<div class="linie"></div>
-					<div class="eins-he fl-j-center">
-						<h3 class="uneditable">Mappings</h3>
+						<h3 class="uneditable">Assignments</h3>
 					</div>
 					<div class="eins-he">
 						<div class="w60p">
@@ -510,40 +493,21 @@
 							<g:RadioButton ui:field="disable14Bit" name="rad_14BitCC" value="false"></g:RadioButton>
 						</div>
 					</div>
-					<div class="linie"></div>
 					<div class="eins-he">
 						<div class="w60p">
-							<p>Program Change Bank</p>
-						</div>
-						<div class="w40p">
-							<g:ListBox ui:field="pcBanks">
-							</g:ListBox>
-						</div>
-					</div>
-					<div class="linie"></div>
-					<div class="eins-he">
-						<div class="w60p">
-							<p>Trigger Note Panic</p>
+							<p>Set to Defaults:</p>
 						</div>
 						<div class="w20p">
-							<g:Button ui:field="panicAE">Panic</g:Button>
-						</div>
-						<div class="w20p">
-						</div>
-					</div>
-					<div class="linie"></div>
-					<div class="eins-he">
-						<div class="w60p">
-							<p>Reset Midi Settings to Defaults</p>
-						</div>
-						<div class="w20p">
-							<g:Button ui:field="classicMidi">Classic MIDI</g:Button>
+							<g:Button ui:field="classicMidi">Classic</g:Button>
 						</div>
 						<div class="w20p">
 							<g:Button ui:field="highResMidi">High-Res.</g:Button>
 						</div>
 					</div>
 					<div class="linie"></div>
+					<div class="eins-he fl-j-center">
+						<h3 class="uneditable">Routings</h3>
+					</div>
 					<div class="eins-he table-parent">
 						<table class="midi-table">
 							<thead>
@@ -562,6 +526,42 @@
 								<th>Send</th>
 								<th>Receive</th>
 								<th>Local</th>
+							</tr>
+							<tr>
+								<td>Notes</td>
+								<td>
+									<g:CheckBox ui:field="psonNotes" name="psNotes" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<g:CheckBox ui:field="pronNotes" name="prNotes" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<g:CheckBox ui:field="ssonNotes" name="ssNotes" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<g:CheckBox ui:field="sronNotes" name="srNotes" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<g:CheckBox ui:field="lonNotes" name="lNotes" value="true"></g:CheckBox>
+								</td>
+							</tr>
+							<tr>
+								<td>Prog. Change</td>
+								<td>
+									<g:CheckBox ui:field="psonPC" name="psPC" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<g:CheckBox ui:field="pronPC" name="prPC" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<g:CheckBox ui:field="ssonPC" name="ssPC" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<g:CheckBox ui:field="sronPC" name="srPC" value="true"></g:CheckBox>
+								</td>
+								<td>
+									<p>n.a.</p>
+								</td>
 							</tr>
 							<tr>
 								<td>Pedal1</td>
@@ -789,6 +789,17 @@
 							</tr>
 							</tbody>
 						</table>
+					</div>
+					<div class="eins-he">
+						<div class="w60p">
+							<p>Set to Defaults:</p>
+						</div>
+						<div class="w20p">
+							<g:Button ui:field="routingsOn">All On</g:Button>
+						</div>
+						<div class="w20p">
+							<g:Button ui:field="routingsOff">All Off</g:Button>
+						</div>
 					</div>
 				</div>
 			</div>

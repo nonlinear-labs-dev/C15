@@ -4,6 +4,7 @@
 #include <synth/C15Synth.h>
 #include <AudioEngineOptions.h>
 #include <Toolbox.h>
+#include <testing/TestHelper.h>
 
 TEST_CASE("Load XML Preset into AE")
 {
@@ -12,9 +13,14 @@ TEST_CASE("Load XML Preset into AE")
 
   //Prepare Midi Settings
   {
-    nltools::msg::Setting::MidiSettingsMessage msg;
+    using tMSG = nltools::msg::Setting::MidiSettingsMessage;
+    tMSG msg;
     msg.receiveChannel = MidiReceiveChannel::CH_1;
-    msg.receiveNotes = true;
+    TestHelper::updateMappingForHW(msg.routings,
+                                   tMSG::RoutingIndex::Notes,
+                                   tMSG::RoutingAspect::RECEIVE_PRIMARY,
+                                   true);
+
     synth->onMidiSettingsMessage(msg);
   }
 

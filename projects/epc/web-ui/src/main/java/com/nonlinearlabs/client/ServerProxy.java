@@ -1234,9 +1234,9 @@ public class ServerProxy {
 		queueJob(uri, false);
     }
 
-    public void setHWSourceEnable(int hw, int xx, boolean b) {
-		StaticURI.Path path = new StaticURI.Path("settings", "hw-source-enable-set");
-		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("hw", hw), new StaticURI.KeyValue("aspect", xx), new StaticURI.KeyValue("value", b));
+    public void setRoutingAspect(int hw, int xx, boolean b) {
+		StaticURI.Path path = new StaticURI.Path("settings", "set-routing-aspect");
+		StaticURI uri = new StaticURI(path, new StaticURI.KeyValue("routing-entry", hw), new StaticURI.KeyValue("aspect", xx), new StaticURI.KeyValue("value", b));
 		queueJob(uri, false);
     }
 
@@ -1262,6 +1262,13 @@ public class ServerProxy {
 	public void triggerPanic() {
 		StaticURI.Path path = new StaticURI.Path("settings", "panic-audio-engine");
 		StaticURI uri = new StaticURI(path);
+		queueJob(uri, false);
+	}
+
+    public void resetRoutings(boolean b) {
+		StaticURI.Path path = new StaticURI.Path("settings", "set-all-routings-to-value");
+		StaticURI.KeyValue state = new StaticURI.KeyValue("state", b ? "1" : "0");
+		StaticURI uri = new StaticURI(path, state);
 		queueJob(uri, false);
 	}
 }

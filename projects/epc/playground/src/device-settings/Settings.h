@@ -55,6 +55,7 @@ class Settings : public ContentSection
   bool isLoading() const;
 
  protected:
+  virtual const Glib::ustring &getSettingFileNameToLoadFrom() const;
   void writeDocument(Writer &writer, tUpdateID knownRevision) const override;
 
  private:

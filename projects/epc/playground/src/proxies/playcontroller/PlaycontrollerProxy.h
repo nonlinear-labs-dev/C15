@@ -64,9 +64,9 @@ class PlaycontrollerProxy
 
   void sendPedalSetting(uint16_t pedal, PedalTypes pedalType, bool reset);
 
-  sigc::connection onRibbonTouched(sigc::slot<void, int> s);
+  sigc::connection onRibbonTouched(const sigc::slot<void, int>& s);
   sigc::connection onPlaycontrollerSoftwareVersionChanged(const sigc::slot<void, int> &s);
-  sigc::connection onLastKeyChanged(sigc::slot<void, int> s);
+  sigc::connection onLastKeyChanged(sigc::slot<void> s);
   int getLastTouchedRibbonParameterID() const;
   std::string getPlaycontrollerSoftwareVersion() const;
   Parameter *findPhysicalControlParameterFromPlaycontrollerHWSourceID(uint16_t id) const;
@@ -79,7 +79,7 @@ class PlaycontrollerProxy
   typedef std::shared_ptr<MessageComposer> tMessageComposerPtr;
   void queueToPlaycontroller(const tMessageComposerPtr &cmp);
 
-  gint16 separateSignedBitToComplementary(uint16_t v) const;
+  static gint16 separateSignedBitToComplementary(uint16_t v) ;
   void traceBytes(const Glib::RefPtr<Glib::Bytes> &bytes) const;
 
   void onEditControlMessageReceived(const MessageParser::NLMessage &msg);
@@ -96,7 +96,7 @@ class PlaycontrollerProxy
   int m_lastTouchedRibbon;
   Signal<void, int> m_signalRibbonTouched;
   Signal<void, int> m_signalPlaycontrollerSoftwareVersionChanged;
-  Signal<void, int> m_lastKeyChanged;
+  Signal<void> m_lastKeyChanged;
 
   std::unique_ptr<QuantizedValue::IncrementalChanger> m_relativeEditControlMessageChanger;
 
@@ -112,5 +112,5 @@ class PlaycontrollerProxy
 
   void onHeartbeatStumbled();
   void requestPlaycontrollerSoftwareVersion();
-  void notifyLastKey(gint16 key);
+  void notifyKeyBedActionHappened();
 };

@@ -193,19 +193,15 @@ public class SystemSettings {
 		NonMaps.theMaps.getServerProxy().setSetting("HighResCC", netify(b.name()));
 	}
 
+	public void setGlobalLocal(BooleanValues b)
+	{
+		SetupModel.get().systemSettings.globalLocalEnable.setValue(b);
+		NonMaps.theMaps.getServerProxy().setSetting("GlobalLocalEnable", netify(b.name()));
+	}
+
 	public void setReceiveMidiChannelSplit(MidiReceiveChannelSplit midiReceiveChannelSplit) {
 		SetupModel.get().systemSettings.receiveChannelSplit.setValue(midiReceiveChannelSplit);
 		NonMaps.theMaps.getServerProxy().setSetting("ReceiveChannelSplit", midiReceiveChannelSplit.name());
-	}
-
-	public void setReceiveNotes(BooleanValues enabled) {
-		SetupModel.get().systemSettings.receiveNotes.setValue(enabled);
-		NonMaps.theMaps.getServerProxy().setSetting("ReceiveNotes", netify(enabled.name()));
-	}
-
-	public void setReceiveProgramChanges(BooleanValues enabled) {
-		SetupModel.get().systemSettings.receiveProgramChanges.setValue(enabled);
-		NonMaps.theMaps.getServerProxy().setSetting("ReceiveProgramChanges", netify(enabled.name()));
 	}
 
 	public void setReceiveAftertouchCurve(AftertouchCurve value) {
@@ -228,21 +224,6 @@ public class SystemSettings {
 		NonMaps.theMaps.getServerProxy().setSetting("SendChannelSplit", channel.name());
 	}
 
-	public void setSendProgramChanges(BooleanValues enabled) {
-		SetupModel.get().systemSettings.sendProgramChanges.setValue(enabled);
-		NonMaps.theMaps.getServerProxy().setSetting("SendProgramChanges", netify(enabled.name()));
-	}
-
-	public void setSendNotes(BooleanValues enabled) {
-		SetupModel.get().systemSettings.sendNotes.setValue(enabled);
-		NonMaps.theMaps.getServerProxy().setSetting("SendNotes", netify(enabled.name()));
-	}
-
-	public void setLocalNotes(BooleanValues enabled) {
-		SetupModel.get().systemSettings.localNotes.setValue(enabled);
-		NonMaps.theMaps.getServerProxy().setSetting("LocalNotes", netify(enabled.name()));
-	}
-
 	public void setAutoStartRecorder(BooleanValues on) {
 		SetupModel.get().systemSettings.autoStartRecorder.setValue(on);
 		NonMaps.theMaps.getServerProxy().setSetting("AutoStartRecorder", netify(on.name()));
@@ -256,12 +237,16 @@ public class SystemSettings {
 		NonMaps.theMaps.getServerProxy().resetToHighResMidi();
     }
 
-    public void setHWSourceEnable(int hw, int xx, boolean b) {
-		SetupModel.get().systemSettings.hwSourceMapping.getValue().m_data[hw][xx] = b;
-		NonMaps.theMaps.getServerProxy().setHWSourceEnable(hw, xx, b);
+    public void setRoutingAspect(int hw, int xx, boolean b) {
+		SetupModel.get().systemSettings.routingAspects.getValue().m_data[hw][xx] = b;
+		NonMaps.theMaps.getServerProxy().setRoutingAspect(hw, xx, b);
 	}
 
 	public void panic() {
 		NonMaps.theMaps.getServerProxy().triggerPanic();
 	}
+
+    public void resetRoutings(boolean b) {
+		NonMaps.theMaps.getServerProxy().resetRoutings(b);
+    }
 }
