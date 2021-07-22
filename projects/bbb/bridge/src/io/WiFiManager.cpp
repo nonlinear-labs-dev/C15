@@ -64,7 +64,7 @@ void WiFiManager::saveConfig()
 
 void WiFiManager::scheduleRestart()
 {
-  if constexpr(isDevelopmentPC)
+  if (isDevelopmentPC)
     return;
 
   m_asyncCommands.schedule({ "systemctl", "restart", "accesspoint" }, [](auto) {},
@@ -73,7 +73,7 @@ void WiFiManager::scheduleRestart()
 
 void WiFiManager::enableAndStartAP()
 {
-  if constexpr(isDevelopmentPC)
+  if (isDevelopmentPC)
     return;
 
   m_asyncCommands.schedule({ "/usr/C15/scripts/enableAndStartAP.sh" }, [](auto) {},
@@ -82,7 +82,7 @@ void WiFiManager::enableAndStartAP()
 
 void WiFiManager::disableAndStopAP()
 {
-  if constexpr(isDevelopmentPC)
+  if (isDevelopmentPC)
     return;
 
   m_asyncCommands.schedule({ "/usr/C15/scripts/disableAndStopAP.sh" }, [](auto) {},
