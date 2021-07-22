@@ -22,11 +22,11 @@ void SerializedAsyncCommands::doCommand()
     m_records.pop_front();
 
     m_currentCommand = std::make_unique<AsyncCommandLine>(cmd.cmd,
-                                                          [this, success = std::move(cmd.success)](auto a) {
+                                                          [this, success = std::move(cmd.success)](const std::string& a) {
                                                             success(a);
                                                             doCommand();
                                                           },
-                                                          [this, error = std::move(cmd.error)](auto a) {
+                                                          [this, error = std::move(cmd.error)](const std::string& a) {
                                                             error(a);
                                                             doCommand();
                                                           });
